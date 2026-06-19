@@ -1,0 +1,24 @@
+{
+    "name": "Empty",
+    "derivative": "DEEP_DARK",
+    "vanillaDerivative": "DEEP_DARK",
+    "color": "#000000",
+    "layers": [
+        {
+            "palette": [
+                {
+                    "block": "minecraft:deepslate_tiles"
+                }
+            ],
+            "minHeight": 1,
+            "maxHeight": 1
+        }
+    ],
+    "generators": [
+        {
+            "generator": "flat",
+            "min": 58,
+            "max": 60
+        }
+    ]
+}

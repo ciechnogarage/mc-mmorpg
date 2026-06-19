@@ -1,0 +1,70 @@
+mount:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:saddle
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"Click
+      to mount your pet",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"Mount",underlined:0b}],text:""}'
+    minecraft:item_name: '{extra:["MCPetsMenu;mount"],text:""}'
+  schema_version: 1
+rename:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:name_tag
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"Click
+      to rename your pet",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"Rename",underlined:0b}],text:""}'
+    minecraft:item_name: '{extra:["MCPetsMenu;rename"],text:""}'
+  schema_version: 1
+inventory:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:chest
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"Inventory",underlined:0b}],text:""}'
+    minecraft:item_name: '{extra:["MCPetsMenu;inventory"],text:""}'
+  schema_version: 1
+petmenu:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:paper
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"Click
+      to get back to the menu",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"red",italic:0b,obfuscated:0b,strikethrough:0b,text:"Back
+      to menu",underlined:0b}],text:""}'
+    minecraft:item_name: '{extra:["MCPetsMenu;petmenu"],text:""}'
+  schema_version: 1
+skins:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:magma_cream
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"Skins",underlined:0b}],text:""}'
+    minecraft:item_name: '{extra:["MCPetsMenu;skins"],text:""}'
+  schema_version: 1
+equipment:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:leather_horse_armor
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"Equipment",underlined:0b}],text:""}'
+    minecraft:item_name: '{extra:["MCPetsMenu;equipment"],text:""}'
+  schema_version: 1
+page_selector:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4671
+  id: minecraft:paper
+  count: 1
+  components:
+    minecraft:custom_model_data: '{floats:[9660.0f]}'
+    minecraft:item_name: '{extra:["MCPetsMenu;page_selector"],text:""}'
+  schema_version: 1

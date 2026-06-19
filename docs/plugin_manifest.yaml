@@ -1,0 +1,326 @@
+# Plugin manifest - source of truth for orchestrator and plugin-admin.
+# Versions below were observed from staging jar names and the Paper startup log.
+
+server:
+  target_minecraft_version: 1.21.11
+  runtime: Paper 1.21.11-127-main@bd74bf6
+  environment: staging
+  server_folder: Server — kopia/1.21.11
+  last_scanned: 2026-05-26
+  scan_source:
+    - Server — kopia/1.21.11/plugins
+    - Server — kopia/1.21.11/codex-start-last.out.log
+    - Server — kopia/1.21.11/version_history.json
+  scan_note: Versions are sourced from staged jar filenames plus observed Paper boot lines.
+
+plugins:
+  - name: Chunky-Bukkit
+    jar: Chunky-Bukkit-1.4.40.jar
+    current_version: 1.4.40
+    role: pregeneration
+    owner: server_performance_engineer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: CMI
+    jar: CMI-9.8.4.14.jar
+    current_version: 9.8.4.14
+    role: admin/utility/economy bridge
+    owner: ui_ux_menu_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: CMILib
+    jar: CMILib1.5.9.5.jar
+    current_version: 1.5.9.5
+    role: dependency
+    owner: technical_director_minecraft
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: CoreTools
+    jar: CoreTools-1.4.1.jar
+    current_version: 1.4.1
+    role: tools/dependency
+    owner: plugin_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: low
+
+  - name: DecentHolograms
+    jar: DecentHolograms-2.9.9.jar
+    current_version: 2.9.9
+    role: holograms
+    owner: ux_world_info_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: DeluxeMenus
+    jar: DeluxeMenus-1.14.1-Release.jar
+    current_version: 1.14.1-Release
+    role: menus/gui
+    owner: ui_ux_menu_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: FastAsyncWorldEdit-Paper
+    jar: FastAsyncWorldEdit-Paper-2.15.1-SNAPSHOT-1283.jar
+    current_version: 2.15.1-SNAPSHOT-1283
+    role: world editing
+    owner: world_region_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: Guilds
+    jar: Guilds-2.0.10.jar
+    current_version: 2.0.10
+    role: guilds/social
+    owner: social_systems_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: HuskSync-Bukkit
+    jar: HuskSync-Bukkit-3.8.8-0772f09+mc.1.21.11.jar
+    current_version: 3.8.8-0772f09+mc.1.21.11
+    role: player data sync
+    owner: devops_sre
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: Iris
+    jar: Iris-3.9.1-1.20.1-1.21.11.jar
+    current_version: 3.9.1-1.20.1-1.21.11
+    role: world generation
+    owner: world_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: LibsDisguises
+    jar: LibsDisguises-11.0.15-Free.jar
+    current_version: 11.0.15-Free
+    role: disguises
+    owner: mob_boss_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: LuckPerms-Bukkit
+    jar: LuckPerms-Bukkit-5.5.36.jar
+    current_version: 5.5.36
+    role: permissions
+    owner: permissions_security_admin
+    license_status: unknown
+    update_policy: staging_required
+    criticality: critical
+
+  - name: MCPets
+    jar: MCPets 4.1.6 (1.21.+).jar
+    current_version: 4.1.6
+    role: pets
+    owner: cosmetics_pets_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: low
+
+  - name: MEG-Molang
+    jar: MEG-Molang-R1.0.0.jar
+    current_version: R1.0.0
+    role: model engine dependency
+    owner: plugin_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: MMOCore
+    jar: MMOCore-1.13.1-20260330.110342-58.jar
+    current_version: 1.13.1-20260330.110342-58
+    role: classes/progression
+    owner: rpg_systems_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: critical
+
+  - name: MMOInventory
+    jar: MMOInventory-2.0-20260330.113858-32.jar
+    current_version: 2.0-20260330.113858-32
+    role: rpg inventory
+    owner: rpg_systems_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: MMOItems
+    jar: MMOItems-6.10.1-20260330.094756-58.jar
+    current_version: 6.10.1-20260330.094756-58
+    role: items/stats/gear
+    owner: itemization_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: critical
+
+  - name: ModelEngine
+    jar: ModelEngine-4.0.9.jar
+    current_version: 4.0.9
+    role: custom models
+    owner: mob_boss_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: multiverse-core
+    jar: multiverse-core-5.5.3.jar
+    current_version: 5.5.3
+    role: multiple worlds
+    owner: world_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: MythicCrucible
+    jar: MythicCrucible-2.2.0.jar
+    current_version: 2.2.0
+    role: item/asset integrations
+    owner: itemization_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: MythicDungeons
+    jar: MythicDungeons-2.0.1-SNAPSHOT.jar
+    current_version: 2.0.1-SNAPSHOT
+    role: dungeons
+    owner: dungeon_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: MythicHUD
+    jar: MythicHUD-1.3.4-SNAPSHOT-all.jar
+    current_version: 1.3.4-SNAPSHOT-all
+    role: rpg hud/ui
+    owner: ui_ux_menu_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: MythicLib-dist
+    jar: MythicLib-dist-1.7.1-20260330.110510-95.jar
+    current_version: 1.7.1-20260330.110510-95
+    role: mmo shared library
+    owner: plugin_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: critical
+
+  - name: MythicMobs
+    jar: MythicMobs-5.11.2.jar
+    current_version: 5.11.2
+    role: mobs/bosses/loot
+    owner: mob_boss_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: critical
+
+  - name: nexo
+    jar: nexo-1.20.jar
+    current_version: 1.20
+    role: assets/resource pack layer
+    owner: plugin_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: packetevents-spigot
+    jar: packetevents-spigot-2.11.2.jar
+    current_version: 2.11.2
+    role: packet api dependency
+    owner: technical_director_minecraft
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: PixelLibs
+    jar: PixelLibs.jar
+    current_version: 1.1.1
+    role: library
+    owner: plugin_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: low
+
+  - name: PlaceholderAPI
+    jar: PlaceholderAPI-2.12.2.jar
+    current_version: 2.12.2
+    role: placeholders
+    owner: ui_ux_menu_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: ProtocolLib
+    jar: ProtocolLib.jar
+    current_version: 5.4.1-SNAPSHOT-f606cc9
+    role: packet dependency
+    owner: technical_director_minecraft
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: Vault
+    jar: Vault-1.7.4.jar
+    current_version: 1.7.4
+    role: economy/permissions bridge
+    owner: economy_balance_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: voicechat-bukkit
+    jar: voicechat-bukkit-2.6.12.jar
+    current_version: 2.6.12
+    role: proximity voice
+    owner: community_safety_lead
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: VoidGen
+    jar: VoidGen-2.3.4.jar
+    current_version: 2.3.4
+    role: void worlds/lobby
+    owner: world_architect
+    license_status: unknown
+    update_policy: staging_required
+    criticality: medium
+
+  - name: worldguard-bukkit
+    jar: worldguard-bukkit-7.0.15.jar
+    current_version: 7.0.15
+    role: regions/flags
+    owner: world_region_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+dependencies:
+  - parent: CMI
+    dependency: CMILib
+    status: installed
+  - parent: MMOCore/MMOItems
+    dependency: MythicLib
+    status: installed
+  - parent: packet/API plugins
+    dependency: ProtocolLib / PacketEvents
+    status: installed
+  - parent: MMO stack
+    dependency: MythicHUD
+    status: installed_optional

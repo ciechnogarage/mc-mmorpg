@@ -1,0 +1,37 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "min_format": 15,
+    "max_format": 99,
+    "supported_formats": [15,99],
+    "description": "MythicHUD Resourcepack!"
+  },
+  "overlays": {
+    "entries": [
+        {
+          "formats": [13,22],
+          "directory": "mythichud-1_20_4"
+        },
+        {
+          "formats": [32,34],
+          "directory": "mythichud-1_20_5"
+        },
+        {
+          "formats": [42,55],
+          "directory": "mythichud-1_21_2"
+        },
+        {
+          "min_format": 63,
+          "max_format": 75,
+          "formats": [63,75],
+          "directory": "mythichud-1_21_6"
+        },
+        {
+         "min_format": 83,
+         "max_format": 99,
+         "formats": [83,99],
+         "directory": "mythichud-26_1"
+        }
+    ]
+  }
+}

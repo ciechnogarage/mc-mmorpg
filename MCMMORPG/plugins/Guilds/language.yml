@@ -1,0 +1,622 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+guilds:
+  settings:
+    guild-level:
+      level-up-message:
+      - '&6&m-----------------------------------------------------'
+      - ''
+      - '&f&lLEVEL UP!'
+      - ''
+      - '&6The Guild has reached Level {level}!'
+      - ''
+      - '&6&m-----------------------------------------------------'
+    boosters:
+      double-xp:
+        start-message:
+        - '&6&lYOU GOT LUCKY!'
+        - '&7You will receive &3DOUBLE XP &7this game!'
+        reward-message:
+        - '&bExperience just earned DOUBLED as a &2Guild &6Level Reward!'
+      double-coins:
+        reward-message:
+        - '&6Coins just earned DOUBLED as a &2Guild &6Level Reward!'
+    guild-join:
+      format: '&2Guild > &7{player} &ejoined.'
+    guild-leave:
+      format: '&2Guild > &7{player} &eleft.'
+    guild-chat:
+      format: '&2Guild > &7{player} {rankTagFormatted}&f: {message}'
+      admin-spy:
+        format: '&9Guild Spy > &7{guildName} &7{player} {rankTagFormatted}&f: {message}'
+    officer-chat:
+      format: '&3Officer > &7{player}{rankTagFormatted}&f: {message}'
+    finder:
+      sorting:
+        format: '{sortingStatus} {sortingName}'
+        a_to_z: A to Z.
+        z_to_a: Z to A.
+        high_members: Most Guild Members first.
+        low_members: Fewest Guild Members first.
+        high_level: Highest Guild Level first.
+        low_level: Lowest Guild Level first.
+        none: Sort in no apparent order.
+  message:
+    no-permissions: '&cYou do not have the required permission'
+    no-rank: '&cYou do not have the required guild rank'
+    not-in-guild: '&cYou are not in a guild'
+    already-in-guild: '&cYou are already in a guild'
+    player-not-found: '&cPlayer not found'
+    full-guild: '&cThe guild is full'
+    command-not-available: '&cThis command is not usable yet'
+    error: '&cAn error occurred while executing the command. Please contact an administrator!'
+    none: None
+    nobody: Nobody
+    never: Never
+    online: Online
+    no-description: Your guild does not have a description
+    enter-new-name: Enter new name
+    enter-edit-name: '{name}'
+    enter-new-tag: Enter new tag
+    enter-edit-tag: '{tag}'
+    enter-player-name: Enter player name
+  messages:
+    guild-time:
+      units:
+        second:
+          singular: second
+          plural: seconds
+        minute:
+          singular: minute
+          plural: minutes
+        hour:
+          singular: hour
+          plural: hours
+        day:
+          singular: day
+          plural: days
+        year:
+          singular: year
+          plural: years
+  help:
+    above:
+    - '&b&m-----------------------------------------------------'
+    - '&aGuild Commands:'
+    bottom:
+    - '&b&m-----------------------------------------------------'
+  motd:
+    above:
+    - '&b&m--------------&a Guild: Message Of The Day &b&m----------------'
+    line: '&b| {line-text}'
+    line-list: '&b| {line-number}. {line-text}'
+    bottom:
+    - '&b&m---------------------------------------------------'
+  quest:
+    complete-message:
+    - '&6&m---------------------------------------------------'
+    - ''
+    - '&6The guild has completed Tier {quest_tier} of this week''s Guild Quest!'
+    - '&2+{quest_next_reward} Guild Experience'
+    - ''
+    - '&6&m---------------------------------------------------'
+  menu:
+    home-no-guild:
+      create:
+        help:
+          message: '&aClick here to use &6/guild create &ato create a new guild!'
+          hover: '&aClick to create a new guild!'
+    home:
+      discord-item:
+        help:
+          message: '&aClick here to use &6/guild discord &ato change the discord link!'
+          hover: '&aClick to change the discord link!'
+      description-item:
+        help:
+          message: '&aClick here to use &6/guild settings DESCRIPTION &ato change
+            the description!'
+          hover: '&aClick to change the description!'
+    finder:
+      no-guilds: '&cThere aren''t any guilds to request to join!'
+    rank-name:
+      input-minor-than-2: '&cThe rank''s name must be at least 2 characters!'
+      already-exist:
+        chat: '&cYou''ve already got a rank with this name!'
+        gui: Name already used
+      updated: '&aThe rank is now called &6{rankDisplayName}&a!'
+    rank-tag:
+      input-minor-than-2: '&cThe rank''s tag must be at least 2 characters!'
+      already-exist: '&cYou''ve already got a rank with this tag!'
+      updated: '&aSuccessfully changed the tag to &6{rankTag}&a!'
+  commands:
+    accept:
+      help: '&e/guild accept - &bAccepts a guild invitation'
+      hover-command: /guild accept
+      hover-text: '&bAccepts a guild invitation'
+      use: '&cUse: /guild accept'
+      click-hover-message: '&eClick to accept!'
+      joined-broadcast:
+      - '&b&m-----------------------------------------------------'
+      - '&7{player} &ejoined the guild!'
+      - '&b&m-----------------------------------------------------'
+      joined-player:
+      - '&b&m-----------------------------------------------------'
+      - '&eYou accepted the invite to &6{guildName} &eguild!'
+      - '&b&m-----------------------------------------------------'
+      not-invited:
+      - '&b&m-----------------------------------------------------'
+      - '&eYou do not have invitation requests!'
+      - '&b&m-----------------------------------------------------'
+    achievements:
+      help: '&e/guild achievements - &bOpens the Guild Achievements Menu'
+      hover-command: /guild achievements
+      hover-text: '&bOpens the Guild Achievements Menu'
+      use: '&cUse: /guild achievements'
+    chat:
+      help: '&e/guild chat <chat message> - &bSend a chat message to your guild channel'
+      hover-command: '/guild chat '
+      hover-text: '&bSend a chat message to your guild channel'
+      use: '&cUse: /guild chat <message>'
+      empty: '&cYou must enter a message to send'
+      delay: '&cYou are chatting too fast! You will be able to send another message
+        in {cooldown}s.'
+      muted: '&cYou are muted right now! You will be able to send another message
+        on {endTime}.'
+    create:
+      help: '&e/guild create <name> - &bCreates a guild with the specified name'
+      hover-command: '/guild create '
+      hover-text: '&bCreates a guild with the specified name'
+      use: '&cUse: /guild create <guild-name>'
+      already-exists: '&cThe guild {guildName} already exists'
+      name-length-more-than-limit: '&cThe guild name length must be less than {limit}'
+      name-with-prohibited-chars: '&cThe guild name contains prohibited characters'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&aYou created the &6{guildName} &aguild!'
+      - '&b&m-----------------------------------------------------'
+    demote:
+      help: '&e/guild demote <player> - &bDemotes the player to the previous rank'
+      hover-command: '/guild demote '
+      hover-text: '&bDemotes the player to the previous rank'
+      use: '&cUse: /guild demote <player>'
+      master-rank: '&cYou can''t demote the player because he is the highest rank!'
+      default-rank: '&cYou can''t demote again the player because his rank is the
+        default one!'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{playerTarget} &awas demoted from {oldRank} to {newRank}!'
+      - '&b&m-----------------------------------------------------'
+    disband:
+      help: '&e/guild disband - &bDisbands the guild'
+      hover-command: /guild disband
+      hover-text: '&bDisbands the guild'
+      use: '&cUse: /guild disband'
+      not-in-guild: '&cYou are not in a guild'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&aYou disbanded the &6{guildName} &aguild!'
+      - '&b&m-----------------------------------------------------'
+      confirm-request:
+      - '&b&m-----------------------------------------------------'
+      - '&eAre you sure you want to disband the guild?'
+      - '&eType &6{confirmMessage} &eto confirm.'
+      - '&b&m-----------------------------------------------------'
+    discord:
+      help: '&e/guild discord - &bSet or view the guild''s discord link'
+      hover-command: /guild discord
+      hover-text: '&bSet or view the guild''s discord link'
+      use: '&cUse: /guild discord'
+      no-link: '&cYour guild does not have a Discord invite link!'
+      change-link-help: '&7To change the link, use &6/guild discord (invite link)
+        &7or &6/guild discord reset &7to remove it.'
+      message:
+      - '&b&m-----------------------------------------------------'
+      - '&f{guildName}'
+      - '&fDISCORD'
+      - '&b {link}'
+      - '&7{editmsg-or-null}'
+      - '&b&m-----------------------------------------------------'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &aupdated the Guild Discord invite link.'
+      - '&b&m-----------------------------------------------------'
+    finder:
+      help: '&e/guild finder - &bOpens the Guild Finder Menu'
+      hover-command: /guild finder
+      hover-text: '&bOpens the Guild Finder Menu'
+    help:
+      help: '&e/guild help - &bPrints this help message'
+      hover-command: /guild help
+      hover-text: '&bPrints this help message'
+    history:
+      help: '&e/guild history - &bView the last 24 hours of guild events'
+      hover-command: /guild history
+      hover-text: '&bView the last 24 hours of guild events'
+    info:
+      help: '&e/guild info - &bPrints information about your guild'
+      hover-command: /guild info
+      hover-text: '&bPrints information about your guild'
+      use: '&cUse: /guild info'
+      message:
+      - '&b&m-----------------------------------------------------'
+      - '                                 &6{guildName}'
+      - ''
+      - '&bCreated: &e{creationTime}'
+      - '&bMembers: &e{players}&6/&e{maxPlayers}'
+      - '&bDescription: &e{description}'
+      - '&bMOTD last edited by &e{motdEditor} &bat &e{editTime}'
+      - ''
+      - '&bGuild Exp: &e{xp}'
+      - '&bGuild Level: &e{level} &b(&e{percentage}% &bto Level {nextLevel})'
+      - '&b&m-----------------------------------------------------'
+    invite:
+      help: '&e/guild invite <player> - &bInvites the player to your guild'
+      hover-command: '/guild invite '
+      hover-text: ' &bInvites the player to your guild'
+      player-already-in-guild: '&c{player} &cis already in a guild'
+      use: '&cUse: /guild invite <player>'
+      player-already-invited:
+      - '&b&m-----------------------------------------------------'
+      - '&7{player} &cis already invited to your guild.'
+      - '&b&m-----------------------------------------------------'
+      success-sender:
+      - '&b&m-----------------------------------------------------'
+      - '&eYou invited &7{player} &eto your guild! They have 5 minutes to accept.'
+      - '&b&m-----------------------------------------------------'
+      success-player:
+      - '&b&m-----------------------------------------------------'
+      - '&7{player} &einvited you to &6{guildName} &eguild!'
+      - '&eUse /guild accept to join.'
+      - '&b&m-----------------------------------------------------'
+      expired:
+      - '&b&m-----------------------------------------------------'
+      - '&eThe guild invite to &7{player} &ehas expired!'
+      - '&b&m-----------------------------------------------------'
+    join:
+      help: '&e/guild join <guild> - &bRequest to join the specified guild'
+      hover-command: '/guild join '
+      hover-text: '&bRequest to join the specified guild'
+      use: '&cUse: /guild join <guild>'
+      guild-not-exist: '&cThis guild does not exists'
+      cant-join: '&cYou can''t join this guild without an invite'
+      joined-broadcast:
+      - '&b&m-----------------------------------------------------'
+      - '&7{player} &ejoined the guild!'
+      - '&b&m-----------------------------------------------------'
+      joined-player:
+      - '&b&m-----------------------------------------------------'
+      - '&eYou joined the &6{guildName} &eguild!'
+      - '&b&m-----------------------------------------------------'
+    kick:
+      help: '&e/guild kick <player> <reason> - &bKicks the player from your guild'
+      hover-command: '/guild kick '
+      hover-text: '&bKicks the player from your guild'
+      use: '&cUse: /guild kick <player> <message>'
+      reason-not-entered: '&cYou must enter a reason to kick the player'
+      default-reason: No reason provided
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{playerTarget} &awas kicked from the guild by &6{player} &afor &6{message}!'
+      - '&b&m-----------------------------------------------------'
+    leave:
+      help: '&e/guild leave - &bLeaves your current guild'
+      hover-command: /guild leave
+      hover-text: '&bLeaves your current guild'
+      use: '&cUse: /guild leave'
+      owner: '&cYou can not leave the guild because you are the guild master'
+      success-broadcast:
+      - '&b&m-----------------------------------------------------'
+      - '&e{player} &ehas left the guild!'
+      - '&b&m-----------------------------------------------------'
+      success-player:
+      - '&b&m-----------------------------------------------------'
+      - '&aYou left the &6{guildName} &aguild!'
+      - '&b&m-----------------------------------------------------'
+    log:
+      help: '&e/guild log - &bView the audit log'
+      hover-command: /guild log
+      hover-text: '&bView the audit log'
+    member:
+      help: '&e/guild member - &bDisplays information about the Guild Member'
+      hover-command: /guild member
+      hover-text: '&bDisplays information about the Guild Member'
+    members:
+      help: '&e/guild members - &bLists players in your guild'
+      hover-command: /guild members
+      hover-text: '&bLists players in your guild'
+      use: '&cUse: /guild members'
+      no-members-with-specific-rank: '&7There is no guild member with this rank'
+      above:
+      - '&b&m-----------------------------------------------------'
+      - '&6Guild Name: {guildName}'
+      - ''
+      message-rank-part:
+      - '&a-- {rankDisplayName} --'
+      - '{rankMembers}'
+      bottom:
+      - '&eTotal Members: &a{players}'
+      - '&eOnline Members: &a{onlinePlayers}'
+      - '&b&m-----------------------------------------------------'
+    menu:
+      help: '&e/guild menu - &bOpens the Guild Menu'
+      hover-command: /guild menu
+      hover-text: '&bOpens the Guild Menu'
+      use: '&cUse: /guild menu'
+    motd:
+      help: '&e/guild motd - &bModifies the MOTO for the Guild'
+      hover-command: /guild motd
+      hover-text: '&bModifies the MOTO for the Guild'
+      no-motd: '&cYour guild does not have a MOTD'
+      line-must-be-number: '&cThe line ID must be a number'
+      sub-cmds:
+      - '&b&m-----------------------------------------------------'
+      - '&aGuild MOTD Commands:'
+      - '&e/guild motd add <text> - &bAdds a line in the MOTD'
+      - '&e/guild motd clear - &bClears the MOTD'
+      - '&e/guild motd help - &bPrints this help message'
+      - '&e/guild motd list - &bList lines in the MOTD'
+      - '&e/guild motd preview - &bPreview what the MOTD will look like to players'
+      - '&e/guild motd set <line> <text> - &bSets a line in the MOTD'
+      - '&b&m-----------------------------------------------------'
+      set-line:
+      - '&b&m-----------------------------------------------------'
+      - '&eSet line #{number} to ''&f{text}&e''!'
+      - '&b&m-----------------------------------------------------'
+      no-line:
+      - '&b&m-----------------------------------------------------'
+      - '&cThere is no line #{number}! Try &b/g motd add'
+      - '&b&m-----------------------------------------------------'
+      cleared:
+      - '&b&m-----------------------------------------------------'
+      - '&cCleared Guild MOTD'
+      - '&b&m-----------------------------------------------------'
+    mute:
+      help: '&e/guild mute <player/everyone> <time> - &bMutes a player or the whole
+        guild'
+      hover-command: '/guild mute '
+      hover-text: '&bMutes a player or the whole guild'
+      use: '&cUse: /guild mute <player/everyone> <time>'
+      invalid-time: '&cYou must enter a valid time'
+      success-everyone:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &ehas muted the guild chat for {time}'
+      - '&b&m-----------------------------------------------------'
+      success-player:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &ehas mute {playerTarget} &efor {time}'
+      - '&b&m-----------------------------------------------------'
+    mypermissions:
+      help: '&e/guild mypermissions - &bView your rank''s permissions'
+      hover-command: /guild mypermissions
+      hover-text: '&bView your rank''s permissions'
+    notifications:
+      help: '&e/guild notifications - &bToggle guild join/leave notifications'
+      hover-command: /guild notifications
+      hover-text: '&bToggle guild join/leave notifications'
+      use: '&cUse: /guild notifications'
+      enabled:
+      - '&b&m-----------------------------------------------------'
+      - '&eEnabled guild join/leave notifications!.'
+      - '&b&m-----------------------------------------------------'
+      disabled:
+      - '&b&m-----------------------------------------------------'
+      - '&eDisabled guild join/leave notifications!.'
+      - '&b&m-----------------------------------------------------'
+    officerchat:
+      help: '&e/guild officerchat - &bSend a chat message to your guild officer chat
+        channel'
+      hover-command: /guild officerchat
+      hover-text: '&bSend a chat message to your guild officer chat channel'
+      use: '&cUse: /guild officerchat <message>'
+    online:
+      help: '&e/guild online - &bShow the current online members of your guild'
+      hover-command: /guild online
+      hover-text: '&bShow the current online members of your guild'
+      use: '&cUse: /guild online'
+      above:
+      - '&b&m-----------------------------------------------------'
+      - '&6Guild Name: {guildName}'
+      - ''
+      message-rank-part:
+      - '&a-- {rankDisplayName} --'
+      - '{rankMembers}'
+      bottom:
+      - '&eTotal Members: &a{players}'
+      - '&eOnline Members: &a{onlinePlayers}'
+      - '&eOffline Members: &a{offlinePlayers}'
+      - '&b&m-----------------------------------------------------'
+    onlinemode:
+      help: '&e/guild onlinemode - &bToggle if offline players are displayed in the
+        guild list'
+      hover-command: /guild onlinemode
+      hover-text: '&bToggle if offline players are displayed in the guild list'
+      use: '&cUse: /guild onlinemode'
+      enabled:
+      - '&b&m-----------------------------------------------------'
+      - '&eEnabled guild online mode!'
+      - '&b&m-----------------------------------------------------'
+      disabled:
+      - '&b&m-----------------------------------------------------'
+      - '&eDisabled guild online mode!'
+      - '&b&m-----------------------------------------------------'
+    party:
+      help: '&e/guild party - &bForms a party from your online Guild Members'
+      hover-command: /guild party
+      hover-text: '&bForms a party from your online Guild Members'
+      use: '&cUse: /guild party'
+    permissions:
+      help: '&e/guild permissions - &bModify a rank''s permissions'
+      hover-command: /guild permissions
+      hover-text: '&bModify a rank''s permissions'
+      use: '&cUse: /guild permissions'
+    promote:
+      help: '&e/guild promote <player> - &bPromotes the player to the next rank'
+      hover-command: '/guild promote '
+      hover-text: '&bPromotes the player to the next rank'
+      use: '&cUse: /guild promote <player>'
+      already-master-rank: '&cThe player is already the highest rank!'
+      next-master-rank: '&cYou can''t promote a player to the highest rank! Use /guild
+        transfer instead'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{playerTarget} &awas promoted from {oldRank} to {newRank}!'
+      - '&b&m-----------------------------------------------------'
+    quest:
+      help: '&e/guild quest - &bShows information regarding the current Guild Quest'
+      hover-command: /guild quest
+      hover-text: '&bShows information regarding the current Guild Quest'
+      message:
+      - '&b&m-----------------------------------------------------'
+      - '                       &6Guild Quest Progress'
+      - '&eTo complete the quest, Guild Members need to complete challenges in any
+        game.'
+      - ''
+      - '{quest_tiers}'
+      - ''
+      - '&7Reward: &2{quest_next_reward} Guild Experience'
+      - '&eReset in: {quest_next_reset}'
+      - '&b&m-----------------------------------------------------'
+    rename:
+      help: '&e/guild rename <name> - &bRenames the Guild'
+      hover-command: '/guild rename '
+      hover-text: '&bRenames the Guild'
+      use: '&cUse: /guild rename <name>'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &arenamed the guild to &6{guildName}&a!'
+      - '&b&m-----------------------------------------------------'
+    setrank:
+      help: '&e/guild setrank <player> <rank> - &bSets a player''s rank'
+      hover-command: '/guild setrank '
+      hover-text: '&bSets a player''s rank'
+      use: '&cUse: /guild setrank <player> <rank>'
+    settings:
+      help: '&e/guild settings <setting> <value> - &bModify settings for your guild'
+      hover-command: '/guild settings '
+      hover-text: '&bModify settings for your guild'
+      use:
+      - '&b&m-----------------------------------------------------'
+      - '&aModify settings for your guild. Only usable by Guild Master:'
+      - '&aSettings:'
+      - '&eSHOWN &b- Whether or not the guild is publicly listed. This lets players
+        join without being invited.'
+      - '&eDESCRIPTION &b- Modify the Guild''s description in the Guild Finder.'
+      - '&eGAMES &b-Lets you change the Guild''s preferred games. This lets new players
+        find a guild that''s active in the games they play most frequently.'
+      - ''
+      - '&cInvalid usage! /guild settings <setting> <value>'
+      - '&b&m-----------------------------------------------------'
+      shown:
+        error:
+        - '&b&m-----------------------------------------------------'
+        - '&eInvalid value ''{value}''! Should be true/false'
+        - '&b&m-----------------------------------------------------'
+        'true':
+        - '&b&m-----------------------------------------------------'
+        - '&a{player} &aenabled Guild Visibility!'
+        - '&b&m-----------------------------------------------------'
+        'false':
+        - '&b&m-----------------------------------------------------'
+        - '&a{player} &adisabled Guild Visibility!'
+        - '&b&m-----------------------------------------------------'
+      description:
+        success:
+        - '&b&m-----------------------------------------------------'
+        - '&a{player} &aset the Guild Description to {message}'
+        - '&b&m-----------------------------------------------------'
+    slow:
+      help: '&e/guild slow - &bToggle slow chat, requiring guild members to wait {chat-cooldown}
+        seconds between messages'
+      hover-command: /guild slow
+      hover-text: '&bToggle slow chat, requiring guild members to wait {chat-cooldown}
+        seconds between messages'
+      use: '&cUse: /guild slow'
+      disabled: '&2Guild > &e{player} &edisabled the chat throttle!'
+      enabled: '&2Guild > &e{player} &eenabled the chat throttle! You can only send
+        messages every {chat-cooldown} seconds'
+    tag:
+      help: '&e/guild tag - &b Sets the guild [TAG]'
+      hover-command: '/guild tag '
+      hover-text: '&b Sets the guild [TAG]'
+      tag-length-more-than-limit: '&cThe Guild [TAG] can''t be longer than {length}
+        characters!'
+      tag-with-prohibited-chars: '&cThe guild [TAG] contains prohibited characters'
+      tag-already-chosen: '&cThe guild [TAG] has been already chosen by another guild'
+      use:
+      - '&b&m-----------------------------------------------------'
+      - '&eInvalide usage! Correct usage: &b/guild tag HYP &cor &b/guild tag reset'
+      - '&b&m-----------------------------------------------------'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &aset the guild tag to {guildTagFormatted}&a!'
+      - '&b&m-----------------------------------------------------'
+      reset-success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &areset the guild tag!'
+      - '&b&m-----------------------------------------------------'
+    tagcolor:
+      help: '&e/guild tagcolor - &bSets the guild tag color'
+      hover-command: '/guild tagcolor '
+      hover-text: '&bSets the guild tag color'
+      no-tag: '&cYour guild does not have a tag'
+      no-color-unlocked: '&cYour guild has not unlocked any Guild Tag Colors!'
+      tag-hover: '&7Click to set your Guild Tag Color to {color}'
+      use:
+        above:
+        - '&b&m-----------------------------------------------------'
+        - '&eYou can set your Guild Tag to any of the following colors:'
+        bottom:
+        - '&eRun the command: /guild tagcolor <color>'
+        - '&b&m-----------------------------------------------------'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &aset the guild tag color to {guildTagFormatted}&a!'
+      - '&b&m-----------------------------------------------------'
+    toggle:
+      help: '&e/guild toggle - &bToggle guild chat for yourself'
+      hover-command: /guild toggle
+      hover-text: '&bToggle guild chat for yourself'
+      enabled:
+      - '&b&m-----------------------------------------------------'
+      - '&eEnabled guild chat!'
+      - '&b&m-----------------------------------------------------'
+      disabled:
+      - '&b&m-----------------------------------------------------'
+      - '&eDisabled guild chat!'
+      - '&b&m-----------------------------------------------------'
+    top:
+      help: '&e/guild top - &bLists the players with most experience earned'
+      hover-command: /guild top
+      hover-text: '&bLists the players with most experience earned'
+    transfer:
+      help: '&e/guild transfer <player> - &bTransfers ownership of the guild to another
+        player'
+      hover-command: '/guild transfer '
+      hover-text: '&bTransfers ownership of the guild to another player'
+      use: '&cUse: /guild transfer <player>'
+      success:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &atransferred the guild to &6{playerTarget}&a!'
+      - '&b&m-----------------------------------------------------'
+    unmute:
+      help: '&e/guild unmute <player/everyone> - &bUnmute a player or the whole guild'
+      hover-command: '/guild unmute '
+      hover-text: '&bUnmute a player or the whole guild'
+      use: '&cUse: /guild unmute <player/everyone>'
+      success-everyone:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &ehas unmuted the guild chat!'
+      - '&b&m-----------------------------------------------------'
+      success-player:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &ehas unmuted {playerTarget}!'
+      - '&b&m-----------------------------------------------------'
+      not-muted:
+      - '&b&m-----------------------------------------------------'
+      - '&a{player} &cis not muted!'
+      - '&b&m-----------------------------------------------------'
+config:
+  version: 3

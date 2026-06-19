@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://volmit.com/iris-schema/irisobjecttranslate.json",
+    "anyOf": [
+        {
+            "description": "Translate objects",
+            "x-intellij-html-description": "Translate objects",
+            "type": "object",
+            "required": ["y"],
+            "properties": {
+                "x": {
+                    "type": "integer",
+                    "minimum": -128,
+                    "maximum": 128,
+                    "description": "x\nThe x shift in blocks\n\nInteger\n* Default Value is 0\n* Minimum allowed is -128\n* Maximum allowed is 128",
+                    "x-intellij-html-description": "<h>x<\/h><br>The x shift in blocks<hr><\/hr><br><h>Integer<\/h><br>* Default Value is 0<br>* Minimum allowed is -128<br>* Maximum allowed is 128"
+                },
+                "y": {
+                    "type": "integer",
+                    "minimum": -128,
+                    "maximum": 128,
+                    "description": "y\nThe y shift in blocks\n\nInteger\n* Default Value is 0\n* Minimum allowed is -128\n* Maximum allowed is 128",
+                    "x-intellij-html-description": "<h>y<\/h><br>The y shift in blocks<hr><\/hr><br><h>Integer<\/h><br>* Default Value is 0<br>* Minimum allowed is -128<br>* Maximum allowed is 128"
+                },
+                "yRandom": {
+                    "type": "integer",
+                    "minimum": -128,
+                    "maximum": 128,
+                    "description": "yRandom\nAdds an additional amount of height randomly (translateY + rand(0 - yRandom))\n\nInteger\n* Default Value is 0\n* Minimum allowed is -128\n* Maximum allowed is 128",
+                    "x-intellij-html-description": "<h>yRandom<\/h><br>Adds an additional amount of height randomly (translateY + rand(0 - yRandom))<hr><\/hr><br><h>Integer<\/h><br>* Default Value is 0<br>* Minimum allowed is -128<br>* Maximum allowed is 128"
+                },
+                "z": {
+                    "type": "integer",
+                    "minimum": -128,
+                    "maximum": 128,
+                    "description": "z\nThe z shift in blocks\n\nInteger\n* Default Value is 0\n* Minimum allowed is -128\n* Maximum allowed is 128",
+                    "x-intellij-html-description": "<h>z<\/h><br>The z shift in blocks<hr><\/hr><br><h>Integer<\/h><br>* Default Value is 0<br>* Minimum allowed is -128<br>* Maximum allowed is 128"
+                }
+            }
+        },
+        {
+            "type": "string",
+            "$ref": "#/definitions/enum-snippet-object-translator",
+            "description": "Translate objects",
+            "x-intellij-html-description": "Translate objects"
+        }
+    ],
+    "description": "Translate objects",
+    "x-intellij-html-description": "Translate objects",
+    "!required": false,
+    "definitions": {"enum-snippet-object-translator": {"enum": []}}
+}

@@ -1,0 +1,17 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+quests:
+  settings:
+    reset-day: 6
+    reset-time: 02:00:00
+    reset-format: '{hours}hours, {minutes}minutes'
+    tiers:
+    - 25:50000
+    - 100:50000
+    - 500:50000
+    - 1500:50000
+    tier-format: '&7Tier {quest_tier}: &6{quest_progress}&7/{quest_required}'

@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://volmit.com/iris-schema/irisrange.json",
+    "anyOf": [
+        {
+            "description": "Represents a range",
+            "x-intellij-html-description": "Represents a range",
+            "type": "object",
+            "properties": {
+                "min": {
+                    "type": "number",
+                    "description": "min\nThe minimum value\n\nNumber\n* Default Value is 16.0",
+                    "x-intellij-html-description": "<h>min<\/h><br>The minimum value<hr><\/hr><br><h>Number<\/h><br>* Default Value is 16.0"
+                },
+                "max": {
+                    "type": "number",
+                    "description": "max\nThe maximum value\n\nNumber\n* Default Value is 32.0",
+                    "x-intellij-html-description": "<h>max<\/h><br>The maximum value<hr><\/hr><br><h>Number<\/h><br>* Default Value is 32.0"
+                }
+            }
+        },
+        {
+            "type": "string",
+            "$ref": "#/definitions/enum-snippet-range",
+            "description": "Represents a range",
+            "x-intellij-html-description": "Represents a range"
+        }
+    ],
+    "description": "Represents a range",
+    "x-intellij-html-description": "Represents a range",
+    "!required": false,
+    "definitions": {"enum-snippet-range": {"enum": []}}
+}

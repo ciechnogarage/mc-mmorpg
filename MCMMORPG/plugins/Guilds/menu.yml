@@ -1,0 +1,1240 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+guilds:
+  menu:
+    home:
+      gui:
+        name: '&8Guild'
+        slot: 45
+        paginated-slots: 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,42,43,44
+        separator-slots: 9,10,11,12,13,14,15,16,17
+      items:
+        invite-player:
+          material: BOOK
+          slot: 0
+          name: '&aInvite Player'
+          lore:
+          - '&7Click here to invite a player to'
+          - '&7your Guild.'
+        guild-information:
+          material: PAINTING
+          slot: 1
+          name: '&aGuild Information'
+          lore:
+          - '&7Name: &6{guildName}'
+          - '&7Rank: &6{rankDisplayName}'
+          - '&7Members: &6{players}&b/&6{maxPlayers}'
+        guild-settings:
+          material: COMPARATOR
+          slot: 2
+          name: '&aGuild Settings'
+          lore:
+          - '&7Edit settings such as your tag,'
+          - '&7permissions and guild finder'
+          - '&7options'
+          - ''
+          - '&eClick to configure!'
+        guild-quest:
+          material: ENCHANTED_BOOK
+          slot: 3
+          name: '&aWeekly Guild Quest'
+          lore:
+          - '&eTo complete the quest, Guild Members'
+          - '&eneed to complete Challenges in any'
+          - '&egame!'
+          - '{quest_tiers}'
+          - ''
+          - '&7Reward: &2{quest_next_reward} Guild Experience'
+          - '&eResets in: {quest_next_reset}'
+        guild-leveling:
+          material: BREWING_STAND
+          slot: 4
+          name: '&aGuild Leveling'
+          lore:
+          - '&7Guild Level: &6{level}'
+          - '&6{currentLevel} &6{progressBar} &6{nextLevel}'
+          - '&6Exp until next level: &6{requiredXp}'
+          - '&7Guild Exp: &6{xp} &7/&6{nextXp} &7(&6{percentage}%&7)'
+        guild-achievements:
+          material: DIAMOND
+          slot: 5
+          name: '&aGuild Achievements'
+          lore:
+          - '&7Not available yet!'
+        guild-discord:
+          material: PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2RhOTQ0OWNlYTEyMTE5YzIyY2E1YjkzYzI4Y2JlOWRmMzE1MjFjYTE1OWE1ZWE1ZmFhNWZmYjVhMTc4MGY1NyJ9fX0=
+          slot: 6
+          name: '&aGuild Discord'
+          lore:
+          - '&7Your Guild has a Discord'
+          - '&7server that Guild Members'
+          - '&7can join.'
+          - ''
+          - '&eClick to view Invite Link'
+          - '&eRight-click to modify'
+        guild-finder:
+          material: PAPER
+          slot: 7
+          name: '&aGuild Finder'
+          lore:
+          - '&7Find a Guild you can join based'
+          - '&7on your favorite games.'
+          - ''
+          - '&eClick to browse!'
+        separator:
+          material: LIME_STAINED_GLASS_PANE
+          name: ' '
+        next-page:
+          material: ARROW
+          slot: 26
+          name: '&aNext Page'
+          lore:
+          - '&eLEFT CLICK &7to go to the'
+          - '&7next page'
+          - '&eRIGHT CLICK &7to go to'
+          - '&7the last page'
+          - '&7Page {currentPage}/{totalPages}'
+        previous-page:
+          material: ARROW
+          slot: 18
+          name: '&aPrevious Page'
+          lore:
+          - '&eLEFT CLICK &7to go to the'
+          - '&7previous page'
+          - '&eRIGHT CLICK &7to go to'
+          - '&7the first page'
+          - '&7Page {currentPage}/{totalPages}'
+        player-item:
+          material: PLAYER_HEAD
+          name: '&7{player}'
+          lore:
+          - '&7Guild Rank: &b{rankDisplayName}'
+          - '&7Member Since: &b{joinDate}'
+          - '&7Last Online: &b{lastOnline}'
+    home-no-guild:
+      gui:
+        name: '&8Guild'
+        slot: 27
+      items:
+        create-guild:
+          material: OAK_SIGN
+          slot: 11
+          name: '&aCreate Guild'
+          lore:
+          - '&7Click here to create'
+          - '&7a new guild.'
+        create-guild-no-permission:
+          material: OAK_SIGN
+          slot: 11
+          name: '&cCreate Guild'
+          lore:
+          - '&7Only players with &aVIP&6+ &7or'
+          - '&7higher can create guilds, but'
+          - '&7anybody can join them.'
+        guild-finder:
+          material: PAPER
+          slot: 15
+          name: '&aGuild Finder'
+          lore:
+          - '&7Find a Guild you can join based'
+          - '&7on your favorite games.'
+          - ''
+          - '&eClick to browse!'
+    level:
+      gui:
+        name: '&8Guild Leveling Rewards'
+        slot: 54
+        paginated-slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44
+      items:
+        locked-special-reward:
+          material: CLAY_BALL
+        locked-common-reward:
+          material: GRAY_DYE
+        double-xp:
+          material: CYAN_DYE
+          name: '&3{percentage}% Double Exp'
+          lore:
+          - '&7Whenever a Guild Member'
+          - '&7plays a game, they have a'
+          - '&3{percentage}% &7chance of getting'
+          - '&7Double Exp for the entire'
+          - '&7game.'
+          - ''
+          - '&eUnlocked at level {level}'
+        double-coins:
+          material: GOLD_NUGGET
+          name: '&6{percentage}% Double Coins'
+          lore:
+          - '&7Whenever a Guild Member'
+          - '&7plays a game, they have a'
+          - '&6{percentage}% &7chance of getting'
+          - '&7Double Coins every time'
+          - '&7they gain coins.'
+          - ''
+          - '&eUnlocked at level {level}'
+        tag:
+          material: LIGHT_GRAY_WOOL
+          name: '{tag} Guild Tag'
+          lore:
+          - '&7Guild Members can have a'
+          - '{tag} &7Guild Tag'
+          - '&7displayed next to their'
+          - '&7username in lobbies!.'
+          - ''
+          - '&eUnlocked at level {level}'
+        chars:
+          material: PAPER
+          name: '&7Special Characters in Guild Tag'
+          lore:
+          - '&7The Guild Tag can include'
+          - '&7the following special'
+          - '&7characters: {chars}'
+          - ''
+          - '&eUnlocked at level {level}'
+        tag-length:
+          material: PAPER
+          name: '&7Guild Tag Length'
+          lore:
+          - '&7The Guild Tag''s maximum'
+          - '&7length is increased to {length}'
+          - '&7characters.'
+          - ''
+          - '&eUnlocked at level {level}'
+        previous-page:
+          material: ARROW
+          slot: 45
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 53
+          name: '&aNext Page'
+        go-back:
+          material: ARROW
+          slot: 49
+          name: '&aGo Back'
+          lore:
+          - '&7To Guild'
+    gsettings:
+      gui:
+        name: '&8Guild Settings'
+        slot: 36
+        status:
+          'on': '&aON'
+          'off': '&cOFF'
+      items:
+        guild-tag:
+          material: NAME_TAG
+          slot: 10
+          name: '&aGuild Tag'
+          lore:
+          - '&7Changes the tag next to your'
+          - '&7guild members'' names.'
+          - ''
+          - '&eClick to edit!'
+        guild-tag-color:
+          material: RED_DYE
+          slot: 11
+          name: '&aGuild Tag Color'
+          lore:
+          - '&7Changes the color of the tag'
+          - '&7next to your guild members'''
+          - '&7names.'
+          - ''
+          - '&eClick to view available colors!'
+        guild-permissions:
+          material: COMPARATOR
+          slot: 12
+          name: '&aGuild Permissions'
+          lore:
+          - '&7Modify your guild''s ranks'
+          - '&7their permissions.'
+          - ''
+          - '&eClick to edit!'
+        guild-shown-in-finder:
+          material: SUNFLOWER
+          slot: 13
+          name: '&aShown in guild Finder'
+          lore:
+          - '&7Whether or not players can find'
+          - '&7the guild in Guild Finder and'
+          - '&7request to join.'
+          - '&7Currently: {status}'
+          - ''
+          - '&eClick to toggle!'
+        guild-games:
+          material: COMPASS
+          slot: 14
+          name: '&aGuild Games'
+          lore:
+          - '&7Changes the Guild''s list of'
+          - '&7games used in the Guild Finder.'
+          - ''
+          - '&eClick to pick games!'
+        guild-description:
+          material: BOOK
+          slot: 15
+          name: '&aGuild Description'
+          lore:
+          - '&7Changes the Guild''s description'
+          - '&7as shown in Guild Finder.'
+          - ''
+          - '&eClick to edit!'
+        guild-personal-settings:
+          material: ORANGE_DYE
+          slot: 16
+          name: '&aPersonal Guild Settings'
+          lore:
+          - '&7Modify your personal'
+          - '&7guild settings.'
+          - ''
+          - '&eClick to edit!'
+        go-back-settings:
+          material: ARROW
+          slot: 31
+          name: '&aGo back'
+    tag-color:
+      gui:
+        name: '&8Guild Tag Color'
+        slot: 36
+        paginated-slots: 10,11,12,13,14,15,16,19,20,21,22,23,24,25
+      items:
+        tag-color-item:
+          material: INK_SAC
+          name: '{color}'
+          lore:
+          - '&7Preview: {tag}'
+          - ''
+          - '&eClick to pick this color!'
+        previous-page:
+          material: ARROW
+          slot: 27
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 35
+          name: '&aNext Page'
+        go-back-tag:
+          material: ARROW
+          slot: 31
+          name: '&aGo back'
+          lore:
+          - '&7To Guild Settings'
+    games:
+      gui:
+        name: '&8Select Guild Games'
+        slot: 36
+        paginated-slots: 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34,35
+      items:
+        go-back-games:
+          material: ARROW
+          slot: 31
+          name: '&aGo back'
+          lore:
+          - '&7To Guild Settings'
+    psettings:
+      gui:
+        name: '&8Personal Guild Settings'
+        slot: 36
+      items:
+        guild-chat-visibility:
+          material: PAPER
+          slot: 12
+          name: '&aGuild Chat Visibility'
+          lore:
+          - '&7Toggles ability to see guild'
+          - '&7chat.'
+        guild-chat-visibility-on:
+          material: LIME_DYE
+          slot: 21
+          name: '&aGuild Chat Visibility'
+          lore:
+          - '&7Click to disable!'
+        guild-chat-visibility-off:
+          material: GRAY_DYE
+          slot: 21
+          name: '&cGuild Chat Visibility'
+          lore:
+          - '&7Click to enable!'
+        guild-notifications:
+          material: OAK_DOOR
+          slot: 13
+          name: '&aGuild Notifications'
+          lore:
+          - '&7Receive messages when your'
+          - '&7fellow guild members log in or'
+          - '&7out.'
+        guild-notifications-on:
+          material: LIME_DYE
+          slot: 22
+          name: '&aGuild Notifications'
+          lore:
+          - '&7Click to disable!'
+        guild-notifications-off:
+          material: GRAY_DYE
+          slot: 22
+          name: '&cGuild Notifications'
+          lore:
+          - '&7Click to enable!'
+        go-back-personal-settings:
+          material: ARROW
+          slot: 35
+          name: '&aGo back'
+          lore:
+          - '&7To Guild Settings'
+    finder:
+      gui:
+        name: '&8Guild Finder'
+        slot: 54
+        paginated-slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35
+      items:
+        previous-page:
+          material: ARROW
+          slot: 45
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 53
+          name: '&aNext Page'
+        guild-item-join:
+          material: PAPER
+          name: '&6{guildName}'
+          lore:
+          - '&7Guild Master: &b{guildMaster}'
+          - '&7Members: &b{players}&7/{maxPlayers}'
+          - '&7Guild Level: &6{level}'
+          - ''
+          - '&7Games: &7{games}'
+          - ''
+          - '&7Guild Description: &7{description}'
+          - ''
+          - '&eClick to join!'
+        guild-item-request:
+          material: PAPER
+          name: '&6{guildName}'
+          lore:
+          - '&7Guild Master: &b{guildMaster}'
+          - '&7Members: &b{players}&7/{maxPlayers}'
+          - '&7Guild Level: &6{level}'
+          - ''
+          - '&7Games: &7{games}'
+          - ''
+          - '&7Guild Description: &7{description}'
+          - ''
+          - '&cTo request to join, you must'
+          - '&cfirst leave your current guild.'
+        sort-results:
+          material: LEVER
+          slot: 39
+          name: '&aSort Results'
+          lore:
+          - '&7Choose how you want the results'
+          - '&7to be sorted.'
+          - ''
+          - '{sortingList}'
+          - ''
+          - '&eClick to change!'
+        choose-games:
+          material: COMPASS
+          slot: 40
+          name: '&aChoose Games'
+          lore:
+          - '&7Click to filter Guilds by the'
+          - '&7games they play.'
+          - '&7We''ll only show you guilds that play'
+          - '&7all the games you select.'
+        limit-size:
+          material: PLAYER_HEAD
+          slot: 41
+          name: '&aLimit Size'
+          lore:
+          - '&7Click to filter Guilds by how'
+          - '&7many members they have.'
+        back:
+          material: ARROW
+          slot: 49
+          name: '&aGo Back'
+          lore:
+          - '&7To Guild!'
+    finder-games:
+      gui:
+        name: '&8Guild Finder: Games'
+        slot: 54
+        paginated-slots: 10,11,12,13,14,15,16,19,20,21,22,23,24,25,28,29,30,31,32,33,34,35
+      items:
+        previous-page:
+          material: ARROW
+          slot: 45
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 53
+          name: '&aNext Page'
+        save:
+          material: EMERALD
+          slot: 49
+          name: '&aSave and Go Back'
+    finder-size:
+      gui:
+        name: '&8Guild Finder: Size Selector'
+        slot: 54
+        paginated-slots: 20,21,22,23,24
+      items:
+        size:
+          to-select:
+            material: GRAY_DYE
+            name: '&a{finderPlayers} Players'
+            lore:
+            - '&7Show only Guilds with {finderPlayers} players.'
+          selected:
+            material: GREEN_DYE
+            name: '&a{finderPlayers} Players'
+            lore:
+            - '&7Show only Guilds with {finderPlayers} players.'
+        no-limit:
+          to-select:
+            material: GRAY_WOOL
+            name: '&aNo Limit'
+            lore:
+            - '&7Show all Guilds, regardless of how'
+            - '&7many members they have.'
+          selected:
+            material: LIME_WOOL
+            name: '&aNo Limit'
+            lore:
+            - '&7Show all Guilds, regardless of how'
+            - '&7many members they have.'
+        previous-page:
+          material: ARROW
+          slot: 45
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 53
+          name: '&aNext Page'
+        apply:
+          material: EMERALD
+          slot: 49
+          name: '&aApply Filters'
+    achievements:
+      gui:
+        name: '&8Guild Achievements'
+        slot: 54
+        paginated-slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44
+        align: HORIZONTAL
+      items:
+        previous-page:
+          material: ARROW
+          slot: 45
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 53
+          name: '&aNext Page'
+        back:
+          material: ARROW
+          slot: 49
+          name: '&aGo Back'
+          lore:
+          - '&7To Guild!'
+        achievement-item:
+          material: STONE
+          name: '&a{displayName} {tier}'
+          lore:
+          - '&7{description}'
+          - '&7Progress: &6{progress}&7/&6{requirement}'
+        locked-achievement:
+          material: GRAY_DYE
+          name: '&c{displayName} {tier}'
+          lore:
+          - '&7{description}'
+          - '&7Progress: &6{progress}&7/&6{requirement}'
+    admin:
+      gui:
+        name: '&8Admin Menu - Guilds'
+        slot: 54
+        paginated-slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53
+      items:
+        guild-item:
+          material: BOOK
+          name: '&6{guildName}'
+          lore:
+          - '&7Guild Master: &b{guildMaster}'
+          - '&7Members: &b{players}&7/{maxPlayers}'
+        previous-page:
+          material: ARROW
+          slot: 45
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 53
+          name: '&aNext Page'
+    admin-guild:
+      gui:
+        name: '&8Admin Menu - Guild {guildName}'
+        slot: 54
+        paginated-slots: 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53
+        separator-slots: 9,10,11,12,13,14,15,16,17
+      items:
+        info:
+          material: PAINTING
+          slot: 0
+          name: '&aGuild Information'
+          lore:
+          - '&7Name: &6{guildName}'
+          - '&7Members: &6{players}&b/&6{maxPlayers}'
+        tag:
+          material: NAME_TAG
+          slot: 2
+          name: '&aGuild Tag'
+          lore:
+          - '&7Tag: &6{guildTag}'
+          - ''
+          - '&eLeft-click to edit!'
+          - '&eRight-click to reset!'
+        tag-color:
+          material: RED_DYE
+          slot: 3
+          name: '&aGuild Tag Color'
+          lore:
+          - '&7Color: &6{guildTagColor}'
+          - ''
+          - '&eClick to edit!'
+        rename:
+          material: PAPER
+          slot: 4
+          name: '&aRename Guild'
+          lore:
+          - '&7Name: &6{guildName}'
+          - ''
+          - '&eLeft-click to edit!'
+        xp-level:
+          material: EXPERIENCE_BOTTLE
+          slot: 6
+          name: '&aSet Guild Level'
+          lore:
+          - '&7Level: &6{level}'
+          - '&7Exp: &6{xp}&7/&6{requiredXp}'
+          - ''
+          - '&eClick to edit!'
+        disband:
+          material: BARRIER
+          slot: 8
+          name: '&cDisband Guild'
+          lore:
+          - '&7Click to disband the guild.'
+        separator:
+          material: LIGHT_GRAY_STAINED_GLASS_PANE
+          name: ' '
+        guild-member:
+          material: PLAYER_HEAD
+          name: '&7{player}'
+          lore:
+          - '&7Guild Rank: &b{rankDisplayName}'
+          - '&7Member Since: &b{joinDate}'
+          - '&7Last Online: &b{lastOnline}'
+          - ''
+          - '&eClick to view!'
+        previous-page:
+          material: ARROW
+          slot: 18
+          name: '&aPrevious Page'
+        next-page:
+          material: ARROW
+          slot: 26
+          name: '&aNext Page'
+    admin-member:
+      gui:
+        name: '&8Admin Menu - Player {player}'
+        slot: 27
+      items:
+        info:
+          material: PAINTING
+          slot: 0
+          name: '&aPlayer Information'
+          lore:
+          - '&7Name: &6{player}'
+          - '&7Guild: &6{guildName}'
+          - '&7Rank: &6{rankDisplayName}'
+        kick:
+          material: BARRIER
+          slot: 2
+          name: '&cKick Member'
+          lore:
+          - '&7Click to kick the member from the guild.'
+        promote:
+          material: ARROW
+          slot: 3
+          name: '&aPromote Member'
+          lore:
+          - '&7Click to promote the member.'
+        demote:
+          material: ARROW
+          slot: 4
+          name: '&cDemote Member'
+          lore:
+          - '&7Click to demote the member.'
+        mute:
+          material: BOOK
+          slot: 5
+          name: '&aMute Member'
+          lore:
+          - '&7Click to mute the member.'
+        unmute:
+          material: BOOK
+          slot: 6
+          name: '&cUnmute Member'
+          lore:
+          - '&7Click to unmute the member.'
+    permissions:
+      gui:
+        name: '&8Permission Menu'
+        slot: 45
+        paginated-slots: 10,11,12,13,14,15
+        rank-items: EMERALD-0,DIAMOND-0,GOLD_INGOT-0,IRON_INGOT-0,REDSTONE_BLOCK-0,INK_SAC-3
+      items:
+        rank:
+          material: STONE
+          name: '&a{rankDisplayName}'
+          lore:
+          - '&7Click to modify the'
+          - '&7permissions of {rankDisplayName}'
+        go-back:
+          material: ARROW
+          slot: 30
+          name: '&aGo Back'
+          lore:
+          - '&7To Guild Settings'
+        create-rank-available:
+          material: OAK_SIGN
+          slot: 32
+          name: '&aCreate a new rank'
+          lore:
+          - '&7Click to create a new rank'
+        create-rank-not-available:
+          material: OAK_SIGN
+          slot: 32
+          name: '&cYou can''t create any more ranks'
+          lore:
+          - '&7You can only have up to 5'
+          - '&ccustom guild ranks!'
+        next-page:
+          material: ARROW
+          slot: 35
+          name: '&aNext Page'
+        previous-page:
+          material: ARROW
+          slot: 27
+          name: '&aPrevious Page'
+    rank:
+      gui:
+        name: '&8Rank Menu'
+        slot: 54
+      items:
+        permission:
+          modify-name:
+            yes-label:
+              material: NAME_TAG
+              slot: 1
+              name: '&aModify Guild Name'
+              lore:
+              - '&7Change the guild''s name.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 10
+              name: '&aModify Guild Name'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: NAME_TAG
+              slot: 1
+              name: '&cModify Guild Name'
+              lore:
+              - '&7Change the guild''s name.'
+            no-status:
+              material: RED_DYE
+              slot: 10
+              name: '&cModify Guild Name'
+              lore:
+              - '&7Click to disable.'
+          modify-motd:
+            yes-label:
+              material: PAPER
+              slot: 2
+              name: '&aModify Guild MOTD'
+              lore:
+              - '&7Change the guild''s message of'
+              - '&7the day.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 11
+              name: '&aModify Guild MOTD'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: PAPER
+              slot: 2
+              name: '&cModify Guild MOTD'
+              lore:
+              - '&7Change the guild''s message of'
+              - '&7the day.'
+            no-status:
+              material: RED_DYE
+              slot: 11
+              name: '&cModify Guild MOTD'
+              lore:
+              - '&7Click to disable.'
+          modify-tag:
+            yes-label:
+              material: OAK_SIGN
+              slot: 3
+              name: '&aModify Guild Tag'
+              lore:
+              - '&7Change the guild''s tag.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 12
+              name: '&aModify Guild Tag'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: OAK_SIGN
+              slot: 3
+              name: '&cModify Guild Tag'
+              lore:
+              - '&7Change the guild''s tag.'
+            no-status:
+              material: RED_DYE
+              slot: 12
+              name: '&cModify Guild Tag'
+              lore:
+              - '&7Click to disable.'
+          change-ranks:
+            yes-label:
+              material: CRAFTING_TABLE
+              slot: 4
+              name: '&aChange ranks'
+              lore:
+              - '&7Promote or demote members (up to'
+              - '&7their own rank).'
+            yes-status:
+              material: GREEN_DYE
+              slot: 13
+              name: '&aChange ranks'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: CRAFTING_TABLE
+              slot: 4
+              name: '&cChange ranks'
+              lore:
+              - '&7Promote or demote members (up to'
+              - '&7their own rank).'
+            no-status:
+              material: RED_DYE
+              slot: 13
+              name: '&cChange ranks'
+              lore:
+              - '&7Click to disable.'
+          finder-options:
+            yes-label:
+              material: BOOK
+              slot: 5
+              name: '&aGuild Finder options'
+              lore:
+              - '&7Change how the guild is shown in'
+              - '&7the Guild Finder, if at all.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 14
+              name: '&aGuild Finder options'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: BOOK
+              slot: 5
+              name: '&cGuild Finder options'
+              lore:
+              - '&7Change how the guild is shown in'
+              - '&7the Guild Finder, if at all.'
+            no-status:
+              material: RED_DYE
+              slot: 14
+              name: '&cGuild Finder options'
+              lore:
+              - '&7Click to disable.'
+          officer-chat:
+            yes-label:
+              material: EMERALD
+              slot: 6
+              name: '&aOfficer Chat'
+              lore:
+              - '&7Send and receive messages in the'
+              - '&7officer chat.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 15
+              name: '&aOfficer Chat'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: EMERALD
+              slot: 6
+              name: '&cOfficer Chat'
+              lore:
+              - '&7Send and receive messages in the'
+              - '&7officer chat.'
+            no-status:
+              material: RED_DYE
+              slot: 15
+              name: '&cOfficer Chat'
+              lore:
+              - '&7Click to disable.'
+          kick:
+            yes-label:
+              material: BARRIER
+              slot: 7
+              name: '&aKick Members'
+              lore:
+              - '&7Kick members from the guild.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 16
+              name: '&aKick Members'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: BARRIER
+              slot: 7
+              name: '&cKick Members'
+              lore:
+              - '&7Kick members from the guild.'
+            no-status:
+              material: RED_DYE
+              slot: 16
+              name: '&cKick Members'
+              lore:
+              - '&7Click to disable.'
+          mute:
+            yes-label:
+              material: REDSTONE
+              slot: 28
+              name: '&aMute Members'
+              lore:
+              - '&7Mute guild members.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 37
+              name: '&aMute Members'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: REDSTONE
+              slot: 28
+              name: '&cMute Members'
+              lore:
+              - '&7Mute guild members.'
+            no-status:
+              material: RED_DYE
+              slot: 37
+              name: '&cMute Members'
+              lore:
+              - '&7Click to disable.'
+          invite:
+            yes-label:
+              material: BOOK
+              slot: 29
+              name: '&aInvite Members'
+              lore:
+              - '&7Invite members to the guild.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 38
+              name: '&aInvite Members'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: BOOK
+              slot: 29
+              name: '&cInvite Members'
+              lore:
+              - '&7Invite members to the guild.'
+            no-status:
+              material: RED_DYE
+              slot: 38
+              name: '&cInvite Members'
+              lore:
+              - '&7Click to disable.'
+          log:
+            yes-label:
+              material: BOOK
+              slot: 30
+              name: '&aAudit Log'
+              lore:
+              - '&7View the guild''s audit log.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 39
+              name: '&aAudit Log'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: BOOK
+              slot: 30
+              name: '&cAudit Log'
+              lore:
+              - '&7View the guild''s audit log.'
+            no-status:
+              material: RED_DYE
+              slot: 39
+              name: '&cAudit Log'
+              lore:
+              - '&7Click to disable.'
+          stats:
+            yes-label:
+              material: BOOK
+              slot: 31
+              name: '&aView Stats'
+              lore:
+              - '&7View a guild member''s stats.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 40
+              name: '&aView Stats'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: BOOK
+              slot: 31
+              name: '&cView Stats'
+              lore:
+              - '&7View a guild member''s stats.'
+            no-status:
+              material: RED_DYE
+              slot: 40
+              name: '&cView Stats'
+              lore:
+              - '&7Click to disable.'
+          party:
+            yes-label:
+              material: CHEST
+              slot: 32
+              name: '&aGuild Party'
+              lore:
+              - '&7Start a guild party.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 41
+              name: '&aGuild Party'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: CHEST
+              slot: 32
+              name: '&cGuild Party'
+              lore:
+              - '&7Start a guild party.'
+            no-status:
+              material: RED_DYE
+              slot: 41
+              name: '&cGuild Party'
+              lore:
+              - '&7Click to disable.'
+          settings:
+            yes-label:
+              material: COMPARATOR
+              slot: 33
+              name: '&aGuild Settings'
+              lore:
+              - '&7Change the guild settings.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 42
+              name: '&aGuild Settings'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: COMPARATOR
+              slot: 33
+              name: '&cGuild Settings'
+              lore:
+              - '&7Change the guild settings.'
+            no-status:
+              material: RED_DYE
+              slot: 42
+              name: '&cGuild Settings'
+              lore:
+              - '&7Click to disable.'
+          change-discord:
+            yes-label:
+              material: MAP
+              slot: 34
+              name: '&aChange Guild Discord'
+              lore:
+              - '&7Change the guild''s Discord join'
+              - '&7link.'
+            yes-status:
+              material: GREEN_DYE
+              slot: 43
+              name: '&aChange Guild Discord'
+              lore:
+              - '&7Click to enable.'
+            no-label:
+              material: MAP
+              slot: 34
+              name: '&cChange Guild Discord'
+              lore:
+              - '&7Change the guild''s Discord join'
+              - '&7link.'
+            no-status:
+              material: RED_DYE
+              slot: 43
+              name: '&cChange Guild Discord'
+              lore:
+              - '&7Click to disable.'
+        rename-rank:
+          material: ANVIL
+          slot: 46
+          name: '&aRename Rank'
+          lore:
+          - '&7Rename the {rankDisplayName} rank.'
+        modify-tag:
+          material: NAME_TAG
+          slot: 47
+          name: '&aModify Tag'
+          lore:
+          - '&7Modify this ranks tag'
+          - '&7Currently: &a{rankTag}'
+        not-default-rank:
+          material: REDSTONE
+          slot: 48
+          name: '&cDefault Rank'
+          lore:
+          - '&7Set this to the default rank.'
+        is-default-rank:
+          material: DIAMOND
+          slot: 48
+          name: '&aDefault Rank'
+          lore:
+          - '&7This rank is already the'
+          - '&7default rank! To change this,'
+          - '&7select another rank to be the'
+          - '&7default rank.'
+        go-back:
+          material: ARROW
+          slot: 49
+          name: '&aGo Back'
+          lore:
+          - '&7To guild ranks.'
+        delete-rank-possible:
+          material: REDSTONE_BLOCK
+          slot: 50
+          name: '&aDelete Rank'
+          lore:
+          - '&7Delete this guild rank'
+        delete-rank-not-possible-is-default:
+          material: REDSTONE_BLOCK
+          slot: 50
+          name: '&aDelete Rank'
+          lore:
+          - '&7You cannot delete this rank as'
+          - '&7it''s the default rank! Set'
+          - '&7another rank as the default to'
+          - '&7delete this rank.'
+        delete-rank-not-possible-is-master:
+          material: REDSTONE_BLOCK
+          slot: 50
+          name: '&aDelete Rank'
+          lore:
+          - '&7You cannot delete this rank as'
+          - '&7it''s the guild master rank!'
+        change-priority:
+          material: OAK_SIGN
+          slot: 51
+          name: '&aChange Priority'
+          lore:
+          - '&7Current priority: &a{rankPriority}'
+          - ''
+          - '&aLEFT CLICK &7to increase'
+          - '&7priority'
+          - '&aRIGHT CLICK &7to decrease'
+          - '&7priority'
+    rank-delete:
+      gui:
+        name: '&8Delete Rank Menu'
+        slot: 27
+      items:
+        confirm:
+          material: LIME_TERRACOTTA
+          slot: 11
+          name: '&aConfirm'
+          lore:
+          - '&7Rank: &a{rankDisplayName}'
+          - ''
+          - '&7You will delete this rank!'
+        cancel:
+          material: RED_TERRACOTTA
+          slot: 15
+          name: '&cCancel'
+          lore:
+          - '&7Rank: &c{rankDisplayName}'
+          - ''
+          - '&7You won''t delete this rank!'
+  menu-games:
+    bedwars:
+      to-select:
+        material: RED_BED
+        slot: 10
+        name: '&aBedWars'
+        lore:
+        - '&eClick to select!'
+      selected:
+        material: LIGHT_BLUE_STAINED_GLASS_PANE
+        slot: 10
+        name: '&aBedWars'
+        lore:
+        - '&6SELECTED!'
+    skywars:
+      to-select:
+        material: ENDER_EYE
+        slot: 11
+        name: '&aSkyWars'
+        lore:
+        - '&eClick to select!'
+      selected:
+        material: LIGHT_BLUE_STAINED_GLASS_PANE
+        slot: 11
+        name: '&aSkyWars'
+        lore:
+        - '&6SELECTED!'
+    survival:
+      to-select:
+        material: GRASS_BLOCK
+        slot: 12
+        name: '&aSurvival'
+        lore:
+        - '&eClick to select!'
+      selected:
+        material: LIGHT_BLUE_STAINED_GLASS_PANE
+        slot: 12
+        name: '&aSurvival'
+        lore:
+        - '&6SELECTED!'
+    duels:
+      to-select:
+        material: BOW
+        slot: 13
+        name: '&aDuels'
+        lore:
+        - '&eClick to select!'
+      selected:
+        material: LIGHT_BLUE_STAINED_GLASS_PANE
+        slot: 13
+        name: '&aDuels'
+        lore:
+        - '&6SELECTED!'
+config:
+  version: 2

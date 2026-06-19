@@ -1,0 +1,132 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+database:
+  type: sqlite
+  host: localhost
+  port: 3306
+  name: guilds
+  username: root
+  password: ''
+  ssl: true
+  driver-class: ''
+  tables:
+    guilds: guilds
+    players: players
+    ranks: ranks
+  mongo-uri: mongodb://localhost:27017
+  auth-database: ''
+redis:
+  host: localhost
+  port: 6379
+  username: root
+  password: ''
+guilds:
+  update-checker: true
+  settings:
+    bungeecord:
+      enabled: false
+      refresh: 10
+      join-delay: 50
+    debug: false
+    guild-players:
+      max-members: 125
+      online:
+        symbol: ●
+        color: '&a'
+      offline:
+        symbol: ●
+        color: '&c'
+      format: '%vault_prefix%{playerName}'
+    guild-name:
+      max-name-length: 10
+      chars: ^[a-zA-Z0-9]*$
+    guild-tag:
+      format: '{guildTagColor}[{guildTag}]'
+      uppercase: false
+      default-max-length: 6
+      disable-color-system: false
+      tag:
+      - NONE:None
+      - GRAY:Gray
+      - DARK_AQUA:Dark Aqua
+      - DARK_GREEN:Dark Green
+      - YELLOW:Yellow
+      - ORANGE:Orange
+      - DARK_RED:Dark Red
+      - RED:Red
+      - GREEN:Green
+      - AQUA:Aqua
+      - DARK_BLUE:Dark Blue
+      - BLUE:Blue
+      - PINK:Pink
+      - PURPLE:Purple
+      - WHITE:White
+      - DARK_GRAY:Dark Gray
+      - BLACK:Black
+      orange-tag: Orange
+    guild-rank-tag:
+      format: '{rankTagColor}[{rankTag}]'
+    guild-level:
+      enabled: true
+      kill-reward: guild addxp {guildName} 10
+      final-kill-reward: guild addxp {guildName} 20
+      bed-destroy-reward: guild addxp {guildName} 15
+      win-reward: guild addxp {guildName} 200
+    guild-finder:
+      sorting:
+        symbol:
+          selected: '&a➠'
+          not-selected: '&7 '
+        sizes:
+        - 1-20
+        - 21-50
+        - 51-80
+        - '81'
+    guild-menu:
+      set-page-in-title: true
+    progress-bar:
+      char: '|'
+      chars-count: 40
+      locked-color: '&7'
+      unlocked-color: '&6'
+    guild-time:
+      format: yyyy-MM-dd HH:mm z
+    guild-invite:
+      time-in-minutes: 1
+    guild-party:
+      party-command: party invite {player}
+    guild-chat:
+      mute-time: 10
+      admin-spy:
+        enabled: true
+    guild-kick:
+      require-reason: true
+  commands:
+    guild:
+      aliases:
+      - guilds
+      - g
+      - clan
+      - c
+      - clans
+      achievements:
+        aliases:
+        - achievementmenu
+      disband:
+        confirm: Confirm
+    guildadmin:
+      aliases:
+      - gadmin
+      - guildsadmin
+  permissions:
+    create: guilds.create
+    join: ''
+    admin: guilds.admin
+    tag: guilds.tag
+    discord: guilds.discord
+config:
+  version: 3

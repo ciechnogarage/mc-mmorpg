@@ -1,0 +1,12 @@
+{
+    "name": "Dunmid",
+    "landBiomes": [
+        "dunmid"
+    ],
+    "seaBiomes": [
+        "dunmid"
+    ],
+    "shoreBiomes": [
+        "dunmid"
+    ]
+}

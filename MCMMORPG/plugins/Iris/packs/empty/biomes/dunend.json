@@ -1,0 +1,24 @@
+{
+    "name": "Dunend",
+    "derivative": "DEEP_DARK",
+    "vanillaDerivative": "DEEP_DARK",
+    "color": "#0000C0",
+    "layers": [
+        {
+            "palette": [
+                {
+                    "block": "minecraft:granite"
+                }
+            ],
+            "minHeight": 3,
+            "maxHeight": 3
+        }
+    ],
+    "generators": [
+        {
+            "generator": "flat",
+            "min": 58,
+            "max": 60
+        }
+    ]
+}

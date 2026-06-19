@@ -1,0 +1,13 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+tags:
+  orange:
+    color: ORANGE
+    display-name: Orange
+    conditions:
+    - RANK:MASTER
+    - MC_PERMISSION:guilds.mvp++

@@ -1,0 +1,61 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+guilds:
+  ranks:
+    master:
+      displayName: Guild Master
+      permissions:
+      - modify-name
+      - modify-motd
+      - modify-tag
+      - change-ranks
+      - finder-options
+      - officer-chat
+      - kick
+      - mute
+      - invite
+      - log
+      - stats
+      - party
+      - settings
+      - change-discord
+      priority: 6
+      default: false
+      master: true
+    admin:
+      displayName: Guild Admin
+      permissions:
+      - change-ranks
+      - finder-options
+      - officer-chat
+      - kick
+      - mute
+      - invite
+      - log
+      - stats
+      - change-discord
+      priority: 4
+      default: false
+      master: false
+    mod:
+      displayName: Guild Mod
+      permissions:
+      - officer-chat
+      - kick
+      - invite
+      - invite
+      - log
+      - stats
+      priority: 2
+      default: false
+      master: false
+    member:
+      displayName: Member
+      permissions: []
+      priority: 0
+      default: true
+      master: false

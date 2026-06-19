@@ -1,0 +1,418 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+total-levels: 100
+lock-at-max-level: false
+levels:
+  level-1:
+    xp-requirement: 11000
+    rewards:
+    - double-xp:1
+  level-2:
+    xp-requirement: 12000
+    rewards:
+    - double-xp:2
+  level-3:
+    xp-requirement: 13000
+    rewards:
+    - double-coins:1
+  level-4:
+    xp-requirement: 14000
+    rewards:
+    - double-xp:3
+  level-5:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:4
+    - tag:GRAY
+  level-6:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:2
+  level-7:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:5
+  level-8:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:6
+  level-9:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:3
+  level-10:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:7
+  level-11:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:8
+  level-12:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:4
+  level-13:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:9
+  level-14:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:10
+  level-15:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:5
+    - tag:DARK_AQUA
+  level-16:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:11
+  level-17:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:12
+  level-18:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:6
+  level-19:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:13
+  level-20:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:14
+  level-21:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:7
+  level-22:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:15
+  level-23:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:16
+  level-24:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:8
+  level-25:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:17
+    - tag:DARK_GREEN
+  level-26:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:18
+  level-27:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:9
+  level-28:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:19
+  level-29:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:20
+  level-30:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:10
+  level-31:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:21
+  level-32:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:22
+  level-33:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:11
+  level-34:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:23
+  level-35:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:24
+  level-36:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:12
+  level-37:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:25
+  level-38:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:26
+  level-39:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:13
+  level-40:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:27
+  level-41:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:28
+  level-42:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:14
+  level-43:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:29
+  level-44:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:30
+  level-45:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:15
+    - tag:YELLOW
+  level-46:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:31
+  level-47:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:32
+  level-48:
+    xp-requirement: 15000
+    rewards:
+    - double-coins:16
+  level-49:
+    xp-requirement: 15000
+    rewards:
+    - double-xp:33
+  level-50:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:34
+    - tag-length:7
+  level-51:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:17
+  level-52:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:35
+  level-53:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:36
+  level-54:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:18
+  level-55:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:37
+  level-56:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:38
+  level-57:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:19
+  level-58:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:39
+  level-59:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:40
+  level-60:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:20
+  level-61:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:41
+  level-62:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:42
+  level-63:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:21
+  level-64:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:43
+  level-65:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:44
+    - chars:✧,✪,✖,✓
+  level-66:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:22
+  level-67:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:45
+  level-68:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:46
+  level-69:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:23
+  level-70:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:47
+  level-71:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:48
+  level-72:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:24
+  level-73:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:49
+  level-74:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:50
+  level-75:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:25
+  level-76:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:51
+  level-77:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:52
+  level-78:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:26
+  level-79:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:53
+  level-80:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:54
+  level-81:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:27
+  level-82:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:55
+  level-83:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:56
+  level-84:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:28
+  level-85:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:57
+    - chars:✿,✌,①,❤
+  level-86:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:58
+  level-87:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:29
+  level-88:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:59
+  level-89:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:60
+  level-90:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:30
+  level-91:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:61
+  level-92:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:62
+  level-93:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:31
+  level-94:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:63
+  level-95:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:64
+  level-96:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:32
+  level-97:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:65
+  level-98:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:66
+  level-99:
+    xp-requirement: 20000
+    rewards:
+    - double-coins:33
+  level-100:
+    xp-requirement: 20000
+    rewards:
+    - double-xp:67
+  other:
+    xp-requirement: 20000

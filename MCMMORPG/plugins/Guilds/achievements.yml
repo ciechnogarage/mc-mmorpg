@@ -1,0 +1,69 @@
+# Guilds v2.0.10 made by [itz_leoo].
+# Dependencies: [PixelLibs].
+# SoftDependencies: [BedWars1058, BedWarsProxy, PlaceholderAPI, Vault].
+# Read the wiki for more info: https://wiki.pixelstudios.dev/guilds
+# Join my discord for support: https://pixelstudios.dev/discord
+
+achievements:
+  prestige:
+    type: GUILD_LEVEL
+    displayName: Prestige
+    description:
+    - Reach Guild level {requirement}
+    item:
+      material: EMERALD
+    tiers:
+      '1':
+        requirement: 5
+      '2':
+        requirement: 10
+      '3':
+        requirement: 20
+      '4':
+        requirement: 40
+      '5':
+        requirement: 60
+      '6':
+        requirement: 80
+      '7':
+        requirement: 100
+  members:
+    type: GUILD_MEMBERS
+    displayName: Members
+    description:
+    - Have {requirement} members in your Guild
+    item:
+      material: IRON_INGOT
+    tiers:
+      '1':
+        requirement: 5
+      '2':
+        requirement: 10
+      '3':
+        requirement: 20
+      '4':
+        requirement: 30
+      '5':
+        requirement: 40
+      '6':
+        requirement: 50
+  online-members:
+    type: ONLINE_MEMBERS
+    displayName: Online Members
+    description:
+    - Have {requirement} online members in your Guild
+    item:
+      material: DIAMOND
+    tiers:
+      '1':
+        requirement: 5
+      '2':
+        requirement: 10
+      '3':
+        requirement: 20
+      '4':
+        requirement: 30
+      '5':
+        requirement: 40
+      '6':
+        requirement: 50

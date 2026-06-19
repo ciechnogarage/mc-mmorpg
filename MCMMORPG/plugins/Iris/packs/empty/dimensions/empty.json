@@ -1,0 +1,32 @@
+{
+    "name": "Loch Dungeon Layout",
+    "fluidHeight": 0,
+    "regions": [
+        "empty",
+        "dunstart",
+        "dunmid",
+        "dunend"
+    ],
+    "bedrock": false,
+    "landChance": 1,
+    "continentalStyle": {
+        "style": "SIMPLEX"
+    },
+    "regionStyle": {
+        "imageMap": {
+            "image": "Example",
+            "coordinateScale": 1,
+            "interpolationMethod": "NONE",
+            "channel": "BLUE",
+            "tiled": false,
+            "centered": true
+        }
+    },
+    "rockPalette": {
+        "palette": [
+            {
+                "block": "minecraft:deepslate"
+            }
+        ]
+    }
+}

@@ -1,0 +1,81 @@
+# .gitignore — MCMMORPG (Paper 1.21.11) config-as-code repo
+#
+# Policy: TRACK plugin config/content YAML + server config + docs.
+#         IGNORE binaries, worlds, logs, caches, and ALL player/runtime data.
+#
+# NOTE: Some plugins mix config and runtime data under one `data/` dir. Before
+# the first commit, run `git add -n -A` / `git status` and confirm nothing
+# sensitive (player UUIDs, IPs, tokens, world/region data, *.db) is staged.
+# Tighten this file if anything leaks in.
+
+# ---- Server runtime / binaries (regenerable, large) ----
+MCMMORPG/paper.jar
+MCMMORPG/libraries/
+MCMMORPG/versions/
+MCMMORPG/cache/
+MCMMORPG/logs/
+MCMMORPG/crash-reports/
+MCMMORPG/version_history.json
+*.log
+*.log.gz
+*.log.*.gz
+session.lock
+MCMMORPG/server.properties
+
+# ---- Worlds (region data + per-player data, large) ----
+MCMMORPG/world/
+MCMMORPG/world_nether/
+MCMMORPG/world_the_end/
+# any additional generated worlds
+MCMMORPG/**/level.dat*
+MCMMORPG/**/playerdata/
+MCMMORPG/**/region/
+MCMMORPG/**/DIM*/
+MCMMORPG/**/data/raids*.dat
+MCMMORPG/**/stats/
+
+# ---- Sensitive server state (player identifiers / moderation) ----
+MCMMORPG/usercache.json
+MCMMORPG/ops.json
+MCMMORPG/whitelist.json
+MCMMORPG/banned-ips.json
+MCMMORPG/banned-players.json
+
+# ---- Plugin binaries ----
+MCMMORPG/plugins/**/*.jar
+MCMMORPG/plugins/.paper-remapped/
+
+# ---- Plugin databases / runtime stores ----
+MCMMORPG/plugins/**/*.db
+MCMMORPG/plugins/**/*.sqlite
+MCMMORPG/plugins/**/*.mv.db
+MCMMORPG/plugins/**/*.h2.db
+MCMMORPG/plugins/**/*.trace.db
+
+# ---- Plugin player/runtime data (observed + common) ----
+MCMMORPG/plugins/**/userdata/
+MCMMORPG/plugins/**/playerdata/
+MCMMORPG/plugins/**/logs/
+MCMMORPG/plugins/**/cache/
+MCMMORPG/plugins/**/.gradle/
+MCMMORPG/plugins/**/.idea/
+MCMMORPG/plugins/MythicDungeons/backups/
+MCMMORPG/plugins/MythicDungeons/globalplayerdata/
+MCMMORPG/plugins/MythicMobs/data/
+MCMMORPG/plugins/CoreTools/plugindata/
+MCMMORPG/plugins/CoreTools/Scripts/discord_message_example.yml
+MCMMORPG/plugins/bStats/
+MCMMORPG/plugins/spark/
+MCMMORPG/plugins/CMI/security.key
+MCMMORPG/plugins/ModelEngine/resource pack.zip
+MCMMORPG/plugins/MythicHUD/built-pack/
+MCMMORPG/plugins/Nexo/pack/.assetCache/
+MCMMORPG/plugins/Nexo/pack/external_packs/
+
+# ---- Editor / OS noise ----
+.DS_Store
+Thumbs.db
+*.swp
+*~
+*.bak-*
+*.code-workspace

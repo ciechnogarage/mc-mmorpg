@@ -1,0 +1,21 @@
+prefix: "<gray>[</gray><rainbow>MythicHUD</rainbow><gray>]</gray> "
+
+version: "<green>Running MythicHUD <aqua><plugin_version></aqua> (<gold>#<plugin_vcs_branch></gold> - <gold><plugin_vcs_commit></gold>), built <aqua><plugin_build_type></aqua> on <aqua><plugin_build_timestamp>."
+
+reload:
+  - "<green> MythicHUD has been successfully reloaded."
+  - "<bold><red> MAKE SURE TO RELOAD YOUR RESOURCE PACK!"
+
+layout-add-success: "<green>Successfully added layout '<layout>' to <holder>."
+layout-add-fail: "<red><holder> already has layout '<layout>'."
+
+layout-remove-success: "<green>Successfully removed layout '<layout>' from <holder>."
+layout-remove-fail: "<red>Could not remove layout '<layout>' from <holder>."
+
+layout-reset-success: "<green>Successfully reset layout '<layout>' on <holder>."
+
+layout-invalid-option: "<red>That option is not valid."
+
+error-hud-holder: "<red>Could not set hud for <holder>."
+enabled-hud-holder: "<green>Enabled huds for <holder>."
+disabled-hud-holder: "<red>Disabled huds for <holder>"

@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://volmit.com/iris-schema/irismarker.json",
+    "description": "Represents a marker",
+    "x-intellij-html-description": "Represents a marker",
+    "type": "object",
+    "properties": {
+        "preprocessors": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/definitions/erzscripts"},
+            "description": "preprocessors\nPreprocess this object in-memory when it's loaded, run scripts using the variable 'object' and modify properties about this object before it's used.\nFile extension: .proc.kts\n\nList<Script>\n* At least one entry must be defined, or just remove this list.\nMust be a valid Script (use ctrl+space for auto complete!)",
+            "x-intellij-html-description": "<h>preprocessors<\/h><br>Preprocess this object in-memory when it's loaded, run scripts using the variable 'object' and modify properties about this object before it's used.\nFile extension: .proc.kts<hr><\/hr><br><h>List<Script><\/h><br>* At least one entry must be defined, or just remove this list.<br>Must be a valid Script (use ctrl+space for auto complete!)"
+        },
+        "spawners": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/definitions/erzspawners"},
+            "description": "spawners\nA list of spawners to add to anywhere this marker is.\n\nList<Spawner>\n* Default Value is an empty list\n* At least one entry must be defined, or just remove this list.\nMust be a valid Spawner (use ctrl+space for auto complete!)",
+            "x-intellij-html-description": "<h>spawners<\/h><br>A list of spawners to add to anywhere this marker is.<hr><\/hr><br><h>List<Spawner><\/h><br>* Default Value is an empty list<br>* At least one entry must be defined, or just remove this list.<br>Must be a valid Spawner (use ctrl+space for auto complete!)"
+        },
+        "removeOnChange": {
+            "type": "boolean",
+            "description": "removeOnChange\nRemove this marker when the block it's assigned to is changed.\n\nBoolean\n* Default Value is true",
+            "x-intellij-html-description": "<h>removeOnChange<\/h><br>Remove this marker when the block it's assigned to is changed.<hr><\/hr><br><h>Boolean<\/h><br>* Default Value is true"
+        },
+        "emptyAbove": {
+            "type": "boolean",
+            "description": "emptyAbove\nIf true, markers will only be placed here if there is 2 air blocks above it.\n\nBoolean\n* Default Value is true",
+            "x-intellij-html-description": "<h>emptyAbove<\/h><br>If true, markers will only be placed here if there is 2 air blocks above it.<hr><\/hr><br><h>Boolean<\/h><br>* Default Value is true"
+        },
+        "exhaustionChance": {
+            "type": "number",
+            "description": "exhaustionChance\nIf this marker is used, what is the chance it removes itself. For example 25% (0.25) would mean that on average 4 uses will remove a specific marker. Set this below 0 (-1) to never exhaust & set this to 1 or higher to always exhaust on first use.\n\nNumber\n* Default Value is 0.0",
+            "x-intellij-html-description": "<h>exhaustionChance<\/h><br>If this marker is used, what is the chance it removes itself. For example 25% (0.25) would mean that on average 4 uses will remove a specific marker. Set this below 0 (-1) to never exhaust & set this to 1 or higher to always exhaust on first use.<hr><\/hr><br><h>Number<\/h><br>* Default Value is 0.0"
+        }
+    },
+    "definitions": {
+        "erzspawners": {"enum": []},
+        "erzscripts": {"enum": []}
+    }
+}
