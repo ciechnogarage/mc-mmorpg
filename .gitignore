@@ -135,5 +135,7 @@ MCMMORPG/server.properties.bak*
 Thumbs.db
 *.swp
 *~
+*.bak
+*.bak.*
 *.bak-*
 *.code-workspace
