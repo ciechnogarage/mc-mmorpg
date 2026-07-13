@@ -55,8 +55,8 @@ public class BuildCharacterStage {
       List<String> options = List.of(
           "-classpath", classpath,
           "-d", classesRoot.toString(),
-          "-source", "17",
-          "-target", "17"
+          "-source", "21",
+          "-target", "21"
       );
       var compilationUnits = fileManager.getJavaFileObjectsFromFiles(
           sources.stream().map(Path::toFile).collect(Collectors.toList())
