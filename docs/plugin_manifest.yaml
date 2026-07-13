@@ -116,6 +116,12 @@ plugins:
     license_status: unknown
     update_policy: staging_required
     criticality: high
+    vendor_pack_note: >-
+      The default "Overworld V3000" pack (plugins/Iris/packs/overworld/, dimension
+      version 31100) is vendor content and is git-ignored, not tracked. Restore it
+      with `/iris download overworld` on Iris 3.9.1, or fetch the matching
+      IrisDimensions overworld release. Authored packs (packs/level_1, packs/empty)
+      remain tracked. De-track evidence: docs/ai/cleanup-inventory-2026-07-13.md.
 
   - name: LibsDisguises
     jar: LibsDisguises-11.0.15-Free.jar

@@ -112,6 +112,9 @@ MCMMORPG/plugins/FastAsyncWorldEdit/history/
 MCMMORPG/plugin-src/**/build/
 MCMMORPG/disabled-runtime-blockers/plugins/**/*.jar
 MCMMORPG/plugins/Iris/worlds.json
+# Iris vendor default pack "Overworld V3000" (regenerable via `/iris download overworld`
+# on Iris 3.9.1). Authored packs (level_1, empty) and Iris root config stay tracked.
+MCMMORPG/plugins/Iris/packs/overworld/
 MCMMORPG/plugins/MythicDungeons/config.yml.bak*
 MCMMORPG/plugins/MythicDungeons/maps/dungeon_test/
 MCMMORPG/plugins/MythicMobs/generation/
