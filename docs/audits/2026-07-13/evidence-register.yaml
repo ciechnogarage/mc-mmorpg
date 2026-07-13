@@ -69,7 +69,9 @@ sources:
     status: externally_supplied
     file: OUTPUT — kopia (2).zip
     tracked_in_git: false
-    validation_reproducible: true
+    validation_reproducible_from_supplied_archive: true
+    reproducible_from_checkout: false
+    hash_policy: recorded_external_checksum_not_rehashed_without_local_archive
     reported_entries: 8066
     reported_size_mb: 147
     static_findings:
@@ -116,7 +118,7 @@ checks:
     output: docs/audits/2026-07-13/commands/static-validation.txt
     status: pass
   audit_evidence_validation:
-    command: python3 scripts/check-audit-evidence.py --allow-missing-external-hash
+    command: python3 scripts/check-audit-evidence.py
     executed_at: 2026-07-13T14:12:39+02:00
     exit_code: 0
     output: docs/audits/2026-07-13/commands/static-validation.txt

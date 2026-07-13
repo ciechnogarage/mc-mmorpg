@@ -8,6 +8,12 @@ Status: externally supplied, not tracked in Git, not active runtime content
 Reported archive size is 146,719,792 bytes, approximately 146.72 MB decimal, with 8,066 entries.
 SHA-256: `c661a807ad54f53de23752658c2aa840024347470aa713d6d3b12b6e8e7c0ffa`
 
+The checksum is recorded from the supplied external archive. The archive is not
+stored in this repository, so the checksum cannot be independently recomputed
+from the Git checkout alone. The evidence validator verifies the recorded
+checksum format and validates it against a local file only when an external
+archive path is supplied.
+
 | Type | Count |
 | --- | ---: |
 | `.yml` | 542 |
