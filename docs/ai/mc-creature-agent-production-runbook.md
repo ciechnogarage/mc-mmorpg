@@ -17,7 +17,7 @@ This runbook tells agents how to execute from that packet without drifting.
 A production pass is BLOCKED until all of these exist:
 
 - exact mob/model ID
-- exact repo root: `/home/przemek/projects/MC`
+- exact repo root: `$MC_ROOT`
 - exact current local model path if one exists
 - exact family reference packet path
 - exact evidence directory for the current pass

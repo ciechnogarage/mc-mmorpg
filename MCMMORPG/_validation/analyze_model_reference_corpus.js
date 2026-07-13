@@ -5,7 +5,7 @@ const { spawnSync } = require('child_process');
 const { createCanvas, Image } = require('canvas');
 const { collectAnimationFrames, deriveAnimationPhases } = require('./modelengine_phase_utils');
 
-const DEFAULT_CORPUS = '/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)';
+const DEFAULT_CORPUS = process.env.MODEL_REFERENCE_CORPUS || path.join(__dirname, 'reference_corpus');
 const ROOT = path.resolve(__dirname, '..');
 const OUTPUT_DIR = path.join(__dirname, 'reference_corpus');
 const REPORT_PATH = path.resolve(ROOT, '..', 'docs', 'ai', 'modelengine-reference-corpus.md');

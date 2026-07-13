@@ -57,7 +57,7 @@ Skill nie zastępuje agenta. Skill prowadzi agenta.
 ### 4. Corpus
 
 Corpus to zrodlo referencyjne. Dla mobow/modeli glowny corpus jest tutaj:
-- `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)`
+- `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)`
 
 Corpus sluzy do:
 - wyboru referencji
@@ -130,7 +130,7 @@ Poprawny model to lane-based pipeline:
 ## Jak to ma dzialac przy 3 Codexach
 
 Wszystkie profile powinny miec ten sam operating layer:
-- wspolne kanoniczne reguly w `/home/przemek/AGENTS.md` i `/home/przemek/SELF_IMPROVEMENT.md`
+- wspolne kanoniczne reguly w `$HOME/AGENTS.md` i `$HOME/SELF_IMPROVEMENT.md`
 - wspolne repo docs i skills
 - wspolny `profiles:sync` / `profiles:doctor`
 
@@ -156,7 +156,7 @@ Parity NIE oznacza:
 Gdy task dotyczy nowego moba/modelu, source of truth jest następujacy:
 
 1. lokalne aktywne pliki projektu (`MCMMORPG/...`)
-2. exact `.bbmodel` i powiazane assety bezposrednio z `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)`
+2. exact `.bbmodel` i powiazane assety bezposrednio z `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)`
 3. corpus docs wygenerowane z `OUTPUT — kopia (2)` tylko jako indeks/pomoc do nawigacji, nie primary source
 4. pipeline docs i skills
 5. external vendors tylko jako principle references

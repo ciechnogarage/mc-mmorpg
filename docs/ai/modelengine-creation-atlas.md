@@ -1,6 +1,6 @@
 # ModelEngine Creation Atlas
 
-Source corpus: `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)`. This atlas contains 542 model cards and 2777 animation cards.
+Source corpus: `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)`. This atlas contains 542 model cards and 2777 animation cards.
 
 ## Reading Contract
 

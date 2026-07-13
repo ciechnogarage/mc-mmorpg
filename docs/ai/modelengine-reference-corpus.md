@@ -1,6 +1,6 @@
 # ModelEngine Reference Corpus
 
-Generated from `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)`. The corpus is read-only reference material.
+Generated from `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)`. The corpus is read-only reference material.
 
 ## Inventory
 

@@ -33,9 +33,9 @@ proposed_or_applied_changes:
 validation:
 - Commands run:
   - `sha256sum plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel docker/servers/world/plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel`
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:render -- --model level_1_grove_guardian`
-  - `node /home/przemek/projects/MC/MCMMORPG/_validation/check_modelengine_quality.js --model level_1_grove_guardian`
-  - `node /home/przemek/projects/MC/MCMMORPG/_validation/check_modelengine_binding.js --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:render -- --model level_1_grove_guardian`
+  - `node $MC_ROOT/MCMMORPG/_validation/check_modelengine_quality.js --model level_1_grove_guardian`
+  - `node $MC_ROOT/MCMMORPG/_validation/check_modelengine_binding.js --model level_1_grove_guardian`
 - Results:
   - render PASS
   - quality FAIL: `QUALITY_MANIFEST_MISSING`

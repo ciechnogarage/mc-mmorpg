@@ -37,15 +37,15 @@ proposed_or_applied_changes:
 
 validation:
 - Commands run by QA/orchestrator in the current evidence pass:
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:render -- --model level_1_grove_guardian`
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:check -- --model level_1_grove_guardian`
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:quality -- --model level_1_grove_guardian`
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:ecosystem -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:render -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:check -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:quality -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:ecosystem -- --model level_1_grove_guardian`
   - `./docker/mc rcon world "mm reload"`
   - `./docker/mc rcon world "meg reload"`
-  - `npm run collab:validate-output -- --agent art --file /home/przemek/projects/MC/MCMMORPG/_validation/lane_reports/grove_guardian_art_report.md --json`
-  - `npm run collab:validate-output -- --agent mobs --file /home/przemek/projects/MC/MCMMORPG/_validation/lane_reports/grove_guardian_mobs_report.md`
-  - `npm run collab:validate-output -- --agent qa --file /home/przemek/projects/MC/MCMMORPG/_validation/lane_reports/grove_guardian_qa_report.md`
+  - `npm run collab:validate-output -- --agent art --file $MC_ROOT/MCMMORPG/_validation/lane_reports/grove_guardian_art_report.md --json`
+  - `npm run collab:validate-output -- --agent mobs --file $MC_ROOT/MCMMORPG/_validation/lane_reports/grove_guardian_mobs_report.md`
+  - `npm run collab:validate-output -- --agent qa --file $MC_ROOT/MCMMORPG/_validation/lane_reports/grove_guardian_qa_report.md`
 - QA statement on autonomous self-critique: the art worker named the real failure family; this was not outsourced judgment.
 - Current QA verdict: FAIL.
 

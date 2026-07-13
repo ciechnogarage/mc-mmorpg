@@ -3,17 +3,17 @@
 ## Direct reference corpus actually used
 
 Primary source asset:
-- `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
+- `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
 
 Additional related assets in the same folder:
 - `lrd_direwolf_ground_fx.bbmodel`
 - `lrd_electric_beam.bbmodel`
 
 Reference render pack used:
-- `/home/przemek/projects/MC/MCMMORPG/_validation/reviews/ref_direwolf/front.png`
-- `/home/przemek/projects/MC/MCMMORPG/_validation/reviews/ref_direwolf/side.png`
-- `/home/przemek/projects/MC/MCMMORPG/_validation/reviews/ref_direwolf/three_quarter.png`
-- `/home/przemek/projects/MC/MCMMORPG/_validation/reviews/ref_direwolf/player_scale.png`
+- `$MC_ROOT/MCMMORPG/_validation/reviews/ref_direwolf/front.png`
+- `$MC_ROOT/MCMMORPG/_validation/reviews/ref_direwolf/side.png`
+- `$MC_ROOT/MCMMORPG/_validation/reviews/ref_direwolf/three_quarter.png`
+- `$MC_ROOT/MCMMORPG/_validation/reviews/ref_direwolf/player_scale.png`
 - animation samples under the same directory, including:
   - `animation_idle_start.png`
   - `animation_run_start.png`
@@ -352,8 +352,8 @@ Before saying the redo is good:
 - it must preserve wolf head landmarks under briar styling
 
 ## 2026-07-07 Blockbench process lock
-- direct Blockbench session note: `/home/przemek/projects/MC/MCMMORPG/docs/modeling/direwolf-blockbench-session-2026-07-07.md`
-- direct source used for this learning case: `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
+- direct Blockbench session note: `$MC_ROOT/MCMMORPG/docs/modeling/direwolf-blockbench-session-2026-07-07.md`
+- direct source used for this learning case: `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
 - the durable lesson is NOT "keep checking this one direwolf forever"; the durable lesson is: open strong direct references once, extract the structural truth into a reusable packet/runbook, then build from those written constraints and memory
 - reopen the direct source package when:
   - a new creature family is being learned
@@ -366,7 +366,7 @@ Before saying the redo is good:
 
 ## General workflow lesson extracted from direwolf
 1. Learn from direct references first, not from derived prose.
-2. Distill that learning into explicit reusable rules, preferably via `/home/przemek/projects/MC/docs/ai/mc-creature-reference-extraction-packet-template.md` and a filled family packet such as `/home/przemek/projects/MC/MCMMORPG/_validation/model_studies/direwolf_family_reference_extraction_packet.md`.
+2. Distill that learning into explicit reusable rules, preferably via `$MC_ROOT/docs/ai/mc-creature-reference-extraction-packet-template.md` and a filled family packet such as `$MC_ROOT/MCMMORPG/_validation/model_studies/direwolf_family_reference_extraction_packet.md`.
 3. Every strong rule should have lineage: source file -> observed fact -> inference -> execution rule ID.
 4. Mark what is general, what is family-only, and what is reference-specific.
 5. Attach confidence so weak assumptions do not masquerade as hard law.

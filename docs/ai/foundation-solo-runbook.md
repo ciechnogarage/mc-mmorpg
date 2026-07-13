@@ -33,7 +33,7 @@ npm run mc:agent -- <alias> "<task>"
 
 ## Kolejnosc Runu
 
-Uruchom helper z `/home/przemek`:
+Uruchom helper z `$HOME`:
 
 ```bash
 npm run foundation:solo

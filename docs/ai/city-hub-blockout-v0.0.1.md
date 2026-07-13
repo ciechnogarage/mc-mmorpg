@@ -15,7 +15,7 @@ Use these as source of truth:
 - `docs/discovery-npc-board-loop-001-foundation-v0.0.1.md`
 - `docs/world-content-loop-foundation-v0.0.1.md`
 - generated visual concepts in
-  `/home/przemek/.codex-alt/generated_images/019f0e34-3e9e-7c53-b32d-7c2c7ba76a4a/`
+  `$HOME/.codex-alt/generated_images/019f0e34-3e9e-7c53-b32d-7c2c7ba76a4a/`
 
 ## Blockout Shape
 

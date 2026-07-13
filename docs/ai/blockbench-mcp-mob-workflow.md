@@ -14,7 +14,7 @@ Agent działa deterministycznie i NIE WOLNO mu zgadywać.
 
 ## Korpus referencyjny
 
-Rozpakowane archiwum: `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/`
+Rozpakowane archiwum: `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)/`
 (gałęzie: `ModelEngine/` — 542 bbmodel + animacje, `MythicMobs/` — mobs/skills/items/packs, `resource pack/` — tekstury i legacy eksporty).
 
 Fakty o korpusie (zmierzone): dominuje `model_format="free"`, `box_uv=false` (per-face UV), geometria cube-only, rozdzielczości projektów najczęściej 64×64 / 128×128 (deploy PNG bywa 256×256 — nie zakładaj, że `resolution` bbmodela = rozmiar finalnego PNG). Wersje bbmodel 3.6–5.0 → **zakaz ręcznej edycji `.bbmodel`** (format wewnętrzny Blockbench, bez stabilnej specyfikacji).

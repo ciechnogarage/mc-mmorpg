@@ -24,7 +24,7 @@ You are not here to stop after generating prompts.
 You must implement, validate, repair, and continue.
 
 Execution environment:
-- Workspace root: /home/przemek/projects/MC
+- Workspace root: $MC_ROOT
 - Server folder: MCMMORPG
 - Main docs: docs/
 - AI control docs: docs/ai/

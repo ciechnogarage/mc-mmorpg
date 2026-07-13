@@ -36,9 +36,9 @@ proposed_or_applied_changes:
 
 validation:
 - Commands run:
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:check -- --model level_1_grove_guardian`
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:ecosystem -- --model level_1_grove_guardian`
-  - `npm --prefix /home/przemek/projects/MC/MCMMORPG/_validation run modelengine:quality -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:check -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:ecosystem -- --model level_1_grove_guardian`
+  - `npm --prefix $MC_ROOT/MCMMORPG/_validation run modelengine:quality -- --model level_1_grove_guardian`
   - `sha256sum plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel docker/servers/world/plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel`
   - `./docker/mc rcon world "mm reload"`
   - `./docker/mc rcon world "meg reload"`

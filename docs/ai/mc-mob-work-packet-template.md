@@ -19,7 +19,7 @@ One sentence only.
 
 - allowed files:
 - forbidden files:
-- exact repo root: `/home/przemek/projects/MC`
+- exact repo root: `$MC_ROOT`
 
 ## Required Inputs
 
@@ -64,11 +64,11 @@ One sentence only.
 ## Example — art brief
 
 ```text
-read-only brief for level_1_moss_stalker in /home/przemek/projects/MC; backend world; inspect local refs in MCMMORPG and corpus refs in /home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2); return distant read, 3 references, what to borrow, what not to copy, 3 silhouette directions, exact artifact paths under MCMMORPG/_validation/model_studies, and a Blockbench review plan for the next art pass; do not edit gameplay files
+read-only brief for level_1_moss_stalker in $MC_ROOT; backend world; inspect local refs in MCMMORPG and corpus refs in $HOME/projects/Minecraft/modele/OUTPUT — kopia (2); return distant read, 3 references, what to borrow, what not to copy, 3 silhouette directions, exact artifact paths under MCMMORPG/_validation/model_studies, and a Blockbench review plan for the next art pass; do not edit gameplay files
 ```
 
 ## Example — mobs integration
 
 ```text
-zintegruj gotowy model level_1_moss_stalker w /home/przemek/projects/MC; backend world; accept handoff only if the art packet includes Blockbench front/side/three-quarter/player-scale captures plus side-by-side concept/reference proof; bind blueprint to MythicMobs, resolve states, helper bones, spawn/death hooks, and runtime proof paths; keep rewards as separate rpg handoff unless exact reward file is already in scope
+zintegruj gotowy model level_1_moss_stalker w $MC_ROOT; backend world; accept handoff only if the art packet includes Blockbench front/side/three-quarter/player-scale captures plus side-by-side concept/reference proof; bind blueprint to MythicMobs, resolve states, helper bones, spawn/death hooks, and runtime proof paths; keep rewards as separate rpg handoff unless exact reward file is already in scope
 ```

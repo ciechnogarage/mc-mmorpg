@@ -34,7 +34,7 @@ This runbook is operational only. The source of truth for milestone status is
 ## Canonical Commands
 
 ```bash
-cd /home/przemek/projects/MC
+cd $MC_ROOT
 node --check MCMMORPG/_validation/validate_character_sector.js
 node MCMMORPG/_validation/validate_character_sector.js
 node --check MCMMORPG/_validation/foundation_bot.js

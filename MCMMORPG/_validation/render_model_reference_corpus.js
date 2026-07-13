@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 const { PHASES } = require('./modelengine_phase_utils');
 
-const DEFAULT_CORPUS = '/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)';
+const DEFAULT_CORPUS = process.env.MODEL_REFERENCE_CORPUS || path.join(__dirname, 'reference_corpus');
 const DEFAULT_OUTPUT = path.join(__dirname, 'reference_corpus', 'visual_atlas_v2');
 const SINGLE_RENDER_SCRIPT = path.join(__dirname, 'render_single_model_reference.js');
 const QUALITY_ROOT = path.join(__dirname, 'model_quality');

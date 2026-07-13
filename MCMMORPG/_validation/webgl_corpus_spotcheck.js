@@ -24,7 +24,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const DEFAULT_CORPUS = '/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)';
+const DEFAULT_CORPUS = process.env.MODEL_REFERENCE_CORPUS || path.join(__dirname, 'reference_corpus');
 const WEBGL_RENDER = path.join(__dirname, 'webgl_render.js');
 
 function arg(name, fallback = null) {

@@ -20,7 +20,7 @@ Use this when the asset should be created against the real MC staging stack, not
 
 ## Task Template
 
-Run from `/home/przemek`:
+Run from `$HOME`:
 
 ```bash
 npm run mc:agent -- art --write-policy workspace-write --role primary "<task>"
@@ -31,7 +31,7 @@ Task body should always include:
 - target backend: `world`, `items`, or `hub`
 - asset family: weapon, furniture, block, skin, cosmetic, icon, mob visual
 - target region, faction, biome, dungeon, or system
-- repo scope: `/home/przemek/projects/MC` when the task may pass through top-level collab routing
+- repo scope: `$MC_ROOT` when the task may pass through top-level collab routing
 - required runtime files and source files
 - required evidence for QA
 
@@ -40,25 +40,25 @@ Task body should always include:
 ### Ruins Furniture and Blocks
 
 ```text
-stworz zestaw ruin furniture i custom blokow dla [region_or_dungeon] w /home/przemek/projects/MC; backend world; klimat [faction_or_biome]; dostarcz source files, runtime files, stable IDs, preview evidence i handoff do qa; uwzglednij placement, collision footprint, rotations i resource-pack integration
+stworz zestaw ruin furniture i custom blokow dla [region_or_dungeon] w $MC_ROOT; backend world; klimat [faction_or_biome]; dostarcz source files, runtime files, stable IDs, preview evidence i handoff do qa; uwzglednij placement, collision footprint, rotations i resource-pack integration
 ```
 
 ### Weapon Family
 
 ```text
-stworz rodzine [weapon_family] dla [class_or_faction] w /home/przemek/projects/MC; backend items; dostarcz modele, tekstury, ikony, source files, runtime files, stable IDs i evidence do qa; zachowaj tier readability, held-item transforms i zgodnosc z visual_style_bible
+stworz rodzine [weapon_family] dla [class_or_faction] w $MC_ROOT; backend items; dostarcz modele, tekstury, ikony, source files, runtime files, stable IDs i evidence do qa; zachowaj tier readability, held-item transforms i zgodnosc z visual_style_bible
 ```
 
 ### Cosmetic or Skin
 
 ```text
-stworz [skin_or_cosmetic_type] dla [role_or_faction] w /home/przemek/projects/MC; backend hub; dostarcz source files, runtime files, preview evidence i handoff do qa; zachowaj player readability, body alignment i multiplayer performance
+stworz [skin_or_cosmetic_type] dla [role_or_faction] w $MC_ROOT; backend hub; dostarcz source files, runtime files, preview evidence i handoff do qa; zachowaj player readability, body alignment i multiplayer performance
 ```
 
 ### Mob or Pet Visual Package
 
 ```text
-stworz visual package dla [mob_or_pet_id] w /home/przemek/projects/MC; backend world; dostarcz source files, runtime resource-pack files, preview evidence i handoff do qa; behavior i hitbox contracts zostaw dla mobs, ale przygotuj asset pod ich integracje
+stworz visual package dla [mob_or_pet_id] w $MC_ROOT; backend world; dostarcz source files, runtime resource-pack files, preview evidence i handoff do qa; behavior i hitbox contracts zostaw dla mobs, ale przygotuj asset pod ich integracje
 ```
 
 ## Validation Handoff

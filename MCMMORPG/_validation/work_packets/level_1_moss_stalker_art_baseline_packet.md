@@ -16,7 +16,7 @@ Rescue `level_1_moss_stalker` to a server-worthy baseline through 5 large struct
 ## Mandatory references
 
 - direct shell teacher:
-  - `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
+  - `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
 - autopsy:
   - `MCMMORPG/_validation/model_studies/level_1_moss_stalker_lrd_direwolf_reference_autopsy.md`
 - rule packet:
@@ -29,7 +29,7 @@ Rescue `level_1_moss_stalker` to a server-worthy baseline through 5 large struct
 ## Live Blockbench entrypoint
 
 - host-side launch command:
-  - `npm run blockbench:open -- /home/przemek/projects/MC/MCMMORPG/plugins/ModelEngine/blueprints/level_1_moss_stalker/level_1_moss_stalker.bbmodel`
+  - `npm run blockbench:open -- $MC_ROOT/MCMMORPG/plugins/ModelEngine/blueprints/level_1_moss_stalker/level_1_moss_stalker.bbmodel`
 - environment note:
   - sandboxed Codex launch failures around FUSE or Electron sandbox are not valid evidence that Blockbench is unavailable; live review must be judged from the host-side window.
 

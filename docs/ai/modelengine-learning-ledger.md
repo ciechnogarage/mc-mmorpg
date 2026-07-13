@@ -1,6 +1,6 @@
 # ModelEngine Learning Ledger
 
-Generated from all 6771 files in `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)`. Regenerate after adding reference material.
+Generated from all 6771 files in `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)`. Regenerate after adding reference material.
 
 ## Evidence-Backed Lessons
 

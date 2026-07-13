@@ -9,7 +9,7 @@ Repo-local MC agents sa warstwa wykonawcza dla domen pluginow i mechanik. Nie sa
 
 ## Helper Command
 
-Run z `/home/przemek`:
+Run z `$HOME`:
 
 ```bash
 npm run mc:agent -- <alias> [--write-policy read-only|workspace-write] [--role primary|secondary|validation] "<task>"
@@ -17,7 +17,7 @@ npm run mc:agent -- <alias> [--write-policy read-only|workspace-write] [--role p
 
 Domyslnie agent jest `read-only`, chyba ze task zawiera wyrazny sygnal wykonawczy albo podasz `--write-policy workspace-write`.
 
-Prompt agenta buduje registry w `/home/przemek/scripts/collab-agent-registry.js`. Registry okresla:
+Prompt agenta buduje registry w `$HOME/scripts/collab-agent-registry.js`. Registry okresla:
 
 - `allowed_paths`
 - `forbidden_paths`
@@ -78,15 +78,15 @@ npm run mc:agent -- qa --write-policy read-only --role validation "validate foun
 - `weapon/furniture/texture/skin/resource pack`: primary `art`, odpowiedni agent gameplay jako secondary, validation `qa`
 - `runtime/log/storage`: primary `ops`, validation `qa`
 
-Realne taski artystyczne na backendach `world/items/hub` sa opisane w [mc-art-server-playbook.md](/home/przemek/projects/MC/docs/ai/mc-art-server-playbook.md).
-Nowy proces dla mobow i modeli (brief -> art -> mobs -> optional dungeon/rpg -> qa) jest opisany w [mc-mob-model-agent-pipeline.md](/home/przemek/projects/MC/docs/ai/mc-mob-model-agent-pipeline.md).
+Realne taski artystyczne na backendach `world/items/hub` sa opisane w [mc-art-server-playbook.md]($MC_ROOT/docs/ai/mc-art-server-playbook.md).
+Nowy proces dla mobow i modeli (brief -> art -> mobs -> optional dungeon/rpg -> qa) jest opisany w [mc-mob-model-agent-pipeline.md]($MC_ROOT/docs/ai/mc-mob-model-agent-pipeline.md).
 Warstwa nauki i krytyki dla agentow jest opisana w:
-- [mc-model-mob-learning-spec.md](/home/przemek/projects/MC/docs/ai/mc-model-mob-learning-spec.md)
-- [mc-model-mob-critique-rubric.md](/home/przemek/projects/MC/docs/ai/mc-model-mob-critique-rubric.md)
-- [mc-model-mob-anti-pattern-catalog.md](/home/przemek/projects/MC/docs/ai/mc-model-mob-anti-pattern-catalog.md)
+- [mc-model-mob-learning-spec.md]($MC_ROOT/docs/ai/mc-model-mob-learning-spec.md)
+- [mc-model-mob-critique-rubric.md]($MC_ROOT/docs/ai/mc-model-mob-critique-rubric.md)
+- [mc-model-mob-anti-pattern-catalog.md]($MC_ROOT/docs/ai/mc-model-mob-anti-pattern-catalog.md)
 
 Jesli ktos nie rozumie relacji `Codex/Claude -> agent role -> skill -> corpus -> artifact gates`, czytaj najpierw:
-- [mc-agent-operating-model.md](/home/przemek/projects/MC/docs/ai/mc-agent-operating-model.md)
+- [mc-agent-operating-model.md]($MC_ROOT/docs/ai/mc-agent-operating-model.md)
 
 ## Safety
 

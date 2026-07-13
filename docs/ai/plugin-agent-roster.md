@@ -45,7 +45,7 @@ when a change crosses domains.
 
 ## Daily Usage
 
-- Generate a prompt from `/home/przemek`:
+- Generate a prompt from `$HOME`:
   `npm run mc:agent -- <alias> "<task>"`
 - Start read-only unless implementation was explicitly requested.
 - Ask for a plan before risky edits to world, economy, permissions, DB/storage,

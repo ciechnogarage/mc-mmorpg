@@ -4,10 +4,10 @@ Purpose: convert "look at good examples and learn" into explicit production know
 
 Use this together with:
 
-- `/home/przemek/projects/MC/docs/ai/mc-mob-model-agent-pipeline.md`
-- `/home/przemek/projects/MC/docs/ai/modelengine-learning-ledger.md`
-- `/home/przemek/projects/MC/docs/ai/mc-model-mob-critique-rubric.md`
-- `/home/przemek/projects/MC/docs/ai/mc-model-mob-anti-pattern-catalog.md`
+- `$MC_ROOT/docs/ai/mc-mob-model-agent-pipeline.md`
+- `$MC_ROOT/docs/ai/modelengine-learning-ledger.md`
+- `$MC_ROOT/docs/ai/mc-model-mob-critique-rubric.md`
+- `$MC_ROOT/docs/ai/mc-model-mob-anti-pattern-catalog.md`
 
 ## What "learning" means here
 
@@ -31,7 +31,7 @@ If a lesson is not written into a brief, manifest, rubric, review note, playbook
 Priority order:
 
 1. local shipped or active project assets in `MCMMORPG/`
-2. local corpus in `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)`
+2. local corpus in `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)`
 3. local derived analysis docs
 4. external vendors as principle references only
 
@@ -243,7 +243,7 @@ Judge this pass against the local baseline, the critique rubric, and the anti-pa
 A valid task is:
 
 ```text
-read-only brief for <mob_id> in /home/przemek/projects/MC; backend world; inspect local corpus refs plus selected vendor principles; open direct `.bbmodel`, render pack, and representative idle/run/attack/leap frames; fill `/home/przemek/projects/MC/docs/ai/mc-primary-read-learning-template.md` or a creature-specific equivalent; return exact references, 5-10 extracted principles, 3-5 build-method rules, 3-5 forbidden traits, 2-3 silhouette directions, one recommended baseline, a reference parity artifact, a translation plan, and the acceptance criteria for the next art pass; do not edit gameplay files
+read-only brief for <mob_id> in $MC_ROOT; backend world; inspect local corpus refs plus selected vendor principles; open direct `.bbmodel`, render pack, and representative idle/run/attack/leap frames; fill `$MC_ROOT/docs/ai/mc-primary-read-learning-template.md` or a creature-specific equivalent; return exact references, 5-10 extracted principles, 3-5 build-method rules, 3-5 forbidden traits, 2-3 silhouette directions, one recommended baseline, a reference parity artifact, a translation plan, and the acceptance criteria for the next art pass; do not edit gameplay files
 ```
 
 An invalid task is:

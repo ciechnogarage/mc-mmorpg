@@ -25,9 +25,9 @@ MC nie jest agentem.
 
 ## Fast Start
 
-- Real asset creation for `world/items/hub`: [mc-art-server-playbook.md](/home/przemek/projects/MC/docs/ai/mc-art-server-playbook.md)
-- New mob/model pipeline: [mc-mob-model-agent-pipeline.md](/home/przemek/projects/MC/docs/ai/mc-mob-model-agent-pipeline.md)
-- Learning spec + critique bar: [mc-model-mob-learning-spec.md](/home/przemek/projects/MC/docs/ai/mc-model-mob-learning-spec.md), [mc-model-mob-critique-rubric.md](/home/przemek/projects/MC/docs/ai/mc-model-mob-critique-rubric.md), [mc-model-mob-anti-pattern-catalog.md](/home/przemek/projects/MC/docs/ai/mc-model-mob-anti-pattern-catalog.md)
+- Real asset creation for `world/items/hub`: [mc-art-server-playbook.md]($MC_ROOT/docs/ai/mc-art-server-playbook.md)
+- New mob/model pipeline: [mc-mob-model-agent-pipeline.md]($MC_ROOT/docs/ai/mc-mob-model-agent-pipeline.md)
+- Learning spec + critique bar: [mc-model-mob-learning-spec.md]($MC_ROOT/docs/ai/mc-model-mob-learning-spec.md), [mc-model-mob-critique-rubric.md]($MC_ROOT/docs/ai/mc-model-mob-critique-rubric.md), [mc-model-mob-anti-pattern-catalog.md]($MC_ROOT/docs/ai/mc-model-mob-anti-pattern-catalog.md)
 - Start with `art` as primary and `workspace-write` when implementation is intended.
 - Validate with `qa` before calling the asset ready.
 - Put the backend name directly in the task text.

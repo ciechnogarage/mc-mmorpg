@@ -1,12 +1,12 @@
 # Direwolf Blockbench session — 2026-07-07
 
 Reference source opened:
-- `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
+- `$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel`
 
 Blockbench runtime used:
-- AppImage: `/home/przemek/.local/bin/Blockbench_5.1.4.AppImage`
+- AppImage: `$HOME/.local/bin/Blockbench_5.1.4.AppImage`
 - launch command:
-  - `'/home/przemek/.local/bin/Blockbench_5.1.4.AppImage' --no-sandbox '/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel'`
+  - `'$HOME/.local/bin/Blockbench_5.1.4.AppImage' --no-sandbox '$HOME/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel'`
 - environment seen during launch:
   - `DISPLAY=:0`
   - `WAYLAND_DISPLAY=wayland-0`
