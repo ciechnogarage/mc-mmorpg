@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -43,6 +44,12 @@ public final class MmoProfilesReflectionAdapter implements ProfileBackendAdapter
       String profileName = String.valueOf(getName.invoke(profile));
       return Optional.of(new ProfileSlotData(profileIndex, profileName, true));
     } catch (ReflectiveOperationException ex) {
+      Bukkit.getLogger().log(
+          Level.WARNING,
+          "CharacterStage: MMOProfiles reflection failed for player "
+              + player.getName() + " (profile slot " + profileIndex
+              + "); returning empty. Check MMOProfiles API compatibility.",
+          ex);
       return Optional.empty();
     }
   }
