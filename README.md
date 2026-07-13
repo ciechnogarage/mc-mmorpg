@@ -33,3 +33,4 @@ node --test tests/repo-hygiene.test.mjs tests/plugin-inventory.test.mjs tests/co
 
 RCON helpers require `RCON_PASS` in the environment. Do not place passwords,
 tokens, player data, or generated runtime state in version control.
+# mc-mmorpg
