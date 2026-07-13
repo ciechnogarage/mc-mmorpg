@@ -1,8 +1,12 @@
 display:
-    name: 'Marksman'
+    name: 'Łowca'
     lore:
-    - 'The marksman is a swift and accurate'
-    - 'ranged fighter, never missing any arrow.'
+    - 'Mark / Trap / kontrola dystansu.'
+    - 'Czyta arenę, zakłada presję wcześniej'
+    - 'i karze wszystko, co idzie prosto.'
+    - ''
+    - 'Moc: zasięg, przygotowanie, bezpieczny damage.'
+    - 'Cena: zwarcie i chaos psują plan.'
     attribute-lore:
     - '&a+ &7Knockback Resistance'
     - '&a+ &7Speed Malus Reduction'
@@ -52,30 +56,35 @@ exp-table: class_exp_table
 
 skill-slots:
     1:
-        name: "&aSkill Slot I"
+        name: "&aZnak Celu"
         unlocked-by-default: true
-        lore: []
+        lore:
+            - '&7Oznaczenie priorytetu i przygotowanie presji.'
         # Permanently binds a skill to this slot
         # Players won't be able to change the skill in this slot
-        #hardset: WEAKEN
+        hardset: WEAKEN
     2:
-        name: "&aSkill Slot II"
+        name: "&aStrzał Karzący"
         unlocked-by-default: true
-        lore: []
-        #hardset: COMBO_ATTACK
+        lore:
+            - '&7Obrażenia z pozycji, nie z paniki.'
+        hardset: COMBO_ATTACK
     3:
-        name: "&aSkill Slot III"
+        name: "&aPułapka Oddechu"
         unlocked-by-default: true
-        lore: []
-        #hardset: EVADE
+        lore:
+            - '&7Dystans, kontrola lub ucieczka spod presji.'
+        hardset: EVADE
     4:
-        name: "&aSkill Slot IV"
+        name: "&aCzysta Linia"
         unlocked-by-default: true
-        lore: []
-        #hardset: MINOR_HEALINGS
+        lore:
+            - '&7Slot pod podpis builda łowcy.'
+        hardset: MINOR_HEALINGS
 
 skill-trees:
     - 'general'
+    - 'combat'
     - 'rogue-marksman'
 
 # Particles displayed around the player
@@ -138,3 +147,7 @@ attributes:
 main-exp-sources:
 - 'killmob{type=ZOMBIE;amount=1-3}'
 - 'killmob{type=ENDERMAN;amount=6-9}'
+subclasses:
+    STRZELEC: 25
+    TROPICIEL: 25
+    BESTIARIUSZ: 25

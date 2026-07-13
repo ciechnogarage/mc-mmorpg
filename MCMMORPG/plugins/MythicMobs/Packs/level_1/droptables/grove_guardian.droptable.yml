@@ -1,0 +1,45 @@
+level_1_grove_guardian_drops:
+  Conditions:
+    - { }
+  Drops:
+    - mmoitem{type=MATERIAL;id=HARTOWANA_STAL} 2-4 1
+    - mmoitem{type=MATERIAL;id=RDZEN_RUNICZNY} 2-3 1
+    - mmoitem{type=MATERIAL;id=ZETON_GAJU} 1 1
+    - mmoitem{type=MATERIAL;id=RDZEN_STRAZNIKA} 1 0.45
+    - mmoitem{type=MATERIAL;id=NATURALNY_FRAGMENT} 2-3 0.8
+    - mmoitem{type=GEM_STONE;id=RUBIN_NATARCIA} 1 0.20
+    - mmoitem{type=GEM_STONE;id=SZAFIR_SKUPIENIA} 1 0.20
+    - mmoitem{type=GEM_STONE;id=SZMARAGD_TROPU} 1 0.20
+    - mmoitem{type=CONSUMABLE;id=RECALL_POTION} 1 0.5
+    - exp 120 1
+    - money 50-90 1
+    - level_1_grove_guardian_loot_normal 1 1
+    - level_1_grove_guardian_loot_hard 1 1
+
+level_1_grove_guardian_loot_normal:
+  Conditions:
+    - dungeondifficulty{d=NORMAL}
+  Drops:
+    - mmoitem{type=MATERIAL;id=RDZEN_RUNICZNY} 1-2 1
+    - mmoitem{type=MATERIAL;id=ODLAMEK_KLEJNOTU} 1-2 1
+    - mmoitem{type=MATERIAL;id=SLABY_FRAGMENT_RUNY} 1 0.12
+    - mmoitem{type=MATERIAL;id=FRAGMENT_RELIKTU} 1 0.08
+    - exp 60 1
+    - money 30-50 1
+    - mmoitem{type=RING;id=PIERSCIEN_ZELAZNEJ_WYPRAWY} 1 0.10
+    - mmoitem{type=ARMOR;id=PANCERZ_ZWIADOWCY} 1 0.08
+
+level_1_grove_guardian_loot_hard:
+  Conditions:
+    - dungeondifficulty{d=HARD}
+  Drops:
+    - mmoitem{type=MATERIAL;id=RDZEN_RUNICZNY} 3-5 1
+    - mmoitem{type=MATERIAL;id=ODLAMEK_KLEJNOTU} 2-4 1
+    - mmoitem{type=MATERIAL;id=SLABY_FRAGMENT_RUNY} 1-2 0.22
+    - mmoitem{type=MATERIAL;id=FRAGMENT_RELIKTU} 1 0.18
+    - exp 150 1
+    - money 90-140 1
+    - mmoitem{type=RING;id=PIERSCIEN_RUNICZNEJ_WYPRAWY} 1 0.18
+    - mmoitem{type=GEM_STONE;id=PERLA_PRZEPLYWU} 1 0.12
+    - mmoitem{type=CONSUMABLE;id=RECALL_POTION} 1 1
+    - mmoitem{type=ARMOR;id=KOLCZUGA_ZWIADOWCY} 1 0.12

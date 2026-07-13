@@ -1,6 +1,6 @@
 # Name which will be displayed
 # when opening the station
-name: 'Mythical Forge'
+name: '&8[LEGACY OFF] Mythical Forge'
 
 # The maximum amount of items in the crafting queue, ie the
 # max number of items players are able to craft simultaneously.
@@ -14,6 +14,7 @@ recipes:
     crafting-time: 20
     conditions:
       - 'level{level=24}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MISCELLANEOUS,id=HUMAN_SOUL,amount=8,display="Human Soul"}'
       - 'mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}'
@@ -22,6 +23,7 @@ recipes:
     crafting-time: 5
     conditions:
       - 'level{level=15}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=BLAZE_POWDER,amount=4,display="Blaze Powder"}'
   fire-totem:
@@ -29,6 +31,7 @@ recipes:
     crafting-time: 30
     conditions:
       - 'level{level=10}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=8,display="Fire Essence"}'
       - 'vanilla{type=BLAZE_ROD,amount=1,display="Blaze Rod"}'
@@ -38,6 +41,7 @@ recipes:
     crafting-time: 20
     conditions:
       - 'level{level=12}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=5,display="Fire Essence"}'
   hell-bow:
@@ -45,6 +49,7 @@ recipes:
     crafting-time: 20
     conditions:
       - 'level{level=24}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=2,display="Fire Essence"}'
       - 'vanilla{type=BOW,amount=1,display="Bow"}'
@@ -53,6 +58,7 @@ recipes:
     crafting-time: 35
     conditions:
       - 'level{level=30}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=4,display="Fire Essence"}'
   molten-blade:
@@ -60,6 +66,7 @@ recipes:
     crafting-time: 20
     conditions:
       - 'level{level=20}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=13,display="Fire Essence"}'
       - 'mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}'
@@ -68,6 +75,7 @@ recipes:
     crafting-time: 5
     conditions:
       - 'level{level=20}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=WITHER_SKELETON_SKULL}'
   marking-bow:
@@ -75,6 +83,7 @@ recipes:
     crafting-time: 20
     conditions:
       - 'level{level=20}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=BOW,amount=1,display="Bow"}'
       - 'mmoitem{type=MATERIAL,id=WITHER_ESSENCE,amount=1,display="Wither Essence"}'
@@ -83,6 +92,7 @@ recipes:
     crafting-time: 10
     conditions:
       - 'level{level=15}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=IRON_HELMET}'
       - 'mmoitem{type=MATERIAL,id=WITHER_ESSENCE,display="Wither Essence"}'
@@ -91,6 +101,7 @@ recipes:
     crafting-time: 10
     conditions:
       - 'level{level=10}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=DIAMOND}'
       - 'vanilla{type=SKELETON_SKULL}'
@@ -99,13 +110,14 @@ recipes:
     crafting-time: 10
     conditions:
       - 'level{level=17}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=MOSSY_COBBLESTONE}'
       - 'vanilla{type=SKELETON_SKULL}'
 
 gui-layout:
   # GUI display name
-  name: 'Mythical Forge ({page}/{max_page})'
+  name: '&8[LEGACY OFF] Mythical Forge ({page}/{max_page})'
 
   # Number of slots in your inventory. Must be
   # between 9 and 54 and must be a multiple of 9.

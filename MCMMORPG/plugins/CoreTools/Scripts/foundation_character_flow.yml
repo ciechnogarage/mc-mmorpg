@@ -1,0 +1,1101 @@
+open_race_selector_if_needed:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - Script{script=creator_resume_or_start} @Self
+
+creator_resume_or_start:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="{class_selected}";operator="=";value2="false"} true
+  Mechanics:
+    - Script{script=creator_resume_profile_created} @Self
+
+creator_resume_profile_created:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="PROFILE_CREATED"} falseElse creator_resume_intro
+  Mechanics:
+    - Script{script=creator_open_intro} @Self
+
+creator_resume_intro:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="CREATOR_INTRO"} falseElse creator_resume_race_gallery
+  Mechanics:
+    - Script{script=creator_open_intro} @Self
+
+creator_resume_race_gallery:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="RACE_GALLERY"} falseElse creator_resume_race_spotlight
+  Mechanics:
+    - Script{script=creator_open_race_gallery} @Self
+
+creator_resume_race_spotlight:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="RACE_SPOTLIGHT"} falseElse creator_resume_race_selected
+  Mechanics:
+    - Script{script=creator_resume_race_spotlight_dispatch} @Self
+
+creator_resume_race_spotlight_dispatch:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="CZLOWIEK"} falseElse creator_resume_race_spotlight_ork
+  Mechanics:
+    - Script{script=creator_open_race_spotlight_czlowiek} @Self
+
+creator_resume_race_spotlight_ork:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="ORK"} falseElse creator_resume_race_spotlight_elf
+  Mechanics:
+    - Script{script=creator_open_race_spotlight_ork} @Self
+
+creator_resume_race_spotlight_elf:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="ELF"} falseElse creator_resume_race_spotlight_krasnolud
+  Mechanics:
+    - Script{script=creator_open_race_spotlight_elf} @Self
+
+creator_resume_race_spotlight_krasnolud:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="KRASNOLUD"} falseElse creator_resume_race_spotlight_nieumarly
+  Mechanics:
+    - Script{script=creator_open_race_spotlight_krasnolud} @Self
+
+creator_resume_race_spotlight_nieumarly:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="NIEUMARLY"} falseElse creator_resume_race_gallery_fallback
+  Mechanics:
+    - Script{script=creator_open_race_spotlight_nieumarly} @Self
+
+creator_resume_race_gallery_fallback:
+  Conditions: []
+  Mechanics:
+    - Script{script=creator_open_race_gallery} @Self
+
+creator_resume_race_selected:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="RACE_SELECTED"} falseElse creator_resume_class_ready
+  Mechanics:
+    - Script{script=creator_open_class_selector} @Self
+
+creator_resume_class_ready:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_READY"} falseElse creator_resume_class_spotlight
+  Mechanics:
+    - Script{script=creator_resume_class_spotlight_dispatch} @Self
+
+creator_resume_class_spotlight:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_SPOTLIGHT"} falseElse creator_resume_starter_phase
+  Mechanics:
+    - Script{script=creator_resume_class_spotlight_dispatch} @Self
+
+creator_resume_starter_phase:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="STARTER_PHASE"} falseElse creator_resume_class_confirm
+  Mechanics:
+    - Script{script=creator_open_class_selector} @Self
+
+creator_resume_class_confirm:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_CONFIRM"} falseElse creator_resume_class_selected
+  Mechanics:
+    - Script{script=creator_resume_class_confirm_dispatch} @Self
+
+creator_resume_class_confirm_dispatch:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_resume_class_confirm_rogue
+  Mechanics:
+    - Script{script=creator_open_class_confirm_warrior} @Self
+
+creator_resume_class_confirm_rogue:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_resume_class_confirm_marksman
+  Mechanics:
+    - Script{script=creator_open_class_confirm_rogue} @Self
+
+creator_resume_class_confirm_marksman:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_resume_class_confirm_mage
+  Mechanics:
+    - Script{script=creator_open_class_confirm_marksman} @Self
+
+creator_resume_class_confirm_mage:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_resume_class_confirm_paladin
+  Mechanics:
+    - Script{script=creator_open_class_confirm_mage} @Self
+
+creator_resume_class_confirm_paladin:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_resume_class_selector_fallback
+  Mechanics:
+    - Script{script=creator_open_class_confirm_paladin} @Self
+
+creator_resume_class_spotlight_dispatch:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_resume_class_spotlight_rogue
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_warrior} @Self
+
+creator_resume_class_spotlight_rogue:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_resume_class_spotlight_marksman
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_rogue} @Self
+
+creator_resume_class_spotlight_marksman:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_resume_class_spotlight_mage
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_marksman} @Self
+
+creator_resume_class_spotlight_mage:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_resume_class_spotlight_paladin
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_mage} @Self
+
+creator_resume_class_spotlight_paladin:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_resume_class_selector_fallback
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_paladin} @Self
+
+creator_resume_class_selector_fallback:
+  Conditions: []
+  Mechanics:
+    - Script{script=creator_open_class_selector} @Self
+
+creator_resume_class_selected:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_SELECTED"} falseElse creator_resume_city_onboarding
+  Mechanics:
+    - Script{script=creator_open_class_mentor_roster} @Self
+
+creator_resume_city_onboarding:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="CITY_ONBOARDING"} falseElse creator_resume_subclass_ready
+  Mechanics:
+    - Script{script=creator_open_class_mentor_roster} @Self
+
+creator_resume_subclass_ready:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="SUBCLASS_READY"} falseElse creator_resume_subclass_selected
+  Mechanics:
+    - Script{script=creator_open_class_mentor_roster} @Self
+
+creator_resume_subclass_selected:
+  Conditions:
+    - Comparator{value1="{character_stage}";operator="=";value2="SUBCLASS_SELECTED"} falseElse creator_resume_default
+  Mechanics:
+    - Script{script=creator_open_city_roster} @Self
+
+creator_resume_default:
+  Conditions: []
+  Mechanics:
+    - Script{script=creator_open_intro} @Self
+
+creator_close_menu:
+  Conditions: []
+  Mechanics: []
+
+creator_reset_selection:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="class_selected";value="false";profile=true} @Self
+    - variable{action="set";variable="first_contract_started";value="false";profile=true} @Self
+    - variable{action="set";variable="first_contract_completed";value="false";profile=true} @Self
+    - variable{action="set";variable="first_weapon_claimed";value="false";profile=true} @Self
+    - variable{action="set";variable="skill_roster_opened";value="false";profile=true} @Self
+    - variable{action="set";variable="selected_generic_skill_1";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="selected_generic_skill_2";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="profession_intro_started";value="false";profile=true} @Self
+    - variable{action="set";variable="profession_intro_completed";value="false";profile=true} @Self
+    - variable{action="set";variable="mentor_intro_warrior";value="false";profile=true} @Self
+    - variable{action="set";variable="mentor_intro_rogue";value="false";profile=true} @Self
+    - variable{action="set";variable="mentor_intro_marksman";value="false";profile=true} @Self
+    - variable{action="set";variable="mentor_intro_mage";value="false";profile=true} @Self
+    - variable{action="set";variable="mentor_intro_paladin";value="false";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_warrior";value="false";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_rogue";value="false";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_marksman";value="false";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_mage";value="false";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_paladin";value="false";profile=true} @Self
+    - variable{action="set";variable="creator_intro_seen";value="false";profile=true} @Self
+    - variable{action="set";variable="race_spotlight_czlowiek";value="false";profile=true} @Self
+    - variable{action="set";variable="race_spotlight_ork";value="false";profile=true} @Self
+    - variable{action="set";variable="race_spotlight_elf";value="false";profile=true} @Self
+    - variable{action="set";variable="race_spotlight_krasnolud";value="false";profile=true} @Self
+    - variable{action="set";variable="race_spotlight_nieumarly";value="false";profile=true} @Self
+    - variable{action="set";variable="class_spotlight_warrior";value="false";profile=true} @Self
+    - variable{action="set";variable="class_spotlight_rogue";value="false";profile=true} @Self
+    - variable{action="set";variable="class_spotlight_marksman";value="false";profile=true} @Self
+    - variable{action="set";variable="class_spotlight_mage";value="false";profile=true} @Self
+    - variable{action="set";variable="class_spotlight_paladin";value="false";profile=true} @Self
+    - variable{action="set";variable="style_trial_front";value="false";profile=true} @Self
+    - variable{action="set";variable="style_trial_burst";value="false";profile=true} @Self
+    - variable{action="set";variable="style_trial_range";value="false";profile=true} @Self
+    - variable{action="set";variable="style_trial_caster";value="false";profile=true} @Self
+    - variable{action="set";variable="style_trial_sustain";value="false";profile=true} @Self
+    - message{m="<red>Księga została wyczyszczona. Pieczęć i przysięga czekają od nowa."} @Self
+    - playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.8} @Self
+    - Script{script=creator_open_intro} @Self
+
+creator_open_intro:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - variable{action="set";variable="creator_intro_seen";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CREATOR_INTRO";profile=true} @Self
+    - message{m="<gold>Komnata Początku &8> &fTo nie jest zwykłe menu. Tu zaczyna się ton twojej postaci, jej rytm walki i pierwszy kontrakt miasta."} @Self
+    - playsound{sound="minecraft:music_disc.5";volume=0.5;pitch=1.0} @Self
+    - openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_open_race_gallery:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - variable{action="set";variable="character_stage";value="RACE_GALLERY";profile=true} @Self
+    - message{m="<gold>Galeria Rodów &8> &fNajpierw obejrzyj fantasy każdej pieczęci. Decyzja następuje dopiero w spotlightcie rasy."} @Self
+    - playsound{sound="minecraft:block.amethyst_block.chime";volume=1;pitch=0.9} @Self
+    - openmenu{name="foundation_race_selector";permission=false} @Self
+
+creator_open_race_spotlight_czlowiek:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_spotlight_czlowiek";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SPOTLIGHT";profile=true} @Self
+    - message{m="<white>Spotlight Rodu &8> &fCzłowiek to adaptacja, dług i handel przetrwania. To wybór dla gracza, który chce budować przewagę przez elastyczność."} @Self
+    - playsound{sound="minecraft:block.amethyst_block.resonate";volume=1;pitch=1.0} @Self
+    - openmenu{name="foundation_race_spotlight_czlowiek";permission=false} @Self
+
+creator_open_race_spotlight_ork:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_spotlight_ork";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SPOTLIGHT";profile=true} @Self
+    - message{m="<red>Spotlight Rodu &8> &fOrk to brutalny nacisk i pierwszeństwo siły. To wybór dla tych, którzy chcą wymuszać tempo, a nie prosić o nie świat."} @Self
+    - playsound{sound="minecraft:block.anvil.land";volume=0.7;pitch=0.8} @Self
+    - openmenu{name="foundation_race_spotlight_ork";permission=false} @Self
+
+creator_open_race_spotlight_elf:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_spotlight_elf";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SPOTLIGHT";profile=true} @Self
+    - message{m="<aqua>Spotlight Rodu &8> &fElf to trop, dystans i chłodna precyzja. To wybór dla postaci, która chce wygrywać przez przygotowanie, nie hałas."} @Self
+    - playsound{sound="minecraft:entity.allay.ambient_with_item";volume=0.8;pitch=1.2} @Self
+    - openmenu{name="foundation_race_spotlight_elf";permission=false} @Self
+
+creator_open_race_spotlight_krasnolud:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_spotlight_krasnolud";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SPOTLIGHT";profile=true} @Self
+    - message{m="<gold>Spotlight Rodu &8> &fKrasnolud to stal, pamięć i ciężar rzemiosła. To wybór dla gracza, który lubi trwałość, odzysk i powolne dławienie przewagi."} @Self
+    - playsound{sound="minecraft:block.anvil.use";volume=0.7;pitch=0.9} @Self
+    - openmenu{name="foundation_race_spotlight_krasnolud";permission=false} @Self
+
+creator_open_race_spotlight_nieumarly:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_spotlight_nieumarly";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SPOTLIGHT";profile=true} @Self
+    - message{m="<dark_gray>Spotlight Rodu &8> &fNieumarły to klątwa, cena mocy i odmowa grobu. To wybór dla postaci, która ma być niepokojąca i kosztowna."} @Self
+    - playsound{sound="minecraft:block.sculk_shrieker.shriek";volume=0.4;pitch=1.1} @Self
+    - openmenu{name="foundation_race_spotlight_nieumarly";permission=false} @Self
+
+creator_confirm_race_czlowiek:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="CZLOWIEK";profile=true} @Self
+    - variable{action="set";variable="race_id";value="CZLOWIEK";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - message{m="<green>Pieczęć rodu: <white>Człowiek<gray> - adaptacja, kontrakty i miękka przewaga na starcie."} @Self
+    - playsound{sound="minecraft:block.beacon.activate";volume=0.7;pitch=1.2} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_confirm_race_ork:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="ORK";profile=true} @Self
+    - variable{action="set";variable="race_id";value="ORK";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - message{m="<green>Pieczęć rodu: <red>Ork<gray> - krew, presja i brutalne pierwsze kroki."} @Self
+    - playsound{sound="minecraft:block.beacon.activate";volume=0.7;pitch=0.8} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_confirm_race_elf:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="ELF";profile=true} @Self
+    - variable{action="set";variable="race_id";value="ELF";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - message{m="<green>Pieczęć rodu: <aqua>Elf<gray> - trop, rytuał i chłodne ustawienie przewagi."} @Self
+    - playsound{sound="minecraft:block.beacon.activate";volume=0.7;pitch=1.4} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_confirm_race_krasnolud:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="KRASNOLUD";profile=true} @Self
+    - variable{action="set";variable="race_id";value="KRASNOLUD";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - message{m="<green>Pieczęć rodu: <gold>Krasnolud<gray> - stal, dług i ciężar kuźni."} @Self
+    - playsound{sound="minecraft:block.beacon.activate";volume=0.7;pitch=0.9} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_confirm_race_nieumarly:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="NIEUMARLY";profile=true} @Self
+    - variable{action="set";variable="race_id";value="NIEUMARLY";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - message{m="<green>Pieczęć rodu: <dark_gray>Nieumarły<gray> - klątwa, cień i koszt każdej przewagi."} @Self
+    - playsound{sound="minecraft:block.beacon.activate";volume=0.7;pitch=0.6} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_select_race_czlowiek:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="CZLOWIEK";profile=true} @Self
+    - variable{action="set";variable="race_id";value="CZLOWIEK";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - 'message{m="<green>Pieczęć rodu: <white>Człowiek<gray> - adaptacja, kontrakty, przetrwanie."} @Self'
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.2} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_select_race_ork:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="ORK";profile=true} @Self
+    - variable{action="set";variable="race_id";value="ORK";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - 'message{m="<green>Pieczęć rodu: <red>Ork<gray> - krew, presja, honor siły."} @Self'
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.9} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_select_race_elf:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="ELF";profile=true} @Self
+    - variable{action="set";variable="race_id";value="ELF";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - 'message{m="<green>Pieczęć rodu: <aqua>Elf<gray> - trop, rytuał, precyzja."} @Self'
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.5} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_select_race_krasnolud:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="KRASNOLUD";profile=true} @Self
+    - variable{action="set";variable="race_id";value="KRASNOLUD";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - 'message{m="<green>Pieczęć rodu: <gold>Krasnolud<gray> - stal, dług, pamięć kamienia."} @Self'
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.7} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_select_race_nieumarly:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_race_id";value="NIEUMARLY";profile=true} @Self
+    - variable{action="set";variable="race_id";value="NIEUMARLY";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="RACE_SELECTED";profile=true} @Self
+    - 'message{m="<green>Pieczęć rodu: <dark_gray>Nieumarły<gray> - klątwa, cień, odmowa śmierci."} @Self'
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.5} @Self
+    - Script{script=creator_open_class_selector} @Self
+
+creator_style_front:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="style_trial_front";value="true";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="WARRIOR";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="WARRIOR";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - 'message{m="<gold>Próba stylu: front. Rekomendacja: Wojownik. Otwieram spotlight archetypu zamiast suchego confirma."} @Self'
+    - playsound{sound="minecraft:item.shield.block";volume=1;pitch=0.9} @Self
+    - Script{script=creator_open_class_spotlight_warrior} @Self
+
+creator_style_burst:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="style_trial_burst";value="true";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="ROGUE";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="ROGUE";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - 'message{m="<gold>Próba stylu: burst. Rekomendacja: Łotrzyk. Otwieram spotlight archetypu zamiast suchego confirma."} @Self'
+    - playsound{sound="minecraft:entity.player.attack.crit";volume=1;pitch=1.2} @Self
+    - Script{script=creator_open_class_spotlight_rogue} @Self
+
+creator_style_range:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="style_trial_range";value="true";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="MARKSMAN";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="MARKSMAN";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - 'message{m="<gold>Próba stylu: dystans. Rekomendacja: Łowca. Otwieram spotlight archetypu zamiast suchego confirma."} @Self'
+    - playsound{sound="minecraft:entity.arrow.hit_player";volume=1;pitch=1.4} @Self
+    - Script{script=creator_open_class_spotlight_marksman} @Self
+
+creator_style_caster:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="style_trial_caster";value="true";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="MAGE";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="MAGE";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - 'message{m="<gold>Próba stylu: rytuał. Rekomendacja: Mag. Otwieram spotlight archetypu zamiast suchego confirma."} @Self'
+    - playsound{sound="minecraft:block.enchantment_table.use";volume=1;pitch=1.0} @Self
+    - Script{script=creator_open_class_spotlight_mage} @Self
+
+creator_style_sustain:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="style_trial_sustain";value="true";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="PALADIN";profile=true} @Self
+    - variable{action="set";variable="recommended_class_id";value="PALADIN";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - 'message{m="<gold>Próba stylu: sustain. Rekomendacja: Akolita. Otwieram spotlight archetypu zamiast suchego confirma."} @Self'
+    - playsound{sound="minecraft:block.beacon.power_select";volume=1;pitch=0.9} @Self
+    - Script{script=creator_open_class_spotlight_paladin} @Self
+
+creator_accept_recommendation:
+  Conditions: []
+  Mechanics:
+    - Script{script=creator_accept_recommendation_dispatch} @Self
+
+creator_accept_recommendation_dispatch:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_accept_recommendation_rogue
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_warrior} @Self
+
+creator_accept_recommendation_rogue:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_accept_recommendation_marksman
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_rogue} @Self
+
+creator_accept_recommendation_marksman:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_accept_recommendation_mage
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_marksman} @Self
+
+creator_accept_recommendation_mage:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_accept_recommendation_paladin
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_mage} @Self
+
+creator_accept_recommendation_paladin:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_open_class_selector
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_paladin} @Self
+
+creator_open_class_selector:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - message{m="<gold>Galeria Archetypów &8> &fTeraz wybierasz klasę świadomie. Żadnej kartki z werdyktem, tylko spotlight, koszt i oath."} @Self
+    - openmenu{name="foundation_class_selector";permission=false} @Self
+
+creator_open_class_confirm_warrior:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="WARRIOR";profile=true} @Self
+    - variable{action="set";variable="class_id";value="WARRIOR";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_CONFIRM";profile=true} @Self
+    - openmenu{name="foundation_class_confirm_warrior";permission=false} @Self
+
+creator_open_class_confirm_rogue:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="ROGUE";profile=true} @Self
+    - variable{action="set";variable="class_id";value="ROGUE";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_CONFIRM";profile=true} @Self
+    - openmenu{name="foundation_class_confirm_rogue";permission=false} @Self
+
+creator_open_class_confirm_marksman:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="MARKSMAN";profile=true} @Self
+    - variable{action="set";variable="class_id";value="MARKSMAN";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_CONFIRM";profile=true} @Self
+    - openmenu{name="foundation_class_confirm_marksman";permission=false} @Self
+
+creator_open_class_confirm_mage:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="MAGE";profile=true} @Self
+    - variable{action="set";variable="class_id";value="MAGE";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_CONFIRM";profile=true} @Self
+    - openmenu{name="foundation_class_confirm_mage";permission=false} @Self
+
+creator_open_class_confirm_paladin:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="PALADIN";profile=true} @Self
+    - variable{action="set";variable="class_id";value="PALADIN";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_CONFIRM";profile=true} @Self
+    - openmenu{name="foundation_class_confirm_paladin";permission=false} @Self
+
+creator_open_class_spotlight_warrior:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="class_spotlight_warrior";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
+    - message{m="<white>Spotlight Archetypu &8> &fWojownik wygrywa utrzymaniem frontu i wymuszaniem błędów. Płaci za to tempem i podatnością na dystans."} @Self
+    - playsound{sound="minecraft:item.shield.block";volume=1;pitch=0.85} @Self
+    - openmenu{name="foundation_class_spotlight_warrior";permission=false} @Self
+
+creator_open_class_spotlight_rogue:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="class_spotlight_rogue";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
+    - message{m="<green>Spotlight Archetypu &8> &fŁotrzyk wygrywa wejściem, pozycją i egzekucją błędu. Źle wybrany moment kosztuje go całą przewagę."} @Self
+    - playsound{sound="minecraft:entity.player.attack.crit";volume=1;pitch=1.15} @Self
+    - openmenu{name="foundation_class_spotlight_rogue";permission=false} @Self
+
+creator_open_class_spotlight_marksman:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="class_spotlight_marksman";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
+    - message{m="<aqua>Spotlight Archetypu &8> &fŁowca wygrywa przez linię strzału, znak i przygotowanie pola. Gubi przewagę, gdy walka wejdzie mu na twarz."} @Self
+    - playsound{sound="minecraft:entity.arrow.hit_player";volume=1;pitch=1.35} @Self
+    - openmenu{name="foundation_class_spotlight_marksman";permission=false} @Self
+
+creator_open_class_spotlight_mage:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="class_spotlight_mage";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
+    - message{m="<light_purple>Spotlight Archetypu &8> &fMag zamienia ryzyko w burst. Problemem nie jest brak mocy, tylko moment, w którym presja łamie rytm castu."} @Self
+    - playsound{sound="minecraft:block.enchantment_table.use";volume=1;pitch=1.0} @Self
+    - openmenu{name="foundation_class_spotlight_mage";permission=false} @Self
+
+creator_open_class_spotlight_paladin:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - variable{action="set";variable="class_spotlight_paladin";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
+    - message{m="<yellow>Spotlight Archetypu &8> &fAkolita wygrywa przez ward, sustain i odmowę śmierci. Zamiast szybko kończyć walkę, odmawia przeciwnikowi czystego zwycięstwa."} @Self
+    - playsound{sound="minecraft:block.beacon.power_select";volume=1;pitch=0.95} @Self
+    - openmenu{name="foundation_class_spotlight_paladin";permission=false} @Self
+
+creator_open_storage_menu:
+  Conditions: []
+  Mechanics:
+    - message{m="<gold>Archiwum &8> &fStorage jest dostępny tylko jako system hubowy. Otwarcie skrzyń jest wstrzymane do czasu safe-zone/combat-lock hooka."} @Self
+    - openmenu{name="foundation_storage";permission=false} @Self
+
+creator_open_class_mentor_roster:
+  Conditions: []
+  Mechanics:
+    - message{m="<gold>Mentorzy &8> &fTu sprawdzasz żywy loop klasy, słabość, anchor gear i trzy ścieżki podklasy przed dalszą przysięgą."} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+creator_open_city_roster:
+  Conditions: []
+  Mechanics:
+    - message{m="<gold>Stolica &8> &fNPC roster prowadzi teraz gear, skille, mentorów i profesje. Klasa sama nie rozdaje ekwipunku."} @Self
+    - openmenu{name="foundation_city_roster";permission=false} @Self
+
+creator_open_skill_roster:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="skill_roster_opened";value="true";profile=true} @Self
+    - 'message{m="<aqua>Trener Skilli &8> &fZapisujesz loadout profilu: klasowe przez MMOCore, ogólne jako slot draft, profesyjne przez osobny progres."} @Self'
+    - openmenu{name="foundation_skill_roster";permission=false} @Self
+
+creator_open_profession_roster:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="profession_intro_started";value="true";profile=true} @Self
+    - message{m="<green>Dzielnica Profesji &8> &fProfesje są osobnym filarem progresji, nie darmowym buffem z menu."} @Self
+    - openmenu{name="foundation_profession_roster";permission=false} @Self
+
+creator_open_first_contract:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} falseElse creator_pick_class_first
+  Mechanics:
+    - variable{action="set";variable="first_contract_started";value="true";profile=true} @Self
+    - message{m="<yellow>Kwatermistrz &8> &fPierwszy ekwipunek odbierasz w mieście po przysiędze, nie z automatu klasy."} @Self
+    - openmenu{name="foundation_first_contract";permission=false} @Self
+
+creator_select_generic_guard:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="selected_generic_skill_1";value="GUARD";profile=true} @Self
+    - 'message{m="<aqua>Trener Skilli &8> &fSlot ogólny I zapisany: Guard. To utility draft profilu, nie zamiennik klasy Wojownika."} @Self'
+    - playsound{sound="minecraft:block.note_block.pling";volume=1;pitch=1.1} @Self
+    - openmenu{name="foundation_skill_roster";permission=false} @Self
+
+creator_select_generic_dodge:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="selected_generic_skill_1";value="DODGE";profile=true} @Self
+    - 'message{m="<aqua>Trener Skilli &8> &fSlot ogólny I zapisany: Dodge. Mobilność ma cooldown i counterplay, ale bind live nadal idzie przez dalszy seam."} @Self'
+    - playsound{sound="minecraft:block.note_block.pling";volume=1;pitch=1.2} @Self
+    - openmenu{name="foundation_skill_roster";permission=false} @Self
+
+creator_select_generic_focus:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="selected_generic_skill_2";value="FOCUS";profile=true} @Self
+    - 'message{m="<aqua>Trener Skilli &8> &fSlot ogólny II zapisany: Focus. To przygotowanie i tempo, nie darmowy burst."} @Self'
+    - playsound{sound="minecraft:block.note_block.pling";volume=1;pitch=1.3} @Self
+    - openmenu{name="foundation_skill_roster";permission=false} @Self
+
+creator_select_generic_field_medic:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="selected_generic_skill_2";value="FIELD_MEDIC";profile=true} @Self
+    - 'message{m="<aqua>Trener Skilli &8> &fSlot ogólny II zapisany: Field Medic. To utility ratunkowe, nie healer replacement."} @Self'
+    - playsound{sound="minecraft:block.note_block.pling";volume=1;pitch=1.4} @Self
+    - openmenu{name="foundation_skill_roster";permission=false} @Self
+
+creator_open_mmocore_class_panel:
+  Conditions: []
+  Mechanics:
+    - command{c="class"} @Self
+
+creator_open_mmocore_skills:
+  Conditions: []
+  Mechanics:
+    - command{c="skills"} @Self
+
+creator_open_mmocore_skilltrees:
+  Conditions: []
+  Mechanics:
+    - command{c="skilltrees"} @Self
+
+creator_mentor_warrior:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="mentor_intro_warrior";value="true";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_warrior";value="true";profile=true} @Self
+    - message{m="<yellow>Mentor Wojownika &8> &fTwój live loop to guard, counter i rage pressure. Nie wygrywasz szybkością. Wygrywasz utrzymaniem linii."} @Self
+    - 'message{m="<dark_gray>Podklasy: Strażnik = obrona i ally cover, Berserker = burst za cenę ryzyka, Gladiator = pojedynek i presja. Anchor path: Płyta Pioniera, forge, ciężkie bazy."} @Self'
+    - playsound{sound="minecraft:item.shield.block";volume=1;pitch=0.9} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+creator_mentor_rogue:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="mentor_intro_rogue";value="true";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_rogue";value="true";profile=true} @Self
+    - message{m="<green>Mentor Łotrzyka &8> &fLive loop to opener, tempo i zniknięcie z linii. Jeśli wejdziesz źle, build sam cię ukarze."} @Self
+    - 'message{m="<dark_gray>Podklasy: Zabójca = egzekucja, Sabotażysta = pułapki i bleed, Cień = mobilność i pozycja. Anchor path: Wędrowiec, forge lekkich baz, precyzyjne dodatki."} @Self'
+    - playsound{sound="minecraft:entity.player.attack.crit";volume=1;pitch=1.2} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+creator_mentor_marksman:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="mentor_intro_marksman";value="true";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_marksman";value="true";profile=true} @Self
+    - message{m="<aqua>Mentor Łowcy &8> &fLive loop to mark, pozycja i czysta linia. Tracisz przewagę, kiedy pozwolisz walce wejść w zwarcie."} @Self
+    - 'message{m="<dark_gray>Podklasy: Strzelec = precyzja, Tropiciel = kontrola i torby utility, Bestiariusz = presja bestii. Anchor path: Wędrowiec/Zwiadowca, ranged forge, scope upgrades."} @Self'
+    - playsound{sound="minecraft:entity.arrow.hit_player";volume=1;pitch=1.4} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+creator_mentor_mage:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="mentor_intro_mage";value="true";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_mage";value="true";profile=true} @Self
+    - message{m="<light_purple>Mentor Maga &8> &fLive loop to mana, burst i odzyskanie rytmu po presji. Twoją słabością nie jest brak mocy, tylko przerwany cast."} @Self
+    - 'message{m="<dark_gray>Podklasy: Piromanta = nacisk, Kriomanta = kontrola, Burzomanta = tempo i przeciążenie. Anchor path: Adept, forge catalystów, runiczne źródła."} @Self'
+    - playsound{sound="minecraft:block.enchantment_table.use";volume=1;pitch=1.0} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+creator_mentor_paladin:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="mentor_intro_paladin";value="true";profile=true} @Self
+    - variable{action="set";variable="subclass_preview_paladin";value="true";profile=true} @Self
+    - message{m="<yellow>Mentor Akolity &8> &fLive loop to ward, sustain i odmowa śmierci. Nie wygrywasz szybkością zabijania, tylko kontrolą ryzyka."} @Self
+    - 'message{m="<dark_gray>Podklasy: Kapelan = wsparcie, Inkwizytor = kara i pressure, Rytualista = ciemniejsze koszty i utility. Anchor path: Adept/Zwiadowca, relic upgrades, runiczne salvage."} @Self'
+    - playsound{sound="minecraft:block.beacon.power_select";volume=1;pitch=0.9} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+creator_profession_intro_complete:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="profession_intro_completed";value="true";profile=true} @Self
+    - message{m="<green>Dzielnica Profesji &8> &fIntro zapisane. Mocne receptury i skille profesji wymagają używania profesji, nie kliknięcia."} @Self
+    - playsound{sound="minecraft:block.note_block.pling";volume=1;pitch=1.0} @Self
+    - openmenu{name="foundation_profession_roster";permission=false} @Self
+
+creator_open_profile_vault:
+  Conditions: []
+  Mechanics:
+    - 'message{m="<red>Skrzynia Profilu &8> &fZablokowana: brakuje runtime hooka safe-zone + combat-lock. Nie otwieram vaulta bez egzekucji zasad."} @Self'
+    - playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.7} @Self
+
+creator_open_account_vault:
+  Conditions: []
+  Mechanics:
+    - 'message{m="<red>Skrzynia Konta &8> &fZablokowana: account storage wymaga safe-zone + combat-lock hooka. Nie otwieram vaulta jako panic banku."} @Self'
+    - playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.7} @Self
+
+creator_back_to_race_menu:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - message{m="<yellow>Księga wróciła do rodowodu. Zmień pieczęć, zanim złożysz przysięgę."} @Self
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.8} @Self
+    - openmenu{name="foundation_race_selector";permission=false} @Self
+
+creator_select_class_warrior:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_warrior} @Self
+
+creator_select_class_rogue:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_rogue} @Self
+
+creator_select_class_marksman:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_marksman} @Self
+
+creator_select_class_mage:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_mage} @Self
+
+creator_select_class_paladin:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+  Mechanics:
+    - Script{script=creator_open_class_spotlight_paladin} @Self
+
+creator_confirm_character:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - Script{script=creator_finalize_character} @Self
+
+creator_cancel_class_choice:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="class_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
+    - message{m="<yellow>Przysięga cofnięta. Wybierz archetyp ponownie."} @Self
+    - playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.8} @Self
+    - openmenu{name="foundation_class_selector";permission=false} @Self
+
+creator_confirm_warrior:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="WARRIOR";profile=true} @Self
+    - variable{action="set";variable="class_id";value="WARRIOR";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
+    - command{c="mmocore admin force-class {caster_name} warrior";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_confirm_rogue:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="ROGUE";profile=true} @Self
+    - variable{action="set";variable="class_id";value="ROGUE";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
+    - command{c="mmocore admin force-class {caster_name} rogue";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_confirm_marksman:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="MARKSMAN";profile=true} @Self
+    - variable{action="set";variable="class_id";value="MARKSMAN";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
+    - command{c="mmocore admin force-class {caster_name} marksman";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_confirm_mage:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="MAGE";profile=true} @Self
+    - variable{action="set";variable="class_id";value="MAGE";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
+    - command{c="mmocore admin force-class {caster_name} mage";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_confirm_paladin:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="pending_class_id";value="PALADIN";profile=true} @Self
+    - variable{action="set";variable="class_id";value="PALADIN";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
+    - command{c="mmocore admin force-class {caster_name} paladin";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_finalize_character:
+  Conditions:
+    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} falseElse creator_already_finalized
+    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_finalize_check_class
+  Mechanics:
+    - Script{script=creator_pick_race_first} @Self
+
+creator_finalize_check_class:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="UNSET"} falseElse creator_finalize_race_dispatch
+  Mechanics:
+    - Script{script=creator_pick_class_first} @Self
+
+creator_already_finalized:
+  Conditions: []
+  Mechanics:
+    - message{m="<red>Ta postać ma już zapisaną pieczęć i przysięgę. Nowy los wymaga nowego profilu."} @Self
+    - playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.6} @Self
+
+creator_pick_race_first:
+  Conditions: []
+  Mechanics:
+    - message{m="<red>Najpierw wybierz pieczęć rodu. Bez pochodzenia nie ma przysięgi."} @Self
+    - playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.8} @Self
+
+creator_pick_class_first:
+  Conditions: []
+  Mechanics:
+    - message{m="<red>Najpierw wybierz archetyp. Bez roli nie ma pierwszego kontraktu."} @Self
+    - playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.8} @Self
+
+creator_finalize_race_dispatch:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="CZLOWIEK"} falseElse creator_finalize_race_ork
+  Mechanics:
+    - variable{action="set";variable="race_id";value="CZLOWIEK";profile=true} @Self
+    - Script{script=creator_finalize_class_dispatch} @Self
+
+creator_finalize_race_ork:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="ORK"} falseElse creator_finalize_race_elf
+  Mechanics:
+    - variable{action="set";variable="race_id";value="ORK";profile=true} @Self
+    - Script{script=creator_finalize_class_dispatch} @Self
+
+creator_finalize_race_elf:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="ELF"} falseElse creator_finalize_race_krasnolud
+  Mechanics:
+    - variable{action="set";variable="race_id";value="ELF";profile=true} @Self
+    - Script{script=creator_finalize_class_dispatch} @Self
+
+creator_finalize_race_krasnolud:
+  Conditions:
+    - Comparator{value1="{pending_race_id}";operator="=";value2="KRASNOLUD"} falseElse creator_finalize_race_nieumarly
+  Mechanics:
+    - variable{action="set";variable="race_id";value="KRASNOLUD";profile=true} @Self
+    - Script{script=creator_finalize_class_dispatch} @Self
+
+creator_finalize_race_nieumarly:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_id";value="NIEUMARLY";profile=true} @Self
+    - Script{script=creator_finalize_class_dispatch} @Self
+
+creator_finalize_class_dispatch:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_finalize_class_rogue
+  Mechanics:
+    - command{c="mmocore admin force-class {caster_name} warrior";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_finalize_class_rogue:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_finalize_class_marksman
+  Mechanics:
+    - command{c="mmocore admin force-class {caster_name} rogue";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_finalize_class_marksman:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_finalize_class_mage
+  Mechanics:
+    - command{c="mmocore admin force-class {caster_name} marksman";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_finalize_class_mage:
+  Conditions:
+    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_finalize_class_paladin
+  Mechanics:
+    - command{c="mmocore admin force-class {caster_name} mage";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_finalize_class_paladin:
+  Conditions: []
+  Mechanics:
+    - command{c="mmocore admin force-class {caster_name} paladin";runas=console} @Self
+    - Script{script=creator_finalize_common} @Self
+
+creator_finalize_common:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="race_selected";value="true";profile=true} @Self
+    - variable{action="set";variable="class_selected";value="true";profile=true} @Self
+    - variable{action="set";variable="character_stage";value="CITY_ONBOARDING";profile=true} @Self
+    - variable{action="set";variable="pending_race_id";value="UNSET";profile=true} @Self
+    - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+    - 'message{m="<green>Pieczęć i przysięga zapisane. Zanim wejdziesz do miasta, przejdź przez Galerię Mentorów i zobacz live loop klasy, słabość i subclass path."} @Self'
+    - message{m="<dark_aqua>Komnata Mentorów &8> &fTo jest twój pierwszy payoff po wyborze. Anchor set czeka później u Kwatermistrza, nie w próżni po kliknięciu."} @Self
+    - playsound{sound="minecraft:entity.player.levelup";volume=1;pitch=1.2} @Self
+    - openmenu{name="foundation_class_mentor_roster";permission=false} @Self
+
+npc_quartermaster_claim_warrior:
+  Conditions:
+    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="=";value2="warrior"} falseElse npc_quartermaster_wrong_class
+  Mechanics:
+    - command{c="mi give SWORD WOJOWNIK_INITIATE_BLADE {caster_name} 1";runas=console} @Self
+    - command{c="mi give SHIELD WOJOWNIK_INITIATE_SHIELD {caster_name} 1";runas=console} @Self
+    - command{c="mi give ARMOR WOJOWNIK_INITIATE_CHESTPLATE {caster_name} 1";runas=console} @Self
+    - command{c="mi give RING PIERSCIEN_ZELAZNEJ_WYPRAWY {caster_name} 1";runas=console} @Self
+    - Script{script=npc_quartermaster_claim_common} @Self
+
+npc_quartermaster_claim_rogue:
+  Conditions:
+    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="=";value2="rogue"} falseElse npc_quartermaster_wrong_class
+  Mechanics:
+    - command{c="mi give DAGGER LOTRZYK_INITIATE_DAGGER {caster_name} 1";runas=console} @Self
+    - command{c="mi give ARMOR LOTRZYK_INITIATE_CHESTPIECE {caster_name} 1";runas=console} @Self
+    - command{c="mi give RING PIERSCIEN_RUNICZNEJ_WYPRAWY {caster_name} 1";runas=console} @Self
+    - Script{script=npc_quartermaster_claim_common} @Self
+
+npc_quartermaster_claim_marksman:
+  Conditions:
+    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="=";value2="marksman"} falseElse npc_quartermaster_wrong_class
+  Mechanics:
+    - command{c="mi give BOW LOWCA_INITIATE_BOW {caster_name} 1";runas=console} @Self
+    - command{c="mi give ARMOR LOWCA_INITIATE_CHESTPIECE {caster_name} 1";runas=console} @Self
+    - command{c="mi give OFF_CATALYST LOWCA_INITIATE_SCOPE {caster_name} 1";runas=console} @Self
+    - Script{script=npc_quartermaster_claim_common} @Self
+
+npc_quartermaster_claim_mage:
+  Conditions:
+    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="=";value2="mage"} falseElse npc_quartermaster_wrong_class
+  Mechanics:
+    - command{c="mi give WAND MAG_INITIATE_WAND {caster_name} 1";runas=console} @Self
+    - command{c="mi give ARMOR MAG_INITIATE_ROBE {caster_name} 1";runas=console} @Self
+    - command{c="mi give OFF_CATALYST MAG_INITIATE_FOCUS {caster_name} 1";runas=console} @Self
+    - Script{script=npc_quartermaster_claim_common} @Self
+
+npc_quartermaster_claim_paladin:
+  Conditions:
+    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="=";value2="paladin"} falseElse npc_quartermaster_wrong_class
+  Mechanics:
+    - command{c="mi give STAFF AKOLITA_INITIATE_STAFF {caster_name} 1";runas=console} @Self
+    - command{c="mi give ARMOR AKOLITA_INITIATE_VESTMENT {caster_name} 1";runas=console} @Self
+    - command{c="mi give OFF_CATALYST AKOLITA_INITIATE_RELIC {caster_name} 1";runas=console} @Self
+    - Script{script=npc_quartermaster_claim_common} @Self
+
+npc_quartermaster_claim_common:
+  Conditions: []
+  Mechanics:
+    - variable{action="set";variable="first_weapon_claimed";value="true";profile=true} @Self
+    - variable{action="set";variable="first_contract_completed";value="true";profile=true} @Self
+    - Script{script=npc_quartermaster_race_bonus_dispatch} @Self
+    - message{m="<green>Kwatermistrz &8> &fPierwszy zestaw wydany przez miasto. To twój anchor loadout. Następne ulepszenia zdobywasz przez forge, profesje i łup."} @Self
+    - playsound{sound="minecraft:entity.villager.yes";volume=1;pitch=1.0} @Self
+    - openmenu{name="foundation_city_roster";permission=false} @Self
+
+npc_quartermaster_race_bonus_dispatch:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="CZLOWIEK"} falseElse npc_quartermaster_race_bonus_ork
+  Mechanics:
+    - command{c="mi give MATERIAL SILVER_COIN {caster_name} 3";runas=console} @Self
+    - message{m="<white>Pieczęć Człowieka &8> &fMiasto dorzuca kontraktowy start: 3 Srebrne Monety na pierwszą drogę."} @Self
+
+npc_quartermaster_race_bonus_ork:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="ORK"} falseElse npc_quartermaster_race_bonus_elf
+  Mechanics:
+    - command{c="mi give MATERIAL MALA_KOSC {caster_name} 2";runas=console} @Self
+    - message{m="<red>Pieczęć Orka &8> &fDostajesz surowy bonus wyprawowy: 2 Małe Kości pod pierwsze brutalne ulepszenia."} @Self
+
+npc_quartermaster_race_bonus_elf:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="ELF"} falseElse npc_quartermaster_race_bonus_krasnolud
+  Mechanics:
+    - command{c="mi give MATERIAL DZIKIE_ZIOLO {caster_name} 2";runas=console} @Self
+    - message{m="<aqua>Pieczęć Elfa &8> &fDostajesz zwiadowczy bonus startowy: 2 Dzikie Zioła pod pierwszy utility loop."} @Self
+
+npc_quartermaster_race_bonus_krasnolud:
+  Conditions:
+    - Comparator{value1="{race_id}";operator="=";value2="KRASNOLUD"} falseElse npc_quartermaster_race_bonus_nieumarly
+  Mechanics:
+    - command{c="mi give MATERIAL ZLOM_ZELAZNY {caster_name} 2";runas=console} @Self
+    - message{m="<gold>Pieczęć Krasnoluda &8> &fDostajesz kuźniczy bonus startowy: 2 Żelazne Złomy pod forge i pierwszy odzysk."} @Self
+
+npc_quartermaster_race_bonus_nieumarly:
+  Conditions: []
+  Mechanics:
+    - command{c="mi give MATERIAL SLABA_ESENCJA {caster_name} 1";runas=console} @Self
+    - message{m="<dark_gray>Pieczęć Nieumarłego &8> &fDostajesz mroczny bonus startowy: 1 Słaba Esencja pod pierwszy loop reliktów i rytuału."} @Self
+
+npc_quartermaster_wrong_class:
+  Conditions: []
+  Mechanics:
+    - message{m="<red>Kwatermistrz &8> &fTo nie jest zestaw twojej klasy. Wybierz sprzęt zgodny z zapisaną przysięgą."} @Self
+    - playsound{sound="minecraft:entity.villager.no";volume=1;pitch=0.8} @Self
+    - openmenu{name="foundation_first_contract";permission=false} @Self
+
+npc_quartermaster_already_claimed:
+  Conditions: []
+  Mechanics:
+    - message{m="<red>Kwatermistrz &8> &fPierwszy zestaw został już wydany. Dalszy postęp idzie przez forge, profesje i łup."} @Self
+    - playsound{sound="minecraft:entity.villager.no";volume=1;pitch=0.7} @Self
+    - openmenu{name="foundation_city_roster";permission=false} @Self

@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC UI and player-facing flow"
+  short_description: "DeluxeMenus, HUD, holograms"
+  default_prompt: "Use $minecraft-ui-hud-menus as a registry-backed MC task agent and return its evidence-based report contract."

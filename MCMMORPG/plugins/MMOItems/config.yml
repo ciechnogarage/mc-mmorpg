@@ -26,8 +26,8 @@ mysql:
   host: localhost
   port: 3306
   database: minecraft
-  user: mmolover
-  pass: ILoveTaner
+  user: disabled
+  pass: disabled
   maxPoolSize: 10
   maxLifeTime: 300000
   connectionTimeOut: 10000
@@ -127,7 +127,7 @@ item_commands:
   # Along with item commands, this stat can cause serious security
   # problems if given access to staff members/admins. If you don't
   # plan on using this stat, you can consider disabling it altogether.
-  enabled: true
+  enabled: false
 
   # List of regex patterns for item command whitelist.
   # For additional security, carefully choose a subset of

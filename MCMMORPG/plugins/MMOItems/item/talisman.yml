@@ -13,3 +13,59 @@ THUNDER_BLESSING:
       - §bThis talisman, when held in offhand,
       - §ballows the user to greatly increase
       - §bhis skill damage. §3It also gives Speed I.
+TALIZMAN_KOSCI:
+  base:
+    material: BONE
+    name: '&fKosciany Talizman'
+    lore:
+      - '&7Prosty talizman uzytkowy do wczesnych buildow.'
+    required-level: 8.0
+    skill-damage: 5.0
+    damage-reduction: 2.0
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory
+SABOTAZYSTA_CHARGE:
+  base:
+    material: REDSTONE
+    name: '&2Ladunek Zaklocajacy'
+    lore:
+      - '&7Talizman pod presje, cooldown i walke narzedziami.'
+    required-level: 25.0
+    required-dexterity: 18.0
+    skill-damage: 10.0
+    cooldown-reduction: 8.0
+    pvp-damage: 4.0
+    gem-sockets:
+      - Green
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-accessory
+  modifiers:
+    accessory_prefix_rare:
+      weight: 1
+    accessory_suffix_rare:
+      weight: 1
+TROPICIEL_FEATHER:
+  base:
+    material: FEATHER
+    name: '&aPioro Tropu'
+    lore:
+      - '&7Lekki talizman pod ruch, sledzenie i dystans.'
+    required-level: 25.0
+    required-dexterity: 18.0
+    movement-speed: 0.02
+    safe-fall-distance: 4.0
+    projectile-damage: 8.0
+    gem-sockets:
+      - Green
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-accessory
+  modifiers:
+    accessory_prefix_rare:
+      weight: 1
+    accessory_suffix_rare:
+      weight: 1

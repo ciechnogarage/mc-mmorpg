@@ -1,0 +1,143 @@
+foundation_first_contract:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Kwatermistrz - Pierwszy Kontrakt'
+  size: 4
+  fill_material: 'BLACK_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [ 0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35 ]
+      source: vanilla
+      material: BLACK_STAINED_GLASS_PANE
+      name: ' '
+
+    title:
+      location: top
+      slots: [ 4 ]
+      source: vanilla
+      material: IRON_CHESTPLATE
+      name: '<green><bold>Pierwszy Ekwipunek'
+      lore:
+        - '<gray>Miasto wydaje pierwszy zestaw'
+        - '<gray>po przysiędze klasy.'
+        - ''
+        - '<red>To nie jest auto-grant klasy.'
+        - '<gray>Każda pieczęć rodu dodaje mały bonus startowy.'
+        - '<dark_gray>Zła klasa i duplikat dostają odmowę.'
+        - '<dark_gray>Wydane: {first_weapon_claimed}'
+
+    claim_warrior:
+      location: top
+      slots: [ 10 ]
+      source: vanilla
+      material: IRON_SWORD
+      name: '<gold><bold>Zestaw Wojownika'
+      lore:
+        - '<gray>Blade, shield, chestplate, ring.'
+        - '<gray>Anchor: pierwszy frontowy set miasta.'
+        - '<dark_gray>Następny krok: PIONIER + forge.'
+        - '<dark_gray>Lock: class=warrior.'
+        - '<dark_gray>Wrong class: refusal.'
+        - '<dark_gray>Duplicate: refusal.'
+      left_click:
+        Scripts:
+          - npc_quartermaster_claim_warrior
+      click:
+        Scripts:
+          - npc_quartermaster_claim_warrior
+
+    claim_rogue:
+      location: top
+      slots: [ 11 ]
+      source: vanilla
+      material: IRON_SWORD
+      name: '<green><bold>Zestaw Łotrzyka'
+      lore:
+        - '<gray>Dagger, chestpiece, ring.'
+        - '<gray>Anchor: wejście, tempo, ucieczka.'
+        - '<dark_gray>Następny krok: WĘDROWIEC + lekkie bazy.'
+        - '<dark_gray>Lock: class=rogue.'
+        - '<dark_gray>Wrong class: refusal.'
+        - '<dark_gray>Duplicate: refusal.'
+      left_click:
+        Scripts:
+          - npc_quartermaster_claim_rogue
+      click:
+        Scripts:
+          - npc_quartermaster_claim_rogue
+
+    claim_marksman:
+      location: top
+      slots: [ 12 ]
+      source: vanilla
+      material: BOW
+      name: '<aqua><bold>Zestaw Łowcy'
+      lore:
+        - '<gray>Bow, chestpiece, scope.'
+        - '<gray>Anchor: dystans i czysta linia.'
+        - '<dark_gray>Następny krok: WĘDROWIEC / ZWIADOWCA.'
+        - '<dark_gray>Lock: class=marksman.'
+        - '<dark_gray>Wrong class: refusal.'
+        - '<dark_gray>Duplicate: refusal.'
+      left_click:
+        Scripts:
+          - npc_quartermaster_claim_marksman
+      click:
+        Scripts:
+          - npc_quartermaster_claim_marksman
+
+    claim_mage:
+      location: top
+      slots: [ 14 ]
+      source: vanilla
+      material: BLAZE_ROD
+      name: '<light_purple><bold>Zestaw Maga'
+      lore:
+        - '<gray>Wand, robe, focus.'
+        - '<gray>Anchor: mana, rytm i przeciążenie.'
+        - '<dark_gray>Następny krok: ADEPT + runiczne źródła.'
+        - '<dark_gray>Lock: class=mage.'
+        - '<dark_gray>Wrong class: refusal.'
+        - '<dark_gray>Duplicate: refusal.'
+      left_click:
+        Scripts:
+          - npc_quartermaster_claim_mage
+      click:
+        Scripts:
+          - npc_quartermaster_claim_mage
+
+    claim_paladin:
+      location: top
+      slots: [ 15 ]
+      source: vanilla
+      material: BLAZE_ROD
+      name: '<yellow><bold>Zestaw Akolity'
+      lore:
+        - '<gray>Staff, vestment, relic.'
+        - '<gray>Anchor: ward, sustain i kontrola ryzyka.'
+        - '<dark_gray>Następny krok: ADEPT / ZWIADOWCA.'
+        - '<dark_gray>Lock: class=paladin.'
+        - '<dark_gray>Wrong class: refusal.'
+        - '<dark_gray>Duplicate: refusal.'
+      left_click:
+        Scripts:
+          - npc_quartermaster_claim_paladin
+      click:
+        Scripts:
+          - npc_quartermaster_claim_paladin
+
+    back:
+      location: top
+      slots: [ 31 ]
+      source: vanilla
+      material: ARROW
+      name: '<yellow><bold>Wróć do miasta'
+      left_click:
+        Scripts:
+          - creator_open_city_roster
+      click:
+        Scripts:
+          - creator_open_city_roster

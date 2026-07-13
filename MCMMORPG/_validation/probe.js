@@ -1,0 +1,11 @@
+const mineflayer = require("mineflayer");
+const t0=Date.now(); const el=()=>((Date.now()-t0)/1000).toFixed(1)+"s";
+const log=(...a)=>{console.log(el(),...a);};
+const bot = mineflayer.createBot({host:"127.0.0.1",port:25565,username:"ProbeBot",auth:"offline",version:"1.21.11"});
+bot.on("connect",()=>log("CONNECT tcp ok"));
+bot.on("login",()=>log("LOGIN play-state, ver=",bot.version));
+bot.on("kicked",r=>{log("KICKED:",JSON.stringify(r));process.exit(2);});
+bot.on("end",r=>log("END:",r));
+bot.on("error",e=>log("ERROR:",e.message));
+bot.once("spawn",()=>{log("SPAWN_OK world=",bot.game.dimension);setTimeout(()=>{bot.quit();process.exit(0);},800);});
+setTimeout(()=>{log("TIMEOUT 150s, last state stuck");process.exit(9);},150000);

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Start MCMMORPG (Paper 1.21.11) z flagami Aikar.
+# RAM: 8G stałe (Xms=Xmx) — maszyna ma 15G, reszta dla OS + pamięci natywnej
+# (ModelEngine / MythicMobs / Iris alokują dużo poza stertą).
+# Aby zmienić RAM, edytuj zmienną MEM poniżej.
+cd "$(dirname "$0")" || exit 1
+
+MEM="4G"
+JAR="paper.jar"
+
+while true; do
+  java -Xms${MEM} -Xmx${MEM} \
+    -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 \
+    -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC \
+    -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 \
+    -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 \
+    -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 \
+    -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 \
+    -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 \
+    -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true \
+    -jar "${JAR}" --nogui
+
+  echo ""
+  echo "---- Serwer zatrzymany. Ctrl+C w ciagu 5s aby NIE restartowac ----"
+  sleep 5 || break
+done

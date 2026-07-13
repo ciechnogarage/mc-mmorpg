@@ -1,0 +1,23 @@
+{
+  "version": "foundation-premium-creator-v1",
+  "updated_at": "2026-07-05",
+  "race_tokens": {
+    "CREATOR_RACE_CZLOWIEK": { "cmd": 9101, "fallback": "PAPER" },
+    "CREATOR_RACE_ORK": { "cmd": 9102, "fallback": "PAPER" },
+    "CREATOR_RACE_ELF": { "cmd": 9103, "fallback": "PAPER" },
+    "CREATOR_RACE_KRASNOLUD": { "cmd": 9104, "fallback": "PAPER" },
+    "CREATOR_RACE_NIEUMARLY": { "cmd": 9105, "fallback": "PAPER" }
+  },
+  "class_tokens": {
+    "CREATOR_CLASS_WARRIOR": { "cmd": 9201, "fallback": "IRON_SWORD" },
+    "CREATOR_CLASS_ROGUE": { "cmd": 9202, "fallback": "IRON_SWORD" },
+    "CREATOR_CLASS_MARKSMAN": { "cmd": 9203, "fallback": "BOW" },
+    "CREATOR_CLASS_MAGE": { "cmd": 9204, "fallback": "BLAZE_POWDER" },
+    "CREATOR_CLASS_PALADIN": { "cmd": 9205, "fallback": "BLAZE_ROD" }
+  },
+  "state_tokens": {
+    "CREATOR_STATE_RECOMMENDED": { "cmd": 9401, "fallback": "NETHER_STAR" },
+    "CREATOR_STATE_CONFIRM": { "cmd": 9402, "fallback": "EMERALD" },
+    "CREATOR_STATE_BRIDGE": { "cmd": 9403, "fallback": "WRITABLE_BOOK" }
+  }
+}

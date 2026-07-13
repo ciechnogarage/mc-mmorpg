@@ -1,0 +1,64 @@
+Version: 2
+Gamerule:
+  minecraft:
+    entity_drops: true
+    universal_anger: false
+    spawn_patrols: true
+    log_admin_commands: true
+    keep_inventory: false
+    raids: true
+    fire_damage: true
+    respawn_radius: 10
+    advance_time: true
+    immediate_respawn: false
+    block_drops: true
+    projectiles_can_break_blocks: true
+    elytra_movement_check: true
+    block_explosion_drop_decay: true
+    command_blocks_work: true
+    spawn_phantoms: true
+    natural_health_regeneration: true
+    pvp: true
+    mob_explosion_drop_decay: true
+    player_movement_check: true
+    fire_spread_radius_around_player: 128
+    max_command_sequence_length: 65536
+    random_tick_speed: 0
+    spread_vines: true
+    lava_source_conversion: false
+    spawn_mobs: true
+    fall_damage: true
+    limited_crafting: false
+    max_command_forks: 65536
+    drowning_damage: true
+    spawn_wardens: true
+    send_command_feedback: true
+    forgive_dead_players: true
+    freeze_damage: true
+    ender_pearls_vanish_on_death: true
+    max_snow_accumulation_height: 1
+    players_sleeping_percentage: 100
+    mob_drops: true
+    mob_griefing: true
+    tnt_explosion_drop_decay: false
+    water_source_conversion: true
+    global_sound_events: true
+    spectators_generate_chunks: true
+    advance_weather: true
+    show_death_messages: true
+    allow_entering_nether_using_portals: true
+    spawn_monsters: true
+    spawner_blocks_work: true
+    max_block_modifications: 32768
+    show_advancement_messages: true
+    command_block_output: true
+    locator_bar: true
+    players_nether_portal_creative_delay: 0
+    players_nether_portal_default_delay: 80
+    max_entity_cramming: 24
+    reduced_debug_info: false
+    spawn_wandering_traders: true
+    tnt_explodes: true
+Difficulty: EASY
+WorldTime: 6767
+WorldWeather: CLEAR

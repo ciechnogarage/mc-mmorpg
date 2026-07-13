@@ -1,0 +1,25 @@
+{
+    "surface_builder": "minecraft:grass",
+    "depth": 0.125,
+    "scale": 0.05,
+    "temperature": 0.45,
+    "downfall": 0.1,
+    "has_precipitation": true,
+    "precipitation": "rain",
+    "category": "jungle",
+    "effects": {
+        "water_color": -12331538,
+        "grass_color": -11881472,
+        "foliage_color": -7649793
+    },
+    "starts": [],
+    "spawners": {},
+    "spawn_costs": {},
+    "carvers": [],
+    "features": [],
+    "attributes": {
+        "minecraft:visual/fog_color": -4138753,
+        "minecraft:visual/sky_color": -3225857,
+        "minecraft:visual/water_fog_color": -16448205
+    }
+}

@@ -1,0 +1,36 @@
+display:
+    name: 'Gladiator'
+    lore:
+    - 'Duelowa sciezka wojownika.'
+    - 'Tempo, counter i walka jeden na jeden.'
+    attribute-lore:
+    - '&a+ &7Attack Speed'
+    - '&a+ &7Counter Pressure'
+    - '&c- &7Max Health'
+    item: IRON_SWORD
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aPierwsza Wymiana", unlocked-by-default: true, lore: [ '&7Duelowy opener i sprawdzenie tempa.' ] }
+    2: { name: "&aKontra", unlocked-by-default: true, lore: [ '&7Kara za przewidywalny atak celu.' ] }
+    3: { name: "&aPrzewaga Areny", unlocked-by-default: true, lore: [ '&7Utrzymanie presji jeden na jeden.' ] }
+    4: { name: "&aGladiator", unlocked-by-default: true, lore: [ '&7Podpis walki duelowej.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'warrior-paladin'
+options:
+    display: false
+    needs-permission: false
+skills:
+    COMBO_ATTACK: { level: 1, max-level: 30 }
+    WEAKEN: { level: 4, max-level: 30 }
+    EMPOWERED_ATTACK: { level: 8, max-level: 30 }
+attributes:
+    attack-speed: { base: 4.3, per-level: 0.05 }
+    max-health: { base: 22, per-level: 0.2 }
+    movement-speed: { base: 0.11, per-level: 0 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

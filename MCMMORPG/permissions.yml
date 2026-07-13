@@ -1,0 +1,34 @@
+permissions:
+  mmocore.profile:
+    description: Allows default players to open the MMOCore profile signal used in the starter flow.
+    default: true
+  mmocore.class-select:
+    description: Allows default players to open the class/archetype panel exposed by the Foundation Nexus.
+    default: true
+  mmocore.attributes:
+    description: Allows default players to inspect and manage character attributes.
+    default: true
+  mmocore.skills:
+    description: Allows default players to inspect and manage class skills.
+    default: true
+  mmocore.skilltrees:
+    description: Allows default players to inspect and manage skill trees.
+    default: true
+  custom_inv.open.mmoinventory_default:
+    description: Allows default players to open the RPG equipment inventory through /rpginv.
+    default: true
+  mmoitems.foundation_forge:
+    description: Allows default players to open the Foundation forge through /fundament when not using the Nexus console proxy.
+    default: true
+  dungeons.play:
+    description: Allows default players to use MythicDungeons play commands.
+    default: true
+  dungeons.play.send:
+    description: Allows default players to send themselves into a dungeon instance.
+    default: true
+  mythicdungeons.play.level_1:
+    description: Allows default players to enter the foundation MVP level_1 dungeon.
+    default: true
+  foundation.starter.claimed:
+    description: Starter claim marker for the foundation menu state; granted once through the starter flow.
+    default: false

@@ -1,0 +1,35 @@
+display:
+    name: 'Zabojca'
+    lore:
+    - 'Burst melee i kara za zle ustawienie przeciwnika.'
+    attribute-lore:
+    - '&a+ &7Burst Damage'
+    - '&a+ &7Mobility'
+    - '&c- &7Max Health'
+    item: IRON_SWORD
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aCios Otwierający", unlocked-by-default: true, lore: [ '&7Wejście w okno zabójstwa.' ] }
+    2: { name: "&aGłęboka Rana", unlocked-by-default: true, lore: [ '&7Presja po błędzie przeciwnika.' ] }
+    3: { name: "&aUnik Egzekutora", unlocked-by-default: true, lore: [ '&7Przeżycie po nieudanym burstcie.' ] }
+    4: { name: "&aEgzekucja", unlocked-by-default: true, lore: [ '&7Podpis zabójcy: krótko i bez drugiej szansy.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'rogue-marksman'
+options:
+    display: false
+    needs-permission: false
+skills:
+    FURTIVE_STRIKE: { level: 1, max-level: 30 }
+    DEEP_WOUND: { level: 4, max-level: 30 }
+    EVADE: { level: 8, max-level: 30 }
+attributes:
+    attack-speed: { base: 4.3, per-level: 0.05 }
+    movement-speed: { base: 0.11, per-level: 0 }
+    max-health: { base: 18, per-level: 0 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

@@ -1,0 +1,45 @@
+level_1_spawn_grove_guardian_on_start:
+  Skills:
+    - summon{mob=level_1_grove_guardian;amount=1;radius=0;noise=0} @self
+    - summon{mob=level_1_grove_ambience;amount=1;radius=0;noise=0} @self
+
+# ALIAS dla MythicDungeons: functions.yml template level_1 (w pamieci MD) wola stara nazwe
+# 'SpawnGroveGuardianOnStart'; edycja functions.yml na dysku jest nadpisywana autosavem
+# otwartej sesji edycji MD. Alias odtwarza stary kontrakt bez ruszania MD.
+SpawnGroveGuardianOnStart:
+  Skills:
+    - skill{s=level_1_spawn_grove_guardian_on_start} @self
+
+level_1_grove_ambient_life:
+  Skills:
+    - particles{particle=falling_spore_blossom;amount=5;hSpread=7;vSpread=3;yOffset=2.5;speed=0} @PlayersInRadius{r=24}
+    - particles{particle=composter;amount=3;hSpread=8;vSpread=2;yOffset=1;speed=0.01} @PlayersInRadius{r=24}
+    - sound{s=entity.parrot.ambient;v=0.22;p=1.3;chance=0.35} @PlayersInRadius{r=30}
+    - sound{s=entity.bee.loop;v=0.15;p=1.0;chance=0.25} @PlayersInRadius{r=18}
+    - sound{s=weather.rain;v=0.05;p=1.4;chance=0.2} @PlayersInRadius{r=30}
+
+level_1_grove_heartbeat:
+  Skills:
+    - particles{particle=glow;amount=22;hSpread=0.6;vSpread=3;yOffset=4;speed=0.02} @self
+    - particles{particle=end_rod;amount=8;hSpread=1;vSpread=4;yOffset=3;speed=0.01} @self
+    - sound{s=entity.warden.heartbeat;v=0.5;p=1.0} @PlayersInRadius{r=32}
+    - delay 9
+    - particles{particle=glow;amount=12;hSpread=0.6;vSpread=3;yOffset=4;speed=0.02} @self
+    - sound{s=entity.warden.heartbeat;v=0.3;p=0.9} @PlayersInRadius{r=32}
+
+level_1_grove_corruption_pulse:
+  Skills:
+    - particles{particle=sculk_charge_pop;amount=18;hSpread=8;vSpread=1;yOffset=0.5;speed=0.05} @self
+    - particles{particle=smoke;amount=12;hSpread=9;vSpread=0.5;yOffset=0.3;speed=0.02} @PlayersInRadius{r=26}
+    - sound{s=block.sculk.spread;v=0.4;p=0.8} @PlayersInRadius{r=30}
+    - sound{s=ambient.nether_wart_block.break;v=0.2;p=0.7;chance=0.5} @PlayersInRadius{r=30}
+
+level_1_apply_dungeon_difficulty:
+  Conditions:
+    - stance{stance=default}
+  Skills:
+    - setlevel{level=3} @self ?dungeondifficulty{d=HARD}
+    - setlevel{level=2} @self ?dungeondifficulty{d=NORMAL}
+    - setlevel{level=1} @self ?dungeondifficulty{d=EASY}
+    - heal{amount=99999} @self
+    - setstance{stance=ready} @self

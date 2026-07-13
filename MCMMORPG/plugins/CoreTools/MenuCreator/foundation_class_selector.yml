@@ -1,0 +1,153 @@
+foundation_class_selector:
+  permission:
+  bottom_inventory: false
+  name: '<dark_gray>Kompania - Archetypy'
+  size: 6
+  fill_material: 'BROWN_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location:
+        slots: 0,1,2,3,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53
+      source: vanilla
+      material: BROWN_STAINED_GLASS_PANE
+      name:
+
+    title:
+      location:
+        slots: 4
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=
+      name: '<gold><bold>Galeria Archetypów'
+      lore:
+        - '<gray>Tu wybierasz sposób gry, który będzie widoczny'
+        - '<gray>w rosterze twojej Kompanii Bohaterów.'
+        - '<gray>Najpierw spotlight. Potem oath. Dopiero oath zapisuje klasę.'
+        - '<dark_gray>Nic nie wskazuje klasy za ciebie.'
+        - ''
+        - '<dark_gray>Ród: {race_id}'
+
+    guide:
+      location:
+        slots: 13
+      source: vanilla
+      material: WRITABLE_BOOK
+      name: '<yellow><bold>Jak czytać archetyp'
+      lore:
+        - '<gray>Każdy archetyp pokazuje live loop,'
+        - '<gray>Koszt Wyboru i Subclass Pull.'
+        - '<dark_gray>Nie ma automatycznej rekomendacji klasy.'
+
+    payoff_rule:
+      location:
+        slots: 40
+      source: vanilla
+      material: CAMPFIRE
+      name: '<gold><bold>Po oath'
+      lore:
+        - '<gray>Nie dostajesz sprzętu z powietrza.'
+        - '<gray>Idziesz do mentorów i miejskiego huba.'
+        - '<dark_gray>Quartermaster wydaje pierwszy ekwipunek.'
+
+    class_warrior:
+      location:
+        slots: 20
+      source: vanilla
+      material: IRON_SWORD
+      name: '<red><bold>Wojownik'
+      lore:
+        - '<gray>Front, rage i utrzymanie linii.'
+        - '<red>Słabość: dystans i zużycie zasobów.'
+        - '<dark_gray>Wejdź w spotlight archetypu.'
+      left_click:
+        Scripts:
+          - creator_open_class_spotlight_warrior
+      click:
+        Scripts:
+          - creator_open_class_spotlight_warrior
+
+    class_rogue:
+      location:
+        slots: 21
+      source: vanilla
+      material: IRON_SWORD
+      name: '<green><bold>Łotrzyk'
+      lore:
+        - '<gray>Timing, wejście i egzekucja.'
+        - '<red>Słabość: błąd wejścia boli natychmiast.'
+        - '<dark_gray>Wejdź w spotlight archetypu.'
+      left_click:
+        Scripts:
+          - creator_open_class_spotlight_rogue
+      click:
+        Scripts:
+          - creator_open_class_spotlight_rogue
+
+    class_marksman:
+      location:
+        slots: 22
+      source: vanilla
+      material: BOW
+      name: '<aqua><bold>Łowca'
+      lore:
+        - '<gray>Dystans, znak i przygotowanie.'
+        - '<red>Słabość: presja zwarcia i pęknięta linia.'
+        - '<dark_gray>Wejdź w spotlight archetypu.'
+      left_click:
+        Scripts:
+          - creator_open_class_spotlight_marksman
+      click:
+        Scripts:
+          - creator_open_class_spotlight_marksman
+
+    class_mage:
+      location:
+        slots: 23
+      source: vanilla
+      material: AMETHYST_SHARD
+      name: '<light_purple><bold>Mag'
+      lore:
+        - '<gray>Mana, rytm i burst.'
+        - '<red>Słabość: przerwanie castu i utrata rytmu.'
+        - '<dark_gray>Wejdź w spotlight archetypu.'
+      left_click:
+        Scripts:
+          - creator_open_class_spotlight_mage
+      click:
+        Scripts:
+          - creator_open_class_spotlight_mage
+
+    class_paladin:
+      location:
+        slots: 24
+      source: vanilla
+      material: BLAZE_ROD
+      name: '<yellow><bold>Akolita'
+      lore:
+        - '<gray>Ward, sustain i odmowa śmierci.'
+        - '<red>Słabość: wolniejsze tempo zabijania.'
+        - '<dark_gray>Wejdź w spotlight archetypu.'
+      left_click:
+        Scripts:
+          - creator_open_class_spotlight_paladin
+      click:
+        Scripts:
+          - creator_open_class_spotlight_paladin
+
+    back:
+      location:
+        slots: 49
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do rodów'
+      lore:
+        - '<gray>Zmień pieczęć przed oath.'
+      left_click:
+        Scripts:
+          - creator_back_to_race_menu
+      click:
+        Scripts:
+          - creator_back_to_race_menu

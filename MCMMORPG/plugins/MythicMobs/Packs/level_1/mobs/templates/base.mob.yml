@@ -1,0 +1,45 @@
+level_1_base_combatant:
+  Type: ZOMBIE
+  Level: 1
+  Options:
+    PreventRandomEquipment: true
+
+level_1_base_melee_add:
+  Template: level_1_base_combatant
+  Skills:
+    - skill{s=level_1_apply_dungeon_difficulty} @self ~onTimer:10
+  AIGoalSelectors:
+    - 0 clear
+    - 1 meleeattack
+    - 2 randomstroll
+  AITargetSelectors:
+    - 0 clear
+    - 1 players
+  Drops:
+    - level_1_grove_trash_drops
+
+level_1_base_boss:
+  Template: level_1_base_combatant
+  Options:
+    PreventOtherDrops: true
+    AlwaysShowName: true
+    Despawn: false
+  Modules:
+    ThreatTable: true
+
+level_1_base_ambient:
+  Type: ARMOR_STAND
+  Display: ''
+  Health: 1
+  Options:
+    Invisible: true
+    Marker: true
+    NoGravity: true
+    Collidable: false
+    Persistent: true
+    Despawn: false
+    Invincible: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+  Modules:
+    ThreatTable: false

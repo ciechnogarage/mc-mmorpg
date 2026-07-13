@@ -1,0 +1,85 @@
+# Faza 2 "Grove Ritual" bossa (docs: mob-boss-encounter-001) - czasowniki, nie liczby.
+# Telegraph grammar: particle -> pauza -> hit (souls-like). Zero one-shotow.
+
+# VINE LINE: liniowy, wolny pocisk-korzen. Lekcja: zejdz z linii.
+level_1_grove_guardian_vine_line:
+  Skills:
+    - gcd{ticks=40}
+    - sound{s=block.roots.break;v=1.2;p=0.45} @self
+    - particles{particle=block;material=MANGROVE_ROOTS;amount=40;hSpread=0.5;vSpread=0.5;speed=0.1} @self
+    - delay 14
+    - projectile{onTick=[ particles{particle=block;material=MANGROVE_ROOTS;amount=6;hSpread=0.5;vSpread=0.2} @origin ];onHit=level_1_grove_guardian_vine_line_hit;velocity=5;hRadius=1.1;vRadius=1.4;maxRange=16} @target
+
+level_1_grove_guardian_vine_line_hit:
+  Skills:
+    - damage{amount=7} @trigger
+    - potion{type=SLOW;duration=70;level=3} @trigger
+    - sound{s=block.sweet_berry_bush.break;v=1;p=0.6} @trigger
+    - particles{particle=block;material=MANGROVE_ROOTS;amount=25;hSpread=0.4;vSpread=1;speed=0.05} @trigger
+
+# GROUND BLOOM: AoE w miejscu gracza z telegrafem. Lekcja: repozycja.
+# @origin w metaskillu = zrzut lokacji z momentu castu (gracz ktory odszedl - unika).
+level_1_grove_guardian_ground_bloom:
+  Skills:
+    - gcd{ticks=50}
+    - sound{s=block.moss.break;v=1.2;p=0.5} @self
+    - skill{s=level_1_grove_guardian_ground_bloom_zone} @TargetLocation
+
+level_1_grove_guardian_ground_bloom_zone:
+  Skills:
+    - particles{particle=composter;amount=50;hSpread=2.6;vSpread=0.2;yOffset=0.2;speed=0} @origin
+    - particles{particle=block;material=MOSS_BLOCK;amount=40;hSpread=2.6;vSpread=0.2;yOffset=0.1} @origin
+    - sound{s=block.sculk_sensor.clicking;v=1;p=0.6} @origin
+    - delay 25
+    - particles{particle=block;material=FLOWERING_AZALEA_LEAVES;amount=90;hSpread=2.6;vSpread=1.5;yOffset=0.4;speed=0.25} @origin
+    - sound{s=entity.generic.explode;v=0.5;p=1.4} @origin
+    - damage{amount=9} @PlayersNearOrigin{r=3}
+    - potion{type=SLOW;duration=40;level=1} @PlayersNearOrigin{r=3}
+
+# BARKSKIN CHANNEL: przerywalny rytual tarczy/leczenia. Lekcja: interrupt (bij mocno!).
+level_1_grove_guardian_barkskin_channel:
+  Cooldown: 20
+  Skills:
+    - gcd{ticks=100}
+    - setstance{stance=channeling} @self
+    - state{mid=level_1_grove_guardian;s=summon} @self
+    - potion{type=GLOWING;duration=100;level=0} @self
+    - title{title="<yellow>Rytual Kory</yellow>";subtitle="<gray>Straznik czerpie z korzeni - PRZERWIJ GO!</gray>";fadein=5;duration=45;fadeout=10} @PlayersInRadius{r=40}
+    - sound{s=block.respawn_anchor.charge;v=1;p=0.6} @PlayersInRadius{r=40}
+    - particles{particle=composter;amount=30;hSpread=1;vSpread=3;speed=0.1;repeat=9;repeatInterval=10} @self
+    - delay 100
+    - skill{s=level_1_grove_guardian_barkskin_success} @self ?stance{stance=channeling}
+
+level_1_grove_guardian_barkskin_success:
+  Skills:
+    - setstance{stance=ready} @self
+    - heal{amount=50} @self
+    - potion{type=DAMAGE_RESISTANCE;duration=300;level=0} @self
+    - sound{s=block.wood.place;v=1.2;p=0.5} @PlayersInRadius{r=40}
+    - title{title="<dark_green>Kora stwardniala</dark_green>";subtitle="<gray>Straznik odzyskal sily...</gray>";fadein=5;duration=35;fadeout=10} @PlayersInRadius{r=40}
+    - particles{particle=block;material=OAK_WOOD;amount=80;hSpread=1.2;vSpread=2.5;speed=0.1} @self
+
+# Przerwanie: kazde trafienie w trakcie channelingu ma szanse zlamac rytual
+# (EASY najlatwiej - szansa w linii moba). Nagroda: okno na darmowy DPS.
+level_1_grove_guardian_barkskin_break:
+  Skills:
+    - setstance{stance=ready} @self
+    - gcd{ticks=0}
+    - sound{s=block.amethyst_cluster.break;v=1.2;p=0.7} @PlayersInRadius{r=40}
+    - title{title="<green><bold>RYTUAL PRZERWANY!</bold></green>";subtitle="<gray>Straznik slania sie...</gray>";fadein=3;duration=35;fadeout=10} @PlayersInRadius{r=40}
+    - particles{particle=block;material=AMETHYST_BLOCK;amount=70;hSpread=1.5;vSpread=2;speed=0.2} @self
+    - potion{type=SLOW;duration=50;level=2} @self
+    - lockmodel{l=false} @self
+
+# BRIAR VOLLEY: seria 3 cierni w gracza. Lekcja: LoS / unik w ruchu.
+level_1_grove_guardian_briar_volley:
+  Skills:
+    - gcd{ticks=46}
+    - sound{s=entity.player.hurt_sweet_berry_bush;v=1;p=0.6} @self
+    - particles{particle=composter;amount=50;hSpread=0.4;vSpread=0.4;speed=0.3} @self
+    - delay 12
+    - skill{s=level_1_grove_guardian_thorn_bolt} @target
+    - delay 8
+    - skill{s=level_1_grove_guardian_thorn_bolt} @target
+    - delay 8
+    - skill{s=level_1_grove_guardian_thorn_bolt} @target

@@ -40,9 +40,83 @@ QUICKCASTER_CATALYST:
     max-mana: 5.0
     mana-regeneration: 1.0
     required-class:
-      - Mage
+      - mage
     required-level: 5.0
     tier: RARE
+LOWCA_INITIATE_SCOPE:
+  base:
+    material: FLINT
+    name: '&fMonokl Ostatniej Linii'
+    lore:
+      - '&7Mała soczewka dla tych, którzy'
+      - '&7wolą wygrać zanim walka stanie się chaosem.'
+      - '&8Archetyp: Mark / Trap / precyzja.'
+      - '&8Starter: off-hand do nauki dystansu.'
+      - '&8Następny krok: scope forge i ranged bazy.'
+    handworn: true
+    projectile-damage: 8.0
+    critical-strike-power: 6.0
+    required-level: 1.0
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-ranged
+  modifiers:
+    ranged_prefix_magic:
+      weight: 1
+    ranged_suffix_magic:
+      weight: 1
+MAG_INITIATE_FOCUS:
+  base:
+    material: PRISMARINE_CRYSTALS
+    name: '&fPryzmat Przeciążenia'
+    lore:
+      - '&7Trzyma manę w ryzach tylko do chwili,'
+      - '&7w której rozkazujesz jej pęknąć.'
+      - '&8Archetyp: Mana / Overload / burst.'
+      - '&8Starter: off-hand do czytelnego castowania.'
+      - '&8Następny krok: runiczne rdzenie i focus upgrade.'
+    handworn: true
+    magic-damage: 8.0
+    max-mana: 4.0
+    mana-regeneration: 0.2
+    required-level: 1.0
+    gem-sockets:
+      - Blue
+    tier: MAGICAL
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_magic:
+      weight: 1
+    caster_suffix_magic:
+      weight: 1
+AKOLITA_INITIATE_RELIC:
+  base:
+    material: IRON_NUGGET
+    name: '&fRelikwiarz Wardu'
+    lore:
+      - '&7Cichy ciężar przy pasie.'
+      - '&7Przypomina, że przetrwanie też jest bronią.'
+      - '&8Archetyp: Faith / Ward / sustain.'
+      - '&8Starter: relikt roli, bez progu statów.'
+      - '&8Następny krok: relikty, salvage i ward craft.'
+    handworn: true
+    skill-damage: 6.0
+    max-mana: 3.0
+    health-regeneration: 0.08
+    required-level: 1.0
+    gem-sockets:
+      - Uncolored
+    tier: MAGICAL
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_magic:
+      weight: 1
+    caster_suffix_magic:
+      weight: 1
 CHARM_OF_LEVITATION:
   base:
     material: IRON_NUGGET

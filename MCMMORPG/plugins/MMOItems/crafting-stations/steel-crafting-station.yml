@@ -1,6 +1,6 @@
 # Name which will be displayed
 # when opening the station
-name: 'Steel Crafting Station'
+name: '&8[LEGACY OFF] Steel Crafting Station'
 
 # The maximum amount of items in the crafting queue, ie the
 # max number of items players are able to craft simultaneously.
@@ -27,6 +27,7 @@ recipes:
     conditions:
       - 'level{level=5}'
       - 'permission{list="mmoitems.recipe.steel-sword,mmoitems.recipe.station.steel"}'
+      - 'permission{list="foundation.legacy.disabled"}'
 
     # Ingredients needed for the recipe
     # Available properties: type, id, amount, display, level (optional)
@@ -37,6 +38,7 @@ recipes:
     output: 'mmoitems{type=SWORD,id=STEEL_SWORD}'
     conditions:
       - 'level{level=5}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
   two-handed-steel-sword:
@@ -44,6 +46,7 @@ recipes:
     crafting-time: 10
     conditions:
       - 'level{level=8}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=SWORD,id=STEEL_SWORD,amount=1,display="Steel Sword"}'
       - 'vanilla{type=STICK,amount=4,display="Wooden Stick"}'
@@ -52,6 +55,7 @@ recipes:
     crafting-time: 20
     conditions:
       - level{level=15}
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=6,display="Steel Ingot"}'
       - 'vanilla{type=IRON_INGOT,amount=2,display="Iron Ingot"}'
@@ -61,6 +65,7 @@ recipes:
     crafting-time: 7
     conditions:
       - 'level{level=8}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=6,display="Steel Ingot"}'
   steel-chestplate:
@@ -68,6 +73,7 @@ recipes:
     crafting-time: 7
     conditions:
       - level{level=8}
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=9,display="Steel Ingot"}'
   steel-leggings:
@@ -75,6 +81,7 @@ recipes:
     crafting-time: 7
     conditions:
       - 'level{level=8}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=8,display="Steel Ingot"}'
   steel-boots:
@@ -82,11 +89,14 @@ recipes:
     crafting-time: 7
     conditions:
       - 'level{level=8}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=5,display="Steel Ingot"}'
   steel-ingot:
     output: 'mmoitems{type=MATERIAL,id=STEEL_INGOT,amount=3}'
     crafting-time: 2
+    conditions:
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'vanilla{type=IRON_INGOT,amount=4,display="Iron Ingot"}'
   steel-dagger:
@@ -94,6 +104,7 @@ recipes:
     crafting-time: 6
     conditions:
       - 'level{level=20}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
       - 'vanilla{type=STICK,amount=2,display="Wooden Stick"}'
@@ -102,6 +113,7 @@ recipes:
     crafting-time: 20
     conditions:
       - 'level{level=13}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=15,display="Steel Ingot"}'
       - 'vanilla{type=STICK,amount=4,display="Wooden Stick"}'
@@ -109,6 +121,7 @@ recipes:
     output: 'mmoitems{type=GREATSTAFF,id=STIFF_GREATSTAFF}'
     conditions:
       - 'level{level=6}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
       - 'vanilla{type=STICK,amount=10,display="Wooden Stick"}'
@@ -116,6 +129,7 @@ recipes:
     output: 'mmoitems{type=TOOL,id=STEEL_PICKAXE}'
     conditions:
       - 'level{level=6}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=4,display="Steel Ingot"}'
       - 'vanilla{type=STICK,amount=3,display="Wooden Stick"}'
@@ -123,13 +137,14 @@ recipes:
     output: 'mmoitems{type=TOOL,id=STEEL_SHOVEL}'
     conditions:
       - 'level{level=6}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=STEEL_INGOT,amount=2,display="Steel Ingot"}'
       - 'vanilla{type=STICK,amount=3,display="Wooden Stick"}'
 
 gui-layout:
   # GUI display name
-  name: 'Steel Crafting Station ({page}/{max_page})'
+  name: '&8[LEGACY OFF] Steel Crafting Station ({page}/{max_page})'
 
   # Number of slots in your inventory. Must be
   # between 9 and 54 and must be a multiple of 9.

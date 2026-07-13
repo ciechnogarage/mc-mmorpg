@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC visual assets and art direction"
+  short_description: "art direction, Blockbench source, textures and icons"
+  default_prompt: "Use $minecraft-visual-assets as a registry-backed MC task agent and return its evidence-based report contract."

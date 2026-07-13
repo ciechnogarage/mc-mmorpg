@@ -1,0 +1,213 @@
+foundation_style_test:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>[LEGACY OFF] Próba Stylu'
+  size: 6
+  fill_material: 'LIGHT_BLUE_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [ 0,1,2,3,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53 ]
+      source: vanilla
+      material: CYAN_STAINED_GLASS_PANE
+      name: ' '
+
+    title:
+      location: top
+      slots: [ 4 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=
+      name: '<red><bold>Legacy Off'
+      lore:
+        - '<gray>Ten ekran nie jest już częścią'
+        - '<gray>kanonicznego flow kreatora.'
+        - '<gray>Klasa jest teraz wybierana bezpośrednio'
+        - '<gray>w Galerii Archetypów.'
+        - ''
+        - '<red>Legacy off: nie używać w player path.'
+
+    step:
+      location: top
+      slots: [ 13 ]
+      source: vanilla
+      material: SPYGLASS
+      name: '<yellow><bold>Legacy Placeholder'
+      lore:
+        - '<gray>Pozostawione tylko jako zgodność wsteczna.'
+        - '<gray>Wróć do kreatora i wybierz klasę'
+        - '<gray>bezpośrednio z galerii.'
+
+    trial_front:
+      location: top
+      slots: [ 19 ]
+      source: vanilla
+      material: SHIELD
+      name: '<white><bold>Front / Presja'
+      lore:
+        - '<gray>Chcesz wejść pierwszy, trzymać linię'
+        - '<gray>i wymuszać uwagę przeciwnika.'
+        - '<dark_gray>Myśl o bloku, kontrze i presji frontu.'
+        - '<green>Rekomenduje: Wojownik'
+        - '<dark_gray>Flaga: {style_trial_front}'
+      left_click:
+        Scripts:
+          - creator_style_front
+      click:
+        Scripts:
+          - creator_style_front
+
+    trial_burst:
+      location: top
+      slots: [ 20 ]
+      source: vanilla
+      material: IRON_SWORD
+      name: '<white><bold>Burst / Okno'
+      lore:
+        - '<gray>Wolisz wygrać krótkim oknem,'
+        - '<gray>pozycją i egzekucją błędu.'
+        - '<dark_gray>Myśl o wejściu, wyjściu i karze za błąd.'
+        - '<green>Rekomenduje: Łotrzyk'
+        - '<dark_gray>Flaga: {style_trial_burst}'
+      left_click:
+        Scripts:
+          - creator_style_burst
+      click:
+        Scripts:
+          - creator_style_burst
+
+    trial_range:
+      location: top
+      slots: [ 21 ]
+      source: vanilla
+      material: BOW
+      name: '<white><bold>Dystans / Kontrola'
+      lore:
+        - '<gray>Chcesz czytać arenę, znakować cel'
+        - '<gray>i karać zanim wróg podejdzie.'
+        - '<dark_gray>Myśl o linii strzału i kontroli dystansu.'
+        - '<green>Rekomenduje: Łowca'
+        - '<dark_gray>Flaga: {style_trial_range}'
+      left_click:
+        Scripts:
+          - creator_style_range
+      click:
+        Scripts:
+          - creator_style_range
+
+    trial_caster:
+      location: top
+      slots: [ 23 ]
+      source: vanilla
+      material: AMETHYST_SHARD
+      name: '<white><bold>Rytuał / Burst magiczny'
+      lore:
+        - '<gray>Lubisz planować okno many,'
+        - '<gray>kontrolę i ryzyko przerwania.'
+        - '<dark_gray>Myśl o castach, rytmie i załamaniu presji.'
+        - '<green>Rekomenduje: Mag'
+        - '<dark_gray>Flaga: {style_trial_caster}'
+      left_click:
+        Scripts:
+          - creator_style_caster
+      click:
+        Scripts:
+          - creator_style_caster
+
+    trial_sustain:
+      location: top
+      slots: [ 24 ]
+      source: vanilla
+      material: BLAZE_ROD
+      name: '<white><bold>Sustain / Ward'
+      lore:
+        - '<gray>Chcesz utrzymywać walkę, osłaniać'
+        - '<gray>i wygrywać przez odmowę śmierci.'
+        - '<dark_gray>Myśl o wardzie, osłonie i cierpliwości.'
+        - '<green>Rekomenduje: Akolita'
+        - '<dark_gray>Flaga: {style_trial_sustain}'
+      left_click:
+        Scripts:
+          - creator_style_sustain
+      click:
+        Scripts:
+          - creator_style_sustain
+
+    accept:
+      location: top
+      slots: [ 39 ]
+      source: vanilla
+      material: EMERALD_BLOCK
+      name: '<green><bold>Przyjmij rekomendację'
+      lore:
+        - '<gray>Aktualna rekomendacja: <white>{recommended_class_id}'
+        - '<gray>Wchodzi od razu w spotlight'
+        - '<gray>polecanego archetypu.'
+      left_click:
+        Scripts:
+          - creator_accept_recommendation
+      click:
+        Scripts:
+          - creator_accept_recommendation
+
+    readout:
+      location: top
+      slots: [ 40 ]
+      source: vanilla
+      material: BOOK
+      name: '<aqua><bold>Co Ten Wynik Naprawdę Mówi'
+      lore:
+        - '<gray>To nie jest wyrok.'
+        - '<gray>To skrót do fantasy klasy,'
+        - '<gray>która naturalnie pasuje do rytmu.'
+        - '<dark_gray>Potem i tak oglądasz spotlight.'
+
+    choose_manual:
+      location: top
+      slots: [ 41 ]
+      source: vanilla
+      material: NETHER_STAR
+      name: '<yellow><bold>Wybierz ręcznie'
+      lore:
+        - '<gray>Nie wymuszamy rekomendacji.'
+        - '<gray>Możesz wejść do pełnej galerii'
+        - '<gray>archetypów i wybrać własny oath.'
+      left_click:
+        Scripts:
+          - creator_open_class_selector
+      click:
+        Scripts:
+          - creator_open_class_selector
+
+    back:
+      location: top
+      slots: [ 48 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć Do Ras'
+      lore:
+        - '<gray>Zmień rodowód przed próbą.'
+      left_click:
+        Scripts:
+          - creator_back_to_race_menu
+      click:
+        Scripts:
+          - creator_back_to_race_menu
+
+    close:
+      location: top
+      slots: [ 49 ]
+      source: vanilla
+      material: REDSTONE
+      name: '<red><bold>Zamknij'
+      lore:
+        - '<gray>Zamknij kreator.'
+      left_click:
+        Scripts:
+          - creator_close_menu
+      click:
+        Scripts:
+          - creator_close_menu

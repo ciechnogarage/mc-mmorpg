@@ -20,3 +20,45 @@ armor-template-example:
     block-rating: 5%
     dodge-rating: 5%
     parry-rating: 5%
+
+foundation-weapon:
+    attack-damage: 4%
+    weapon-damage: 2%
+    critical-strike-chance: 1
+
+foundation-ranged:
+    attack-damage: 3%
+    projectile-damage: 4%
+    critical-strike-power: 2%
+
+foundation-caster:
+    attack-damage: 2%
+    magic-damage: 4%
+    skill-damage: 3%
+    max-mana: 2%
+
+foundation-heavy-armor:
+    armor: 4%
+    block-rating: 5%
+    max-health: 2%
+
+foundation-light-armor:
+    armor: 3%
+    dodge-rating: 5%
+    movement-speed: 1%
+
+foundation-robe:
+    armor: 2%
+    max-mana: 3%
+    mana-regeneration: 2%
+    magic-damage-reduction: 2%
+
+foundation-shield:
+    block-power: 5%
+    block-rating: 5%
+    armor: 3%
+
+foundation-accessory:
+    max-health: 2%
+    max-mana: 2%
+    cooldown-reduction: 1%

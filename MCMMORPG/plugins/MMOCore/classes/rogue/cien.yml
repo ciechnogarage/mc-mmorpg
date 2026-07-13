@@ -1,0 +1,35 @@
+display:
+    name: 'Cien'
+    lore:
+    - 'Uniki, flankowanie i ucieczka z presji.'
+    attribute-lore:
+    - '&a+ &7Evasion'
+    - '&a+ &7Positioning'
+    - '&c- &7Direct Pressure'
+    item: ENDER_PEARL
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aUskok Cienia", unlocked-by-default: true, lore: [ '&7Pozycja i unik zamiast frontalnej wymiany.' ] }
+    2: { name: "&aUkryte Cięcie", unlocked-by-default: true, lore: [ '&7Kara za odsłonięte plecy.' ] }
+    3: { name: "&aZanik Presji", unlocked-by-default: true, lore: [ '&7Wyjście z błędu lub reset tempa.' ] }
+    4: { name: "&aCień", unlocked-by-default: true, lore: [ '&7Podpis flankowania i kontroli ryzyka.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'rogue-marksman'
+options:
+    display: false
+    needs-permission: false
+skills:
+    EVADE: { level: 1, max-level: 30 }
+    FURTIVE_STRIKE: { level: 4, max-level: 30 }
+    WEAKEN: { level: 8, max-level: 30 }
+attributes:
+    movement-speed: { base: 0.12, per-level: 0 }
+    safe-fall-distance: { base: 6.0, per-level: 0 }
+    max-health: { base: 18, per-level: 0 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

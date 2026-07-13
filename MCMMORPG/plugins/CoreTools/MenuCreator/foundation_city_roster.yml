@@ -1,0 +1,159 @@
+foundation_city_roster:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Bastion Pierwszego Kontraktu'
+  size: 6
+  fill_material: 'ORANGE_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [ 0,1,2,3,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53 ]
+      source: vanilla
+      material: BROWN_STAINED_GLASS_PANE
+      name: ' '
+
+    title:
+      location: top
+      slots: [ 4 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=
+      name: '<gold><bold>Miasto Startowe'
+      lore:
+        - '<gray>To ma grać jak pierwszy hub fantasy,'
+        - '<gray>nie jak panel administracyjny.'
+        - '<gray>Mentorzy, gear i profesje mają'
+        - '<gray>sprzedać wagę pierwszego miasta.'
+        - ''
+        - '<red>Zakaz: auto-grant gearu po klasie.'
+        - '<dark_gray>Klasa: {class_selected}'
+        - '<dark_gray>Pierwszy gear: {first_weapon_claimed}'
+
+    class_mentors:
+      location: top
+      slots: [ 19 ]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<yellow><bold>Mentorzy Klas'
+      lore:
+        - '<gray>To jest główny payoff po oath.'
+        - '<gray>Wchodzisz po fantasy klasy,'
+        - '<gray>żywy loop i preview podklas.'
+        - '<dark_gray>Highlight miasta.'
+      left_click:
+        Scripts:
+          - creator_open_class_mentor_roster
+      click:
+        Scripts:
+          - creator_open_class_mentor_roster
+
+    skill_trainer:
+      location: top
+      slots: [ 21 ]
+      source: vanilla
+      material: ENCHANTED_BOOK
+      name: '<aqua><bold>Trener Skilli'
+      lore:
+        - '<gray>Roster: klasowe, ogólne,'
+        - '<gray>profesyjne i itemowe.'
+        - '<dark_gray>Otwarte: {skill_roster_opened}'
+        - '<dark_gray>Bridge: panel konceptu -> runtime MMOCore.'
+      left_click:
+        Scripts:
+          - creator_open_skill_roster
+      click:
+        Scripts:
+          - creator_open_skill_roster
+
+    quartermaster:
+      location: top
+      slots: [ 23 ]
+      source: vanilla
+      material: CHEST
+      name: '<green><bold>Kwatermistrz Pierwszego Kontraktu'
+      lore:
+        - '<gray>Pierwszy ekwipunek ma źródło'
+        - '<gray>w mieście, nie w kliknięciu klasy.'
+        - '<gray>Pieczęć rodu dokłada mały bonus startowy.'
+        - '<dark_gray>Kontrakt: {first_contract_started}'
+        - '<dark_gray>Wydane: {first_weapon_claimed}'
+        - '<dark_gray>Tu gracz powinien czuć wagę pierwszego setu.'
+      left_click:
+        Scripts:
+          - creator_open_first_contract
+      click:
+        Scripts:
+          - creator_open_first_contract
+
+    professions:
+      location: top
+      slots: [ 25 ]
+      source: vanilla
+      material: SMITHING_TABLE
+      name: '<green><bold>Dzielnica Profesji'
+      lore:
+        - '<gray>Gathering, rzemiosło, usługi,'
+        - '<gray>craft, salvage i utility.'
+        - '<dark_gray>Intro: {profession_intro_completed}'
+        - '<dark_gray>Nie tylko ekonomia; to druga oś progresu.'
+      left_click:
+        Scripts:
+          - creator_open_profession_roster
+      click:
+        Scripts:
+          - creator_open_profession_roster
+
+    forge:
+      location: top
+      slots: [ 39 ]
+      source: vanilla
+      material: BLAST_FURNACE
+      name: '<gold><bold>Kuźnia / Salvage / Upgrade'
+      lore:
+        - '<gray>Gear rośnie przez łup, craft'
+        - '<gray>i materiały, nie przez menu klasy.'
+        - '<dark_gray>Live: foundation-forge i anchor upgrade path.'
+
+    city_progress:
+      location: top
+      slots: [ 40 ]
+      source: vanilla
+      material: WRITABLE_BOOK
+      name: '<aqua><bold>Progress Miasta'
+      lore:
+        - '<gray>1. Mentor i loop klasy'
+        - '<gray>2. Skill roster i runtime bridge'
+        - '<gray>3. Quartermaster i pierwszy set'
+        - '<gray>4. Profesje, forge, storage'
+
+    storage:
+      location: top
+      slots: [ 41 ]
+      source: vanilla
+      material: ENDER_CHEST
+      name: '<aqua><bold>Bank / Storage'
+      lore:
+        - '<gray>Hub convenience, nie panic bank.'
+        - '<red>Vault opening pending runtime hook.'
+      left_click:
+        Scripts:
+          - creator_open_storage_menu
+      click:
+        Scripts:
+          - creator_open_storage_menu
+
+    close:
+      location: top
+      slots: [ 49 ]
+      source: vanilla
+      material: REDSTONE
+      name: '<red><bold>Zamknij'
+      left_click:
+        Scripts:
+          - creator_close_menu
+      click:
+        Scripts:
+          - creator_close_menu

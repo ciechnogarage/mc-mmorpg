@@ -1,0 +1,54 @@
+level_1_grove_guardian:
+  Template: level_1_base_boss
+  Type: ZOMBIE
+  Display: '<green>Strażnik Gaju</green>'
+  Health: 400
+  Damage: 12
+  Armor: 6
+  LevelModifiers:
+    Health: 180
+    Damage: 3.5
+    Armor: 2
+  Options:
+    MovementSpeed: 0.18
+  Model:
+    Id: level_1_grove_guardian
+    ViewRadius: 64
+    Drive: false
+    DamageTint: true
+  Skills:
+    - defaultstate{s=passive;t=idle} @self ~onSpawn
+    - skill{s=level_1_grove_guardian_damage_zones} @self ~onSpawn
+    - skill{s=level_1_grove_guardian_damage_zones} @self ~onLoad
+    - bodyclamp{mh=25;mb=25;rde=35;rdu=35} @self ~onSpawn
+    - bodyclamp{mh=25;mb=25;rde=35;rdu=35} @self ~onLoad
+    - skill{s=level_1_grove_guardian_encounter_init} @self ~onTimer:10
+    - skill{s=level_1_grove_guardian_enrage} @self ~onTimer:10 ?stance{stance=ready} ?dungeondifficulty{d=HARD} ?health{h=<228}
+    - skill{s=level_1_grove_guardian_enrage} @self ~onTimer:10 ?stance{stance=ready} ?dungeondifficulty{d=NORMAL} ?health{h=<174}
+    - skill{s=level_1_grove_guardian_enrage} @self ~onTimer:10 ?stance{stance=ready} ?dungeondifficulty{d=EASY} ?health{h=<119}
+    - skill{s=level_1_grove_guardian_basic_attack} @self ~onAttack
+    - state{mid=level_1_grove_guardian;s=death} @self ~onDeath
+    - skill{s=level_1_grove_guardian_death_finale} @self ~onDeath
+    # HARD-only chase: Skarb Skazenia na zapadlisku, 60 s zanim sculk go wchlonie.
+    - skill{s=level_1_hard_chase} @self ~onDeath ?dungeondifficulty{d=HARD}
+    - skill{s=level_1_grove_guardian_root_smash} @self ~onTimer:120 ?stance{stance=ready}
+    - skill{s=level_1_grove_guardian_root_smash} @self ~onTimer:60 ?stance{stance=enraged}
+    - skill{s=level_1_grove_guardian_summon_adds} @self ~onTimer:220 ?stance{stance=ready}
+    - skill{s=level_1_grove_guardian_summon_adds_enraged} @self ~onTimer:160 ?stance{stance=enraged}
+    - skill{s=level_1_grove_guardian_thorn_nova} @self ~onTimer:140 ?stance{stance=ready} ?dungeondifficulty{d=HARD}
+    - skill{s=level_1_grove_guardian_thorn_nova} @self ~onTimer:140 ?stance{stance=enraged} ?dungeondifficulty{d=HARD}
+    # Faza 2 "Grove Ritual" (docs mob-boss-encounter-001): vine line, ground bloom,
+    # przerywalny barkskin, briar volley. Telegraphy w skillach (grove_guardian_p2).
+    - skill{s=level_1_grove_guardian_vine_line} @target ~onTimer:170 ?stance{stance=ready}
+    - skill{s=level_1_grove_guardian_briar_volley} @target ~onTimer:190 ?stance{stance=ready} ?dungeondifficulty{d=NORMAL}
+    - skill{s=level_1_grove_guardian_briar_volley} @target ~onTimer:150 ?stance{stance=ready} ?dungeondifficulty{d=HARD}
+    - skill{s=level_1_grove_guardian_ground_bloom} @target ~onTimer:260 ?stance{stance=ready} ?health{h=<300}
+    # Rytual kory wylaczony dopiero gdy WSZYSTKIE 3 wezly oczyszczone (negacja:
+    # unset licznika = wezly nieobecne = rytual dziala jak dotychczas).
+    - skill{s=level_1_grove_guardian_barkskin_channel} @self ~onTimer:340 ?stance{stance=ready} ?health{h=<280} ?!variableInRange{var=world.level_1_nodes_cleansed;value=>2}
+    # HARD, P2: skazenie odrasta (wezel wraca przy arenie) — zachowanie, nie liczby.
+    - skill{s=level_1_grove_guardian_node_regrow} @self ~onTimer:200 ?stance{stance=ready} ?dungeondifficulty{d=HARD} ?health{h=<300}
+    - skill{s=level_1_grove_guardian_node_regrow} @self ~onTimer:200 ?stance{stance=enraged} ?dungeondifficulty{d=HARD}
+    - skill{s=level_1_grove_guardian_barkskin_break} @self ~onDamaged ?stance{stance=channeling} ?chance{c=0.3}
+  Drops:
+    - level_1_grove_guardian_drops

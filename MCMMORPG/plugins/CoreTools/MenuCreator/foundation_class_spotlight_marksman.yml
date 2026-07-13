@@ -1,0 +1,78 @@
+foundation_class_spotlight_marksman:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Spotlight Archetypu - Łowca'
+  size: 4
+  fill_material: 'CYAN_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: CYAN_STAINED_GLASS_PANE
+      name: ' '
+    hero:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<aqua><bold>Portret Łowcy'
+      lore:
+        - '<gray>To twoja twarz po złożeniu oath.'
+    loop:
+      location: top
+      slots: [11]
+      source: vanilla
+      material: BOOK
+      name: '<aqua><bold>Hero Card'
+      lore:
+        - '<gray>Live loop: mark -> pozycja -> czysta linia.'
+        - '<gray>Łowca chce wygrać walkę zanim wróg'
+        - '<gray>przejdzie przez jego dystans.'
+        - '<dark_gray>Payoff: zasięg i przygotowanie.'
+    weakness:
+      location: top
+      slots: [13]
+      source: vanilla
+      material: COBWEB
+      name: '<red><bold>Koszt Wyboru'
+      lore:
+        - '<gray>Słabość: zwarcie i chaos.'
+        - '<gray>Kiedy linia pęka, build traci'
+        - '<gray>najważniejsze narzędzie przewagi.'
+    subclass:
+      location: top
+      slots: [15]
+      source: vanilla
+      material: SPYGLASS
+      name: '<aqua><bold>Subclass Pull'
+      lore:
+        - '<gray>Strzelec / Tropiciel / Bestiariusz'
+        - '<dark_gray>Anchor gear: Zwiadowca, scope, ranged salvage.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Przejdź do Oath Screenu'
+      left_click:
+        Scripts:
+          - creator_open_class_confirm_marksman
+      click:
+        Scripts:
+          - creator_open_class_confirm_marksman
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do Galerii Klas'
+      left_click:
+        Scripts:
+          - creator_open_class_selector
+      click:
+        Scripts:
+          - creator_open_class_selector

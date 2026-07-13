@@ -5,13 +5,13 @@ server:
   target_minecraft_version: 1.21.11
   runtime: Paper 1.21.11-127-main@bd74bf6
   environment: staging
-  server_folder: Server — kopia/1.21.11
-  last_scanned: 2026-05-26
+  server_folder: MCMMORPG
+  last_scanned: 2026-06-24
   scan_source:
-    - Server — kopia/1.21.11/plugins
-    - Server — kopia/1.21.11/codex-start-last.out.log
-    - Server — kopia/1.21.11/version_history.json
-  scan_note: Versions are sourced from staged jar filenames plus observed Paper boot lines.
+    - MCMMORPG/plugins
+    - MCMMORPG/logs/latest.log
+    - MCMMORPG/version_history.json
+  scan_note: Versions are sourced from local jar filenames and existing runtime evidence; startup warnings/errors still require review before release.
 
 plugins:
   - name: Chunky-Bukkit
@@ -40,6 +40,16 @@ plugins:
     license_status: unknown
     update_policy: staging_required
     criticality: high
+
+  - name: CharacterStage
+    jar: CharacterStage-0.1.0-SNAPSHOT.jar
+    current_version: 0.1.0-SNAPSHOT
+    role: character selection/profile integration bridge
+    owner: ui_ux_menu_designer
+    license_status: internal
+    update_policy: staging_required
+    criticality: high
+    source_path: MCMMORPG/plugin-src/character-stage
 
   - name: CoreTools
     jar: CoreTools-1.4.1.jar
@@ -94,6 +104,9 @@ plugins:
     license_status: unknown
     update_policy: staging_required
     criticality: high
+    runtime_status: disabled_staging_mvp
+    runtime_note: moved to MCMMORPG/disabled-runtime-blockers/plugins because no local database baseline is present for foundation MVP staging.
+    runtime_location: MCMMORPG/disabled-runtime-blockers/plugins
 
   - name: Iris
     jar: Iris-3.9.1-1.20.1-1.21.11.jar
@@ -130,6 +143,8 @@ plugins:
     license_status: unknown
     update_policy: staging_required
     criticality: low
+    runtime_status: yaml_fallback_accepted_staging_mvp
+    runtime_note: SQL fallback is accepted only for staging MVP if pets are not required by the first vertical slice.
 
   - name: MEG-Molang
     jar: MEG-Molang-R1.0.0.jar
@@ -153,6 +168,15 @@ plugins:
     jar: MMOInventory-2.0-20260330.113858-32.jar
     current_version: 2.0-20260330.113858-32
     role: rpg inventory
+    owner: rpg_systems_designer
+    license_status: unknown
+    update_policy: staging_required
+    criticality: high
+
+  - name: MMOProfiles
+    jar: MMOProfiles-1.2-20260325.193503-28.jar
+    current_version: 1.2-20260325.193503-28
+    role: character profiles and character selection data
     owner: rpg_systems_designer
     license_status: unknown
     update_policy: staging_required

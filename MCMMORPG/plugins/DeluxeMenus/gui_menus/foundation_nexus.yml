@@ -1,0 +1,226 @@
+menu_title: '&8Stolica Wyspy: Nexus'
+open_command:
+  - foundation
+  - stolica
+  - nexus
+size: 27
+open_commands:
+  - '[sound] BLOCK_BEACON_ACTIVATE'
+
+items:
+  intro:
+    material: RECOVERY_COMPASS
+    slot: 10
+    display_name: '&6Mapa Pękniętej Wyspy'
+    lore:
+      - '&7Stolica nie rozdaje bohaterstwa.'
+      - '&7Ona wystawia rachunek za każde'
+      - '&7wejście w mrok pod wyspą.'
+      - ''
+      - '&fPierwszy kontrakt:'
+      - '&e1. Zwiąż rodowód z postacią'
+      - '&e2. Złóż przysięgę archetypu'
+      - '&e3. Odwiedź mentorów i kwatermistrza'
+      - '&e4. Wejdź do Kwietnej Polany'
+      - ''
+      - '&8To jest pionek na planszy wojny,'
+      - '&8nie szkolny samouczek.'
+    left_click_commands:
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+
+  loot_signal:
+    material: ENDER_CHEST
+    slot: 11
+    display_name: '&dRejestr Łupów'
+    lore:
+      - '&7Każdy sensowny build zaczyna się'
+      - '&7od blizn, rdzeni i rzeczy wyrwanych'
+      - '&7z gardła pierwszego bossa.'
+      - ''
+      - '&fKwietna Polana daje:'
+      - '&d- rdzenie i fragmenty runiczne'
+      - '&d- klejnoty pod pierwsze buildy'
+      - '&d- relikty do forge i ulepszeń'
+      - ''
+      - '&eKliknij, aby sprawdzić logikę łupu.'
+    left_click_commands:
+      - '[message] &dRejestr &8> &fTrash ma karmić craft i decyzje, nie zapychać ekwipunku.'
+      - '[message] &dRejestr &8> &fBoss ma dropić rzeczy, po których czujesz zmianę builda.'
+      - '[message] &dRejestr &8> &fForge zamienia łup w kierunek postaci, a nie w losowy numer.'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+
+  character_setup:
+    material: ECHO_SHARD
+    slot: 12
+    display_name: '&aKsięga Rodu i Przysięgi'
+    lore:
+      - '&7Tu nie bierzesz kitu.'
+      - '&7Tu podpisujesz pierwszą wersję siebie.'
+      - ''
+      - '&fWybór zapisze:'
+      - '&a- rodowód'
+      - '&a- archetyp walki'
+      - '&a- pierwszy znak przynależności'
+      - ''
+      - '&eOtwórz księgę i wybierz świadomie.'
+    left_click_commands:
+      - '[player] core-menu foundation_race_selector'
+      - '[close]'
+
+  city_roster_signal:
+    material: BELL
+    slot: 19
+    display_name: '&6Roster Miasta'
+    lore:
+      - '&7Mentorzy klas, trener skilli,'
+      - '&7profesje, kwatermistrz i forge.'
+      - ''
+      - '&fZasada: &enie ma auto-grantu.'
+      - '&7Gear i skille mają źródło w świecie.'
+      - ''
+      - '&eOtwórz miejski roster.'
+    left_click_commands:
+      - '[player] core-menu foundation_city_roster'
+      - '[close]'
+
+  progression_signal:
+    material: AMETHYST_SHARD
+    slot: 13
+    display_name: '&eOś Postępu'
+    lore:
+      - '&7Dobre MMO nie pyta tylko'
+      - '&7"ile masz leveli". Pyta:'
+      - ''
+      - '&e- co potrafisz przeżyć'
+      - '&e- co umiesz wykonać pod presją'
+      - '&e- jaką cenę płacisz za moc'
+      - '&e- czym różnisz się od reszty'
+      - ''
+      - '&eKliknij po zasadę projektową.'
+    left_click_commands:
+      - '[message] &6Oś &8> &fNajpierw tożsamość, potem mechanika, potem prestiż.'
+      - '[message] &6Oś &8> &fBuild ma powstawać z decyzji, lootu i ryzyka.'
+      - '[message] &6Oś &8> &fJeśli system nie daje wyboru albo napięcia, nie zasługuje na ekran.'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+
+  profile_signal:
+    material: WRITABLE_BOOK
+    slot: 14
+    display_name: '&bArchiwum Postaci'
+    lore:
+      - '&7Oddzielne życiorysy, oddzielne'
+      - '&7ryzyko, oddzielny łup.'
+      - ''
+      - '&eOtwórz MMOProfiles.'
+    left_click_commands:
+      - '[player] mmoprofiles open %player_name%'
+      - '[close]'
+
+  inventory_signal:
+    material: CHEST
+    slot: 21
+    display_name: '&6Ekwipunek RPG'
+    lore:
+      - '&7Tu sprawdzasz, czy twoja postać'
+      - '&7jest buildem, czy tylko zbiorem łupów.'
+      - ''
+      - '&fEkran pokazuje:'
+      - '&6- pancerz i drugą rękę'
+      - '&6- pierścienie, amulet i artefakty'
+      - '&6- podstawowe staty walki'
+      - ''
+      - '&eOtwórz ekwipunek postaci.'
+    left_click_commands:
+      - '[player] rpginv'
+      - '[close]'
+
+  storage_signal:
+    material: BARREL
+    slot: 20
+    display_name: '&bArchiwum Łupów'
+    lore:
+      - '&7Skrzynia profilu i konta przez'
+      - '&7kontrolowany ekran storage.'
+      - ''
+      - '&fReguła: &bhub/safe-zone, bez combat locka.'
+      - '&8Nie jest to panic button w lochu.'
+      - ''
+      - '&eOtwórz archiwum.'
+    left_click_commands:
+      - '[player] core-menu foundation_storage'
+      - '[close]'
+
+  warsztat_signal:
+    material: ANVIL
+    slot: 15
+    display_name: '&eKuźnia Blizn'
+    lore:
+      - '&7Tu martwy boss staje się'
+      - '&7stalą, runą, gniazdem i przewagą.'
+      - ''
+      - '&fCel: &enie większe liczby,'
+      - '&ftylko wyraźniejszy build.'
+      - ''
+      - '&eOtwórz forge.'
+    left_click_commands:
+      - '[console] mi stations open foundation-forge %player_name%'
+      - '[close]'
+
+  portal_level_1:
+    material: CRYING_OBSIDIAN
+    slot: 16
+    display_name: '&dKontrakt: Kwietna Polana'
+    lore:
+      - '&7Pierwszy loch ma sprawdzić,'
+      - '&7czy twoja postać jest decyzją,'
+      - '&7a nie skórką z itemami.'
+      - ''
+      - '&fCel: &aStrażnik Gaju'
+      - '&fStawka: &dGajowe Relikty'
+      - '&fRyzyko: &cmechaniki, addy, enrage'
+      - ''
+      - '&ePodpisz kontrakt i wejdź.'
+    left_click_commands:
+      - '[message] &dKontrakt &8> &fKwietna Polana otwiera się. Zabij to, co pilnuje rdzenia.'
+      - '[player] md play level_1'
+      - '[sound] BLOCK_PORTAL_TRAVEL'
+      - '[close]'
+
+  class_signal:
+    material: NETHER_STAR
+    slot: 22
+    display_name: '&6Panel Archetypu'
+    lore:
+      - '&7Po przysiędze sprawdzasz tu'
+      - '&7dalsze ścieżki, sloty i specjalizacje.'
+      - ''
+      - '&8Docelowo: buildy, nie kosmetyka.'
+      - ''
+      - '&eOtwórz panel MMOCore.'
+    left_click_commands:
+      - '[player] class'
+      - '[close]'
+
+  starter_notice:
+    material: NETHERITE_SCRAP
+    slot: 23
+    display_name: '&7Zasada: Zero Plastikowych Kitów'
+    lore:
+      - '&7Starter ma dać archetyp i napięcie.'
+      - '&7Nie ma udawać endgame.'
+      - ''
+      - '&fDobry start daje:'
+      - '&7- jasną rolę'
+      - '&7- jedną słabość'
+      - '&7- pierwszy powód, żeby iść do lochu'
+      - ''
+      - '&8To jest twarda reguła jakości.'
+    left_click_commands:
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+
+  close:
+    material: BARRIER
+    slot: 26
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'

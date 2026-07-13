@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC mobs, bosses and models"
+  short_description: "MythicMobs, ModelEngine, bosses"
+  default_prompt: "Use $minecraft-mobs-models as a registry-backed MC task agent and return its evidence-based report contract."

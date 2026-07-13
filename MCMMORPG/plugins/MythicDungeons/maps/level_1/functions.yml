@@ -1,0 +1,291 @@
+Version: 1
+Functions:
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_secret_herbalist_cache
+  targetType: &id001
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PLAYER
+  location:
+    ==: org.bukkit.Location
+    x: 27.0
+    y: 64.0
+    z: 76.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 2.5
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_open_root_gate_reward
+  targetType: &id002
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 65.0
+    z: -32.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: level_1_grove_guardian
+    delayTicks: 80
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionCheckpoint
+  savePoint: false
+  targetType: *id001
+  location:
+    ==: org.bukkit.Location
+    x: 5.0
+    y: 64.0
+    z: 72.0
+    pitch: 0.0
+    yaw: 180.0
+  pitch: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: true
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 10.0
+    conditions: []
+  yaw: 0.0
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionFinishDungeon
+  leave: false
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 64.0
+    z: 3.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: level_1_grove_guardian
+    delayTicks: 0
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_zone_camp_ambience
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 64.0
+    z: 133.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDungeonStart
+    delayTicks: 20
+    limitToRoom: false
+    allowRetrigger: false
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: SpawnGroveGuardianOnStart
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 64.0
+    z: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 17.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_open_root_gate_bridge
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 66.0
+    z: 46.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: level_1_grove_warden
+    delayTicks: 0
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_spawn_grove_warden
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 64.0
+    z: 54.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 12.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_zone_path_a
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 6.0
+    y: 64.0
+    z: 111.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 10.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_reward_chamber_bonus
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 60.0
+    z: -39.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 3.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionCheckpoint
+  savePoint: false
+  targetType: *id001
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 64.0
+    z: 40.0
+    pitch: 0.0
+    yaw: 180.0
+  pitch: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: true
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 6.0
+    conditions: []
+  yaw: 0.0
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_wave_1
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 64.0
+    z: 74.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 11.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionLeaveDungeon
+  targetType: *id001
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 60.0
+    z: -42.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: true
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 2.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_wave_2
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: 1.0
+    y: 64.0
+    z: 70.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: level_1_grove_wolf
+    delayTicks: 0
+    limitToRoom: false
+    count: 2
+    allowRetrigger: false
+    radius: 14.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: level_1_zone_path_b
+  targetType: *id002
+  location:
+    ==: org.bukkit.Location
+    x: -5.0
+    y: 64.0
+    z: 93.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 10.0
+    conditions: []

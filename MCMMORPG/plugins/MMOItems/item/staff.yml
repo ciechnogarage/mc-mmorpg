@@ -43,14 +43,76 @@ EARTH_STAFF:
         cooldown: 39.0
         amplifier: 4.0
         duration: 2.0
+AKOLITA_INITIATE_STAFF:
+  base:
+    material: BONE
+    name: '&fKostur Odmowy'
     lore:
-    - '&7An extremely powerful weapon.'
-    - '&7Use it &f&nwisely&7.'
-    tier: VERY_RARE
-    disable-crafting: true
-    disable-smelting: true
-    disable-interaction: true
-    required-level: 30.0
+    - '&7Nie leczy świata. Tylko odmawia mu'
+    - '&7prawa do zabrania twojej drużyny zbyt wcześnie.'
+    - '&8Archetyp: Faith / Ward / sustain.'
+    - '&8Starter: narzędzie roli, nie nagroda endgame.'
+    - '&8Następny krok: ADEPT / ZWIADOWCA i relikty runiczne.'
+    required-level: 1.0
+    attack-damage: 5.0
+    attack-speed: 0.5
+    max-mana: 4.0
+    gem-sockets:
+      - Blue
+    tier: MAGICAL
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_magic:
+      weight: 1
+    caster_suffix_magic:
+      weight: 1
+KRIOMANTA_STAFF:
+  base:
+    material: BONE
+    name: '&bKostur Szronu'
+    lore:
+      - '&7Kostur pod kontrole, zaklecia i tempo starcia.'
+    required-level: 25.0
+    required-intelligence: 18.0
+    attack-damage: 7.0
+    attack-speed: 0.45
+    magic-damage: 10.0
+    skill-damage: 10.0
+    gem-sockets:
+      - Blue
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_rare:
+      weight: 1
+    caster_suffix_rare:
+      weight: 1
+KAPELAN_STAFF:
+  base:
+    material: BONE
+    name: '&fPastoral Swiatla'
+    lore:
+      - '&7Kostur pod wsparcie i utrzymanie druzyny.'
+    required-level: 25.0
+    required-intelligence: 18.0
+    attack-damage: 6.0
+    attack-speed: 0.5
+    health-regeneration: 0.12
+    max-mana: 6.0
+    gem-sockets:
+      - Blue
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_rare:
+      weight: 1
+    caster_suffix_rare:
+      weight: 1
 LIGHTNING_STAFF:
   base:
     material: STICK
@@ -168,7 +230,7 @@ VOID_STAFF:
     magic-damage: 40.0
     staff-spirit: VOID_SPIRIT
     required-class:
-      - Mage
+      - mage
     ability:
       ability1:
         type: CURSED_BEAM

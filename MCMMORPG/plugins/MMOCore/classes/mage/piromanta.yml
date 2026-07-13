@@ -1,0 +1,35 @@
+display:
+    name: 'Piromanta'
+    lore:
+    - 'Ogień, ignite i ofensywne castowanie.'
+    attribute-lore:
+    - '&a+ &7Fire Pressure'
+    - '&a+ &7Burst'
+    - '&c- &7Max Health'
+    item: BLAZE_ROD
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aZarzewie", unlocked-by-default: true, lore: [ '&7Pierwsze źródło presji ognia.' ] }
+    2: { name: "&aKula Ognia", unlocked-by-default: true, lore: [ '&7Czytelny burst z kosztem ustawienia.' ] }
+    3: { name: "&aPopiół", unlocked-by-default: true, lore: [ '&7DoT albo kara za zbyt długą walkę.' ] }
+    4: { name: "&aPrzegrzanie", unlocked-by-default: true, lore: [ '&7Podpis builda: moc za ryzyko.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'mage-arcane-mage'
+options:
+    display: false
+    needs-permission: false
+skills:
+    FIRE_STORM: { level: 1, max-level: 30 }
+    FIREBALL: { level: 4, max-level: 30 }
+    AMBERS: { level: 8, max-level: 30 }
+attributes:
+    max-health: { base: 18, per-level: 0 }
+    max-mana: { base: 31, per-level: 1.3 }
+    mana-regeneration: { base: 0.24, per-level: 0.04 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

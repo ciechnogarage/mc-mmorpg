@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC permissions and economy"
+  short_description: "LuckPerms, Vault, CMI"
+  default_prompt: "Use $minecraft-permissions-economy as a registry-backed MC task agent and return its evidence-based report contract."

@@ -1,0 +1,35 @@
+display:
+    name: 'Sabotazysta'
+    lore:
+    - 'Debuffy, tempo i psucie rytmu walki.'
+    attribute-lore:
+    - '&a+ &7Debuff Pressure'
+    - '&a+ &7Utility'
+    - '&c- &7Raw Damage'
+    item: SHEARS
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aZakłócenie", unlocked-by-default: true, lore: [ '&7Debuff i psucie rytmu celu.' ] }
+    2: { name: "&aCichy Sabotaż", unlocked-by-default: true, lore: [ '&7Utility bez czystego burstu.' ] }
+    3: { name: "&aUcieczka z Linii", unlocked-by-default: true, lore: [ '&7Zmiana pozycji po wykonaniu zadania.' ] }
+    4: { name: "&aSabotaż", unlocked-by-default: true, lore: [ '&7Podpis kontroli tempa walki.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'rogue-marksman'
+options:
+    display: false
+    needs-permission: false
+skills:
+    WEAKEN: { level: 1, max-level: 30 }
+    SNEAKY_PICKY: { level: 3, max-level: 20 }
+    EVADE: { level: 8, max-level: 30 }
+attributes:
+    movement-speed: { base: 0.115, per-level: 0 }
+    sneaking-speed: { base: 0.6, per-level: 0 }
+    max-health: { base: 18, per-level: 0 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

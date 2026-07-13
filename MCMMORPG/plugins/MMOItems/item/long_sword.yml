@@ -9,7 +9,7 @@ DUAL_LONGSWORD:
     tier: EPIC
     required-level: 45.0
     required-class:
-      - Paladin
+      - paladin
     critical-strike-chance: 10.0
     critical-strike-power:
       base: 15.0
@@ -46,3 +46,27 @@ DUAL_LONGSWORD:
         duration: 4.0
         cooldown: 8.0
         damage: 25.0
+INKWIZYTOR_BLADE:
+  base:
+    material: IRON_SWORD
+    name: '&6Miecz Osadu'
+    lore:
+      - '&7Dluzsze ostrze pod skill damage i presje na celu.'
+    required-level: 25.0
+    required-strength: 14.0
+    required-intelligence: 10.0
+    attack-damage: 8.0
+    attack-speed: 1.6
+    weapon-damage: 10.0
+    skill-damage: 8.0
+    gem-sockets:
+      - Red
+      - Blue
+    tier: RARE
+    upgrade:
+      template: foundation-weapon
+  modifiers:
+    melee_prefix_rare:
+      weight: 1
+    melee_suffix_rare:
+      weight: 1

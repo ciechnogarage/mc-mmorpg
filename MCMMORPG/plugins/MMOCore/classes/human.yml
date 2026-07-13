@@ -2,15 +2,14 @@
 # Display options, it's not displayed anywhere so pointless.
 # Just need the name for reference and PAPI placeholders.
 display:
-    name: 'Human'
+    name: 'Origin'
 
     # Icon used when displaying the class in the UI. By default,
     # the default class is not displayed, making this option useless
-    item: LEATHER_CHESTPLATE
+    item: BOOK
 
-# This is the default class granted to players when joining the server.
-# They may level it up, but they cannot choose this class again
-# after switching class, since it is not displayed in /class
+# Technical starter phase class.
+# Public-facing race selection is handled separately through MMOProfiles + CoreTools.
 options:
     default: true # Default class when joining the server for the first time
     display: false # Does not display in the class UI
@@ -34,19 +33,19 @@ exp-table: class_exp_table
 
 skill-slots:
     1:
-        name: "&aSkill Slot I"
+        name: "&aStarter Slot I"
         unlocked-by-default: true
         lore: []
     2:
-        name: "&aSkill Slot II"
+        name: "&aStarter Slot II"
         unlocked-by-default: true
         lore: []
     3:
-        name: "&aSkill Slot III"
+        name: "&aStarter Slot III"
         unlocked-by-default: true
         lore: []
     4:
-        name: "&aSkill Slot IV"
+        name: "&aStarter Slot IV"
         unlocked-by-default: true
         lore: []
 

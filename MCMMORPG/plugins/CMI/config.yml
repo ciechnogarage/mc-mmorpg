@@ -13,7 +13,7 @@ Economy:
   # Attention! For economy to work properly with other plugins you will need either an injector or a recompiled Vault version.
   # You can find both option at top of plugins page
   # ATTENTION! If you disabled CMI economy while server was running, you will need to perform a full server restart for this to take effect and avoid issues when retrieving players' balances.
-  Enabled: false
+  Enabled: true
   # Determines if player needs to confirm money payment by clicking on chat message
   Confirmation: false
   # Should we allow offline payments. This is primarily for pay command and will not block other payments like receiving money from other plugins
@@ -208,6 +208,9 @@ Optimizations:
   ShortDateFormat: dd/MM/yy
   # Do you want to record sell hand actions into file
   SellLog: true
+  # When set to true players with same name but different capitalization will be denyied from joining server to avoid possible issues. In example if on first day player Zrips joined server and on second day player zRips tries to join server, he will be rejected
+  # RECOMMENDED to keep this at true
+  PreventDifferentCapitalizationNames: false
   # When this set to true by using any command, requiring players name, in case plugin cant determine player by given full name, then partial matches from online players will be used. In example: /cmi heal rips can heal player Zrips 
   # Useful when you have players with complicated names
   PartialPlayerName: false
@@ -565,7 +568,7 @@ ExploitPatcher:
   NoCommandsInBed: false
   # Due to major exploit relating to oversized books this is recomended to be enabled
   # While this is set to true players will be limited in how many pages they can create
-  # Limitation is determined by cmi.book.pages.missing locale for command.checkperm.info.variablecolor [20to100]missing locale for command.checkperm.info.permissioncolor  permission node and by default players can create 20 pages
+  # Limitation is determined by cmi.book.pages.§x§a§a§a§a§a§a[20to100]§x§f§f§a§a§0§0 permission node and by default players can create 20 pages
   LimitBooks: true
   # While enabled we will prevent items being teleported with end portal and end beacons
   BlockEndPortalItemTransfers: true
@@ -803,6 +806,11 @@ Command:
     # Default: LOW
     Priority: LOW
   Spy:
+    # Delay in seconds for commands spy to turn on after relog
+    # This will prevent some one from loging in with admin account and seeing commands before loging in
+    # Keep it at same or higher than your login plugin delay for entering password
+    # This includes social spy too
+    DelayForTrigger: 60
     # Commands in this list will not be shown when command spy is enabled for player for security/privacy reasons
     # This can be bypassed with cmi.command.commandspy.bypass permission node
     BlackListed:

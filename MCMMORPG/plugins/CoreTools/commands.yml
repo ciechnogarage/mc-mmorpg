@@ -71,7 +71,7 @@ menu-creator:
   main: 'core-menu'
   aliases:
     - 'coremenu'
-  permission: 'OP'
+  permission: ''
   description: 'Allows opening custom menu'
 
 stations:

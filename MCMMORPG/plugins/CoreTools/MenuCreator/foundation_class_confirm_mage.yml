@@ -1,0 +1,50 @@
+foundation_class_confirm_mage:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Oath Screen - Mag'
+  size: 4
+  fill_material: 'PURPLE_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: PURPLE_STAINED_GLASS_PANE
+      name: ' '
+    summary:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<gold><bold>Przysięga Maga'
+      lore:
+        - '<gray>Rodowód: <white>{race_id}'
+        - '<gray>Oath: zamienisz ryzyko w moc castu.'
+        - '<gray>Payoff: mentorzy, Adept i runiczny anchor path.'
+        - '<dark_gray>Gear nadal ma źródło w mieście.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Potwierdź Oath Maga'
+      left_click:
+        Scripts:
+          - creator_confirm_mage
+      click:
+        Scripts:
+          - creator_confirm_mage
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: REDSTONE
+      name: '<red><bold>Wróć do Archetypów'
+      left_click:
+        Scripts:
+          - creator_cancel_class_choice
+      click:
+        Scripts:
+          - creator_cancel_class_choice

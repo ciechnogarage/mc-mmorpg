@@ -14,9 +14,9 @@ mysql:
   enabled: false
   host: localhost
   port: 3306
-  database: minecraft
-  user: mmolover
-  pass: ILovePhoenixDev
+  database: disabled
+  user: disabled
+  pass: disabled
   maxPoolSize: 10
   maxLifeTime: 300000
   connectionTimeOut: 10000
@@ -256,7 +256,7 @@ player_resource_tick_period: 20
 # log into a profile with default class before choosing another class
 #
 # This option is useless unless you have installed a profile plugin.
-force-class-selection: true
+force-class-selection: false
 
 # Check the target player's RPG profile on shift-right click.
 shift-click-player-profile-check: false

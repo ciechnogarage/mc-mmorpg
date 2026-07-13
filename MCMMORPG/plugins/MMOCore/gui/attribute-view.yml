@@ -8,7 +8,7 @@
 # by attributes here. Please use attributes/default_attributes.yml to edit those.
 
 # GUI display name
-name: Player Attributes
+name: 'Atrybuty Postaci'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -31,14 +31,14 @@ items:
     #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
 
     item: CAULDRON
-    name: '&aAttribute Points'
+    name: '&aReset atrybutów'
     lore:
       - ''
-      - 'You have spent a total of &6{total}&7 attribute points.'
-      - '&7Right click to reallocate them.'
+      - 'Wydano łącznie &6{total}&7 punktów atrybutów.'
+      - '&7Prawy klik resetuje rozdział punktów.'
       - ''
-      - '&eCosts 1 attribute reallocation point.'
-      - '&e◆ Attribute Reallocation Points: &6{points}'
+      - '&eKoszt: 1 punkt resetu atrybutów.'
+      - '&e◆ Punkty resetu atrybutów: &6{points}'
   str:
     slots: [ 11 ]
     function: attribute_strength
@@ -46,15 +46,15 @@ items:
     item: GOLDEN_APPLE
     lore: # {buffs} returns amount of buffs
       - ''
-      - '&7Points Spent: &6{spent}&7/&6{max}'
-      - '&7Current {name}: &6&l{current}'
+      - '&7Wydane punkty: &6{spent}&7/&6{max}'
+      - '&7Aktualnie {name}: &6&l{current}'
       - ''
-      - '&8When Leveled Up:'
-      - '&7  +{buff_weapon_damage}% Weapon Damage (&a+{total_weapon_damage}%&7)'
-      - '&7  +{buff_max_health}% Max Health (&a+{total_max_health}%&7)'
+      - '&8Po ulepszeniu:'
+      - '&7  +{buff_weapon_damage}% obrażeń broni (&a+{total_weapon_damage}%&7)'
+      - '&7  +{buff_max_health}% maks. zdrowia (&a+{total_max_health}%&7)'
       - ''
-      - '&eClick to level up for 1 attribute point.'
-      - '&e◆ Current Attribute Points: {attribute_points}'
+      - '&eKliknij, aby wydać 1 punkt atrybutu.'
+      - '&e◆ Dostępne punkty atrybutów: {attribute_points}'
   dex:
     slots: [ 13 ]
     function: attribute_dexterity
@@ -63,16 +63,16 @@ items:
     item-flags: [ 'HIDE_ATTRIBUTES' ]
     lore:
       - ''
-      - '&7Points Spent: &6{spent}&7/&6{max}'
-      - '&7Current {name}: &6&l{current}'
+      - '&7Wydane punkty: &6{spent}&7/&6{max}'
+      - '&7Aktualnie {name}: &6&l{current}'
       - ''
-      - '&8When Leveled Up:'
-      - '&7  +{buff_physical_damage}% Physical Damage (&a+{total_physical_damage}%&7)'
-      - '&7  +{buff_projectile_damage}% Projectile Damage (&a+{total_projectile_damage}%&7)'
-      - '&7  +{buff_attack_speed}% Attack Speed (&a+{total_attack_speed}%&7)'
+      - '&8Po ulepszeniu:'
+      - '&7  +{buff_physical_damage}% obrażeń fizycznych (&a+{total_physical_damage}%&7)'
+      - '&7  +{buff_projectile_damage}% obrażeń dystansowych (&a+{total_projectile_damage}%&7)'
+      - '&7  +{buff_attack_speed}% szybkości ataku (&a+{total_attack_speed}%&7)'
       - ''
-      - '&eClick to level up for 1 attribute point.'
-      - '&e◆ Current Attribute Points: {attribute_points}'
+      - '&eKliknij, aby wydać 1 punkt atrybutu.'
+      - '&e◆ Dostępne punkty atrybutów: {attribute_points}'
   int:
     slots: [ 15 ]
     function: attribute_intelligence
@@ -80,12 +80,12 @@ items:
     item: BOOK
     lore:
       - ''
-      - '&7Points Spent: &6{spent}&7/&6{max}'
-      - '&7Current {name}: &6&l{current}'
+      - '&7Wydane punkty: &6{spent}&7/&6{max}'
+      - '&7Aktualnie {name}: &6&l{current}'
       - ''
-      - '&8When Leveled Up:'
-      - '&7  +{buff_magic_damage}% Magic Damage (&a+{total_magic_damage}%&7)'
-      - '&7  +{buff_cooldown_reduction}% Cooldown Reduction (&a+{total_cooldown_reduction}%&7)'
+      - '&8Po ulepszeniu:'
+      - '&7  +{buff_magic_damage}% obrażeń magicznych (&a+{total_magic_damage}%&7)'
+      - '&7  +{buff_cooldown_reduction}% redukcji cooldownów (&a+{total_cooldown_reduction}%&7)'
       - ''
-      - '&eClick to level up for 1 attribute point.'
-      - '&e◆ Current Attribute Points: {attribute_points}'
+      - '&eKliknij, aby wydać 1 punkt atrybutu.'
+      - '&e◆ Dostępne punkty atrybutów: {attribute_points}'

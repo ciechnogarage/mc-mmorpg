@@ -1,0 +1,35 @@
+display:
+    name: 'Bestiariusz'
+    lore:
+    - 'Lowca ze wsparciem utility i kontroli stworzen.'
+    attribute-lore:
+    - '&a+ &7Utility'
+    - '&a+ &7Sustain'
+    - '&c- &7Burst'
+    item: LEAD
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aZew Bestii", unlocked-by-default: true, lore: [ '&7Utility i wsparcie bez utraty roli łowcy.' ] }
+    2: { name: "&aSłaby Punkt", unlocked-by-default: true, lore: [ '&7Debuff zamiast czystego burstu.' ] }
+    3: { name: "&aUnik Tropiciela", unlocked-by-default: true, lore: [ '&7Przeżycie presji i zmiana pozycji.' ] }
+    4: { name: "&aBestiariusz", unlocked-by-default: true, lore: [ '&7Podpis wsparcia stworzeń i wiedzy.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'rogue-marksman'
+options:
+    display: false
+    needs-permission: false
+skills:
+    MINOR_HEALINGS: { level: 1, max-level: 30 }
+    WEAKEN: { level: 4, max-level: 30 }
+    EVADE: { level: 8, max-level: 30 }
+attributes:
+    max-health: { base: 19, per-level: 0.1 }
+    movement-speed: { base: 0.108, per-level: 0 }
+    knockback-resistance: { base: 0.12, per-level: 0.01 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

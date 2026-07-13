@@ -1,0 +1,79 @@
+foundation_race_spotlight_elf:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Spotlight Rodu - Elf'
+  size: 4
+  fill_material: 'CYAN_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: CYAN_STAINED_GLASS_PANE
+      name: ' '
+    hero:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<aqua><bold>Portret Tropiciela'
+      lore:
+        - '<gray>To twoja postać niesie tę pieczęć.'
+    fantasy:
+      location: top
+      slots: [11]
+      source: vanilla
+      material: BOOK
+      name: '<aqua><bold>Hero Card'
+      lore:
+        - '<gray>Elf buduje przewagę ciszą, rytuałem'
+        - '<gray>i wiedzą, gdzie postawić pierwszy krok.'
+        - '<gray>To fantasy pamięci, tropu i dystansu.'
+        - '<dark_gray>Starter scene: ścieżka, liść, linia strzału.'
+    payoff:
+      location: top
+      slots: [13]
+      source: vanilla
+      material: FERN
+      name: '<gold><bold>Realny Payoff'
+      lore:
+        - '<gray>Miasto da 2 Dzikie Zioła'
+        - '<gray>pod pierwszy utility craft.'
+        - '<dark_gray>Combat passive pozostaje pending.'
+    counter:
+      location: top
+      slots: [15]
+      source: vanilla
+      material: IRON_BARS
+      name: '<red><bold>Koszt Wyboru'
+      lore:
+        - '<gray>Counterplay: wymuszenie zwarcia.'
+        - '<gray>Tożsamość działa najlepiej,'
+        - '<gray>gdy możesz przygotować dystans.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Przyjmij Pieczęć Elfa'
+      left_click:
+        Scripts:
+          - creator_confirm_race_elf
+      click:
+        Scripts:
+          - creator_confirm_race_elf
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do Galerii'
+      left_click:
+        Scripts:
+          - creator_open_race_gallery
+      click:
+        Scripts:
+          - creator_open_race_gallery

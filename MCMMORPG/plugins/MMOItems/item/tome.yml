@@ -11,6 +11,50 @@ AMPLIFICATION_TOME:
       base: 85.0
       spread: 0.02
       max-spread: 0.06
+BESTIARIUSZ_MANUAL:
+  base:
+    material: BOOK
+    name: '&2Podrecznik Lowow'
+    lore:
+      - '&7Ksiega pod wiedze o bestiach i obrazenia PvE.'
+    required-level: 25.0
+    required-intelligence: 18.0
+    skill-damage: 8.0
+    max-health: 3.0
+    pve-damage: 8.0
+    gem-sockets:
+      - Green
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    accessory_prefix_rare:
+      weight: 1
+    accessory_suffix_rare:
+      weight: 1
+RYTUALISTA_GRIMOIRE:
+  base:
+    material: ENCHANTED_BOOK
+    name: '&5Grymuar Obrzedow'
+    lore:
+      - '&7Ksiega pod rytualy, skille i presje magiczna.'
+    required-level: 25.0
+    required-intelligence: 18.0
+    magic-damage: 10.0
+    skill-damage: 12.0
+    max-mana: 6.0
+    gem-sockets:
+      - Blue
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_rare:
+      weight: 1
+    caster_suffix_rare:
+      weight: 1
 WYVERN_FEATHER:
   base:
     material: FEATHER

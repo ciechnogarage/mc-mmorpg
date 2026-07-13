@@ -1,12 +1,293 @@
 GOLD_COIN:
   base:
     material: GOLD_NUGGET
-    name: '&fGold Coin'
+    name: '&fMoneta'
     lore:
-    - '&7A very shiny gold coin.'
+    - '&7Prosta moneta do ekonomii foundation.'
     enchants:
       unbreaking: 1
     hide-enchants: true
+    disable-crafting: true
+CREATOR_RACE_CZLOWIEK:
+  base:
+    material: PAPER
+    custom-model-data: 9101.0
+    name: '&fSigil Rodu: Człowiek'
+    lore:
+    - '&7Hero card rasy do menu kreatora.'
+    - '&8Fantasy: adaptacja i kontrakty.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_RACE_ORK:
+  base:
+    material: PAPER
+    custom-model-data: 9102.0
+    name: '&cSigil Rodu: Ork'
+    lore:
+    - '&7Hero card rasy do menu kreatora.'
+    - '&8Fantasy: presja i brutalna przewaga.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_RACE_ELF:
+  base:
+    material: PAPER
+    custom-model-data: 9103.0
+    name: '&bSigil Rodu: Elf'
+    lore:
+    - '&7Hero card rasy do menu kreatora.'
+    - '&8Fantasy: trop, rytuał, precyzja.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_RACE_KRASNOLUD:
+  base:
+    material: PAPER
+    custom-model-data: 9104.0
+    name: '&6Sigil Rodu: Krasnolud'
+    lore:
+    - '&7Hero card rasy do menu kreatora.'
+    - '&8Fantasy: stal, odzysk, pamięć kamienia.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_RACE_NIEUMARLY:
+  base:
+    material: PAPER
+    custom-model-data: 9105.0
+    name: '&8Sigil Rodu: Nieumarły'
+    lore:
+    - '&7Hero card rasy do menu kreatora.'
+    - '&8Fantasy: klątwa i odmowa grobu.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_CLASS_WARRIOR:
+  base:
+    material: IRON_SWORD
+    custom-model-data: 9201.0
+    name: '&fArchetyp: Wojownik'
+    lore:
+    - '&7Hero card klasy do menu kreatora.'
+    - '&8Loop: guard, counter, rage.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_CLASS_ROGUE:
+  base:
+    material: IRON_SWORD
+    custom-model-data: 9202.0
+    name: '&aArchetyp: Łotrzyk'
+    lore:
+    - '&7Hero card klasy do menu kreatora.'
+    - '&8Loop: opener, tempo, escape.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_CLASS_MARKSMAN:
+  base:
+    material: BOW
+    custom-model-data: 9203.0
+    name: '&bArchetyp: Łowca'
+    lore:
+    - '&7Hero card klasy do menu kreatora.'
+    - '&8Loop: mark, pozycja, czysta linia.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_CLASS_MAGE:
+  base:
+    material: BLAZE_POWDER
+    custom-model-data: 9204.0
+    name: '&dArchetyp: Mag'
+    lore:
+    - '&7Hero card klasy do menu kreatora.'
+    - '&8Loop: mana, burst, reset rytmu.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_CLASS_PALADIN:
+  base:
+    material: BLAZE_ROD
+    custom-model-data: 9205.0
+    name: '&eArchetyp: Akolita'
+    lore:
+    - '&7Hero card klasy do menu kreatora.'
+    - '&8Loop: ward, sustain, odmowa śmierci.'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_GUARDIAN:
+  base:
+    material: SHIELD
+    custom-model-data: 9301.0
+    name: '&fCrest: Strażnik'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_BERSERKER:
+  base:
+    material: IRON_AXE
+    custom-model-data: 9302.0
+    name: '&cCrest: Berserker'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_GLADIATOR:
+  base:
+    material: GOLDEN_SWORD
+    custom-model-data: 9303.0
+    name: '&6Crest: Gladiator'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_ASSASSIN:
+  base:
+    material: SHEARS
+    custom-model-data: 9304.0
+    name: '&aCrest: Zabójca'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_SABOTEUR:
+  base:
+    material: TRIPWIRE_HOOK
+    custom-model-data: 9305.0
+    name: '&2Crest: Sabotażysta'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_SHADOW:
+  base:
+    material: BLACK_DYE
+    custom-model-data: 9306.0
+    name: '&8Crest: Cień'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_SNIPER:
+  base:
+    material: SPYGLASS
+    custom-model-data: 9307.0
+    name: '&bCrest: Strzelec'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_TRACKER:
+  base:
+    material: COMPASS
+    custom-model-data: 9308.0
+    name: '&aCrest: Tropiciel'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_BESTIARIST:
+  base:
+    material: BONE
+    custom-model-data: 9309.0
+    name: '&eCrest: Bestiariusz'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_PYROMANCER:
+  base:
+    material: FIRE_CHARGE
+    custom-model-data: 9310.0
+    name: '&cCrest: Piromanta'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_CRYOMANCER:
+  base:
+    material: SNOWBALL
+    custom-model-data: 9311.0
+    name: '&bCrest: Kriomanta'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_TEMPEST:
+  base:
+    material: LIGHTNING_ROD
+    custom-model-data: 9312.0
+    name: '&eCrest: Burzomanta'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_CHAPLAIN:
+  base:
+    material: GLOWSTONE_DUST
+    custom-model-data: 9313.0
+    name: '&fCrest: Kapelan'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_INQUISITOR:
+  base:
+    material: IRON_BARS
+    custom-model-data: 9314.0
+    name: '&6Crest: Inkwizytor'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_SUBCLASS_RITUALIST:
+  base:
+    material: AMETHYST_SHARD
+    custom-model-data: 9315.0
+    name: '&5Crest: Rytualista'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_STATE_RECOMMENDED:
+  base:
+    material: NETHER_STAR
+    custom-model-data: 9401.0
+    name: '&aStan: Rekomendowane'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_STATE_CONFIRM:
+  base:
+    material: EMERALD
+    custom-model-data: 9402.0
+    name: '&aStan: Potwierdź'
+    disable-crafting: true
+    disable-interaction: true
+CREATOR_STATE_BRIDGE:
+  base:
+    material: WRITABLE_BOOK
+    custom-model-data: 9403.0
+    name: '&bStan: Runtime Bridge'
+    disable-crafting: true
+    disable-interaction: true
+RACE_SIGIL_CZLOWIEK:
+  base:
+    material: PAPER
+    name: '&fPieczęć Człowieka'
+    lore:
+    - '&7Nie ma w niej czystej krwi.'
+    - '&7Jest dług, handel, wojna i upór.'
+    - '&8Rodowód: adaptacja i kontrakty.'
+    - '&8Pasyw rasowy: późniejszy balans, nie starter power.'
+    unstackable: true
+    disable-crafting: true
+RACE_SIGIL_ORK:
+  base:
+    material: PAPER
+    name: '&cPieczęć Orka'
+    lore:
+    - '&7Znak tych, którzy wolą złamać drzwi'
+    - '&7niż prosić o klucz.'
+    - '&8Rodowód: presja, honor i trofea.'
+    - '&8Pasyw rasowy: późniejszy balans, nie starter power.'
+    unstackable: true
+    disable-crafting: true
+RACE_SIGIL_ELF:
+  base:
+    material: PAPER
+    name: '&bPieczęć Elfa'
+    lore:
+    - '&7Cichy zapis starych ścieżek,'
+    - '&7rytuałów i strzał bez ostrzeżenia.'
+    - '&8Rodowód: trop, precyzja i pamięć lasu.'
+    - '&8Pasyw rasowy: późniejszy balans, nie starter power.'
+    unstackable: true
+    disable-crafting: true
+RACE_SIGIL_KRASNOLUD:
+  base:
+    material: PAPER
+    name: '&6Pieczęć Krasnoluda'
+    lore:
+    - '&7Kamień pęka raz. Krasnolud pamięta,'
+    - '&7kto uderzył pierwszy.'
+    - '&8Rodowód: stal, forge i dług.'
+    - '&8Pasyw rasowy: późniejszy balans, nie starter power.'
+    unstackable: true
+    disable-crafting: true
+RACE_SIGIL_NIEUMARLY:
+  base:
+    material: PAPER
+    name: '&8Pieczęć Nieumarłego'
+    lore:
+    - '&7To nie jest powrót do życia.'
+    - '&7To odmowa zostania martwym.'
+    - '&8Rodowód: klątwa, cień i zakazane runy.'
+    - '&8Pasyw rasowy: późniejszy balans, nie starter power.'
+    unstackable: true
     disable-crafting: true
 HUMAN_SOUL:
   base:
@@ -16,32 +297,30 @@ HUMAN_SOUL:
     hide-enchants: true
     enchants:
       unbreaking: 1
-    name: '&6Human Soul'
+    name: '&8[LEGACY OFF] Human Soul'
     disable-crafting: true
+    required-level: 100.0
     lore:
-    - '&7&oYou hear the screams of'
-    - '&7&oyour enemies... or friends.'
+    - '&8Legacy/demo item poza foundation loop.'
 MYSTERIOUS_PEARL:
   base:
     material: ENDER_PEARL
     enchants:
       luck_of_the_sea: 1.0
     hide-enchants: true
-    name: §9Mysterious Pearl
+    name: §8[LEGACY OFF] Mysterious Pearl
     lore:
-      - §7§oWho knows what secrets it can hide...
-      - §3Can't be stacked.
+      - §8Legacy/demo item poza foundation loop.
+    required-level: 100.0
     unstackable: true
     tier: RARE
 LEVEL_1_KEY:
   base:
     material: SHEARS
-    name: §3§nLevel 1§3 Key
+    name: §8[LEGACY OFF] Level 1 Key
     lore:
-      - §7Gives the permission §cmmoitems.key§7 when
-      - §7held.
-    granted-permissions:
-      - mmoitems.key
+      - §8Legacy key disabled. Do not use for permissions.
+    required-level: 100.0
     tier: UNIQUE
     unstackable: true
     disable-interaction: true

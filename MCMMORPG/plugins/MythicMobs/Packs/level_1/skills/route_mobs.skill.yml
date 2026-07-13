@@ -1,0 +1,25 @@
+# Skille mobow-lekcji trasy. Telegraph grammar: particle -> pauza -> efekt.
+
+# Rytual Zaklinacza: 3s telegraf (kolumna czastek + dzwiek), potem heal sojusznikow
+# i puls obrazen. Interrupt = zabic go w oknie (HP niskie celowo).
+level_1_channeler_ritual:
+  Cooldown: 6
+  Skills:
+    - sound{s=entity.evoker.prepare_summon;v=1;p=0.8} @PlayersInRadius{r=20}
+    - particles{particle=witch;amount=25;hSpread=0.5;vSpread=2;speed=0.05;repeat=5;repeatInterval=12} @self
+    - particles{particle=composter;amount=15;hSpread=3;vSpread=0.2;yOffset=0.2;repeat=5;repeatInterval=12} @self
+    - delay 60
+    - heal{amount=15} @MobsInRadius{r=12;types=level_1_grove_wolf,level_1_corrupted_sprout,level_1_shielded_husk,level_1_briar_archer}
+    - particles{particle=heart;amount=10;hSpread=4;vSpread=1} @self
+    - damage{amount=5} @PlayersInRadius{r=8}
+    - potion{type=POISON;duration=50;level=0} @PlayersInRadius{r=8}
+    - sound{s=entity.evoker.cast_spell;v=1;p=0.7} @PlayersInRadius{r=20}
+
+# Garda Wygrzebanca: 2.5s odpornosci (telegraf: uniesienie tarczy = dzwiek + czastki).
+level_1_husk_guard:
+  Cooldown: 5
+  Skills:
+    - sound{s=item.shield.block;v=1;p=0.8} @PlayersInRadius{r=12}
+    - particles{particle=block;material=IRON_BLOCK;amount=20;hSpread=0.5;vSpread=1;speed=0.02} @self
+    - potion{type=DAMAGE_RESISTANCE;duration=50;level=2} @self
+    - potion{type=SLOW;duration=50;level=1} @self

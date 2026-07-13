@@ -1,0 +1,35 @@
+display:
+    name: 'Inkwizytor'
+    lore:
+    - 'Bojowa sciezka akolity z naciskiem na pressure i karanie.'
+    attribute-lore:
+    - '&a+ &7Pressure'
+    - '&a+ &7Hybrid Combat'
+    - '&c- &7Pure Defense'
+    item: IRON_SWORD
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aWyrok", unlocked-by-default: true, lore: [ '&7Presja i kara zamiast biernej obrony.' ] }
+    2: { name: "&aRana Winy", unlocked-by-default: true, lore: [ '&7DoT lub osłabienie celu.' ] }
+    3: { name: "&aŚlubowanie", unlocked-by-default: true, lore: [ '&7Sustain pod ryzykowną wymianę.' ] }
+    4: { name: "&aInkwizycja", unlocked-by-default: true, lore: [ '&7Podpis ofensywnego akolity.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'warrior-paladin'
+options:
+    display: false
+    needs-permission: false
+skills:
+    WEAKEN: { level: 1, max-level: 30 }
+    DEEP_WOUND: { level: 4, max-level: 30 }
+    GREATER_HEALINGS: { level: 8, max-level: 30 }
+attributes:
+    max-health: { base: 22, per-level: 0.2 }
+    max-mana: { base: 20, per-level: 0.4 }
+    attack-speed: { base: 3.9, per-level: 0 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

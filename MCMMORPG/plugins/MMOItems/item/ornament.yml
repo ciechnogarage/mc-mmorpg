@@ -12,5 +12,27 @@ BOOK_OF_STRENGTH:
     weapon-damage: 10.0
     damage-reduction: 5.0
     required-class:
-      - Warrior
+      - warrior
     required-level: 15.0
+CIEN_MIRROR:
+  base:
+    material: GLASS_PANE
+    name: '&8Lustro Uskoku'
+    lore:
+      - '&7Ozdoba pod unik, ruch i precyzyjne wejscie.'
+    required-level: 25.0
+    required-dexterity: 18.0
+    movement-speed: 0.02
+    dodge-rating: 10.0
+    critical-strike-chance: 6.0
+    gem-sockets:
+      - Green
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-accessory
+  modifiers:
+    accessory_prefix_rare:
+      weight: 1
+    accessory_suffix_rare:
+      weight: 1

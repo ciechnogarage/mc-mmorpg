@@ -1,5 +1,5 @@
 # GUI display name
-name: 'Selected Skill: &6{skill}'
+name: 'Wybrany skill: &6{skill}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -34,9 +34,9 @@ items:
     item-flags: [ 'HIDE_ATTRIBUTES' ]
     lore:
       - ''
-      - '{unlocked}&a✔ Requires Level {unlock}'
-      - '{locked}&c✖ Requires Level {unlock}'
-      - '{max_level}&e✔ Maximum Level Hit!'
+      - '{unlocked}&a✔ Wymaga poziomu {unlock}'
+      - '{locked}&c✖ Wymaga poziomu {unlock}'
+      - '{max_level}&e✔ Maksymalny poziom'
       - ''
       - '{lore}'
   next:
@@ -44,51 +44,51 @@ items:
     function: next
     item: PLAYER_HEAD
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
-    name: '&aNext'
+    name: '&aDalej'
     lore: { }
   previous:
     slots: [ 2 ]
     function: previous
     item: PLAYER_HEAD
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
-    name: '&aPrevious'
+    name: '&aWstecz'
     lore: { }
 
   reallocate:
     slots: [ 45 ]
     function: reallocation
     item: CAULDRON
-    name: '&aReallocate Skill Points'
+    name: '&aReset punktów skilli'
     lore:
       - ''
-      - 'You have spent a total of &6{total}&7 skill points.'
-      - '&7Right click to reallocate them.'
+      - '&7Wydano łącznie &6{total}&7 punktów skilli.'
+      - '&7Prawy klik resetuje rozdział punktów.'
       - ''
-      - '&eCosts 1 skill reallocation point.'
-      - '&e◆ Skill Reallocation Points: &6{points}'
+      - '&eKoszt: 1 punkt resetu skilli.'
+      - '&e◆ Punkty resetu skilli: &6{points}'
 
   slot:
     slots: [ 8,17,26,35,44,53 ]
     function: slot
     item: GRAY_DYE
 
-    name: '&aSkill Slot {slot}'
-    no-skill: '&cNone'
+    name: '&aSlot skilla {slot}'
+    no-skill: '&cBrak'
 
     #If this is filled, the item shown in the GUI when a slot is filled will be the item specified here.
     #Else it will be the display item of the bound skill.
     #filled-item:
     #filled-custom-model-data:
     lore:
-      - '&7Current Skill: &6{skill}'
+      - '&7Aktualny skill: &6{skill}'
       - ''
       - '{slot-lore}'
-      - '&7&oCast this spell by pressing [F] followed'
-      - '&7&oby the keybind displayed on the action bar.'
+      - '&7&oUżyj skilla przez [F] i klawisz'
+      - '&7&opokazany na pasku akcji.'
       - ''
-      - '&e► Left click to bind {selected}.'
-      - '&e► Right click to unbind.'
-      - '&e► Shift left click to select.'
+      - '&e► Lewy klik: przypisz {selected}.'
+      - '&e► Prawy klik: odepnij.'
+      - '&e► Shift + lewy klik: wybierz.'
   skill-level:
     slots: [ 6,15,24,33,42,51 ]
     function: level
@@ -104,7 +104,7 @@ items:
       item: AIR
 
     item: LIME_DYE
-    name: '&a{skill} Level {roman}'
+    name: '&a{skill} poziom {roman}'
     lore:
       - ''
       - '{lore}'
@@ -112,11 +112,11 @@ items:
     slots: [ 15 ]
     function: upgrade
     item: GREEN_STAINED_GLASS_PANE
-    name: '&a&lUPGRADE {skill_caps}'
+    name: '&a&lULEPSZ {skill_caps}'
     lore:
-      - '&7Costs 1 skill point.'
+      - '&7Koszt: 1 punkt skilla.'
       - ''
-      - '&eCurrent Skill Points: {skill_points}'
+      - '&eAktualne punkty skilli: {skill_points}'
 #This will display the selected item in the skill UI.
 #  selected:
 #    slots: []

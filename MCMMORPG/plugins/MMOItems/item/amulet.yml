@@ -1,0 +1,26 @@
+AMULET_OGNISKA:
+  base:
+    material: GOLD_NUGGET
+    name: '&fAmulet Ogniska'
+    lore:
+      - '&7Prosty amulet pod przetrwanie i spokojne wejscie w progres.'
+    required-level: 6.0
+    max-health: 3.0
+    health-regeneration: 0.05
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory
+
+AMULET_MYSLI:
+  base:
+    material: PRISMARINE_CRYSTALS
+    name: '&fAmulet Mysli'
+    lore:
+      - '&7Amulet pod mane, koncentracje i dluzsze starcia.'
+    required-level: 6.0
+    required-intelligence: 6.0
+    max-mana: 3.0
+    mana-regeneration: 0.08
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory

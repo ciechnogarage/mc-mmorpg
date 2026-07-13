@@ -1,0 +1,11 @@
+level_1_grove_wolf:
+  Template: level_1_base_melee_add
+  Type: WOLF
+  Display: '<gray>Zdziczały Wilk</gray>'
+  Health: 30
+  Damage: 5
+  LevelModifiers:
+    Health: 12
+    Damage: 2
+  Options:
+    MovementSpeed: 0.32

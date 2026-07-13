@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC runtime operations"
+  short_description: "startup logs, runtime blockers, storage"
+  default_prompt: "Use $minecraft-ops-sync as a registry-backed MC task agent and return its evidence-based report contract."

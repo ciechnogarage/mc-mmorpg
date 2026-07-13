@@ -1,9 +1,12 @@
 display:
-    name: 'Rogue'
+    name: 'Łotrzyk'
     lore:
-    - 'His important damage burst potential and'
-    - 'his lack of health forces him to one'
-    - 'shot his targets before being taken down.'
+    - 'Momentum / Bleed / okna zabójstwa.'
+    - 'Żyje z pozycji, krótkiej przewagi'
+    - 'i karania każdego błędu celu.'
+    - ''
+    - 'Moc: tempo, krytyczne wejście, wykończenia.'
+    - 'Cena: zły timing kończy się krwią po twojej stronie.'
     attribute-lore:
     - '&a+ &7Attack Speed'
     - '&c- &7Max Health'
@@ -53,30 +56,35 @@ exp-table: class_exp_table
 
 skill-slots:
     1:
-        name: "&aSkill Slot I"
+        name: "&aPierwsze Ukłucie"
         unlocked-by-default: true
-        lore: []
+        lore:
+            - '&7Szybkie wejście, bleed albo kara za odsłonięcie.'
         # Permanently binds a skill to this slot
         # Players won't be able to change the skill in this slot
-        #hardset: FURTIVE_STRIKE
+        hardset: FURTIVE_STRIKE
     2:
-        name: "&aSkill Slot II"
+        name: "&aCięcie Ścięgna"
         unlocked-by-default: true
-        lore: []
-        #hardset: DEEP_WOUND
+        lore:
+            - '&7Kontrola tempa przeciwnika i okna ucieczki.'
+        hardset: DEEP_WOUND
     3:
-        name: "&aSkill Slot III"
+        name: "&aZniknięcie z Linii"
         unlocked-by-default: true
-        lore: []
-        #hardset: SNEAKY_PICKY
+        lore:
+            - '&7Przeżycie błędu albo zmiana pozycji.'
+        hardset: SNEAKY_PICKY
     4:
-        name: "&aSkill Slot IV"
+        name: "&aEgzekucja"
         unlocked-by-default: true
-        lore: []
-        #hardset: MINOR_HEALINGS
+        lore:
+            - '&7Slot pod podpis builda i finisher.'
+        hardset: MINOR_HEALINGS
 
 skill-trees:
     - 'general'
+    - 'combat'
     - 'rogue-marksman'
 
 options:
@@ -140,3 +148,7 @@ attributes:
 main-exp-sources:
 - 'killmob{type=ZOMBIE;amount=1-3}'
 - 'killmob{type=ENDERMAN;amount=6-9}'
+subclasses:
+    ZABOJCA: 25
+    SABOTAZYSTA: 25
+    CIEN: 25

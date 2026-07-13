@@ -172,7 +172,7 @@ SPELLCASTER_HELMET:
     lore:
       - §d§lSuits very well for mages!
     required-class:
-      - Mage
+      - mage
     required-level: 1.0
     block-power:
       base: 10.0
@@ -205,7 +205,7 @@ SPELLCASTER_CHESTPLATE:
     lore:
       - §d§lSuits very well for mages!
     required-class:
-      - Mage
+      - mage
     required-level: 1.0
     block-power:
       base: 15.0
@@ -238,7 +238,7 @@ SPELLCASTER_LEGGINGS:
     lore:
       - §d§lSuits very well for mages!
     required-class:
-      - Mage
+      - mage
     required-level: 1.0
     block-power:
       base: 12.0
@@ -271,7 +271,7 @@ SPELLCASTER_BOOTS:
     lore:
       - §d§lSuits very well for mages!
     required-class:
-      - Mage
+      - mage
     required-level: 1.0
     block-power:
       base: 10.0
@@ -1070,7 +1070,7 @@ CONTROL_DEVICES:
       FIRE_RESISTANCE: 1.0
       INCREASE_DAMAGE: 2.0
     required-class:
-      - Mage
+      - mage
     lore:
       - §7To keep your powers in check...
     armor-toughness: 2.0
@@ -1184,7 +1184,7 @@ SHRINKING_BOOTS:
     scale: -0.5
     movement-speed: 0.02
     required-class:
-      - Mage
+      - mage
     skill-damage: -50.0
     max-health: -10.0
     name: Boots of Shrinking
@@ -1258,10 +1258,416 @@ FIREPROOF_JACKET:
     material: LEATHER_CHESTPLATE
     burning-time: -0.9
     name: Fireproof Jacket
+PLYTA_PIONIERA:
+  base:
+    material: IRON_CHESTPLATE
+    name: '&fPlyta Pioniera'
+    lore:
+      - '&7Podstawowy ciezki pancerz do frontowej walki.'
+    required-level: 8.0
+    required-strength: 6.0
+    armor: 5.0
+    block-rating: 4.0
+    max-health: 3.0
+    set: PIONIER
+    tier: COMMON
+    upgrade:
+      template: foundation-heavy-armor
+HELM_PIONIERA:
+  base:
+    material: IRON_HELMET
+    name: '&fHelm Pioniera'
+    lore:
+      - '&7Ciezki helm pod wczesny front i stabilna obrone.'
+    required-level: 8.0
+    required-strength: 6.0
+    armor: 3.0
+    block-rating: 2.0
+    max-health: 2.0
+    set: PIONIER
+    tier: COMMON
+    upgrade:
+      template: foundation-heavy-armor
+NOGAWICE_PIONIERA:
+  base:
+    material: IRON_LEGGINGS
+    name: '&fNogawice Pioniera'
+    lore:
+      - '&7Ciezkie nogawice pod frontowe buildy.'
+    required-level: 8.0
+    required-strength: 6.0
+    armor: 4.0
+    block-rating: 3.0
+    max-health: 2.0
+    set: PIONIER
+    tier: COMMON
+    upgrade:
+      template: foundation-heavy-armor
+BUTY_PIONIERA:
+  base:
+    material: IRON_BOOTS
+    name: '&fButy Pioniera'
+    lore:
+      - '&7Ciezkie buty pod utrzymanie pozycji.'
+    required-level: 8.0
+    required-strength: 6.0
+    armor: 2.5
+    block-rating: 2.0
+    knockback-resistance: 0.03
+    set: PIONIER
+    tier: COMMON
+    upgrade:
+      template: foundation-heavy-armor
+TUNIKA_WEDROWCA:
+  base:
+    material: LEATHER_CHESTPLATE
+    name: '&fSkorzana Tunika Wedrowca'
+    lore:
+      - '&7Podstawowy lekki pancerz pod ruch i dystans.'
+    required-level: 8.0
+    required-dexterity: 6.0
+    armor: 3.0
+    movement-speed: 0.01
+    critical-strike-chance: 2.0
+    set: WEDROWIEC
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+KAPTUR_WEDROWCA:
+  base:
+    material: LEATHER_HELMET
+    name: '&fKaptur Wedrowca'
+    lore:
+      - '&7Lekki kaptur pod zwiad i mobilnosc.'
+    required-level: 8.0
+    required-dexterity: 6.0
+    armor: 2.0
+    dodge-rating: 2.0
+    critical-strike-chance: 1.0
+    hide-dye: true
+    dye-color: 80 62 45
+    set: WEDROWIEC
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+SPODNIE_WEDROWCA:
+  base:
+    material: LEATHER_LEGGINGS
+    name: '&fSpodnie Wedrowca'
+    lore:
+      - '&7Lekkie spodnie pod ruch i bezpieczne wejscie w walke.'
+    required-level: 8.0
+    required-dexterity: 6.0
+    armor: 2.5
+    dodge-rating: 2.0
+    movement-speed: 0.008
+    hide-dye: true
+    dye-color: 80 62 45
+    set: WEDROWIEC
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+BUTY_WEDROWCA:
+  base:
+    material: LEATHER_BOOTS
+    name: '&fButy Wedrowca'
+    lore:
+      - '&7Lekkie buty pod pozycjonowanie i tempo.'
+    required-level: 8.0
+    required-dexterity: 6.0
+    armor: 2.0
+    movement-speed: 0.01
+    safe-fall-distance: 1.0
+    hide-dye: true
+    dye-color: 80 62 45
+    set: WEDROWIEC
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+SZATA_ADEPTA:
+  base:
+    material: LEATHER_CHESTPLATE
+    name: '&fSzata Adepta'
+    lore:
+      - '&7Podstawowa szata dla buildow opartych o mane.'
+    required-level: 8.0
+    required-intelligence: 6.0
+    armor: 2.0
+    max-mana: 4.0
+    mana-regeneration: 0.1
+    hide-dye: true
+    dye-color: 80 80 160
+    set: ADEPT
+    tier: COMMON
+    upgrade:
+      template: foundation-robe
+KAPTUR_ADEPTA:
+  base:
+    material: LEATHER_HELMET
+    name: '&fKaptur Adepta'
+    lore:
+      - '&7Lekki kaptur pod skupienie i oslone many.'
+    required-level: 8.0
+    required-intelligence: 6.0
+    armor: 1.5
+    max-mana: 2.0
+    magic-damage-reduction: 2.0
+    hide-dye: true
+    dye-color: 80 80 160
+    set: ADEPT
+    tier: COMMON
+    upgrade:
+      template: foundation-robe
+SPODNIE_ADEPTA:
+  base:
+    material: LEATHER_LEGGINGS
+    name: '&fSpodnie Adepta'
+    lore:
+      - '&7Szata dolna pod koncentracje i dluzsze starcia.'
+    required-level: 8.0
+    required-intelligence: 6.0
+    armor: 1.5
+    max-mana: 2.0
+    mana-regeneration: 0.05
+    hide-dye: true
+    dye-color: 80 80 160
+    set: ADEPT
+    tier: COMMON
+    upgrade:
+      template: foundation-robe
+SANDALY_ADEPTA:
+  base:
+    material: LEATHER_BOOTS
+    name: '&fSandały Adepta'
+    lore:
+      - '&7Lekkie obuwie pod manewr i utrzymanie many.'
+    required-level: 8.0
+    required-intelligence: 6.0
+    armor: 1.0
+    max-mana: 2.0
+    movement-speed: 0.005
+    hide-dye: true
+    dye-color: 80 80 160
+    set: ADEPT
+    tier: COMMON
+    upgrade:
+      template: foundation-robe
+PANCERZ_ZWIADOWCY:
+  base:
+    material: CHAINMAIL_CHESTPLATE
+    name: '&fPancerz Zwiadowcy'
+    lore:
+      - '&7Sredni pancerz pod balans obrony i mobilnosci.'
+    required-level: 8.0
+    required-strength: 4.0
+    required-dexterity: 4.0
+    armor: 4.0
+    max-health: 2.0
+    movement-speed: 0.004
+    set: ZWIADOWCA
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+HELM_ZWIADOWCY:
+  base:
+    material: CHAINMAIL_HELMET
+    name: '&fHelm Zwiadowcy'
+    lore:
+      - '&7Sredni helm pod zwiad i wytrzymalosc.'
+    required-level: 8.0
+    required-strength: 4.0
+    required-dexterity: 4.0
+    armor: 2.5
+    dodge-rating: 1.0
+    max-health: 1.0
+    set: ZWIADOWCA
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+NOGAWICE_ZWIADOWCY:
+  base:
+    material: CHAINMAIL_LEGGINGS
+    name: '&fNogawice Zwiadowcy'
+    lore:
+      - '&7Srednie nogawice pod presje terenu i stabilnosc.'
+    required-level: 8.0
+    required-strength: 4.0
+    required-dexterity: 4.0
+    armor: 3.5
+    max-health: 1.0
+    movement-speed: 0.003
+    set: ZWIADOWCA
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+BUTY_ZWIADOWCY:
+  base:
+    material: CHAINMAIL_BOOTS
+    name: '&fButy Zwiadowcy'
+    lore:
+      - '&7Srednie buty pod pozycjonowanie i spokojniejszy front.'
+    required-level: 8.0
+    required-strength: 4.0
+    required-dexterity: 4.0
+    armor: 2.0
+    safe-fall-distance: 1.0
+    max-health: 1.0
+    set: ZWIADOWCA
+    tier: COMMON
+    upgrade:
+      template: foundation-light-armor
+WOJOWNIK_INITIATE_CHESTPLATE:
+  base:
+    material: IRON_CHESTPLATE
+    name: '&fKirys Pierwszej Linii'
+    lore:
+      - '&7Ciężar, który mówi drużynie:'
+      - '&7najpierw uderzą we mnie.'
+      - '&8Archetyp: Guard / Rage / frontline.'
+      - '&8Starter: pancerz roli, nie level gate.'
+      - '&8Następny krok: Płyta Pioniera i heavy forge.'
+    required-level: 1.0
+    armor: 6.0
+    block-rating: 5.0
+    max-health: 4.0
+    gem-sockets:
+      - Red
+    tier: MAGICAL
+    upgrade:
+      template: foundation-heavy-armor
+  modifiers:
+    heavy_armor_prefix_magic:
+      weight: 1
+    heavy_armor_suffix_magic:
+      weight: 1
+LOTRZYK_INITIATE_CHESTPIECE:
+  base:
+    material: LEATHER_CHESTPLATE
+    name: '&fKaftan Krótkiego Cienia'
+    lore:
+      - '&7Lekki, ciemny i bez obietnic.'
+      - '&7Masz przeżyć własny błąd tylko raz.'
+      - '&8Archetyp: Momentum / Bleed / burst.'
+      - '&8Starter: mobilność bez progu statów.'
+      - '&8Następny krok: Tunika Wędrowca i lekki forge.'
+    required-level: 1.0
+    armor: 3.0
+    attack-speed: 0.1
+    movement-speed: 0.01
+    hide-dye: true
+    dye-color: 40 40 40
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-light-armor
+  modifiers:
+    light_armor_prefix_magic:
+      weight: 1
+    light_armor_suffix_magic:
+      weight: 1
+LOWCA_INITIATE_CHESTPIECE:
+  base:
+    material: LEATHER_CHESTPLATE
+    name: '&fKurtka Czystej Linii'
+    lore:
+      - '&7Szyta pod dystans, ciszę i cierpliwość.'
+      - '&7Nie pomoże, jeśli pozwolisz im podejść.'
+      - '&8Archetyp: Mark / Trap / dystans.'
+      - '&8Starter: pancerz pozycyjny od początku gry.'
+      - '&8Następny krok: Wędrowiec/Zwiadowca i ranged salvage.'
+    required-level: 1.0
+    armor: 3.5
+    projectile-damage: 4.0
+    movement-speed: 0.008
+    hide-dye: true
+    dye-color: 70 100 40
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-light-armor
+  modifiers:
+    light_armor_prefix_magic:
+      weight: 1
+    light_armor_suffix_magic:
+      weight: 1
+MAG_INITIATE_ROBE:
+  base:
+    material: LEATHER_CHESTPLATE
+    name: '&fSzata Przeciążenia'
+    lore:
+      - '&7Cienka warstwa między ciałem'
+      - '&7a mocą, która chce wyjść za szybko.'
+      - '&8Archetyp: Mana / Overload / burst.'
+      - '&8Starter: szata uczy ryzyka many bez stat gate.'
+      - '&8Następny krok: Szata Adepta i runiczny salvage.'
+    required-level: 1.0
+    armor: 2.5
+    max-mana: 6.0
+    mana-regeneration: 0.15
+    hide-dye: true
+    dye-color: 90 40 150
+    gem-sockets:
+      - Blue
+    tier: MAGICAL
+    upgrade:
+      template: foundation-robe
+  modifiers:
+    robe_prefix_magic:
+      weight: 1
+    robe_suffix_magic:
+      weight: 1
+AKOLITA_INITIATE_VESTMENT:
+  base:
+    material: LEATHER_CHESTPLATE
+    name: '&fSzata Odmowy'
+    lore:
+      - '&7Nie zatrzymuje ciosu.'
+      - '&7Zmusza go, by zapłacił za wejście.'
+      - '&8Archetyp: Faith / Ward / sustain.'
+      - '&8Starter: sustain jako rola, nie nagroda za grind.'
+      - '&8Następny krok: Adept/Zwiadowca i relikwiarz forge.'
+    required-level: 1.0
+    armor: 4.0
+    max-mana: 4.0
+    health-regeneration: 0.08
+    hide-dye: true
+    dye-color: 180 180 120
+    gem-sockets:
+      - Blue
+    tier: MAGICAL
     enchants:
       unbreaking: 4.0
-    trim-pattern: vex
-    trim-material: redstone
+    upgrade:
+      template: foundation-robe
+  modifiers:
+    robe_prefix_magic:
+      weight: 1
+    robe_suffix_magic:
+      weight: 1
+KOLCZUGA_ZWIADOWCY:
+  base:
+    material: CHAINMAIL_CHESTPLATE
+    name: '&fKolczuga Zwiadowcy'
+    lore:
+      - '&7Magiczny sredni pancerz pod napor, ruch i walke na dystans.'
+    required-level: 10.0
+    required-strength: 6.0
+    required-dexterity: 8.0
+    armor: 4.5
+    projectile-damage: 3.0
+    max-health: 2.0
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-light-armor
+  modifiers:
+    medium_armor_prefix_magic:
+      weight: 1
+    medium_armor_suffix_magic:
+      weight: 1
 BEE_WINGS:
   base:
     material: ELYTRA
@@ -1290,4 +1696,3 @@ DIVING_BOOTS:
     water-movement-efficiency: 1.0
     gravity: 2.0
     step-height: 0.5
-

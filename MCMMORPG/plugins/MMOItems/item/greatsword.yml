@@ -5,8 +5,8 @@ HARDENED_STEEL_CLAYMORE:
     required-level: 13.0
     tier: RARE
     required-class:
-      - Warrior
-      - Paladin
+      - warrior
+      - paladin
     attack-damage:
       base: 5.5
       spread: 0.03
@@ -89,6 +89,30 @@ MOLTEN_BLADE:
     magic-damage: 30.0
     unbreakable: true
     two-handed: true
+GLADIATOR_CLAYMORE:
+  base:
+    material: IRON_SWORD
+    name: '&6Miecz Arenowy'
+    lore:
+      - '&7Dwureczna bron do nacisku i kontr.'
+    required-level: 25.0
+    required-strength: 18.0
+    attack-damage: 8.0
+    attack-speed: 1.35
+    parry-rating: 14.0
+    critical-strike-chance: 8.0
+    two-handed: true
+    gem-sockets:
+      - Red
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-weapon
+  modifiers:
+    melee_prefix_rare:
+      weight: 1
+    melee_suffix_rare:
+      weight: 1
 TWO_HANDED_STEEL_SWORD:
   base:
     material: IRON_SWORD
@@ -152,7 +176,7 @@ EARTHLY_GREATSWORD:
       scale: 0.1
       spread: 0.2
     required-class:
-      - Warrior
+      - warrior
     tier: EPIC
     name: §2Earthly Greatsword
     gem-sockets:

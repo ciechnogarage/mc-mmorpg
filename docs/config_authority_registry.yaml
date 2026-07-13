@@ -1,0 +1,158 @@
+# Draft registry for cross-domain MMO contracts.
+# This is a design boundary, not a claim that every target is implemented.
+version: 1
+status: draft
+last_reviewed: 2026-07-12
+design_index: docs/foundation-index.md
+runtime_manifest: docs/plugin_manifest.yaml
+
+rules:
+  - every shared concept has one durable authority
+  - plugin configs are adapters and must reference stable contract IDs
+  - seasonal state is isolated from persistent character and cosmetic state
+  - unresolved authority is a blocker for cross-domain implementation
+
+contracts:
+  - id: player_profile
+    domain: social
+    authority: MMOProfiles
+    current_adapter: MCMMORPG/plugins/MMOProfiles
+    target_persistence: mariadb
+    consumers: [CharacterStage, MMOCore, MMOInventory, Guilds, MCPets]
+    status: adapter_observed_target_db_unverified
+    evidence: MCMMORPG/plugins/MMOProfiles/config.yml
+
+  - id: character_stage
+    domain: ux
+    authority: CharacterStage
+    current_adapter: MCMMORPG/plugin-src/character-stage
+    target_persistence: player_profile
+    consumers: [MMOProfiles, CoreTools, DecentHolograms, ModelEngine]
+    status: source_present_runtime_flow_unverified
+    evidence: MCMMORPG/plugin-src/character-stage/README.md
+
+  - id: class_progression
+    domain: combat
+    authority: MMOCore
+    current_adapter: MCMMORPG/plugins/MMOCore
+    target_persistence: player_profile
+    consumers: [MythicLib, MMOItems, MMOInventory, MythicHUD]
+    status: adapter_observed_contract_pending
+    evidence: docs/class-subclass-foundation-v0.0.1.md
+
+  - id: combat_formulas
+    domain: combat
+    authority: MythicLib
+    current_adapter: MCMMORPG/plugins/MythicLib
+    target_persistence: player_profile
+    consumers: [MMOCore, MMOItems, MythicMobs, MythicDungeons]
+    status: authority_requires_runtime_formula_audit
+    evidence: docs/damage-defense-foundation-v0.0.1.md
+
+  - id: item_definition
+    domain: itemization
+    authority: MMOItems
+    current_adapter: MCMMORPG/plugins/MMOItems
+    target_persistence: config_and_player_profile
+    consumers: [MMOCore, MMOInventory, MythicCrucible, Nexo, CMI]
+    status: adapter_observed_contract_pending
+    evidence: docs/itemization-foundation-v0.0.1.md
+
+  - id: inventory_and_storage
+    domain: itemization
+    authority: MMOInventory
+    current_adapter: MCMMORPG/plugins/MMOInventory
+    target_persistence: mariadb
+    consumers: [MMOItems, MMOCore, CMI, Guilds]
+    status: adapter_observed_target_db_unverified
+    evidence: docs/loadout-bank-storage-foundation-v0.0.1.md
+
+  - id: currency_and_economy
+    domain: economy
+    authority: CMI_Vault
+    current_adapter: MCMMORPG/plugins/CMI
+    target_persistence: mariadb
+    consumers: [Vault, MMOItems, MMOInventory, Guilds, MythicDungeons]
+    status: staging_provider_observed_global_contract_pending
+    evidence: docs/economy-crafting-loot-foundation-v0.0.1.md
+
+  - id: loot_and_rewards
+    domain: world_pve
+    authority: MythicMobs_MythicDungeons
+    current_adapter: MCMMORPG/plugins/MythicMobs
+    target_persistence: player_profile_and_season_state
+    consumers: [MMOItems, CMI_Vault, Professions, Achievements]
+    status: split_authority_requires_reward_contract
+    evidence: docs/loot-reward-table-001-foundation-v0.0.1.md
+
+  - id: world_and_dungeons
+    domain: world_pve
+    authority: MythicDungeons
+    current_adapter: MCMMORPG/plugins/MythicDungeons
+    target_persistence: world_templates_and_instance_state
+    consumers: [MythicMobs, Iris, WorldGuard, Multiverse, ModelEngine]
+    status: level_1_content_present_runtime_reset_unverified
+    evidence: docs/level-1-dungeon-island-foundation-v0.0.1.md
+
+  - id: mobs_and_bosses
+    domain: world_pve
+    authority: MythicMobs
+    current_adapter: MCMMORPG/plugins/MythicMobs
+    target_persistence: config_and_runtime_instance_state
+    consumers: [ModelEngine, MMOItems, MythicDungeons, MythicLib]
+    status: adapter_observed_model_binding_requires_live_proof
+    evidence: MCMMORPG/_validation/check_modelengine_binding.js
+
+  - id: pet_progression
+    domain: pets
+    authority: MCPets
+    current_adapter: MCMMORPG/plugins/MCPets
+    target_persistence: mariadb
+    consumers: [MMOProfiles, MMOCore, Professions, MythicMobs]
+    status: yaml_fallback_only_staging_limits_unverified
+    evidence: docs/pet-companion-minion-system-foundation-v0.0.1.md
+
+  - id: guilds_and_social
+    domain: social
+    authority: Guilds
+    current_adapter: MCMMORPG/plugins/Guilds
+    target_persistence: mariadb
+    consumers: [MMOProfiles, CMI_Vault, WorldGuard, PvP_Season]
+    status: adapter_observed_contract_pending
+    evidence: docs/guilds-foundation-v0.0.1.md
+
+  - id: pvp_season
+    domain: pvp
+    authority: unresolved
+    current_adapter: none
+    target_persistence: mariadb_season_schema
+    consumers: [MMOProfiles, Guilds, CMI_Vault, Leaderboards]
+    status: blocker_no_dedicated_pvp_authority
+    evidence: docs/pvp-foundation-v0.0.1.md
+
+  - id: professions
+    domain: economy
+    authority: unresolved
+    current_adapter: none
+    target_persistence: mariadb
+    consumers: [MMOProfiles, MMOItems, CMI_Vault, MythicDungeons, MCPets]
+    status: blocker_no_dedicated_profession_authority
+    evidence: docs/professions-foundation-v0.0.1.md
+
+  - id: quests_and_objectives
+    domain: world_pve
+    authority: unresolved
+    current_adapter: none
+    target_persistence: mariadb
+    consumers: [MMOProfiles, MythicDungeons, MythicMobs, Guilds]
+    status: blocker_no_dedicated_quest_authority
+    evidence: docs/quest-contract-objective-foundation-v0.0.1.md
+
+  - id: seasons_prestige_cosmetics
+    domain: meta
+    authority: unresolved
+    current_adapter: none
+    target_persistence: mariadb_persistent_and_seasonal_split
+    consumers: [MMOProfiles, PvP_Season, Guilds, MCPets]
+    status: blocker_reset_boundary_not_implemented
+    evidence: docs/seasons-prestige-cosmetics-foundation-v0.0.1.md

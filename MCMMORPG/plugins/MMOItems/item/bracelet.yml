@@ -1,0 +1,27 @@
+BRANSOLETA_WARTY:
+  base:
+    material: IRON_NUGGET
+    name: '&fBransoleta Warty'
+    lore:
+      - '&7Prosta bransoleta pod wytrzymalosc i obrone.'
+    required-level: 6.0
+    required-strength: 6.0
+    max-health: 2.0
+    block-rating: 2.0
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory
+
+BRANSOLETA_ZWROTNOSCI:
+  base:
+    material: FLINT
+    name: '&fBransoleta Zwrotnosci'
+    lore:
+      - '&7Lekka bransoleta pod ruch i szybsze wejscie w akcje.'
+    required-level: 6.0
+    required-dexterity: 6.0
+    attack-speed: 0.03
+    movement-speed: 0.005
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory

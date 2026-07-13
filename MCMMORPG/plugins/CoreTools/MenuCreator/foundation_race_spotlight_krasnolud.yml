@@ -1,0 +1,79 @@
+foundation_race_spotlight_krasnolud:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Spotlight Rodu - Krasnolud'
+  size: 4
+  fill_material: 'ORANGE_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: ORANGE_STAINED_GLASS_PANE
+      name: ' '
+    hero:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<gold><bold>Portret Kowala'
+      lore:
+        - '<gray>To twoja postać niesie tę pieczęć.'
+    fantasy:
+      location: top
+      slots: [11]
+      source: vanilla
+      material: BOOK
+      name: '<gold><bold>Hero Card'
+      lore:
+        - '<gray>Krasnolud niesie dług stali'
+        - '<gray>i pamięć kamienia do każdej walki.'
+        - '<gray>To fantasy ciężaru, odzysku i kuźni.'
+        - '<dark_gray>Starter scene: iskry, warsztat, młot.'
+    payoff:
+      location: top
+      slots: [13]
+      source: vanilla
+      material: IRON_INGOT
+      name: '<gold><bold>Realny Payoff'
+      lore:
+        - '<gray>Miasto da 2 Żelazne Złomy'
+        - '<gray>pod forge i pierwszy odzysk.'
+        - '<dark_gray>Combat passive pozostaje pending.'
+    counter:
+      location: top
+      slots: [15]
+      source: vanilla
+      material: CHAIN
+      name: '<red><bold>Koszt Wyboru'
+      lore:
+        - '<gray>Counterplay: tempo i mobilność.'
+        - '<gray>Twoja przewaga rośnie z czasem,'
+        - '<gray>nie w pierwszym skoku do przodu.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Przyjmij Pieczęć Krasnoluda'
+      left_click:
+        Scripts:
+          - creator_confirm_race_krasnolud
+      click:
+        Scripts:
+          - creator_confirm_race_krasnolud
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do Galerii'
+      left_click:
+        Scripts:
+          - creator_open_race_gallery
+      click:
+        Scripts:
+          - creator_open_race_gallery

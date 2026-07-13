@@ -1,0 +1,35 @@
+display:
+    name: 'Rytualista'
+    lore:
+    - 'Chaos utility, ward flavor i rytualne przygotowanie walki.'
+    attribute-lore:
+    - '&a+ &7Utility'
+    - '&a+ &7Caster Hybrid'
+    - '&c- &7Frontline'
+    item: ENCHANTING_TABLE
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aZnak Popiołu", unlocked-by-default: true, lore: [ '&7Rytualna presja i przygotowanie celu.' ] }
+    2: { name: "&aPieczęć Mocy", unlocked-by-default: true, lore: [ '&7Setup pod kolejne zaklęcie.' ] }
+    3: { name: "&aWard Obrzędu", unlocked-by-default: true, lore: [ '&7Przeżycie przez przygotowanie.' ] }
+    4: { name: "&aKrąg Rytuału", unlocked-by-default: true, lore: [ '&7Podpis utility i kontroli.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'warrior-paladin'
+options:
+    display: false
+    needs-permission: false
+skills:
+    AMBERS: { level: 1, max-level: 30 }
+    POWER_MARK: { level: 4, max-level: 30 }
+    GREATER_HEALINGS: { level: 8, max-level: 30 }
+attributes:
+    max-health: { base: 21, per-level: 0.2 }
+    max-mana: { base: 24, per-level: 0.8 }
+    mana-regeneration: { base: 0.2, per-level: 0.03 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

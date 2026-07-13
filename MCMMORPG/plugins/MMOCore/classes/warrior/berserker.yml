@@ -1,0 +1,36 @@
+display:
+    name: 'Berserker'
+    lore:
+    - 'Agresywna sciezka wojownika.'
+    - 'Wysoka presja, ryzyko i burst.'
+    attribute-lore:
+    - '&a+ &7Attack Damage'
+    - '&a+ &7Attack Speed'
+    - '&c- &7Defense'
+    item: IRON_AXE
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aIskra Furii", unlocked-by-default: true, lore: [ '&7Agresja z kosztem bezpieczeństwa.' ] }
+    2: { name: "&aSeria Ciosów", unlocked-by-default: true, lore: [ '&7Presja, gdy cel nie przerwie tempa.' ] }
+    3: { name: "&aGłęboka Rana", unlocked-by-default: true, lore: [ '&7Kara za przedłużoną walkę.' ] }
+    4: { name: "&aSzał", unlocked-by-default: true, lore: [ '&7Podpis berserkera: moc za ryzyko.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'warrior-paladin'
+options:
+    display: false
+    needs-permission: false
+skills:
+    FIRE_BERSERKER: { level: 1, max-level: 30 }
+    COMBO_ATTACK: { level: 5, max-level: 30 }
+    DEEP_WOUND: { level: 8, max-level: 30 }
+attributes:
+    attack-damage: { base: 2.6, per-level: 0.15 }
+    attack-speed: { base: 4.4, per-level: 0.05 }
+    max-health: { base: 22, per-level: 0.2 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

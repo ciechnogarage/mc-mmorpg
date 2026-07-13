@@ -1,0 +1,91 @@
+foundation_storage:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Archiwum Łupów'
+  size: 3
+  fill_material: 'BLACK_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [ 0,1,2,3,5,6,7,8,9,17,18,19,21,23,25,26 ]
+      source: vanilla
+      material: BLACK_STAINED_GLASS_PANE
+      name: ' '
+
+    title:
+      location: top
+      slots: [ 4 ]
+      source: vanilla
+      material: ENDER_CHEST
+      name: '<gold><bold>Archiwum Łupów'
+      lore:
+        - '<gray>Storage jest systemem hubowym,'
+        - '<gray>nie przyciskiem ratunkowym w walce.'
+        - ''
+        - '<red>Status: pending runtime hook.'
+        - '<dark_gray>Reguła: safe-zone + brak combat-locka.'
+
+    profile_vault:
+      location: top
+      slots: [ 11 ]
+      source: vanilla
+      material: CHEST
+      name: '<aqua><bold>Skrzynia Profilu'
+      lore:
+        - '<gray>Przestrzeń tej postaci.'
+        - '<red>Zablokowana do czasu egzekucji'
+        - '<red>safe-zone + combat-lock.'
+        - '<dark_gray>Bez hooka nie otwieramy vaulta.'
+      left_click:
+        Scripts:
+          - creator_open_profile_vault
+      click:
+        Scripts:
+          - creator_open_profile_vault
+
+    account_vault:
+      location: top
+      slots: [ 15 ]
+      source: vanilla
+      material: BARREL
+      name: '<yellow><bold>Skrzynia Konta'
+      lore:
+        - '<gray>Wspólna przestrzeń konta.'
+        - '<red>Zablokowana do czasu egzekucji'
+        - '<red>safe-zone + combat-lock.'
+        - '<dark_gray>Bez hooka byłby to exploit.'
+      left_click:
+        Scripts:
+          - creator_open_account_vault
+      click:
+        Scripts:
+          - creator_open_account_vault
+
+    rule:
+      location: top
+      slots: [ 20 ]
+      source: vanilla
+      material: REDSTONE_TORCH
+      name: '<red><bold>Blokada walki'
+      lore:
+        - '<gray>Obecny stan: zawsze odmowa.'
+        - '<gray>Otwarcie wróci dopiero po'
+        - '<gray>runtime safe-zone/combat hooku.'
+        - '<dark_gray>Ten ekran nie wywołuje openvault.'
+
+    close:
+      location: top
+      slots: [ 22 ]
+      source: vanilla
+      material: BARRIER
+      name: '<red><bold>Zamknij'
+      lore:
+        - '<gray>Wróć do gry.'
+      left_click:
+        Scripts:
+          - creator_close_menu
+      click:
+        Scripts:
+          - creator_close_menu

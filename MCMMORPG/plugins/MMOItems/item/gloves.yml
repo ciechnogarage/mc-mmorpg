@@ -1,0 +1,27 @@
+REKAWICE_KUTNIKA:
+  base:
+    material: LEATHER
+    name: '&fRekawice Kutnika'
+    lore:
+      - '&7Rekawice pod silniejszy chwyt i bronie fizyczne.'
+    required-level: 8.0
+    required-strength: 8.0
+    attack-damage: 2.0
+    weapon-damage: 4.0
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory
+
+REKAWICE_CELU:
+  base:
+    material: LEATHER
+    name: '&fRekawice Celu'
+    lore:
+      - '&7Rekawice pod dystans, precyzje i stabilna reke.'
+    required-level: 8.0
+    required-dexterity: 8.0
+    projectile-damage: 4.0
+    critical-strike-power: 4.0
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory

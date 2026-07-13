@@ -18,7 +18,7 @@ SWORD:
     display: IRON_SWORD:0
 
     # Name displayed in the item lore.
-    name: 'Sword'
+    name: 'Miecz'
 
     # Should this type be displayed inside the item browser?
     hide-in-game: false
@@ -38,10 +38,10 @@ SWORD:
         #fake_attribute: false                # Should MythicLib add a fake attribute modifier? Useful for 1.20 or lower to hide vanilla attributes from the item
         #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
 
-        name: '&f#prefix#Unidentified Sword'
+        name: '&f#prefix#Niezidentyfikowany miecz'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -61,12 +61,12 @@ SWORD:
 
 DAGGER:
     display: STONE_SWORD
-    name: 'Dagger'
+    name: 'Sztylet'
     unident-item:
-        name: '&f#prefix#Unidentified Dagger'
+        name: '&f#prefix#Niezidentyfikowany sztylet'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -77,12 +77,12 @@ DAGGER:
 
 SPEAR:
     display: TRIDENT
-    name: 'Spear'
+    name: 'Włócznia'
     unident-item:
-        name: '&f#prefix#Unidentified Spear'
+        name: '&f#prefix#Niezidentyfikowana włócznia'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -93,12 +93,12 @@ SPEAR:
 
 HAMMER:
     display: IRON_AXE
-    name: 'Hammer'
+    name: 'Młot'
     unident-item:
-        name: '&f#prefix#Unidentified Hammer'
+        name: '&f#prefix#Niezidentyfikowany młot'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -148,12 +148,12 @@ WHIP:
 
 STAFF:
     display: DIAMOND_HOE
-    name: 'Staff'
+    name: 'Kostur'
     unident-item:
-        name: '&f#prefix#Unidentified Staff'
+        name: '&f#prefix#Niezidentyfikowany kostur'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -171,12 +171,12 @@ STAFF:
 
 BOW:
     display: BOW
-    name: 'Bow'
+    name: 'Łuk'
     unident-item:
-        name: '&f#prefix#Unidentified Bow'
+        name: '&f#prefix#Niezidentyfikowany łuk'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -188,12 +188,12 @@ BOW:
 
 CROSSBOW:
     display: WOODEN_PICKAXE
-    name: 'Crossbow'
+    name: 'Kusza'
     unident-item:
-        name: '&f#prefix#Unidentified Crossbow'
+        name: '&f#prefix#Niezidentyfikowana kusza'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -246,12 +246,12 @@ LUTE:
 # Applies stats in both hands
 CATALYST:
     display: PRISMARINE_SHARD
-    name: 'Catalyst'
+    name: 'Katalizator'
     unident-item:
-        name: '&f#prefix#Unidentified Catalyst'
+        name: '&f#prefix#Niezidentyfikowany katalizator'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -260,12 +260,12 @@ CATALYST:
 # Applies stats in offhand only
 OFF_CATALYST:
     display: PRISMARINE_CRYSTALS
-    name: 'Catalyst (Offhand)'
+    name: 'Katalizator drugiej ręki'
     unident-item:
-        name: '&f#prefix#Unidentified Catalyst'
+        name: '&f#prefix#Niezidentyfikowany katalizator'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -300,12 +300,12 @@ ORNAMENT:
 
 ACCESSORY:
     display: DIAMOND
-    name: 'Accessory'
+    name: 'Akcesorium'
     unident-item:
-        name: '&f#prefix#Unidentified Accessory'
+        name: '&f#prefix#Niezidentyfikowane akcesorium'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -313,12 +313,12 @@ ACCESSORY:
 
 ARMOR:
     display: IRON_CHESTPLATE
-    name: 'Armor'
+    name: 'Pancerz'
     unident-item:
-        name: '&f#prefix#Unidentified Armor'
+        name: '&f#prefix#Niezidentyfikowany pancerz'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -352,12 +352,12 @@ CONSUMABLE:
 
 MISCELLANEOUS:
     display: WATER_BUCKET
-    name: 'Miscellaneous'
+    name: 'Różne'
     unident-item:
-        name: '&f#prefix#Unidentified Misc Item'
+        name: '&f#prefix#Niezidentyfikowany przedmiot'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -378,12 +378,12 @@ SKIN:
 
 GEM_STONE:
     display: EMERALD
-    name: 'Gem Stone'
+    name: 'Klejnot'
     unident-item:
-        name: '&f#prefix#Unidentified Gem'
+        name: '&f#prefix#Niezidentyfikowany klejnot'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -584,13 +584,13 @@ STAVE:
 
 TOME:
     display: BOOK
-    name: 'Tome'
+    name: 'Tom'
     parent: 'CATALYST'
     unident-item:
-        name: '&f#prefix#Unidentified Tome'
+        name: '&f#prefix#Niezidentyfikowany tom'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -598,13 +598,13 @@ TOME:
 
 TALISMAN:
     display: TOTEM_OF_UNDYING
-    name: 'Talisman'
+    name: 'Talizman'
     parent: 'CATALYST'
     unident-item:
-        name: '&f#prefix#Unidentified Talisman'
+        name: '&f#prefix#Niezidentyfikowany talizman'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -612,13 +612,13 @@ TALISMAN:
 
 WAND:
     display: STICK
-    name: 'Wand'
+    name: 'Różdżka'
     parent: 'STAFF'
     unident-item:
-        name: '&f#prefix#Unidentified Wand'
+        name: '&f#prefix#Niezidentyfikowana różdżka'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -647,13 +647,13 @@ GREATBOW:
 
 SHIELD:
     display: SHIELD
-    name: 'Shield'
+    name: 'Tarcza'
     parent: CATALYST
     unident-item:
-        name: '&f#prefix#Unidentified Shield'
+        name: '&f#prefix#Niezidentyfikowana tarcza'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -661,13 +661,13 @@ SHIELD:
 
 MATERIAL:
     display: PAPER
-    name: 'Material'
+    name: 'Materiał'
     parent: 'MISCELLANEOUS'
     unident-item:
-        name: '&f#prefix#Unidentified Material'
+        name: '&f#prefix#Niezidentyfikowany materiał'
         lore:
-        - '&7This item is unidentified. I must'
-        - '&7find a way to identify it!'
+        - '&7Ten przedmiot jest niezidentyfikowany.'
+        - '&7Znajdź sposób, aby poznać jego właściwości.'
         - '{tier}'
         - '{tier}&8Item Info:'
         - '{range}&8- &7Lvl Range: &e#range#'
@@ -679,13 +679,13 @@ MATERIAL:
 
 RING:
     display: EMERALD
-    name: 'Ring'
+    name: 'Pierścień'
     parent: 'ACCESSORY'
     unident-item:
-        name: '&f#prefix#Unidentified Ring'
+        name: '&f#prefix#Niezidentyfikowany pierścień'
         lore:
-            - '&7This item is unidentified. I must'
-            - '&7find a way to identify it!'
+            - '&7Ten przedmiot jest niezidentyfikowany.'
+            - '&7Znajdź sposób, aby poznać jego właściwości.'
             - '{tier}'
             - '{tier}&8Item Info:'
             - '{range}&8- &7Lvl Range: &e#range#'
@@ -695,49 +695,49 @@ AMULET:
     name: 'Amulet'
     parent: 'ACCESSORY'
     unident-item:
-        name: '&f#prefix#Unidentified Amulet'
+        name: '&f#prefix#Niezidentyfikowany amulet'
         lore:
-            - '&7This item is unidentified. I must'
-            - '&7find a way to identify it!'
+            - '&7Ten przedmiot jest niezidentyfikowany.'
+            - '&7Znajdź sposób, aby poznać jego właściwości.'
             - '{tier}'
             - '{tier}&8Item Info:'
             - '{range}&8- &7Lvl Range: &e#range#'
             - '{tier}&8- &7Item Tier: #prefix##tier#'
 BRACELET:
     display: EMERALD
-    name: 'Bracelet'
+    name: 'Bransoleta'
     parent: 'ACCESSORY'
     unident-item:
-        name: '&f#prefix#Unidentified Bracelet'
+        name: '&f#prefix#Niezidentyfikowana bransoleta'
         lore:
-            - '&7This item is unidentified. I must'
-            - '&7find a way to identify it!'
+            - '&7Ten przedmiot jest niezidentyfikowany.'
+            - '&7Znajdź sposób, aby poznać jego właściwości.'
             - '{tier}'
             - '{tier}&8Item Info:'
             - '{range}&8- &7Lvl Range: &e#range#'
             - '{tier}&8- &7Item Tier: #prefix##tier#'
 GLOVES:
     display: EMERALD
-    name: 'Gloves'
+    name: 'Rękawice'
     parent: 'ACCESSORY'
     unident-item:
-        name: '&f#prefix#Unidentified Gloves'
+        name: '&f#prefix#Niezidentyfikowane rękawice'
         lore:
-            - '&7This item is unidentified. I must'
-            - '&7find a way to identify it!'
+            - '&7Ten przedmiot jest niezidentyfikowany.'
+            - '&7Znajdź sposób, aby poznać jego właściwości.'
             - '{tier}'
             - '{tier}&8Item Info:'
             - '{range}&8- &7Lvl Range: &e#range#'
             - '{tier}&8- &7Item Tier: #prefix##tier#'
 ARTIFACT:
     display: EMERALD
-    name: 'Artifact'
+    name: 'Artefakt'
     parent: 'ACCESSORY'
     unident-item:
-        name: '&f#prefix#Unidentified Artifact'
+        name: '&f#prefix#Niezidentyfikowany artefakt'
         lore:
-            - '&7This item is unidentified. I must'
-            - '&7find a way to identify it!'
+            - '&7Ten przedmiot jest niezidentyfikowany.'
+            - '&7Znajdź sposób, aby poznać jego właściwości.'
             - '{tier}'
             - '{tier}&8Item Info:'
             - '{range}&8- &7Lvl Range: &e#range#'

@@ -32,7 +32,7 @@ EXECUTIONER_AXE:
             - v AIR 0 1..|v stick - 1.0..|v AIR 0 1..
     max-durability: 3150.0
     required-class:
-      - Warrior
+      - warrior
     ability:
       ability1:
         type: EARTHQUAKE
@@ -41,6 +41,41 @@ EXECUTIONER_AXE:
         damage: 8.0
         amplifier: 1.0
         mode: RIGHT_CLICK
+ORIGIN_CLEAVER:
+  base:
+    material: WOODEN_AXE
+    name: '&fOrigin Cleaver'
+    lore:
+    - '&7Starter axe granted after choosing Ork.'
+    attack-damage: 5.0
+    attack-speed: 1.0
+    required-level: 0.0
+    tier: COMMON
+    upgrade:
+      template: foundation-weapon
+BERSERKER_WARAXE:
+  base:
+    material: IRON_AXE
+    name: '&cTopor Bitewny Furii'
+    lore:
+      - '&7Ciezsza bron pod agresywny burst.'
+    required-level: 25.0
+    required-strength: 18.0
+    attack-damage: 9.0
+    attack-speed: 1.15
+    weapon-damage: 12.0
+    critical-strike-power: 24.0
+    gem-sockets:
+      - Red
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-weapon
+  modifiers:
+    melee_prefix_rare:
+      weight: 1
+    melee_suffix_rare:
+      weight: 1
 UNDEAD_SLAYER:
   base:
     material: NETHERITE_AXE
@@ -146,7 +181,7 @@ SKULL_BREAKER:
       base: 0.35
       spread: 0.042
       max-spread: 0.13
-    name: '&f&lSKULL BREAKER'
+    name: '&8[LEGACY OFF] Skull Breaker'
     tier: COMMON
     two-handed: true
     movement-speed: -0.02
@@ -155,8 +190,7 @@ SKULL_BREAKER:
       - '&7when smashing it on their skull.'
     required-level: 9.0
     required-class:
-      - Brute
-      - Warrior
+      - warrior
 SILVER_AXE:
   base:
     material: IRON_AXE

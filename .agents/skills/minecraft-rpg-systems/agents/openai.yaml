@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC RPG systems"
+  short_description: "MMOCore, MMOItems, starter items"
+  default_prompt: "Use $minecraft-rpg-systems as a registry-backed MC task agent and return its evidence-based report contract."

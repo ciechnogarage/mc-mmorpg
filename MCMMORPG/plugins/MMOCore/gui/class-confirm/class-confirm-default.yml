@@ -1,5 +1,5 @@
 # GUI display name, used by default
-name: 'Confirmation: {class}'
+name: 'Potwierdź archetyp: {class}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -33,25 +33,25 @@ items:
       #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
 
       item: GREEN_TERRACOTTA
-      name: '&aSelect {class}'
+      name: '&aWybierz {class}'
       lore:
         - ''
-        - '&7Class Level: &e{level}'
-        - '&7Progression: &e{exp} / {next_level}'
+        - '&7Poziom klasy: &e{level}'
+        - '&7Postęp: &e{exp} / {next_level}'
         - '&8[&e{progress}&8] &e{percent}%'
         - ''
-        - '&7Skill Points: &6{skill_points}'
-        - '&7Skills You Unlocked: &6{unlocked_skills}&7/&6{class_skills}'
+        - '&7Punkty skilli: &6{skill_points}'
+        - '&7Odblokowane skille: &6{unlocked_skills}&7/&6{class_skills}'
 
     # Displayed when the class is being chosen for the first time.
     locked:
       item: GREEN_TERRACOTTA
-      name: '&aSelect {class}'
+      name: '&aWybierz {class}'
       lore: { }
 
   back:
     slots: [ 14 ]
     item: RED_TERRACOTTA
     function: back
-    name: '&aBack'
+    name: '&cWróć'
     lore: { }

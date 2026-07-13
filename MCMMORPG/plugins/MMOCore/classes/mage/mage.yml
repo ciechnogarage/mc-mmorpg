@@ -1,9 +1,12 @@
 display:
-    name: 'Mage'
+    name: 'Mag'
     lore:
-    - 'The Mage has mastered the power of the'
-    - 'Arcanes, taking down any enemy on his path'
-    - 'using powerful magic & ranged abilities.'
+    - 'Mana / Overload / kontrolowany burst.'
+    - 'Zamienia ryzyko castu w eksplozję tempa'
+    - 'i płaci za każdy przerwany rytuał.'
+    - ''
+    - 'Moc: burst, kontrola pola, skalowanie many.'
+    - 'Cena: presja i zły timing łamią rotację.'
     attribute-lore:
     - '&a+ &7Mana Regeneration'
     - '&a+ &7Health Regeneration'
@@ -51,13 +54,14 @@ max-level: 100
 
 skill-trees:
     - 'general'
+    - 'combat'
     - 'mage-arcane-mage'
 
 exp-table: class_exp_table
 
 skill-slots:
     1:
-        name: "&aSkill Slot I"
+        name: "&aIskra Otwarcia"
         unlocked-by-default: true
         lore:
             - '&a-50% Cooldown &7for Active Skills'
@@ -69,22 +73,25 @@ skill-slots:
             - 'skill_buff{modifier="damage";amount=30;type="RELATIVE"}'
         # Permanently binds a skill to this slot
         # Players won't be able to change the skill in this slot
-        #hardset: POWER_MARK
+        hardset: POWER_MARK
     2:
-        name: "&aSkill Slot II"
+        name: "&aZimny Bezdech"
         unlocked-by-default: true
-        lore: []
-        #hardset: ICE_SPIKES
+        lore:
+            - '&7Slot pod kontrolę lub okno bezpieczeństwa.'
+        hardset: ICE_SPIKES
     3:
-        name: "&aSkill Slot III"
+        name: "&aRdzeń Burzy"
         unlocked-by-default: true
-        lore: []
-        #hardset: FIREBALL
+        lore:
+            - '&7Slot pod burst i presję many.'
+        hardset: FIREBALL
     4:
-        name: "&aSkill Slot IV"
+        name: "&aPęknięcie Przestrzeni"
         unlocked-by-default: true
-        lore: []
-        #hardset: WARP
+        lore:
+            - '&7Slot pod podpis builda maga.'
+        hardset: WARP
 
 # This is the default mana display options, however it is not mandatory
 # to have it in your class config file. Other classes do not have this
@@ -149,7 +156,9 @@ attributes:
         per-level: 0
 
 subclasses:
-    ARCANE_MAGE: 10
+    PIROMANTA: 25
+    KRIOMANTA: 25
+    BURZOMANTA: 25
 
 skills:
     FIRE_STORM:

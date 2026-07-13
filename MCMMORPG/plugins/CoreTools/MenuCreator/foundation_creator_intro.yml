@@ -1,0 +1,305 @@
+foundation_creator_intro:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Kompania Bohaterow - Wybor Postaci'
+  size: 6
+  fill_material: 'BLACK_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,35,36,42,43,44,45,46,47,48,52,53]
+      source: vanilla
+      material: BLACK_STAINED_GLASS_PANE
+      name: ''
+
+    race_title:
+      location: top
+      slots: [10]
+      source: vanilla
+      material: NETHER_STAR
+      name: '<aqua><bold>Rody'
+      lore:
+        - '<gray>Wybierz pochodzenie bohatera.'
+        - '<dark_gray>Pending: {pending_race_id}'
+
+    class_title:
+      location: top
+      slots: [16]
+      source: vanilla
+      material: IRON_SWORD
+      name: '<red><bold>Archetypy'
+      lore:
+        - '<gray>Wybierz styl walki.'
+        - '<dark_gray>Pending: {pending_class_id}'
+
+    player_card:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<white><bold>{caster_name}'
+      lore:
+        - '<gray>Ród: <white>{pending_race_id}'
+        - '<gray>Archetyp: <white>{pending_class_id}'
+        - '<gray>Etap: <white>{character_stage}'
+
+    creator_status:
+      location: top
+      slots: [25]
+      source: vanilla
+      material: WRITABLE_BOOK
+      name: '<yellow><bold>Status Kreatora'
+      lore:
+        - '<gray>To jest glowny ekran wyboru.'
+        - '<gray>Accept dziala dopiero po wyborze'
+        - '<gray>rodu i archetypu.'
+        - '<gray>Preview otwiera spotlight.'
+
+    race_czlowiek:
+      location: top
+      slots: [19]
+      source: vanilla
+      material: PAPER
+      name: '<white><bold>Czlowiek'
+      lore:
+        - '<gray>Adaptacja, handel i przetrwanie.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_race_czlowiek
+      click:
+        Scripts:
+          creator_v2_select_race_czlowiek
+
+    race_ork:
+      location: top
+      slots: [20]
+      source: vanilla
+      material: NETHER_WART
+      name: '<red><bold>Ork'
+      lore:
+        - '<gray>Presja, brutalnosc i tempo.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_race_ork
+      click:
+        Scripts:
+          creator_v2_select_race_ork
+
+    race_elf:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: FEATHER
+      name: '<green><bold>Elf'
+      lore:
+        - '<gray>Finezja, zasieg i kontrola rytmu.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_race_elf
+      click:
+        Scripts:
+          creator_v2_select_race_elf
+
+    race_krasnolud:
+      location: top
+      slots: [22]
+      source: vanilla
+      material: IRON_INGOT
+      name: '<gold><bold>Krasnolud'
+      lore:
+        - '<gray>Stal, wytrzymalosc i odzysk.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_race_krasnolud
+      click:
+        Scripts:
+          creator_v2_select_race_krasnolud
+
+    race_nieumarly:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: WITHER_ROSE
+      name: '<dark_gray><bold>Nieumarly'
+      lore:
+        - '<gray>Klatwa, cena mocy i cien.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_race_nieumarly
+      click:
+        Scripts:
+          creator_v2_select_race_nieumarly
+
+    class_warrior:
+      location: top
+      slots: [28]
+      source: vanilla
+      material: IRON_SWORD
+      name: '<gold><bold>Wojownik'
+      lore:
+        - '<gray>Linia, tarcza i ciezka zbroja.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_class_warrior
+      click:
+        Scripts:
+          creator_v2_select_class_warrior
+
+    class_rogue:
+      location: top
+      slots: [29]
+      source: vanilla
+      material: SHEARS
+      name: '<green><bold>Lotrzyk'
+      lore:
+        - '<gray>Tempo, bleed i znikniecie z linii.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_class_rogue
+      click:
+        Scripts:
+          creator_v2_select_class_rogue
+
+    class_marksman:
+      location: top
+      slots: [30]
+      source: vanilla
+      material: BOW
+      name: '<aqua><bold>Lowca'
+      lore:
+        - '<gray>Dystans, oznaczenie i presja.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_class_marksman
+      click:
+        Scripts:
+          creator_v2_select_class_marksman
+
+    class_mage:
+      location: top
+      slots: [31]
+      source: vanilla
+      material: AMETHYST_SHARD
+      name: '<light_purple><bold>Mag'
+      lore:
+        - '<gray>Mana, rytm i burst.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_class_mage
+      click:
+        Scripts:
+          creator_v2_select_class_mage
+
+    class_paladin:
+      location: top
+      slots: [32]
+      source: vanilla
+      material: BLAZE_ROD
+      name: '<yellow><bold>Akolita'
+      lore:
+        - '<gray>Ward, sustain i odmowa smierci.'
+        - '<gray>Lewy klik: wybierz'
+      left_click:
+        Scripts:
+          creator_v2_select_class_paladin
+      click:
+        Scripts:
+          creator_v2_select_class_paladin
+
+    race_preview:
+      location: top
+      slots: [39]
+      source: vanilla
+      material: COMPASS
+      name: '<aqua><bold>Preview Rodu'
+      lore:
+        - '<gray>Otwiera spotlight aktualnego rodu.'
+      left_click:
+        Scripts:
+          creator_v2_preview_pending_race
+      click:
+        Scripts:
+          creator_v2_preview_pending_race
+
+    class_preview:
+      location: top
+      slots: [40]
+      source: vanilla
+      material: SPYGLASS
+      name: '<red><bold>Preview Archetypu'
+      lore:
+        - '<gray>Otwiera spotlight aktualnej klasy.'
+      left_click:
+        Scripts:
+          creator_v2_preview_pending_class
+      click:
+        Scripts:
+          creator_v2_preview_pending_class
+
+    current_summary:
+      location: top
+      slots: [41]
+      source: vanilla
+      material: BOOK
+      name: '<green><bold>Gotowosc'
+      lore:
+        - '<gray>Ród pending: <white>{pending_race_id}'
+        - '<gray>Klasa pending: <white>{pending_class_id}'
+        - '<gray>Accept finalizuje wybor i idzie dalej.'
+
+    reset:
+      location: top
+      slots: [49]
+      source: vanilla
+      material: BARRIER
+      name: '<red><bold>Wyczysc wybor'
+      lore:
+        - '<gray>Kasuje pending rasy i klasy.'
+      left_click:
+        Scripts:
+          creator_v2_reset_selection
+      click:
+        Scripts:
+          creator_v2_reset_selection
+
+    accept:
+      location: top
+      slots: [50]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Accept'
+      lore:
+        - '<gray>Dziala tylko przy kompletnym wyborze.'
+      left_click:
+        Scripts:
+          creator_v2_accept_pending_character
+      click:
+        Scripts:
+          creator_v2_accept_pending_character
+
+    back:
+      location: top
+      slots: [51]
+      source: vanilla
+      material: REDSTONE
+      name: '<yellow><bold>Powrot'
+      lore:
+        - '<gray>Wyjdz z kreatora do ekranu slotu.'
+      left_click:
+        Scripts:
+          creator_v2_leave_to_stage
+      click:
+        Scripts:
+          creator_v2_leave_to_stage

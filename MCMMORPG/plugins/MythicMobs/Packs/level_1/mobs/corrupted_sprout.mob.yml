@@ -1,0 +1,18 @@
+level_1_corrupted_sprout:
+  Template: level_1_base_melee_add
+  Type: HUSK
+  Display: '<dark_green>Spaczony Pęd</dark_green>'
+  Health: 20
+  Damage: 4
+  LevelModifiers:
+    Health: 9
+    Damage: 1.5
+  Options:
+    MovementSpeed: 0.22
+  Model:
+    Id: level_1_corrupted_sprout
+    ViewRadius: 48
+    Drive: false
+    DamageTint: true
+  Skills:
+    - skill{s=level_1_corrupted_sprout_thorn_shot} @target ~onTimer:80 >0 0.3

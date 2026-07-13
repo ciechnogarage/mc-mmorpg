@@ -1,5 +1,5 @@
 # GUI display name
-name: Choose your path...
+name: 'Wybierz specjalizację'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -22,13 +22,80 @@ items:
     #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
 
     item: RED_STAINED_GLASS_PANE
-    name: '&aBack to Class Selection'
+    name: '&cWróć do archetypu'
     lore: [ ]
-  arcane-mage:
+  straznik:
+    slots: [ 10 ]
+    function: sub-class-straznik
+    name: '&a&lStraznik'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  berserker:
+    slots: [ 11 ]
+    function: sub-class-berserker
+    name: '&c&lBerserker'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  gladiator:
+    slots: [ 12 ]
+    function: sub-class-gladiator
+    name: '&6&lGladiator'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  zabojca:
     slots: [ 13 ]
-    function: sub-class-arcane-mage
-    name: '&a&lThe Arcane Mage'
-    lore:
-      - '{lore}'
-      - ''
-      - '{attribute-lore}'
+    function: sub-class-zabojca
+    name: '&7&lZabojca'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  sabotazysta:
+    slots: [ 14 ]
+    function: sub-class-sabotazysta
+    name: '&2&lSabotazysta'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  cien:
+    slots: [ 15 ]
+    function: sub-class-cien
+    name: '&8&lCien'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  strzelec:
+    slots: [ 16 ]
+    function: sub-class-strzelec
+    name: '&e&lStrzelec'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  tropiciel:
+    slots: [ 10 ]
+    function: sub-class-tropiciel
+    name: '&a&lTropiciel'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  bestiariusz:
+    slots: [ 11 ]
+    function: sub-class-bestiariusz
+    name: '&2&lBestiariusz'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  piromanta:
+    slots: [ 12 ]
+    function: sub-class-piromanta
+    name: '&c&lPiromanta'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  kriomanta:
+    slots: [ 13 ]
+    function: sub-class-kriomanta
+    name: '&b&lKriomanta'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  burzomanta:
+    slots: [ 14 ]
+    function: sub-class-burzomanta
+    name: '&9&lBurzomanta'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  kapelan:
+    slots: [ 15 ]
+    function: sub-class-kapelan
+    name: '&f&lKapelan'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  inkwizytor:
+    slots: [ 16 ]
+    function: sub-class-inkwizytor
+    name: '&6&lInkwizytor'
+    lore: [ '{lore}', '', '{attribute-lore}' ]
+  rytualista:
+    slots: [ 22 ]
+    function: sub-class-rytualista
+    name: '&5&lRytualista'
+    lore: [ '{lore}', '', '{attribute-lore}' ]

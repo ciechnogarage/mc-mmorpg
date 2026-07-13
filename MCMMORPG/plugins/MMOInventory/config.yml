@@ -30,8 +30,8 @@ mysql:
   host: localhost
   port: 3306
   database: minecraft
-  user: mmolover
-  pass: ILoveAria
+  user: disabled
+  pass: disabled
   maxPoolSize: 10
   maxLifeTime: 300000
   connectionTimeOut: 10000

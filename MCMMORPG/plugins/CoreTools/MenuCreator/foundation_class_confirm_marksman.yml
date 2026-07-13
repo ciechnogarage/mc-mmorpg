@@ -1,0 +1,50 @@
+foundation_class_confirm_marksman:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Oath Screen - Łowca'
+  size: 4
+  fill_material: 'CYAN_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: CYAN_STAINED_GLASS_PANE
+      name: ' '
+    summary:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<gold><bold>Przysięga Łowcy'
+      lore:
+        - '<gray>Rodowód: <white>{race_id}'
+        - '<gray>Oath: utrzymasz dystans i pole walki.'
+        - '<gray>Payoff: mentorzy, Zwiadowca i ranged anchor path.'
+        - '<dark_gray>Gear nadal ma źródło w mieście.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Potwierdź Oath Łowcy'
+      left_click:
+        Scripts:
+          - creator_confirm_marksman
+      click:
+        Scripts:
+          - creator_confirm_marksman
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: REDSTONE
+      name: '<red><bold>Wróć do Archetypów'
+      left_click:
+        Scripts:
+          - creator_cancel_class_choice
+      click:
+        Scripts:
+          - creator_cancel_class_choice

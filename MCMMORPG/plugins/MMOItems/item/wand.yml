@@ -22,6 +22,66 @@ OAK_WAND:
         mode: RIGHT_CLICK
         damage: 3.0
         cooldown: 15.0
+MAG_INITIATE_WAND:
+  base:
+    material: STICK
+    name: '&fRóżdżka Przeciążenia'
+    lore:
+    - '&7Cienki kanał dla zbyt dużej mocy.'
+    - '&7Jeśli rytm pęknie, pękniesz razem z nim.'
+    - '&8Archetyp: Mana / Overload / burst.'
+    - '&8Starter: skupienie przed stat checkiem.'
+    - '&8Następny krok: ADEPT, rdzenie runiczne i focus forge.'
+    required-level: 1.0
+    range: 22.0
+    attack-damage: 5.0
+    attack-speed: 1.2
+    gem-sockets:
+      - Blue
+    tier: MAGICAL
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_magic:
+      weight: 1
+    caster_suffix_magic:
+      weight: 1
+ORIGIN_BONE_WAND:
+  base:
+    material: STICK
+    name: '&fOrigin Bone Wand'
+    lore:
+      - '&7Starter wand granted after choosing Nieumarly.'
+    range: 18.0
+    attack-damage: 4.0
+    attack-speed: 1.1
+    required-level: 0.0
+    tier: COMMON
+    upgrade:
+      template: foundation-caster
+PIROMANTA_WAND:
+  base:
+    material: BLAZE_ROD
+    name: '&cRozdzka Zarzewia'
+    lore:
+      - '&7Rozdzka pod obrazenia zaklec i magiczny nacisk.'
+    required-level: 25.0
+    required-intelligence: 18.0
+    attack-damage: 7.0
+    attack-speed: 1.3
+    magic-damage: 12.0
+    skill-damage: 15.0
+    gem-sockets:
+      - Blue
+      - Red
+    tier: RARE
+    upgrade:
+      template: foundation-caster
+  modifiers:
+    caster_prefix_rare:
+      weight: 1
+    caster_suffix_rare:
+      weight: 1
 BLAZE_WAND:
   base:
     material: BLAZE_ROD
@@ -147,7 +207,7 @@ SPELLCASTER_WAND:
     name: §dSpellcaster Wand
     required-level: 1.0
     required-class:
-      - Mage
+      - mage
     range: 16.0
     attack-damage:
       base: 6.0

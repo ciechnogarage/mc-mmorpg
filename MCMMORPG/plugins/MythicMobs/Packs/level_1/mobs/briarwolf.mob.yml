@@ -1,0 +1,20 @@
+level_1_briarwolf:
+  Template: level_1_base_melee_add
+  Type: HUSK
+  Display: '<dark_green>Cierniowy Wilk</dark_green>'
+  Health: 28
+  Damage: 5
+  LevelModifiers:
+    Health: 11
+    Damage: 1.8
+  Options:
+    MovementSpeed: 0.30
+  Model:
+    Id: level_1_briarwolf
+    ViewRadius: 48
+    Drive: false
+    DamageTint: true
+  Skills:
+    - defaultstate{s=idle;t=idle} @self ~onSpawn
+    - state{mid=level_1_briarwolf;s=attack} @self ~onAttack
+    - state{mid=level_1_briarwolf;s=death} @self ~onDeath

@@ -55,3 +55,63 @@ HANDGUN:
       - Red
     max-durability: 2650.0
     tier: RARE
+KUSZA_WARTY:
+  base:
+    material: WOODEN_PICKAXE
+    name: '&fKusza Warty'
+    lore:
+      - '&7Podstawowa kusza pierwszego aktu pod pewny dystans.'
+    required-level: 10.0
+    required-dexterity: 8.0
+    attack-damage: 5.5
+    projectile-damage: 8.0
+    arrow-velocity: 1.8
+    tier: COMMON
+    upgrade:
+      template: foundation-ranged
+KUSZA_NACIAGU:
+  base:
+    material: WOODEN_PICKAXE
+    name: '&2Kusza Naciagu'
+    lore:
+      - '&7Lepsza kusza pod nacisk i przebicie na srednim dystansie.'
+    required-level: 18.0
+    required-dexterity: 12.0
+    attack-damage: 6.5
+    projectile-damage: 10.0
+    critical-strike-chance: 4.0
+    arrow-velocity: 1.95
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-ranged
+  modifiers:
+    ranged_prefix_magic:
+      weight: 1
+    ranged_suffix_magic:
+      weight: 1
+KUSZA_OBLEZNICZA:
+  base:
+    material: WOODEN_PICKAXE
+    name: '&6Kusza Obleznicza'
+    lore:
+      - '&7Ciezsza kusza pod mocny pojedynczy strzal i presje.'
+    required-level: 25.0
+    required-strength: 10.0
+    required-dexterity: 16.0
+    attack-damage: 7.5
+    projectile-damage: 13.0
+    critical-strike-power: 16.0
+    arrow-velocity: 2.1
+    gem-sockets:
+      - Red
+      - Green
+    tier: RARE
+    upgrade:
+      template: foundation-ranged
+  modifiers:
+    ranged_prefix_rare:
+      weight: 1
+    ranged_suffix_rare:
+      weight: 1

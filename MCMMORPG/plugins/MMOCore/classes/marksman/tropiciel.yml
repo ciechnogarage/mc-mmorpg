@@ -1,0 +1,35 @@
+display:
+    name: 'Tropiciel'
+    lore:
+    - 'Ranged skirmisher z naciskiem na ruch i kontrolowany engage.'
+    attribute-lore:
+    - '&a+ &7Mobility'
+    - '&a+ &7Tracking'
+    - '&c- &7Static Damage'
+    item: COMPASS
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aŚlad", unlocked-by-default: true, lore: [ '&7Odczyt celu i kontrola podejścia.' ] }
+    2: { name: "&aUskok Terenowy", unlocked-by-default: true, lore: [ '&7Ruch jako obrona, nie darmowy escape.' ] }
+    3: { name: "&aZasadzka", unlocked-by-default: true, lore: [ '&7Przygotowanie starcia przed kontaktem.' ] }
+    4: { name: "&aDługi Pościg", unlocked-by-default: true, lore: [ '&7Podpis tropiciela.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'rogue-marksman'
+options:
+    display: false
+    needs-permission: false
+skills:
+    EVADE: { level: 1, max-level: 30 }
+    WEAKEN: { level: 4, max-level: 30 }
+    MINOR_HEALINGS: { level: 8, max-level: 30 }
+attributes:
+    movement-speed: { base: 0.112, per-level: 0 }
+    safe-fall-distance: { base: 5.0, per-level: 0 }
+    max-health: { base: 18, per-level: 0 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

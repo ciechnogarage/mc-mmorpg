@@ -1,0 +1,35 @@
+display:
+    name: 'Kapelan'
+    lore:
+    - 'Wsparcie, leczenie i defensywny sustain.'
+    attribute-lore:
+    - '&a+ &7Healing'
+    - '&a+ &7Stability'
+    - '&c- &7Burst'
+    item: GHAST_TEAR
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aModlitwa Ocalenia", unlocked-by-default: true, lore: [ '&7Leczenie z kosztem tempa zabijania.' ] }
+    2: { name: "&aMałe Uzdrowienie", unlocked-by-default: true, lore: [ '&7Krótka korekta błędu drużyny.' ] }
+    3: { name: "&aTarcza Wspólnoty", unlocked-by-default: true, lore: [ '&7Ochrona miejsca albo sojusznika.' ] }
+    4: { name: "&aKapelański Rytm", unlocked-by-default: true, lore: [ '&7Podpis defensywnego wsparcia.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'warrior-paladin'
+options:
+    display: false
+    needs-permission: false
+skills:
+    GREATER_HEALINGS: { level: 1, max-level: 30 }
+    MINOR_HEALINGS: { level: 3, max-level: 30 }
+    HUMAN_SHIELD: { level: 8, max-level: 20 }
+attributes:
+    max-health: { base: 23, per-level: 0.3 }
+    max-mana: { base: 22, per-level: 0.6 }
+    mana-regeneration: { base: 0.18, per-level: 0.03 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

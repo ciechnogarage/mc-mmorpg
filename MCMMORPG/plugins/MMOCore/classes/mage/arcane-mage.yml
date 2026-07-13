@@ -1,11 +1,11 @@
 
 # Display options
 display:
-    name: 'Arcane Mage'
+    name: 'Arkanista'
     lore:
-    - 'The Mage has mastered the power of the'
-    - 'Arcanes, taking down any enemy on his path'
-    - 'using powerful magic & ranged abilities.'
+    - 'Czysta magia, kontrola formy i presja z dystansu.'
+    - 'Nie wygrywa pancerzem. Wygrywa rytmem, zasobem'
+    - 'i karą za zignorowanie castu.'
     attribute-lore:
     - '&a+ &7Mana Regeneration'
     - '&a+ &7Health Regeneration'
@@ -48,27 +48,31 @@ exp-curve: '{level} * 200'
 
 skill-slots:
     1:
-        name: "&aSkill Slot I"
+        name: "&aWęzeł Many"
         unlocked-by-default: true
-        lore: []
+        lore:
+            - '&7Podstawowy kanał arkany i kontroli zasobu.'
         # Permanently binds a skill to this slot
         # Players won't be able to change the skill in this slot
-        #hardset: FIREBALL
+        hardset: FIREBALL
     2:
-        name: "&aSkill Slot II"
+        name: "&aPęknięcie Arkany"
         unlocked-by-default: true
-        lore: []
-        #hardset: FIREBALL
+        lore:
+            - '&7Burst albo setup po utrzymaniu rytmu.'
+        hardset: FIREBALL
     3:
-        name: "&aSkill Slot III"
+        name: "&aTarcza Formy"
         unlocked-by-default: true
-        lore: []
-        #hardset: ICE_SPIKES
+        lore:
+            - '&7Ochrona rytmu, gdy przeciwnik skraca dystans.'
+        hardset: ICE_SPIKES
     4:
-        name: "&aSkill Slot IV"
+        name: "&aArkanum"
         unlocked-by-default: true
-        lore: []
-        #hardset: WARP
+        lore:
+            - '&7Podpis czystej magii i późniejszej specjalizacji.'
+        hardset: WARP
 
 cast-particle:
     particle: SPELL_INSTANT

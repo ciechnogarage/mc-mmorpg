@@ -1,0 +1,79 @@
+foundation_race_spotlight_ork:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Spotlight Rodu - Ork'
+  size: 4
+  fill_material: 'RED_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: RED_STAINED_GLASS_PANE
+      name: ' '
+    hero:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<red><bold>Portret Zdobywcy'
+      lore:
+        - '<gray>To twoja postać niesie tę pieczęć.'
+    fantasy:
+      location: top
+      slots: [11]
+      source: vanilla
+      material: BOOK
+      name: '<red><bold>Hero Card'
+      lore:
+        - '<gray>Ork nie prosi o wejście do świata.'
+        - '<gray>Wchodzi w niego toporem, presją'
+        - '<gray>i prawem do pierwszego uderzenia.'
+        - '<dark_gray>Starter scene: trofeum, kurz i ciężki oddech.'
+    payoff:
+      location: top
+      slots: [13]
+      source: vanilla
+      material: BONE
+      name: '<gold><bold>Realny Payoff'
+      lore:
+        - '<gray>Miasto da 2 Małe Kości'
+        - '<gray>pod pierwszy brutalny salvage.'
+        - '<dark_gray>Combat passive pozostaje pending.'
+    counter:
+      location: top
+      slots: [15]
+      source: vanilla
+      material: LEAD
+      name: '<red><bold>Koszt Wyboru'
+      lore:
+        - '<gray>Counterplay: kite i dystans.'
+        - '<gray>Budujesz nacisk, ale nie dostajesz'
+        - '<gray>darmowej odpowiedzi na kontrolę.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Przyjmij Pieczęć Orka'
+      left_click:
+        Scripts:
+          - creator_confirm_race_ork
+      click:
+        Scripts:
+          - creator_confirm_race_ork
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do Galerii'
+      left_click:
+        Scripts:
+          - creator_open_race_gallery
+      click:
+        Scripts:
+          - creator_open_race_gallery

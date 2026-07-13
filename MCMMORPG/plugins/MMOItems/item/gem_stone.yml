@@ -1,7 +1,10 @@
 RUBY:
   base:
     material: EMERALD
-    name: '&fRuby of Strength'
+    name: '&8[LEGACY OFF] Ruby of Strength'
+    required-level: 100.0
+    lore:
+      - '&8Legacy/demo gem poza foundation loop.'
     critical-strike-power:
       base: 11.0
       spread: 0.028
@@ -10,13 +13,15 @@ RUBY:
       base: 1.5
       spread: 0.083
       max-spread: 0.25
-    required-level: 5.0
     disable-crafting: true
 GEM_OF_ACCURACY:
   base:
     material: DIAMOND
     disable-crafting: true
-    name: '&fGem of Accuracy'
+    name: '&8[LEGACY OFF] Gem of Accuracy'
+    required-level: 100.0
+    lore:
+      - '&8Legacy/demo gem poza foundation loop.'
     success-rate:
       base: 94.5
       spread: 0.015
@@ -36,7 +41,10 @@ GEM_OF_LIFE:
   base:
     material: RED_DYE
     max-health: 4.0
-    name: '&fGem of Life'
+    name: '&8[LEGACY OFF] Gem of Life'
+    required-level: 100.0
+    lore:
+      - '&8Legacy/demo gem poza foundation loop.'
     item-type-restriction:
     - ARMOR
     gem-color: Red
@@ -46,17 +54,22 @@ GEM_OF_LIFE:
 NATURE_GIFT:
   base:
     material: EMERALD
-    name: '&fNature''s Gift'
+    name: '&8[LEGACY OFF] Nature''s Gift'
+    lore:
+      - '&8Legacy/demo gem poza foundation loop.'
     displayed-type: Green Gem Stone
     fire-damage-reduction:
       base: 25.0
       spread: 0.06
       max-spread: 0.17
-    required-level: 6.0
+    required-level: 100.0
 SPITEFUL_OPAQUE_DIAMOND:
   base:
     material: DIAMOND
-    name: '&9Spiteful Opaque Diamond'
+    name: '&8[LEGACY OFF] Spiteful Opaque Diamond'
+    required-level: 100.0
+    lore:
+      - '&8Legacy/demo gem poza foundation loop.'
     success-rate:
       base: 11.0
       spread: 0.03
@@ -72,22 +85,23 @@ SPITEFUL_OPAQUE_DIAMOND:
 GOLDEN_RELIC:
   base:
     material: GOLD_NUGGET
-    name: '&eGolden Relic'
+    name: '&8[LEGACY OFF] Golden Relic'
     lore:
-    - '&7Apply it onto &eany&7 socket.'
-    - '&7'
+    - '&8Legacy/demo gem poza foundation loop.'
     critical-strike-chance:
       base: 15.0
       spread: 0.08
       max-spread: 0.25
-    required-level: 20.0
+    required-level: 100.0
     disable-crafting: true
 BLAZE_SOUL:
   base:
     material: ORANGE_DYE
     disable-crafting: true
-    name: '&cBlaze Soul'
-    required-level: 15.0
+    name: '&8[LEGACY OFF] Blaze Soul'
+    required-level: 100.0
+    lore:
+      - '&8Legacy/demo gem poza foundation loop.'
     displayed-type: Red Gem Stone
     hide-enchants: true
     enchants:
@@ -103,10 +117,10 @@ BLAZE_SOUL:
 NETHER_GEM:
   base:
     material: NETHERITE_SCRAP
-    name: §cNether Gem
+    name: §8[LEGACY OFF] Nether Gem
     lore:
-      - §c§oThe nether gem can be placed on
-      - §c§oitems containing nether sockets.
+      - §8Legacy/demo gem poza foundation loop.
+    required-level: 100.0
     success-rate:
       base: 60.0
       scale: 0.12
@@ -143,13 +157,10 @@ NETHER_GEM:
 RAINBOW_GEM:
   base:
     material: AMETHYST_SHARD
-    name: §c§lR§6§la§e§li§a§ln§2§lb§9§lo§3§lw §c§lG§6§le§e§lm
+    name: §8[LEGACY OFF] Rainbow Gem
     lore:
-      - §eThe rainbow gem allows you to
-      - §eboost a large amount of stats!
-      - §2It will also upgrade your item
-      - §2depending on its previous upgrades!
-      - §cVery hard to craft!
+      - §8Legacy/demo gem poza foundation loop.
+    required-level: 100.0
     attack-damage: 2.0
     attack-speed: 0.1
     critical-strike-chance: 10.0
@@ -184,3 +195,96 @@ RAINBOW_GEM:
             - v iron_sword - 1.0..|v iron_helmet - 1.0..|v iron_chestplate - 1.0..|v
               iron_leggings - 1.0..|v iron_boots - 1.0..|v diamond_sword - 1.0..
     success-rate: 90.0
+RUBIN_NATARCIA:
+  base:
+    material: RED_DYE
+    name: '&cRubin Natarcia'
+    lore:
+      - '&7Prosty czerwony gem pod bronie fizyczne.'
+    gem-color: Red
+    displayed-type: Red Gem Stone
+    required-level: 10.0
+    success-rate: 88.0
+    attack-damage: 1.5
+    weapon-damage: 3.0
+    disable-crafting: true
+GRANAT_BASTIONU:
+  base:
+    material: BRICK
+    name: '&6Granat Bastionu'
+    lore:
+      - '&7Gem do tarcz i pancerzy frontowych.'
+    gem-color: Red
+    displayed-type: Red Armor Gem Stone
+    item-type-restriction:
+      - ARMOR
+      - SHIELD
+    required-level: 12.0
+    success-rate: 84.0
+    armor: 1.0
+    block-power: 3.0
+    disable-crafting: true
+SZAFIR_SKUPIENIA:
+  base:
+    material: BLUE_DYE
+    name: '&9Szafir Skupienia'
+    lore:
+      - '&7Gem pod mane i magiczny nacisk.'
+    gem-color: Blue
+    displayed-type: Blue Gem Stone
+    required-level: 10.0
+    success-rate: 88.0
+    max-mana: 2.0
+    magic-damage: 3.0
+    disable-crafting: true
+PERLA_PRZEPLYWU:
+  base:
+    material: PRISMARINE_CRYSTALS
+    name: '&bPerla Przeplywu'
+    lore:
+      - '&7Gem pod odnowienia i utrzymanie rotacji.'
+    gem-color: Blue
+    displayed-type: Blue Gem Stone
+    required-level: 14.0
+    success-rate: 82.0
+    cooldown-reduction: 2.0
+    mana-regeneration: 0.04
+    disable-crafting: true
+SZMARAGD_TROPU:
+  base:
+    material: GREEN_DYE
+    name: '&aSzmaragd Tropu'
+    lore:
+      - '&7Gem pod dystans i precyzje.'
+    gem-color: Green
+    displayed-type: Green Gem Stone
+    required-level: 10.0
+    success-rate: 88.0
+    projectile-damage: 3.0
+    critical-strike-chance: 2.0
+    disable-crafting: true
+AGAT_ZWINNOSCI:
+  base:
+    material: SLIME_BALL
+    name: '&2Agat Zwinnosci'
+    lore:
+      - '&7Gem pod ruch, tempo i lekkie buildy.'
+    gem-color: Green
+    displayed-type: Green Gem Stone
+    required-level: 12.0
+    success-rate: 84.0
+    attack-speed: 0.03
+    movement-speed: 0.005
+    disable-crafting: true
+OPAL_RZEMIOSLA:
+  base:
+    material: QUARTZ
+    name: '&fOpal Rzemiosla'
+    lore:
+      - '&7Uniwersalny gem pod bezpieczne wzmacnianie ekwipunku.'
+    required-level: 15.0
+    success-rate: 80.0
+    critical-strike-power: 3.0
+    skill-damage: 3.0
+    displayed-type: White Gem Stone
+    disable-crafting: true

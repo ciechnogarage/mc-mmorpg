@@ -1,0 +1,12 @@
+PlayerJoinCreatorResume:
+  Event: PlayerJoinEvent
+  Script: PlayerJoinCreatorResume
+  run_script_if_event_cancelled: false
+
+  extra-script:
+    PlayerJoinCreatorResume:
+      Conditions:
+        - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+        - Comparator{value1="{class_selected}";operator="=";value2="false"} true
+      Mechanics:
+        - Script{script=creator_resume_or_start} @Self

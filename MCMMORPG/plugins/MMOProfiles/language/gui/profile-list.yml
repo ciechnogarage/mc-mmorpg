@@ -1,0 +1,102 @@
+# GUI display name
+name: 'Kompania Bohaterow'
+removal_name: 'Kompania - tryb usuwania'
+
+# Number of slots in inventory. Must be a multiple of 9.
+slots: 45
+
+items:
+  prev_page_item:
+    function: previous-page
+    slots: [ 9 ]
+
+    item: PLAYER_HEAD
+    name: "&6Poprzednia strona"
+    texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+
+  next_page_item:
+    function: next-page
+    slots: [ 17 ]
+
+    item: PLAYER_HEAD
+    name: "&6Nastepna strona"
+    texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
+
+  # Additional option for Geyser servers to remove
+  # profiles without right-clicking the profile item
+  removal:
+    function: removal
+    slots: [ 36 ]
+
+    item: BARRIER
+    name: "&6Usuwanie bohatera"
+
+  # Kicks the player when clicked.
+  # To disable, erase/comment out this section.
+  log_out:
+    function: log_out
+    slots: [ 44 ]
+
+    kick_reason: 'Wylogowano z wyboru postaci.'
+    item: BELL
+    name: "&cWyloguj"
+
+  profile_item:
+    function: profile
+    slots: [ 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25 ]
+
+    # This is disabled if the `removal` item above is in use.
+    remove_on_right_click: true
+
+    # Fallback placeholder if the placeholder does not exist
+    # or has not been loaded yet from the database.
+    fallback_placeholder: '[brak]'
+
+    no-slot:
+      name: "&6"
+      item: 'GRAY_STAINED_GLASS_PANE'
+      lore: [ ]
+
+    empty-slot:
+      name: "&6[+] Stworz nowego bohatera"
+      item: EMERALD
+      lore:
+        - ''
+        - '&7To miejsce przy ognisku czeka'
+        - '&7na nowy rod i nowa przysiege.'
+        - ''
+        - "&e↪ Lewy klik: otworz kreator bohatera."
+
+    locked-slot:
+      name: "&cSlot {rank}"
+      item: REDSTONE
+      lore:
+        - ''
+        - '&7Potrzebujesz rangi &6{rank}&7 lub wyzszej,'
+        - '&7aby odblokowac to miejsce w Kompanii.'
+
+    # Item used for the profile the player is currently playing on.
+    current:
+      item: PLAYER_HEAD
+      name: "&6[{slot}] {profile_name} &a(Przy ognisku)"
+      lore:
+        - ''
+        - '&7Archetyp: &6{mmocore_class}'
+        - '&7Poziom: &e{mmocore_level}'
+        - '&7Postep: &e{mmocore_exp}&7/&e{mmocore_exp_next_level}'
+        - '&7Ostatnia scena: &e{world}'
+        - ''
+        - '&aTen bohater jest aktualnie wybrany.'
+        - "&c↪ Prawy klik: usun po potwierdzeniu."
+
+    item: PLAYER_HEAD
+    name: "&6[{slot}] {profile_name}"
+    lore:
+      - ''
+      - '&7Archetyp: &6{mmocore_class}'
+      - '&7Poziom: &e{mmocore_level}'
+      - '&7Postep: &e{mmocore_exp}&7/&e{mmocore_exp_next_level}'
+      - '&7Ostatnia scena: &e{world}'
+      - ''
+      - "&e↪ Lewy klik: postaw bohatera przy ognisku."
+      - "&c↪ Prawy klik: usun po potwierdzeniu."

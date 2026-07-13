@@ -10,8 +10,16 @@
 
 ## Build, Test, and Development Commands
 
-- Start the server locally from the server directory:
-  `cd MCMMORPG && java -Xms2G -Xmx6G -jar paper.jar --nogui`
+- Do not start Paper natively and do not use the disabled `start.sh`. Runtime
+  validation uses Docker backends behind Velocity; see
+  `MCMMORPG/START_HERE_DOCKER.md`.
+- Select the backend by affected area: `world` for dungeons/world/mobs/models,
+  `items` for items/equipment/classes/login, and `hub` for social/hub work.
+- From `MCMMORPG/docker`, use `./mc up <area>`, `./mc rcon <area> "<command>"`,
+  `./mc logs <area>`, and `./mc down <area>`. Players connect through Velocity
+  on `localhost:25565`; never validate by connecting directly to a backend.
+- Test every affected area on its own backend. Cross-area changes require
+  separate evidence from each affected backend.
 - Inspect the latest boot/runtime log:
   `tail -n 200 MCMMORPG/logs/latest.log`
 - Find plugin or config references quickly:
@@ -30,8 +38,18 @@ There is no application build system in this repository. Validation is primarily
 
 ## Testing Guidelines
 
-- After plugin jar, config, or world-generation changes, boot the server and review `logs/latest.log` for errors, missing dependencies, and warning spikes.
+- After plugin jar, config, or world-generation changes, start only the relevant
+  Docker backend and inspect both `./mc logs <area>` and the area-specific runtime
+  evidence for errors, missing dependencies, and warning spikes.
 - For gameplay changes, verify the relevant flow in-game on staging before production use.
+- For `ModelEngine` mobs, do not treat a YAML `Model:` section or an existing `.bbmodel` as proof that the model is active. Before claiming a model exists or works, verify all three: the active MythicMobs YAML reference, the source blueprint in `plugins/ModelEngine/blueprints/`, and compiled `model_id:*` entries in `plugins/ModelEngine/.data/cache.json`.
+- When touching boss/mob models, run `node MCMMORPG/_validation/check_modelengine_binding.js` before any art/runtime conclusion. If the script reports `CACHE_MISSING`, the model is not active yet, regardless of reload output or viewer screenshots.
+- For boss-quality `ModelEngine` work, a valid import is still not enough. Before calling a model "good", verify that the blueprint has a real segmented `outliner` rig (not one flat bag of cubes), a hidden `hitbox` bone, and explicit state animations. Run `node MCMMORPG/_validation/check_modelengine_quality.js`; if it fails on `RIG_NOT_SEGMENTED`, `HIERARCHY_TOO_FLAT`, or `ANIMATIONS_MISSING`, treat the model as unfinished.
+- For every new or materially changed ModelEngine model, follow `docs/ai/modelengine-model-production.md`. A quality claim requires current multi-view renders, a quality manifest whose SHA-256 matches the shipped blueprint, all review scores at least 4/5, no known issues, and live spawn inspection. Import/cache success alone is never visual approval.
+- All creature-model final art is Blockbench-first. Edit and inspect the real `.bbmodel` natively in Blockbench while iterating; do not treat guessed numeric edits, script-generated geometry, or render-only review as an acceptable primary art workflow.
+- Before overwriting a generated `.bbmodel` or its generator during visual iteration, create a versioned backup containing both files. Never describe a user-created copy as an agent-created backup.
+- After two visual rejections of the same model, stop geometry mutations. Return to the best explicitly accepted visual baseline and prepare side-by-side silhouette/material studies; do not substitute a mechanically simplified blockout or treat structural validation as artistic progress.
+- Boss manifests use schema version 2 and must bind animation contracts to real MythicMobs skills and model-part bones. Run `npm --prefix MCMMORPG/_validation run modelengine:ecosystem -- --model <model_id>`; unresolved states, helper bones, impact ticks, skill sources, or integration files block completion.
 - Update docs when observed versions, runtime requirements, or known gaps change.
 
 ## Commit & Pull Request Guidelines

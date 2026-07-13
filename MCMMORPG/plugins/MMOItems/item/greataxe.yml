@@ -16,7 +16,7 @@ BARBARIAN_AXE:
       max-spread: 0.2
     required-level: 70.0
     required-class:
-      - Warrior
+      - warrior
     critical-strike-chance:
       base: 30.0
       spread: 0.1

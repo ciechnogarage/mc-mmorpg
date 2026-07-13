@@ -1,0 +1,224 @@
+creator_v2_open_main:
+ Conditions:
+ Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+ Mechanics:
+ variable{action="set";variable="creator_intro_seen";value="true";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_reset_selection:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_race_id";value="UNSET";profile=true} @Self
+ variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
+ variable{action="set";variable="recommended_class_id";value="UNSET";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<yellow>Wyczyszczono wybor. Zacznij jeszcze raz na glownym ekranie kreatora."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.8} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_race_czlowiek:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_race_id";value="CZLOWIEK";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano rod: <white>Czlowiek<gray>. Dobierz archetyp i zaakceptuj gotowy profil."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.2} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_race_ork:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_race_id";value="ORK";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano rod: <white>Ork<gray>. Dobierz archetyp i zaakceptuj gotowy profil."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.9} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_race_elf:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_race_id";value="ELF";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano rod: <white>Elf<gray>. Dobierz archetyp i zaakceptuj gotowy profil."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.3} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_race_krasnolud:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_race_id";value="KRASNOLUD";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano rod: <white>Krasnolud<gray>. Dobierz archetyp i zaakceptuj gotowy profil."} @Self
+ playsound{sound="minecraft:block.anvil.use";volume=0.7;pitch=1.0} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_race_nieumarly:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_race_id";value="NIEUMARLY";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano rod: <white>Nieumarly<gray>. Dobierz archetyp i zaakceptuj gotowy profil."} @Self
+ playsound{sound="minecraft:block.sculk_shrieker.shriek";volume=0.4;pitch=1.1} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_class_warrior:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_class_id";value="WARRIOR";profile=true} @Self
+ variable{action="set";variable="recommended_class_id";value="WARRIOR";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano archetyp: <white>Wojownik<gray>. Mozesz otworzyc spotlight albo kliknac Accept."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.0} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_class_rogue:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_class_id";value="ROGUE";profile=true} @Self
+ variable{action="set";variable="recommended_class_id";value="ROGUE";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano archetyp: <white>Lotrzyk<gray>. Mozesz otworzyc spotlight albo kliknac Accept."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.15} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_class_marksman:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_class_id";value="MARKSMAN";profile=true} @Self
+ variable{action="set";variable="recommended_class_id";value="MARKSMAN";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano archetyp: <white>Lowca<gray>. Mozesz otworzyc spotlight albo kliknac Accept."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.1} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_class_mage:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_class_id";value="MAGE";profile=true} @Self
+ variable{action="set";variable="recommended_class_id";value="MAGE";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano archetyp: <white>Mag<gray>. Mozesz otworzyc spotlight albo kliknac Accept."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=1.3} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_select_class_paladin:
+ Conditions: []
+ Mechanics:
+ variable{action="set";variable="pending_class_id";value="PALADIN";profile=true} @Self
+ variable{action="set";variable="recommended_class_id";value="PALADIN";profile=true} @Self
+ variable{action="set";variable="character_stage";value="CREATOR_MAIN";profile=true} @Self
+ message{m="<green>Wybrano archetyp: <white>Akolita<gray>. Mozesz otworzyc spotlight albo kliknac Accept."} @Self
+ playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.95} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_preview_pending_race:
+ Conditions:
+ Comparator{value1="{pending_race_id}";operator="=";value2="CZLOWIEK"} falseElse creator_v2_preview_pending_race_ork
+ Mechanics:
+ Script{script=creator_open_race_spotlight_czlowiek} @Self
+
+creator_v2_preview_pending_race_ork:
+ Conditions:
+ Comparator{value1="{pending_race_id}";operator="=";value2="ORK"} falseElse creator_v2_preview_pending_race_elf
+ Mechanics:
+ Script{script=creator_open_race_spotlight_ork} @Self
+
+creator_v2_preview_pending_race_elf:
+ Conditions:
+ Comparator{value1="{pending_race_id}";operator="=";value2="ELF"} falseElse creator_v2_preview_pending_race_krasnolud
+ Mechanics:
+ Script{script=creator_open_race_spotlight_elf} @Self
+
+creator_v2_preview_pending_race_krasnolud:
+ Conditions:
+ Comparator{value1="{pending_race_id}";operator="=";value2="KRASNOLUD"} falseElse creator_v2_preview_pending_race_nieumarly
+ Mechanics:
+ Script{script=creator_open_race_spotlight_krasnolud} @Self
+
+creator_v2_preview_pending_race_nieumarly:
+ Conditions:
+ Comparator{value1="{pending_race_id}";operator="=";value2="NIEUMARLY"} falseElse creator_v2_preview_missing_race
+ Mechanics:
+ Script{script=creator_open_race_spotlight_nieumarly} @Self
+
+creator_v2_preview_missing_race:
+ Conditions: []
+ Mechanics:
+ message{m="<red>Najpierw zaznacz rod na glownym ekranie kreatora."} @Self
+ playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.7} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_preview_pending_class:
+ Conditions:
+ Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_v2_preview_pending_class_rogue
+ Mechanics:
+ Script{script=creator_open_class_spotlight_warrior} @Self
+
+creator_v2_preview_pending_class_rogue:
+ Conditions:
+ Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_v2_preview_pending_class_marksman
+ Mechanics:
+ Script{script=creator_open_class_spotlight_rogue} @Self
+
+creator_v2_preview_pending_class_marksman:
+ Conditions:
+ Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_v2_preview_pending_class_mage
+ Mechanics:
+ Script{script=creator_open_class_spotlight_marksman} @Self
+
+creator_v2_preview_pending_class_mage:
+ Conditions:
+ Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_v2_preview_pending_class_paladin
+ Mechanics:
+ Script{script=creator_open_class_spotlight_mage} @Self
+
+creator_v2_preview_pending_class_paladin:
+ Conditions:
+ Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_v2_preview_missing_class
+ Mechanics:
+ Script{script=creator_open_class_spotlight_paladin} @Self
+
+creator_v2_preview_missing_class:
+ Conditions: []
+ Mechanics:
+ message{m="<red>Najpierw zaznacz archetyp na glownym ekranie kreatora."} @Self
+ playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.7} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_accept_pending_character:
+ Conditions:
+ Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_v2_accept_check_class
+ Mechanics:
+ Script{script=creator_v2_accept_missing_race} @Self
+
+creator_v2_accept_check_class:
+ Conditions:
+ Comparator{value1="{pending_class_id}";operator="=";value2="UNSET"} falseElse creator_v2_accept_finalize
+ Mechanics:
+ Script{script=creator_v2_accept_missing_class} @Self
+
+creator_v2_accept_finalize:
+ Conditions: []
+ Mechanics:
+ Script{script=creator_finalize_character} @Self
+
+creator_v2_accept_missing_race:
+ Conditions: []
+ Mechanics:
+ message{m="<red>Accept jest zablokowany: najpierw wybierz rod."} @Self
+ playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.7} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_accept_missing_class:
+ Conditions: []
+ Mechanics:
+ message{m="<red>Accept jest zablokowany: najpierw wybierz archetyp."} @Self
+ playsound{sound="minecraft:block.note_block.bass";volume=1;pitch=0.7} @Self
+ openmenu{name="foundation_creator_intro";permission=false} @Self
+
+creator_v2_leave_to_stage:
+ Conditions: []
+ Mechanics:
+ message{m="<yellow>Wracasz do wyboru slotu bohatera."} @Self
+ command{c="characterstage leave"} @Self

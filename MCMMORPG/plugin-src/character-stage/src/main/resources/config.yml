@@ -1,0 +1,128 @@
+enabled: true
+intercept_join: true
+lock_stage_movement: true
+focus_radius: 3.0
+messages:
+  stage_title: "<gold>Kompania Bohaterow"
+  stage_subtitle: "<gray>Wybierz bohatera przy ognisku"
+  focused_title: "<yellow>%slot_name%"
+  focused_subtitle: "<gray>Kliknij ponownie albo uzyj postumentu wejscia"
+  empty_title: "<aqua>Nowy bohater"
+  empty_subtitle: "<gray>Otworz kreator rodu, archetypu i przysiegi"
+  enter_ready: "<green>Wybrano slot: %slot_name%"
+  leave_stage: "<yellow>Opuszczasz scene wyboru postaci"
+  blocked_movement: "<red>Najpierw wybierz bohatera z Kompanii"
+stage:
+  spawn:
+    world: world
+    x: 189.5
+    y: 63.0
+    z: 209.5
+    yaw: 180.0
+    pitch: 0.0
+  exit:
+    world: world
+    x: 239.5
+    y: 63.0
+    z: 208.5
+    yaw: 0.0
+    pitch: 0.0
+  confirm_anchor:
+    world: world
+    x: 189
+    y: 63
+    z: 205
+  back_anchor:
+    world: world
+    x: 189
+    y: 63
+    z: 213
+slots:
+  slot_1:
+    display_name: "Bohater I"
+    profile_index: 1
+    occupied: false
+    anchor:
+      world: world
+      x: 185
+      y: 63
+      z: 209
+    focus:
+      world: world
+      x: 186.5
+      y: 63.0
+      z: 209.5
+      yaw: 90.0
+      pitch: 0.0
+    occupied_actions:
+      - "player:characterstage leave"
+      - "console:mmoprofiles open %player%"
+    create_actions:
+      - "player:characterstage leave"
+      - "console:core-menu foundation_creator_intro %player%"
+  slot_2:
+    display_name: "Bohater II"
+    profile_index: 2
+    occupied: false
+    anchor:
+      world: world
+      x: 187
+      y: 63
+      z: 206
+    focus:
+      world: world
+      x: 187.5
+      y: 63.0
+      z: 207.5
+      yaw: 135.0
+      pitch: 0.0
+    occupied_actions:
+      - "player:characterstage leave"
+      - "console:mmoprofiles open %player%"
+    create_actions:
+      - "player:characterstage leave"
+      - "console:core-menu foundation_creator_intro %player%"
+  slot_3:
+    display_name: "Bohater III"
+    profile_index: 3
+    occupied: false
+    anchor:
+      world: world
+      x: 193
+      y: 63
+      z: 206
+    focus:
+      world: world
+      x: 192.5
+      y: 63.0
+      z: 207.5
+      yaw: -135.0
+      pitch: 0.0
+    occupied_actions:
+      - "player:characterstage leave"
+      - "console:mmoprofiles open %player%"
+    create_actions:
+      - "player:characterstage leave"
+      - "console:core-menu foundation_creator_intro %player%"
+  slot_4:
+    display_name: "Bohater IV"
+    profile_index: 4
+    occupied: false
+    anchor:
+      world: world
+      x: 195
+      y: 63
+      z: 209
+    focus:
+      world: world
+      x: 193.5
+      y: 63.0
+      z: 209.5
+      yaw: -90.0
+      pitch: 0.0
+    occupied_actions:
+      - "player:characterstage leave"
+      - "console:mmoprofiles open %player%"
+    create_actions:
+      - "player:characterstage leave"
+      - "console:core-menu foundation_creator_intro %player%"

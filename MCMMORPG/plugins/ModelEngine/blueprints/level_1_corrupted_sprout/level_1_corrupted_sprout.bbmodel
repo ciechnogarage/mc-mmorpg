@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "format_version": "5.0",
+    "model_format": "free",
+    "box_uv": false
+  },
+  "name": "level_1_corrupted_sprout",
+  "model_identifier": "level_1_corrupted_sprout",
+  "visible_box": [0, 2, 0],
+  "variable_placeholders": "",
+  "variable_placeholder_buttons": [],
+  "timeline_setups": [],
+  "unhandled_root_fields": {},
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "root_core",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-5, 0, -5],
+      "to": [5, 8, 5],
+      "origin": [0, 0, 0],
+      "faces": {
+        "north": { "uv": [0, 0, 5, 4], "texture": 0 },
+        "east": { "uv": [0, 0, 5, 4], "texture": 0 },
+        "south": { "uv": [0, 0, 5, 4], "texture": 0 },
+        "west": { "uv": [0, 0, 5, 4], "texture": 0 },
+        "up": { "uv": [0, 0, 5, 5], "texture": 0 },
+        "down": { "uv": [0, 0, 5, 5], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000001"
+    },
+    {
+      "name": "left_root",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-10, 0, -2],
+      "to": [-2, 4, 2],
+      "origin": [-4, 1, 0],
+      "rotation": [0, 0, -18],
+      "faces": {
+        "north": { "uv": [0, 0, 4, 2], "texture": 0 },
+        "east": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "south": { "uv": [0, 0, 4, 2], "texture": 0 },
+        "west": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "up": { "uv": [0, 0, 4, 2], "texture": 0 },
+        "down": { "uv": [0, 0, 4, 2], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000002"
+    },
+    {
+      "name": "right_root",
+      "box_uv": false,
+      "type": "cube",
+      "from": [2, 0, -2],
+      "to": [10, 4, 2],
+      "origin": [4, 1, 0],
+      "rotation": [0, 0, 18],
+      "faces": {
+        "north": { "uv": [0, 0, 4, 2], "texture": 0 },
+        "east": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "south": { "uv": [0, 0, 4, 2], "texture": 0 },
+        "west": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "up": { "uv": [0, 0, 4, 2], "texture": 0 },
+        "down": { "uv": [0, 0, 4, 2], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000003"
+    },
+    {
+      "name": "stem_lower",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-3, 6, -3],
+      "to": [3, 18, 3],
+      "origin": [0, 6, 0],
+      "faces": {
+        "north": { "uv": [0, 0, 3, 6], "texture": 0 },
+        "east": { "uv": [0, 0, 3, 6], "texture": 0 },
+        "south": { "uv": [0, 0, 3, 6], "texture": 0 },
+        "west": { "uv": [0, 0, 3, 6], "texture": 0 },
+        "up": { "uv": [0, 0, 3, 3], "texture": 0 },
+        "down": { "uv": [0, 0, 3, 3], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000004"
+    },
+    {
+      "name": "bud_core",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-6, 16, -6],
+      "to": [6, 28, 6],
+      "origin": [0, 18, 0],
+      "faces": {
+        "north": { "uv": [0, 0, 6, 6], "texture": 0 },
+        "east": { "uv": [0, 0, 6, 6], "texture": 0 },
+        "south": { "uv": [0, 0, 6, 6], "texture": 0 },
+        "west": { "uv": [0, 0, 6, 6], "texture": 0 },
+        "up": { "uv": [0, 0, 6, 6], "texture": 0 },
+        "down": { "uv": [0, 0, 6, 6], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000005"
+    },
+    {
+      "name": "thorn_front",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-2, 18, -12],
+      "to": [2, 22, -4],
+      "origin": [0, 20, -4],
+      "rotation": [22, 0, 0],
+      "faces": {
+        "north": { "uv": [0, 0, 2, 4], "texture": 0 },
+        "east": { "uv": [0, 0, 2, 4], "texture": 0 },
+        "south": { "uv": [0, 0, 2, 4], "texture": 0 },
+        "west": { "uv": [0, 0, 2, 4], "texture": 0 },
+        "up": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "down": { "uv": [0, 0, 2, 2], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000006"
+    },
+    {
+      "name": "thorn_left",
+      "box_uv": false,
+      "type": "cube",
+      "from": [4, 18, -2],
+      "to": [11, 22, 2],
+      "origin": [4, 20, 0],
+      "rotation": [0, 0, 26],
+      "faces": {
+        "north": { "uv": [0, 0, 3, 2], "texture": 0 },
+        "east": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "south": { "uv": [0, 0, 3, 2], "texture": 0 },
+        "west": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "up": { "uv": [0, 0, 3, 2], "texture": 0 },
+        "down": { "uv": [0, 0, 3, 2], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000007"
+    },
+    {
+      "name": "thorn_right",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-11, 18, -2],
+      "to": [-4, 22, 2],
+      "origin": [-4, 20, 0],
+      "rotation": [0, 0, -26],
+      "faces": {
+        "north": { "uv": [0, 0, 3, 2], "texture": 0 },
+        "east": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "south": { "uv": [0, 0, 3, 2], "texture": 0 },
+        "west": { "uv": [0, 0, 2, 2], "texture": 0 },
+        "up": { "uv": [0, 0, 3, 2], "texture": 0 },
+        "down": { "uv": [0, 0, 3, 2], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000008"
+    },
+    {
+      "name": "hitbox_cube",
+      "box_uv": false,
+      "type": "cube",
+      "from": [-6, 0, -6],
+      "to": [6, 24, 6],
+      "origin": [0, 12, 0],
+      "faces": {
+        "north": { "uv": [0, 0, 1, 1], "texture": 0 },
+        "east": { "uv": [0, 0, 1, 1], "texture": 0 },
+        "south": { "uv": [0, 0, 1, 1], "texture": 0 },
+        "west": { "uv": [0, 0, 1, 1], "texture": 0 },
+        "up": { "uv": [0, 0, 1, 1], "texture": 0 },
+        "down": { "uv": [0, 0, 1, 1], "texture": 0 }
+      },
+      "uuid": "61000000-0000-4000-8000-000000000009"
+    }
+  ],
+  "groups": [
+    {
+      "uuid": "62000000-0000-4000-8000-000000000001",
+      "export": true,
+      "locked": false,
+      "origin": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "color": 0,
+      "name": "root",
+      "children": [
+        "61000000-0000-4000-8000-000000000001",
+        "61000000-0000-4000-8000-000000000002",
+        "61000000-0000-4000-8000-000000000003",
+        "61000000-0000-4000-8000-000000000004",
+        "61000000-0000-4000-8000-000000000005",
+        "61000000-0000-4000-8000-000000000006",
+        "61000000-0000-4000-8000-000000000007",
+        "61000000-0000-4000-8000-000000000008"
+      ],
+      "reset": false,
+      "shade": true,
+      "mirror_uv": false,
+      "visibility": true,
+      "autouv": 0,
+      "isOpen": true
+    },
+    {
+      "uuid": "62000000-0000-4000-8000-000000000002",
+      "export": true,
+      "locked": false,
+      "origin": [0, 18, 0],
+      "rotation": [0, 0, 0],
+      "color": 0,
+      "name": "hitbox",
+      "children": [
+        "61000000-0000-4000-8000-000000000009"
+      ],
+      "reset": false,
+      "shade": true,
+      "mirror_uv": false,
+      "visibility": false,
+      "autouv": 0,
+      "isOpen": false
+    }
+  ],
+  "outliner": [
+    {
+      "uuid": "62000000-0000-4000-8000-000000000001",
+      "isOpen": true,
+      "children": [
+        "61000000-0000-4000-8000-000000000001",
+        "61000000-0000-4000-8000-000000000002",
+        "61000000-0000-4000-8000-000000000003",
+        "61000000-0000-4000-8000-000000000004",
+        "61000000-0000-4000-8000-000000000005",
+        "61000000-0000-4000-8000-000000000006",
+        "61000000-0000-4000-8000-000000000007",
+        "61000000-0000-4000-8000-000000000008"
+      ]
+    },
+    {
+      "uuid": "62000000-0000-4000-8000-000000000002",
+      "isOpen": false,
+      "children": [
+        "61000000-0000-4000-8000-000000000009"
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "path": "",
+      "name": "level_1_corrupted_sprout.png",
+      "folder": "block",
+      "namespace": "minecraft",
+      "id": "0",
+      "group": "",
+      "width": 16,
+      "height": 16,
+      "uv_width": 16,
+      "uv_height": 16,
+      "particle": false,
+      "use_as_default": false,
+      "layers_enabled": false,
+      "sync_to_project": "",
+      "render_mode": "default",
+      "render_sides": "auto",
+      "pbr_channel": "color",
+      "frame_time": 1,
+      "frame_order_type": "loop",
+      "frame_order": "",
+      "frame_interpolate": false,
+      "visible": true,
+      "internal": false,
+      "saved": true,
+      "uuid": "63000000-0000-4000-8000-000000000001",
+      "relative_path": "level_1_corrupted_sprout.png",
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAT0lEQVR42mMommn7nxLMMPAG+CWq/7f0lf8fW6UPxzA+SA6ZjywPk2OAMdA1wwwgZDiKAeiKiTGcgRhn4jMcbAAleLiEwTBIBxRHIyVhAACxffecRTpKXwAAAABJRU5ErkJggg=="
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 account:
-  permission: vip
-  no_permission: You don't have enough permissions to open this vault.
-  name: '[{page_no}] {caster_name} Account Vault'
+  permission: ''
+  no_permission: <red>Nie masz dostepu do skrzyni konta.
+  name: '[{page_no}] {caster_name} Skrzynia Konta'
   size: 1
   max_page: 5
   start_script:

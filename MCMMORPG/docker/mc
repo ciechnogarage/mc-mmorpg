@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Helper on-demand dla dockerowych serwerów MCMMORPG.
+#   mc up <world|items|hub>     # start velocity + backend
+#   mc down <world|items|hub>   # zgaś backend (velocity zostaje)
+#   mc stop-all                 # zgaś wszystko (łącznie z velocity)
+#   mc ps                       # status kontenerów
+#   mc logs <domena|velocity>   # podążaj za logiem
+#   mc rcon <domena> "<cmd>"    # wyślij komendę RCON do backendu
+#   mc stats                    # zużycie RAM/CPU kontenerów
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+svc() { case "$1" in world|items|hub) echo "srv-$1";; velocity) echo velocity;; *) echo "zła domena: $1" >&2; exit 2;; esac; }
+
+cmd="${1:-}"; shift || true
+case "$cmd" in
+  up)     dom="${1:?podaj domenę}"; docker compose --profile "$dom" up -d ;;
+  down)   dom="${1:?podaj domenę}"; docker compose stop "$(svc "$dom")" ;;
+  stop-all) docker compose --profile world --profile items --profile hub down ;;
+  ps)     docker compose --profile world --profile items --profile hub ps ;;
+  logs)   dom="${1:?podaj domenę/velocity}"; docker compose logs -f "$(svc "$dom")" ;;
+  rcon)   dom="${1:?podaj domenę}"; shift; docker exec -i "$(svc "$dom")" rcon-cli "$@" ;;
+  stats)  docker stats --no-stream ;;
+  *) grep -E '^#   mc ' "$0" | sed 's/^#   //'; exit 1 ;;
+esac

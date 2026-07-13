@@ -1,0 +1,50 @@
+SERCE_BASTIONU:
+  base:
+    material: HEART_OF_THE_SEA
+    name: '&6Serce Bastionu'
+    lore:
+      - '&7Unikalny artefakt pod obrone, pozycje i przetrwanie.'
+    required-level: 12.0
+    required-strength: 10.0
+    max-health: 5.0
+    armor: 2.0
+    damage-reduction: 3.0
+    gem-sockets:
+      - Uncolored
+    tier: UNIQUE
+    upgrade:
+      template: foundation-accessory
+
+OKO_LOWCY:
+  base:
+    material: ENDER_EYE
+    name: '&6Oko Lowcy'
+    lore:
+      - '&7Unikalny artefakt pod dystans, tropienie i precyzje.'
+    required-level: 12.0
+    required-dexterity: 10.0
+    projectile-damage: 6.0
+    critical-strike-chance: 4.0
+    movement-speed: 0.01
+    gem-sockets:
+      - Green
+    tier: UNIQUE
+    upgrade:
+      template: foundation-accessory
+
+ISKRA_PAMIECI:
+  base:
+    material: AMETHYST_SHARD
+    name: '&6Iskra Pamieci'
+    lore:
+      - '&7Unikalny artefakt pod mane, odnowienia i nacisk skilli.'
+    required-level: 12.0
+    required-intelligence: 10.0
+    max-mana: 4.0
+    cooldown-reduction: 4.0
+    skill-damage: 6.0
+    gem-sockets:
+      - Blue
+    tier: UNIQUE
+    upgrade:
+      template: foundation-accessory

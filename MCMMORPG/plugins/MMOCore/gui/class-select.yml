@@ -1,5 +1,5 @@
 # GUI display name
-name: Class Selection
+name: 'Wybór Archetypu'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -7,10 +7,10 @@ slots: 27
 
 items:
 
-  class-rogue:
+  class-lotrzyk:
     slots: [ 11 ]
     function: class-rogue
-    name: '&a&lThe Rogue'
+    name: '&a&lLotrzyk'
     item-flags: [ 'HIDE_ATTRIBUTES' ]
 
     #custom_model_data_float: 0.45        # 1.20.4+ Float custom model data. Either this, or string option above works completely fine
@@ -29,39 +29,39 @@ items:
       - ''
       - '{attribute-lore}'
 
-  class-mage:
+  class-mag:
     slots: [ 12 ]
     function: class-mage
-    name: '&a&lThe Mage'
+    name: '&a&lMag'
     lore:
       - '{lore}'
       - ''
       - '{attribute-lore}'
 
-  class-marksman:
+  class-lowca:
     slots: [ 13 ]
     function: class-marksman
-    name: '&a&lThe Marksman'
+    name: '&a&lLowca'
     item-flags: [ 'HIDE_ATTRIBUTES' ]
     lore:
       - '{lore}'
       - ''
       - '{attribute-lore}'
 
-  class-warrior:
+  class-wojownik:
     slots: [ 14 ]
     function: class-warrior
-    name: '&a&lThe Warrior'
+    name: '&a&lWojownik'
     item-flags: [ 'HIDE_ATTRIBUTES' ]
     lore:
       - '{lore}'
       - ''
       - '{attribute-lore}'
 
-  class-paladin:
+  class-akolita:
     slots: [ 15 ]
     function: class-paladin
-    name: '&a&lThe Paladin'
+    name: '&a&lAkolita'
     lore:
       - '{lore}'
       - ''

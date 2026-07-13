@@ -1,0 +1,331 @@
+race_id:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "CZLOWIEK"
+    - "ORK"
+    - "ELF"
+    - "KRASNOLUD"
+    - "NIEUMARLY"
+
+race_selected:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+pending_race_id:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "CZLOWIEK"
+    - "ORK"
+    - "ELF"
+    - "KRASNOLUD"
+    - "NIEUMARLY"
+
+pending_class_id:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "WARRIOR"
+    - "ROGUE"
+    - "MARKSMAN"
+    - "MAGE"
+    - "PALADIN"
+
+class_id:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "WARRIOR"
+    - "ROGUE"
+    - "MARKSMAN"
+    - "MAGE"
+    - "PALADIN"
+
+recommended_class_id:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "SKIPPED"
+    - "WARRIOR"
+    - "ROGUE"
+    - "MARKSMAN"
+    - "MAGE"
+    - "PALADIN"
+
+style_trial_front:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+style_trial_burst:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+style_trial_range:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+style_trial_caster:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+style_trial_sustain:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+character_stage:
+  type: string
+  default: PROFILE_CREATED
+  allowed_values:
+    - "PROFILE_CREATED"
+    - "CREATOR_INTRO"
+    - "RACE_GALLERY"
+    - "RACE_SPOTLIGHT"
+    - "RACE_SELECTED"
+    - "STARTER_PHASE"
+    - "CLASS_READY"
+    - "CLASS_SPOTLIGHT"
+    - "CLASS_CONFIRM"
+    - "CLASS_SELECTED"
+    - "CITY_ONBOARDING"
+    - "SUBCLASS_READY"
+    - "SUBCLASS_SELECTED"
+
+class_selected:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+first_contract_started:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+first_contract_completed:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+first_weapon_claimed:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+skill_roster_opened:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+selected_generic_skill_1:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "GUARD"
+    - "DODGE"
+    - "FOCUS"
+    - "FIELD_MEDIC"
+
+selected_generic_skill_2:
+  type: string
+  default: UNSET
+  allowed_values:
+    - "UNSET"
+    - "GUARD"
+    - "DODGE"
+    - "FOCUS"
+    - "FIELD_MEDIC"
+
+profession_intro_started:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+profession_intro_completed:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+mentor_intro_warrior:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+mentor_intro_rogue:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+mentor_intro_marksman:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+mentor_intro_mage:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+mentor_intro_paladin:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+subclass_preview_warrior:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+subclass_preview_rogue:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+subclass_preview_marksman:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+subclass_preview_mage:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+subclass_preview_paladin:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+creator_intro_seen:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+race_spotlight_czlowiek:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+race_spotlight_ork:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+race_spotlight_elf:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+race_spotlight_krasnolud:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+race_spotlight_nieumarly:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+class_spotlight_warrior:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+class_spotlight_rogue:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+class_spotlight_marksman:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+class_spotlight_mage:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"
+
+class_spotlight_paladin:
+  type: string
+  default: false
+  allowed_values:
+    - "false"
+    - "true"

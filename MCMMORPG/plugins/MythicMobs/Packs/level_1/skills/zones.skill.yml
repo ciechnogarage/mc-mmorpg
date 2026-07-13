@@ -1,0 +1,162 @@
+# Skille strefowe lochu level_1 — wolane przez MythicDungeons FunctionMythicSkill
+# (caster = tymczasowy ArmorStand w miejscu funkcji; @self = punkt strefy).
+# Bramy: command{} przez konsole z <caster.l.w> (nazwa swiata instancji) — wspolrzedne
+# fill MUSZA odpowiadac barierom z _validation/build_level1_grove.js (sekcja ZONES).
+
+# --- Oboz: ambient przy starcie ---
+level_1_zone_camp_ambience:
+  Skills:
+    - summon{mob=level_1_grove_ambience;amount=1;radius=0;noise=0} @self
+    # Wezly Skazenia spawnuja sie razem z campem (DungeonStart) — celowo pack-side,
+    # zeby nie edytowac functions.yml (autosave MD) i nie zalezec od dodatkowych triggerow.
+    - skill{s=level_1_spawn_corruption_nodes} @self
+    - sound{s=entity.villager.ambient;v=0.4;p=0.9} @PlayersInRadius{r=20}
+    - title{title="<green>Kwietna Polana</green>";subtitle="<gray>Skażenie toczy święty gaj. Oczyść go.</gray>";fadein=10;duration=60;fadeout=15} @PlayersInRadius{r=25}
+    - delay 70
+    - message{m="<gray>Zwiadowca:</gray> <white>Ścieżka na północ prowadzi do Drzewa-Serca. Coś wyje w zaroślach — trzymaj się światła latarni.</white>"} @PlayersInRadius{r=30}
+
+# --- Skazona Sciezka: zasadzki ---
+level_1_zone_path_a:
+  Skills:
+    - sound{s=block.grass.break;v=0.9;p=0.6} @PlayersInRadius{r=16}
+    - particles{particle=block;material=OAK_LEAVES;amount=30;hSpread=4;vSpread=1.5;speed=0.05} @self
+    - delay 10
+    - summon{mob=level_1_grove_wolf;amount=2;radius=4;noise=2} @self ?dungeondifficulty{d=EASY}
+    - summon{mob=level_1_grove_wolf;amount=2;radius=4;noise=2} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_grove_wolf;amount=3;radius=4;noise=2} @self ?dungeondifficulty{d=HARD}
+
+level_1_zone_path_b:
+  Skills:
+    - sound{s=block.sculk.spread;v=0.8;p=0.7} @PlayersInRadius{r=16}
+    - particles{particle=sculk_charge_pop;amount=20;hSpread=3;vSpread=1;speed=0.05} @self
+    - delay 10
+    - summon{mob=level_1_corrupted_sprout;amount=1;radius=3;noise=1} @self
+    - summon{mob=level_1_grove_wolf;amount=1;radius=4;noise=2} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_grove_wolf;amount=1;radius=4;noise=2} @self ?dungeondifficulty{d=HARD}
+
+# --- Polana Prob: dwie fale ---
+level_1_wave_1:
+  Skills:
+    - title{title="<dark_green>Próba Gaju</dark_green>";subtitle="<gray>Krąg przodków budzi dawnych strażników...</gray>";fadein=5;duration=40;fadeout=10} @PlayersInRadius{r=20}
+    - sound{s=entity.wolf.growl;v=1;p=0.8} @PlayersInRadius{r=20}
+    - particles{particle=block;material=MOSS_BLOCK;amount=50;hSpread=6;vSpread=0.5;speed=0.06} @self
+    - delay 15
+    - summon{mob=level_1_grove_wolf;amount=2;radius=6;noise=3} @self ?dungeondifficulty{d=EASY}
+    - summon{mob=level_1_grove_wolf;amount=3;radius=6;noise=3} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_grove_wolf;amount=3;radius=6;noise=3} @self ?dungeondifficulty{d=HARD}
+    - summon{mob=level_1_corrupted_sprout;amount=1;radius=6;noise=3} @self ?dungeondifficulty{d=HARD}
+
+level_1_wave_2:
+  Skills:
+    - title{title="<red>Druga fala!</red>";subtitle="<dark_gray>Skażenie odpowiada na wasz opór.</dark_gray>";fadein=5;duration=40;fadeout=10} @PlayersInRadius{r=25}
+    - sound{s=block.sculk_shrieker.shriek;v=0.7;p=1.1} @PlayersInRadius{r=20}
+    - particles{particle=sculk_soul;amount=30;hSpread=6;vSpread=1;speed=0.04} @self
+    - delay 20
+    - summon{mob=level_1_grove_wolf;amount=2;radius=6;noise=3} @self ?dungeondifficulty{d=EASY}
+    - summon{mob=level_1_corrupted_sprout;amount=1;radius=5;noise=2} @self ?dungeondifficulty{d=EASY}
+    - summon{mob=level_1_grove_wolf;amount=3;radius=6;noise=3} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_corrupted_sprout;amount=1;radius=5;noise=2} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_grove_wolf;amount=3;radius=6;noise=3} @self ?dungeondifficulty{d=HARD}
+    - summon{mob=level_1_corrupted_sprout;amount=2;radius=5;noise=2} @self ?dungeondifficulty{d=HARD}
+
+# --- Gatekeeper: Straznik Mostu ---
+level_1_spawn_grove_warden:
+  Skills:
+    - title{title="<dark_aqua>Strażnik Mostu</dark_aqua>";subtitle="<gray>Nikt nie przejdzie do gaju bez próby siły.</gray>";fadein=5;duration=50;fadeout=10} @PlayersInRadius{r=24}
+    - sound{s=entity.ravager.roar;v=0.8;p=0.7} @PlayersInRadius{r=24}
+    - particles{particle=block;material=MUDDY_MANGROVE_ROOTS;amount=60;hSpread=2;vSpread=1;speed=0.08} @self
+    - delay 12
+    - summon{mob=level_1_grove_warden;amount=1;radius=0;noise=0} @self
+    - summon{mob=level_1_grove_channeler;amount=1;radius=4;noise=2} @self
+    - delay 40
+    - message{m="<gray>Zwiadowca:</gray> <white>Zaklinacz osłania Strażnika Mostu rytuałem — najpierw zerwij więź!</white>"} @PlayersInRadius{r=30}
+
+# --- Wiez Rytualu: egzamin z lekcji "priorytet celow" przed bossem ---
+# Dopoki Zaklinacz zyje w promieniu 24: Warden dostaje odswiezany DR (EASY lagodniej),
+# nitka czastek pokazuje zrodlo tarczy. Pierwsze odpalenie = stance linked + ogloszenie.
+level_1_grove_warden_ward_link:
+  Conditions:
+    - mobsinradius{types=level_1_grove_channeler;amount=>0;radius=24}
+  Skills:
+    - potion{type=DAMAGE_RESISTANCE;duration=30;level=1} @self ?dungeondifficulty{d=EASY}
+    - potion{type=DAMAGE_RESISTANCE;duration=30;level=3} @self ?dungeondifficulty{d=NORMAL}
+    - potion{type=DAMAGE_RESISTANCE;duration=30;level=3} @self ?dungeondifficulty{d=HARD}
+    - particleline{particle=witch;db=0.6} @MobsInRadius{r=24;types=level_1_grove_channeler}
+    - skill{s=level_1_grove_warden_ward_announce} @self ?stance{stance=ready}
+
+level_1_grove_warden_ward_announce:
+  Skills:
+    - setstance{stance=linked} @self
+    - sound{s=block.respawn_anchor.charge;v=0.9;p=0.7} @PlayersInRadius{r=24}
+    - title{title="<dark_aqua>Więź Rytuału</dark_aqua>";subtitle="<gray>Tarcza Strażnika czerpie z Zaklinacza — zabij go!</gray>";fadein=5;duration=45;fadeout=10} @PlayersInRadius{r=24}
+
+# Zerwanie wiezi: nagroda = okno na darmowy DPS (SLOW na Wardenie).
+level_1_grove_warden_ward_broken:
+  Conditions:
+    - mobsinradius{types=level_1_grove_channeler;amount=<1;radius=24}
+  Skills:
+    - setstance{stance=ready} @self
+    - sound{s=item.shield.break;v=1;p=0.8} @PlayersInRadius{r=24}
+    - title{title="<green>Więź zerwana!</green>";subtitle="<gray>Strażnik Mostu stracił ochronę rytuału — teraz!</gray>";fadein=3;duration=40;fadeout=10} @PlayersInRadius{r=24}
+    - particles{particle=block;material=AMETHYST_BLOCK;amount=50;hSpread=1;vSpread=1.5;speed=0.15} @self
+    - potion{type=SLOW;duration=60;level=1} @self
+
+level_1_grove_warden_slam:
+  Cooldown: 6
+  Skills:
+    - sound{s=entity.iron_golem.attack;v=1;p=0.7} @self
+    - particles{particle=block;material=SPRUCE_PLANKS;amount=40;hSpread=2.5;vSpread=0.4;speed=0.1} @self
+    - damage{amount=7} @PlayersInRadius{r=3.5}
+    - throw{velocity=6;velocityY=3} @PlayersInRadius{r=3.5}
+
+level_1_grove_warden_roots:
+  Cooldown: 9
+  Skills:
+    - sound{s=block.roots.break;v=1;p=0.6} @self
+    - particles{particle=block;material=MANGROVE_ROOTS;amount=30;hSpread=1;vSpread=1;speed=0.05} @target
+    - potion{type=SLOWNESS;duration=60;level=2} @target
+    - damage{amount=4} @target
+
+level_1_grove_warden_death:
+  Skills:
+    - sound{s=entity.ravager.death;v=1;p=0.8} @self
+    - particles{particle=composter;amount=60;hSpread=2;vSpread=1.5;speed=0.1} @self
+
+# --- Bramy z korzeni (fill MUSI zgadzac sie z buildem!) ---
+level_1_open_root_gate_bridge:
+  Skills:
+    - command{c="execute in <caster.l.w> run fill -3 64 46 3 68 46 air"}
+    - sound{s=block.roots.break;v=1;p=0.5} @PlayersInRadius{r=30}
+    - sound{s=entity.zombie.break_wooden_door;v=0.7;p=0.7} @PlayersInRadius{r=30}
+    - particles{particle=block;material=MANGROVE_ROOTS;amount=120;hSpread=3;vSpread=2.5;speed=0.1} @self
+    - message{m="<gray>Korzenie ustępują — droga do gaju stoi otworem.</gray>"} @PlayersInRadius{r=30}
+
+level_1_open_root_gate_reward:
+  Skills:
+    - command{c="execute in <caster.l.w> run fill -2 64 -33 2 67 -32 air"}
+    - sound{s=block.roots.break;v=1;p=0.5} @PlayersInRadius{r=40}
+    - sound{s=block.amethyst_block.chime;v=1;p=0.8} @PlayersInRadius{r=40}
+    - particles{particle=end_rod;amount=60;hSpread=2;vSpread=2;speed=0.05} @self
+    - title{title="<light_purple>Gaj oczyszczony</light_purple>";subtitle="<gray>Komora pod Drzewem-Sercem otwiera się...</gray>";fadein=10;duration=70;fadeout=15} @PlayersInRadius{r=50}
+    - message{m="<gray>Za Drzewem-Sercem odsłoniło się zejście do komory nagród. Portal wyprowadzi was do miasta.</gray>"} @PlayersInRadius{r=50}
+
+# --- Sekret zielarza (grota) + nagroda w komorze ---
+level_1_secret_herbalist_cache:
+  Skills:
+    - sound{s=block.amethyst_cluster.break;v=1;p=1.2} @PlayersInRadius{r=8}
+    - particles{particle=totem_of_undying;amount=40;hSpread=1;vSpread=1;speed=0.2} @self
+    - command{c="mi give MATERIAL DZIKIE_ZIOLO <target.name> 3"} @PlayersInRadius{r=8}
+    - command{c="mi give MATERIAL USZKODZONY_KORZEN <target.name> 2"} @PlayersInRadius{r=8}
+
+level_1_reward_chamber_bonus:
+  Skills:
+    # Named-loot moment (skill artistry §7): najpierw scena, potem przedmioty.
+    - sound{s=block.amethyst_block.resonate;v=1;p=0.8} @PlayersInRadius{r=10}
+    - particles{particle=end_rod;amount=50;hSpread=2;vSpread=2;speed=0.03} @self
+    - delay 20
+    - title{title="<gold>Dar Drzewa-Serca</gold>";subtitle="<gray>Odłamki klejnotu i esencja gaju — zanieś je kowalowi w Stolicy.</gray>";fadein=8;duration=70;fadeout=15} @PlayersInRadius{r=10}
+    - sound{s=ui.toast.challenge_complete;v=0.8;p=1} @PlayersInRadius{r=10}
+    - delay 20
+    - command{c="mi give MATERIAL ODLAMEK_KLEJNOTU <target.name> 2"} @PlayersInRadius{r=10}
+    - command{c="mi give MATERIAL SLABA_ESENCJA <target.name> 1"} @PlayersInRadius{r=10}
+    - message{m="<gray>Kowal w Stolicy wie, co zrobić z odłamkami klejnotu...</gray>"} @PlayersInRadius{r=10}

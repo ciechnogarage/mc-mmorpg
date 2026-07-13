@@ -60,7 +60,7 @@ Pack:
     external_pack_order: []
     model_engine: true
   dispatch:
-    send_pre_join: true
+    send_pre_join: false
     send_on_join: false
     send_on_reload: true
     delay: -1

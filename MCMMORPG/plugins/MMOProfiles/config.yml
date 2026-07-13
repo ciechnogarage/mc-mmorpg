@@ -1,0 +1,110 @@
+# Foundation profile flow
+server-identifier: 'foundation'
+
+synced-data:
+  health: true
+  health-scale: true
+  food-level: true
+  saturation: true
+  walk-speed: true
+  fly-speed: true
+  allow-flight: true
+  flying: true
+  exp: true
+  level: true
+  air-level: true
+  location: true
+  respawn-location: true
+  compass-target: true
+  game-mode: true
+  inventory: true
+  ender-chest: true
+  potion-effects: true
+  attributes: true
+  invulnerable: false
+  balance: true
+  permissions: true
+
+mysql:
+  enabled: false
+  host: localhost
+  port: 3306
+  database: minecraft
+  user: disabled
+  pass: disabled
+  maxPoolSize: 10
+  maxLifeTime: 300000
+  connectionTimeOut: 10000
+  leakDetectionThreshold: 150000
+  properties:
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+  userdata-table-name: 'mmoprofiles_playerdata'
+  debug: false
+
+profile-selection-location:
+  world: 'world'
+  x: 189
+  y: 63
+  z: 209
+  yaw: 0
+  pitch: 0
+
+new-profile-spawn-point:
+  world: 'world'
+  x: 239
+  y: 63
+  z: 208
+  yaw: 0
+  pitch: 0
+
+profile_names:
+  enable: true
+  max_length: 20
+
+default-profile: true
+default-main-profile-name: 'Main'
+date-format: 'd MMM yyyy HH:mm:ss'
+
+builtin_balance:
+  enabled: false
+  digits: 2
+  format: '{name}{balance}'
+  decimal_format: '0.##'
+  min_balance: 0
+  currency_name:
+    singular: '$'
+    plural: '$'
+
+permanent-worlds:
+  - 'world'
+  - 'world_nether'
+  - 'world_the_end'
+
+inventory-slot-blacklist: [ 0 ]
+gui-close-timeout: 40
+
+force-game-mode:
+  enabled: false
+  game-mode: SURVIVAL
+
+profile-selection-invulnerability: true
+disable_invulnerability_on_profile_select: true
+
+auto-save:
+  enabled: true
+  interval: 1800
+  log: true
+
+unique_profile:
+  enabled: false
+
+login_black_box: true
+
+resource-pack-options:
+  wait-for-resource-pack: false
+  resource-pack-load-delay: 40
+
+manual-gui-open:
+  enabled: true

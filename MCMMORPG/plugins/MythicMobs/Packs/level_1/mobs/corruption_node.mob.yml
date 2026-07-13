@@ -1,0 +1,58 @@
+# Wezel Skazenia — zniszczalny cel na trasie/w klinie NE (playbook: cele oparte
+# na korupcji, nie tylko kill-gate). Kazdy oczyszczony wezel oslabia kore bossa
+# (licznik world.level_1_nodes_cleansed; boss czyta go w encounter_init i w gate
+# rytualu barkskin). Mob niewidzialny — cialo wezla to dekoracja sculk z buildu
+# (sekcja NODES w build_level1_grove.js), aura czastek prowadzi oko gracza.
+level_1_corruption_node:
+  Type: HUSK
+  Display: '<dark_purple>Węzeł Skażenia</dark_purple>'
+  Health: 40
+  Damage: 0
+  LevelModifiers:
+    Health: 15
+  Options:
+    NoAI: true
+    Silent: true
+    Invisible: true
+    AlwaysShowName: true
+    KnockbackResistance: 1
+    PreventSunburn: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    Despawn: false
+  Modules:
+    ThreatTable: false
+  Skills:
+    - skill{s=level_1_apply_dungeon_difficulty} @self ~onTimer:10
+    - skill{s=level_1_corruption_node_aura} @self ~onTimer:30
+    - skill{s=level_1_corruption_node_hurt} @self ~onDamaged
+    - skill{s=level_1_corruption_node_cleansed} @self ~onDeath
+  Drops:
+    - level_1_corruption_node_drops
+
+# HARD-only chase po zabiciu bossa: "Skarb Skazenia" na zapadlisku sculkowym,
+# znika po 60 s (wchloniety przez sculk). Spawn: ~onDeath bossa (mob.yml bossa),
+# zadnych triggerow MD. Piniata: 1 hit = drop (droptable, nie NBT chesta).
+level_1_sculk_cache:
+  Type: HUSK
+  Display: '<light_purple>Skarb Skażenia</light_purple>'
+  Health: 1
+  Damage: 0
+  Options:
+    NoAI: true
+    Silent: true
+    Invisible: true
+    AlwaysShowName: true
+    KnockbackResistance: 1
+    PreventSunburn: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    Despawn: false
+  Modules:
+    ThreatTable: false
+  Skills:
+    - skill{s=level_1_sculk_cache_aura} @self ~onTimer:20
+    - skill{s=level_1_sculk_cache_timeout} @self ~onTimer:1200
+    - skill{s=level_1_sculk_cache_opened} @self ~onDeath
+  Drops:
+    - level_1_sculk_cache_drops

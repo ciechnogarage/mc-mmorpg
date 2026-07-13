@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC dungeon and world flow"
+  short_description: "MythicDungeons, instances, entry/exit/reset"
+  default_prompt: "Use $minecraft-dungeon-world as a registry-backed MC task agent and return its evidence-based report contract."

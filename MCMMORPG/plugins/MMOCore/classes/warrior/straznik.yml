@@ -1,0 +1,42 @@
+display:
+    name: 'Straznik'
+    lore:
+    - 'Defensywna sciezka wojownika.'
+    - 'Mocniejszy block, kontrola frontu i ochrona druzyny.'
+    attribute-lore:
+    - '&a+ &7Max Health'
+    - '&a+ &7Block Power'
+    - '&c- &7Movement Speed'
+    item: SHIELD
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+
+skill-slots:
+    1: { name: "&aTarcza Frontu", unlocked-by-default: true, lore: [ '&7Blok i ochrona pozycji.' ] }
+    2: { name: "&aRozkaz Obrony", unlocked-by-default: true, lore: [ '&7Wsparcie drużyny pod presją.' ] }
+    3: { name: "&aOsłabienie Natarcia", unlocked-by-default: true, lore: [ '&7Kontrola celu bez darmowego burstu.' ] }
+    4: { name: "&aStrażnik", unlocked-by-default: true, lore: [ '&7Podpis defensywnego wojownika.' ] }
+
+skill-trees:
+- 'general'
+- 'combat'
+- 'warrior-paladin'
+
+options:
+    display: false
+    needs-permission: false
+
+skills:
+    HUMAN_SHIELD: { level: 1, max-level: 20 }
+    MINOR_HEALINGS: { level: 5, max-level: 30 }
+    WEAKEN: { level: 8, max-level: 30 }
+
+attributes:
+    max-health: { base: 26, per-level: 0.5 }
+    movement-speed: { base: 0.09, per-level: 0 }
+    knockback-resistance: { base: 0.2, per-level: 0.01 }
+
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

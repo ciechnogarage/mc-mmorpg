@@ -1,0 +1,523 @@
+# Name which will be displayed
+# when opening the station
+name: 'Warsztat Fundamentu'
+
+max-queue-size: 18
+
+command:
+  name: 'fundament'
+  description: 'Otwiera warsztat Fundamentu'
+  usage: '/fundament'
+  permission: 'mmoitems.foundation_forge'
+  aliases: [ ff, warsztatfundamentu ]
+  message:
+    no-perm: '&cBrak dostepu do warsztatu.'
+    not-a-player: '&cTa komenda jest tylko dla graczy.'
+
+recipes:
+  hartowana-stal:
+    output: 'mmoitems{type=MATERIAL,id=HARTOWANA_STAL}'
+    crafting-time: 3
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ZLOM_ZELAZNY,amount=6,display="Zelazny Zlom"}'
+      - 'vanilla{type=IRON_INGOT,amount=2,display="Sztabka Zelaza"}'
+  tkanina-mistyczna:
+    output: 'mmoitems{type=MATERIAL,id=TKANINA_MISTYCZNA}'
+    crafting-time: 3
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=4,display="Garbowana Skora"}'
+      - 'vanilla{type=WHITE_WOOL,amount=2,display="Biala Welna"}'
+  naturalny-fragment:
+    output: 'mmoitems{type=MATERIAL,id=NATURALNY_FRAGMENT}'
+    crafting-time: 3
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=DZIKIE_ZIOLO,amount=3,display="Dzikie Ziolo"}'
+      - 'mmoitem{type=MATERIAL,id=USZKODZONY_KORZEN,amount=2,display="Uszkodzony Korzen"}'
+  pekniety-krysztal:
+    output: 'mmoitems{type=MATERIAL,id=PEKNIETY_KRYSZTAL}'
+    crafting-time: 3
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=1,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=1,display="Rdzen Runiczny"}'
+  peknieta-plytka:
+    output: 'mmoitems{type=MATERIAL,id=PEKNIETA_PLYTKA}'
+    crafting-time: 3
+    conditions:
+      - 'level{level=6}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ZLOM_ZELAZNY,amount=3,display="Zelazny Zlom"}'
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=1,display="Hartowana Stal"}'
+  plyta-pioniera:
+    output: 'mmoitems{type=ARMOR,id=PLYTA_PIONIERA}'
+    crafting-time: 7
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=7,display="Hartowana Stal"}'
+  helm-pioniera:
+    output: 'mmoitems{type=ARMOR,id=HELM_PIONIERA}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=5,display="Hartowana Stal"}'
+  nogawice-pioniera:
+    output: 'mmoitems{type=ARMOR,id=NOGAWICE_PIONIERA}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=6,display="Hartowana Stal"}'
+  buty-pioniera:
+    output: 'mmoitems{type=ARMOR,id=BUTY_PIONIERA}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=4,display="Hartowana Stal"}'
+  tunika-wedrowca:
+    output: 'mmoitems{type=ARMOR,id=TUNIKA_WEDROWCA}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=8,display="Garbowana Skora"}'
+      - 'mmoitem{type=MATERIAL,id=TKANINA_MISTYCZNA,amount=2,display="Tkanina Mistyczna"}'
+  kaptur-wedrowca:
+    output: 'mmoitems{type=ARMOR,id=KAPTUR_WEDROWCA}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=5,display="Garbowana Skora"}'
+  spodnie-wedrowca:
+    output: 'mmoitems{type=ARMOR,id=SPODNIE_WEDROWCA}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=6,display="Garbowana Skora"}'
+  buty-wedrowca:
+    output: 'mmoitems{type=ARMOR,id=BUTY_WEDROWCA}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=4,display="Garbowana Skora"}'
+  pancerz-zwiadowcy:
+    output: 'mmoitems{type=ARMOR,id=PANCERZ_ZWIADOWCY}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PEKNIETA_PLYTKA,amount=4,display="Peknieta Plytka"}'
+      - 'mmoitem{type=MATERIAL,id=SUROWA_SKORA,amount=4,display="Surowa Skora"}'
+  helm-zwiadowcy:
+    output: 'mmoitems{type=ARMOR,id=HELM_ZWIADOWCY}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PEKNIETA_PLYTKA,amount=2,display="Peknieta Plytka"}'
+      - 'mmoitem{type=MATERIAL,id=SUROWA_SKORA,amount=3,display="Surowa Skora"}'
+  nogawice-zwiadowcy:
+    output: 'mmoitems{type=ARMOR,id=NOGAWICE_ZWIADOWCY}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PEKNIETA_PLYTKA,amount=3,display="Peknieta Plytka"}'
+      - 'mmoitem{type=MATERIAL,id=SUROWA_SKORA,amount=3,display="Surowa Skora"}'
+  buty-zwiadowcy:
+    output: 'mmoitems{type=ARMOR,id=BUTY_ZWIADOWCY}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PEKNIETA_PLYTKA,amount=2,display="Peknieta Plytka"}'
+      - 'mmoitem{type=MATERIAL,id=SUROWA_SKORA,amount=2,display="Surowa Skora"}'
+  szata-adepta:
+    output: 'mmoitems{type=ARMOR,id=SZATA_ADEPTA}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=TKANINA_MISTYCZNA,amount=8,display="Tkanina Mistyczna"}'
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=1,display="Rdzen Runiczny"}'
+  miecz-poborowego:
+    output: 'mmoitems{type=SWORD,id=WOJOWNIK_INITIATE_BLADE}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=4,display="Hartowana Stal"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  tarcza-poborowego:
+    output: 'mmoitems{type=SHIELD,id=WOJOWNIK_INITIATE_SHIELD}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=3,display="Hartowana Stal"}'
+      - 'vanilla{type=SHIELD,amount=1,display="Tarcza"}'
+  sztylet-ulicznika:
+    output: 'mmoitems{type=DAGGER,id=LOTRZYK_INITIATE_DAGGER}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=2,display="Hartowana Stal"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  luk-sciezkowca:
+    output: 'mmoitems{type=BOW,id=LOWCA_INITIATE_BOW}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=3,display="Garbowana Skora"}'
+      - 'vanilla{type=STRING,amount=3,display="Nicia"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  kusza-warty:
+    output: 'mmoitems{type=CROSSBOW,id=KUSZA_WARTY}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=2,display="Hartowana Stal"}'
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=2,display="Garbowana Skora"}'
+      - 'vanilla{type=STRING,amount=2,display="Nicia"}'
+  rozdzka-iskrzenia:
+    output: 'mmoitems{type=WAND,id=MAG_INITIATE_WAND}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=2,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  kostur-obrzedowy:
+    output: 'mmoitems{type=STAFF,id=AKOLITA_INITIATE_STAFF}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=2,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=TKANINA_MISTYCZNA,amount=2,display="Tkanina Mistyczna"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  kolczuga-zwiadowcy:
+    output: 'mmoitems{type=ARMOR,id=KOLCZUGA_ZWIADOWCY}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PEKNIETA_PLYTKA,amount=4,display="Peknieta Plytka"}'
+      - 'mmoitem{type=MATERIAL,id=WILCZY_KIEL,amount=2,display="Wilczy Kiel"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  mlot-warty:
+    output: 'mmoitems{type=HAMMER,id=WARTOWNICZY_MLOT}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=4,display="Hartowana Stal"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  monokl-tropiciela:
+    output: 'mmoitems{type=OFF_CATALYST,id=LOWCA_INITIATE_SCOPE}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=2,display="Garbowana Skora"}'
+  skupiajacy-pryzmat:
+    output: 'mmoitems{type=OFF_CATALYST,id=MAG_INITIATE_FOCUS}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=2,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=1,display="Odlamek Klejnotu"}'
+  relikwiarz-pielgrzyma:
+    output: 'mmoitems{type=OFF_CATALYST,id=AKOLITA_INITIATE_RELIC}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=1,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=TKANINA_MISTYCZNA,amount=2,display="Tkanina Mistyczna"}'
+  rdzen-burzy:
+    output: 'mmoitems{type=CATALYST,id=BURZOMANTA_CORE}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=4,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  topor-bitewny-furii:
+    output: 'mmoitems{type=AXE,id=BERSERKER_WARAXE}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=5,display="Hartowana Stal"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  dlugi-luk-warowny:
+    output: 'mmoitems{type=BOW,id=STRZELEC_LONGBOW}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=4,display="Garbowana Skora"}'
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  kostur-szronu:
+    output: 'mmoitems{type=STAFF,id=KRIOMANTA_STAFF}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=4,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  kruszyc-muru:
+    output: 'mmoitems{type=HAMMER,id=KRUSZYC_MURU}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=5,display="Hartowana Stal"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+      - 'mmoitem{type=MATERIAL,id=ZLOM_ZELAZNY,amount=4,display="Zelazny Zlom"}'
+  rozdzka-zarzewia:
+    output: 'mmoitems{type=WAND,id=PIROMANTA_WAND}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=4,display="Rdzen Runiczny"}'
+      - 'vanilla{type=BLAZE_ROD,amount=1,display="Palka Blazea"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  podrecznik-lowow:
+    output: 'mmoitems{type=TOME,id=BESTIARIUSZ_MANUAL}'
+    crafting-time: 7
+    conditions:
+      - 'level{level=22}'
+    ingredients:
+      - 'vanilla{type=BOOK,amount=2,display="Ksiega"}'
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  grymuar-obrzedow:
+    output: 'mmoitems{type=TOME,id=RYTUALISTA_GRIMOIRE}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=24}'
+    ingredients:
+      - 'vanilla{type=BOOK,amount=2,display="Ksiega"}'
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=3,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  lustro-uskoku:
+    output: 'mmoitems{type=ORNAMENT,id=CIEN_MIRROR}'
+    crafting-time: 6
+    conditions:
+      - 'level{level=22}'
+    ingredients:
+      - 'vanilla{type=GLASS_PANE,amount=4,display="Szklo"}'
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=1,display="Esencja Rzadka"}'
+  rubin-natarcia:
+    output: 'mmoitems{type=GEM_STONE,id=RUBIN_NATARCIA}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'vanilla{type=REDSTONE,amount=2,display="Czerwony Proch"}'
+  szafir-skupienia:
+    output: 'mmoitems{type=GEM_STONE,id=SZAFIR_SKUPIENIA}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=1,display="Rdzen Runiczny"}'
+  szmaragd-tropu:
+    output: 'mmoitems{type=GEM_STONE,id=SZMARAGD_TROPU}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=1,display="Garbowana Skora"}'
+  granat-bastionu:
+    output: 'mmoitems{type=GEM_STONE,id=GRANAT_BASTIONU}'
+    crafting-time: 4
+    conditions:
+      - 'level{level=12}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=2,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=HARTOWANA_STAL,amount=1,display="Hartowana Stal"}'
+  perla-przeplywu:
+    output: 'mmoitems{type=GEM_STONE,id=PERLA_PRZEPLYWU}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=14}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=3,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=1,display="Rdzen Runiczny"}'
+  agat-zwinnosci:
+    output: 'mmoitems{type=GEM_STONE,id=AGAT_ZWINNOSCI}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=14}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=3,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=GARBOWANA_SKORA,amount=1,display="Garbowana Skora"}'
+  opal-rzemiosla:
+    output: 'mmoitems{type=GEM_STONE,id=OPAL_RZEMIOSLA}'
+    crafting-time: 5
+    conditions:
+      - 'level{level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=ODLAMEK_KLEJNOTU,amount=3,display="Odlamek Klejnotu"}'
+      - 'mmoitem{type=MATERIAL,id=MAGICAL_WEAPON_ESSENCE,amount=1,display="Esencja Magiczna"}'
+  fragment-reliktu:
+    output: 'mmoitems{type=MATERIAL,id=FRAGMENT_RELIKTU}'
+    crafting-time: 8
+    conditions:
+      - 'level{level=25}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=RDZEN_RUNICZNY,amount=3,display="Rdzen Runiczny"}'
+      - 'mmoitem{type=MATERIAL,id=RARE_WEAPON_ESSENCE,amount=2,display="Esencja Rzadka"}'
+
+gui-layout:
+  name: 'Warsztat Fundamentu ({page}/{max_page})'
+  slots: 54
+  enable_right_click_preview: true
+  force_preview_on_click: false
+  sound:
+    craft: ENTITY_EXPERIENCE_ORB_PICKUP
+    upgrade: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_cancel: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_claim: ENTITY_EXPERIENCE_ORB_PICKUP
+    queue_add: ENTITY_EXPERIENCE_ORB_PICKUP
+  items:
+    previous_page:
+      item: PLAYER_HEAD
+      name: '&6Poprzednia Strona'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+      slots: [ 9 ]
+      click_sound: BLOCK_LEVER_CLICK
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+    next_page:
+      item: PLAYER_HEAD
+      name: '&6Nastepna Strona'
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjhlOWQ0Nzc2ZmM4NTEzNjg2MjFjZTc3OWY5MmU5ZTRiMmYwYzI3ZjQ3NDRkNjg3ZTE3MmQ4YzJhZmE2In19fQ==
+      slots: [ 17 ]
+      click_sound: BLOCK_LEVER_CLICK
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+    previous_queue_item:
+      item: PLAYER_HEAD
+      function: previous_queue_item
+      name: '&6Poprzedni Przedmiot'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+    next_queue_item:
+      item: PLAYER_HEAD
+      name: '&6Nastepny Przedmiot'
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19'
+    queued_item:
+      slots: [ 38, 39, 40, 41, 42 ]
+      existing:
+        name: '&6&lKolejka&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oPrzedmiot jest gotowy do odebrania.'
+          - '{queue}&7&oPrzedmiot jest w kolejce warsztatu.'
+          - '{queue}'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e► Kliknij, aby odebrac!'
+          - '{queue}&e► Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&6Brak Przedmiotu w Kolejce'
+    recipe:
+      function: recipe
+      slots: [ 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25 ]
+      delay_format: 'smhdMy'
+      craft:
+        name: '&a&lTworz&f {name}'
+        name_multiple: '&a&lTworz&f {amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas Tworzenia: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Skladniki:'
+          - '{lore}'
+          - ''
+          - '&e► Lewy klik, aby tworzyc!'
+          - '&e► Prawy klik, aby podejrzec!'
+      upgrade:
+        name: '&e&lUlepsz&f {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{ingredients}'
+          - '{ingredients}&8Skladniki:'
+          - '{lore}'
+          - ''
+          - '&e► Lewy klik, aby ulepszyc!'
+          - '&e► Prawy klik, aby podejrzec!'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&6Brak Recepty'
+    queue_info:
+      item: CLOCK
+      name: '&bStatus Warsztatu'
+      lore:
+        - '&7Tworz ekwipunek, gemy i materialy pierwszego aktu.'
+        - '&8Zlom/skora/kosci: dropy poczatkowe i level_1.'
+        - '&8Rdzenie/klejnoty: wiedzm, blaze, boss i loch.'
+        - '&8Esencje: odzysk itemow z tierow MAGICZNY/RZADKI.'
+        - '&8Relikty: boss, HARD i pozniejszy craft.'
+      slots: [ 49 ]
+
+preview-gui-layout:
+  name: 'Podglad Recepty'
+  slots: 45
+  items:
+    cosmetic_border:
+      item: GRAY_STAINED_GLASS_PANE
+      name: '&6'
+      slots: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 17, 18, 19, 20, 24, 25, 26, 27, 29, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44 ]
+    confirm:
+      item: EMERALD
+      name: '&6Potwierdz'
+      slots: [ 34 ]
+    back:
+      item: PLAYER_HEAD
+      name: '&6Powrot'
+      slots: [ 10 ]
+      texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=='
+    preview_output:
+      slots: [ 16 ]
+    recipe:
+      slots: [ 28 ]
+      material: KNOWLEDGE_BOOK
+      remove_lore_lines: 3
+    ingredient:
+      slots: [ 12, 13, 14, 21, 22, 23, 30, 31, 32 ]
+      none:
+        material: AIR

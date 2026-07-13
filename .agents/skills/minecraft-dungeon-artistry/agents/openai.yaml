@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC dungeon artistry"
+  short_description: "Scene composition, organics, palettes, pacing, encounter and FX design for dungeons"
+  default_prompt: "Use minecraft-dungeon-artistry as the craft reference before designing or building any dungeon zone, scene, or encounter. Apply the 5-second rule, organic building rules, palette/lighting guidance, pacing curriculum, souls-like telegraph grammar, and the validation loop. Never ship geometry or encounters without screenshot/real-kill validation."

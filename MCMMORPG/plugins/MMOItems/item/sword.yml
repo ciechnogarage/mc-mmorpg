@@ -36,6 +36,42 @@ CUTLASS:
     tier: COMMON
     name: '&fSharp Cutlass'
     max-durability: 300.0
+ORIGIN_BLADE:
+  base:
+    material: WOODEN_SWORD
+    name: '&fOstrze Wedrowca'
+    lore:
+    - '&7Prosta bron na pierwsze kroki postaci.'
+    - '&7Nie narzuca klasy ani archetypu.'
+    attack-damage: 4.0
+    attack-speed: 1.6
+    required-level: 0.0
+    tier: COMMON
+    upgrade:
+      template: foundation-weapon
+WOJOWNIK_INITIATE_BLADE:
+  base:
+    material: IRON_SWORD
+    name: '&fOstrze Pierwszej Linii'
+    lore:
+    - '&7Nie jest ozdobą. Jest obietnicą,'
+    - '&7że wejdziesz pierwszy i nie odwrócisz wzroku.'
+    - '&8Archetyp: Guard / Rage / presja.'
+    - '&8Starter: broń działa od razu po przysiędze.'
+    - '&8Następny krok: PIONIER, forge i ciężkie bazy.'
+    attack-damage: 6.5
+    attack-speed: 1.65
+    required-level: 1.0
+    gem-sockets:
+      - Red
+    tier: MAGICAL
+    upgrade:
+      template: foundation-weapon
+  modifiers:
+    melee_prefix_magic:
+      weight: 1
+    melee_suffix_magic:
+      weight: 1
 FALCON_BLADE:
   base:
     material: GOLDEN_SWORD
@@ -143,7 +179,7 @@ STEEL_SWORD:
       max-spread: 0.02
     lore:
     - '&7May be upgraded.'
-    required-level: 6.0
+    required-level: 1.0
     upgrade:
       template: weapon-default
 SILVER_SWORD:
@@ -431,7 +467,7 @@ TOOLTIP_COPPER_SWORD:
       fire:
         damage: 3.0
     required-class:
-      - Warrior
+      - warrior
 
 TOOLTIP_SILVER_SWORD:
   base:
@@ -444,7 +480,7 @@ TOOLTIP_SILVER_SWORD:
       fire:
         damage: 3.0
     required-class:
-      - Warrior
+      - warrior
 
 TOOLTIP_GOLD_SWORD:
   base:
@@ -457,4 +493,4 @@ TOOLTIP_GOLD_SWORD:
       fire:
         damage: 3.0
     required-class:
-      - Warrior
+      - warrior

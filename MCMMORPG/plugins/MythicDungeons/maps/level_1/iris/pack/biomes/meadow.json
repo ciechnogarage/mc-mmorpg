@@ -1,0 +1,33 @@
+{
+    "name": "Meadow",
+    "derivative": "MEADOW",
+    "vanillaDerivative": "MEADOW",
+    "color": "#6db04a",
+    "layers": [
+        {
+            "palette": [
+                {
+                    "block": "minecraft:grass_block"
+                }
+            ],
+            "minHeight": 1,
+            "maxHeight": 1
+        },
+        {
+            "palette": [
+                {
+                    "block": "minecraft:dirt"
+                }
+            ],
+            "minHeight": 2,
+            "maxHeight": 4
+        }
+    ],
+    "generators": [
+        {
+            "generator": "flat",
+            "min": 62,
+            "max": 64
+        }
+    ]
+}

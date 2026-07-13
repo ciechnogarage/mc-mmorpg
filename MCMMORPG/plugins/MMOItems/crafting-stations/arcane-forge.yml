@@ -1,6 +1,6 @@
 # Name which will be displayed
 # when opening the station
-name: 'Arcane Forge'
+name: '&8[LEGACY OFF] Arcane Forge'
 
 # The maximum amount of items in the crafting queue, ie the
 # max number of items players are able to craft simultaneously.
@@ -22,10 +22,10 @@ command:
   name: 'arcaneforge'                                   # The command itself
   description: 'Open the arcane forge'                  # Command description
   usage: '/arcaneforge'                                 # Command usage
-  permission: 'mmoitems.arcane_forge'                   # Permission needed to use the command
+  permission: 'foundation.legacy.disabled'              # Disabled legacy/demo station
   aliases: [ af, mmoitems_af ]                          # Command aliases
   message:
-    no-perm: '&cYou don''t have enough permissions.'    # Message shown when missing permission
+    no-perm: '&cTa stara stacja demo jest wylaczona.'   # Message shown when missing permission
     not-a-player: '&cThis command is for players only.' # Message shown when sender is not a player
 
 # Station recipes
@@ -35,6 +35,7 @@ recipes:
     crafting-time: 5
     conditions:
       - 'level{level=5}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=MAGIC_FRAGMENT,amount=3,display="Magic Fragments"}'
   arcane-helmet:
@@ -45,6 +46,7 @@ recipes:
       - '&7quite some materials to craft a full set.'
     conditions:
       - 'level{level=4}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
       - 'vanilla{type=LEATHER,amount=5,display="Leather Pieces"}'
@@ -56,6 +58,7 @@ recipes:
       - '&7quite some materials to craft a full set.'
     conditions:
       - 'level{level=4}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
       - 'vanilla{type=LEATHER,amount=8,display="Leather Pieces"}'
@@ -67,6 +70,7 @@ recipes:
       - '&7quite some materials to craft a full set.'
     conditions:
       - 'level{level=4}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
       - 'vanilla{type=LEATHER,amount=7,display="Leather Pieces"}'
@@ -78,13 +82,14 @@ recipes:
       - '&7quite some materials to craft a full set.'
     conditions:
       - 'level{level=4}'
+      - 'permission{list="foundation.legacy.disabled"}'
     ingredients:
       - 'mmoitem{type=MATERIAL,id=MAGIC_ESSENCE,amount=7,display="Magic Essences"}'
       - 'vanilla{type=LEATHER,amount=4,display="Leather Pieces"}'
 
 gui-layout:
   # GUI display name
-  name: 'Arcane Forge ({page}/{max_page})'
+  name: '&8[LEGACY OFF] Arcane Forge ({page}/{max_page})'
 
   # Number of slots in your inventory. Must be
   # between 9 and 54 and must be a multiple of 9.

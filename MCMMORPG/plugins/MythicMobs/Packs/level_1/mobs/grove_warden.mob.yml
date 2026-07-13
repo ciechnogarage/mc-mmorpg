@@ -1,0 +1,26 @@
+level_1_grove_warden:
+  Template: level_1_base_melee_add
+  Type: HUSK
+  Display: '<dark_aqua>Strażnik Mostu</dark_aqua>'
+  Health: 140
+  Damage: 8
+  LevelModifiers:
+    Health: 45
+    Damage: 3
+  Options:
+    MovementSpeed: 0.26
+    KnockbackResistance: 0.8
+    AlwaysShowName: true
+    PreventOtherDrops: true
+  Equipment:
+    - shield HAND
+  Skills:
+    - skill{s=level_1_grove_warden_slam} @target ~onTimer:140 >0 0.9
+    - skill{s=level_1_grove_warden_roots} @target ~onTimer:220 >0 0.9
+    # Egzamin gatekeepera (skill artistry §5): tarcza czerpie z rytualu Zaklinacza —
+    # dopoki Zaklinacz zyje w poblizu, Warden ma DR; kill Zaklinacza = wiez zerwana.
+    - skill{s=level_1_grove_warden_ward_link} @self ~onTimer:20
+    - skill{s=level_1_grove_warden_ward_broken} @self ~onTimer:20 ?stance{stance=linked}
+    - skill{s=level_1_grove_warden_death} @self ~onDeath
+  Drops:
+    - level_1_grove_trash_drops

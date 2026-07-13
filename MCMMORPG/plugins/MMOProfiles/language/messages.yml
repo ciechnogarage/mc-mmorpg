@@ -1,0 +1,4 @@
+too-much-profiles: '&cOsiągnięto limit profili.'
+profile-with-same-name: '&cMasz już profil o tej nazwie.'
+set-profile-name-ask: '&eWpisz nazwę postaci. Wpisz ''cancel'', aby anulować.'
+profile-name-too-long: '&cNazwa profilu jest za długa. Maksymalnie {max} znaków.'

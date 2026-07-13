@@ -3,3 +3,31 @@ RING_OF_LIFE:
     material: EMERALD
     max-health: 10.0
     name: Ring of Life
+PIERSCIEN_ZELAZNEJ_WYPRAWY:
+  base:
+    material: IRON_NUGGET
+    name: '&fZelazny Pierscien Wyprawy'
+    lore:
+      - '&7Prosty znak pierwszej wyprawy.'
+      - '&8Starter: przeżywalność bez blokady poziomu.'
+      - '&8Anchor: pierwszy kontrakt miasta.'
+    required-level: 1.0
+    max-health: 2.0
+    armor: 1.0
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory
+PIERSCIEN_RUNICZNEJ_WYPRAWY:
+  base:
+    material: PRISMARINE_CRYSTALS
+    name: '&fRuniczny Pierscien Wyprawy'
+    lore:
+      - '&7Mały rdzeń pod pierwszą pracę z maną.'
+      - '&8Starter: zasób i kierunek builda.'
+      - '&8Anchor: pierwszy kontrakt miasta.'
+    required-level: 1.0
+    max-mana: 3.0
+    skill-damage: 4.0
+    tier: COMMON
+    upgrade:
+      template: foundation-accessory

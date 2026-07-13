@@ -32,8 +32,54 @@ STEEL_DAGGER:
     tier: COMMON
     required-level: 5.0
     required-class:
-    - Rogue
-    - Archer
+    - rogue
+    - marksman
+LOTRZYK_INITIATE_DAGGER:
+  base:
+    material: IRON_SWORD
+    name: '&fSztylet Krótkiego Okna'
+    lore:
+    - '&7Daje tylko sekundę przewagi.'
+    - '&7Dobry łotrzyk robi z niej wyrok.'
+    - '&8Archetyp: Momentum / Bleed / burst.'
+    - '&8Starter: działa od razu po przysiędze.'
+    - '&8Następny krok: WĘDROWIEC i lekkie ulepszenia forge.'
+    required-level: 1.0
+    attack-damage: 5.5
+    attack-speed: 1.9
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-weapon
+  modifiers:
+    melee_prefix_magic:
+      weight: 1
+    melee_suffix_magic:
+      weight: 1
+ZABOJCA_FANG:
+  base:
+    material: IRON_SWORD
+    name: '&7Kiel Uderzeniowy'
+    lore:
+      - '&7Sztylet pod trafienia krytyczne i wykonczenia.'
+    required-level: 25.0
+    required-dexterity: 18.0
+    attack-damage: 7.0
+    attack-speed: 2.05
+    critical-strike-chance: 12.0
+    critical-strike-power: 28.0
+    gem-sockets:
+      - Green
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-weapon
+  modifiers:
+    melee_prefix_rare:
+      weight: 1
+    melee_suffix_rare:
+      weight: 1
 DRACULA_DAGGER:
   base:
     material: IRON_SWORD
@@ -72,11 +118,11 @@ VERY_SHARP_DAGGER:
     tier: RARE
     max-durability: 1800.0
     will-break: true
-    name: §7§l§oVery Sharp Dagger
+    name: '&8[LEGACY OFF] Very Sharp Dagger'
     displayed-type: §cSharp Dagger
     required-level: 12.0
     required-class:
-      - Assassin
+      - rogue
     attack-damage:
       base: 10.0
       scale: 0.13

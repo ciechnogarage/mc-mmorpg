@@ -1,0 +1,20 @@
+level_1_glimmer_wisp:
+  Template: level_1_base_melee_add
+  Type: HUSK
+  Display: '<aqua>Migotliwy Duszek</aqua>'
+  Health: 15
+  Damage: 3
+  LevelModifiers:
+    Health: 8
+    Damage: 1.2
+  Options:
+    MovementSpeed: 0.3
+  Model:
+    Id: level_1_glimmer_wisp
+    ViewRadius: 48
+    Drive: false
+    DamageTint: true
+  Skills:
+    - defaultstate{s=idle;t=idle} @self ~onSpawn
+    - state{mid=level_1_glimmer_wisp;s=attack} @self ~onAttack
+    - state{mid=level_1_glimmer_wisp;s=death} @self ~onDeath

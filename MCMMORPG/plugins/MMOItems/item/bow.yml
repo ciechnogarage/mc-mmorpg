@@ -19,6 +19,64 @@ COMPOSITE_BOW:
       weight: 3
     impending-doom:
       weight: 5
+ORIGIN_RECURVE:
+  base:
+    material: BOW
+    name: '&fOrigin Recurve'
+    lore:
+    - '&7Starter bow granted after choosing Elf.'
+    attack-damage: 4.0
+    attack-speed: 1.2
+    required-level: 0.0
+    tier: COMMON
+    upgrade:
+      template: foundation-ranged
+LOWCA_INITIATE_BOW:
+  base:
+    material: BOW
+    name: '&fŁuk Czystej Linii'
+    lore:
+    - '&7Nie wybacza paniki.'
+    - '&7Nagradza tych, którzy widzą arenę wcześniej.'
+    - '&8Archetyp: Mark / Trap / dystans.'
+    - '&8Starter: pierwszy łuk bez progu statów.'
+    - '&8Następny krok: WĘDROWIEC / ZWIADOWCA i scope upgrades.'
+    attack-damage: 6.0
+    attack-speed: 1.35
+    required-level: 1.0
+    gem-sockets:
+      - Green
+    tier: MAGICAL
+    upgrade:
+      template: foundation-ranged
+  modifiers:
+    ranged_prefix_magic:
+      weight: 1
+    ranged_suffix_magic:
+      weight: 1
+STRZELEC_LONGBOW:
+  base:
+    material: BOW
+    name: '&eDlugi Luk Warowny'
+    lore:
+    - '&7Luk pod zasieg, presje i precyzje.'
+    required-level: 25.0
+    required-dexterity: 18.0
+    attack-damage: 8.5
+    attack-speed: 1.4
+    critical-strike-chance: 10.0
+    projectile-damage: 12.0
+    gem-sockets:
+      - Green
+      - Uncolored
+    tier: RARE
+    upgrade:
+      template: foundation-ranged
+  modifiers:
+    ranged_prefix_rare:
+      weight: 1
+    ranged_suffix_rare:
+      weight: 1
 HELL_BOW:
   base:
     material: BOW
@@ -165,4 +223,4 @@ PRECISION_BOW:
     tier: RARE
     max-durability: 2400.0
     required-class:
-      - Archer
+      - marksman

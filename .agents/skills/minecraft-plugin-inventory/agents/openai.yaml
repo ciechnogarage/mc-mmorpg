@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC plugin inventory"
+  short_description: "plugin manifest, compatibility matrix, ownership routing"
+  default_prompt: "Use $minecraft-plugin-inventory as a registry-backed MC task agent and return its evidence-based report contract."

@@ -1,0 +1,1 @@
+{"textures":{"0":"modelengine:entity/cerberus_sleep","particle":"#0"},"elements":[{"from":[8.0,1.5,1.5],"to":[8.0,14.5,14.5],"faces":{"east":{"uv":[6.5,0.0,13.0,6.5],"tintindex":0,"rotation":0,"texture":"#0"},"west":{"uv":[6.5,0.0,13.0,6.5],"tintindex":0,"rotation":0,"texture":"#0"}}}],"display":{"gui":{"rotation":[-150.0,-45.0,180.0]}}}

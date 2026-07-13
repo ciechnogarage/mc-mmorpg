@@ -1,0 +1,78 @@
+foundation_class_spotlight_paladin:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Spotlight Archetypu - Akolita'
+  size: 4
+  fill_material: 'YELLOW_STAINED_GLASS_PANE'
+  enable_animation: false
+  buttons:
+    border:
+      location: top
+      slots: [0,1,2,3,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+      source: vanilla
+      material: YELLOW_STAINED_GLASS_PANE
+      name: ' '
+    hero:
+      location: top
+      slots: [4]
+      source: vanilla
+      material: player_head
+      texture: player
+      name: '<yellow><bold>Portret Akolity'
+      lore:
+        - '<gray>To twoja twarz po złożeniu oath.'
+    loop:
+      location: top
+      slots: [11]
+      source: vanilla
+      material: BOOK
+      name: '<yellow><bold>Hero Card'
+      lore:
+        - '<gray>Live loop: ward -> sustain -> odmowa śmierci.'
+        - '<gray>Akolita nie ściga szybkiego zabójstwa.'
+        - '<gray>Ściga kontrolę ryzyka i przetrwania.'
+        - '<dark_gray>Payoff: ward i stabilność walki.'
+    weakness:
+      location: top
+      slots: [13]
+      source: vanilla
+      material: SOUL_TORCH
+      name: '<red><bold>Koszt Wyboru'
+      lore:
+        - '<gray>Słabość: wolniejsze tempo zabijania.'
+        - '<gray>Budujesz odmowę śmierci,'
+        - '<gray>nie ekspresowy clean-up.'
+    subclass:
+      location: top
+      slots: [15]
+      source: vanilla
+      material: GLOWSTONE_DUST
+      name: '<aqua><bold>Subclass Pull'
+      lore:
+        - '<gray>Kapelan / Inkwizytor / Rytualista'
+        - '<dark_gray>Anchor gear: Adept, relic, ward salvage.'
+    confirm:
+      location: top
+      slots: [21]
+      source: vanilla
+      material: EMERALD
+      name: '<green><bold>Przejdź do Oath Screenu'
+      left_click:
+        Scripts:
+          - creator_open_class_confirm_paladin
+      click:
+        Scripts:
+          - creator_open_class_confirm_paladin
+    back:
+      location: top
+      slots: [23]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do Galerii Klas'
+      left_click:
+        Scripts:
+          - creator_open_class_selector
+      click:
+        Scripts:
+          - creator_open_class_selector

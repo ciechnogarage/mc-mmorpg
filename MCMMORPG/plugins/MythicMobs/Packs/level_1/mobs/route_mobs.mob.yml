@@ -1,0 +1,80 @@
+# Moby-lekcje trasy (docs: mob-boss-encounter-001): 1 strefa = 1 mechanika.
+# Vanilla bazy (decyzja 2026-07-03); modele ModelEngine mozna dorobic pozniej.
+
+# Ranged Bend - lekcja LoS/uniku
+level_1_briar_archer:
+  Template: level_1_base_combatant
+  Type: SKELETON
+  Display: '<green>Cierniowy Łucznik</green>'
+  Health: 24
+  Damage: 4
+  LevelModifiers:
+    Health: 10
+    Damage: 1.5
+  Options:
+    MovementSpeed: 0.24
+    PreventRandomEquipment: true
+  Equipment:
+    - bow HAND
+  Skills:
+    - skill{s=level_1_apply_dungeon_difficulty} @self ~onTimer:10
+    - particles{particle=composter;amount=6;hSpread=0.3;vSpread=0.5} @self ~onTimer:60
+  Drops:
+    - level_1_grove_trash_drops
+
+# Ritual Clearing - lekcja interruptu (zabij zanim skonczy rytual)
+level_1_grove_channeler:
+  Template: level_1_base_combatant
+  Type: EVOKER
+  Display: '<dark_purple>Zaklinacz Gaju</dark_purple>'
+  Health: 26
+  Damage: 3
+  LevelModifiers:
+    Health: 10
+    Damage: 1
+  Options:
+    MovementSpeed: 0.2
+  AIGoalSelectors:
+    - 0 clear
+    - 1 randomstroll
+  AITargetSelectors:
+    - 0 clear
+    - 1 players
+  Skills:
+    - skill{s=level_1_apply_dungeon_difficulty} @self ~onTimer:10
+    - skill{s=level_1_channeler_ritual} @self ~onTimer:160 ?playerwithin{d=14}
+  Drops:
+    - level_1_grove_trash_drops
+
+# Broken Gate - lekcja presji gardy (przeczekaj/obejdz garde)
+level_1_shielded_husk:
+  Template: level_1_base_melee_add
+  Type: HUSK
+  Display: '<gold>Opancerzony Wygrzebaniec</gold>'
+  Health: 40
+  Damage: 5
+  Armor: 4
+  LevelModifiers:
+    Health: 14
+    Damage: 1.5
+  Options:
+    MovementSpeed: 0.2
+  Equipment:
+    - shield OFFHAND
+  Skills:
+    - skill{s=level_1_husk_guard} @self ~onTimer:140 ?playerwithin{d=6}
+
+# Poison Side Area - lekcja statusu (opcjonalna odnoga z materialami)
+level_1_toxic_creeper:
+  Template: level_1_base_melee_add
+  Type: CAVE_SPIDER
+  Display: '<dark_green>Toksyczny Pnącz</dark_green>'
+  Health: 18
+  Damage: 3
+  LevelModifiers:
+    Health: 8
+    Damage: 1
+  Options:
+    MovementSpeed: 0.3
+  Skills:
+    - particles{particle=item_slime;amount=8;hSpread=0.4;vSpread=0.3} @self ~onTimer:50

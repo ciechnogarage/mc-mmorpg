@@ -1,0 +1,23 @@
+# GUI display name
+name: 'Usuń postać?'
+
+# Number of slots in your inventory. Must be
+# between 9 and 54 and must be a multiple of 9.
+slots: 27
+
+items:
+  yes:
+    function: 'yes'
+    slots: [11]
+
+    name: '&cTAK, usuń tę postać'
+    item: REDSTONE
+    lore:
+      - '&7Ta decyzja usuwa życiorys profilu.'
+      - '&7Nie używaj tego jako resetu builda.'
+  back:
+    function: 'back'
+    slots: [15]
+
+    name: '&aNie, wróć do archiwum'
+    item: EMERALD

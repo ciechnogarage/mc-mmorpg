@@ -1,0 +1,399 @@
+wojenny:
+    prefix: '&cWojenny'
+    stats:
+        attack-damage:
+            base: 2.0
+            spread: .04
+            max-spread: .12
+        weapon-damage:
+            base: 4.0
+            spread: .04
+            max-spread: .12
+
+miazdzacy:
+    prefix: '&6Miazdzacy'
+    stats:
+        blunt-power:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+        critical-strike-power:
+            base: 8.0
+            spread: .03
+            max-spread: .08
+
+precyzyjny:
+    prefix: '&aPrecyzyjny'
+    stats:
+        projectile-damage:
+            base: 4.0
+            spread: .04
+            max-spread: .12
+        critical-strike-chance:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+
+zwiadowczy:
+    prefix: '&2Zwiadowczy'
+    stats:
+        movement-speed:
+            base: .005
+            spread: .02
+            max-spread: .05
+        attack-speed:
+            base: .03
+            spread: .03
+            max-spread: .08
+
+runiczny:
+    prefix: '&9Runiczny'
+    stats:
+        magic-damage:
+            base: 4.0
+            spread: .04
+            max-spread: .12
+        max-mana:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+
+rytualny:
+    prefix: '&5Rytualny'
+    stats:
+        skill-damage:
+            base: 4.0
+            spread: .04
+            max-spread: .12
+        mana-regeneration:
+            base: .03
+            spread: .02
+            max-spread: .05
+
+warowny:
+    prefix: '&7Warowny'
+    stats:
+        armor:
+            base: 1.0
+            spread: .03
+            max-spread: .08
+        block-rating:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+
+utwardzony:
+    prefix: '&8Utwardzony'
+    stats:
+        armor:
+            base: 1.5
+            spread: .03
+            max-spread: .08
+        damage-reduction:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+
+kanalizujacy:
+    prefix: '&dKanalizujacy'
+    stats:
+        max-mana:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+        mana-regeneration:
+            base: .04
+            spread: .02
+            max-spread: .05
+
+natarcia:
+    suffix: '&7 Natarcia'
+    stats:
+        critical-strike-power:
+            base: 10.0
+            spread: .03
+            max-spread: .08
+
+celnosci:
+    suffix: '&7 Celnosci'
+    stats:
+        critical-strike-chance:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+        projectile-damage:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+
+skupienia:
+    suffix: '&7 Skupienia'
+    stats:
+        cooldown-reduction:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+        magic-damage:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+
+przeplywu:
+    suffix: '&7 Przeplywu'
+    stats:
+        mana-regeneration:
+            base: .05
+            spread: .02
+            max-spread: .05
+        max-mana:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+
+wytrwalosci:
+    suffix: '&7 Wytrwalosci'
+    stats:
+        max-health:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+        health-regeneration:
+            base: .03
+            spread: .02
+            max-spread: .05
+
+zwinnosci:
+    suffix: '&7 Zwinnosci'
+    stats:
+        movement-speed:
+            base: .006
+            spread: .02
+            max-spread: .05
+        dodge-rating:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+
+tropu:
+    suffix: '&7 Tropu'
+    stats:
+        projectile-damage:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+        pve-damage:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+
+bastionu:
+    suffix: '&7 Bastionu'
+    stats:
+        block-power:
+            base: 3.0
+            spread: .03
+            max-spread: .08
+        damage-reduction:
+            base: 2.0
+            spread: .03
+            max-spread: .08
+
+melee_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        wojenny: 2
+        miazdzacy: 1
+        zwiadowczy: 1
+
+melee_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        natarcia: 2
+        zwinnosci: 1
+        wytrwalosci: 1
+
+melee_prefix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        wojenny: 2
+        miazdzacy: 2
+        runiczny: 1
+
+melee_suffix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        natarcia: 2
+        celnosci: 1
+        skupienia: 1
+
+ranged_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        precyzyjny: 2
+        zwiadowczy: 1
+
+ranged_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        celnosci: 2
+        tropu: 1
+        zwinnosci: 1
+
+ranged_prefix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        precyzyjny: 2
+        wojenny: 1
+        zwiadowczy: 1
+
+ranged_suffix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        celnosci: 2
+        tropu: 2
+        natarcia: 1
+
+caster_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        runiczny: 2
+        rytualny: 1
+        kanalizujacy: 1
+
+caster_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        skupienia: 2
+        przeplywu: 2
+        wytrwalosci: 1
+
+caster_prefix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        runiczny: 2
+        rytualny: 2
+        kanalizujacy: 1
+
+caster_suffix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        skupienia: 2
+        przeplywu: 2
+        wytrwalosci: 2
+
+shield_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        warowny: 2
+        utwardzony: 1
+
+shield_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        bastionu: 2
+        wytrwalosci: 1
+
+shield_prefix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        warowny: 2
+        utwardzony: 2
+
+shield_suffix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        bastionu: 2
+        wytrwalosci: 1
+
+light_armor_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        zwiadowczy: 2
+        precyzyjny: 1
+
+light_armor_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        zwinnosci: 2
+        tropu: 1
+
+heavy_armor_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        warowny: 2
+        utwardzony: 1
+
+heavy_armor_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        wytrwalosci: 2
+        bastionu: 1
+
+robe_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        runiczny: 2
+        rytualny: 1
+
+robe_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        skupienia: 2
+        przeplywu: 2
+        wytrwalosci: 1
+
+medium_armor_prefix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        warowny: 1
+        zwiadowczy: 1
+        utwardzony: 1
+
+medium_armor_suffix_magic:
+    min: 1
+    max: 1
+    modifiers:
+        wytrwalosci: 1
+        zwinnosci: 1
+        bastionu: 1
+
+accessory_prefix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        precyzyjny: 1
+        runiczny: 1
+        rytualny: 1
+        zwiadowczy: 1
+
+accessory_suffix_rare:
+    min: 1
+    max: 1
+    modifiers:
+        wytrwalosci: 1
+        zwinnosci: 1
+        skupienia: 1
+        tropu: 1

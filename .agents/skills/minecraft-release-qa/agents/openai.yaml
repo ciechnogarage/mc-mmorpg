@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC QA and release evidence"
+  short_description: "vertical slice validation, pass/fail evidence, bot/runtime proof"
+  default_prompt: "Use $minecraft-release-qa as a registry-backed MC task agent and return its evidence-based report contract."

@@ -1,0 +1,213 @@
+level_1_grove_guardian_damage_zones:
+  Skills:
+    # ModelEngine 4.0.9 native sub-hitbox damage multipliers. Direct melee and
+    # projectile hits use the struck zone; skill/AoE/DoT damage remains unchanged.
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_head;pass=1.5} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_torso;pass=1.0} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_core_weakpoint;pass=2.0} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_left_arm;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_left_forearm;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_right_arm;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_right_forearm;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_left_leg;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_left_shin;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_left_foot;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_right_leg;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_right_shin;pass=0.8} @self
+    - hitboxconfig{model=level_1_grove_guardian;part=ob_right_foot;pass=0.8} @self
+
+level_1_grove_guardian_encounter_init:
+  Conditions:
+    - stance{stance=default}
+  Skills:
+    # setstance MUSI byc pierwszy: zamyka warunek stance=default, zeby ~onTimer:10
+    # nie odpalal intro (title/awaken) w kolko co 0.5s. Ustawia tez stance=ready,
+    # ktorego wymagaja timery enrage (grove_guardian.mob.yml).
+    - setstance{stance=ready} @self
+    - gcd{ticks=60}
+    - lockmodel{l=true} @self
+    - setAI{ai=false} @self
+    - state{mid=level_1_grove_guardian;s=awaken} @self
+    - skill{s=level_1_apply_dungeon_difficulty} @self
+    - sound{s=entity.wither.spawn;v=0.6;p=1.5} @PlayersInRadius{r=40}
+    - sound{s=block.wood.break;v=1;p=0.6} @self
+    - title{title="<dark_green>Straznik Gaju</dark_green>";subtitle="<gray>budzi sie z glebi korzeni...</gray>";fadein=10;duration=50;fadeout=20} @PlayersInRadius{r=40}
+    - particles{particle=block;material=GRASS_BLOCK;amount=60;hSpread=2;vSpread=2;speed=0.1} @self
+    - sound{s=entity.warden.sonic_boom;v=0.35;p=0.55} @PlayersInRadius{r=40}
+    - sound{s=block.bell.resonate;v=0.8;p=0.5} @PlayersInRadius{r=40}
+    - particles{particle=totem_of_undying;amount=70;hSpread=1.2;vSpread=2.5;yOffset=1;speed=0.35} @self
+    - particles{particle=falling_spore_blossom;amount=40;hSpread=8;vSpread=4;yOffset=5;speed=0} @self
+    - potion{type=GLOWING;duration=80;level=0} @self
+    - delay 10
+    - particles{particle=block;material=ROOTED_DIRT;amount=90;hSpread=4;vSpread=0.4;yOffset=0.1;speed=0.15} @self
+    - sound{s=block.roots.break;v=1.2;p=0.5} @PlayersInRadius{r=40}
+    - skill{s=level_1_grove_guardian_bark_of_corruption} @self
+    - delay 50
+    - defaultstate{mid=level_1_grove_guardian;s=idle;t=idle} @self
+    - defaultstate{mid=level_1_grove_guardian;s=walk;t=walk} @self
+    - setAI{ai=true} @self
+    - lockmodel{l=false} @self
+
+# Kora Skazenia: pull-time odczyt licznika wezlow (world.level_1_nodes_cleansed,
+# patrz corruption_node.skill.yml). Unset (wezly nie zespawnowane) => zadna linia
+# nie odpala => zachowanie identyczne jak przed zmiana. 0 oczyszczonych = 40% DR,
+# 1 = 20% DR, 2 = brak DR, 3 = boss odslonietny na pullu (okno darmowego DPS).
+level_1_grove_guardian_bark_of_corruption:
+  Skills:
+    # UWAGA: value=0 matchuje tez UNSET (probe 2026-07-04) — stad dodatkowy ?variableIsSet,
+    # zeby loch bez zespawnowanych wezlow nie dawal bossowi darmowego DR.
+    - potion{type=DAMAGE_RESISTANCE;duration=999999;level=1} @self ?variableIsSet{var=world.level_1_nodes_cleansed} ?variableInRange{var=world.level_1_nodes_cleansed;value=0}
+    - message{m="<dark_purple>Skażona kora chroni Strażnika.</dark_purple> <gray>Trzy węzły wciąż pulsują w gaju...</gray>"} @PlayersInRadius{r=45} ?variableIsSet{var=world.level_1_nodes_cleansed} ?variableInRange{var=world.level_1_nodes_cleansed;value=0}
+    - title{title="<dark_purple>Skażona Kora</dark_purple>";subtitle="<gray>Zniszcz 3 węzły skażenia, by odsłonić Strażnika</gray>";fadein=10;duration=70;fadeout=15} @PlayersInRadius{r=45} ?variableIsSet{var=world.level_1_nodes_cleansed} ?variableInRange{var=world.level_1_nodes_cleansed;value=0}
+    - potion{type=DAMAGE_RESISTANCE;duration=999999;level=0} @self ?variableInRange{var=world.level_1_nodes_cleansed;value=1}
+    - message{m="<dark_purple>Kora Strażnika jest nadwątlona.</dark_purple> <gray>Dwa węzły skażenia wciąż go zasilają...</gray>"} @PlayersInRadius{r=45} ?variableInRange{var=world.level_1_nodes_cleansed;value=1}
+    - message{m="<yellow>Kora Strażnika ledwo się trzyma.</yellow> <gray>Został jeden węzeł skażenia...</gray>"} @PlayersInRadius{r=45} ?variableInRange{var=world.level_1_nodes_cleansed;value=2}
+    - potion{type=GLOWING;duration=100;level=0} @self ?variableInRange{var=world.level_1_nodes_cleansed;value=>2}
+    - potion{type=SLOW;duration=100;level=1} @self ?variableInRange{var=world.level_1_nodes_cleansed;value=>2}
+    - title{title="<green>Strażnik odsłonięty!</green>";subtitle="<gray>Bez kory jest bezbronny — uderzajcie!</gray>";fadein=5;duration=40;fadeout=10} @PlayersInRadius{r=45} ?variableInRange{var=world.level_1_nodes_cleansed;value=>2}
+    - sound{s=block.amethyst_cluster.break;v=1;p=0.9} @PlayersInRadius{r=45} ?variableInRange{var=world.level_1_nodes_cleansed;value=>2}
+
+level_1_grove_guardian_basic_attack:
+  Conditions:
+    - offgcd true
+  Skills:
+    - CancelEvent{sync=true}
+    - gcd{ticks=28}
+    - lockmodel{l=true} @self
+    - state{mid=level_1_grove_guardian;s=attack} @self
+    - sound{s=block.wood.break;v=1;p=0.65} @self
+    - sound{s=entity.ravager.attack;v=0.8;p=0.8;delay=14} @modelpart{pid=right_impact}
+    - totem{md=2;oH=level_1_grove_guardian_basic_attack_hit;hr=1.8;vr=2;drawhitbox=false;delay=14;repeat=5;repeatI=1;hnp=true} @modelpart{pid=right_impact}
+    - particles{particle=block;material=OAK_WOOD;amount=16;hSpread=0.35;vSpread=0.35;delay=14} @modelpart{pid=right_impact}
+    - lockmodel{l=false;delay=28} @self
+
+level_1_grove_guardian_basic_attack_hit:
+  Skills:
+    - basedamage{m=1} @trigger
+    - throw{v=4;vy=1.5} @trigger
+
+level_1_grove_guardian_root_smash:
+  Skills:
+    - gcd{ticks=44}
+    - lockmodel{l=true} @self
+    - state{mid=level_1_grove_guardian;s=root_smash} @self
+    - sound{s=block.grass.break;v=1;p=0.5} @self
+    - particles{particle=block;material=DIRT;amount=30;hSpread=3;vSpread=0.2;yOffset=0.1} @self
+    - delay 18
+    - sound{s=entity.ravager.attack;v=1;p=0.8} @self
+    - totem{md=2;oH=level_1_grove_guardian_root_smash_hit;hr=2.4;vr=2;drawhitbox=false;repeat=8;repeatI=1;hnp=true} @modelpart{pid=left_impact}
+    - totem{md=2;oH=level_1_grove_guardian_root_smash_hit;hr=2.4;vr=2;drawhitbox=false;repeat=8;repeatI=1;hnp=true} @modelpart{pid=right_impact}
+    - particles{particle=block;material=GRASS_BLOCK;amount=50;hSpread=2.5;vSpread=1;speed=0.15} @self
+    - lockmodel{l=false;delay=44} @self
+
+level_1_grove_guardian_root_smash_hit:
+  Skills:
+    - damage{amount=10} @trigger
+    - potion{type=SLOW;duration=60;level=1} @trigger
+    - throw{v=5;vy=2} @trigger
+
+level_1_grove_guardian_enrage:
+  Skills:
+    - gcd{ticks=40}
+    - lockmodel{l=true} @self
+    - state{mid=level_1_grove_guardian;s=enrage} @self
+    - setstance{stance=enraged} @self
+    - sound{s=entity.ravager.roar;v=1.2;p=0.7} @PlayersInRadius{r=45}
+    - title{title="<red><bold>WSCIEKLOSC</bold></red>";subtitle="<dark_red>Straznik Gaju wpada w szal!</dark_red>";fadein=5;duration=40;fadeout=15} @PlayersInRadius{r=45}
+    - particles{particle=angry_villager;amount=40;hSpread=1.5;vSpread=2;speed=0.2} @self
+    - particles{particle=crit;amount=60;hSpread=2;vSpread=2;speed=0.3} @self
+    - sound{s=entity.warden.roar;v=0.7;p=0.8} @PlayersInRadius{r=45}
+    - particles{particle=dust;color=#c41e1e;size=1.6;amount=90;hSpread=0.6;vSpread=0.6;speed=0.05} @modelpart{pid=core_vfx}
+    - particles{particle=block;material=CHERRY_LEAVES;amount=80;hSpread=3;vSpread=3;yOffset=2;speed=0.25} @self
+    - potion{type=GLOWING;duration=60;level=0} @self
+    - potion{type=SPEED;duration=99999;level=1} @self
+    - potion{type=INCREASE_DAMAGE;duration=99999;level=0} @self
+    - lockmodel{l=false;delay=40} @self
+
+level_1_grove_guardian_summon_adds:
+  Cooldown: 8
+  Conditions:
+    - mobsinradius{types=level_1_grove_wolf,level_1_corrupted_sprout;amount=<1;radius=18}
+  Skills:
+    - gcd{ticks=48}
+    - lockmodel{l=true} @self
+    - state{mid=level_1_grove_guardian;s=summon} @self
+    - sound{s=block.roots.break;v=1;p=0.8} @self
+    - title{title="<dark_green>Szmer Poszycia</dark_green>";subtitle="<gray>Korzenie poruszaja sie wokol Straznika...</gray>";fadein=5;duration=25;fadeout=10} @PlayersInRadius{r=30}
+    - particles{particle=block;material=MOSS_BLOCK;amount=45;hSpread=3;vSpread=0.6;speed=0.05;yOffset=0.1} @modelpart{pid=summon_origin}
+    - delay 20
+    - summon{mob=level_1_grove_wolf;amount=1;noise=4} @self ?dungeondifficulty{d=EASY}
+    - summon{mob=level_1_grove_wolf;amount=1;noise=4} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_corrupted_sprout;amount=1;noise=4} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_grove_wolf;amount=2;noise=4} @self ?dungeondifficulty{d=HARD}
+    - summon{mob=level_1_corrupted_sprout;amount=1;noise=4} @self ?dungeondifficulty{d=HARD}
+    - lockmodel{l=false;delay=48} @self
+
+level_1_grove_guardian_summon_adds_enraged:
+  Cooldown: 8
+  Conditions:
+    - mobsinradius{types=level_1_grove_wolf,level_1_corrupted_sprout;amount=<1;radius=20}
+  Skills:
+    - gcd{ticks=40}
+    - lockmodel{l=true} @self
+    - state{mid=level_1_grove_guardian;s=summon} @self
+    - sound{s=entity.warden.attack_impact;v=0.9;p=0.6} @self
+    - title{title="<red>Korzenie Wzywaja</red>";subtitle="<dark_red>Wsciekly Straznik przyzywa posilki!</dark_red>";fadein=5;duration=30;fadeout=10} @PlayersInRadius{r=30}
+    - particles{particle=angry_villager;amount=20;hSpread=2;vSpread=1;speed=0.1} @self
+    - particles{particle=block;material=ROOTED_DIRT;amount=70;hSpread=3.5;vSpread=0.8;speed=0.08;yOffset=0.1} @modelpart{pid=summon_origin}
+    - delay 15
+    - summon{mob=level_1_grove_wolf;amount=2;noise=5} @self ?dungeondifficulty{d=EASY}
+    - summon{mob=level_1_grove_wolf;amount=2;noise=5} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_corrupted_sprout;amount=1;noise=5} @self ?dungeondifficulty{d=NORMAL}
+    - summon{mob=level_1_grove_wolf;amount=2;noise=5} @self ?dungeondifficulty{d=HARD}
+    - summon{mob=level_1_corrupted_sprout;amount=2;noise=5} @self ?dungeondifficulty{d=HARD}
+    - lockmodel{l=false;delay=40} @self
+
+level_1_grove_guardian_thorn_nova:
+  Skills:
+    - gcd{ticks=36}
+    - lockmodel{l=true} @self
+    - state{mid=level_1_grove_guardian;s=thorn_nova} @self
+    - sound{s=entity.player.hurt_sweet_berry_bush;v=1;p=0.8} @self
+    - particles{particle=composter;amount=80;hSpread=0.3;vSpread=0.3;speed=0.4} @modelpart{pid=thorn_origin}
+    - delay 18
+    - skill{s=level_1_grove_guardian_thorn_bolt} @PlayersInRadius{r=14}
+    - lockmodel{l=false;delay=36} @self
+
+level_1_grove_guardian_thorn_bolt:
+  Skills:
+    - projectile{onTick=[ particles{particle=composter} @origin ];onHit=level_1_grove_guardian_thorn_bolt_hit;velocity=9;hRadius=0.4;vRadius=0.4;maxRange=18} @target
+
+level_1_grove_guardian_thorn_bolt_hit:
+  Skills:
+    - damage{amount=6} @trigger
+    - potion{type=POISON;duration=60;level=1} @trigger
+
+# FINAL smierci bossa: kolumna platkow + fontanna swiatla + warstwowy dzwiek (wolane ~onDeath)
+level_1_grove_guardian_death_finale:
+  Skills:
+    - sound{s=entity.warden.death;v=0.5;p=1.3} @PlayersInRadius{r=45}
+    - sound{s=block.amethyst_block.resonate;v=1.2;p=0.7} @PlayersInRadius{r=45}
+    - particles{particle=totem_of_undying;amount=140;hSpread=0.6;vSpread=0.6;yOffset=1;speed=0.55} @self
+    - particles{particle=end_rod;amount=120;hSpread=0.4;vSpread=6;yOffset=3;speed=0.12} @self
+    - particles{particle=falling_spore_blossom;amount=90;hSpread=9;vSpread=5;yOffset=6;speed=0} @self
+    - particles{particle=block;material=CHERRY_LEAVES;amount=120;hSpread=5;vSpread=4;yOffset=2;speed=0.3} @self
+    - delay 20
+    - sound{s=entity.player.levelup;v=0.9;p=0.6} @PlayersInRadius{r=45}
+    - sound{s=block.bell.use;v=0.8;p=1.2} @PlayersInRadius{r=45}
+    - title{title="<green>Gaj odetchnal</green>";subtitle="<gray>Serce Polany bije spokojnie...</gray>";fadein=10;duration=60;fadeout=25} @PlayersInRadius{r=45}
+    - particles{particle=glow;amount=80;hSpread=6;vSpread=3;yOffset=2;speed=0.02} @self
+    # Reakcja swiata: korupcja NE gasnie (soul_fire znika, sculk cichnie) — playbook:
+    # zwyciestwo widac w scenerii, nie tylko w title.
+    - delay 30
+    - command{c="execute in <caster.l.w> run fill 14 63 -44 44 70 -14 air replace minecraft:soul_fire"}
+    - particles{particle=totem_of_undying;amount=90;hSpread=10;vSpread=2;yOffset=2;speed=0.25} @Location{x=24;y=66;z=-24}
+    - particles{particle=glow;amount=60;hSpread=12;vSpread=3;yOffset=1;speed=0.03} @Location{x=24;y=65;z=-24}
+    - sound{s=block.sculk_shrieker.shriek;v=0.5;p=0.4} @PlayersInRadius{r=50}
+    - delay 15
+    - sound{s=block.amethyst_block.chime;v=1;p=1.4} @PlayersInRadius{r=50}
+    - message{m="<gray>Skażenie na północnym wschodzie przygasa — węzły milkną, ogniska duszy gasną.</gray>"} @PlayersInRadius{r=50}
+
+level_1_corrupted_sprout_thorn_shot:
+  Skills:
+    - projectile{onTick=[ particles{particle=composter} @origin ];onHit=[ damage{amount=4} @trigger ];velocity=8;hRadius=0.4;vRadius=0.4;maxRange=18} @target

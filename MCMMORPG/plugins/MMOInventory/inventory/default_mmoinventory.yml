@@ -36,8 +36,8 @@ ui_layout:
   # be set to 110% to hide the vanilla grid pattern of any inventory. This no longer
   # exists in 1.21+ and custom fonts are now required to achieve similar results.
   name:
-    self: "&f%mythiclib_space_-17%\u40E0%mythiclib_space_-169%<#3F3F3F>Equipment"
-    other: "&f%mythiclib_space_-17%\u40E0%mythiclib_space_-169%<#3F3F3F>Equipment of {name}"
+    self: "&f%mythiclib_space_-17%\u40E0%mythiclib_space_-169%<#3F3F3F>Ekwipunek Postaci"
+    other: "&f%mythiclib_space_-17%\u40E0%mythiclib_space_-169%<#3F3F3F>Ekwipunek: {name}"
 
 # Command to be used in order to open the custom inventory.
 # This option is only for custom inventories.
@@ -60,10 +60,10 @@ inventory_button:
   slot: 9
   item:
     material: CHEST
-    name: '&6Custom Inventory'
+    name: '&6Ekwipunek RPG'
     lore:
       - ''
-      - '&eClick to open.'
+      - '&eKliknij, aby otworzyć.'
     # custom_model_data: 1
     # skull_texture: eyJ0ZXh0dXJ.....
 
@@ -99,149 +99,162 @@ slots:
     #fake_attribute: false                # Should MythicLib add a fake attribute modifier? Useful for 1.20 or lower to hide vanilla attributes from the item
     #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
 
-    name: "&6Helmet Slot"
+    name: "&6Hełm"
     slot: 4
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Obrona głowy, ward albo pierwszy bonus roli.'
+      - '&ePrzeciągnij pasujący przedmiot.'
   CHESTPLATE:
     type: chestplate
     material: GOLD_NUGGET
     custom_model_data_string: 'chestplate'
-    name: "&6Chestplate Slot"
+    name: "&6Pancerz"
     slot: 13
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Główna decyzja defensywna postaci.'
+      - '&ePrzeciągnij pasujący przedmiot.'
   LEGGINGS:
     type: leggings
     material: GOLD_NUGGET
     custom_model_data_string: 'leggings'
-    name: "&6Leggings Slot"
+    name: "&6Nogawice"
     slot: 22
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Stabilność, mobilność albo zasoby.'
+      - '&ePrzeciągnij pasujący przedmiot.'
   BOOTS:
     type: boots
     material: GOLD_NUGGET
     custom_model_data_string: 'boots'
-    name: "&6Boots Slot"
+    name: "&6Buty"
     slot: 31
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Pozycjonowanie, tempo i kara za ciężar.'
+      - '&ePrzeciągnij pasujący przedmiot.'
   OFF_HAND:
     type: off_hand
     material: GOLD_NUGGET
     custom_model_data_string: 'off_hand'
-    name: "&6Off Hand Slot"
+    name: "&6Druga Ręka"
     slot: 12
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Tarcza, relikt, fokus albo narzędzie builda.'
+      - '&ePrzeciągnij pasujący przedmiot.'
 
   ELYTRA:
     type: elytra
     material: GOLD_NUGGET
     custom_model_data_string: "elytra"
-    name: "&6Elytra Slot"
+    name: "&6Slot Pleców"
     restrictions:
       - 'material{materials="ELYTRA"}'
     slot: 14
     lore:
-      - 'Only &bElytras&7 are allowed here.'
-      - '&bDeploy automatically&7 when falling.'
-      - 'Drag & drop an item to equip it.'
+      - '&7Późniejszy slot mobilności lub kosmetyki.'
+      - '&7Na teraz akceptuje tylko &bElytrę&7.'
+      - '&eNie jest częścią starter power.'
 
   # Ring slots
   LEFT_RING:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "ring1"
-    name: "&6Left Ring Slot"
+    name: "&6Pierścień Lewy"
     slot: 34
     restrictions:
       - "mmoitemstype{type=RING}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Mały slot, duża korekta builda.'
+      - '&eTylko itemy typu RING.'
   RIGHT_RING:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "ring2"
-    name: "&6Right Ring Slot"
+    name: "&6Pierścień Prawy"
     slot: 25
     restrictions:
       - "mmoitemstype{type=RING}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Drugi pierścień domyka braki postaci.'
+      - '&eTylko itemy typu RING.'
 
   # Extra accessories
   AMULET:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "amulet"
-    name: "&6Amulet Slot"
+    name: "&6Amulet"
     slot: 7
     restrictions:
       - "mmoitemstype{type=AMULET}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Tożsamość, zasoby albo odporności.'
+      - '&eTylko itemy typu AMULET.'
   BRACELET:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "bracelet"
-    name: "&6Bracelet Slot"
+    name: "&6Bransoleta"
     slot: 16
     restrictions:
       - "mmoitemstype{type=BRACELET}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Utility, tempo albo drobna obrona.'
+      - '&eTylko itemy typu BRACELET.'
   GLOVES:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "gloves"
-    name: "&6Gloves Slot"
+    name: "&6Rękawice"
     slot: 1
     restrictions:
       - "mmoitemstype{type=GLOVES}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Precyzja ataku, castu albo pracy broni.'
+      - '&eTylko itemy typu GLOVES.'
 
   # Artifact slots
   ARTIFACT_1:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "artifact1"
-    name: "&6Artifact Slot I"
+    name: "&6Artefakt I"
     slot: 10
     restrictions:
       - "mmoitemstype{type=ARTIFACT}"
       - "unique{enabled=true}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Moc specjalna z realną ceną.'
+      - '&eTylko unikatowe ARTIFACT.'
   ARTIFACT_2:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "artifact2"
-    name: "&6Artifact Slot II"
+    name: "&6Artefakt II"
     slot: 19
     restrictions:
       - "mmoitemstype{type=ARTIFACT}"
       - "unique{enabled=true}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Nie każdy build powinien zapełnić ten slot od razu.'
+      - '&eTylko unikatowe ARTIFACT.'
   ARTIFACT_3:
     type: accessory
     material: GOLD_NUGGET
     custom_model_data_string: "artifact3"
-    name: "&6Artifact Slot III"
+    name: "&6Artefakt III"
     slot: 28
     restrictions:
       - "mmoitemstype{type=ARTIFACT}"
       - "unique{enabled=true}"
     lore:
-      - Drag & drop an item to equip it.
+      - '&7Późny slot pod specjalizację, nie starter power.'
+      - '&eTylko unikatowe ARTIFACT.'
   FILL:
     type: fill
     material: GOLD_NUGGET
     custom_model_data_string: "fill"
-    name: "iLoveTaner"
+    name: " "
     # Hides tooltip (1.20.5+ only)
     hide_tooltip: true
     slot: -1
@@ -253,25 +266,27 @@ items:
     #item: GOLD_NUGGET
     #custom_model_data_string: "info"
     material: SPRUCE_HANGING_SIGN
-    name: "&6Information"
+    name: "&6Profil Walki"
     slot: 5
     lore:
       - ''
-      - '&f ⌛ &7Level &f%mmocore_level%'
-      - '&f %mythiclib_space_1%❣%mythiclib_space_1% &7Class: &f%mmocore_class%'
-      - '&f ☄ &7Gold: &f%vault_eco_balance%'
+      - '&f ⌛ &7Poziom: &f%mmocore_level%'
+      - '&f %mythiclib_space_1%❣%mythiclib_space_1% &7Klasa: &f%mmocore_class%'
+      - '&f ☄ &7Złoto: &f%vault_eco_balance%'
       - ''
-      - '&7Health: &f%mythiclib_stat_max_health%'
-      - '&7Defense: &f%mythiclib_stat_defense%'
-      - '&7Attack: &f%mythiclib_stat_attack_damage%'
+      - '&7Życie: &f%mythiclib_stat_max_health%'
+      - '&7Obrona: &f%mythiclib_stat_defense%'
+      - '&7Atak: &f%mythiclib_stat_attack_damage%'
+      - ''
+      - '&8EQ ma pokazać build, nie tylko miejsce na itemy.'
     on_click:
       - 'command{format="p";from_console=false}'
 
   CLOSE:
     item: BARRIER
-    name: "&cClose"
+    name: "&cZamknij"
     slot: 35
     lore:
-      - "&7Click to close this inventory."
+      - "&7Kliknij, aby zamknąć ekwipunek."
     on_click:
       - 'close_inventory{}'

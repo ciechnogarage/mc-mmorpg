@@ -1,0 +1,1 @@
+{"textures":{"0":"modelengine:entity/cerberus_pet","particle":"#0"},"elements":[{"from":[7.0,8.0,8.0],"to":[9.0,8.0,12.0],"faces":{"up":{"uv":[7.25,4.25,6.75,3.25],"tintindex":0,"rotation":0,"texture":"#0"},"down":{"uv":[7.25,3.25,6.75,4.25],"tintindex":0,"rotation":0,"texture":"#0"}}}],"display":{"gui":{"rotation":[-150.0,-45.0,180.0]}}}

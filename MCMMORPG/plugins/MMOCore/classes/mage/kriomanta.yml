@@ -1,0 +1,35 @@
+display:
+    name: 'Kriomanta'
+    lore:
+    - 'Kontrola pola walki i tempo przez cold magic.'
+    attribute-lore:
+    - '&a+ &7Control'
+    - '&a+ &7Safety'
+    - '&c- &7Raw Damage'
+    item: SNOWBALL
+
+exp-curve: '{level} * 200'
+max-level: 100
+exp-table: class_exp_table
+skill-slots:
+    1: { name: "&aKolce Mrozu", unlocked-by-default: true, lore: [ '&7Kontrola pola bez darmowego burstu.' ] }
+    2: { name: "&aZimny Znak", unlocked-by-default: true, lore: [ '&7Setup pod bezpieczne okno obrażeń.' ] }
+    3: { name: "&aKrok przez Lód", unlocked-by-default: true, lore: [ '&7Pozycjonowanie i kara za pościg.' ] }
+    4: { name: "&aStrefa Ciszy", unlocked-by-default: true, lore: [ '&7Podpis builda kontroli.' ] }
+skill-trees:
+- 'general'
+- 'combat'
+- 'mage-arcane-mage'
+options:
+    display: false
+    needs-permission: false
+skills:
+    ICE_SPIKES: { level: 1, max-level: 30 }
+    POWER_MARK: { level: 4, max-level: 30 }
+    WARP: { level: 8, max-level: 30 }
+attributes:
+    max-health: { base: 18, per-level: 0 }
+    max-mana: { base: 30, per-level: 1.2 }
+    mana-regeneration: { base: 0.22, per-level: 0.04 }
+main-exp-sources:
+- 'killmob{type=ZOMBIE;amount=1-3}'

@@ -1,0 +1,208 @@
+foundation_class_mentor_roster:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Galeria Mentorów - Archetypy'
+  size: 6
+  fill_material: 'LIGHT_GRAY_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [ 0,1,2,3,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53 ]
+      source: vanilla
+      material: GRAY_STAINED_GLASS_PANE
+      name: ' '
+
+    title:
+      location: top
+      slots: [ 4 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=
+      name: '<gold><bold>Mentorzy Archetypów'
+      lore:
+        - '<gray>To jest galeria payoffu po oath.'
+        - '<gray>Tu sprawdzasz żywy loop klasy,'
+        - '<gray>słabość, gear fantasy i preview podklas.'
+        - ''
+        - '<dark_gray>Klasa zapisana: {class_id}'
+
+    mentor_note:
+      location: top
+      slots: [ 13 ]
+      source: vanilla
+      material: SPYGLASS
+      name: '<yellow><bold>Po Co Jest Mentor'
+      lore:
+        - '<gray>Nie po to, żeby powtórzyć opis klasy.'
+        - '<gray>Ma powiedzieć, jak ta klasa'
+        - '<gray>wygrywa i na czym pęka.'
+
+    subclass_note:
+      location: top
+      slots: [ 31 ]
+      source: vanilla
+      material: WRITABLE_BOOK
+      name: '<aqua><bold>Preview Podklas'
+      lore:
+        - '<gray>Tu tylko sprzedajemy kierunek.'
+        - '<gray>Każda podklasa musi później dostać'
+        - '<gray>własny loop, gear fantasy i payoff.'
+
+    warrior:
+      location: top
+      slots: [ 19 ]
+      source: vanilla
+      material: IRON_SWORD
+      name: '<white><bold>Mentor Wojownika'
+      lore:
+        - '<gray>Live loop: guard -> counter -> rage.'
+        - '<gray>Słabość: dystans i resource war.'
+        - '<dark_gray>Podklasy: Strażnik / Berserker / Gladiator'
+        - '<dark_gray>Anchor gear: Ostrze + Kirys Pierwszej Linii'
+        - '<dark_gray>Preview seen: {subclass_preview_warrior}'
+      left_click:
+        Scripts:
+          - creator_mentor_warrior
+      click:
+        Scripts:
+          - creator_mentor_warrior
+
+    rogue:
+      location: top
+      slots: [ 20 ]
+      source: vanilla
+      material: SHEARS
+      name: '<green><bold>Mentor Łotrzyka'
+      lore:
+        - '<gray>Live loop: opener -> tempo -> escape.'
+        - '<gray>Słabość: zły timing kończy wejście.'
+        - '<dark_gray>Podklasy: Zabójca / Sabotażysta / Cień'
+        - '<dark_gray>Anchor gear: Sztylet + Kaftan Krótkiego Cienia'
+        - '<dark_gray>Preview seen: {subclass_preview_rogue}'
+      left_click:
+        Scripts:
+          - creator_mentor_rogue
+      click:
+        Scripts:
+          - creator_mentor_rogue
+
+    marksman:
+      location: top
+      slots: [ 21 ]
+      source: vanilla
+      material: BOW
+      name: '<aqua><bold>Mentor Łowcy'
+      lore:
+        - '<gray>Live loop: mark -> pozycja -> czysta linia.'
+        - '<gray>Słabość: zwarcie i chaos.'
+        - '<dark_gray>Podklasy: Strzelec / Tropiciel / Bestiariusz'
+        - '<dark_gray>Anchor gear: Łuk + Monokl Ostatniej Linii'
+        - '<dark_gray>Preview seen: {subclass_preview_marksman}'
+      left_click:
+        Scripts:
+          - creator_mentor_marksman
+      click:
+        Scripts:
+          - creator_mentor_marksman
+
+    mage:
+      location: top
+      slots: [ 23 ]
+      source: vanilla
+      material: AMETHYST_SHARD
+      name: '<light_purple><bold>Mentor Maga'
+      lore:
+        - '<gray>Live loop: mana -> burst -> reset rytmu.'
+        - '<gray>Słabość: przerwanie castu i presja.'
+        - '<dark_gray>Podklasy: Piromanta / Kriomanta / Burzomanta'
+        - '<dark_gray>Anchor gear: Różdżka + Pryzmat Przeciążenia'
+        - '<dark_gray>Preview seen: {subclass_preview_mage}'
+      left_click:
+        Scripts:
+          - creator_mentor_mage
+      click:
+        Scripts:
+          - creator_mentor_mage
+
+    paladin:
+      location: top
+      slots: [ 24 ]
+      source: vanilla
+      material: BLAZE_ROD
+      name: '<yellow><bold>Mentor Akolity'
+      lore:
+        - '<gray>Live loop: ward -> sustain -> odmowa śmierci.'
+        - '<gray>Słabość: wolniejsze tempo zabijania.'
+        - '<dark_gray>Podklasy: Kapelan / Inkwizytor / Rytualista'
+        - '<dark_gray>Anchor gear: Kostur + Relikwiarz Wardu'
+        - '<dark_gray>Preview seen: {subclass_preview_paladin}'
+      left_click:
+        Scripts:
+          - creator_mentor_paladin
+      click:
+        Scripts:
+          - creator_mentor_paladin
+
+    class_panel:
+      location: top
+      slots: [ 39 ]
+      source: vanilla
+      material: WRITABLE_BOOK
+      name: '<yellow><bold>Otwórz Panel Klas'
+      lore:
+        - '<gray>Przejście do live panelu MMOCore.'
+        - '<dark_gray>Most do runtime, nie atrapka menu.'
+      left_click:
+        Scripts:
+          - creator_open_mmocore_class_panel
+      click:
+        Scripts:
+          - creator_open_mmocore_class_panel
+
+    skill_trees:
+      location: top
+      slots: [ 40 ]
+      source: vanilla
+      material: EXPERIENCE_BOTTLE
+      name: '<aqua><bold>Drzewka i Skille'
+      lore:
+        - '<gray>Otwórz live panel drzewek'
+        - '<gray>i klasowych odblokowań.'
+        - '<dark_gray>Tu gracz ma zobaczyć realny rozwój.'
+      left_click:
+        Scripts:
+          - creator_open_mmocore_skilltrees
+      click:
+        Scripts:
+          - creator_open_mmocore_skilltrees
+
+    choose_class:
+      location: top
+      slots: [ 41 ]
+      source: vanilla
+      material: EMERALD_BLOCK
+      name: '<green><bold>Wróć do Przysięgi'
+      lore:
+        - '<gray>Przejście do wyboru klasy.'
+      left_click:
+        Scripts:
+          - creator_open_class_selector
+      click:
+        Scripts:
+          - creator_open_class_selector
+
+    back:
+      location: top
+      slots: [ 49 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do miasta'
+      left_click:
+        Scripts:
+          - creator_open_city_roster
+      click:
+        Scripts:
+          - creator_open_city_roster

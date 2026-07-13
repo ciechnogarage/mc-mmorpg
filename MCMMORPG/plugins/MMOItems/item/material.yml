@@ -1,12 +1,11 @@
 STEEL_INGOT:
   base:
     material: IRON_INGOT
-    name: '&fSteel Ingot'
+    name: '&fSztabka Stali'
     disable-repairing: true
     disable-crafting: true
     lore:
-      - '&7Can be used at the steel crafting'
-      - '&7station to craft advanced gear.'
+      - '&7Moze posluzyc do tworzenia zaawansowanego ekwipunku.'
 UNCOMMON_WEAPON_ESSENCE:
   base:
     material: BLAZE_POWDER
@@ -14,8 +13,8 @@ UNCOMMON_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft uncommon items.'
-    name: '&eUncommon Weapon Essence'
+      - '&7Moze posluzyc do tworzenia wyposazenia nizszej jakosci.'
+    name: '&eEsencja Niepospolita'
     disable-crafting: true
     disable-smelting: true
 WITHER_ESSENCE:
@@ -30,8 +29,8 @@ RARE_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft rare items.'
-    name: '&eRare Weapon Essence'
+      - '&7Moze posluzyc do tworzenia rzadkiego wyposazenia.'
+    name: '&6Esencja Rzadka'
     disable-crafting: true
     disable-smelting: true
 VERY_RARE_WEAPON_ESSENCE:
@@ -41,8 +40,8 @@ VERY_RARE_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft very rare items.'
-    name: '&eVery rare Weapon Essence'
+      - '&7Moze posluzyc do tworzenia bardzo rzadkiego wyposazenia.'
+    name: '&eEsencja Bardzo Rzadka'
     disable-crafting: true
     disable-smelting: true
 LEGENDARY_WEAPON_ESSENCE:
@@ -52,8 +51,8 @@ LEGENDARY_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft legendary items.'
-    name: '&eLegendary Weapon Essence'
+      - '&7Moze posluzyc do tworzenia legendarnego wyposazenia.'
+    name: '&bEsencja Legendarna'
     disable-crafting: true
     disable-smelting: true
 MYTHICAL_WEAPON_ESSENCE:
@@ -63,8 +62,8 @@ MYTHICAL_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft mythical items.'
-    name: '&eMythical Weapon Essence'
+      - '&7Moze posluzyc do tworzenia mitycznego wyposazenia.'
+    name: '&5Esencja Mityczna'
     disable-crafting: true
     disable-smelting: true
 EPIC_WEAPON_ESSENCE:
@@ -74,8 +73,8 @@ EPIC_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft epic items.'
-    name: '&eEpic Weapon Essence'
+      - '&7Moze posluzyc do tworzenia epickiego wyposazenia.'
+    name: '&4Esencja Epicka'
     disable-crafting: true
     disable-smelting: true
 MAGICAL_WEAPON_ESSENCE:
@@ -85,8 +84,8 @@ MAGICAL_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft magical items.'
-    name: '&eMagical Weapon Essence'
+      - '&7Moze posluzyc do tworzenia magicznego wyposazenia.'
+    name: '&2Esencja Magiczna'
     disable-crafting: true
     disable-smelting: true
 UNIQUE_WEAPON_ESSENCE:
@@ -96,18 +95,152 @@ UNIQUE_WEAPON_ESSENCE:
       unbreaking: 1
     hide-enchants: true
     lore:
-      - '&7Can be used to craft unique items.'
-    name: '&eUnique Weapon Essence'
+      - '&7Moze posluzyc do tworzenia unikatowego wyposazenia.'
+    name: '&cEsencja Unikatu'
     disable-crafting: true
     disable-smelting: true
 WEAPON_POWDER:
   base:
     material: GUNPOWDER
     tier: TRASH
-    name: '&7Broken Weapon Powder'
+    name: '&7Sproszkowany Odzysk'
     lore:
-      - '&7Can be used as regular gunpowder.'
-      - '&7Obtained when deconstructing an item.'
+      - '&7Uzyskiwany podczas odzysku przedmiotow.'
+ZLOM_ZELAZNY:
+  base:
+    material: IRON_NUGGET
+    name: '&fZelazny Zlom'
+    lore:
+      - '&7Podstawowy material z odzysku i dropow poczatkowej strefy.'
+    disable-crafting: true
+GARBOWANA_SKORA:
+  base:
+    material: LEATHER
+    name: '&6Garbowana Skora'
+    lore:
+      - '&7Lekki material do pancerzy, lukow i rekawic.'
+    disable-crafting: true
+RDZEN_RUNICZNY:
+  base:
+    material: PRISMARINE_SHARD
+    name: '&bRdzen Runiczny'
+    lore:
+      - '&7Podstawowy rdzen do catalystow, rozdziek i gemow.'
+    disable-crafting: true
+ODLAMEK_KLEJNOTU:
+  base:
+    material: AMETHYST_SHARD
+    name: '&dOdlamek Klejnotu'
+    lore:
+      - '&7Surowiec do przygotowania prostych gemow.'
+    disable-crafting: true
+FRAGMENT_RELIKTU:
+  base:
+    material: NETHER_STAR
+    name: '&cFragment Reliktu'
+    lore:
+      - '&7Rzadki fragment do artefaktow i najmocniejszych recept.'
+    disable-crafting: true
+HARTOWANA_STAL:
+  base:
+    material: IRON_INGOT
+    name: '&7Hartowana Stal'
+    lore:
+      - '&7Obrobiony metal do pancerzy, tarcz i ciezkich broni.'
+    disable-crafting: true
+TKANINA_MISTYCZNA:
+  base:
+    material: WHITE_WOOL
+    name: '&fTkanina Mistyczna'
+    lore:
+      - '&7Tkanina do lekkich pancerzy, szat i utility magicznego.'
+    disable-crafting: true
+WILCZY_KIEL:
+  base:
+    material: RABBIT_FOOT
+    name: '&fWilczy Kiel'
+    lore:
+      - '&7Trofeum z bestii pierwszego aktu.'
+      - '&7Skladnik lowiectwa i lekkiego rzemiosla.'
+    disable-crafting: true
+SUROWA_SKORA:
+  base:
+    material: LEATHER
+    name: '&6Surowa Skora'
+    lore:
+      - '&7Prosty material z bestii i lekkich baz.'
+    disable-crafting: true
+MALA_KOSC:
+  base:
+    material: BONE
+    name: '&fMala Kosc'
+    lore:
+      - '&7Pospolity skladnik odzysku i prostych receptur.'
+    disable-crafting: true
+USZKODZONY_KORZEN:
+  base:
+    material: MANGROVE_ROOTS
+    name: '&2Uszkodzony Korzen'
+    lore:
+      - '&7Roslinny skladnik z lochu 001.'
+    disable-crafting: true
+DZIKIE_ZIOLO:
+  base:
+    material: FERN
+    name: '&aDzikie Ziolo'
+    lore:
+      - '&7Podstawowy skladnik zielarstwa i prostych mikstur.'
+    disable-crafting: true
+NATURALNY_FRAGMENT:
+  base:
+    material: GLOW_LICHEN
+    name: '&aNaturalny Fragment'
+    lore:
+      - '&7Wczesny material do ulepszania i lekkiego rzemiosla.'
+    disable-crafting: true
+PEKNIETY_KRYSZTAL:
+  base:
+    material: QUARTZ
+    name: '&bPekniety Krysztal'
+    lore:
+      - '&7Material pod jubilerstwo i wczesne runy.'
+    disable-crafting: true
+SLABA_ESENCJA:
+  base:
+    material: LIGHT_BLUE_DYE
+    name: '&bSlaba Esencja'
+    lore:
+      - '&7Slaba esencja z kanalizujacych przeciwnikow.'
+    disable-crafting: true
+PEKNIETA_PLYTKA:
+  base:
+    material: IRON_NUGGET
+    name: '&7Peknieta Plytka'
+    lore:
+      - '&7Defensywny material z opancerzonych przeciwnikow.'
+    disable-crafting: true
+SLABY_FRAGMENT_RUNY:
+  base:
+    material: PRISMARINE_CRYSTALS
+    name: '&dSlaby Fragment Runy'
+    lore:
+      - '&7Wprowadza lekkie modyfikatory runiczne.'
+    disable-crafting: true
+ZETON_GAJU:
+  base:
+    material: SUNFLOWER
+    name: '&6Zeton Gaju'
+    lore:
+      - '&7Zeton bossa lochu 001 pod pity i wymiany.'
+    disable-crafting: true
+RDZEN_STRAZNIKA:
+  base:
+    material: HEART_OF_THE_SEA
+    name: '&6Rdzen Straznika'
+    lore:
+      - '&7Rzadki material z bossa Strażnik Gaju.'
+      - '&7Skladnik mocniejszych recept aktu 1.'
+    disable-crafting: true
 MAGIC_FRAGMENT:
   base:
     material: MAGENTA_DYE

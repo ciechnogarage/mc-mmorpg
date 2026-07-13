@@ -1,0 +1,84 @@
+# MCMMORPG — per-domenowe serwery dev w Dockerze za Velocity.
+# on-demand: `mc up <domena>` startuje velocity + ten backend; `mc down <domena>` gasi backend.
+# Izolacja: każdy backend to osobny kontener/proces — padnięcie jednego nie rusza reszty.
+
+name: mcmmorpg
+
+x-backend: &backend
+  image: itzg/minecraft-server:java21
+  tty: true
+  stdin_open: true
+  restart: "no"                 # on-demand, NIE auto-restart (izolacja świadoma)
+  networks: [mcnet]
+  environment: &backend-env
+    EULA: "TRUE"
+    TYPE: "CUSTOM"
+    CUSTOM_SERVER: "/data/paper.jar"   # pinowany Paper 1.21.11 (bez pobierania przez itzg)
+    USE_AIKAR_FLAGS: "TRUE"
+    ENABLE_AUTOPAUSE: "FALSE"          # SIGSTOP zawiesza RCON/bota — gasimy jawnie przez `mc down`
+    ONLINE_MODE: "FALSE"              # gracze/boty przez proxy (offline dev)
+    ENABLE_RCON: "TRUE"
+    RCON_PASSWORD: "${RCON_PASSWORD}"
+    SERVER_PORT: "25565"             # wewnętrzny port stały; host nie mapuje backendów
+    MAX_PLAYERS: "20"
+    SPAWN_PROTECTION: "0"
+    OVERRIDE_SERVER_PROPERTIES: "TRUE"
+    # velocity modern forwarding jest w /data/config/paper-global.yml (secret wstrzyknięty przy buildzie)
+
+services:
+  velocity:
+    image: itzg/bungeecord
+    container_name: velocity
+    environment:
+      TYPE: "VELOCITY"
+      JAVA_TOOL_OPTIONS: "-Dvelocity.packet-decode-logging=true"
+    volumes:
+      - ./velocity:/server
+    ports:
+      - "${VELOCITY_PORT:-25565}:25565"
+    mem_limit: 768m
+    networks: [mcnet]
+    restart: unless-stopped          # proxy always-on (tani, trzyma punkt wejścia)
+
+  srv-world:
+    <<: *backend
+    container_name: srv-world
+    profiles: ["world"]
+    environment:
+      <<: *backend-env
+      INIT_MEMORY: "1G"
+      MAX_MEMORY: "4G"
+      LEVEL: "world"
+    volumes:
+      - ./servers/world:/data
+    mem_limit: 5g
+
+  srv-items:
+    <<: *backend
+    container_name: srv-items
+    profiles: ["items"]
+    environment:
+      <<: *backend-env
+      INIT_MEMORY: "1G"
+      MAX_MEMORY: "2G"
+      LEVEL: "world"
+    volumes:
+      - ./servers/items:/data
+    mem_limit: 2600m
+
+  srv-hub:
+    <<: *backend
+    container_name: srv-hub
+    profiles: ["hub"]
+    environment:
+      <<: *backend-env
+      INIT_MEMORY: "512M"
+      MAX_MEMORY: "1536M"
+      LEVEL: "world"
+    volumes:
+      - ./servers/hub:/data
+    mem_limit: 2g
+
+networks:
+  mcnet:
+    name: mcmmorpg_net

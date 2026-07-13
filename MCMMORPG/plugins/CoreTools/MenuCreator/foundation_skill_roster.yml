@@ -1,0 +1,176 @@
+foundation_skill_roster:
+  permission: ''
+  bottom_inventory: false
+  name: '<dark_gray>Trener Skilli - Roster'
+  size: 6
+  fill_material: 'BLACK_STAINED_GLASS_PANE'
+  enable_animation: false
+
+  buttons:
+    border:
+      location: top
+      slots: [ 0,1,2,3,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53 ]
+      source: vanilla
+      material: BLACK_STAINED_GLASS_PANE
+      name: ' '
+
+    title:
+      location: top
+      slots: [ 4 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=
+      name: '<aqua><bold>Roster Skilli'
+      lore:
+        - '<gray>Skille są wyborem loadoutu,'
+        - '<gray>nie darmową listą po kliknięciu.'
+        - '<red>selection contract: roster wyboru, nie auto-grant.'
+        - '<yellow>Status: draft slotów + live MMOCore bridge.'
+        - '<dark_gray>Runtime hook: pending.'
+        - '<dark_gray>Runtime equip: pending.'
+        - '<dark_gray>Klasa i drzewka otwierasz z tego rosteru.'
+        - ''
+        - '<dark_gray>Ogólny I: {selected_generic_skill_1}'
+        - '<dark_gray>Ogólny II: {selected_generic_skill_2}'
+
+    class_locked:
+      location: top
+      slots: [ 19 ]
+      source: vanilla
+      material: DIAMOND_SWORD
+      name: '<yellow><bold>Skille Klasowe'
+      lore:
+        - '<gray>Locked do klasy i później podklasy.'
+        - '<gray>Nie są dostępne jako generic pool.'
+        - '<dark_gray>Źródło: mentor klasy + progres.'
+        - '<dark_gray>Klik: otwórz panel /skills.'
+      left_click:
+        Scripts:
+          - creator_open_mmocore_skills
+      click:
+        Scripts:
+          - creator_open_mmocore_skills
+
+    skill_trees:
+      location: top
+      slots: [ 20 ]
+      source: vanilla
+      material: ENCHANTED_BOOK
+      name: '<aqua><bold>Drzewka Klasowe'
+      lore:
+        - '<gray>Live panel drzewek i odblokowań.'
+        - '<dark_gray>Klik: otwórz /skilltrees.'
+      left_click:
+        Scripts:
+          - creator_open_mmocore_skilltrees
+      click:
+        Scripts:
+          - creator_open_mmocore_skilltrees
+
+    generic_guard:
+      location: top
+      slots: [ 21 ]
+      source: vanilla
+      material: SHIELD
+      name: '<white><bold>Generic: Guard'
+      lore:
+        - '<gray>Ogólny defensywny tester.'
+        - '<gray>Nie zastępuje tank identity.'
+        - '<dark_gray>Slot: generic I.'
+        - '<dark_gray>Source: skill trainer.'
+        - '<dark_gray>Runtime: zapis slotu profilu.'
+      left_click:
+        Scripts:
+          - creator_select_generic_guard
+      click:
+        Scripts:
+          - creator_select_generic_guard
+
+    generic_dodge:
+      location: top
+      slots: [ 22 ]
+      source: vanilla
+      material: FEATHER
+      name: '<white><bold>Generic: Dodge'
+      lore:
+        - '<gray>Krótka mobilność z cooldownem.'
+        - '<gray>Nie resetuje całej walki.'
+        - '<dark_gray>Slot: generic I.'
+        - '<dark_gray>Source: skill trainer.'
+        - '<dark_gray>Runtime: zapis slotu profilu.'
+      left_click:
+        Scripts:
+          - creator_select_generic_dodge
+      click:
+        Scripts:
+          - creator_select_generic_dodge
+
+    generic_focus:
+      location: top
+      slots: [ 23 ]
+      source: vanilla
+      material: AMETHYST_SHARD
+      name: '<white><bold>Generic: Focus'
+      lore:
+        - '<gray>Tempo, przygotowanie, resource.'
+        - '<gray>Nie jest darmowym burstem.'
+        - '<dark_gray>Slot: generic II.'
+        - '<dark_gray>Source: skill trainer.'
+        - '<dark_gray>Runtime: zapis slotu profilu.'
+      left_click:
+        Scripts:
+          - creator_select_generic_focus
+      click:
+        Scripts:
+          - creator_select_generic_focus
+
+    generic_medic:
+      location: top
+      slots: [ 24 ]
+      source: vanilla
+      material: HONEY_BOTTLE
+      name: '<white><bold>Generic: Field Medic'
+      lore:
+        - '<gray>Utility ratunkowe i onboarding.'
+        - '<gray>Nie zastępuje Akolity.'
+        - '<dark_gray>Slot: generic II.'
+        - '<dark_gray>Source: skill trainer.'
+        - '<dark_gray>Runtime: zapis slotu profilu.'
+      left_click:
+        Scripts:
+          - creator_select_generic_field_medic
+      click:
+        Scripts:
+          - creator_select_generic_field_medic
+
+    profession_locked:
+      location: top
+      slots: [ 31 ]
+      source: vanilla
+      material: SMITHING_TABLE
+      name: '<green><bold>Skille Profesji'
+      lore:
+        - '<gray>Locked do profesji i używania.'
+        - '<gray>Craft/utility/preparation,'
+        - '<gray>nie zamiennik klasy.'
+        - '<dark_gray>Źródło: profession roster.'
+      left_click:
+        Scripts:
+          - creator_open_profession_roster
+      click:
+        Scripts:
+          - creator_open_profession_roster
+
+    back:
+      location: top
+      slots: [ 49 ]
+      source: vanilla
+      material: player_head
+      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=
+      name: '<yellow><bold>Wróć do miasta'
+      left_click:
+        Scripts:
+          - creator_open_city_roster
+      click:
+        Scripts:
+          - creator_open_city_roster
