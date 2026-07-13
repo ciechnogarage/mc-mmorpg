@@ -1,0 +1,6 @@
+Evidence inspected:
+- MCMMORPG/logs/latest.log
+- MCMMORPG/_validation/_server_boot.log
+
+Result: PARTIALLY VERIFIED.
+The current latest.log contains a failed port bind and unexpected exception; it is not clean release-start evidence.

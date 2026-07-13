@@ -1,0 +1,17 @@
+Source: externally supplied `OUTPUT — kopia (2).zip`
+Status: supplied archive evidence accepted; archive is not tracked in Git.
+Hash status: BLOCKED; the archive is not available in the current filesystem, so SHA-256 has not been independently computed.
+
+Reported findings:
+- 8066 entries, approximately 147 MB
+- 542 YAML files
+- 542 BBModel files
+- 914 PNG files
+- 2818 OGG files
+- 1835 JSON files
+- 27 duplicate YAML keys
+- 2 invalid sounds.json files
+- 8 duplicate item IDs
+- 10 duplicate mob IDs
+- 44 duplicate skill IDs
+- 572 ~onTimer:1 occurrences in 113 files

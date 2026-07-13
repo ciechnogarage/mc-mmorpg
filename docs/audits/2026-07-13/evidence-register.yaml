@@ -1,0 +1,124 @@
+version: 1
+audit_date: 2026-07-13
+status: verified_with_external_evidence
+
+evidence:
+  - id: repository_root
+    kind: repository
+    path: .
+    status: current
+  - id: contract_registry
+    kind: repository_file
+    path: docs/config_authority_registry.yaml
+    status: validated
+  - id: database_baseline
+    kind: repository_file
+    path: docs/database-staging-baseline.md
+    status: prepared_not_live_validated
+  - id: mmoprofiles_config
+    kind: repository_file
+    path: MCMMORPG/plugins/MMOProfiles/config.yml
+    status: mysql_disabled
+  - id: mmoinventory_config
+    kind: repository_file
+    path: MCMMORPG/plugins/MMOInventory/config.yml
+    status: mysql_disabled
+  - id: mmocore_config
+    kind: repository_file
+    path: MCMMORPG/plugins/MMOCore/config.yml
+    status: mysql_disabled
+  - id: characterstage_build
+    kind: repository_file
+    path: MCMMORPG/plugin-src/character-stage/build.gradle.kts
+    status: compatibility_seam_present
+  - id: latest_runtime_log
+    kind: runtime_log
+    path: MCMMORPG/logs/latest.log
+    status: partially_verified
+  - id: server_boot_log
+    kind: runtime_log
+    path: MCMMORPG/_validation/_server_boot.log
+    status: partially_verified
+  - id: vendor_archive
+    kind: external_binary
+    status: externally_supplied_evidence
+    tracked_in_git: false
+    filename: "OUTPUT — kopia (2).zip"
+    size_bytes: 154564949
+    sha256: null
+    hash_status: unavailable_external_file
+    validation_status: statically_analyzed
+    runtime_status: not_activated
+    source_scope: external_archive
+    report: docs/audits/2026-07-13/vendor-content-report.md
+
+sources:
+  repository:
+    status: current
+    location: /home/przemek/projects/MC
+    tracked_in_git: true
+
+  staging_runtime:
+    status: partially_verified
+    evidence:
+      - MCMMORPG/logs/latest.log
+      - MCMMORPG/_validation/_server_boot.log
+    limitation: latest.log contains a failed port-bind attempt and is not clean release evidence
+
+  vendor_archive:
+    status: externally_supplied
+    file: OUTPUT — kopia (2).zip
+    tracked_in_git: false
+    validation_reproducible: true
+    reported_entries: 8066
+    reported_size_mb: 147
+    static_findings:
+      duplicate_yaml_keys: 27
+      invalid_sounds_json: 2
+      duplicate_item_ids: 8
+      duplicate_mob_ids: 10
+      duplicate_skill_ids: 44
+      timer_one_occurrences: 572
+      timer_one_files: 113
+
+  production:
+    status: not_verified
+
+checks:
+  repository_tests:
+    command: node --test tests/*.test.mjs
+    executed_at: 2026-07-13T14:12:39+02:00
+    exit_code: 0
+    output: docs/audits/2026-07-13/commands/node-tests.txt
+    status: pass
+    tests: 5
+    pass: 5
+    fail: 0
+  contract_registry:
+    command: python3 scripts/check-contract-registry.py
+    executed_at: 2026-07-13T14:12:39+02:00
+    exit_code: 0
+    output: docs/audits/2026-07-13/commands/static-validation.txt
+    status: pass_with_blockers
+    contracts: 16
+    unresolved_blockers: 4
+  npm_test_entrypoint:
+    command: npm test
+    executed_at: 2026-07-13T11:51:59+02:00
+    exit_code: 1
+    output: docs/audits/2026-07-13/commands/static-validation.txt
+    status: missing
+    note: package.json does not define a test script
+  git_diff_check:
+    command: git diff --check
+    executed_at: 2026-07-13T14:12:39+02:00
+    exit_code: 0
+    output: docs/audits/2026-07-13/commands/static-validation.txt
+    status: pass
+  audit_evidence_validation:
+    command: python3 scripts/check-audit-evidence.py --allow-missing-external-hash
+    executed_at: 2026-07-13T14:12:39+02:00
+    exit_code: 0
+    output: docs/audits/2026-07-13/commands/static-validation.txt
+    status: pass_with_blockers
+    blocker: vendor_archive_sha256_unavailable

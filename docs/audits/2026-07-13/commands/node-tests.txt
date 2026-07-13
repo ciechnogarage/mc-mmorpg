@@ -1,0 +1,42 @@
+TAP version 13
+# Subtest: tests/audit-evidence.test.mjs
+ok 1 - tests/audit-evidence.test.mjs
+  ---
+  duration_ms: 192.853161
+  type: 'test'
+  ...
+# Subtest: tests/contract-registry.test.mjs
+ok 2 - tests/contract-registry.test.mjs
+  ---
+  duration_ms: 107.621151
+  type: 'test'
+  ...
+# Subtest: tests/database-staging.test.mjs
+ok 3 - tests/database-staging.test.mjs
+  ---
+  duration_ms: 52.464585
+  type: 'test'
+  ...
+# Subtest: tests/plugin-inventory.test.mjs
+ok 4 - tests/plugin-inventory.test.mjs
+  ---
+  duration_ms: 59.414655
+  type: 'test'
+  ...
+# Subtest: tests/repo-hygiene.test.mjs
+ok 5 - tests/repo-hygiene.test.mjs
+  ---
+  duration_ms: 67.712974
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 203.745322
+
+command_exit_code=0

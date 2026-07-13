@@ -1,0 +1,20 @@
+node --test tests/*.test.mjs
+The Node test runner reported:
+- tests: 5
+- pass: 5
+- fail: 0
+
+git diff --check
+command_exit_code=0
+
+python3 scripts/check-audit-evidence.py --allow-missing-external-hash
+BLOCKED: missing SHA-256 for external evidence: vendor_archive
+audit evidence valid: 10 evidence entries; 5 command checks
+command_exit_code=0
+
+Strict validation remains blocked until the supplied ZIP is available locally:
+python3 scripts/check-audit-evidence.py
+command_exit_code=1
+
+python3 scripts/check-contract-registry.py
+16 contracts validated; 4 unresolved blocker(s).
