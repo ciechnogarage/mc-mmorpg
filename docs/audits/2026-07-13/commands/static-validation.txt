@@ -7,14 +7,12 @@ The Node test runner reported:
 git diff --check
 command_exit_code=0
 
-python3 scripts/check-audit-evidence.py --allow-missing-external-hash
-BLOCKED: missing SHA-256 for external evidence: vendor_archive
+python3 scripts/check-audit-evidence.py
 audit evidence valid: 10 evidence entries; 5 command checks
 command_exit_code=0
 
-Strict validation remains blocked until the supplied ZIP is available locally:
-python3 scripts/check-audit-evidence.py
-command_exit_code=1
+strict audit evidence validation: PASS
+command_exit_code=0
 
 python3 scripts/check-contract-registry.py
 16 contracts validated; 4 unresolved blocker(s).

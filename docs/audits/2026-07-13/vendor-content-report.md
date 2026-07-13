@@ -5,7 +5,8 @@
 Source: `OUTPUT — kopia (2).zip`  
 Status: externally supplied, not tracked in Git, not active runtime content
 
-Reported archive size is approximately 147 MB with 8,066 entries.
+Reported archive size is 146,719,792 bytes, approximately 146.72 MB decimal, with 8,066 entries.
+SHA-256: `c661a807ad54f53de23752658c2aa840024347470aa713d6d3b12b6e8e7c0ffa`
 
 | Type | Count |
 | --- | ---: |

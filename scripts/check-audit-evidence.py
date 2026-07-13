@@ -90,7 +90,7 @@ def main() -> None:
                 fail(f"external binary has invalid SHA-256: {entry['id']}")
             else:
                 archive_path = ROOT / entry.get("path", "")
-                if archive_path.exists():
+                if archive_path.is_file():
                     check_hash(archive_path, str(sha256))
 
     checks = data.get("checks")
