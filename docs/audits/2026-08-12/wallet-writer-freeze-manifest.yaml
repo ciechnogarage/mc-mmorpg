@@ -59,7 +59,7 @@ capabilities:
     applicable_backends: [items, hub]
     mutation_route: lifecycle_hook
     observed_state: configured_active
-    required_cutover_state: migrated_first_party
+    required_cutover_state: disabled_or_migrated_first_party
     permission_only_freeze_allowed: false
   - capability_id: GOLD-WRITER-003
     classification: ACTIVE_CONFIGURED

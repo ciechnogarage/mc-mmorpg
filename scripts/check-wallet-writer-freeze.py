@@ -49,6 +49,12 @@ REQUIRED_PROOFS = {
     "provider_identity",
     "focused_mutation_rejection",
 }
+PROOF_BLOCKER_CODES = {
+    "exact_jar_scan": "MISSING_EXACT_JAR_SCAN_PROOF",
+    "effective_permission": "MISSING_EFFECTIVE_PERMISSION_PROOF",
+    "provider_identity": "MISSING_PROVIDER_IDENTITY_PROOF",
+    "focused_mutation_rejection": "MISSING_MUTATION_REJECTION_PROOF",
+}
 
 
 def fail(message: str) -> None:
@@ -252,6 +258,9 @@ def validate_structure(data: dict[str, Any], manifest_path: Path) -> tuple[int, 
             fail(f"freeze record {backend} {capability_id} has invalid effective_exposure")
         if record.get("freeze_status") not in FREEZE_STATUSES:
             fail(f"freeze record {backend} {capability_id} has invalid freeze_status")
+        target_protocol = record.get("target_mutation_protocol")
+        if target_protocol is not None and not isinstance(target_protocol, str):
+            fail(f"freeze record {backend} {capability_id} has invalid target_mutation_protocol")
         digest = record.get("vendor_jar_sha256")
         if digest is not None and (not isinstance(digest, str) or not SHA256.fullmatch(digest)):
             fail(f"freeze record {backend} {capability_id} has invalid vendor_jar_sha256")
@@ -318,20 +327,118 @@ def validate_structure(data: dict[str, Any], manifest_path: Path) -> tuple[int, 
     return len(catalog), len(records)
 
 
+def allowed_exposures(required_state: str) -> set[str]:
+    mapping = {
+        "disabled": {"disabled"},
+        "migrated_first_party": {"migrated_first_party"},
+        "disabled_or_migrated_first_party": {"disabled", "migrated_first_party"},
+        "disabled_or_not_gold_proven": {"disabled", "not_gold_proven"},
+        "not_gold_proven": {"not_gold_proven"},
+    }
+    return mapping.get(required_state, set())
+
+
+def readiness_blockers(data: dict[str, Any]) -> list[str]:
+    blockers: set[str] = set()
+    catalog = {
+        capability["capability_id"]: capability for capability in data["capabilities"]
+    }
+
+    for record in data["freeze_records"]:
+        capability = catalog[record["capability_id"]]
+        if record["freeze_status"] != "VERIFIED":
+            blockers.add("FREEZE_RECORD_NOT_VERIFIED")
+        if (
+            capability["binary_origin"] == "vendor"
+            and not isinstance(record.get("vendor_jar_sha256"), str)
+        ):
+            blockers.add("MISSING_VENDOR_JAR_PROOF")
+        for proof_name, blocker_code in PROOF_BLOCKER_CODES.items():
+            if record["proofs"][proof_name]["status"] != "VERIFIED":
+                blockers.add(blocker_code)
+        exposure = record["effective_exposure"]
+        if exposure == "permission_denied" and not capability["permission_only_freeze_allowed"]:
+            blockers.add("PERMISSION_ONLY_FREEZE_FORBIDDEN")
+        if exposure not in allowed_exposures(capability["required_cutover_state"]):
+            blockers.add("EFFECTIVE_EXPOSURE_MISMATCH")
+        if (
+            exposure == "migrated_first_party"
+            and record.get("target_mutation_protocol") != "WalletMutationPort"
+        ):
+            blockers.add("FIRST_PARTY_CONTEXTUAL_MUTATION_UNPROVEN")
+
+    requirement = data["provider_requirement"]
+    epochs: list[str] = []
+    for acknowledgement in data["backend_acknowledgements"]:
+        if acknowledgement["status"] != "VERIFIED":
+            blockers.add("PROVIDER_ACK_NOT_VERIFIED")
+        if acknowledgement.get("selected_provider") != requirement["selected_provider"]:
+            blockers.add("PROVIDER_IDENTITY_MISMATCH")
+        if (
+            acknowledgement.get("provider_contract_version")
+            != requirement["provider_contract_version"]
+        ):
+            blockers.add("PROVIDER_CONTRACT_VERSION_MISMATCH")
+        if acknowledgement.get("write_mode") != requirement["write_mode"]:
+            blockers.add("PROVIDER_WRITE_MODE_MISMATCH")
+        if (
+            acknowledgement.get("generic_write_failure_code")
+            != requirement["generic_write_failure_code"]
+        ):
+            blockers.add("GENERIC_WRITE_FAILURE_UNPROVEN")
+        epoch = acknowledgement.get("cutover_epoch")
+        if isinstance(epoch, str) and epoch.strip():
+            epochs.append(epoch)
+
+    if (
+        len(epochs) != len(REQUIRED_BACKENDS)
+        or len(set(epochs)) != 1
+        or any(re.search(r"pending|placeholder|tbd", epoch, re.IGNORECASE) for epoch in epochs)
+    ):
+        blockers.add("CUTOVER_EPOCH_MISSING_OR_MISMATCHED")
+
+    legacy = data["legacy_snapshot"]
+    account_count = legacy.get("account_count")
+    if (
+        legacy.get("status") != "VERIFIED"
+        or isinstance(account_count, bool)
+        or not isinstance(account_count, int)
+        or account_count < 0
+        or not isinstance(legacy.get("balance_checksum_sha256"), str)
+        or not SHA256.fullmatch(legacy["balance_checksum_sha256"])
+        or not isinstance(legacy.get("snapshot_watermark"), str)
+        or not legacy["snapshot_watermark"].strip()
+    ):
+        blockers.add("LEGACY_SNAPSHOT_PROOF_MISSING")
+
+    if blockers and data["readiness"] == "READY":
+        blockers.add("DECLARED_READINESS_MISMATCH")
+    if not blockers and data["readiness"] != "READY":
+        blockers.add("DECLARED_READINESS_MISMATCH")
+    return sorted(blockers)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--require-ready", action="store_true")
     args = parser.parse_args()
 
     manifest_path = args.manifest.resolve()
     data = load_yaml(manifest_path)
     capability_count, record_count = validate_structure(data, manifest_path)
+    blockers = readiness_blockers(data)
 
     print(f"STRUCTURE PASS: {capability_count} capabilities; {record_count} freeze records")
-    if data["readiness"] == "READY":
+    if not blockers:
         print("READINESS READY")
-    else:
-        print("READINESS BLOCKED: readiness evidence remains pending")
+        return
+
+    summary = f"READINESS BLOCKED: {len(blockers)} blocker code(s): {', '.join(blockers)}"
+    if args.require_ready:
+        print(summary, file=sys.stderr)
+        raise SystemExit(1)
+    print(summary)
 
 
 if __name__ == "__main__":
