@@ -1,0 +1,415 @@
+schema_version: 1
+manifest_id: wallet-writer-freeze-pre-cutover-2026-08-12
+snapshot_at: "2026-08-12T00:00:00Z"
+readiness: BLOCKED
+
+sources:
+  capability_matrix:
+    path: docs/ai/cmi-vault-gold-writer-capability-matrix.md
+    sha256: c3a35068eb068f4a9e5a9e9510384dfa699512101843bf29537fa890e69146fd
+  wallet_contract:
+    path: docs/contracts/central-account-wallet-contract.yaml
+    contract_id: central-account-wallet-contract
+    contract_version: 2
+  plugin_manifest:
+    path: docs/plugin_manifest.yaml
+
+required_backend_set:
+  - items
+  - world
+  - hub
+
+provider_requirement:
+  selected_provider: MCMMORPGCentralWalletVaultProvider
+  provider_contract_version: 2
+  write_mode: context_required
+  generic_write_failure_code: WRITE_CONTEXT_REQUIRED
+
+proof_templates:
+  pending: &pending_proofs
+    exact_jar_scan:
+      status: MISSING
+      evidence_ref: null
+    effective_permission:
+      status: MISSING
+      evidence_ref: null
+    provider_identity:
+      status: MISSING
+      evidence_ref: null
+    focused_mutation_rejection:
+      status: MISSING
+      evidence_ref: null
+
+capabilities:
+  - capability_id: GOLD-WRITER-001
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: generic_vault_api
+    observed_state: configured_active
+    required_cutover_state: disabled
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-002
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: lifecycle_hook
+    observed_state: configured_active
+    required_cutover_state: migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-003
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: operator_command
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-004
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: player_transfer_command
+    observed_state: configured_active
+    required_cutover_state: disabled
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-005
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: bearer_item
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-006
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: console_scheduler
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-007
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: lifecycle_hook
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-008
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: kit_claim
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-009
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: player_sale_command
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-010
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: player_recharge_command
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-011
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: player_scavenge_command
+    observed_state: hub_active_items_default_unverified
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-012
+    classification: ACTIVE_CONFIGURED
+    plugin_name: DeluxeMenus
+    plugin_version: 1.14.1-Release
+    binary_origin: vendor
+    applicable_backends: [items]
+    mutation_route: menu_vault_action
+    observed_state: configured_active
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-013
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CoreTools
+    plugin_version: 1.4.1
+    binary_origin: vendor
+    applicable_backends: [items, world]
+    mutation_route: vault_shop
+    observed_state: configured_active
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-014
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CoreTools
+    plugin_version: 1.4.1
+    binary_origin: vendor
+    applicable_backends: [items, world]
+    mutation_route: vault_station
+    observed_state: configured_active
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-015
+    classification: ACTIVE_CONFIGURED
+    plugin_name: CoreTools
+    plugin_version: 1.4.1
+    binary_origin: vendor
+    applicable_backends: [items, world]
+    mutation_route: vault_market
+    observed_state: configured_active
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-016
+    classification: SOURCE_CONFIRMED_DISABLED
+    plugin_name: ProfessionRuntimeAdapter
+    plugin_version: 0.1.0-SNAPSHOT
+    binary_origin: first_party
+    applicable_backends: [items]
+    mutation_route: first_party_generic_vault_api
+    observed_state: disabled_by_default
+    required_cutover_state: migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-WRITER-017
+    classification: SOURCE_CONFIRMED_DISABLED
+    plugin_name: ProfessionRuntimeAdapter
+    plugin_version: 0.1.0-SNAPSHOT
+    binary_origin: first_party
+    applicable_backends: [items]
+    mutation_route: admin_validation_generic_vault_api
+    observed_state: disabled_by_default
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-001
+    classification: DORMANT_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: console_reward
+    observed_state: disabled_by_feature_flag
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-002
+    classification: DORMANT_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: command_cost
+    observed_state: disabled_by_feature_flag
+    required_cutover_state: disabled
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-003
+    classification: DORMANT_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: player_repair_command
+    observed_state: disabled_by_feature_flag
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-004
+    classification: DORMANT_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: chat_event
+    observed_state: zero_amount
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-005
+    classification: DORMANT_CONFIGURED
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    binary_origin: vendor
+    applicable_backends: [items, hub]
+    mutation_route: scheduler
+    observed_state: all_records_disabled
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-006
+    classification: DORMANT_CONFIGURED
+    plugin_name: MythicDungeons
+    plugin_version: 2.0.1-SNAPSHOT
+    binary_origin: vendor
+    applicable_backends: [world]
+    mutation_route: dungeon_entry_fee
+    observed_state: zero_amount
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-007
+    classification: DORMANT_CONFIGURED
+    plugin_name: multiverse-core
+    plugin_version: 5.5.3
+    binary_origin: vendor
+    applicable_backends: [world]
+    mutation_route: world_entry_fee
+    observed_state: disabled_by_feature_flag
+    required_cutover_state: disabled_or_migrated_first_party
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-008
+    classification: POTENTIAL_UNVERIFIED
+    plugin_name: MMOCore
+    plugin_version: 1.13.1-20260330.110342-58
+    binary_origin: vendor
+    applicable_backends: [items]
+    mutation_route: currency_command
+    observed_state: provider_semantics_unverified
+    required_cutover_state: disabled_or_not_gold_proven
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-009
+    classification: POTENTIAL_UNVERIFIED
+    plugin_name: MMOItems
+    plugin_version: 6.10.1-20260330.094756-58
+    binary_origin: vendor
+    applicable_backends: [items]
+    mutation_route: crafting_requirement
+    observed_state: no_active_local_amount
+    required_cutover_state: disabled_or_not_gold_proven
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-010
+    classification: POTENTIAL_UNVERIFIED
+    plugin_name: DeluxeMenus
+    plugin_version: 1.14.1-Release
+    binary_origin: vendor
+    applicable_backends: [items]
+    mutation_route: console_command_dispatch
+    observed_state: command_owner_unverified
+    required_cutover_state: disabled_or_not_gold_proven
+    permission_only_freeze_allowed: false
+  - capability_id: GOLD-CAP-011
+    classification: STALE_DOCUMENTATION
+    plugin_name: DeluxeMenus
+    plugin_version: 1.14.1-Release
+    binary_origin: configuration_only
+    applicable_backends: [items]
+    mutation_route: historical_console_command
+    observed_state: not_currently_configured
+    required_cutover_state: not_gold_proven
+    permission_only_freeze_allowed: false
+
+freeze_records:
+  - &pending_record
+    backend_id: items
+    capability_id: GOLD-WRITER-001
+    plugin_name: CMI
+    plugin_version: 9.8.4.14
+    mutation_route: generic_vault_api
+    effective_exposure: pending
+    vendor_jar_sha256: null
+    freeze_status: PENDING
+    evidence_refs: []
+    proofs: *pending_proofs
+  - {backend_id: hub, capability_id: GOLD-WRITER-001, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: generic_vault_api, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-002, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: lifecycle_hook, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-002, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: lifecycle_hook, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-003, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: operator_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-003, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: operator_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-004, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_transfer_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-004, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_transfer_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-005, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: bearer_item, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-005, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: bearer_item, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-006, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: console_scheduler, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-006, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: console_scheduler, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-007, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: lifecycle_hook, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-007, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: lifecycle_hook, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-008, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: kit_claim, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-008, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: kit_claim, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-009, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_sale_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-009, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_sale_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-010, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_recharge_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-010, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_recharge_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-011, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_scavenge_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-WRITER-011, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_scavenge_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-012, plugin_name: DeluxeMenus, plugin_version: 1.14.1-Release, mutation_route: menu_vault_action, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-013, plugin_name: CoreTools, plugin_version: 1.4.1, mutation_route: vault_shop, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: world, capability_id: GOLD-WRITER-013, plugin_name: CoreTools, plugin_version: 1.4.1, mutation_route: vault_shop, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-014, plugin_name: CoreTools, plugin_version: 1.4.1, mutation_route: vault_station, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: world, capability_id: GOLD-WRITER-014, plugin_name: CoreTools, plugin_version: 1.4.1, mutation_route: vault_station, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-015, plugin_name: CoreTools, plugin_version: 1.4.1, mutation_route: vault_market, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: world, capability_id: GOLD-WRITER-015, plugin_name: CoreTools, plugin_version: 1.4.1, mutation_route: vault_market, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-016, plugin_name: ProfessionRuntimeAdapter, plugin_version: 0.1.0-SNAPSHOT, mutation_route: first_party_generic_vault_api, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-WRITER-017, plugin_name: ProfessionRuntimeAdapter, plugin_version: 0.1.0-SNAPSHOT, mutation_route: admin_validation_generic_vault_api, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-001, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: console_reward, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-CAP-001, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: console_reward, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-002, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: command_cost, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-CAP-002, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: command_cost, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-003, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_repair_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-CAP-003, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: player_repair_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-004, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: chat_event, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-CAP-004, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: chat_event, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-005, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: scheduler, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: hub, capability_id: GOLD-CAP-005, plugin_name: CMI, plugin_version: 9.8.4.14, mutation_route: scheduler, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: world, capability_id: GOLD-CAP-006, plugin_name: MythicDungeons, plugin_version: 2.0.1-SNAPSHOT, mutation_route: dungeon_entry_fee, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: world, capability_id: GOLD-CAP-007, plugin_name: multiverse-core, plugin_version: 5.5.3, mutation_route: world_entry_fee, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-008, plugin_name: MMOCore, plugin_version: 1.13.1-20260330.110342-58, mutation_route: currency_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-009, plugin_name: MMOItems, plugin_version: 6.10.1-20260330.094756-58, mutation_route: crafting_requirement, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-010, plugin_name: DeluxeMenus, plugin_version: 1.14.1-Release, mutation_route: console_command_dispatch, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+  - {backend_id: items, capability_id: GOLD-CAP-011, plugin_name: DeluxeMenus, plugin_version: 1.14.1-Release, mutation_route: historical_console_command, effective_exposure: pending, vendor_jar_sha256: null, freeze_status: PENDING, evidence_refs: [], proofs: *pending_proofs}
+
+backend_acknowledgements:
+  - backend_id: items
+    status: PENDING
+    selected_provider: null
+    provider_contract_version: null
+    write_mode: null
+    generic_write_failure_code: null
+    cutover_epoch: null
+    evidence_ref: null
+  - backend_id: world
+    status: PENDING
+    selected_provider: null
+    provider_contract_version: null
+    write_mode: null
+    generic_write_failure_code: null
+    cutover_epoch: null
+    evidence_ref: null
+  - backend_id: hub
+    status: PENDING
+    selected_provider: null
+    provider_contract_version: null
+    write_mode: null
+    generic_write_failure_code: null
+    cutover_epoch: null
+    evidence_ref: null
+
+legacy_snapshot:
+  status: MISSING
+  account_count: null
+  balance_checksum_sha256: null
+  snapshot_watermark: null
+  evidence_ref: null
