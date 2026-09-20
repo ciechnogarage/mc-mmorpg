@@ -136,8 +136,14 @@ public final class CharacterProfileModule implements ProfileDataModule {
       CreatorSession session = sessions.start(player, profileId, pending, origin);
       if (session == null) {
         // start() sam zalogowal powod (gracz jest juz w kreatorze dla innego profilu).
-        // Swiadomie NIE zatwierdzamy tego eventu: pierwsza sesja wciaz trwa i to ona ma
-        // dokonczyc tworzenie.
+        //
+        // Ten event trzeba ODRZUCIC, a nie zostawic. Poprzednia wersja nie robila ani
+        // validate(), ani cancel() — "swiadomie", wedlug komentarza, ktory tu stal — wiec
+        // MMOProfiles zostawalo z operacja zawieszona do konca sesji gracza. Dokladnie ta
+        // klasa bledu, ktora naprawiamy w onRemove. PendingProfileEvent implementuje
+        // Cancellable, wiec odmowa ma tu wlasna, jawna droge: drugi profil po prostu
+        // nie powstaje, a pierwsza sesja kreatora toczy sie dalej.
+        event.setCancelled(true);
         player.sendMessage(Component.text(
             "Jesteś już w kreatorze postaci — dokończ tworzenie tej, którą zacząłeś.",
             NamedTextColor.YELLOW));

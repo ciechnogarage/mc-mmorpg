@@ -9,9 +9,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import pl.mcmmorpg.charactercreator.CreatorConfig;
+import pl.mcmmorpg.charactercreator.creator.CreatorSessionManager;
 
 /**
  * Pilnuje, zeby nikt nie grał bez postaci.
@@ -41,11 +43,14 @@ public final class ProfileSelectionEnforcer implements Listener {
 
   private final Plugin plugin;
   private final CreatorConfig config;
+  private final CreatorSessionManager sessions;
   private final Logger logger;
 
-  public ProfileSelectionEnforcer(Plugin plugin, CreatorConfig config, Logger logger) {
+  public ProfileSelectionEnforcer(Plugin plugin, CreatorConfig config,
+      CreatorSessionManager sessions, Logger logger) {
     this.plugin = plugin;
     this.config = config;
+    this.sessions = sessions;
     this.logger = logger;
   }
 
@@ -67,6 +72,26 @@ public final class ProfileSelectionEnforcer implements Listener {
       return;
     }
     if (hasChosenProfile(playerId)) {
+      return;
+    }
+    // ZLAPANE NA PRODUKCJI, 20.09 16:20-16:21. Gracz W TRAKCIE tworzenia postaci z definicji
+    // nie ma jeszcze wybranego profilu: ProfileCreateEvent jest wstrzymany do naszego
+    // validate(), wiec getCurrent() zwraca null przez caly czas trwania kreatora. Bez tego
+    // warunku straznik otwieral graczowi Miau ekran wyboru profilu CO 10 SEKUND na wierzchu
+    // kreatora (16:20:42, 16:20:52, ...), az doprowadzil do drugiego ProfileCreateEvent
+    // ("Odmowa drugiej sesji kreatora dla Miau", 16:21:14) i do bledu wewnetrznego
+    // MMOProfiles przy kliknieciu w profil ("Player has not started playing",
+    // ProfileListImpl.quitCurrentProfile — ani razu w ~110 wczesniejszych logach).
+    //
+    // To byl dokladnie ten blad, ktory ten plik w swoim wlasnym javadocu wytyka gdzie
+    // indziej: kolejny straznik walczacy o to samo, zamiast ustapic wlascicielowi stanu.
+    if (sessions.isActive(playerId)) {
+      return;
+    }
+    // Gracz ma juz cos otwartego — najpewniej wlasnie ten ekran wyboru. Ponawianie
+    // otwarcia na wierzchu otwartego GUI jest tym samym rodzajem walki.
+    // CRAFTING to widok "nic nie otwarte" (wlasny ekwipunek gracza).
+    if (player.getOpenInventory().getType() != InventoryType.CRAFTING) {
       return;
     }
     logger.info("Gracz " + player.getName() + " nie ma wybranej postaci — otwieram ekran "

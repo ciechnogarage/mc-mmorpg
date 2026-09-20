@@ -100,7 +100,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     // do MMOProfiles.
     if (creatorConfig.enforceProfileSelection()) {
       getServer().getPluginManager().registerEvents(
-          new ProfileSelectionEnforcer(this, creatorConfig, getLogger()), this);
+          new ProfileSelectionEnforcer(this, creatorConfig, sessionManager, getLogger()), this);
     } else {
       getLogger().warning("profile-selection.enforce: false — gracz, ktory zamknie ekran "
           + "wyboru profilu, moze grac bez postaci. Nikt tego nie pilnuje.");
