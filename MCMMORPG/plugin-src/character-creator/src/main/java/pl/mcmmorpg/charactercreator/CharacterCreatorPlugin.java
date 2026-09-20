@@ -19,6 +19,7 @@ import pl.mcmmorpg.charactercreator.model.ModelEngineBridge;
 import pl.mcmmorpg.charactercreator.persist.CharacterStore;
 import pl.mcmmorpg.charactercreator.persist.OrphanScanner;
 import pl.mcmmorpg.charactercreator.profile.CharacterProfileModule;
+import pl.mcmmorpg.charactercreator.profile.ProfileSelectionEnforcer;
 import pl.mcmmorpg.charactercreator.profile.RaceModelListener;
 
 /**
@@ -63,7 +64,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     characterStore.backupNow("startup");
     characterStore.load();
 
-    sessionStateStore = new SessionStateStore(getDataFolder(), getLogger());
+    sessionStateStore = new SessionStateStore(this, getLogger());
     sessionStateStore.load();
     if (!sessionStateStore.pendingPlayers().isEmpty()) {
       getLogger().warning(sessionStateStore.pendingPlayers().size() + " graczy nie dokonczylo "
@@ -93,6 +94,17 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
 
     // Model rasy nie przezywa zmiany swiata ani respawnu — ten listener go przywraca.
     getServer().getPluginManager().registerEvents(new RaceModelListener(profileModule), this);
+
+    // Pierwszy krok cyklu: nikt nie gra bez postaci. Patrz ProfileSelectionEnforcer —
+    // routing joina byl dotad NICZYIM, mimo ze javadoc tej klasy twierdzil, ze nalezy
+    // do MMOProfiles.
+    if (creatorConfig.enforceProfileSelection()) {
+      getServer().getPluginManager().registerEvents(
+          new ProfileSelectionEnforcer(this, creatorConfig, getLogger()), this);
+    } else {
+      getLogger().warning("profile-selection.enforce: false — gracz, ktory zamknie ekran "
+          + "wyboru profilu, moze grac bez postaci. Nikt tego nie pilnuje.");
+    }
 
     registerCommand(modelEngineBridge);
 
@@ -192,6 +204,11 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     }
     if (characterStore != null) {
       characterStore.saveNow();
+    }
+    // Zapis sesji jest teraz asynchroniczny z debouncem, wiec przy wylaczaniu trzeba go
+    // domknac recznie — scheduler juz nie odpali odlozonego zadania.
+    if (sessionStateStore != null) {
+      sessionStateStore.saveNow();
     }
   }
 }

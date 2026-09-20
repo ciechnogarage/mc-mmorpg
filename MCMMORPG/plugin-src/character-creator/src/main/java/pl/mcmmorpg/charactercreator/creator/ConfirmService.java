@@ -103,14 +103,24 @@ public final class ConfirmService {
    * usunac razem z sekcja {@code permission} w config.yml, a nie pojedynczo.
    */
   public void applyToRealPlayer(Player player, CharacterRecord record) {
+    // KAZDA z tych komend jest osobnym runTask + osobnym dispatchem konsolowym, ktory
+    // parsuje komende LuckPerms i dotyka jego bazy. Wolane jest to przy KAZDYM wyborze
+    // profilu, czyli przy kazdym logowaniu: przy 4 rasach bylo 6 dispatchow na gracza,
+    // a przy 20 graczach wchodzacych po restarcie 120 w oknie kilku tickow. W logu widac
+    // to jako trzy linie "does not have race.X set in context global" za kazdym razem.
+    //
+    // Bukkitowe hasPermission() odpowiada na to samo pytanie lokalnie i za darmo, wiec
+    // wysylamy wylacznie komendy, ktore cos ZMIENIAJA. Stan koncowy jest identyczny.
     for (String otherId : config.races().keySet()) {
       if (!otherId.equals(record.raceId())) {
         String otherPermission = config.races().get(otherId).permission();
-        ConsoleCommandRunner.run(plugin, "lp user %player% permission unset " + otherPermission, player);
+        if (player.hasPermission(otherPermission)) {
+          ConsoleCommandRunner.run(plugin, "lp user %player% permission unset " + otherPermission, player);
+        }
       }
     }
     CreatorConfig.RaceOption race = config.races().get(record.raceId());
-    if (race != null) {
+    if (race != null && !player.hasPermission(race.permission())) {
       ConsoleCommandRunner.run(plugin, "lp user %player% permission set " + race.permission() + " true", player);
     }
 

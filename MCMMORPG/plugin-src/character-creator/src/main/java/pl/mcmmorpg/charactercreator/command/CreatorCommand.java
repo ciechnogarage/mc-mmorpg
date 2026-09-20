@@ -206,11 +206,27 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     sender.sendMessage(Component.text("Rekordów: " + store.all().size()
         + " | profili MMOProfiles: " + scan.profilesSeen()
         + " (z " + scan.filesRead() + " plików) | sierot: " + scan.orphans().size()
+        + " | bez rekordu: " + scan.pending().size()
         + " | niepełnych: " + corrupt.size(), NamedTextColor.AQUA));
     for (UUID orphan : scan.orphans()) {
       CharacterRecord record = store.get(orphan);
       sender.sendMessage(Component.text("  sierota: " + orphan + " — "
           + (record == null ? "?" : displayName(record)), NamedTextColor.GOLD));
+    }
+    // Drugi kierunek: profile MMOProfiles bez naszego rekordu. Te NIE sa usuwane — nalezą
+    // do MMOProfiles. Sa tu, bo dotad nie widzial ich nikt: skan liczyl wylacznie rekordy
+    // bez profilu, a produkcja miala 0 takich i 9 odwrotnych. Kazdy z nich to profil,
+    // ktorego gracz nie dokonczyl albo ktorego usuniecie zawislo.
+    for (UUID pendingProfile : scan.pending()) {
+      boolean inCreator = sessions.activeSessions().values().stream()
+          .anyMatch(session -> pendingProfile.equals(session.profileId()));
+      if (inCreator) {
+        sender.sendMessage(Component.text("  w kreatorze teraz: " + pendingProfile,
+            NamedTextColor.GRAY));
+      } else {
+        sender.sendMessage(Component.text("  profil bez rekordu: " + pendingProfile
+            + " — gracz wejdzie bez rasy i klasy", NamedTextColor.RED));
+      }
     }
     for (UUID broken : corrupt) {
       sender.sendMessage(Component.text("  niepełny: " + broken + " (brak pola 'name')",

@@ -30,9 +30,21 @@ import java.util.stream.Stream;
  */
 public final class OrphanScanner {
 
-  /** Wynik skanu: co jest sierota i na ilu plikach udalo sie to ustalic. */
-  public record Scan(List<UUID> orphans, int profilesSeen, int filesRead, int filesFailed,
-      boolean userdataAvailable) {
+  /**
+   * Wynik skanu w OBU kierunkach.
+   *
+   * @param orphans  rekordy w characters.yml bez zywego profilu MMOProfiles. Te mozna
+   *                 skasowac — nalezą do nas.
+   * @param pending  profile MMOProfiles bez naszego rekordu. Tych NIE WOLNO ruszac: ich
+   *                 wlascicielem jest MMOProfiles. Sa raportowane, bo to slad po profilu
+   *                 zawieszonym w trakcie tworzenia — na produkcji bylo ich 9 na 19
+   *                 zywych profili i nie widzial ich nikt, bo skan liczyl tylko pierwszy
+   *                 kierunek. Uwaga: profil gracza, ktory JEST w tej chwili w kreatorze,
+   *                 tez tu trafi i to jest poprawne — dlatego wolajacy odsiewa aktywne
+   *                 sesje przed wyswietleniem.
+   */
+  public record Scan(List<UUID> orphans, List<UUID> pending, int profilesSeen, int filesRead,
+      int filesFailed, boolean userdataAvailable) {
   }
 
   private final File userdataDir;
@@ -48,7 +60,7 @@ public final class OrphanScanner {
     if (!userdataDir.isDirectory()) {
       logger.warning("Nie znaleziono " + userdataDir + " — bez tego katalogu nie da sie "
           + "odroznic sieroty od zywego profilu. Skan przerwany, nic nie usunieto.");
-      return new Scan(List.of(), 0, 0, 0, false);
+      return new Scan(List.of(), List.of(), 0, 0, 0, false);
     }
     Set<String> live = new HashSet<>();
     int filesRead = 0;
@@ -73,18 +85,33 @@ public final class OrphanScanner {
       }
     } catch (IOException ex) {
       logger.log(Level.WARNING, "Nie udalo sie wylistowac " + userdataDir, ex);
-      return new Scan(List.of(), 0, filesRead, filesFailed, false);
+      return new Scan(List.of(), List.of(), 0, filesRead, filesFailed, false);
     }
 
     if (filesFailed > 0) {
       logger.warning(filesFailed + " plikow userdata bylo nieczytelnych — skan sierot "
           + "zglasza wynik, ale NIE nadaje sie do automatycznego czyszczenia.");
     }
+    Set<String> known = new HashSet<>();
     for (UUID profileId : knownProfileIds) {
+      known.add(profileId.toString());
       if (!live.contains(profileId.toString())) {
         orphans.add(profileId);
       }
     }
-    return new Scan(List.copyOf(orphans), live.size(), filesRead, filesFailed, filesFailed == 0);
+    // Drugi kierunek: zywy profil, do ktorego nie mamy rekordu.
+    List<UUID> pending = new ArrayList<>();
+    for (String liveId : live) {
+      if (known.contains(liveId)) {
+        continue;
+      }
+      try {
+        pending.add(UUID.fromString(liveId));
+      } catch (IllegalArgumentException ex) {
+        logger.warning("MMOProfiles userdata zawiera profil o niepoprawnym id: " + liveId);
+      }
+    }
+    return new Scan(List.copyOf(orphans), List.copyOf(pending), live.size(), filesRead,
+        filesFailed, filesFailed == 0);
   }
 }

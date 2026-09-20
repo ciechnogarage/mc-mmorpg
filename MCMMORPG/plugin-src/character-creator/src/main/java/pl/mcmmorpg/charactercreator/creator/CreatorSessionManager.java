@@ -97,7 +97,16 @@ public final class CreatorSessionManager {
    * i {@code end()} oddawalo graczowi pustke. To byla trwala utrata itemow plus wyciek
    * starego dummy'ego.
    */
-  public CreatorSession start(Player player, UUID profileId, PendingCreation pendingCreation) {
+  /**
+   * @param origin gdzie gracz stal, ZANIM cokolwiek go ruszylo. Przekazywany z zewnatrz,
+   *               a nie odczytywany tutaj, bo wolajacy teleportuje gracza do sali przed
+   *               otwarciem sesji: {@code player.getLocation()} w tym miejscu zwracalo juz
+   *               spawn kreatora. Skutek byl widoczny w danych — oba wpisy w sessions.yml
+   *               na produkcji mialy {@code origin.world: creator_limbo}, wiec cala galaz
+   *               "odeslij gracza tam, skad przyszedl" w {@link #exitLocation} byla martwa.
+   */
+  public CreatorSession start(Player player, UUID profileId, PendingCreation pendingCreation,
+      Location origin) {
     UUID playerId = player.getUniqueId();
     if (sessions.containsKey(playerId)) {
       logger.severe("Odmowa drugiej sesji kreatora dla " + player.getName() + " (profil "
@@ -112,7 +121,7 @@ public final class CreatorSessionManager {
     }
 
     // KOLEJNOSC MA ZNACZENIE: stan wejscia laduje na dysku ZANIM cokolwiek zmienimy.
-    EntryState entry = captureEntryState(player);
+    EntryState entry = captureEntryState(player, origin);
     stateStore.put(entry);
 
     CreatorSession session = new CreatorSession(playerId, profileId, pendingCreation, raceIds, classIds);
@@ -157,7 +166,7 @@ public final class CreatorSessionManager {
     return session;
   }
 
-  private EntryState captureEntryState(Player player) {
+  private EntryState captureEntryState(Player player, Location origin) {
     PlayerInventory inventory = player.getInventory();
     // Kopie GLEBOKIE: tablica z getStorageContents() trzyma opakowania wskazujace na zywe
     // stosy serwera, a zaraz potem czyscimy ekwipunek. Snapshot ma byc wartoscia, nie widokiem.
@@ -166,7 +175,7 @@ public final class CreatorSessionManager {
         deepCopy(inventory.getArmorContents()),
         inventory.getItemInOffHand() == null ? null : inventory.getItemInOffHand().clone(),
         player.getGameMode(),
-        player.getLocation().clone(),
+        origin == null ? player.getLocation().clone() : origin.clone(),
         System.currentTimeMillis());
   }
 
@@ -236,8 +245,26 @@ public final class CreatorSessionManager {
     } else if (player.getGameMode() == GameMode.SPECTATOR) {
       player.setGameMode(GameMode.SURVIVAL);
     }
+    returnOverflow(player, session);
     if (reason.clearPersistedState) {
       stateStore.clear(player.getUniqueId());
+    }
+  }
+
+  /**
+   * Oddaje przedmioty, ktore sweeper zabral, a ktore nie zmiescily sie w snapshocie
+   * (plecak byl juz pelny przy wejsciu). Co sie nie miesci TERAZ, ladzie pod nogami —
+   * nigdy nie jest kasowane.
+   */
+  private static void returnOverflow(Player player, CreatorSession session) {
+    List<ItemStack> overflow = session.takeOverflow();
+    if (overflow.isEmpty()) {
+      return;
+    }
+    Map<Integer, ItemStack> rejected =
+        player.getInventory().addItem(overflow.toArray(new ItemStack[0]));
+    for (ItemStack leftover : rejected.values()) {
+      player.getWorld().dropItemNaturally(player.getLocation(), leftover);
     }
   }
 
@@ -252,14 +279,27 @@ public final class CreatorSessionManager {
     inventory.setItemInOffHand(entry.offHand());
   }
 
-  /** Miejsce wyjscia: tam, skad gracz przyszedl — chyba ze to byl sam kreator. */
-  private Location exitLocation(EntryState entry) {
-    Location origin = entry.origin();
+  /**
+   * Miejsce wyjscia: tam, skad gracz przyszedl — chyba ze to byl sam kreator.
+   *
+   * <p>Gdy pochodzenia nie znamy (nowy gracz, ktory zaczal w sali), schodzimy na
+   * {@code creator-room.exit} z configu, a dopiero w ostatniej kolejnosci na spawn swiata
+   * glownego. Ta ostatnia galaz byla wczesniej JEDYNA — i to na niej konto testowe ginelo
+   * od mobow w dwoch niezaleznych sesjach QA.
+   */
+  Location exitLocation(EntryState entry) {
+    Location origin = entry == null ? null : entry.origin();
     if (origin != null && origin.getWorld() != null
         && !origin.getWorld().getName().equals(config.roomWorldName())) {
       return origin;
     }
-    return Bukkit.getWorlds().get(0).getSpawnLocation();
+    return configuredExit();
+  }
+
+  /** Skonfigurowane wyjscie albo spawn swiata glownego, gdy configu nie ma. */
+  public Location configuredExit() {
+    Location exit = config.exitLocation();
+    return exit != null ? exit : Bukkit.getWorlds().get(0).getSpawnLocation();
   }
 
   /**
@@ -404,14 +444,48 @@ public final class CreatorSessionManager {
       if (CreatorMenu.PLAYER_SLOTS_IN_USE.contains(i)) {
         continue;
       }
-      if (inv.getItem(i) != null) {
+      ItemStack found = inv.getItem(i);
+      if (found != null) {
+        stash(session, found.clone());
         inv.setItem(i, null);
         dirty = true;
       }
     }
     if (dirty) {
+      // Plecak zmienil sie po wejsciu do kreatora, wiec zapis na dysku jest juz nieaktualny.
+      // Bez tego crash w trakcie sesji oddalby graczowi stan sprzed dosypanych przedmiotow.
+      EntryState entry = session.entryState();
+      if (entry != null) {
+        stateStore.put(entry);
+      }
       menu.render(session.menuInventory(), session, player);
     }
+  }
+
+  /**
+   * Odklada przedmiot zabrany graczowi w trakcie kreatora.
+   *
+   * <p>Wczesniej sweeper po prostu KASOWAL wszystko, co pojawilo sie w plecaku po wejsciu
+   * do sali. Snapshot ekwipunku powstaje raz, przy wejsciu, wiec kit startowy, {@code /give}
+   * od admina czy nagroda z eventu nie trafialy do stashu — znikaly bez sladu. Komentarz nad
+   * sweeperem sam opisywal ten wyscig; rozwiazaniem bylo skasowanie, nie zapisanie.
+   *
+   * <p>Najpierw probujemy wolnego slotu w snapshocie (tablica jest nasza, gleboka kopia —
+   * mutowanie jej jest bezpieczne), a gdy plecak byl pelny juz przy wejsciu, przedmiot ladzie
+   * na liscie nadmiarowej sesji i wraca przy wyjsciu.
+   */
+  private static void stash(CreatorSession session, ItemStack item) {
+    EntryState entry = session.entryState();
+    if (entry != null && entry.inventory() != null) {
+      ItemStack[] slots = entry.inventory();
+      for (int i = 0; i < slots.length; i++) {
+        if (slots[i] == null) {
+          slots[i] = item;
+          return;
+        }
+      }
+    }
+    session.addOverflow(item);
   }
 
   /** Zywe sesje — dla tasku obrotu podgladu i komend administracyjnych. */

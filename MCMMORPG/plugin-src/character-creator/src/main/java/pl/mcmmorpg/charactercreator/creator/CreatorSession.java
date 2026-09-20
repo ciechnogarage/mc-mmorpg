@@ -1,9 +1,11 @@
 package pl.mcmmorpg.charactercreator.creator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * In-progress creation state for one player, held only while they're in the creator room.
@@ -155,6 +157,35 @@ public final class CreatorSession {
   }
 
   /** Stan gracza sprzed wejscia do kreatora — to, co trzeba mu oddac przy wyjsciu. */
+  /**
+   * Przedmioty zabrane graczowi przez sweepera, ktore nie zmiescily sie w snapshocie
+   * wejsciowym — czyli taki, ktory wszedl do kreatora z pelnym plecakiem i dostal jeszcze
+   * cos w trakcie. Oddawane przy konczeniu sesji.
+   *
+   * <p><b>Zyje wylacznie w pamieci.</b> Snapshot wejsciowy jest utrwalany w sessions.yml,
+   * ta lista nie — przy twardym ubiciu procesu (SIGKILL) przepadnie. Swiadomy kompromis:
+   * dotyczy wylacznie nadmiaru ponad 36 slotow, a utrwalanie jej wymagaloby wlasnego
+   * ukladu w pliku dla przypadku, ktory na tym serwerze jeszcze nie wystapil.
+   */
+  private final List<ItemStack> overflow = new ArrayList<>();
+
+  /** Doklada przedmiot do zwrotu przy wyjsciu z kreatora. */
+  public void addOverflow(ItemStack item) {
+    if (item != null) {
+      overflow.add(item);
+    }
+  }
+
+  /** Zwraca i CZYSCI liste nadmiarowa — wolane raz, przy konczeniu sesji. */
+  public List<ItemStack> takeOverflow() {
+    if (overflow.isEmpty()) {
+      return List.of();
+    }
+    List<ItemStack> copy = List.copyOf(overflow);
+    overflow.clear();
+    return copy;
+  }
+
   public EntryState entryState() {
     return entryState;
   }

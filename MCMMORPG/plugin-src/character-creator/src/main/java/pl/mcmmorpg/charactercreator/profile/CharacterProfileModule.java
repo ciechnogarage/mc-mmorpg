@@ -128,8 +128,12 @@ public final class CharacterProfileModule implements ProfileDataModule {
         throw new IllegalStateException("Swiat kreatora '" + config.roomWorldName()
             + "' nie jest zaladowany");
       }
+      // Pochodzenie MUSI zostac zlapane przed teleportem. Wczesniej sesja odczytywala je
+      // sama, juz po przeniesieniu gracza do sali — wiec kazdy wpis w sessions.yml mial
+      // origin == spawn kreatora, a cala sciezka powrotu "tam, skad przyszedl" byla martwa.
+      Location origin = player.getLocation().clone();
       player.teleport(room);
-      CreatorSession session = sessions.start(player, profileId, pending);
+      CreatorSession session = sessions.start(player, profileId, pending, origin);
       if (session == null) {
         // start() sam zalogowal powod (gracz jest juz w kreatorze dla innego profilu).
         // Swiadomie NIE zatwierdzamy tego eventu: pierwsza sesja wciaz trwa i to ona ma
@@ -180,7 +184,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
       }
       // MMOProfiles does not relocate the player once ProfileCreateEvent#validate()
       // completes — it only unblocks the profile — so we still own leaving creator_limbo.
-      player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+      sendToWorld(player);
       trackAndApplyRaceModel(player, stored);
       player.sendMessage(Component.text("Postać utworzona: " + stored.name(),
           NamedTextColor.GREEN));
@@ -188,6 +192,32 @@ public final class CharacterProfileModule implements ProfileDataModule {
       logger.log(Level.SEVERE, "Awaria przy potwierdzaniu postaci dla " + player.getName(), ex);
       abort(player, "Coś poszło nie tak przy tworzeniu postaci — zgłoś to administracji.");
     }
+  }
+
+  /**
+   * Odsyla gracza z sali do swiata gry — i daje mu chwile nietykalnosci.
+   *
+   * <p>Wczesniej byl tu goly {@code Bukkit.getWorlds().get(0).getSpawnLocation()}. Gracz
+   * ladowal na surowym spawnie, w survivalu, z pustym hotbarem, przy wlaczonym spawnie
+   * mobow. W logach obu serwerow konczylo sie to tak samo: {@code KreatorQA was slain by
+   * Zombie} — 36 s po zatwierdzeniu na world1, 9 s na world3. Cel wyjscia jest teraz
+   * konfigurowalny ({@code creator-room.exit}), a nietykalnosc zamyka okno, w ktorym gracz
+   * nie ma jeszcze kontroli nad postacia.
+   */
+  private void sendToWorld(Player player) {
+    player.teleport(sessions.configuredExit());
+    int ticks = config.exitInvulnerabilityTicks();
+    if (ticks <= 0 || player.isInvulnerable()) {
+      return;
+    }
+    UUID playerId = player.getUniqueId();
+    player.setInvulnerable(true);
+    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+      Player online = Bukkit.getPlayer(playerId);
+      if (online != null && online.isOnline()) {
+        online.setInvulnerable(false);
+      }
+    }, ticks);
   }
 
   private CharacterRecord storeWithFallbackName(CharacterRecord record, Player player) {
@@ -225,7 +255,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
     if (sessions.isActive(player)) {
       sessions.end(player, CreatorSessionManager.EndReason.ABORTED);
     } else if (player.getWorld().getName().equals(config.roomWorldName())) {
-      player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+      sendToWorld(player);
     }
     player.sendMessage(Component.text(message, NamedTextColor.RED));
     player.sendActionBar(Component.text(message, NamedTextColor.RED));
@@ -240,6 +270,19 @@ public final class CharacterProfileModule implements ProfileDataModule {
     if (record != null) {
       confirmService.applyToRealPlayer(event.getPlayer(), record);
       backfillOwner(record, event.getPlayer());
+    } else {
+      // Profil ISTNIEJE, ale nie ma do niego naszego rekordu. Dotad konczylo sie to cicha
+      // galezia else — gracz wchodzil do gry bez rasy, bez klasy i bez imienia, a w logu
+      // nie bylo ani slowa. To jest slad po profilu zawieszonym przez brak validate()
+      // w onRemove (patrz nizej) albo po recznej edycji characters.yml. Naprawa: /cc prune
+      // pokazuje takie profile, a gracz ma sie dowiedziec, zeby zglosil to administracji,
+      // zamiast zastanawiac sie, czemu nic nie dziala.
+      logger.severe("Profil " + event.getProfile().getUniqueId() + " gracza "
+          + event.getPlayer().getName() + " nie ma rekordu postaci w characters.yml. "
+          + "Gracz wchodzi bez rasy i klasy. Sprawdz: /cc prune");
+      event.getPlayer().sendMessage(Component.text(
+          "Ta postać nie ma zapisanych danych — zgłoś to administracji.",
+          NamedTextColor.RED));
     }
     event.validate(this);
     if (record != null) {
@@ -305,9 +348,34 @@ public final class CharacterProfileModule implements ProfileDataModule {
     event.validate(this);
   }
 
+  /**
+   * Usuniecie postaci.
+   *
+   * <p><b>Brakowalo tu {@code event.validate(this)}</b> — i to byla czynna sciezka utraty
+   * danych, nie usterka kosmetyczna. {@code ProfileRemoveEvent} dziedziczy po
+   * {@code PendingProfileEvent}, czyli ma ten sam mechanizm blokujacy co
+   * {@code ProfileCreateEvent}: dopoki modul nie zwolni eventu, MMOProfiles nie konczy
+   * usuwania. Skutek byl taki, ze rekord znikal z characters.yml, profil zostawal — na
+   * zawsze, bo kreator wisi na {@code ProfileCreateEvent}, a ten profil juz istnial.
+   * Na produkcji wyprodukowalo to 9 takich profili na 19 zywych. Javadoc tej klasy sam
+   * wymienia CZTERY eventy do zwalidowania i ten byl jedynym pominietym.
+   *
+   * <p>{@code validate} jest w {@code finally}: gdyby zapis rzucil wyjatkiem, profil i tak
+   * nie ma prawa zostac zawieszony. Kopia zapasowa idzie PRZED skasowaniem rekordu —
+   * dotad powstawala tylko przed {@code /cc delete} i {@code /cc prune}, wiec usuniecie
+   * postaci z GUI bylo jedyna operacja kasujaca dane bez siatki bezpieczenstwa.
+   */
   @EventHandler
   public void onRemove(ProfileRemoveEvent event) {
-    forget(event.getPlayer());
-    store.remove(event.getProfile().getUniqueId());
+    try {
+      forget(event.getPlayer());
+      store.backupNow("remove");
+      store.remove(event.getProfile().getUniqueId());
+    } catch (RuntimeException ex) {
+      logger.log(Level.SEVERE, "Awaria przy usuwaniu postaci (profil "
+          + event.getProfile().getUniqueId() + ")", ex);
+    } finally {
+      event.validate(this);
+    }
   }
 }

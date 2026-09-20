@@ -101,10 +101,24 @@ public final class CreatorRoomListener implements Listener {
     feedback(event.getPlayer(), "Najpierw dokończ tworzenie postaci.", true);
   }
 
-  /** Whitelist jest pusta: w kreatorze nie dziala ZADNA komenda. */
+  /**
+   * W kreatorze nie dziala zadna komenda POZA nasza wlasna.
+   *
+   * <p>Whitelist byla dotad pusta, co obejmowalo rowniez {@code /cc} — czyli jedyne
+   * narzedzie, ktorym admin moglby sie z sali wydostac albo obejrzec stan sesji. Admin,
+   * ktory tam wpadl, nie mial wyjscia innego niz relog. Komenda i tak sprawdza wlasna
+   * permisje, wiec zwyklemu graczowi nic to nie daje.
+   */
+  private static final java.util.Set<String> ALLOWED_COMMANDS =
+      java.util.Set.of("/cc", "/charactercreator");
+
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
   public void onCommand(PlayerCommandPreprocessEvent event) {
     if (!sessions.isActive(event.getPlayer())) {
+      return;
+    }
+    String root = event.getMessage().split(" ", 2)[0].toLowerCase(java.util.Locale.ROOT);
+    if (ALLOWED_COMMANDS.contains(root)) {
       return;
     }
     event.setCancelled(true);

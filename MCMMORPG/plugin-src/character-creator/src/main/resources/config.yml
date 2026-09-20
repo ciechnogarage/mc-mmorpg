@@ -11,7 +11,34 @@ creator-room:
   # i bliski. Klaster sterowania to teraz jeden rzad u dolu, wiec model ma na siebie
   # caly pas miedzy paskiem imienia u gory a sterowaniem u dolu.
   dummy-anchor: { x: 0.5, y: 100.0, z: -2.2 }
-  confirm-anchor: { x: 0.5, y: 100.0, z: -1.5 }
+  # 'confirm-anchor' USUNIETY. Byl czytany, walidowany jako FATAL (jego brak wylaczal caly
+  # plugin) i nieuzywany przez ani jedna linie kodu poza wlasnym getterem. Klucz zostawiony
+  # w istniejacych plikach jest od teraz ignorowany — mozna go skasowac.
+
+  # DOKAD wychodzi gracz po utworzeniu postaci.
+  #
+  # Wczesniej bylo to na sztywno Bukkit.getWorlds().get(0).getSpawnLocation(), czyli surowy
+  # spawn swiata — konto testowe zginelo tam od zombie w DWOCH niezaleznych sesjach QA
+  # (world1: 36 s po zatwierdzeniu, world3: 9 s). Wartosci ponizej to celowo TE SAME
+  # wspolrzedne co 'new-profile-spawn-point' w plugins/MMOProfiles/config.yml: nowa postac
+  # ma ladowac tam, gdzie MMOProfiles juz obiecuje ja postawic, zamiast w trzecim z kolei
+  # miejscu zdefiniowanym niezaleznie. Przy zmianie jednego poprawic i drugie.
+  #
+  # Brak sekcji 'exit' = zachowanie sprzed poprawki (spawn swiata glownego).
+  exit:
+    world: 'world'
+    x: 239.5
+    y: 63.0
+    z: 208.5
+    yaw: 0.0
+    pitch: 0.0
+
+  # Nietykalnosc po wyjsciu z kreatora, w tickach. Gracz laduje w swiecie bez ekwipunku
+  # bojowego, czesto w nocy i przy wlaczonym spawnie mobow — te kilka sekund to roznica
+  # miedzy "postac utworzona" a ekranem smierci. MMOProfiles robi to samo na czas wyboru
+  # profilu ('profile-selection-invulnerability: true'), wiec gracz nie zauwazy szwu.
+  # 0 = wylaczone.
+  exit-invulnerability-ticks: 100
 
 # Interfejs kreatora nie ma juz sekcji 'creator-menu'. Trzymala ona przesuniecia glifu
 # ramy okna (title-shift / name-shift) i tryb pomiarowy probe-advance — a ramy nie ma:
@@ -22,6 +49,28 @@ creator-room:
 
 preview:
   rotation-interval-ticks: 2
+
+# WYMUSZENIE WYBORU POSTACI PRZY WEJSCIU.
+#
+# Dotad nikt tego nie pilnowal: MMOProfiles otwiera ekran profili po zalogowaniu
+# ('no-gui-on-login: false'), ale gracz mogl go zamknac Escape'em i grac bez postaci —
+# bez rasy, bez klasy MMOCore, bez rekordu. Widac to w logu: KreatorQA zalogowal sie
+# o 11:50:03, a kreator otworzyl sie dopiero 19 s pozniej, po recznym kliknieciu.
+#
+# Nie budujemy wlasnej pulapki. MMOProfiles ma na to wlasna, wspierana droge:
+# '/mmoprofiles open <gracz>' — a jego argument 'force-select' ma fallback ustawiony
+# na !hasChosenProfile(), wiec dla gracza BEZ wybranego profilu wymuszenie wlacza sie
+# samo (sprawdzone w bajtkodzie OpenCommandNode). Wolamy to z konsoli, wiec permisja
+# 'mmoprofiles.command' (default: op) nie ma tu nic do rzeczy.
+profile-selection:
+  # false = plugin nie pilnuje wejscia i zapisuje to w logu przy starcie.
+  enforce: true
+  # Ile czekac po wejsciu gracza, zanim sprawdzimy, czy ma wybrany profil. Musi byc
+  # DLUZSZE niz 'resource-pack-load-delay: 40' z configu MMOProfiles, inaczej sprawdzimy
+  # gracza, ktoremu MMOProfiles jeszcze nie zdazyl pokazac ekranu.
+  first-check-delay-ticks: 100
+  # Co ile ticków ponawiac dla graczy, ktorzy nadal nie wybrali. 0 = jednorazowo.
+  recheck-interval-ticks: 200
 
 # UWAGA co do 'description' i 'bonus':
 # Oba pola sa WYLACZNIE OPISOWE — ladują w podpowiedzi (lore) ikony i nigdzie indziej.

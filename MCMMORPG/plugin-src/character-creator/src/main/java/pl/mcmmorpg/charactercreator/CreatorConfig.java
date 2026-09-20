@@ -21,6 +21,13 @@ public final class CreatorConfig {
   /** Rasa z {@code model-id: ''} albo {@code 'none'} jest ŚWIADOMIE bez modelu 3D. */
   public static final String NO_MODEL = "none";
 
+  /**
+   * Ile pozycji rasy/klasy menu w ogole potrafi narysowac — patrz
+   * {@code CreatorMenu.SLOTS_RACE}. Tu tylko po to, zeby walidacja configu powiedziala
+   * o nadmiarze zamiast go po cichu uciac.
+   */
+  static final int MENU_SLOTS_PER_COLUMN = 4;
+
   public record RaceOption(String id, String display, String permission, String modelId,
       String icon, Color helmetColor, String description, String bonus) {
 
@@ -46,7 +53,11 @@ public final class CreatorConfig {
   private String roomWorldName;
   private Location roomSpawn;
   private Location dummyAnchor;
-  private Location confirmAnchor;
+  private Location exitLocation;
+  private int exitInvulnerabilityTicks;
+  private boolean enforceProfileSelection;
+  private int profileCheckDelayTicks;
+  private int profileRecheckIntervalTicks;
   private int rotationIntervalTicks;
   private final Map<String, RaceOption> races = new LinkedHashMap<>();
   private final Map<String, ClassOption> classes = new LinkedHashMap<>();
@@ -62,7 +73,11 @@ public final class CreatorConfig {
     roomWorldName = cfg.getString("creator-room.world", "creator_limbo");
     roomSpawn = readLocation(cfg, "creator-room.spawn", 100);
     dummyAnchor = readLocation(cfg, "creator-room.dummy-anchor", 100);
-    confirmAnchor = readLocation(cfg, "creator-room.confirm-anchor", 100);
+    exitLocation = readExitLocation(cfg);
+    exitInvulnerabilityTicks = Math.max(0, cfg.getInt("creator-room.exit-invulnerability-ticks", 100));
+    enforceProfileSelection = cfg.getBoolean("profile-selection.enforce", true);
+    profileCheckDelayTicks = Math.max(1, cfg.getInt("profile-selection.first-check-delay-ticks", 100));
+    profileRecheckIntervalTicks = Math.max(0, cfg.getInt("profile-selection.recheck-interval-ticks", 200));
     rotationIntervalTicks = cfg.getInt("preview.rotation-interval-ticks", 2);
 
     races.clear();
@@ -109,10 +124,21 @@ public final class CreatorConfig {
           + "' nie istnieje albo nie jest zaladowany. Sprawdz Multiverse (/mv list) "
           + "i creator-room.world w config.yml."));
     }
-    if (roomSpawn == null || dummyAnchor == null || confirmAnchor == null) {
+    if (roomSpawn == null || dummyAnchor == null) {
       problems.add(new Problem(Severity.FATAL,
-          "creator-room.spawn / dummy-anchor / confirm-anchor nie daja sie rozwiazac "
+          "creator-room.spawn / dummy-anchor nie daja sie rozwiazac "
           + "w swiecie '" + roomWorldName + "'."));
+    }
+
+    // Wyjscie NIE jest bledem krytycznym: brak sekcji to swiadomy powrot do zachowania
+    // sprzed poprawki (spawn swiata glownego). Ale nazwanie nieistniejacego swiata juz
+    // jest usterka i ma byc slychac — inaczej gracz dowiaduje sie o niej w momencie,
+    // w ktorym konczy tworzenie postaci.
+    String exitWorldName = plugin.getConfig().getString("creator-room.exit.world");
+    if (exitWorldName != null && !exitWorldName.isBlank() && exitLocation == null) {
+      problems.add(new Problem(Severity.WARNING, "creator-room.exit.world wskazuje na swiat '"
+          + exitWorldName + "', ktorego nie ma. Gracze koncza kreator na spawnie swiata "
+          + "glownego — tam, gdzie konto testowe ginelo od mobow."));
     }
 
     if (races.isEmpty()) {
@@ -120,6 +146,21 @@ public final class CreatorConfig {
     }
     if (classes.isEmpty()) {
       problems.add(new Problem(Severity.FATAL, "Sekcja 'classes' w config.yml jest pusta."));
+    }
+
+    // Menu ma na sztywno po CZTERY sloty na rase i na klase (CreatorMenu.SLOTS_RACE /
+    // SLOTS_CLASS). Piata pozycja w configu po prostu sie nie narysuje — bez slowa,
+    // bo petla renderujaca konczy sie na dlugosci tablicy. Lepiej powiedziec to przy
+    // starcie niz pozwolic komus szukac, czemu jego nowa rasa "nie dziala".
+    if (races.size() > MENU_SLOTS_PER_COLUMN) {
+      problems.add(new Problem(Severity.WARNING, "W config.yml jest " + races.size()
+          + " ras, a menu ma miejsce na " + MENU_SLOTS_PER_COLUMN
+          + ". Nadmiarowe nie beda widoczne w kreatorze."));
+    }
+    if (classes.size() > MENU_SLOTS_PER_COLUMN) {
+      problems.add(new Problem(Severity.WARNING, "W config.yml jest " + classes.size()
+          + " klas, a menu ma miejsce na " + MENU_SLOTS_PER_COLUMN
+          + ". Nadmiarowe nie beda widoczne w kreatorze."));
     }
 
     for (ClassOption option : classes.values()) {
@@ -168,6 +209,26 @@ public final class CreatorConfig {
     return out;
   }
 
+  /**
+   * Miejsce wyjscia z kreatora. W przeciwienstwie do lokalizacji w sali, ta ma WLASNY
+   * swiat — sala jest w limbo, a gracz wychodzi do swiata gry.
+   *
+   * @return {@code null}, gdy sekcji nie ma albo swiat nie jest zaladowany; wolajacy ma
+   *         wtedy uzyc spawnu swiata glownego.
+   */
+  private Location readExitLocation(FileConfiguration cfg) {
+    ConfigurationSection s = cfg.getConfigurationSection("creator-room.exit");
+    if (s == null) {
+      return null;
+    }
+    World world = plugin.getServer().getWorld(s.getString("world", ""));
+    if (world == null) {
+      return null;
+    }
+    return new Location(world, s.getDouble("x"), s.getDouble("y"), s.getDouble("z"),
+        (float) s.getDouble("yaw"), (float) s.getDouble("pitch"));
+  }
+
   /** Zwraca {@code null}, gdy swiata nie ma — {@link #validate} zglosi to jako FATAL. */
   private Location readLocation(FileConfiguration cfg, String path, double defaultY) {
     World world = plugin.getServer().getWorld(cfg.getString("creator-room.world", "creator_limbo"));
@@ -195,8 +256,28 @@ public final class CreatorConfig {
     return dummyAnchor;
   }
 
-  public Location confirmAnchor() {
-    return confirmAnchor;
+  /**
+   * Dokad odeslac gracza po kreatorze. {@code null} = spawn swiata glownego, czyli
+   * zachowanie sprzed poprawki.
+   */
+  public Location exitLocation() {
+    return exitLocation;
+  }
+
+  public int exitInvulnerabilityTicks() {
+    return exitInvulnerabilityTicks;
+  }
+
+  public boolean enforceProfileSelection() {
+    return enforceProfileSelection;
+  }
+
+  public int profileCheckDelayTicks() {
+    return profileCheckDelayTicks;
+  }
+
+  public int profileRecheckIntervalTicks() {
+    return profileRecheckIntervalTicks;
   }
 
   public int rotationIntervalTicks() {

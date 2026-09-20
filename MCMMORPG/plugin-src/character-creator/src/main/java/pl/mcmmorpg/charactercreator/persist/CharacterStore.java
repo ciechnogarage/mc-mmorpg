@@ -62,7 +62,22 @@ public final class CharacterStore {
   /** 2 sekundy: dosc, by zlac serie zmian, za malo, by strata bolala. */
   private static final long DEBOUNCE_TICKS = 40L;
 
+  /**
+   * Ile kopii trzymamy ZAWSZE, niezaleznie od wieku — siatka na wypadek serii awaryjnych
+   * restartow tego samego dnia.
+   */
   private static final int BACKUPS_KEPT = 10;
+
+  /**
+   * Jak stare kopie trzymamy ponad {@link #BACKUPS_KEPT}.
+   *
+   * <p>Rotacja po samej LICZBIE oznaczala historie dlugosci "ostatnie 10 restartow". W logach
+   * jest 93 uruchomien pluginu, a kopia startowa powstawala przy kazdym — wiec na dysku
+   * zostawalo niecale dwa dni historii, a jedyna kopia sprzed czyszczenia rekordow
+   * (characters-20260918-165118-prune.yml, 18 rekordow) miala wypasc przy najblizszym
+   * restarcie. Czas jest tu wlasciwa miara, liczba restartow nie jest.
+   */
+  private static final java.time.Duration BACKUP_RETENTION = java.time.Duration.ofDays(30);
 
   private static final DateTimeFormatter STAMP =
       DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
@@ -331,6 +346,14 @@ public final class CharacterStore {
     if (!file.exists()) {
       return;
     }
+    // Kopia pustego pliku to nie kopia. Backup startowy powstawal BEZWARUNKOWO, wiec
+    // characters-20260918-174841-startup.yml ma 18 bajtow i zawiera samo
+    // "schema-version: 2" — a kazda taka kopia wypychala z rotacji jedna prawdziwa.
+    if (!hasAnyProfile()) {
+      logger.fine("Pomijam kopie zapasowa (" + reason + "): characters.yml nie ma zadnych "
+          + "rekordow.");
+      return;
+    }
     try {
       Files.createDirectories(backupDir.toPath());
       String label = reason == null || reason.isBlank() ? "manual"
@@ -345,14 +368,34 @@ public final class CharacterStore {
     }
   }
 
+  /**
+   * Kasuje kopie, ktore sa JEDNOCZESNIE poza pierwsza dziesiatka i starsze niz
+   * {@link #BACKUP_RETENTION}. Oba warunki naraz, bo kazdy z osobna zawodzi w druga
+   * strone: sama liczba gubi historie przy serii restartow, sam czas potrafi zostawic
+   * katalog pusty po dlugiej przerwie w pracy serwera.
+   */
+  /**
+   * Czy plik na DYSKU ma jakikolwiek rekord. Celowo czyta plik, a nie cache: kopia startowa
+   * powstaje przed {@link #load()}, wiec cache jest wtedy jeszcze pusty.
+   */
+  private boolean hasAnyProfile() {
+    ConfigurationSection profiles =
+        YamlConfiguration.loadConfiguration(file).getConfigurationSection("profiles");
+    return profiles != null && !profiles.getKeys(false).isEmpty();
+  }
+
   private void rotateBackups() throws IOException {
+    java.time.Instant cutoff = Instant.now().minus(BACKUP_RETENTION);
     try (Stream<Path> stream = Files.list(backupDir.toPath())) {
       List<Path> backups = stream
           .filter(p -> p.getFileName().toString().startsWith("characters-"))
           .sorted(Comparator.comparing((Path p) -> p.getFileName().toString()).reversed())
           .toList();
       for (int i = BACKUPS_KEPT; i < backups.size(); i++) {
-        Files.deleteIfExists(backups.get(i));
+        Path candidate = backups.get(i);
+        if (Files.getLastModifiedTime(candidate).toInstant().isBefore(cutoff)) {
+          Files.deleteIfExists(candidate);
+        }
       }
     }
   }
