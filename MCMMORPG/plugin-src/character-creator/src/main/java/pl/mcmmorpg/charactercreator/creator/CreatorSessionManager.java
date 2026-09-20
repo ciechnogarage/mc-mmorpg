@@ -37,16 +37,26 @@ public final class CreatorSessionManager {
    * czy teleportowac gracza i czy skasowac jego stan wejscia z dysku.
    */
   public enum EndReason {
-    /** Postac utworzona. Teleportem zarzadza handler commitu; stan wejscia juz niepotrzebny. */
-    CONFIRMED(false, true),
+    /**
+     * Postac utworzona. Teleportem zarzadza handler commitu; stan wejscia juz niepotrzebny.
+     *
+     * <p><b>Ekwipunku NIE oddajemy tutaj</b> — robi to {@code CharacterProfileModule#onConfirm}
+     * dopiero PO zatwierdzeniu profilu. Powod zmierzony evalem przeciwko zywemu serwerowi
+     * (scenariusz 40-ekwipunek): oddanie rzeczy w tym miejscu bylo bezuzyteczne, bo zaraz
+     * potem {@code event.validate()} pozwala MMOProfiles naloz na gracza ekwipunek SWIEZEGO
+     * profilu ({@code synced-data.inventory: true}), czyli pusty — i kasuje to, co wlasnie
+     * oddalismy. Bot wchodzil ze 100 przedmiotami (stone x70, oak_planks x30), a po
+     * utworzeniu postaci mial zero.
+     */
+    CONFIRMED(false, true, false),
     /** Przerwane w locie (blad configu, odmowa commitu). Odsylamy gracza i sprzatamy. */
-    ABORTED(true, true),
+    ABORTED(true, true, true),
     /**
      * Gracza wyrwalo z sali (dungeon queue, respawn, cudzy teleport). Konczymy sesje
      * i oddajemy rzeczy, ale NIE teleportujemy: gracz jest juz tam, gdzie go przeniesiono,
      * a ciagniecie go z powrotem na pozycje wejsciowa byloby walka z tym, co go przeniosło.
      */
-    DISPLACED(false, true),
+    DISPLACED(false, true, true),
     /**
      * Gracz wyszedl z serwera albo serwer sie zatrzymuje. NIE teleportujemy (teleport
      * w trakcie rozlaczania i tak nie jest wiarygodny) i — co wazniejsze — NIE kasujemy
@@ -54,14 +64,16 @@ public final class CreatorSessionManager {
      * zostanie utrwalone, przywroci je {@link #restoreAfterJoin} przy nastepnym wejsciu.
      * Powtorne przywrocenie jest idempotentne, utrata plecaka nie.
      */
-    DISCONNECT(false, false);
+    DISCONNECT(false, false, true);
 
     private final boolean teleport;
     private final boolean clearPersistedState;
+    private final boolean restoreInventory;
 
-    EndReason(boolean teleport, boolean clearPersistedState) {
+    EndReason(boolean teleport, boolean clearPersistedState, boolean restoreInventory) {
       this.teleport = teleport;
       this.clearPersistedState = clearPersistedState;
+      this.restoreInventory = restoreInventory;
     }
   }
 
@@ -235,7 +247,10 @@ public final class CreatorSessionManager {
       entry = stateStore.get(player.getUniqueId());
     }
     if (entry != null) {
-      restoreInventory(player, entry);
+      if (reason.restoreInventory) {
+        restoreInventory(player, entry);
+        returnOverflow(player, session);
+      }
       // Admin wchodzacy z CREATIVE musi wyjsc w CREATIVE. Stara wersja robila
       // "jesli SPECTATOR to SURVIVAL" i wypychala kazdego do survivalu.
       player.setGameMode(entry.gameMode() == null ? GameMode.SURVIVAL : entry.gameMode());
@@ -245,7 +260,6 @@ public final class CreatorSessionManager {
     } else if (player.getGameMode() == GameMode.SPECTATOR) {
       player.setGameMode(GameMode.SURVIVAL);
     }
-    returnOverflow(player, session);
     if (reason.clearPersistedState) {
       stateStore.clear(player.getUniqueId());
     }
@@ -486,6 +500,24 @@ public final class CreatorSessionManager {
       }
     }
     session.addOverflow(item);
+  }
+
+  /**
+   * Oddaje ekwipunek sprzed kreatora — dla sciezki, ktora musi to zrobic PO zatwierdzeniu
+   * profilu (patrz {@link EndReason#CONFIRMED}). Publiczne, bo wola to modul profilu.
+   */
+  public void restoreEntryInventory(Player player, CreatorSession session) {
+    if (player == null || session == null) {
+      return;
+    }
+    EntryState entry = session.entryState();
+    if (entry == null) {
+      entry = stateStore.get(player.getUniqueId());
+    }
+    if (entry != null) {
+      restoreInventory(player, entry);
+    }
+    returnOverflow(player, session);
   }
 
   /** Zywe sesje — dla tasku obrotu podgladu i komend administracyjnych. */

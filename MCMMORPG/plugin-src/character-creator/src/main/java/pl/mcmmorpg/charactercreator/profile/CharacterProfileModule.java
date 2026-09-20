@@ -71,6 +71,13 @@ public final class CharacterProfileModule implements ProfileDataModule {
    */
   private static final long MODEL_APPLY_DELAY_TICKS = 10L;
 
+  /**
+   * Opoznienie oddania ekwipunku po zatwierdzeniu profilu. Dluzsze niz
+   * {@link #MODEL_APPLY_DELAY_TICKS}, bo ma wypasc PO tym, jak MMOProfiles naloz swoj
+   * ekwipunek profilu — inaczej oddane rzeczy zostana nim nadpisane.
+   */
+  private static final long INVENTORY_RESTORE_DELAY_TICKS = 20L;
+
   public CharacterProfileModule(JavaPlugin plugin, CreatorConfig config, CharacterStore store,
       CreatorSessionManager sessions, ConfirmService confirmService) {
     this.plugin = plugin;
@@ -192,6 +199,17 @@ public final class CharacterProfileModule implements ProfileDataModule {
       // completes — it only unblocks the profile — so we still own leaving creator_limbo.
       sendToWorld(player);
       trackAndApplyRaceModel(player, stored);
+      // Ekwipunek oddajemy DOPIERO TERAZ i jeszcze z opoznieniem. MMOProfiles naklada na
+      // gracza ekwipunek swiezo zatwierdzonego profilu ('synced-data.inventory: true') w
+      // jednym z kolejnych tickow po validate() — oddanie rzeczy wczesniej (tak bylo)
+      // konczy sie tym, ze zostaja nadpisane pustka. Zmierzone evalem 40-ekwipunek:
+      // bot wchodzil ze 100 przedmiotami, a po utworzeniu postaci mial zero.
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        Player online = Bukkit.getPlayer(player.getUniqueId());
+        if (online != null && online.isOnline()) {
+          sessions.restoreEntryInventory(online, session);
+        }
+      }, INVENTORY_RESTORE_DELAY_TICKS);
       player.sendMessage(Component.text("Postać utworzona: " + stored.name(),
           NamedTextColor.GREEN));
     } catch (RuntimeException ex) {
