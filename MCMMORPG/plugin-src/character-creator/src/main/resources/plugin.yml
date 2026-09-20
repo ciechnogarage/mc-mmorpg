@@ -1,0 +1,27 @@
+name: CharacterCreator
+version: ${version}
+main: pl.mcmmorpg.charactercreator.CharacterCreatorPlugin
+api-version: '1.21'
+load: POSTWORLD
+
+# Multiverse-Core jest twarda zaleznoscia CELOWO: swiat 'creator_limbo' musi istniec, zanim
+# rozwiazemy w nim kotwice kreatora. Bez tego wpisu dzialalo to wylacznie dzieki temu, ze
+# Multiverse przypadkiem wstawalo 30 s przed nami.
+# MMOCore jest twarda zaleznoscia, bo bez niego `mmocore class select` przepada po cichu
+# i postac zostaje bez klasy.
+# packetevents ZNIKNELO: w kodzie nie bylo ani jednego uzycia, tylko komentarze po
+# poprzedniej implementacji obrotu podgladu (patrz PreviewRotationTask).
+depend: [ModelEngine, MMOProfiles, LibsDisguises, MMOCore, Multiverse-Core]
+softdepend: [LuckPerms, CMI, MythicLib, ProtocolLib]
+
+commands:
+  charactercreator:
+    description: Narzedzia administracyjne kreatora postaci.
+    usage: /<command> <reload|info|delete|prune|sessions>
+    permission: charactercreator.admin
+    aliases: [cc, chcreator]
+
+permissions:
+  charactercreator.admin:
+    description: Dostep do /cc — przeladowanie configu, podglad i czyszczenie rekordow.
+    default: op

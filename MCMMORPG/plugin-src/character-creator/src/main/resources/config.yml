@@ -1,0 +1,118 @@
+# CharacterCreator configuration.
+# See docs at repo root: character-sector-contract.md and character-stage-architecture.md
+# are ARCHIVED (old/character-creator-v1) — this plugin does not follow them.
+
+creator-room:
+  world: 'creator_limbo'
+  # pitch 6: lekko w dol. Podnosi postac w kadrze (nogi przestaja wpadac pod przycisk
+  # "Stworz") i pokazuje mniej pustego sufitu — ten zajmowal 20% ekranu.
+  spawn: { x: 0.5, y: 100.0, z: 0.5, yaw: 180.0, pitch: 6.0 }
+  # 2.7 bloku od gracza — STALE. Zoomu nie ma celowo: kadr ma byc zawsze taki sam
+  # i bliski. Klaster sterowania to teraz jeden rzad u dolu, wiec model ma na siebie
+  # caly pas miedzy paskiem imienia u gory a sterowaniem u dolu.
+  dummy-anchor: { x: 0.5, y: 100.0, z: -2.2 }
+  confirm-anchor: { x: 0.5, y: 100.0, z: -1.5 }
+
+# Interfejs kreatora nie ma juz sekcji 'creator-menu'. Trzymala ona przesuniecia glifu
+# ramy okna (title-shift / name-shift) i tryb pomiarowy probe-advance — a ramy nie ma:
+# minimalistyczne UI rysuje wylacznie ikony i imie, zeby odslonic postac. Grafika ramy
+# nadal da sie wygenerowac (tools/gen_creator_art.py), ale plugin jej nie czyta.
+# Wartosci przesuniec zostaly w jarze 0.2.0 (deploy-backups/) — zrodla pluginu nie sa
+# w gicie, wiec to jedyna kopia starego ukladu.
+
+preview:
+  rotation-interval-ticks: 2
+
+# UWAGA co do 'description' i 'bonus':
+# Oba pola sa WYLACZNIE OPISOWE — ladują w podpowiedzi (lore) ikony i nigdzie indziej.
+# NIE WOLNO wpisywac tu obietnic mechanicznych
+# ("+10% dosw.", "+2 Sila"), dopoki nie stoi za nimi realny efekt w grze — wczesniejsza
+# wersja to robila i interfejs klamal graczowi.
+# Teksty ponizej sa placeholderem napisanym przez asystenta — do zastapienia wlasnym lore.
+# Limitu dlugosci nie ma: od czasu minimalistycznego UI tekst rysuje vanillowy font
+# w tooltipie, a nie generator wypalajacy go w teksture panelu.
+# UWAGA co do 'permission': flaga race.* jest DZIŚ WRITE-ONLY — grep po wszystkich
+# pluginach w tym stacku pokazuje, że jedynym plikiem zawierającym np. 'race.czlowiek' jest
+# ten config. Ustawiamy ją mimo to (tanio, idempotentnie) jako punkt zaczepienia dla
+# przyszłych warunków LuckPerms. Jeśli po jakimś czasie nadal nikt jej nie czyta, usunąć
+# razem z gałęzią w ConfirmService — nie pojedynczo.
+races:
+  czlowiek:
+    icon: 'cc:race_czlowiek'
+    description: 'Wszechstronni i ambitni.'
+    bonus: 'Ludzie Przymierza'
+    helmet-color: '#C8B48C'
+    display: '&fCzłowiek'
+    permission: 'race.czlowiek'
+    # 'none' = rasa ŚWIADOMIE bez modelu 3D. Blueprintu race_czlowiek nie ma w
+    # plugins/ModelEngine/blueprints/ i config nie ma prawa go obiecywać: dopóki tak jest,
+    # podgląd używa przebrania zastępczego (skórka patrzącego gracza), a plugin mówi o tym
+    # raz przy starcie zamiast 177 razy w logu. Po dodaniu blueprintu wpisać 'race_czlowiek'.
+    model-id: 'none'
+  ork:
+    icon: 'cc:race_ork'
+    description: 'Siła ponad wszystko.'
+    bonus: 'Klany Stepu'
+    helmet-color: '#6E9B4E'
+    display: '&2Ork'
+    permission: 'race.ork'
+    # Patrz komentarz przy rasie 'czlowiek'. Po dodaniu blueprintu wpisać 'race_ork'.
+    model-id: 'none'
+  elf:
+    icon: 'cc:race_elf'
+    description: 'Celni łucznicy i magowie.'
+    bonus: 'Dzieci Świtu'
+    helmet-color: '#E8DCA8'
+    display: '&bElf'
+    permission: 'race.elf'
+    # Patrz komentarz przy rasie 'czlowiek'. Po dodaniu blueprintu wpisać 'race_elf'.
+    model-id: 'none'
+  nieumarly:
+    icon: 'cc:race_nieumarly'
+    description: 'Nie znają bólu ni strachu.'
+    bonus: 'Powstali z grobu'
+    helmet-color: '#8FA0A0'
+    display: '&8Nieumarły'
+    permission: 'race.nieumarly'
+    # JEDYNA rasa z realnym blueprintem w plugins/ModelEngine/blueprints/.
+    model-id: 'race_nieumarly'
+
+# UWAGA co do 'gear': to jest WYŁĄCZNIE strój dummy'ego w podglądzie — żeby wybór klasy
+# było widać na postaci. Gracz po utworzeniu postaci NIE dostaje z tego ani jednego
+# przedmiotu; ekwipunku startowego w tym pluginie nie ma (README kiedyś twierdził inaczej).
+classes:
+  wojownik:
+    icon: 'cc:class_wojownik'
+    description: 'Ciężka zbroja i tarcza.'
+    bonus: 'Obrońca'
+    gear: { chest: IRON_CHESTPLATE, legs: IRON_LEGGINGS, boots: IRON_BOOTS, hand: IRON_SWORD }
+    display: '&cWojownik'
+    mmocore-id: 'warrior'
+  mag:
+    icon: 'cc:class_mag'
+    description: 'Wielka moc, kruche ciało.'
+    bonus: 'Zaklinacz'
+    gear: { chest: LEATHER_CHESTPLATE, legs: LEATHER_LEGGINGS, boots: LEATHER_BOOTS, hand: BLAZE_ROD }
+    display: '&dMag'
+    mmocore-id: 'mage'
+  akolita:
+    icon: 'cc:class_akolita'
+    description: 'Leczy i chroni drużynę.'
+    bonus: 'Wsparcie'
+    gear: { chest: GOLDEN_CHESTPLATE, legs: GOLDEN_LEGGINGS, boots: GOLDEN_BOOTS, hand: GOLDEN_SHOVEL }
+    display: '&eAkolita'
+    mmocore-id: 'paladin'
+  ninja:
+    icon: 'cc:class_ninja'
+    description: 'Szybkie ciosy zza pleców.'
+    bonus: 'Zabójca'
+    gear: { chest: CHAINMAIL_CHESTPLATE, legs: CHAINMAIL_LEGGINGS, boots: LEATHER_BOOTS, hand: IRON_SWORD }
+    display: '&7Ninja'
+    mmocore-id: 'rogue'
+
+# SKÓRKI: sekcji 'skin' już nie ma i nie wróci, dopóki nie powstanie prawdziwy wybór
+# skórki per postać. Poprzednia wersja odsyłała do klasy SkinProvider, której NIGDY nie było
+# w źródłach, a cała "abstrakcja" sprowadzała się do jednego `if` wywołującego
+# `cmi skin <gracz> <gracz> -s` — czyli nakładającego graczowi jego własną skórkę. Przy
+# online-mode=false i limicie Mojanga 600 zapytań / 10 min / IP było to bezużyteczne
+# i potencjalnie szkodliwe. Patrz ConfirmService#applyToRealPlayer.

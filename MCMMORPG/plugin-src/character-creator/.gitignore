@@ -1,0 +1,7 @@
+# Wynik builda i cache Gradle'a — regenerowalne, 234 MB.
+.gradle-home/
+.gradle/
+build/
+
+# Jary odkladane przez deploy.sh. Binaria: polityka repo mowi ignorowac.
+deploy-backups/
