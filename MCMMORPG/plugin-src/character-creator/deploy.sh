@@ -29,15 +29,25 @@ cp "$jar" "$plugins/$(basename "$jar")"
 echo "wdrozony: $(basename "$jar")"
 
 if [ "${1:-restart}" = "restart" ]; then
+  log=/opt/docker/mc/data/world1/logs/latest.log
+
+  # Numer i-wezla SPRZED restartu. Bez tego petla ponizej dopasowywala "Done (" z
+  # POPRZEDNIEGO uruchomienia: Paper rotuje latest.log dopiero przy starcie, wiec przez
+  # pierwsze sekundy po `docker restart` pod ta nazwa lezy nadal stary plik — i skrypt
+  # meldowal "serwer wstal" natychmiast, zanim serwer w ogole zaczal wstawac.
+  before="$(stat -c %i "$log" 2>/dev/null || echo none)"
+
   docker restart "$container" >/dev/null
   echo -n "restart $container"
   for _ in $(seq 1 60); do
-    if docker exec "$container" sh -c 'grep -q "Done (" /data/logs/latest.log' 2>/dev/null \
-       || grep -q 'Done (' /opt/docker/mc/data/world1/logs/latest.log 2>/dev/null; then
+    now="$(stat -c %i "$log" 2>/dev/null || echo none)"
+    # Dopiero NOWY plik logu swiadczy o tym, ze to juz ta sesja.
+    if [ "$now" != "none" ] && [ "$now" != "$before" ] \
+       && grep -q 'Done (' "$log" 2>/dev/null; then
       echo " — serwer wstal"; exit 0
     fi
     echo -n "."; sleep 5
   done
-  echo " — UWAGA: nie zobaczylem 'Done (' w logu w 5 min"
+  echo " — UWAGA: nie zobaczylem 'Done (' w NOWYM logu w 5 min"
   exit 1
 fi
