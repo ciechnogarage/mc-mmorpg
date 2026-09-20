@@ -1,0 +1,23 @@
+# MenuKey — klawisz Q otwiera menu-hub, TAKZE przy pustej rece.
+#
+# Ten plugin nie wie nic o zawartosci menu. Wie tylko, ktora komende wywolac.
+# Samo menu to konfiguracja DeluxeMenus: plugins/DeluxeMenus/gui_menus/hub_*.yml.
+
+# Co wywolac. '%player%' to nick klikajacego.
+#
+# Dlaczego akurat 'dm open': DeluxeMenus NIE rejestruje swoich 'open_command' w dispatcherze
+# serwera (z konsoli kazda z nich to "Unknown or incomplete command"), a jego wlasne
+# 'dm open <menu> <gracz>' dziala.
+command: 'dm open hub_glowne %player%'
+
+# console — komenda leci jako konsola (potrzebne dla 'dm open', ktore wymaga OP),
+# player  — jako gracz.
+run-as: console
+
+# Puste = kazdy gracz. Hub jest podstawowym interfejsem gry, a nie przywilejem.
+permission: ''
+
+# Swiaty, w ktorych klawisz nie dziala. creator_limbo to sala kreatora postaci: gracz jest
+# tam w SPECTATOR, ma wymuszone wlasne okno i jeszcze zadnej postaci.
+blocked-worlds:
+  - creator_limbo
