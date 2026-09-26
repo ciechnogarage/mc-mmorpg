@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import pl.mcmmorpg.charactercreator.CreatorConfig;
 import pl.mcmmorpg.charactercreator.model.ModelEngineBridge;
 import pl.mcmmorpg.charactercreator.persist.CharacterRecord;
+import pl.mcmmorpg.charactercreator.skin.SkinService;
 import pl.mcmmorpg.charactercreator.util.ConsoleCommandRunner;
 
 /**
@@ -27,13 +28,15 @@ public final class ConfirmService {
   private final Plugin plugin;
   private final CreatorConfig config;
   private final ModelEngineBridge modelEngineBridge;
+  private final SkinService skinService;
   private final Logger logger;
 
   public ConfirmService(Plugin plugin, CreatorConfig config,
-      ModelEngineBridge modelEngineBridge, Logger logger) {
+      ModelEngineBridge modelEngineBridge, SkinService skinService, Logger logger) {
     this.plugin = plugin;
     this.config = config;
     this.modelEngineBridge = modelEngineBridge;
+    this.skinService = skinService;
     this.logger = logger;
   }
 
@@ -60,8 +63,15 @@ public final class ConfirmService {
       return null;
     }
 
-    return new CharacterRecord(profileId.toString(), name, raceId, classId, "",
-        player.getUniqueId(), player.getName(), Instant.now());
+    // skinSource zapisujemy RAZ, przy tworzeniu postaci, i od tej pory to ON decyduje
+    // o wygladzie — patrz SkinService#resolve. Puste pole = dla tej pary rasa/klasa nie ma
+    // jeszcze skorki; postac dostanie ja sama, gdy skorka pojawi sie w skins.yml.
+    SkinService.Skin skin = skinService.resolve(null, raceId, classId);
+    Instant now = Instant.now();
+    // 'last-used' od razu, a nie dopiero przy nastepnym wyborze: swiezo utworzona postac
+    // JEST ta ostatnio graną, wiec przy najblizszym wejsciu ma to byc jej skorka.
+    return new CharacterRecord(profileId.toString(), name, raceId, classId,
+        skin == null ? "" : skin.id(), player.getUniqueId(), player.getName(), now, now);
   }
 
   /**
@@ -81,6 +91,37 @@ public final class ConfirmService {
    * nowej rasy do modelu starej — ten sam mechanizm, co nakladajace sie sylwetki w podgladzie
    * (patrz {@code ModelEngineBridge#clearExistingModels}).
    */
+  public void applyDeferredAppearance(Player player, CharacterRecord record) {
+    applyRaceModel(player, record);
+    applySkin(player, record);
+  }
+
+  /**
+   * Naklada graczowi skorke jego postaci.
+   *
+   * <p>Razem z modelem, w tym samym opoznionym zadaniu, i to nie jest przypadek: jedno
+   * i drugie trzeba zrobic PO tym, jak gracz stoi juz na miejscu. {@code setPlayerProfile}
+   * przeladowuje encje gracza u obserwatorow, a robienie tego w trakcie teleportu miedzy
+   * swiatami konczylo sie u innych pluginow znikajacym graczem.
+   *
+   * <p>Samo nalozenie jest idempotentne (SkinService#applyTo), wiec powtorne wywolania po
+   * respawnie czy zmianie swiata nic nie kosztuja — a jednoczesnie naprawiaja skorke,
+   * gdyby ktos ja nadpisal.
+   */
+  public void applySkin(Player player, CharacterRecord record) {
+    if (!config.applySkinToPlayer()) {
+      return;
+    }
+    SkinService.Skin skin =
+        skinService.resolve(record.skinSource(), record.raceId(), record.classId());
+    if (skin == null) {
+      return;
+    }
+    if (skinService.applyTo(player, skin)) {
+      logger.fine("Skorka '" + skin.id() + "' nalozona na " + player.getName() + ".");
+    }
+  }
+
   public void applyRaceModel(Player player, CharacterRecord record) {
     modelEngineBridge.clearModel(player);
     CreatorConfig.RaceOption race = config.races().get(record.raceId());
@@ -109,18 +150,26 @@ public final class ConfirmService {
     // a przy 20 graczach wchodzacych po restarcie 120 w oknie kilku tickow. W logu widac
     // to jako trzy linie "does not have race.X set in context global" za kazdym razem.
     //
-    // Bukkitowe hasPermission() odpowiada na to samo pytanie lokalnie i za darmo, wiec
-    // wysylamy wylacznie komendy, ktore cos ZMIENIAJA. Stan koncowy jest identyczny.
+    // Pytamy lokalnie i za darmo, wiec wysylamy wylacznie komendy, ktore cos ZMIENIAJA.
+    // Stan koncowy jest identyczny.
+    //
+    // <b>Pytaniem jest isPermissionSet, a NIE hasPermission</b> — i to nie jest kosmetyka.
+    // hasPermission zwraca true dla KAZDEJ permisji, gdy gracz ma OP, wiec dla operatora
+    // warunek ponizej byl zawsze falszywy i komenda nadajaca rase NIGDY nie szla. W logu
+    // world1 widac to wprost: przy tworzeniu postaci przez wlasciciela serwera poszly trzy
+    // 'unset' (bo hasPermission na kazda obca rase tez zwracalo true), a ani jeden 'set'.
+    // Konto z OP konczylo wiec kreator bez permisji swojej rasy. isPermissionSet pyta o to,
+    // co naprawde chcemy wiedziec: czy ten wezel jest graczowi PRZYPISANY.
     for (String otherId : config.races().keySet()) {
       if (!otherId.equals(record.raceId())) {
         String otherPermission = config.races().get(otherId).permission();
-        if (player.hasPermission(otherPermission)) {
+        if (player.isPermissionSet(otherPermission)) {
           ConsoleCommandRunner.run(plugin, "lp user %player% permission unset " + otherPermission, player);
         }
       }
     }
     CreatorConfig.RaceOption race = config.races().get(record.raceId());
-    if (race != null && !player.hasPermission(race.permission())) {
+    if (race != null && !player.isPermissionSet(race.permission())) {
       ConsoleCommandRunner.run(plugin, "lp user %player% permission set " + race.permission() + " true", player);
     }
 

@@ -52,6 +52,15 @@ public final class CreatorSessionManager {
     /** Przerwane w locie (blad configu, odmowa commitu). Odsylamy gracza i sprzatamy. */
     ABORTED(true, true, true),
     /**
+     * Gracz sam kliknal "Wyjdz". Skutki sa te same co przy {@link #ABORTED} — odeslanie,
+     * oddanie rzeczy, skasowanie stanu z dysku — ale powod ma wlasna nazwe, bo w logu to
+     * dwie zupelnie rozne historie: awaria kontra normalna rezygnacja.
+     *
+     * <p>Zawieszonego {@code ProfileCreateEvent} NIE zatwierdzamy — patrz
+     * {@code CharacterProfileModule#onCancel}.
+     */
+    CANCELLED(true, true, true),
+    /**
      * Gracza wyrwalo z sali (dungeon queue, respawn, cudzy teleport). Konczymy sesje
      * i oddajemy rzeczy, ale NIE teleportujemy: gracz jest juz tam, gdzie go przeniesiono,
      * a ciagniecie go z powrotem na pozycje wejsciowa byloby walka z tym, co go przeniosło.
@@ -140,10 +149,14 @@ public final class CreatorSessionManager {
     session.setEntryState(entry);
     sessions.put(playerId, session);
 
-    var dummy = dummies.spawn(config.dummyAnchor(), config.races().get(session.currentRaceId()), player);
+    var race = config.races().get(session.currentRaceId());
+    var clazz = config.classes().get(session.currentClassId());
+    // Stajnia nosicieli: po jednym na skorke, wszyscy zywi do konca sesji. Zmiana rasy albo
+    // klasy jest wtedy teleportem, a nie tworzeniem nowej encji — patrz PreviewDummyManager.
+    var dummy = dummies.start(config.dummyAnchor(), player, race, clazz);
     session.setPreviewDummy(dummy);
-    dummies.applyAppearance(dummy, config.races().get(session.currentRaceId()),
-        config.classes().get(session.currentClassId()));
+    dummies.applyAppearance(player, race, clazz);
+    hideFromOthers(player, dummies.carriers(playerId));
     // SPECTATOR, nie ADVENTURE. Powod ustalony zrzutami z prawdziwego klienta: na tym
     // serwerze vanillowy HUD (serduszka, glod, hotbar) renderuje sie MIMO otwartego ekranu
     // kontenera — widac to juz na czystym zrzucie z shulkera, bez naszego UI, wiec nie jest
@@ -176,6 +189,24 @@ public final class CreatorSessionManager {
     player.getInventory().setStorageContents(new ItemStack[36]);
     session.setMenuInventory(menu.open(player, session));
     return session;
+  }
+
+  /**
+   * Chowa nosicieli przed WSZYSTKIMI poza tworzacym graczem.
+   *
+   * <p>Przebranie LibsDisguises jest nakladane tylko dla niego ({@code disguiseToPlayers}),
+   * wiec kazdy inny gracz w sali widzi goly nosiciel — zombie. Przy dwoch graczach naraz
+   * (scenariusz 50-dwoch-graczy) oznaczalo to szereg zombie stojacy w cudzym kadrze.
+   */
+  private void hideFromOthers(Player owner, List<org.bukkit.entity.Entity> entities) {
+    for (Player other : Bukkit.getOnlinePlayers()) {
+      if (other.equals(owner)) {
+        continue;
+      }
+      for (org.bukkit.entity.Entity entity : entities) {
+        other.hideEntity(plugin, entity);
+      }
+    }
   }
 
   private EntryState captureEntryState(Player player, Location origin) {
@@ -231,9 +262,7 @@ public final class CreatorSessionManager {
     if (session == null) {
       return;
     }
-    if (session.previewDummy() != null) {
-      dummies.despawn(session.previewDummy());
-    }
+    dummies.despawnAll(player.getUniqueId());
     // Nocne widzenie nalezy do kreatora i konczy sie razem z nim — inaczej gracz wychodzi
     // w swiat z widzeniem w ciemnosci i nie wie, skad je ma.
     player.removePotionEffect(PotionEffectType.NIGHT_VISION);
@@ -330,10 +359,8 @@ public final class CreatorSessionManager {
         end(player, EndReason.DISCONNECT);
       } else {
         // Gracza juz nie ma na serwerze — sprzataj to, co da sie sprzatnac bez niego.
-        CreatorSession session = sessions.remove(playerId);
-        if (session != null && session.previewDummy() != null) {
-          dummies.despawn(session.previewDummy());
-        }
+        sessions.remove(playerId);
+        dummies.despawnAll(playerId);
         // Wpis w sessions.yml ZOSTAJE celowo: to on odda graczowi rzeczy przy najblizszym
         // wejsciu na serwer.
       }

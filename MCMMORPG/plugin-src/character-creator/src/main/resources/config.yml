@@ -27,10 +27,18 @@ creator-room:
   # Brak sekcji 'exit' = zachowanie sprzed poprawki (spawn swiata glownego).
   exit:
     world: 'world'
-    x: 239.5
-    y: 63.0
-    z: 208.5
-    yaw: 0.0
+    # 2026-09-20: przeniesione z 239.5 / 63 / 208.5, bo TAMTO MIEJSCE JEST POD WODA — konto
+    # QA utonelo tam kilkanascie sekund po utworzeniu postaci, a boty evali wychodzily stamtad
+    # z ubytkiem zycia. Nowe wspolrzedne to najblizszy PLASKI, suchy kawalek ladu (kamienny
+    # plaskowyz ~88 m na zachod): sprawdzone w heightmapach regionu (najwyzszy blok nie jest
+    # ciecza, deniwelacja 5x5 <= 1) i potwierdzone w grze — blok 149/98/197 to kamien,
+    # a 99..101 nad nim to powietrze w calym kwadracie 3x3.
+    # Te same wspolrzedne siedza w 'new-profile-spawn-point' i 'profile-selection-location'
+    # w plugins/MMOProfiles/config.yml. Przy zmianie poprawic OBA pliki.
+    x: 149.5
+    y: 99.0
+    z: 197.5
+    yaw: -90.0
     pitch: 0.0
 
   # Nietykalnosc po wyjsciu z kreatora, w tickach. Gracz laduje w swiecie bez ekwipunku
@@ -39,6 +47,34 @@ creator-room:
   # profilu ('profile-selection-invulnerability: true'), wiec gracz nie zauwazy szwu.
   # 0 = wylaczone.
   exit-invulnerability-ticks: 100
+
+  # SPRZATANIE SALI PRZY STARCIE SERWERA.
+  #
+  # Podglad postaci nalezy do sesji i powstaje dopiero, gdy gracz wejdzie do kreatora.
+  # Cokolwiek innego stoi w tej sali, stoi w kadrze: na produkcji byl to recznie
+  # wsummonowany armor stand i mannequin DOKLADNIE w punkcie 'dummy-anchor' (pozostalosc
+  # po porownywaniu tej wersji z prototypem config-only) — armor stand wystawal zza ramion
+  # postaci, a mannequin bylo widac przez ulamek sekundy przy kazdej zmianie rasy.
+  #
+  # true = przy kazdym starcie plugin usuwa z tego swiata WSZYSTKIE encje poza graczami
+  # i melduje w logu, co usunal. false = nie rusza niczego (wtedy sprzatanie recznie:
+  # /execute in minecraft:creator_limbo run minecraft:kill @e[type=!player] — uwaga,
+  # samo 'kill' przechwytuje CMI i po cichu nic nie robi).
+  sweep-stray-entities: true
+
+  # RESPONSYWNOSC WEJSCIA DO SALI.
+  #
+  # Sala jest osobnym swiatem, wiec wejscie to zmiana wymiaru i klient zawsze pokaze
+  # "Loading terrain..." — tego sie nie obejdzie. Mozna za to skrocic czekanie:
+  #
+  # view-distance: ile chunkow sali wysylac. Sala ma kilkanascie blokow, a globalny zasieg
+  #   (server.properties, view-distance=10) kazal klientowi czekac na 21x21 = 441 chunkow
+  #   pustki. 4 daje 81. 0 = nie ruszaj, zostaje globalny.
+  # keep-loaded: trzymaj chunki sali w pamieci na stale (3x3 wokol 'spawn' i 'dummy-anchor').
+  #   Bez tego serwer wczytuje je z dysku przy KAZDYM wejsciu, bo po wyjsciu ostatniego
+  #   gracza sala sie wyladowuje.
+  view-distance: 4
+  keep-loaded: true
 
 # Interfejs kreatora nie ma juz sekcji 'creator-menu'. Trzymala ona przesuniecia glifu
 # ramy okna (title-shift / name-shift) i tryb pomiarowy probe-advance — a ramy nie ma:
@@ -49,6 +85,13 @@ creator-room:
 
 preview:
   rotation-interval-ticks: 2
+
+  # ROZGRZEWKA SKOREK ZNIKNELA razem z kluczem 'skin-warmup-ticks' i to jest zmiana
+  # zachowania, a nie porzadkowa. Podglad to teraz STAJNIA nosicieli: po jednym na skorke,
+  # wszyscy stoja od poczatku sesji 20 blokow pod sala, a klikniecie rasy albo klasy tylko
+  # wystawia wlasciwego na kotwice. Nie ma wiec czego rozgrzewac ani na co czekac — i, co
+  # wazniejsze, klient nie dostaje przy kliknieciu NOWEJ encji, wiec nie ma tez chwili,
+  # w ktorej rysuje skorke domyslna. Szczegoly: javadoc PreviewDummyManager.
 
 # WYMUSZENIE WYBORU POSTACI PRZY WEJSCIU.
 #
@@ -93,10 +136,10 @@ races:
     helmet-color: '#C8B48C'
     display: '&fCzłowiek'
     permission: 'race.czlowiek'
-    # 'none' = rasa ŚWIADOMIE bez modelu 3D. Blueprintu race_czlowiek nie ma w
-    # plugins/ModelEngine/blueprints/ i config nie ma prawa go obiecywać: dopóki tak jest,
-    # podgląd używa przebrania zastępczego (skórka patrzącego gracza), a plugin mówi o tym
-    # raz przy starcie zamiast 177 razy w logu. Po dodaniu blueprintu wpisać 'race_czlowiek'.
+    # 'none' = rasa ŚWIADOMIE bez modelu 3D i tak zostaje dla wszystkich ras: rasę pokazuje
+    # SKÓRKA, nie ModelEngine. Którą skórkę — skins.yml, klucz '<rasa>_<klasa>' (patrz sekcja
+    # 'skins' na końcu pliku). Podgląd w kreatorze nosi dokładnie tę samą teksturę, którą
+    # gracz dostanie po zatwierdzeniu.
     model-id: 'none'
   ork:
     icon: 'cc:race_ork'
@@ -105,7 +148,7 @@ races:
     helmet-color: '#6E9B4E'
     display: '&2Ork'
     permission: 'race.ork'
-    # Patrz komentarz przy rasie 'czlowiek'. Po dodaniu blueprintu wpisać 'race_ork'.
+    # Patrz komentarz przy rasie 'czlowiek'.
     model-id: 'none'
   elf:
     icon: 'cc:race_elf'
@@ -114,7 +157,7 @@ races:
     helmet-color: '#E8DCA8'
     display: '&bElf'
     permission: 'race.elf'
-    # Patrz komentarz przy rasie 'czlowiek'. Po dodaniu blueprintu wpisać 'race_elf'.
+    # Patrz komentarz przy rasie 'czlowiek'.
     model-id: 'none'
   nieumarly:
     icon: 'cc:race_nieumarly'
@@ -123,12 +166,18 @@ races:
     helmet-color: '#8FA0A0'
     display: '&8Nieumarły'
     permission: 'race.nieumarly'
-    # JEDYNA rasa z realnym blueprintem w plugins/ModelEngine/blueprints/.
-    model-id: 'race_nieumarly'
+    # Blueprint race_nieumarly leży w plugins/ModelEngine/blueprints/, ale NIE jest używany:
+    # rasę pokazuje skórka. Model wróciłby tu tylko wtedy, gdyby powstał komplet blueprintów
+    # dla wszystkich ras — jedna rasa z modelem i trzy bez wyglądały w kadrze jak błąd.
+    model-id: 'none'
 
-# UWAGA co do 'gear': to jest WYŁĄCZNIE strój dummy'ego w podglądzie — żeby wybór klasy
-# było widać na postaci. Gracz po utworzeniu postaci NIE dostaje z tego ani jednego
-# przedmiotu; ekwipunku startowego w tym pluginie nie ma (README kiedyś twierdził inaczej).
+# UWAGA co do 'gear': to jest WYŁĄCZNIE strój dummy'ego w podglądzie. Gracz po utworzeniu
+# postaci NIE dostaje z tego ani jednego przedmiotu; ekwipunku startowego w tym pluginie nie ma
+# (README kiedyś twierdził inaczej).
+#
+# Odkąd para rasa+klasa ma własną skórkę, z tej sekcji używany jest tylko 'hand': zbroja
+# zakrywała strój klasy wypalony w skórce, a barwiony helm rasy — głowę. Pozostałe sloty
+# wracają do gry tylko dla par BEZ skórki w skins.yml (podgląd używa wtedy skórki gracza).
 classes:
   wojownik:
     icon: 'cc:class_wojownik'
@@ -159,9 +208,50 @@ classes:
     display: '&7Ninja'
     mmocore-id: 'rogue'
 
-# SKÓRKI: sekcji 'skin' już nie ma i nie wróci, dopóki nie powstanie prawdziwy wybór
-# skórki per postać. Poprzednia wersja odsyłała do klasy SkinProvider, której NIGDY nie było
-# w źródłach, a cała "abstrakcja" sprowadzała się do jednego `if` wywołującego
-# `cmi skin <gracz> <gracz> -s` — czyli nakładającego graczowi jego własną skórkę. Przy
-# online-mode=false i limicie Mojanga 600 zapytań / 10 min / IP było to bezużyteczne
-# i potencjalnie szkodliwe. Patrz ConfirmService#applyToRealPlayer.
+# HISTORIA (zostaje, żeby nikt nie wrócił tą drogą): poprzednia wersja miała sekcję 'skin'
+# odsyłającą do klasy SkinProvider, której NIGDY nie było w źródłach — cała "abstrakcja"
+# sprowadzała się do `cmi skin <gracz> <gracz> -s`, czyli nakładania graczowi jego WŁASNEJ
+# skórki przy każdym wyborze profilu. Dzisiejsze skórki nie pytają Mojanga o nic: gotowe,
+# podpisane tekstury leżą w skins.yml i idą prosto do profilu gracza.
+# SKÓRKI POSTACI
+#
+# Skórka jest JEDNĄ teksturą na parę RASA x KLASA — protokół nie ma drugiej warstwy, którą
+# serwer mógłby podmienić osobno, więc "podskin klasy" jest wypalony w tę samą teksturę:
+# rasa trzyma głowę i karnację, klasa tors, ręce, nogi i warstwę zewnętrzną (kaptur, maska,
+# naramienniki, tabard). Same tekstury leżą w skins.yml (obok tego pliku) i są czytane
+# Z DYSKU — poprawka skórki to podmiana tamtego pliku i '/cc reload', bez przebudowy jara.
+#
+# Skąd biorą się pliki: tools/gen_race_skins.py generuje 16 PNG, tools/upload_skins.sh wgrywa
+# je na mineskin.org (wprost przez jego API) i zapisuje stamtąd podpisane tekstury do
+# skins.yml. Własny hosting PNG odpada: klient Javy pobiera skórki wyłącznie
+# z textures.minecraft.net, także przy online-mode=false.
+skins:
+  # false = kreator nadal pokazuje skórkę rasy i klasy na podglądzie, ale gracz zostaje
+  # w skórce swojego konta. To JEDYNA rzecz w tym pluginie, która zmienia profil gracza —
+  # wyłącznik jest po to, żeby przy sporze z innym pluginem od skórek (CMI, SkinsRestorer)
+  # dało się to rozdzielić bez przebudowy jara.
+  apply-to-player: true
+
+  # SKORKA JUZ PRZY WEJSCIU, a nie dopiero przy wyborze postaci.
+  #
+  # Bez tego gracz od wejscia do kliknięcia postaci chodzi w skorce swojego KONTA —
+  # kilkanascie sekund, w ktorych patrzy na ekran wyboru i widzi za nim siebie. Z tym
+  # wlacznikiem plugin naklada mu skorke postaci granej OSTATNIO (pole 'last-used'
+  # w characters.yml), a po wyborze i tak poprawia ja na skorke wybranej postaci.
+  # Najgorszy mozliwy skutek pomylki: skorka poprzedniej postaci przez chwile.
+  #
+  # Nakladamy dwa razy (10 i 40 tickow po wejsciu), bo plugin od skorek moze nalozyc swoja
+  # PO nas — CMI robilo to ~1 s po wejsciu. Nalozenie jest idempotentne, wiec drugie
+  # podejscie przy niezmienionej skorce nie kosztuje nic.
+  #
+  # false = zachowanie sprzed 2026-09-20: skorka wchodzi dopiero przy wyborze postaci.
+  apply-on-join: true
+
+  # Głowy na ekranie wyboru postaci (MMOProfiles) — bez tego każda postać ma tam głowę
+  # Steve'a, bo MMOProfiles rysuje PLAYER_HEAD bez tekstury i nie ma placeholdera, którym
+  # dałoby się to ustawić z jego configu. Dopisujemy je już po zbudowaniu okna, czyli
+  # wchodzimy w CUDZE okno — dlatego osobny wyłącznik. Mapowanie slot -> postać bierzemy
+  # z jego własnego pliku language/gui/profile-list.yml; przy stronicowaniu (więcej postaci
+  # niż slotów) nie ruszamy niczego, żeby nie wstawić komuś cudzej głowy.
+  profile-heads: true
+

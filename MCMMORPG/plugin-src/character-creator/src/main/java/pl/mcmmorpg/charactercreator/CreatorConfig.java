@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import pl.mcmmorpg.charactercreator.model.ModelEngineBridge;
+import pl.mcmmorpg.charactercreator.skin.SkinService;
 
 /**
  * Typed view over config.yml. Loaded once on enable; call {@link #reload} to pick up
@@ -55,10 +56,16 @@ public final class CreatorConfig {
   private Location dummyAnchor;
   private Location exitLocation;
   private int exitInvulnerabilityTicks;
+  private boolean sweepRoomEntities;
+  private int roomViewDistance;
+  private boolean keepRoomLoaded;
   private boolean enforceProfileSelection;
   private int profileCheckDelayTicks;
   private int profileRecheckIntervalTicks;
   private int rotationIntervalTicks;
+  private boolean applySkinToPlayer;
+  private boolean applySkinOnJoin;
+  private boolean skinProfileHeads;
   private final Map<String, RaceOption> races = new LinkedHashMap<>();
   private final Map<String, ClassOption> classes = new LinkedHashMap<>();
 
@@ -75,10 +82,16 @@ public final class CreatorConfig {
     dummyAnchor = readLocation(cfg, "creator-room.dummy-anchor", 100);
     exitLocation = readExitLocation(cfg);
     exitInvulnerabilityTicks = Math.max(0, cfg.getInt("creator-room.exit-invulnerability-ticks", 100));
+    sweepRoomEntities = cfg.getBoolean("creator-room.sweep-stray-entities", true);
+    roomViewDistance = Math.max(0, cfg.getInt("creator-room.view-distance", 4));
+    keepRoomLoaded = cfg.getBoolean("creator-room.keep-loaded", true);
     enforceProfileSelection = cfg.getBoolean("profile-selection.enforce", true);
     profileCheckDelayTicks = Math.max(1, cfg.getInt("profile-selection.first-check-delay-ticks", 100));
     profileRecheckIntervalTicks = Math.max(0, cfg.getInt("profile-selection.recheck-interval-ticks", 200));
     rotationIntervalTicks = cfg.getInt("preview.rotation-interval-ticks", 2);
+    applySkinToPlayer = cfg.getBoolean("skins.apply-to-player", true);
+    applySkinOnJoin = cfg.getBoolean("skins.apply-on-join", true);
+    skinProfileHeads = cfg.getBoolean("skins.profile-heads", true);
 
     races.clear();
     ConfigurationSection racesSection = cfg.getConfigurationSection("races");
@@ -115,7 +128,7 @@ public final class CreatorConfig {
    * wiec {@code /mv unload creator_limbo} zamienialo kazdy teleport w NPE. Tu obie te rzeczy
    * sa wykrywane, zanim ktokolwiek wejdzie do sali.
    */
-  public List<Problem> validate(ModelEngineBridge modelEngineBridge) {
+  public List<Problem> validate(ModelEngineBridge modelEngineBridge, SkinService skinService) {
     List<Problem> problems = new ArrayList<>();
 
     World world = plugin.getServer().getWorld(roomWorldName);
@@ -175,13 +188,56 @@ public final class CreatorConfig {
         // To jest DEKLARACJA, a nie usterka: rasa jawnie oznaczona jako jeszcze bez modelu.
         problems.add(new Problem(Severity.INFO, "Rasa '" + race.id()
             + "' jest oznaczona jako bez modelu 3D (model-id: " + NO_MODEL
-            + ") — podglad uzyje przebrania zastepczego."));
+            + ") — pokazuje ja skorka z skins.yml."));
       } else if (!modelEngineBridge.hasBlueprint(race.modelId())) {
         problems.add(new Problem(Severity.WARNING, "Rasa '" + race.id() + "' deklaruje model '"
             + race.modelId() + "', ale nie ma takiego blueprintu w "
             + "plugins/ModelEngine/blueprints/. Albo dodaj blueprint, albo ustaw "
             + "model-id: " + NO_MODEL + ", zeby config nie obiecywal czegos, czego nie ma."));
       }
+    }
+
+    problems.addAll(validateSkins(skinService));
+    return problems;
+  }
+
+  /**
+   * Skorki sa CONTENTEM, nie kodem: brak jednej pary rasa x klasa nie moze wylaczac pluginu,
+   * ale ma byc slychac. Bez tego postac po prostu zostawalaby w skorce konta gracza i nikt
+   * by nie wiedzial, dlaczego akurat ta jedna.
+   */
+  private List<Problem> validateSkins(SkinService skinService) {
+    List<Problem> problems = new ArrayList<>();
+    if (skinService == null) {
+      return problems;
+    }
+    if (!applySkinToPlayer) {
+      problems.add(new Problem(Severity.INFO, "skins.apply-to-player: false — kreator pokazuje "
+          + "skorki rasy i klasy w podgladzie, ale gracz zostaje w skorce swojego konta."));
+    }
+    if (applySkinOnJoin && !applySkinToPlayer) {
+      problems.add(new Problem(Severity.INFO, "skins.apply-on-join: true nic nie robi przy "
+          + "skins.apply-to-player: false — nakladanie skorki przy wejsciu jest wylaczone "
+          + "razem z nakladaniem jej w ogole."));
+    }
+    if (skinService.isEmpty()) {
+      problems.add(new Problem(Severity.WARNING, "skins.yml nie ma ani jednej skorki — "
+          + "postacie beda wygladac tak, jak konta graczy. Wygeneruj je: "
+          + "tools/gen_race_skins.py + tools/upload_skins.sh."));
+      return problems;
+    }
+    List<String> missing = new ArrayList<>();
+    for (String raceId : races.keySet()) {
+      for (String classId : classes.keySet()) {
+        String id = SkinService.idFor(raceId, classId);
+        if (!skinService.ids().contains(id) && !skinService.ids().contains(raceId)) {
+          missing.add(id);
+        }
+      }
+    }
+    if (!missing.isEmpty()) {
+      problems.add(new Problem(Severity.WARNING, "Brak skorek dla par: "
+          + String.join(", ", missing) + ". Te postacie zostana w skorkach kont graczy."));
     }
     return problems;
   }
@@ -268,6 +324,21 @@ public final class CreatorConfig {
     return exitInvulnerabilityTicks;
   }
 
+  /** false = sala kreatora nie jest czyszczona przy starcie serwera. */
+  public boolean sweepRoomEntities() {
+    return sweepRoomEntities;
+  }
+
+  /** 0 = nie ruszaj zasiegu widzenia sali (zostaje globalny z server.properties). */
+  public int roomViewDistance() {
+    return roomViewDistance;
+  }
+
+  /** false = chunki sali nie sa trzymane w pamieci miedzy wejsciami graczy. */
+  public boolean keepRoomLoaded() {
+    return keepRoomLoaded;
+  }
+
   public boolean enforceProfileSelection() {
     return enforceProfileSelection;
   }
@@ -282,6 +353,41 @@ public final class CreatorConfig {
 
   public int rotationIntervalTicks() {
     return rotationIntervalTicks;
+  }
+
+  /**
+   * Czy skorka postaci ma trafiac na PRAWDZIWEGO gracza (a nie tylko na podglad w kreatorze).
+   * Wylacznik istnieje, bo to jedyna rzecz w tym pluginie, ktora zmienia profil gracza —
+   * przy sporze z innym pluginem od skorek ma byc czym to rozdzielic bez przebudowy jara.
+   */
+  public boolean applySkinToPlayer() {
+    return applySkinToPlayer;
+  }
+
+  /**
+   * Czy nakladac skorke ostatnio granej postaci juz przy WEJSCIU na serwer.
+   *
+   * <p>Bez tego gracz od wejscia do wyboru postaci chodzi w skorce swojego konta —
+   * kilkanascie sekund, w ktorych wyglada jak nie swoja postac. Po wyborze skorka i tak
+   * jest poprawiana na te, ktora nalezy do wybranej postaci, wiec najgorsze, co moze tu
+   * wyjsc, to skorka POPRZEDNIEJ postaci przez chwile zamiast skorki konta.
+   *
+   * <p>Osobny wylacznik, bo to jedyne miejsce, gdzie ruszamy profil gracza BEZ zadnego
+   * zdarzenia MMOProfiles — gdyby weszlo w droge innemu pluginowi, ma byc czym to odciac.
+   */
+  public boolean applySkinOnJoin() {
+    return applySkinOnJoin;
+  }
+
+  /**
+   * Czy dopisywac skorki postaci do glow na ekranie wyboru postaci MMOProfiles.
+   *
+   * <p>Osobny wylacznik od {@link #applySkinToPlayer()}, bo to jedyne miejsce, w ktorym
+   * wchodzimy w CUDZE okno — przy zmianie ukladu po stronie MMOProfiles ma byc czym to
+   * odciac bez przebudowy jara.
+   */
+  public boolean skinProfileHeads() {
+    return skinProfileHeads;
   }
 
 

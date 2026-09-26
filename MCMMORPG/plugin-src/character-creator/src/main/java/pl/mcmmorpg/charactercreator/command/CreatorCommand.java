@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,6 +24,8 @@ import pl.mcmmorpg.charactercreator.creator.CreatorSessionManager;
 import pl.mcmmorpg.charactercreator.model.ModelEngineBridge;
 import pl.mcmmorpg.charactercreator.persist.CharacterRecord;
 import pl.mcmmorpg.charactercreator.persist.CharacterStore;
+import pl.mcmmorpg.charactercreator.profile.CharacterProfileModule;
+import pl.mcmmorpg.charactercreator.skin.SkinService;
 import pl.mcmmorpg.charactercreator.persist.OrphanScanner;
 
 /**
@@ -46,15 +49,20 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
   private final CreatorSessionManager sessions;
   private final OrphanScanner orphanScanner;
   private final ModelEngineBridge modelEngineBridge;
+  private final SkinService skinService;
+  private final CharacterProfileModule profileModule;
   private final Runnable onReload;
 
   public CreatorCommand(CreatorConfig config, CharacterStore store, CreatorSessionManager sessions,
-      OrphanScanner orphanScanner, ModelEngineBridge modelEngineBridge, Runnable onReload) {
+      OrphanScanner orphanScanner, ModelEngineBridge modelEngineBridge, SkinService skinService,
+      CharacterProfileModule profileModule, Runnable onReload) {
     this.config = config;
     this.store = store;
     this.sessions = sessions;
     this.orphanScanner = orphanScanner;
     this.modelEngineBridge = modelEngineBridge;
+    this.skinService = skinService;
+    this.profileModule = profileModule;
     this.onReload = onReload;
   }
 
@@ -74,6 +82,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       case "delete" -> delete(sender, args);
       case "prune" -> prune(sender, args);
       case "sessions" -> listSessions(sender);
+      case "skin" -> skin(sender, args);
       default -> usage(sender, label);
     }
     return true;
@@ -90,12 +99,14 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
         NamedTextColor.GRAY));
     sender.sendMessage(Component.text("/" + label + " sessions — kto jest teraz w kreatorze",
         NamedTextColor.GRAY));
+    sender.sendMessage(Component.text("/" + label + " skin <gracz> [id|rasa klasa|auto] "
+        + "[sesja] — pokaż albo nałóż skórkę (domyślnie NA STAŁE)", NamedTextColor.GRAY));
   }
 
   private void reload(CommandSender sender) {
     config.reload();
     onReload.run();
-    List<CreatorConfig.Problem> problems = config.validate(modelEngineBridge);
+    List<CreatorConfig.Problem> problems = config.validate(modelEngineBridge, skinService);
     sender.sendMessage(Component.text("Config przeladowany: " + config.races().size()
         + " ras, " + config.classes().size() + " klas.", NamedTextColor.GREEN));
     if (problems.isEmpty()) {
@@ -158,8 +169,16 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
   private Component describe(CharacterRecord record) {
     String owner = record.hasOwner()
         ? record.ownerName() + " (" + record.ownerUuid() + ")" : "nieznany";
+    // Skorka jest w tym wierszu, bo to pierwsze pytanie przy zgloszeniu "moja postac
+    // wyglada nie tak": czy rekord w ogole ma skorke i czy ta skorka jest jeszcze
+    // w skins.yml.
+    String skin = record.skinSource() == null || record.skinSource().isBlank()
+        ? "brak"
+        : record.skinSource() + (skinService.ids().contains(record.skinSource())
+            ? "" : " (BRAK W skins.yml)");
     return Component.text(record.characterId() + " — " + displayName(record) + " | "
-        + record.raceId() + "/" + record.classId() + " | właściciel: " + owner
+        + record.raceId() + "/" + record.classId() + " | skórka: " + skin
+        + " | właściciel: " + owner
         + " | utworzona: " + WHEN.format(record.createdAt()), NamedTextColor.WHITE);
   }
 
@@ -262,6 +281,173 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     }
   }
 
+  /**
+   * Skorka odgornie: podglad tego, co gracz MA, i nalozenie tego, co ma miec.
+   *
+   * <p><b>Po co w ogole komenda.</b> Skorki nakladal dotad wylacznie sam plugin — przy
+   * wejsciu i przy wyborze postaci. Przy zgloszeniu "mam nie te skorke" nie bylo wiec zadnej
+   * drogi, zeby (a) zapytac serwera, co naprawde trzyma na graczu, (b) nalozyc konkretna
+   * skorke i zobaczyc, czy klient ja w ogole pokaze.
+   *
+   * <p><b>Nalozenie jest TRWALE.</b> Skorka idzie na profil gracza ORAZ do pola
+   * {@code skin-source} w rekordzie postaci, czyli tam, skad bierze ja kazde wejscie,
+   * kazdy respawn i kazda zmiana swiata. Bez tego zapisu komenda dzialala do pierwszego
+   * respawnu i wracala stara skorka — co jest dokladnie tym, czego nikt nie chce
+   * tlumaczyc graczowi. {@code sesja} na koncu = po staremu, tylko do nastepnego respawnu.
+   *
+   * <p>Trwale zapisac da sie tylko graczowi, ktory MA wybrana postac — inaczej nie ma do
+   * czego przybic skorki i komenda mowi to wprost, zamiast udawac, ze zapisala.
+   */
+  private void skin(CommandSender sender, String[] args) {
+    if (args.length < 2) {
+      sender.sendMessage(Component.text("Podaj gracza: /cc skin <gracz> [id|rasa klasa|auto] "
+          + "[sesja]", NamedTextColor.RED));
+      return;
+    }
+    Player target = Bukkit.getPlayerExact(args[1]);
+    if (target == null) {
+      sender.sendMessage(Component.text("Gracz '" + args[1] + "' nie jest online — skórkę "
+          + "nakłada się na profil żywego gracza.", NamedTextColor.RED));
+      return;
+    }
+    if (args.length == 2) {
+      skinReport(sender, target);
+      return;
+    }
+
+    List<String> rest = new ArrayList<>(Arrays.asList(args).subList(2, args.length));
+    boolean sessionOnly = "sesja".equalsIgnoreCase(rest.get(rest.size() - 1));
+    if (sessionOnly) {
+      rest.remove(rest.size() - 1);
+    }
+    if (rest.isEmpty()) {
+      sender.sendMessage(Component.text("Podaj skórkę: id, 'rasa klasa' albo 'auto'.",
+          NamedTextColor.RED));
+      return;
+    }
+
+    String wanted;
+    if (rest.size() >= 2) {
+      // 'rasa klasa' — tak, jak te pary nazywa config.yml; sklejanie id zostawiamy
+      // SkinService, zeby nie bylo drugiego miejsca, ktore wie o podkresleniu.
+      wanted = SkinService.idFor(rest.get(0).toLowerCase(Locale.ROOT),
+          rest.get(1).toLowerCase(Locale.ROOT));
+    } else if ("auto".equalsIgnoreCase(rest.get(0))) {
+      CharacterRecord record = expectedRecord(target);
+      if (record == null) {
+        sender.sendMessage(Component.text("Nie wiem, jaka skórka mu się należy — nie ma "
+            + "wybranej postaci ani żadnej zapisanej.", NamedTextColor.RED));
+        return;
+      }
+      SkinService.Skin resolved =
+          skinService.resolve(record.skinSource(), record.raceId(), record.classId());
+      if (resolved == null) {
+        sender.sendMessage(Component.text("Postać " + displayName(record) + " nie ma skórki "
+            + "ani w rekordzie, ani w skins.yml.", NamedTextColor.RED));
+        return;
+      }
+      wanted = resolved.id();
+    } else {
+      wanted = rest.get(0).toLowerCase(Locale.ROOT);
+    }
+
+    SkinService.Skin skin = skinService.get(wanted);
+    if (skin == null) {
+      sender.sendMessage(Component.text("Nie znam skórki '" + wanted + "'. Są: "
+          + String.join(", ", skinService.ids()), NamedTextColor.RED));
+      return;
+    }
+    boolean changed = skinService.applyTo(target, skin);
+    sender.sendMessage(Component.text(changed
+        ? "Nałożono skórkę " + skin.id() + " na gracza " + target.getName() + "."
+        : target.getName() + " już miał skórkę " + skin.id() + " — nic nie zmieniono.",
+        NamedTextColor.GREEN));
+    persistSkin(sender, target, skin, sessionOnly);
+    if (sessions.isActive(target)) {
+      sender.sendMessage(Component.text("Uwaga: gracz jest teraz w kreatorze i ogląda dummy'ego "
+          + "— własnej skórki tam nie zobaczy.", NamedTextColor.GOLD));
+    }
+  }
+
+  /**
+   * Przybija skorke do POSTACI, a nie do sesji.
+   *
+   * <p>Po zapisie odswiezamy tez rekord trzymany w pamieci przez modul profili: to z niego
+   * korzysta przywracanie wygladu po respawnie i zmianie swiata, wiec bez tego kroku
+   * najblizszy respawn cofnalby skorke do poprzedniej, mimo poprawnego pliku.
+   */
+  private void persistSkin(CommandSender sender, Player target, SkinService.Skin skin,
+      boolean sessionOnly) {
+    if (sessionOnly) {
+      sender.sendMessage(Component.text("Tylko na sesję — przy respawnie albo ponownym "
+          + "wejściu wróci skórka postaci.", NamedTextColor.GRAY));
+      return;
+    }
+    CharacterRecord active = profileModule.activeCharacter(target.getUniqueId());
+    if (active == null) {
+      sender.sendMessage(Component.text("Gracz nie ma wybranej postaci, więc nie ma do czego "
+          + "przybić skórki na stałe — została tylko na tę sesję.", NamedTextColor.GOLD));
+      return;
+    }
+    if (skin.id().equals(active.skinSource())) {
+      sender.sendMessage(Component.text("Postać " + displayName(active)
+          + " już ma tę skórkę zapisaną na stałe.", NamedTextColor.GRAY));
+      return;
+    }
+    CharacterRecord stored = store.put(active.withSkinSource(skin.id()));
+    if (stored == null) {
+      sender.sendMessage(Component.text("Nie udało się zapisać rekordu postaci "
+          + displayName(active) + " — skórka została tylko na tę sesję.", NamedTextColor.RED));
+      return;
+    }
+    store.saveNow();
+    profileModule.trackAndApplyAppearance(target, stored);
+    sender.sendMessage(Component.text("Zapisane NA STAŁE: postać " + displayName(stored)
+        + " ma teraz skin-source=" + skin.id() + " (przeżyje respawn, relog i restart).",
+        NamedTextColor.GREEN));
+  }
+
+  /** Co serwer TRZYMA na graczu kontra co POWINIEN — cztery wiersze i jedno rozstrzygniecie. */
+  private void skinReport(CommandSender sender, Player target) {
+    String current = skinService.currentTexture(target);
+    String has = skinService.describeTexture(current);
+    CharacterRecord record = expectedRecord(target);
+    SkinService.Skin expected = record == null ? null
+        : skinService.resolve(record.skinSource(), record.raceId(), record.classId());
+
+    sender.sendMessage(Component.text(target.getName() + " — skórka", NamedTextColor.AQUA));
+    sender.sendMessage(Component.text("  ma teraz: " + has, NamedTextColor.WHITE));
+    if (record == null) {
+      sender.sendMessage(Component.text("  powinien mieć: nie wiadomo — żadnej postaci "
+          + "(ani wybranej, ani zapisanej)", NamedTextColor.GRAY));
+      return;
+    }
+    boolean chosen = profileModule.activeCharacter(target.getUniqueId()) != null;
+    sender.sendMessage(Component.text("  powinien mieć: "
+        + (expected == null ? "brak skórki dla " + record.raceId() + "/" + record.classId() : expected.id())
+        + " (postać " + displayName(record) + (chosen ? ", wybrana" : ", ostatnio grana — "
+        + "postaci jeszcze nie wybrał") + ")", NamedTextColor.WHITE));
+    if (expected == null) {
+      return;
+    }
+    boolean match = current != null && current.equals(expected.value());
+    sender.sendMessage(Component.text(match
+        ? "  zgadza się: TAK — serwer trzyma na nim dokładnie tę teksturę"
+        : "  zgadza się: NIE — napraw przez /cc skin " + target.getName() + " auto",
+        match ? NamedTextColor.GREEN : NamedTextColor.RED));
+    if (match) {
+      sender.sendMessage(Component.text("  jeśli gracz i tak widzi inną skórkę, to już jego "
+          + "klient (cache albo mod podmieniający skórkę lokalnego gracza).",
+          NamedTextColor.GRAY));
+    }
+  }
+
+  /** Postac wybrana, a gdy jeszcze nie wybral — ta ostatnio grana (to ja naklada wejscie). */
+  private CharacterRecord expectedRecord(Player target) {
+    CharacterRecord active = profileModule.activeCharacter(target.getUniqueId());
+    return active != null ? active : store.lastUsedBy(target.getUniqueId());
+  }
+
   private static UUID parseUuid(String raw) {
     try {
       return UUID.fromString(raw);
@@ -276,7 +462,18 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       return List.of();
     }
     if (args.length == 1) {
-      return prefixed(List.of("reload", "info", "delete", "prune", "sessions"), args[0]);
+      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin"), args[0]);
+    }
+    if (args.length == 2 && "skin".equalsIgnoreCase(args[0])) {
+      return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
+    }
+    if (args.length == 3 && "skin".equalsIgnoreCase(args[0])) {
+      List<String> options = new ArrayList<>(skinService.ids());
+      options.add("auto");
+      return prefixed(options, args[2]);
+    }
+    if (args.length == 4 && "skin".equalsIgnoreCase(args[0])) {
+      return prefixed(List.of("sesja"), args[3]);
     }
     if (args.length == 2 && "info".equalsIgnoreCase(args[0])) {
       return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);

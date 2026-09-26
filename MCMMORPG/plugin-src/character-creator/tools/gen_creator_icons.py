@@ -200,6 +200,24 @@ SCROLL = [
     "................",
     "................",
 ]
+DOOR_OUT = [
+    "................",
+    "................",
+    "........DDDDDDD.",
+    "........D.....D.",
+    "........D.....D.",
+    "........D.....D.",
+    "....A...D.....D.",
+    "...AA...D.....D.",
+    "..AAAAAAD.....D.",
+    "..AAAAAAD..K..D.",
+    "...AA...D.....D.",
+    "....A...D.....D.",
+    "........D.....D.",
+    "........D.....D.",
+    "........DDDDDDD.",
+    "................",
+]
 SKIN_H = (226, 180, 140)
 ICONS = {
     "race_czlowiek": (HUMAN, {"H": (94, 60, 34), "S": SKIN_H, "E": (38, 30, 26),
@@ -218,6 +236,9 @@ ICONS = {
     "class_ninja":   (ROGUE, {"B": (176, 186, 200), "G": (216, 180, 88), "H": (72, 52, 40)}),
     "ui_confirm":    (CONFIRM,{"G": (226, 188, 88), "E": (32, 86, 52), "L": (96, 196, 110)}),
     "ui_name":       (SCROLL,{"P": (166, 132, 86), "S": (232, 214, 172), "I": (86, 66, 46)}),
+    # Wyjscie bez tworzenia postaci. Strzalka w LEWO, bo przycisk stoi w lewym rogu
+    # dolnego rzedu, po przeciwnej stronie niz "STWORZ POSTAC".
+    "ui_exit":       (DOOR_OUT,{"D": (120, 84, 52), "A": (206, 96, 84), "K": (226, 188, 88)}),
 }
 
 

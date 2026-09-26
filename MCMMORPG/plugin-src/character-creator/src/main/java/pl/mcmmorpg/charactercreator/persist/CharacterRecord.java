@@ -13,6 +13,17 @@ import java.util.UUID;
  * a to wlasnie ta niemoznosc pozwolila 18 rekordom testowym przelezec na produkcje
  * niezauwazonym. {@code ownerName} jest wylacznie informacyjne (nick moze sie zmienic) —
  * wiazace jest {@code ownerUuid}.
+ *
+ * <p>{@code skinSource} to klucz skorki w skins.yml ({@code <rasa>_<klasa>}), zapisywany RAZ,
+ * przy tworzeniu postaci — od tej pory to ON decyduje o wygladzie, wiec przemapowanie klas
+ * w config.yml nie przebiera istniejacych postaci. Puste = dla tej pary nie bylo wtedy
+ * skorki; wygrywa wtedy dzisiejsza para rasa+klasa (SkinService#resolve).
+ *
+ * <p>{@code lastUsedAt} (schemat 3) to znacznik OSTATNIEGO wyboru tej postaci. Istnieje
+ * dla jednej rzeczy: zeby przy wejsciu na serwer, jeszcze PRZED ekranem wyboru, dalo sie
+ * nalozyc graczowi skorke postaci, ktora gral ostatnio — inaczej przez te kilkanascie
+ * sekund chodzi w skorce swojego konta (patrz CharacterProfileModule#scheduleJoinSkin).
+ * Puste u rekordow sprzed schematu 3; wtedy liczy sie {@code createdAt}.
  */
 public record CharacterRecord(
     String characterId,
@@ -22,11 +33,45 @@ public record CharacterRecord(
     String skinSource,
     UUID ownerUuid,
     String ownerName,
-    Instant createdAt
+    Instant createdAt,
+    Instant lastUsedAt
 ) {
 
   /** Rekord ze schematu 1 (bez wlasciciela) — migracja ustawia oba pola na null/pusty. */
   public boolean hasOwner() {
     return ownerUuid != null;
+  }
+
+  /**
+   * Kiedy postac byla ostatnio w grze — a dla rekordow sprzed schematu 3 kiedy powstala.
+   *
+   * <p>Fallback na {@code createdAt} jest celowy i nie jest przyblizeniem "na oko": postac
+   * zaraz po utworzeniu JEST ta ostatnio graną, wiec dla kogos, kto ma jedna postac sprzed
+   * migracji, odpowiedz i tak wychodzi poprawna.
+   */
+  public Instant effectiveLastUsed() {
+    return lastUsedAt != null ? lastUsedAt : createdAt;
+  }
+
+  public CharacterRecord withLastUsed(Instant when) {
+    return new CharacterRecord(characterId, name, raceId, classId, skinSource, ownerUuid,
+        ownerName, createdAt, when);
+  }
+
+  /**
+   * Nowa skorka postaci — na STALE, czyli w rekordzie.
+   *
+   * <p>Do {@code /cc skin}: dopoki skorka siedziala tylko na profilu gracza w pamieci,
+   * kazdy respawn i kazde wejscie przywracalo te z rekordu. Zapis tutaj jest jedynym
+   * miejscem, w ktorym zmiana wygladu postaci przezywa restart serwera.
+   */
+  public CharacterRecord withSkinSource(String skinSource) {
+    return new CharacterRecord(characterId, name, raceId, classId, skinSource, ownerUuid,
+        ownerName, createdAt, lastUsedAt);
+  }
+
+  public CharacterRecord withOwner(UUID uuid, String name) {
+    return new CharacterRecord(characterId, this.name, raceId, classId, skinSource, uuid,
+        name, createdAt, lastUsedAt);
   }
 }

@@ -10,6 +10,9 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 secret="$(grep -A4 'velocity:' /opt/docker/mc/data/world1/config/paper-global.yml \
           | grep 'secret:' | awk '{print $2}')"
 [ -n "$secret" ] || { echo "BLAD: nie znalazlem sekretu forwardingu"; exit 2; }
-exec docker run --rm --network mc_mmorpg-net -v "$here:/e" -w /e \
+# skins.yml montujemy osobno (/res): scenariusz 70 porownuje skorke gracza z tym, co
+# plugin ma w niej zapisane, zamiast sprawdzac sam ze soba.
+exec docker run --rm --network mc_mmorpg-net -v "$here:/e" \
+  -v "$here/../src/main/resources:/res:ro" -w /e \
   -e MC_FORWARDING_SECRET="$secret" -e MC_HOST="${MC_HOST:-world1}" \
   node:20 node run.js "${1:-}"

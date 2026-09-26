@@ -62,20 +62,35 @@ public final class CreatorMenu {
   // a ekwipunkiem gracza jest techniczna szczelina 13 px), ale 36/31/36 czyta sie jako
   // celowy rozstaw.
   //
-  // Na dole jest JEDEN przycisk: STWORZ POSTAC. Ani zoomu, ani obrotu — postac stoi
-  // zawsze tak samo, przodem do gracza (yaw 0, patrz CreatorSession#MODEL_YAW). Kazde
-  // sterowanie kadrem, ktore probowalismy (zoom przesuwajacy encje, strzalki obracajace
-  // model), dawalo wiecej zamieszania niz pozytku: kadr przestawal byc przewidywalny,
+  // Na dole sa DWA przyciski: WYJDZ (z lewej) i STWORZ POSTAC (na srodku). Ani zoomu,
+  // ani obrotu — postac stoi zawsze tak samo, przodem do gracza (yaw 0, patrz
+  // CreatorSession#MODEL_YAW). Kazde sterowanie kadrem, ktore probowalismy (zoom
+  // przesuwajacy encje, strzalki obracajace model), dawalo wiecej zamieszania niz
+  // pozytku: kadr przestawal byc przewidywalny,
   // a gracz i tak wracal do ustawienia domyslnego.
   public static final int[] SLOTS_RACE = {0, 18, 27, 45};     // skrajna kolumna z lewej
   public static final int[] SLOTS_CLASS = {8, 26, 35, 53};    // skrajna kolumna z prawej
   public static final int SLOT_NAME = 4;                      // GORA, srodek
   public static final int SLOT_CONFIRM = 58;                  // DOL, srodek
 
+  /**
+   * DOL, skrajnie z lewej — wyjscie z kreatora bez tworzenia postaci.
+   *
+   * <p>Do tej pory z sali NIE BYLO WYJSCIA innego niz stworzenie postaci: teleport,
+   * komendy i czat sa zablokowane ({@link CreatorRoomListener}), zamkniete okno straznik
+   * otwiera z powrotem, a tryb SPECTATOR jest wymuszany co 10 tickow. Kto wszedl, ten
+   * konczyl albo sie rozlaczal.
+   *
+   * <p>Slot jest CELOWO daleko od {@link #SLOT_CONFIRM} (przeciwne konce dolnego rzedu,
+   * cztery sloty przerwy): pomylka kosztuje tu porzucenie wyboru, a nie jedno klikniecie
+   * wiecej.
+   */
+  public static final int SLOT_EXIT = 54;                     // DOL, z lewej
+
   /** Indeksy ekwipunku gracza, ktore trzymaja nasze ikony — sweeper ma ich NIE czyscic. */
   public static final Set<Integer> PLAYER_SLOTS_IN_USE =
       Set.of(playerIndex(27), playerIndex(45), playerIndex(35), playerIndex(53),
-             playerIndex(SLOT_CONFIRM));
+             playerIndex(SLOT_CONFIRM), playerIndex(SLOT_EXIT));
 
   /** Oznacza nasze inventory, zeby handlery klikniec odroznily je od innych GUI. */
   public static final class Holder implements InventoryHolder {
@@ -179,6 +194,9 @@ public final class CreatorMenu {
         ? icon(Material.PAPER, "cc:ui_confirm", "&a&lSTWÓRZ POSTAĆ", true, "&7Wszystko gotowe!")
         : icon(Material.PAPER, "cc:ui_confirm", "&8&lSTWÓRZ POSTAĆ", false,
             "&7Najpierw ustaw imię"));
+
+    put(inventory, player, SLOT_EXIT, icon(Material.PAPER, "cc:ui_exit",
+        "&c&lWYJDŹ", false, "&7Wróć do wyboru postaci", "&8Postać nie zostanie utworzona"));
   }
 
   /**
@@ -223,6 +241,7 @@ public final class CreatorMenu {
     return switch (rawSlot) {
       case SLOT_NAME -> "set_name";
       case SLOT_CONFIRM -> "confirm";
+      case SLOT_EXIT -> "exit";
       default -> null;
     };
   }

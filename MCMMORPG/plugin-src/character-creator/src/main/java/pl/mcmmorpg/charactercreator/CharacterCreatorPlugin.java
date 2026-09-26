@@ -3,7 +3,14 @@ package pl.mcmmorpg.charactercreator;
 import fr.phoenixdevt.mmoprofiles.bukkit.MMOProfiles;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import org.bukkit.GameRule;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import pl.mcmmorpg.charactercreator.command.CreatorCommand;
@@ -19,8 +26,10 @@ import pl.mcmmorpg.charactercreator.model.ModelEngineBridge;
 import pl.mcmmorpg.charactercreator.persist.CharacterStore;
 import pl.mcmmorpg.charactercreator.persist.OrphanScanner;
 import pl.mcmmorpg.charactercreator.profile.CharacterProfileModule;
+import pl.mcmmorpg.charactercreator.profile.ProfileListHeadsListener;
 import pl.mcmmorpg.charactercreator.profile.ProfileSelectionEnforcer;
 import pl.mcmmorpg.charactercreator.profile.RaceModelListener;
+import pl.mcmmorpg.charactercreator.skin.SkinService;
 
 /**
  * Join routing and the profile-select screen are NOT owned by this plugin — MMOProfiles'
@@ -40,6 +49,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
   private CharacterStore characterStore;
   private SessionStateStore sessionStateStore;
   private CreatorSessionManager sessionManager;
+  private SkinService skinService;
   private PreviewRotationTask rotationTask;
   private BukkitTask watchdogTask;
 
@@ -51,6 +61,11 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     creatorConfig.reload();
 
     ModelEngineBridge modelEngineBridge = new ModelEngineBridge(getLogger());
+
+    // Skorki czytamy PRZED walidacja configu — to ona mowi, dla ktorych par rasa x klasa
+    // ich brakuje.
+    skinService = new SkinService(this, getLogger());
+    skinService.reload();
 
     // Swiat kreatora byl dotad rozwiazywany RAZ, przy starcie, i nigdy nie sprawdzany na
     // null: dzialalo to wylacznie dlatego, ze w logu Multiverse wstawalo 30 s przed nami.
@@ -72,13 +87,14 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
           + "przy najblizszym wejsciu na serwer.");
     }
 
-    PreviewDummyManager previewDummyManager = new PreviewDummyManager(modelEngineBridge);
+    PreviewDummyManager previewDummyManager =
+        new PreviewDummyManager(modelEngineBridge, skinService);
     CreatorMenu creatorMenu = new CreatorMenu(creatorConfig);
     sessionManager = new CreatorSessionManager(this, creatorConfig, previewDummyManager,
         creatorMenu, sessionStateStore, getLogger());
     NameInputDialog nameInputDialog = new NameInputDialog(this);
     ConfirmService confirmService =
-        new ConfirmService(this, creatorConfig, modelEngineBridge, getLogger());
+        new ConfirmService(this, creatorConfig, modelEngineBridge, skinService, getLogger());
 
     CharacterProfileModule profileModule = new CharacterProfileModule(
         this, creatorConfig, characterStore, sessionManager, confirmService);
@@ -89,11 +105,22 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
 
     CreatorRoomListener creatorRoomListener = new CreatorRoomListener(
         this, creatorConfig, sessionManager, previewDummyManager, creatorMenu, nameInputDialog,
-        characterStore, profileModule::onConfirm);
+        characterStore, profileModule::onConfirm, profileModule::onCancel);
     getServer().getPluginManager().registerEvents(creatorRoomListener, this);
 
     // Model rasy nie przezywa zmiany swiata ani respawnu — ten listener go przywraca.
     getServer().getPluginManager().registerEvents(new RaceModelListener(profileModule), this);
+
+    // Glowy na ekranie wyboru postaci MMOProfiles — bez tego kazda postac ma tam glowe
+    // Steve'a. Wylaczalne, bo dotyka CUDZEGO okna: gdyby MMOProfiles zmienilo jego uklad,
+    // ma byc czym to odciac bez przebudowy jara.
+    if (creatorConfig.skinProfileHeads()) {
+      ProfileListHeadsListener headsListener =
+          ProfileListHeadsListener.create(this, characterStore, skinService);
+      if (headsListener != null) {
+        getServer().getPluginManager().registerEvents(headsListener, this);
+      }
+    }
 
     // Pierwszy krok cyklu: nikt nie gra bez postaci. Patrz ProfileSelectionEnforcer —
     // routing joina byl dotad NICZYIM, mimo ze javadoc tej klasy twierdzil, ze nalezy
@@ -106,7 +133,10 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
           + "wyboru profilu, moze grac bez postaci. Nikt tego nie pilnuje.");
     }
 
-    registerCommand(modelEngineBridge);
+    sweepCreatorRoom();
+    prepareCreatorRoom();
+
+    registerCommand(modelEngineBridge, profileModule);
 
     watchdogTask = getServer().getScheduler().runTaskTimer(this, sessionManager::tick,
         WATCHDOG_PERIOD_TICKS, WATCHDOG_PERIOD_TICKS);
@@ -120,7 +150,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     // Blueprinty ModelEngine wczytuja sie w jego wlasnym onEnable — sprawdzenie ich w tym
     // samym ticku co nasz start dawalo falszywe "brak blueprintu" dla KAZDEJ rasy.
     getServer().getScheduler().runTaskLater(this,
-        () -> reportProblems(creatorConfig.validate(modelEngineBridge), false /* earlyPass */),
+        () -> reportProblems(creatorConfig.validate(modelEngineBridge, skinService),
+            false /* earlyPass */),
         LATE_VALIDATION_DELAY_TICKS);
 
     getLogger().info("CharacterCreator " + getPluginMeta().getVersion()
@@ -128,8 +159,117 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
         + creatorConfig.classes().size() + " klas.");
   }
 
+  /**
+   * Sala kreatora ma byc PUSTA — poza podgladem, ktorego wlascicielem jest sesja.
+   *
+   * <p>Powod jest zmierzony, nie porzadkowy. W {@code creator_limbo} na produkcji stal
+   * widoczny {@code armor_stand} (tagi {@code cc_dummy}, {@code cc_p_TEST}) i
+   * {@code mannequin} — obie encje DOKLADNIE w punkcie {@code creator-room.dummy-anchor},
+   * czyli w tym samym miejscu, co podglad postaci, obie wsummonowane recznie
+   * ({@code Paper.SpawnReason: COMMAND}) przy porownywaniu tej wersji z prototypem
+   * config-only. Skutek dla gracza byl taki, ze armor stand wystawal zza ramion postaci,
+   * a przy kazdej zmianie rasy — kiedy LibsDisguises na chwile zdejmuje i zaklada
+   * przebranie od nowa — zza podgladu wygladal mannequin. Wygladalo to na blad modelu.
+   *
+   * <p>Czyscimy przy starcie, a nie przy kazdej sesji: w tym momencie nie ma jeszcze ani
+   * jednej sesji, wiec nie ma jak pomylic cudzego podgladu ze smieciem. Dwoch graczy
+   * naraz w sali ma po jednym zywym dummy'm i zamiatanie w trakcie skasowaloby jednemu
+   * z nich postac z ekranu.
+   */
+  private void sweepCreatorRoom() {
+    if (!creatorConfig.sweepRoomEntities()) {
+      return;
+    }
+    World world = getServer().getWorld(creatorConfig.roomWorldName());
+    if (world == null) {
+      return;
+    }
+    Map<String, Integer> removed = new TreeMap<>();
+    for (Entity entity : world.getEntities()) {
+      if (entity instanceof Player) {
+        continue;
+      }
+      removed.merge(entity.getType().name(), 1, Integer::sum);
+      entity.remove();
+    }
+    if (!removed.isEmpty()) {
+      getLogger().warning("Sprzatnieto " + removed.values().stream().mapToInt(Integer::intValue).sum()
+          + " obcych encji z sali kreatora (" + creatorConfig.roomWorldName() + "): " + removed
+          + ". Podglad postaci nalezy do sesji i powstaje dopiero przy wejsciu gracza — cokolwiek "
+          + "innego stoi w tej sali, zaslania postac albo wystaje zza niej.");
+    }
+    // Samo sprzatniecie nie wystarcza: sala ma podloge, wiec zwierzeta spawnuja sie w niej
+    // NA BIEZACO. Zlapane na zrzucie z prawdziwego klienta — kura chodzaca po scenie za
+    // plecami postaci, kilkanascie minut po tym, jak sprzatanie przy starcie usunelo
+    // poprzednia. Zamykamy zrodlo, a nie skutek; gamerule jest trwaly (level.dat) i widoczny
+    // dla admina przez /gamerule, wiec nie jest to ciche ustawienie znikad.
+    if (Boolean.TRUE.equals(world.getGameRuleValue(GameRule.DO_MOB_SPAWNING))) {
+      world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+      getLogger().info("Wylaczono naturalny spawn mobow w sali kreatora ("
+          + creatorConfig.roomWorldName() + ") — w kadrze podgladu nie ma po co nic chodzic.");
+    }
+  }
+
+  /**
+   * Sprawia, ze wejscie do sali jest NATYCHMIASTOWE, a nie "po chwili".
+   *
+   * <p>Zmierzone na prawdziwym kliencie: po kliknieciu "Create New Character" gracz widzi
+   * najpierw ekran <i>Loading terrain...</i> narysowany na POPRZEDNIM swiecie, potem sale
+   * w polowie doladowana (zrzuty w {@code output/kreator-responsywnosc-01/captures/}),
+   * a podglad postaci pojawia sie 352 ms po kliknieciu. Sala kreatora to osobny swiat, wiec
+   * wejscie do niej jest zmiana wymiaru i tego sie nie obejdzie — ale mozna skrocic to,
+   * na co klient czeka:
+   *
+   * <ul>
+   *   <li><b>zasieg widzenia</b>: sala ma kilkanascie blokow, a serwer wysylal jej chunki
+   *       z globalnego {@code view-distance=10}, czyli 21x21 = 441 chunkow pustki. Przy 4
+   *       jest ich 81 i ekran ladowania konczy sie odpowiednio wczesniej;</li>
+   *   <li><b>chunki na stale w pamieci</b>: bez tego serwer musi je najpierw wczytac
+   *       z dysku przy KAZDYM wejsciu, bo po wyjsciu ostatniego gracza sala sie wyladowuje.</li>
+   * </ul>
+   */
+  private void prepareCreatorRoom() {
+    World world = getServer().getWorld(creatorConfig.roomWorldName());
+    if (world == null) {
+      return;
+    }
+    int distance = creatorConfig.roomViewDistance();
+    if (distance > 0 && world.getViewDistance() != distance) {
+      world.setViewDistance(distance);
+      world.setSimulationDistance(distance);
+      getLogger().info("Zasieg widzenia sali kreatora (" + creatorConfig.roomWorldName()
+          + ") ustawiony na " + distance + " chunkow — ekran 'Loading terrain' konczy sie "
+          + "wtedy szybciej.");
+    }
+    if (!creatorConfig.keepRoomLoaded()) {
+      return;
+    }
+    // Kwadrat 3x3 wokol kotwic. Wiecej nie ma sensu: w kadrze nie widac dalej, a kazdy
+    // wymuszony chunk to pamiec trzymana do konca zycia serwera.
+    int loaded = 0;
+    for (Location anchor : List.of(creatorConfig.roomSpawn(), creatorConfig.dummyAnchor())) {
+      if (anchor == null) {
+        continue;
+      }
+      int cx = anchor.getBlockX() >> 4;
+      int cz = anchor.getBlockZ() >> 4;
+      for (int dx = -1; dx <= 1; dx++) {
+        for (int dz = -1; dz <= 1; dz++) {
+          if (!world.isChunkForceLoaded(cx + dx, cz + dz)) {
+            world.setChunkForceLoaded(cx + dx, cz + dz, true);
+            loaded++;
+          }
+        }
+      }
+    }
+    if (loaded > 0) {
+      getLogger().info("Sala kreatora trzymana w pamieci: " + loaded + " chunkow wymuszonych "
+          + "na stale, zeby wejscie nie czekalo na ich wczytanie z dysku.");
+    }
+  }
+
   private boolean validateOrDisable(ModelEngineBridge modelEngineBridge) {
-    List<CreatorConfig.Problem> problems = creatorConfig.validate(modelEngineBridge);
+    List<CreatorConfig.Problem> problems = creatorConfig.validate(modelEngineBridge, skinService);
     boolean fatal = reportProblems(problems, true /* earlyPass */);
     if (fatal) {
       getLogger().severe("CharacterCreator NIE zostanie wlaczony: config.yml ma bledy, ktore "
@@ -169,11 +309,14 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     return fatal;
   }
 
-  private void registerCommand(ModelEngineBridge modelEngineBridge) {
+  private void registerCommand(ModelEngineBridge modelEngineBridge,
+      CharacterProfileModule profileModule) {
     File mmoProfilesFolder = new File(getDataFolder().getParentFile(), "MMOProfiles");
     OrphanScanner orphanScanner = new OrphanScanner(mmoProfilesFolder, getLogger());
+    // /cc reload przeladowuje TEZ skins.yml — inaczej poprawka skorki wymagalaby restartu
+    // serwera, a jest to plik danych, nie kod.
     CreatorCommand executor = new CreatorCommand(creatorConfig, characterStore, sessionManager,
-        orphanScanner, modelEngineBridge, () -> { });
+        orphanScanner, modelEngineBridge, skinService, profileModule, skinService::reload);
     PluginCommand command = getCommand("charactercreator");
     if (command == null) {
       getLogger().severe("Komenda 'charactercreator' nie jest zadeklarowana w plugin.yml — "
