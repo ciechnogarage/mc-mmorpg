@@ -38,9 +38,33 @@ public final class CreatorConfig {
     }
   }
 
-  /** gear: co zakladamy dummy'emu, zeby wybor klasy byl widoczny NA POSTACI. */
+  /**
+   * gear: co zakladamy dummy'emu, zeby wybor klasy byl widoczny NA POSTACI.
+   * perRace: klasa rasowa pod tym archetypem (Czlowiek + wojownik = Rycerz) — sekcja
+   * {@code classes.<id>.races.<rasa>}; bez wpisu menu pokazuje sam archetyp.
+   */
   public record ClassOption(String id, String display, String mmocoreId, String icon,
-      Map<String, Material> gear, String description, String bonus) {
+      Map<String, Material> gear, String description, String bonus,
+      Map<String, RaceVariant> perRace) {
+
+    public String displayFor(String raceId) {
+      RaceVariant v = raceId == null ? null : perRace.get(raceId);
+      return v != null && !v.display().isBlank() ? v.display() : display;
+    }
+
+    public String descriptionFor(String raceId) {
+      RaceVariant v = raceId == null ? null : perRace.get(raceId);
+      return v != null && !v.description().isBlank() ? v.description() : description;
+    }
+
+    public String bonusFor(String raceId) {
+      RaceVariant v = raceId == null ? null : perRace.get(raceId);
+      return v != null && !v.bonus().isBlank() ? v.bonus() : bonus;
+    }
+  }
+
+  /** Nazwa i opis klasy rasowej; description moze miec kilka linii rozdzielonych '\n'. */
+  public record RaceVariant(String display, String description, String bonus) {
   }
 
   /** Waga problemu z configu. FATAL wylacza plugin — patrz CharacterCreatorPlugin#onEnable. */
@@ -114,9 +138,24 @@ public final class CreatorConfig {
         if (s == null) continue;
         classes.put(id, new ClassOption(id, s.getString("display", id), s.getString("mmocore-id", ""),
             s.getString("icon", ""), parseGear(s.getConfigurationSection("gear")),
-            s.getString("description", ""), s.getString("bonus", "")));
+            s.getString("description", ""), s.getString("bonus", ""),
+            parseRaceVariants(s.getConfigurationSection("races"))));
       }
     }
+  }
+
+  private static Map<String, RaceVariant> parseRaceVariants(ConfigurationSection section) {
+    Map<String, RaceVariant> out = new LinkedHashMap<>();
+    if (section == null) {
+      return out;
+    }
+    for (String raceId : section.getKeys(false)) {
+      ConfigurationSection r = section.getConfigurationSection(raceId);
+      if (r == null) continue;
+      out.put(raceId, new RaceVariant(r.getString("display", ""),
+          r.getString("description", ""), r.getString("bonus", "")));
+    }
+    return out;
   }
 
   /**

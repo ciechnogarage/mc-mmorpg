@@ -173,15 +173,19 @@ public final class CreatorMenu {
               selected ? "&8Wybrana rasa" : "&8Kliknij, by wybrać")));
     }
 
+    // Kafelek klasy mowi, KIM gracz zostanie przy wybranej rasie (Ork + wojownik =
+    // Wodz Wojny), a nie sam archetyp — klase rasowa nadaje potem skrypt CoreTools.
     List<String> classIds = session.classIds();
+    String raceId = session.currentRaceId();
     for (int i = 0; i < SLOTS_CLASS.length && i < classIds.size(); i++) {
       String id = classIds.get(i);
       CreatorConfig.ClassOption clazz = config.classes().get(id);
       boolean selected = id.equals(session.currentClassId());
       put(inventory, player, SLOTS_CLASS[i], icon(Material.PAPER,
           clazz != null ? clazz.icon() : "",
-          (selected ? "&f&l" : "&7") + (clazz != null ? clazz.display() : id), selected,
-          lore(clazz == null ? "" : clazz.description(), clazz == null ? "" : clazz.bonus(),
+          (selected ? "&f&l" : "&7") + (clazz != null ? clazz.displayFor(raceId) : id), selected,
+          lore(clazz == null ? "" : clazz.descriptionFor(raceId),
+              clazz == null ? "" : clazz.bonusFor(raceId),
               selected ? "&8Wybrana klasa" : "&8Kliknij, by wybrać")));
     }
 
@@ -208,7 +212,9 @@ public final class CreatorMenu {
   private String[] lore(String description, String bonus, String hint) {
     List<String> out = new ArrayList<>();
     if (description != null && !description.isBlank()) {
-      out.add("&7" + description);
+      for (String line : description.split("\n")) {
+        out.add("&7" + line);
+      }
     }
     if (bonus != null && !bonus.isBlank()) {
       out.add("&6" + bonus);
