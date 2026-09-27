@@ -29,6 +29,11 @@ import pl.mcmmorpg.charactercreator.profile.CharacterProfileModule;
 import pl.mcmmorpg.charactercreator.profile.ProfileListHeadsListener;
 import pl.mcmmorpg.charactercreator.profile.ProfileSelectionEnforcer;
 import pl.mcmmorpg.charactercreator.profile.RaceModelListener;
+import pl.mcmmorpg.charactercreator.scene.CreatorFlow;
+import pl.mcmmorpg.charactercreator.scene.SceneListener;
+import pl.mcmmorpg.charactercreator.scene.SceneManager;
+import pl.mcmmorpg.charactercreator.scene.SceneSettings;
+import pl.mcmmorpg.charactercreator.scene.SceneView;
 import pl.mcmmorpg.charactercreator.skin.SkinService;
 
 /**
@@ -52,6 +57,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
   private SkinService skinService;
   private PreviewRotationTask rotationTask;
   private BukkitTask watchdogTask;
+  private SceneManager sceneManager;
+  private ProfileSelectionEnforcer profileEnforcer;
 
   @Override
   public void onEnable() {
@@ -126,8 +133,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     // routing joina byl dotad NICZYIM, mimo ze javadoc tej klasy twierdzil, ze nalezy
     // do MMOProfiles.
     if (creatorConfig.enforceProfileSelection()) {
-      getServer().getPluginManager().registerEvents(
-          new ProfileSelectionEnforcer(this, creatorConfig, sessionManager, getLogger()), this);
+      profileEnforcer = new ProfileSelectionEnforcer(this, creatorConfig, sessionManager, getLogger());
+      getServer().getPluginManager().registerEvents(profileEnforcer, this);
     } else {
       getLogger().warning("profile-selection.enforce: false — gracz, ktory zamknie ekran "
           + "wyboru profilu, moze grac bez postaci. Nikt tego nie pilnuje.");
@@ -136,7 +143,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     sweepCreatorRoom();
     prepareCreatorRoom();
 
-    registerCommand(modelEngineBridge, profileModule);
+    CreatorCommand command = registerCommand(modelEngineBridge, profileModule);
+    startScene(previewDummyManager, command);
 
     watchdogTask = getServer().getScheduler().runTaskTimer(this, sessionManager::tick,
         WATCHDOG_PERIOD_TICKS, WATCHDOG_PERIOD_TICKS);
@@ -309,22 +317,86 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     return fatal;
   }
 
-  private void registerCommand(ModelEngineBridge modelEngineBridge,
+  /**
+   * Scena w stylu Wynncrafta (etap 1: szkielet). Na razie wchodzi sie do niej tylko
+   * komenda admina {@code /cc scena} — stary kreator dziala dalej bez zmian, dopoki etap 2
+   * nie podepnie zatwierdzania postaci.
+   */
+  private void startScene(PreviewDummyManager previewDummyManager, CreatorCommand command) {
+    SceneSettings settings = SceneSettings.read(getConfig(), creatorConfig.roomWorldName());
+    settings.problems().forEach(getLogger()::warning);
+    if (!settings.usable()) {
+      return;
+    }
+    sceneManager = new SceneManager(this, getLogger(), settings);
+    getServer().getPluginManager().registerEvents(new SceneListener(sceneManager, getLogger()), this);
+    sceneManager.start();
+    if (profileEnforcer != null) {
+      profileEnforcer.setSceneCheck(sceneManager::inScene);
+    }
+    CreatorFlow flow = new CreatorFlow(creatorConfig, previewDummyManager, new CreatorFlow.Outcome() {
+      @Override
+      public void chosen(SceneView view, CreatorConfig.RaceOption race,
+          CreatorConfig.ClassOption clazz) {
+        Player player = view.player();
+        view.close();
+        if (player != null) {
+          player.sendMessage(net.kyori.adventure.text.Component.text("Scena (etap 1): wybrano "
+              + race.id() + " + " + clazz.id() + ". Zatwierdzenie postaci podepnie etap 2.",
+              net.kyori.adventure.text.format.NamedTextColor.GREEN));
+        }
+      }
+
+      @Override
+      public void cancelled(SceneView view) {
+        view.close();
+      }
+    });
+    if (command != null) {
+      command.setSceneOpener((player, close) -> {
+        if (close) {
+          sceneManager.close(player.getUniqueId());
+          return "Scena zamknieta: " + player.getName();
+        }
+        if (sessionManager.isActive(player)) {
+          return player.getName() + " jest w starym kreatorze — najpierw go zakoncz.";
+        }
+        return sceneManager.open(player, flow.start())
+            ? "Scena otwarta: " + player.getName()
+            : "Scena nieskonfigurowana — patrz log.";
+      });
+    }
+    getLogger().info("Scena kreatora gotowa: " + settings.points().size() + " kadr(ow), /cc scena.");
+  }
+
+  private CreatorCommand registerCommand(ModelEngineBridge modelEngineBridge,
       CharacterProfileModule profileModule) {
     File mmoProfilesFolder = new File(getDataFolder().getParentFile(), "MMOProfiles");
     OrphanScanner orphanScanner = new OrphanScanner(mmoProfilesFolder, getLogger());
     // /cc reload przeladowuje TEZ skins.yml — inaczej poprawka skorki wymagalaby restartu
     // serwera, a jest to plik danych, nie kod.
     CreatorCommand executor = new CreatorCommand(creatorConfig, characterStore, sessionManager,
-        orphanScanner, modelEngineBridge, skinService, profileModule, skinService::reload);
+        orphanScanner, modelEngineBridge, skinService, profileModule, () -> {
+          skinService.reload();
+          // Kadry sceny tez z /cc reload — strojenie kamery bez restartu serwera.
+          // Scena wlaczona po starcie (brak sekcji przy starcie) nadal wymaga restartu.
+          if (sceneManager != null) {
+            SceneSettings next = SceneSettings.read(getConfig(), creatorConfig.roomWorldName());
+            next.problems().forEach(getLogger()::warning);
+            if (next.usable()) {
+              sceneManager.reload(next);
+            }
+          }
+        });
     PluginCommand command = getCommand("charactercreator");
     if (command == null) {
       getLogger().severe("Komenda 'charactercreator' nie jest zadeklarowana w plugin.yml — "
           + "narzedzia administracyjne sa niedostepne.");
-      return;
+      return null;
     }
     command.setExecutor(executor);
     command.setTabCompleter(executor);
+    return executor;
   }
 
   /**
@@ -336,6 +408,10 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
    */
   @Override
   public void onDisable() {
+    // Scena pierwsza: oddaje graczom tryb gry i miejsce, zanim reszta sie wylaczy.
+    if (sceneManager != null) {
+      sceneManager.closeAll();
+    }
     if (watchdogTask != null) {
       watchdogTask.cancel();
     }

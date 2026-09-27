@@ -1,0 +1,150 @@
+package pl.mcmmorpg.charactercreator.scene;
+
+import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
+import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Input;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInputEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
+
+/**
+ * Wejscie gracza w scenie i blokady. Kazda pulapka z PoC ma tu swoj handler:
+ * <ol>
+ *   <li>Shift wyrzuca z kamery — anulowany {@code PlayerStopSpectatingEntityEvent};</li>
+ *   <li>menu spectatora pod 1-9 teleportuje do innych graczy — anulowany teleport
+ *       {@code SPECTATE};</li>
+ *   <li>PPM przychodzi dwa razy (obie rece) — tylko {@code HAND} i odstep 4 tickow;</li>
+ *   <li>LPM w encje to w spectatorze "zacznij ja ogladac" — anulujemy i traktujemy jak klik.</li>
+ * </ol>
+ */
+public final class SceneListener implements Listener {
+
+  private static final int BACK_DEBOUNCE_TICKS = 4;
+
+  private final SceneManager scenes;
+  private final Logger logger;
+
+  public SceneListener(SceneManager scenes, Logger logger) {
+    this.scenes = scenes;
+    this.logger = logger;
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onStartSpectating(PlayerStartSpectatingEntityEvent event) {
+    SceneView view = scenes.view(event.getPlayer());
+    if (view == null || view.retargeting) {
+      return;
+    }
+    event.setCancelled(true);
+    if (event.getNewSpectatorTarget().equals(view.shield)) {
+      dispatch(view, c -> c.onSelect(view), "LPM");
+    }
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onStopSpectating(PlayerStopSpectatingEntityEvent event) {
+    SceneView view = scenes.view(event.getPlayer());
+    if (view != null && !view.retargeting) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onInteract(PlayerInteractEntityEvent event) {
+    SceneView view = scenes.view(event.getPlayer());
+    if (view == null) {
+      return;
+    }
+    event.setCancelled(true);
+    if (event.getHand() != EquipmentSlot.HAND || !event.getRightClicked().equals(view.shield)) {
+      return;
+    }
+    int now = Bukkit.getCurrentTick();
+    if (now - view.lastBackTick < BACK_DEBOUNCE_TICKS) {
+      return;
+    }
+    view.lastBackTick = now;
+    dispatch(view, c -> c.onBack(view), "PPM");
+  }
+
+  @EventHandler
+  public void onInput(PlayerInputEvent event) {
+    SceneView view = scenes.view(event.getPlayer());
+    if (view == null) {
+      return;
+    }
+    Input input = event.getInput();
+    boolean left = input.isLeft();
+    boolean right = input.isRight();
+    boolean pressedLeft = left && !view.lastLeft;
+    boolean pressedRight = right && !view.lastRight;
+    view.lastLeft = left;
+    view.lastRight = right;
+    if (pressedLeft) {
+      dispatch(view, c -> c.onPrevious(view), "A");
+    } else if (pressedRight) {
+      dispatch(view, c -> c.onNext(view), "D");
+    }
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onTeleport(PlayerTeleportEvent event) {
+    if (event.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE
+        && scenes.view(event.getPlayer()) != null) {
+      event.setCancelled(true);
+    }
+  }
+
+  /**
+   * Komendy w scenie tylko dla administracji. Gracz ma wszystko pod klawiszami; komenda
+   * wpisana w scenie (np. /spawn) wyrwalaby go z kamery w stanie SPECTATOR.
+   */
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onCommand(PlayerCommandPreprocessEvent event) {
+    Player player = event.getPlayer();
+    if (scenes.view(player) != null && !player.hasPermission("charactercreator.admin")) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onJoin(PlayerJoinEvent event) {
+    scenes.onJoin(event.getPlayer());
+  }
+
+  /** Smierc w scenie (np. z pustki pod sala) — scena nie ma juz czego pokazywac. */
+  @EventHandler
+  public void onDeath(org.bukkit.event.entity.PlayerDeathEvent event) {
+    scenes.close(event.getPlayer().getUniqueId());
+  }
+
+  @EventHandler
+  public void onQuit(PlayerQuitEvent event) {
+    scenes.close(event.getPlayer().getUniqueId());
+  }
+
+  /** Wejscie w trakcie sciemnienia jest polykane — dwa szybkie A nie przeskocza dwoch pozycji. */
+  private void dispatch(SceneView view, Consumer<SceneController> action, String key) {
+    if (view.closed || scenes.busy(view)) {
+      return;
+    }
+    try {
+      action.accept(view.controller());
+    } catch (RuntimeException ex) {
+      logger.severe("Scena: blad obslugi " + key + " w " + view.controller().getClass().getSimpleName()
+          + ": " + ex);
+      ex.printStackTrace();
+    }
+  }
+}

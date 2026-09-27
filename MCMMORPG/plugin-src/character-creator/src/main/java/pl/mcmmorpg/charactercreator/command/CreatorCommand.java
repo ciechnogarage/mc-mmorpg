@@ -52,6 +52,8 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
   private final SkinService skinService;
   private final CharacterProfileModule profileModule;
   private final Runnable onReload;
+  /** Etap 1 sceny: podglad kreatora w scenie dla admina. Null = scena wylaczona. */
+  private java.util.function.BiFunction<Player, Boolean, String> sceneOpener;
 
   public CreatorCommand(CreatorConfig config, CharacterStore store, CreatorSessionManager sessions,
       OrphanScanner orphanScanner, ModelEngineBridge modelEngineBridge, SkinService skinService,
@@ -64,6 +66,14 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     this.skinService = skinService;
     this.profileModule = profileModule;
     this.onReload = onReload;
+  }
+
+  /**
+   * Podpina {@code /cc scena}. Funkcja dostaje gracza i flage "zamknij" i zwraca komunikat
+   * dla wolajacego. Osobny setter, bo scena to opcjonalny modul z wlasnym configiem.
+   */
+  public void setSceneOpener(java.util.function.BiFunction<Player, Boolean, String> sceneOpener) {
+    this.sceneOpener = sceneOpener;
   }
 
   @Override
@@ -83,6 +93,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       case "prune" -> prune(sender, args);
       case "sessions" -> listSessions(sender);
       case "skin" -> skin(sender, args);
+      case "scena" -> scene(sender, args);
       default -> usage(sender, label);
     }
     return true;
@@ -101,6 +112,26 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
         NamedTextColor.GRAY));
     sender.sendMessage(Component.text("/" + label + " skin <gracz> [id|rasa klasa|auto] "
         + "[sesja] — pokaż albo nałóż skórkę (domyślnie NA STAŁE)", NamedTextColor.GRAY));
+    sender.sendMessage(Component.text("/" + label + " scena [gracz] [zamknij] — kreator w scenie "
+        + "(podgląd etapu 1)", NamedTextColor.GRAY));
+  }
+
+  /** {@code /cc scena [gracz] [zamknij]} — kreator w scenie (etap 1, tylko do testow). */
+  private void scene(CommandSender sender, String[] args) {
+    if (sceneOpener == null) {
+      sender.sendMessage(Component.text("Scena jest wylaczona (brak sekcji scene w config.yml).",
+          NamedTextColor.RED));
+      return;
+    }
+    boolean close = args.length >= 2 && "zamknij".equalsIgnoreCase(args[args.length - 1]);
+    String name = args.length >= 2 && !"zamknij".equalsIgnoreCase(args[1]) ? args[1] : null;
+    Player target = name != null ? Bukkit.getPlayerExact(name)
+        : sender instanceof Player p ? p : null;
+    if (target == null) {
+      sender.sendMessage(Component.text("Podaj gracza online.", NamedTextColor.RED));
+      return;
+    }
+    sender.sendMessage(Component.text(sceneOpener.apply(target, close), NamedTextColor.GRAY));
   }
 
   private void reload(CommandSender sender) {
@@ -462,7 +493,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       return List.of();
     }
     if (args.length == 1) {
-      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin"), args[0]);
+      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin", "scena"), args[0]);
     }
     if (args.length == 2 && "skin".equalsIgnoreCase(args[0])) {
       return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
@@ -474,6 +505,14 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     }
     if (args.length == 4 && "skin".equalsIgnoreCase(args[0])) {
       return prefixed(List.of("sesja"), args[3]);
+    }
+    if (args.length == 2 && "scena".equalsIgnoreCase(args[0])) {
+      List<String> options = new ArrayList<>(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+      options.add("zamknij");
+      return prefixed(options, args[1]);
+    }
+    if (args.length == 3 && "scena".equalsIgnoreCase(args[0])) {
+      return prefixed(List.of("zamknij"), args[2]);
     }
     if (args.length == 2 && "info".equalsIgnoreCase(args[0])) {
       return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);

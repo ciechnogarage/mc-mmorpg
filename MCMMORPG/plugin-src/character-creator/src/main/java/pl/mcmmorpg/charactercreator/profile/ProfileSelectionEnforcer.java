@@ -45,6 +45,12 @@ public final class ProfileSelectionEnforcer implements Listener {
   private final CreatorConfig config;
   private final CreatorSessionManager sessions;
   private final Logger logger;
+  /** Gracz w scenie kreatora — ekran MMOProfiles przykrylby kamere. Domyslnie nikt. */
+  private java.util.function.Predicate<UUID> inScene = id -> false;
+
+  public void setSceneCheck(java.util.function.Predicate<UUID> inScene) {
+    this.inScene = inScene;
+  }
 
   public ProfileSelectionEnforcer(Plugin plugin, CreatorConfig config,
       CreatorSessionManager sessions, Logger logger) {
@@ -86,6 +92,11 @@ public final class ProfileSelectionEnforcer implements Listener {
     // To byl dokladnie ten blad, ktory ten plik w swoim wlasnym javadocu wytyka gdzie
     // indziej: kolejny straznik walczacy o to samo, zamiast ustapic wlascicielowi stanu.
     if (sessions.isActive(playerId)) {
+      return;
+    }
+    // Ten sam przypadek co wyzej, tylko dla sceny: gracz w scenie jest w trakcie wyboru,
+    // a okno MMOProfiles zaslonioby mu kamere i przejelo klikniecia.
+    if (inScene.test(playerId)) {
       return;
     }
     // Gracz ma juz cos otwartego — najpewniej wlasnie ten ekran wyboru. Ponawianie

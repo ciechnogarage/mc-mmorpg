@@ -169,6 +169,33 @@ public final class PreviewDummyManager {
     return wanted;
   }
 
+  /**
+   * Przestawia cala stajnie na nowa kotwice — scena ma kilka kadrow (osobna sceneria na
+   * rase). Parking idzie RAZEM z kotwica: zostawiony w starym miejscu wypadlby poza zasieg
+   * sledzenia klienta, a wtedy wraca problem nowej encji i migajacej skorki domyslnej.
+   * Kat obrotu bierzemy z kotwicy — scena liczy go tak, zeby postac patrzyla w kamere.
+   */
+  public void moveAnchor(Player viewer, Location anchor) {
+    Stable stable = stables.get(viewer.getUniqueId());
+    if (stable == null) {
+      return;
+    }
+    stable.anchor = anchor.clone();
+    Location parking = parkingOf(stable);
+    for (LivingEntity carrier : stable.bySkin.values()) {
+      if (carrier == null || carrier.isDead()) {
+        continue;
+      }
+      if (carrier.equals(stable.active)) {
+        carrier.teleport(stable.anchor);
+        carrier.setRotation(stable.anchor.getYaw(), 0f);
+        carrier.setBodyYaw(stable.anchor.getYaw());
+      } else {
+        carrier.teleport(parking);
+      }
+    }
+  }
+
   /** Wszyscy nosiciele sesji — do chowania przed innymi graczami i do sprzatania. */
   public List<Entity> carriers(UUID viewerId) {
     Stable stable = stables.get(viewerId);
@@ -284,7 +311,12 @@ public final class PreviewDummyManager {
 
   /** Sam nosiciel, bez wygladu. */
   private static LivingEntity spawnCarrier(Location at) {
-    LivingEntity entity = (LivingEntity) at.getWorld().spawnEntity(at, EntityType.ZOMBIE);
+    // HUSK, nie ZOMBIE: husk z natury nie pali sie w sloncu. setShouldBurnInDay(false) nizej
+    // na 1.21.11 NIE wystarcza — zmierzone w scenie na otwartym niebie: aktywny nosiciel mial
+    // Fire=90 odnawiane co chwile i plonal na oczach gracza (w zadaszonej sali nie bylo tego
+    // widac). Przebranie i tak zaslania wyglad, a Husk to podklasa Zombie, wiec reszta
+    // kodu dziala bez zmian.
+    LivingEntity entity = (LivingEntity) at.getWorld().spawnEntity(at, EntityType.HUSK);
     entity.setAI(false);
     entity.setSilent(true);
     entity.setInvulnerable(true);

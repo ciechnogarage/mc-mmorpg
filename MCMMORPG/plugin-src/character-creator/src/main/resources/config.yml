@@ -83,6 +83,50 @@ creator-room:
 # Wartosci przesuniec zostaly w jarze 0.2.0 (deploy-backups/) — zrodla pluginu nie sa
 # w gicie, wiec to jedyna kopia starego ukladu.
 
+# SCENA W STYLU WYNNCRAFTA (etap 1: szkielet, projekt: claude.ai/artifact/7Le7N9VeAKLc2JfdjZYwWq).
+#
+# Gracz patrzy przez nieruchoma kamere (SPECTATOR na encji), steruje A/D, LPM, PPM.
+# Na razie wchodzi sie tu tylko komenda admina '/cc scena' — stary kreator dziala dalej.
+#
+# points: kadry. 'default' jest obowiazkowy; kadr o id rasy (np. 'ork') przenosi kamere
+#   w scenerie tej rasy — bez niego rasa pokazuje sie w kadrze domyslnym.
+#   camera  — oko kamery (katy liczone same: kamera patrzy na 'look'),
+#   subject — gdzie stoi postac (obraca sie przodem do kamery),
+#   card    — srodek karty z opisem (tekst na scenie, widoczny tylko dla gracza),
+#   look    — opcjonalnie: punkt, w ktory patrzy kamera (domyslnie piers postaci);
+#             przesuniety w bok ustawia postac poza srodkiem kadru.
+# fade.glyph: pelnoekranowy czarny glif Nexo (font minecraft:default). Pusty = bez sciemnien.
+scene:
+  world: 'creator_limbo'
+  shield-distance: 1.4
+  target-delay-ticks: 5
+  fade:
+    glyph: ''
+    in-ticks: 5
+    stay-ticks: 5
+    out-ticks: 10
+  # HUD innych pluginow na czas sceny (komendy z konsoli, %player% = gracz).
+  # Spectator chowa vanillowy HUD, ale nie paski MythicHUD ani action bara MMOCore
+  # (zycie/mana), ktory nadpisywal podpowiedz sterowania. Po zamknieciu — on-close.
+  hud:
+    on-open:
+      - 'hud layout %player% remove default-layout -s'
+      - 'hud layout %player% remove sword-layout -s'
+      - 'hud layout %player% remove chowance-layout -s'
+    repeat:
+      - 'mmocore admin hideab %player% 60'
+    repeat-ticks: 40
+    on-close:
+      - 'hud layout %player% add default-layout -s'
+      - 'hud layout %player% add sword-layout -s'
+      - 'hud layout %player% add chowance-layout -s'
+  points:
+    default:
+      camera:  { x: 0.5, y: 101.62, z: 0.5 }
+      subject: { x: 0.5, y: 100.0, z: -2.2 }
+      card:    { x: 2.0, y: 100.9, z: -2.0 }
+      look:    { x: 1.0, y: 101.0, z: -2.2 }
+
 preview:
   rotation-interval-ticks: 2
 
