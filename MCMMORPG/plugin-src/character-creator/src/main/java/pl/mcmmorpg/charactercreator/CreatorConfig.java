@@ -57,14 +57,32 @@ public final class CreatorConfig {
       return v != null && !v.description().isBlank() ? v.description() : description;
     }
 
+    /** Klasa rasowa albo null, gdy config jej nie ma (wtedy karta pokazuje sam archetyp). */
+    public RaceVariant variant(String raceId) {
+      return raceId == null ? null : perRace.get(raceId);
+    }
+
     public String bonusFor(String raceId) {
       RaceVariant v = raceId == null ? null : perRace.get(raceId);
       return v != null && !v.bonus().isBlank() ? v.bonus() : bonus;
     }
   }
 
-  /** Nazwa i opis klasy rasowej; description moze miec kilka linii rozdzielonych '\n'. */
-  public record RaceVariant(String display, String description, String bonus) {
+  /**
+   * Klasa rasowa. {@code description} (kilka linii rozdzielonych '\n') i {@code bonus} czyta
+   * stary kreator; {@code lore}, {@code armor}, {@code weapons} i {@code specializations} —
+   * karta klasy w scenie. Wszystko pisze tools/klasy-rasowe/generuj_klasy.py (funkcja kreator).
+   */
+  public record RaceVariant(String display, String description, String bonus, String lore,
+      String armor, String weapons, List<Specialization> specializations) {
+
+    public RaceVariant(String display, String description, String bonus) {
+      this(display, description, bonus, "", "", "", List.of());
+    }
+  }
+
+  /** Specjalizacja z 10. poziomu: nazwa (z kolorem &), opis i co daje. */
+  public record Specialization(String name, String description, String perks) {
   }
 
   /** Waga problemu z configu. FATAL wylacza plugin — patrz CharacterCreatorPlugin#onEnable. */
@@ -144,6 +162,10 @@ public final class CreatorConfig {
     }
   }
 
+  private static String str(Object o) {
+    return o == null ? "" : o.toString();
+  }
+
   private static Map<String, RaceVariant> parseRaceVariants(ConfigurationSection section) {
     Map<String, RaceVariant> out = new LinkedHashMap<>();
     if (section == null) {
@@ -152,8 +174,14 @@ public final class CreatorConfig {
     for (String raceId : section.getKeys(false)) {
       ConfigurationSection r = section.getConfigurationSection(raceId);
       if (r == null) continue;
+      List<Specialization> specs = new java.util.ArrayList<>();
+      for (Map<?, ?> m : r.getMapList("specializations")) {
+        specs.add(new Specialization(str(m.get("name")), str(m.get("description")),
+            str(m.get("perks"))));
+      }
       out.put(raceId, new RaceVariant(r.getString("display", ""),
-          r.getString("description", ""), r.getString("bonus", "")));
+          r.getString("description", ""), r.getString("bonus", ""), r.getString("lore", ""),
+          r.getString("armor", ""), r.getString("weapons", ""), List.copyOf(specs)));
     }
     return out;
   }

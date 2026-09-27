@@ -45,7 +45,7 @@ public final class CreatorFlow {
 
   /** Pierwszy ekran kreatora. */
   public SceneController start() {
-    return new RaceStep(0);
+    return new PickStep(0, 0);
   }
 
   // --- wspolne ----------------------------------------------------------------------
@@ -115,57 +115,149 @@ public final class CreatorFlow {
     return out;
   }
 
-  private static String counter(int index, int size) {
-    return (index + 1) + "/" + size;
+  /** Tekst bez kodow kolorow (&x) — tam, gdzie kolor nadaje karta, a nie config. */
+  private static String plain(String legacyText) {
+    return nz(legacyText).replaceAll("&[0-9a-fk-orA-FK-OR]", "");
   }
 
-  // --- krok 1: rasa -----------------------------------------------------------------
+  private static String nz(String s) {
+    return s == null ? "" : s;
+  }
 
-  private final class RaceStep implements SceneController {
-    private int index;
+  // --- jeden ekran: rasa (A/D) x klasa (W/S) -------------------------------------------
 
-    RaceStep(int index) {
-      this.index = index;
+  /**
+   * Wybor rasy i klasy na jednym ekranie (16 klas = 4 rasy x 4 archetypy).
+   *
+   * <p>Uklad wzorowany na Wynnie: u gory pasek ras, po lewej lista klas wybranej rasy,
+   * po prawej karta klasy ze specjalizacjami. A/D zmienia rase pod sciemnieniem (kazda rasa
+   * dostanie w etapie 4 wlasna scenerie) i ZACHOWUJE archetyp — gracz porownuje np.
+   * wojownika miedzy rasami. W/S zmienia klase od razu: to tylko przebranie w tym samym miejscu.
+   *
+   * <p>Dlaczego W/S, a nie Q/E: w kamerze spectatora serwer nie dostaje ani Q (klient
+   * spectatora nie wyrzuca przedmiotow), ani E (ekwipunek jest calkowicie po stronie klienta,
+   * patrz notatka o klawiszu E). W/S przychodzi tym samym pakietem co A/D.
+   */
+  private final class PickStep implements SceneController {
+    private int race;
+    private int clazz;
+
+    PickStep(int race, int clazz) {
+      this.race = race;
+      this.clazz = clazz;
     }
 
     private CreatorConfig.RaceOption race() {
       List<CreatorConfig.RaceOption> all = races();
-      return all.get(Math.floorMod(index, all.size()));
+      return all.get(Math.floorMod(race, all.size()));
+    }
+
+    private CreatorConfig.ClassOption clazz() {
+      List<CreatorConfig.ClassOption> all = classes();
+      return all.get(Math.floorMod(clazz, all.size()));
     }
 
     @Override
     public void onOpen(SceneView view) {
-      show(view);
+      showRace(view);
     }
 
-    private void show(SceneView view) {
-      CreatorConfig.RaceOption race = race();
-      view.point(race.id());
-      // Rasa w skorce pierwszego archetypu — zeby rasa byla widoczna na postaci od razu.
-      showPreview(view, race, classes().get(0));
-      view.card(raceCard(race));
-      view.hint(hint("A/D", "Rasa " + counter(Math.floorMod(index, races().size()), races().size()),
-          "LPM", "Wybierz", "PPM", "Wyjdź"));
+    /** Pelne odswiezenie: kadr rasy, postac, oba panele, pasek i podpowiedz. */
+    private void showRace(SceneView view) {
+      view.point(race().id());
+      view.topBar(raceStrip());
+      view.hint(hint("A/D", "Rasa", "W/S", "Klasa", "LPM", "Dalej", "PPM", "Wyjdź"));
+      showClass(view);
     }
 
-    private Component raceCard(CreatorConfig.RaceOption race) {
-      // Nazwa rasy na bialo: kolory ras z configu bywaja ciemne (&8 Nieumarly) i na
-      // ciemnym tle karty byly nieczytelne — zlapane na kliencie QA.
-      Component card = legacy(race.display()).color(NamedTextColor.WHITE)
+    private void showClass(SceneView view) {
+      CreatorConfig.RaceOption r = race();
+      CreatorConfig.ClassOption c = clazz();
+      showPreview(view, r, c);
+      view.list(classList(r));
+      view.card(classCard(r, c));
+    }
+
+    /** « Czlowiek   Ork   Elf   Nieumarly » — wybrana rasa jasna i w nawiasach. */
+    private Component raceStrip() {
+      List<CreatorConfig.RaceOption> all = races();
+      int current = Math.floorMod(race, all.size());
+      Component out = Component.text("◀ A    ", NamedTextColor.GOLD);
+      for (int i = 0; i < all.size(); i++) {
+        if (i > 0) {
+          out = out.append(Component.text("    "));
+        }
+        String name = plain(all.get(i).display());
+        out = out.append(i == current
+            ? Component.text("[ " + name + " ]", NamedTextColor.WHITE).decoration(TextDecoration.BOLD, true)
+            : Component.text(name, NamedTextColor.GRAY));
+      }
+      return out.append(Component.text("    D ▶", NamedTextColor.GOLD));
+    }
+
+    /** Lewy panel: rasa i jej cztery klasy, biezaca ze strzalka. */
+    private Component classList(CreatorConfig.RaceOption r) {
+      Component out = Component.text(plain(r.display()), NamedTextColor.WHITE)
           .decoration(TextDecoration.BOLD, true)
+          .append(Component.text("  " + nz(r.bonus()), NamedTextColor.GOLD))
           .append(Component.newline())
-          .append(Component.text(race.bonus() == null ? "" : race.bonus(), NamedTextColor.GOLD))
-          .append(Component.newline())
-          .append(lines(race.description(), NamedTextColor.GRAY))
+          .append(Component.text(nz(r.description()), NamedTextColor.GRAY))
           .append(Component.newline()).append(Component.newline())
-          .append(Component.text("Klasy tej rasy:", NamedTextColor.WHITE));
-      for (CreatorConfig.ClassOption clazz : classes()) {
-        card = card.append(Component.newline())
-            .append(Component.text(" • ", NamedTextColor.DARK_GRAY))
-            .append(legacy(clazz.displayFor(race.id())))
-            .append(Component.text(" (", NamedTextColor.DARK_GRAY))
-            .append(legacy(clazz.display()).color(NamedTextColor.GRAY))
-            .append(Component.text(")", NamedTextColor.DARK_GRAY));
+          .append(Component.text("Klasy  ", NamedTextColor.WHITE))
+          .append(Component.text("[W/S]", NamedTextColor.GOLD));
+      List<CreatorConfig.ClassOption> all = classes();
+      int current = Math.floorMod(clazz, all.size());
+      for (int i = 0; i < all.size(); i++) {
+        CreatorConfig.ClassOption c = all.get(i);
+        boolean on = i == current;
+        out = out.append(Component.newline())
+            .append(Component.text(on ? "▶ " : "   ", NamedTextColor.GOLD))
+            .append(on ? legacy(c.displayFor(r.id())).decoration(TextDecoration.BOLD, true)
+                : Component.text(plain(c.displayFor(r.id())), NamedTextColor.GRAY))
+            .append(Component.text("  " + plain(c.display()).toLowerCase(java.util.Locale.ROOT),
+                NamedTextColor.DARK_GRAY));
+      }
+      return out;
+    }
+
+    /** Prawy panel: karta klasy rasowej z obiema specjalizacjami. */
+    private Component classCard(CreatorConfig.RaceOption r, CreatorConfig.ClassOption c) {
+      CreatorConfig.RaceVariant v = c.variant(r.id());
+      Component card = legacy(c.displayFor(r.id())).decoration(TextDecoration.BOLD, true)
+          .append(Component.newline())
+          .append(Component.text(plain(r.display()) + " · " + plain(c.display()), NamedTextColor.GRAY))
+          .append(Component.newline()).append(Component.newline());
+      if (v == null || v.lore().isBlank()) {
+        // Config bez pol sceny (stary generator) — opis wielowierszowy jak w starym kreatorze.
+        return card.append(lines(c.descriptionFor(r.id()), NamedTextColor.WHITE))
+            .append(Component.newline()).append(Component.newline())
+            .append(Component.text(nz(c.bonusFor(r.id())), NamedTextColor.GOLD));
+      }
+      card = card.append(Component.text(v.lore(), NamedTextColor.WHITE))
+          .append(Component.newline()).append(Component.newline())
+          .append(Component.text("Zbroja: ", NamedTextColor.GRAY))
+          .append(Component.text(v.armor(), NamedTextColor.WHITE))
+          .append(Component.newline())
+          .append(Component.text("Broń: ", NamedTextColor.GRAY))
+          .append(Component.text(v.weapons(), NamedTextColor.WHITE));
+      if (!v.specializations().isEmpty()) {
+        card = card.append(Component.newline()).append(Component.newline())
+            .append(Component.text("Specjalizacje od 10. poziomu", NamedTextColor.GOLD));
+        for (CreatorConfig.Specialization spec : v.specializations()) {
+          // Nazwa zawsze biala, kolor specjalizacji tylko na znaczniku: czesc kolorow
+          // z generatora (&5, &8) byla na ciemnej karcie nieczytelna.
+          Component marker = legacy(spec.name().replaceAll("^((?:&[0-9a-fA-F])*).*$", "$1") + "◆ ");
+          card = card.append(Component.newline())
+              .append(marker)
+              .append(Component.text(plain(spec.name()), NamedTextColor.WHITE)
+                  .decoration(TextDecoration.BOLD, true))
+              .append(Component.newline())
+              .append(Component.text(spec.description(), NamedTextColor.GRAY));
+          if (!spec.perks().isBlank()) {
+            card = card.append(Component.newline())
+                .append(Component.text("+ " + spec.perks(), NamedTextColor.GREEN));
+          }
+        }
       }
       return card;
     }
@@ -173,22 +265,34 @@ public final class CreatorFlow {
     @Override
     public void onPrevious(SceneView view) {
       view.fade(() -> {
-        index--;
-        show(view);
+        race--;
+        showRace(view);
       });
     }
 
     @Override
     public void onNext(SceneView view) {
       view.fade(() -> {
-        index++;
-        show(view);
+        race++;
+        showRace(view);
       });
     }
 
     @Override
+    public void onUp(SceneView view) {
+      clazz--;
+      showClass(view);
+    }
+
+    @Override
+    public void onDown(SceneView view) {
+      clazz++;
+      showClass(view);
+    }
+
+    @Override
     public void onSelect(SceneView view) {
-      view.switchTo(new ClassStep(Math.floorMod(index, races().size()), 0));
+      outcome.chosen(view, race(), clazz());
     }
 
     @Override
@@ -199,86 +303,6 @@ public final class CreatorFlow {
 
     @Override
     public void onClose(SceneView view) {
-      if (view.isClosed()) {
-        dropPreview(view);
-      }
-    }
-  }
-
-  // --- krok 2: klasa rasowa ---------------------------------------------------------
-
-  private final class ClassStep implements SceneController {
-    private final int raceIndex;
-    private int index;
-
-    ClassStep(int raceIndex, int index) {
-      this.raceIndex = raceIndex;
-      this.index = index;
-    }
-
-    private CreatorConfig.RaceOption race() {
-      return races().get(raceIndex);
-    }
-
-    private CreatorConfig.ClassOption clazz() {
-      List<CreatorConfig.ClassOption> all = classes();
-      return all.get(Math.floorMod(index, all.size()));
-    }
-
-    @Override
-    public void onOpen(SceneView view) {
-      show(view);
-    }
-
-    /** Klasy zmieniaja sie w tej samej scenerii rasy — bez sciemnienia, jak przebranie. */
-    private void show(SceneView view) {
-      CreatorConfig.RaceOption race = race();
-      CreatorConfig.ClassOption clazz = clazz();
-      showPreview(view, race, clazz);
-      view.card(classCard(race, clazz));
-      view.hint(hint("A/D", "Klasa " + counter(Math.floorMod(index, classes().size()), classes().size()),
-          "LPM", "Wybierz", "PPM", "Zmień rasę"));
-    }
-
-    private Component classCard(CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz) {
-      return legacy(clazz.displayFor(race.id())).decoration(TextDecoration.BOLD, true)
-          .append(Component.newline())
-          .append(legacy(race.display()).color(NamedTextColor.GRAY))
-          .append(Component.text(" · ", NamedTextColor.DARK_GRAY))
-          .append(legacy(clazz.display()).color(NamedTextColor.GRAY))
-          .append(Component.newline()).append(Component.newline())
-          .append(lines(clazz.descriptionFor(race.id()), NamedTextColor.WHITE))
-          .append(Component.newline()).append(Component.newline())
-          .append(Component.text(clazz.bonusFor(race.id()), NamedTextColor.GOLD));
-    }
-
-    @Override
-    public void onPrevious(SceneView view) {
-      index--;
-      show(view);
-    }
-
-    @Override
-    public void onNext(SceneView view) {
-      index++;
-      show(view);
-    }
-
-    @Override
-    public void onSelect(SceneView view) {
-      CreatorConfig.RaceOption race = race();
-      CreatorConfig.ClassOption clazz = clazz();
-      outcome.chosen(view, race, clazz);
-    }
-
-    @Override
-    public void onBack(SceneView view) {
-      view.switchTo(new RaceStep(raceIndex));
-    }
-
-    @Override
-    public void onClose(SceneView view) {
-      // Zamkniecie sceny (wyjscie z serwera, admin) sprzata podglad niezaleznie od kroku.
       if (view.isClosed()) {
         dropPreview(view);
       }

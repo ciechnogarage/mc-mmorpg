@@ -85,16 +85,24 @@ public final class SceneListener implements Listener {
       return;
     }
     Input input = event.getInput();
-    boolean left = input.isLeft();
-    boolean right = input.isRight();
-    boolean pressedLeft = left && !view.lastLeft;
-    boolean pressedRight = right && !view.lastRight;
-    view.lastLeft = left;
-    view.lastRight = right;
+    // Zbocze narastajace: reagujemy na wcisniecie, nie na trzymanie klawisza.
+    boolean pressedLeft = input.isLeft() && !view.lastLeft;
+    boolean pressedRight = input.isRight() && !view.lastRight;
+    boolean pressedUp = input.isForward() && !view.lastForward;
+    boolean pressedDown = input.isBackward() && !view.lastBackward;
+    view.lastLeft = input.isLeft();
+    view.lastRight = input.isRight();
+    view.lastForward = input.isForward();
+    view.lastBackward = input.isBackward();
     if (pressedLeft) {
       dispatch(view, c -> c.onPrevious(view), "A");
     } else if (pressedRight) {
       dispatch(view, c -> c.onNext(view), "D");
+    }
+    if (pressedUp) {
+      dispatch(view, c -> c.onUp(view), "W");
+    } else if (pressedDown) {
+      dispatch(view, c -> c.onDown(view), "S");
     }
   }
 
@@ -129,7 +137,12 @@ public final class SceneListener implements Listener {
     scenes.close(event.getPlayer().getUniqueId());
   }
 
-  @EventHandler
+  /**
+   * LOWEST: scena ma sie zamknac ZANIM MMOProfiles zapisze postac. Zlapane na klonie:
+   * wyjscie z gry w scenie zapisalo profilowi pozycje w sali sceny i tryb SPECTATOR —
+   * po powrocie gracz ladowal jako duch w pustej scenerii.
+   */
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onQuit(PlayerQuitEvent event) {
     scenes.close(event.getPlayer().getUniqueId());
   }

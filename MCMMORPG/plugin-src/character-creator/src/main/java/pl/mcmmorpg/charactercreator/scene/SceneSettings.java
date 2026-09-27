@@ -24,8 +24,33 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
 
   public static final String DEFAULT_POINT = "default";
 
-  /** Jeden kadr: kamera, postac na scenie i karta obok niej. */
-  public record Point(Location camera, Location subject, Location card) {}
+  /**
+   * Jeden kadr: kamera, postac na scenie, karta obok niej (prawa strona) i panel listy
+   * (lewa strona). {@code list} null = lustro karty wzgledem postaci.
+   */
+  public record Point(Location camera, Location subject, Location card, Location list) {
+
+    public Point(Location camera, Location subject, Location card) {
+      this(camera, subject, card, null);
+    }
+
+    /** Panel listy: z configu albo odbicie karty po drugiej stronie postaci. */
+    public Location listOrMirror() {
+      if (list != null || card == null) {
+        return list;
+      }
+      Vector dir = subject.toVector().subtract(camera.toVector()).setY(0);
+      if (dir.lengthSquared() < 1.0E-6) {
+        return null;
+      }
+      dir.normalize();
+      Vector v = card.toVector().subtract(subject.toVector());
+      Vector along = dir.clone().multiply(v.getX() * dir.getX() + v.getZ() * dir.getZ());
+      Vector across = new Vector(v.getX(), 0, v.getZ()).subtract(along);
+      Vector mirrored = along.subtract(across).setY(v.getY());
+      return subject.clone().add(mirrored);
+    }
+  }
 
   public static SceneSettings read(ConfigurationSection root, String fallbackWorld) {
     ConfigurationSection s = root == null ? null : root.getConfigurationSection("scene");
@@ -43,9 +68,10 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
         Location subject = location(world, p.getConfigurationSection("subject"));
         Location card = location(world, p.getConfigurationSection("card"));
         Location look = location(world, p.getConfigurationSection("look"));
+        Location list = location(world, p.getConfigurationSection("list"));
         if (camera != null && subject != null) {
           Location target = look != null ? look : subject.clone().add(0, 1.0, 0);
-          points.put(id, new Point(aimed(camera, target), subject, card));
+          points.put(id, new Point(aimed(camera, target), subject, card, list));
         }
       }
     }

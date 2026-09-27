@@ -18,6 +18,12 @@ public interface SceneController {
   /** D: nastepna pozycja. */
   default void onNext(SceneView view) {}
 
+  /** W: pozycja wyzej na liscie. */
+  default void onUp(SceneView view) {}
+
+  /** S: pozycja nizej na liscie. */
+  default void onDown(SceneView view) {}
+
   /** LPM. */
   default void onSelect(SceneView view) {}
 

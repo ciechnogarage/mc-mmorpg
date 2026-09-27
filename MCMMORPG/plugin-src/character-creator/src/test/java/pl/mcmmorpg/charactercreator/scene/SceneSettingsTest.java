@@ -38,6 +38,17 @@ class SceneSettingsTest {
   }
 
   @Test
+  void panel_listy_to_lustro_karty() {
+    // Kamera na poludniu patrzy na polnoc; karta 2 bloki na wschod (+X) i 0.5 blizej kamery.
+    SceneSettings.Point p = new SceneSettings.Point(new Location(null, 0, 101.62, 3),
+        new Location(null, 0, 100, 0), new Location(null, 2, 101, 0.5));
+    Location list = p.listOrMirror();
+    assertEquals(-2, list.getX(), 1e-9);
+    assertEquals(101, list.getY(), 1e-9);
+    assertEquals(0.5, list.getZ(), 1e-9);
+  }
+
+  @Test
   void kamera_patrzy_na_cel() {
     // Cel na polnoc (-Z) i na wysokosci kamery: yaw 180, pitch 0.
     Location aimed = SceneSettings.aimed(new Location(null, 0, 101, 0), new Location(null, 0, 101, -3));

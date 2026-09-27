@@ -32,6 +32,8 @@ public final class SceneView {
   ItemDisplay camera;
   Interaction shield;
   TextDisplay card;
+  TextDisplay list;
+  net.kyori.adventure.bossbar.BossBar topBar;
   SceneSettings.Point currentPoint;
   String currentPointId;
   Component hint = Component.empty();
@@ -47,6 +49,8 @@ public final class SceneView {
   /** PPM przychodzi dwa razy (obie rece) i czasem w dwoch kolejnych tickach. */
   long lastBackTick;
   boolean lastLeft;
+  boolean lastForward;
+  boolean lastBackward;
   boolean lastRight;
   boolean closed;
 
@@ -98,7 +102,17 @@ public final class SceneView {
 
   /** Tresc karty obok postaci. {@code null} chowa karte. */
   public void card(Component text) {
-    manager.setCard(this, text);
+    manager.setPanel(card, text);
+  }
+
+  /** Panel po lewej stronie postaci (lista do wyboru). {@code null} chowa panel. */
+  public void list(Component text) {
+    manager.setPanel(list, text);
+  }
+
+  /** Napis u gory ekranu (np. pasek ras). {@code null} chowa. */
+  public void topBar(Component text) {
+    manager.setTopBar(this, text);
   }
 
   /** Podpowiedz sterowania na action barze, odswiezana przez scene. */

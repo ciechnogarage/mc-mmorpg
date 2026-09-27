@@ -6,8 +6,9 @@
 # Kadr do config.yml (scene.points.default):
 #   camera  { x: 301.5, y: 101.62, z: 285.5 }
 #   subject { x: 301.5, y: 100.0,  z: 282.5 }
-#   card    { x: 303.6, y: 100.9,  z: 283.4 }
-#   look    { x: 302.1, y: 101.0,  z: 282.5 }
+#   card    { x: 303.6, y: 100.45, z: 282.4 }
+#   list    { x: 299.4, y: 100.95, z: 282.4 }
+#   look    { x: 301.5, y: 101.0,  z: 282.5 }
 #
 # Pulapki (zmierzone): 'tp' i 'time' przechwytuje CMI — tylko minecraft:tp / minecraft:time;
 # '/place structure village' w pustym swiecie stawia same sciezki, bez domow — dlatego

@@ -334,6 +334,11 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     if (profileEnforcer != null) {
       profileEnforcer.setSceneCheck(sceneManager::inScene);
     }
+    // Stary kreator stoi w tym samym swiecie — jego sesji straznik nie rusza, admina tez nie
+    // (buduje scenerie). isPermissionSet, nie hasPermission: wlasciciel ma OP.
+    sceneManager.setStrayGuard(
+        p -> sessionManager.isActive(p) || p.isPermissionSet(CreatorCommand.PERMISSION),
+        sessionManager::configuredExit);
     CreatorFlow flow = new CreatorFlow(creatorConfig, previewDummyManager, new CreatorFlow.Outcome() {
       @Override
       public void chosen(SceneView view, CreatorConfig.RaceOption race,

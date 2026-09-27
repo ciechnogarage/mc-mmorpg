@@ -85,14 +85,18 @@ creator-room:
 
 # SCENA W STYLU WYNNCRAFTA (etap 1: szkielet, projekt: claude.ai/artifact/7Le7N9VeAKLc2JfdjZYwWq).
 #
-# Gracz patrzy przez nieruchoma kamere (SPECTATOR na encji), steruje A/D, LPM, PPM.
+# Gracz patrzy przez nieruchoma kamere (SPECTATOR na encji). Jeden ekran wyboru:
+# A/D = rasa (pod sciemnieniem), W/S = klasa, LPM = dalej, PPM = wyjdz. Q/E nie wchodza
+# w gre: w spectatorze serwer ich nie dostaje (E jest w ogole po stronie klienta).
 # Na razie wchodzi sie tu tylko komenda admina '/cc scena' — stary kreator dziala dalej.
 #
 # points: kadry. 'default' jest obowiazkowy; kadr o id rasy (np. 'ork') przenosi kamere
 #   w scenerie tej rasy — bez niego rasa pokazuje sie w kadrze domyslnym.
 #   camera  — oko kamery (katy liczone same: kamera patrzy na 'look'),
 #   subject — gdzie stoi postac (obraca sie przodem do kamery),
-#   card    — srodek karty z opisem (tekst na scenie, widoczny tylko dla gracza),
+#   card    — karta klasy po prawej (tekst na scenie, widoczny tylko dla gracza; rosnie w gore
+#             od punktu, wiec dlugie karty stawiac nizej),
+#   list    — opcjonalnie: panel listy klas po lewej; bez klucza = lustro karty wzgledem postaci,
 #   look    — opcjonalnie: punkt, w ktory patrzy kamera (domyslnie piers postaci);
 #             przesuniety w bok ustawia postac poza srodkiem kadru.
 # fade.glyph: pelnoekranowy czarny glif Nexo (font minecraft:default). Pusty = bez sciemnien.

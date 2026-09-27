@@ -50,12 +50,29 @@ public final class SceneManager {
   /** Co ile tickow ponawiac podpowiedz: action bar gasnie sam po ok. 3 s. */
   private static final int HINT_PERIOD_TICKS = 30;
   private static final double SHIELD_SIZE = 2.6;
+  private static final int PANEL_LINE_WIDTH = 230;
+  private static final float PANEL_SCALE = 0.5f;
 
   private final Plugin plugin;
   private final Logger logger;
   private final Map<UUID, SceneView> views = new ConcurrentHashMap<>();
   private SceneSettings settings;
   private BukkitTask task;
+  /** Kto moze byc w swiecie sceny bez sceny (stary kreator, admin). Null = straznik wylaczony. */
+  private java.util.function.Predicate<Player> strayExempt;
+  private java.util.function.Supplier<Location> strayExit;
+
+  /**
+   * Straznik zablakanych: gracz w swiecie sceny, ktory nie jest w scenie, nie ma tam czego
+   * szukac — odsylamy go na wyjscie i zdejmujemy SPECTATOR. Chroni przed stanem zapisanym
+   * przez MMOProfiles w trakcie sceny (wyjscie z gry, crash serwera), ktory wraca przy
+   * wyborze postaci, a nie przy samym wejsciu na serwer.
+   */
+  public void setStrayGuard(java.util.function.Predicate<Player> exempt,
+      java.util.function.Supplier<Location> exit) {
+    this.strayExempt = exempt;
+    this.strayExit = exit;
+  }
 
   public SceneManager(Plugin plugin, Logger logger, SceneSettings settings) {
     this.plugin = plugin;
@@ -154,20 +171,10 @@ public final class SceneManager {
       e.setInteractionHeight((float) SHIELD_SIZE);
       e.setResponsive(false);
     });
-    Location cardAt = point.card() != null ? point.card() : cam;
-    view.card = cam.getWorld().spawn(cardAt, TextDisplay.class, e -> {
-      e.setPersistent(false);
-      e.setVisibleByDefault(false);
-      e.setBillboard(Display.Billboard.CENTER);
-      e.setAlignment(TextDisplay.TextAlignment.LEFT);
-      e.setLineWidth(210);
-      e.setShadowed(true);
-      e.text(Component.empty());
-      e.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
-      e.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
-          new Vector3f(0.55f, 0.55f, 0.55f), new AxisAngle4f()));
-    });
-    for (Entity e : new Entity[] {view.camera, view.shield, view.card}) {
+    view.card = spawnPanel(point.card() != null ? point.card() : cam, TextDisplay.TextAlignment.LEFT);
+    Location listAt = point.listOrMirror();
+    view.list = spawnPanel(listAt != null ? listAt : cam, TextDisplay.TextAlignment.LEFT);
+    for (Entity e : new Entity[] {view.camera, view.shield, view.card, view.list}) {
       player.showEntity(plugin, e);
     }
     isolate(player);
@@ -208,7 +215,7 @@ public final class SceneManager {
     } catch (RuntimeException ex) {
       logger.warning("onClose sceny rzucil wyjatek: " + ex);
     }
-    for (Entity e : new Entity[] {view.camera, view.shield, view.card}) {
+    for (Entity e : new Entity[] {view.camera, view.shield, view.card, view.list}) {
       if (e != null && e.isValid()) {
         e.remove();
       }
@@ -224,6 +231,9 @@ public final class SceneManager {
     }
     player.clearTitle();
     player.sendActionBar(Component.empty());
+    if (view.topBar != null) {
+      player.hideBossBar(view.topBar);
+    }
     runAll(settings.hudOnClose(), player);
     player.setGameMode(view.originMode() == null ? GameMode.SURVIVAL : view.originMode());
     player.teleport(view.origin());
@@ -259,6 +269,8 @@ public final class SceneManager {
     view.camera.teleport(point.camera());
     view.shield.teleport(shieldLocation(point.camera()));
     view.card.teleport(point.card() != null ? point.card() : point.camera());
+    Location listAt = point.listOrMirror();
+    view.list.teleport(listAt != null ? listAt : point.camera());
     view.targetReadyTick = Bukkit.getCurrentTick() + settings.targetDelayTicks();
   }
 
@@ -274,17 +286,59 @@ public final class SceneManager {
     return at;
   }
 
-  void setCard(SceneView view, Component text) {
-    if (view.card == null) {
+  /** Panel tekstowy na scenie (karta, lista): widoczny tylko dla gracza, zawsze przodem. */
+  private TextDisplay spawnPanel(Location at, TextDisplay.TextAlignment alignment) {
+    return at.getWorld().spawn(at, TextDisplay.class, e -> {
+      e.setPersistent(false);
+      e.setVisibleByDefault(false);
+      e.setBillboard(Display.Billboard.CENTER);
+      e.setAlignment(alignment);
+      e.setLineWidth(PANEL_LINE_WIDTH);
+      e.setShadowed(true);
+      e.text(Component.empty());
+      e.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
+      e.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
+          new Vector3f(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE), new AxisAngle4f()));
+    });
+  }
+
+  void setPanel(TextDisplay panel, Component text) {
+    if (panel == null) {
       return;
     }
     if (text == null) {
-      view.card.text(Component.empty());
-      view.card.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
+      panel.text(Component.empty());
+      panel.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
     } else {
-      view.card.text(text);
-      view.card.setBackgroundColor(Color.fromARGB(190, 14, 18, 16));
+      panel.text(text);
+      panel.setBackgroundColor(Color.fromARGB(190, 14, 18, 16));
     }
+  }
+
+  /**
+   * Pasek u gory ekranu: bossbar z samym napisem. Kolor ZOLTY celowo — pack MythicHUD
+   * podmienia {@code boss_bar/yellow_background} na przezroczysty, a przy postepie 0 pasek
+   * rysuje tylko tlo, wiec zostaje sam tekst.
+   */
+  void setTopBar(SceneView view, Component text) {
+    Player player = view.player();
+    if (player == null) {
+      return;
+    }
+    if (text == null) {
+      if (view.topBar != null) {
+        player.hideBossBar(view.topBar);
+      }
+      return;
+    }
+    if (view.topBar == null) {
+      view.topBar = net.kyori.adventure.bossbar.BossBar.bossBar(text, 0f,
+          net.kyori.adventure.bossbar.BossBar.Color.YELLOW,
+          net.kyori.adventure.bossbar.BossBar.Overlay.PROGRESS);
+    } else {
+      view.topBar.name(text);
+    }
+    player.showBossBar(view.topBar);
   }
 
   void pushHint(SceneView view) {
@@ -370,6 +424,9 @@ public final class SceneManager {
   /** Straznik: kamera, tryb i podpowiedz. Co tick, bo kamera ma wrocic bez migniecia. */
   private void tick() {
     int now = Bukkit.getCurrentTick();
+    if (now % 20 == 0) {
+      sendStraysHome();
+    }
     for (SceneView view : views.values()) {
       Player player = view.player();
       if (player == null || !player.isOnline()) {
@@ -384,6 +441,30 @@ public final class SceneManager {
       if (now % settings.hudRepeatTicks() == 0) {
         runAll(settings.hudRepeat(), player);
       }
+    }
+  }
+
+  private void sendStraysHome() {
+    if (strayExempt == null || strayExit == null) {
+      return;
+    }
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      if (!player.getWorld().getName().equals(settings.worldName())
+          || views.containsKey(player.getUniqueId()) || player.isDead()
+          || strayExempt.test(player)) {
+        continue;
+      }
+      Location exit = strayExit.get();
+      if (exit == null) {
+        continue;
+      }
+      if (player.getGameMode() == GameMode.SPECTATOR) {
+        player.setGameMode(GameMode.SURVIVAL);
+      }
+      player.teleport(exit);
+      runAll(settings.hudOnClose(), player);
+      logger.warning("Scena: " + player.getName() + " byl w " + settings.worldName()
+          + " poza scena (stary zapis profilu?) — odeslany na wyjscie.");
     }
   }
 
