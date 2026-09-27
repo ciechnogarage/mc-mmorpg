@@ -46,9 +46,13 @@ public final class ConfirmService {
    * @return rekord albo {@code null}, gdy config nie pozwala dokonczyc tworzenia.
    */
   public CharacterRecord buildRecord(Player player, CreatorSession session, UUID profileId) {
-    String raceId = session.currentRaceId();
-    String classId = session.currentClassId();
-    String name = session.hasName() ? session.pendingName() : player.getName();
+    return buildRecord(player, session.currentRaceId(), session.currentClassId(),
+        session.hasName() ? session.pendingName() : player.getName(), "", profileId);
+  }
+
+  /** To samo bez sesji starego kreatora — dla sceny (ksiega "Nowa postac"). */
+  public CharacterRecord buildRecord(Player player, String raceId, String classId, String name,
+      String iconColor, UUID profileId) {
 
     CreatorConfig.ClassOption classOption = config.classes().get(classId);
     if (classOption == null || classOption.mmocoreId().isBlank()) {
@@ -71,7 +75,8 @@ public final class ConfirmService {
     // 'last-used' od razu, a nie dopiero przy nastepnym wyborze: swiezo utworzona postac
     // JEST ta ostatnio graną, wiec przy najblizszym wejsciu ma to byc jej skorka.
     return new CharacterRecord(profileId.toString(), name, raceId, classId,
-        skin == null ? "" : skin.id(), player.getUniqueId(), player.getName(), now, now);
+        skin == null ? "" : skin.id(), player.getUniqueId(), player.getName(), now, now,
+        iconColor == null ? "" : iconColor);
   }
 
   /**

@@ -158,7 +158,10 @@ public final class CharacterStore {
           // 0 = klucza nie ma (rekord sprzed schematu 3). NIE podstawiamy tu 'created-at':
           // rozroznienie "nigdy nie wybrana" od "wybrana wtedy, kiedy powstala" robi
           // CharacterRecord#effectiveLastUsed, a plik ma mowic prawde o tym, co wie.
-          lastUsed == 0L ? null : Instant.ofEpochMilli(lastUsed));
+          lastUsed == 0L ? null : Instant.ofEpochMilli(lastUsed),
+          // Opcjonalne od sceny kreatora; brak = kolor domyslny. Bez podbicia schematu:
+          // pole tylko dopisane, a stary jar po prostu je pominie.
+          c.getString("icon-color", ""));
       cache.put(profileId, record);
       indexName(profileId, record.name());
     }
@@ -357,6 +360,9 @@ public final class CharacterStore {
       yaml.set(path + ".created-at", record.createdAt().toEpochMilli());
       if (record.lastUsedAt() != null) {
         yaml.set(path + ".last-used", record.lastUsedAt().toEpochMilli());
+      }
+      if (record.iconColor() != null && !record.iconColor().isBlank()) {
+        yaml.set(path + ".icon-color", record.iconColor());
       }
     }
     return yaml.saveToString();

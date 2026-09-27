@@ -30,6 +30,7 @@ import pl.mcmmorpg.charactercreator.profile.ProfileListHeadsListener;
 import pl.mcmmorpg.charactercreator.profile.ProfileSelectionEnforcer;
 import pl.mcmmorpg.charactercreator.profile.RaceModelListener;
 import pl.mcmmorpg.charactercreator.scene.CreatorFlow;
+import pl.mcmmorpg.charactercreator.scene.NewCharacterBook;
 import pl.mcmmorpg.charactercreator.scene.SceneListener;
 import pl.mcmmorpg.charactercreator.scene.SceneManager;
 import pl.mcmmorpg.charactercreator.scene.SceneSettings;
@@ -144,7 +145,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     prepareCreatorRoom();
 
     CreatorCommand command = registerCommand(modelEngineBridge, profileModule);
-    startScene(previewDummyManager, command);
+    startScene(previewDummyManager, command, profileModule);
 
     watchdogTask = getServer().getScheduler().runTaskTimer(this, sessionManager::tick,
         WATCHDOG_PERIOD_TICKS, WATCHDOG_PERIOD_TICKS);
@@ -322,7 +323,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
    * komenda admina {@code /cc scena} — stary kreator dziala dalej bez zmian, dopoki etap 2
    * nie podepnie zatwierdzania postaci.
    */
-  private void startScene(PreviewDummyManager previewDummyManager, CreatorCommand command) {
+  private void startScene(PreviewDummyManager previewDummyManager, CreatorCommand command,
+      CharacterProfileModule profileModule) {
     SceneSettings settings = SceneSettings.read(getConfig(), creatorConfig.roomWorldName());
     settings.problems().forEach(getLogger()::warning);
     if (!settings.usable()) {
@@ -339,17 +341,40 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     sceneManager.setStrayGuard(
         p -> sessionManager.isActive(p) || p.isPermissionSet(CreatorCommand.PERMISSION),
         sessionManager::configuredExit);
-    CreatorFlow flow = new CreatorFlow(creatorConfig, previewDummyManager, new CreatorFlow.Outcome() {
+    NewCharacterBook book = new NewCharacterBook(this, getLogger());
+    getServer().getPluginManager().registerEvents(book, this);
+    java.util.function.Function<CreatorFlow.Outcome, CreatorFlow> flows =
+        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome);
+    if (settings.replaceCreator()) {
+      profileModule.enableScene(sceneManager, flows, book);
+      getLogger().info("Scena ZASTEPUJE sale kreatora przy tworzeniu postaci (scene.replace-creator).");
+    }
+    // /cc scena: podglad dla admina — cala droga z ksiega, ale bez tworzenia postaci.
+    CreatorFlow[] preview = new CreatorFlow[1];
+    preview[0] = flows.apply(new CreatorFlow.Outcome() {
       @Override
       public void chosen(SceneView view, CreatorConfig.RaceOption race,
           CreatorConfig.ClassOption clazz) {
         Player player = view.player();
-        view.close();
-        if (player != null) {
-          player.sendMessage(net.kyori.adventure.text.Component.text("Scena (etap 1): wybrano "
-              + race.id() + " + " + clazz.id() + ". Zatwierdzenie postaci podepnie etap 2.",
-              net.kyori.adventure.text.format.NamedTextColor.GREEN));
+        if (player == null) {
+          return;
         }
+        book.open(player, preview[0].summary(race, clazz), player.getName(),
+            NewCharacterBook.DEFAULT_COLOR, new NewCharacterBook.Handler() {
+              @Override
+              public String create(Player p, String name, String color) {
+                view.close();
+                p.sendMessage(net.kyori.adventure.text.Component.text("Podgląd sceny: "
+                    + name + " (" + race.id() + " + " + clazz.id() + ", " + color
+                    + ") — w podglądzie postać nie jest tworzona.",
+                    net.kyori.adventure.text.format.NamedTextColor.GREEN));
+                return null;
+              }
+
+              @Override
+              public void back(Player p) {
+              }
+            });
       }
 
       @Override
@@ -357,6 +382,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
         view.close();
       }
     });
+    CreatorFlow flow = preview[0];
     if (command != null) {
       command.setSceneOpener((player, close) -> {
         if (close) {

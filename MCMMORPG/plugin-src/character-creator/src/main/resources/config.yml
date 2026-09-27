@@ -101,6 +101,9 @@ creator-room:
 #             przesuniety w bok ustawia postac poza srodkiem kadru.
 # fade.glyph: pelnoekranowy czarny glif Nexo (font minecraft:default). Pusty = bez sciemnien.
 scene:
+  # true = nowa postac (MMOProfiles "utworz") przechodzi przez scene zamiast sali kreatora.
+  # false = scena tylko pod /cc scena (podglad dla admina), gracze ida stara droga.
+  replace-creator: false
   world: 'creator_limbo'
   shield-distance: 1.4
   target-delay-ticks: 5

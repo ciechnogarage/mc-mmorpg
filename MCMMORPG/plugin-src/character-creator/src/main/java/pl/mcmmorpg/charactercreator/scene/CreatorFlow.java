@@ -43,6 +43,30 @@ public final class CreatorFlow {
     this.outcome = outcome;
   }
 
+  /**
+   * Podsumowanie wyboru do ksiegi "Nowa postac": klasa rasowa, rasa i archetyp,
+   * specjalizacje. Krotsze niz karta — ksiega ma miejsce na imie i kolor.
+   */
+  public Component summary(CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz) {
+    CreatorConfig.RaceVariant v = clazz.variant(race.id());
+    Component out = legacy(clazz.displayFor(race.id())).decoration(TextDecoration.BOLD, true)
+        .append(Component.text("   " + plain(race.display()) + " · " + plain(clazz.display()),
+            NamedTextColor.GRAY));
+    if (v != null && !v.specializations().isEmpty()) {
+      out = out.append(Component.newline())
+          .append(Component.text("Od 10. poziomu: ", NamedTextColor.GRAY));
+      for (int i = 0; i < v.specializations().size(); i++) {
+        if (i > 0) {
+          out = out.append(Component.text(" albo ", NamedTextColor.GRAY));
+        }
+        out = out.append(Component.text(plain(v.specializations().get(i).name()),
+            NamedTextColor.WHITE));
+      }
+    }
+    return out.append(Component.newline())
+        .append(Component.text("Tryby specjalne (Hardcore): wkrótce", NamedTextColor.DARK_GRAY));
+  }
+
   /** Pierwszy ekran kreatora. */
   public SceneController start() {
     return new PickStep(0, 0);

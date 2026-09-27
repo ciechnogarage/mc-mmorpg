@@ -20,7 +20,7 @@ import org.bukkit.util.Vector;
 public record SceneSettings(String worldName, Map<String, Point> points, String fadeGlyph,
     int fadeInTicks, int fadeStayTicks, int fadeOutTicks, double shieldDistance,
     int targetDelayTicks, List<String> hudOnOpen, List<String> hudRepeat, int hudRepeatTicks,
-    List<String> hudOnClose) {
+    List<String> hudOnClose, boolean replaceCreator) {
 
   public static final String DEFAULT_POINT = "default";
 
@@ -87,7 +87,8 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
         hud == null ? List.of() : List.copyOf(hud.getStringList("on-open")),
         hud == null ? List.of() : List.copyOf(hud.getStringList("repeat")),
         hud == null ? 40 : Math.max(1, hud.getInt("repeat-ticks", 40)),
-        hud == null ? List.of() : List.copyOf(hud.getStringList("on-close")));
+        hud == null ? List.of() : List.copyOf(hud.getStringList("on-close")),
+        s != null && s.getBoolean("replace-creator", false));
   }
 
   /** Kadr o tej nazwie, a gdy go nie ma — domyslny. {@code null} tylko przy braku obu. */

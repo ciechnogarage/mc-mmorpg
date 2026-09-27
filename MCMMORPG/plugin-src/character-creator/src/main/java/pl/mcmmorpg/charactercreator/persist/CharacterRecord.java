@@ -34,8 +34,20 @@ public record CharacterRecord(
     UUID ownerUuid,
     String ownerName,
     Instant createdAt,
-    Instant lastUsedAt
+    Instant lastUsedAt,
+    String iconColor
 ) {
+
+  /**
+   * Rekord bez koloru ikony — wszystko sprzed sceny kreatora. Kolor wybiera sie w ksiedze
+   * "Nowa postac" (scena); pusty = domyslny kolor przy wyswietlaniu.
+   */
+  public CharacterRecord(String characterId, String name, String raceId, String classId,
+      String skinSource, UUID ownerUuid, String ownerName, Instant createdAt,
+      Instant lastUsedAt) {
+    this(characterId, name, raceId, classId, skinSource, ownerUuid, ownerName, createdAt,
+        lastUsedAt, "");
+  }
 
   /** Rekord ze schematu 1 (bez wlasciciela) — migracja ustawia oba pola na null/pusty. */
   public boolean hasOwner() {
@@ -55,7 +67,7 @@ public record CharacterRecord(
 
   public CharacterRecord withLastUsed(Instant when) {
     return new CharacterRecord(characterId, name, raceId, classId, skinSource, ownerUuid,
-        ownerName, createdAt, when);
+        ownerName, createdAt, when, iconColor);
   }
 
   /**
@@ -67,11 +79,16 @@ public record CharacterRecord(
    */
   public CharacterRecord withSkinSource(String skinSource) {
     return new CharacterRecord(characterId, name, raceId, classId, skinSource, ownerUuid,
-        ownerName, createdAt, lastUsedAt);
+        ownerName, createdAt, lastUsedAt, iconColor);
+  }
+
+  public CharacterRecord withName(String newName) {
+    return new CharacterRecord(characterId, newName, raceId, classId, skinSource, ownerUuid,
+        ownerName, createdAt, lastUsedAt, iconColor);
   }
 
   public CharacterRecord withOwner(UUID uuid, String name) {
     return new CharacterRecord(characterId, this.name, raceId, classId, skinSource, uuid,
-        name, createdAt, lastUsedAt);
+        name, createdAt, lastUsedAt, iconColor);
   }
 }
