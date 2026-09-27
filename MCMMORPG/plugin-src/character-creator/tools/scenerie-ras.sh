@@ -13,7 +13,7 @@ teren() { # x0 z0 biome
   for x in $1 $(( $1+32 )); do for z in $2 $(( $2+32 )); do
     r "fill $x 96 $z $((x+31)) 98 $((z+31)) minecraft:dirt"
     r "fill $x 99 $z $((x+31)) 99 $((z+31)) minecraft:grass_block"
-    [ -n "${3:-}" ] && r "fillbiome $x 96 $z $((x+31)) 126 $((z+31)) minecraft:$3"
+    if [ -n "${3:-}" ]; then r "fillbiome $x 96 $z $((x+31)) 126 $((z+31)) minecraft:$3"; fi
   done; done; }
 plama() { # x z blok
   r "fill $(( $1-1 )) 99 $(( $2-2 )) $(( $1+1 )) 99 $(( $2+2 )) minecraft:$3"
