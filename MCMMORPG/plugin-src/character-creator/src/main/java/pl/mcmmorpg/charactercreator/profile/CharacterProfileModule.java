@@ -271,6 +271,13 @@ public final class CharacterProfileModule implements ProfileDataModule {
     }
   }
 
+  /** Po rezygnacji z kreatora: scena wyboru postaci (etap 3) albo, bez niej, okno MMOProfiles. */
+  private java.util.function.Predicate<Player> selectOpener = p -> false;
+
+  public void setSelectOpener(java.util.function.Predicate<Player> selectOpener) {
+    this.selectOpener = selectOpener;
+  }
+
   /** PPM w scenie: jak "Wyjdz" w starym kreatorze — profil nie powstaje, wraca ekran wyboru. */
   private void cancelFromScene(Player player, UUID profileId) {
     logger.info("Gracz " + player.getName() + " zrezygnowal z tworzenia postaci w scenie (profil "
@@ -279,7 +286,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
     UUID playerId = player.getUniqueId();
     Bukkit.getScheduler().runTask(plugin, () -> {
       Player online = Bukkit.getPlayer(playerId);
-      if (online != null && online.isOnline()) {
+      if (online != null && online.isOnline() && !selectOpener.test(online)) {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoprofiles open " + online.getName());
       }
     });
@@ -542,7 +549,8 @@ public final class CharacterProfileModule implements ProfileDataModule {
     // own data (race/class/model) here, before validating.
     CharacterRecord record = store.get(event.getProfile().getUniqueId());
     if (record != null) {
-      confirmService.applyToRealPlayer(event.getPlayer(), record);
+      // false: istniejaca postac — klasa MMOCore przychodzi z profilu, nie wymuszamy archetypu.
+      confirmService.applyToRealPlayer(event.getPlayer(), record, false);
       record = touch(record, event.getPlayer());
     } else if (profilesBeingCreated.contains(event.getProfile().getUniqueId())) {
       // To jest select, ktory MMOProfiles odpala W SRODKU naszego wlasnego tworzenia postaci:

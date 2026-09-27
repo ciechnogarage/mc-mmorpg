@@ -48,6 +48,13 @@ public final class ProfileSelectionEnforcer implements Listener {
   /** Gracz w scenie kreatora — ekran MMOProfiles przykrylby kamere. Domyslnie nikt. */
   private java.util.function.Predicate<UUID> inScene = id -> false;
 
+  /** Scena wyboru postaci zamiast okna MMOProfiles; false = nie wyszlo, otworz okno. */
+  private java.util.function.Predicate<Player> opener = p -> false;
+
+  public void setOpener(java.util.function.Predicate<Player> opener) {
+    this.opener = opener;
+  }
+
   public void setSceneCheck(java.util.function.Predicate<UUID> inScene) {
     this.inScene = inScene;
   }
@@ -103,6 +110,14 @@ public final class ProfileSelectionEnforcer implements Listener {
     // otwarcia na wierzchu otwartego GUI jest tym samym rodzajem walki.
     // CRAFTING to widok "nic nie otwarte" (wlasny ekwipunek gracza).
     if (player.getOpenInventory().getType() != InventoryType.CRAFTING) {
+      return;
+    }
+    if (opener.test(player)) {
+      logger.info("Gracz " + player.getName() + " nie ma wybranej postaci — otwieram scene wyboru.");
+      long interval = config.profileRecheckIntervalTicks();
+      if (interval > 0) {
+        scheduleCheck(playerId, interval);
+      }
       return;
     }
     logger.info("Gracz " + player.getName() + " nie ma wybranej postaci — otwieram ekran "

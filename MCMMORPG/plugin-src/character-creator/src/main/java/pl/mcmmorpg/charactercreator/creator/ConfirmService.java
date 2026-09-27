@@ -149,6 +149,17 @@ public final class ConfirmService {
    * usunac razem z sekcja {@code permission} w config.yml, a nie pojedynczo.
    */
   public void applyToRealPlayer(Player player, CharacterRecord record) {
+    applyToRealPlayer(player, record, true);
+  }
+
+  /**
+   * @param newCharacter true przy TWORZENIU postaci. Tylko wtedy nadajemy klase MMOCore.
+   *   Przy wyborze istniejacej postaci klase trzyma MMOProfiles razem z reszta danych MMOCore
+   *   profilu — wymuszanie archetypu przy kazdym wyborze cofalo klase rasowa i odpalalo
+   *   mapowanie klas rasowych od nowa, a z nim zestaw startowy (zmierzone na klonie 27.09:
+   *   powrot na Grokthara = "You are now a Mage/Szaman" + druga rozdzka i zbroja).
+   */
+  public void applyToRealPlayer(Player player, CharacterRecord record, boolean newCharacter) {
     // KAZDA z tych komend jest osobnym runTask + osobnym dispatchem konsolowym, ktory
     // parsuje komende LuckPerms i dotyka jego bazy. Wolane jest to przy KAZDYM wyborze
     // profilu, czyli przy kazdym logowaniu: przy 4 rasach bylo 6 dispatchow na gracza,
@@ -179,7 +190,7 @@ public final class ConfirmService {
     }
 
     CreatorConfig.ClassOption classOption = config.classes().get(record.classId());
-    if (classOption != null && !classOption.mmocoreId().isBlank()) {
+    if (newCharacter && classOption != null && !classOption.mmocoreId().isBlank()) {
       ConsoleCommandRunner.run(plugin, "mmocore class select %player% " + classOption.mmocoreId(), player);
     }
     // SKORKI: nie ma tu zadnej galezi i nie bedzie, dopoki nie powstanie prawdziwy wybor

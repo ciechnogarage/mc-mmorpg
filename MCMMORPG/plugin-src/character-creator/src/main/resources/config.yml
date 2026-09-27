@@ -104,6 +104,10 @@ scene:
   # true = nowa postac (MMOProfiles "utworz") przechodzi przez scene zamiast sali kreatora.
   # false = scena tylko pod /cc scena (podglad dla admina), gracze ida stara droga.
   replace-creator: false
+  # true = po wejsciu na serwer (i z "Zmien postac") scena wyboru postaci zamiast okna MMOProfiles.
+  # WYMAGA w plugins/MMOProfiles/config.yml 'no-gui-on-login: true', inaczej wyskocza oba ekrany.
+  # Przycisk "Zmien postac" w DeluxeMenus: '[console] cc wybor %player_name%'.
+  replace-selector: false
   world: 'creator_limbo'
   shield-distance: 1.4
   target-delay-ticks: 5

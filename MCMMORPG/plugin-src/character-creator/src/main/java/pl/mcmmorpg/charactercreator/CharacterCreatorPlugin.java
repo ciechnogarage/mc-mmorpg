@@ -29,7 +29,9 @@ import pl.mcmmorpg.charactercreator.profile.CharacterProfileModule;
 import pl.mcmmorpg.charactercreator.profile.ProfileListHeadsListener;
 import pl.mcmmorpg.charactercreator.profile.ProfileSelectionEnforcer;
 import pl.mcmmorpg.charactercreator.profile.RaceModelListener;
+import pl.mcmmorpg.charactercreator.scene.CharacterSelect;
 import pl.mcmmorpg.charactercreator.scene.CreatorFlow;
+import pl.mcmmorpg.charactercreator.scene.SceneMenu;
 import pl.mcmmorpg.charactercreator.scene.NewCharacterBook;
 import pl.mcmmorpg.charactercreator.scene.SceneListener;
 import pl.mcmmorpg.charactercreator.scene.SceneManager;
@@ -115,6 +117,10 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
         this, creatorConfig, sessionManager, previewDummyManager, creatorMenu, nameInputDialog,
         characterStore, profileModule::onConfirm, profileModule::onCancel);
     getServer().getPluginManager().registerEvents(creatorRoomListener, this);
+
+    // Obejscie bledu MMOCore przy drugiej zmianie postaci — patrz MmocoreProfileSwitchFix.
+    getServer().getPluginManager().registerEvents(
+        new pl.mcmmorpg.charactercreator.profile.MmocoreProfileSwitchFix(getLogger()), this);
 
     // Model rasy nie przezywa zmiany swiata ani respawnu — ten listener go przywraca.
     getServer().getPluginManager().registerEvents(new RaceModelListener(profileModule), this);
@@ -345,6 +351,30 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     getServer().getPluginManager().registerEvents(book, this);
     java.util.function.Function<CreatorFlow.Outcome, CreatorFlow> flows =
         outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome);
+    SceneMenu sceneMenu = new SceneMenu(this, getLogger());
+    getServer().getPluginManager().registerEvents(sceneMenu, this);
+    CharacterSelect select = new CharacterSelect(this, getLogger(), sceneManager, sceneMenu,
+        creatorConfig, characterStore, previewDummyManager);
+    java.util.function.Predicate<Player> openSelect = p -> {
+      try {
+        return select.open(p);
+      } catch (RuntimeException ex) {
+        getLogger().severe("Scena wyboru postaci: blad dla " + p.getName() + ": " + ex);
+        ex.printStackTrace();
+        return false;
+      }
+    };
+    if (command != null) {
+      command.setSelectOpener(settings.replaceSelector() ? openSelect : null);
+    }
+    if (settings.replaceSelector()) {
+      profileModule.setSelectOpener(openSelect);
+      if (profileEnforcer != null) {
+        profileEnforcer.setOpener(openSelect);
+      }
+      getLogger().info("Scena ZASTEPUJE okno wyboru postaci MMOProfiles (scene.replace-selector). "
+          + "Ustaw w MMOProfiles 'no-gui-on-login: true', inaczej oba ekrany wyskocza naraz.");
+    }
     if (settings.replaceCreator()) {
       profileModule.enableScene(sceneManager, flows, book);
       getLogger().info("Scena ZASTEPUJE sale kreatora przy tworzeniu postaci (scene.replace-creator).");

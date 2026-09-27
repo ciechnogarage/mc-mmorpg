@@ -14,7 +14,7 @@ class SceneSettingsTest {
 
   private static SceneSettings withPoints(Map<String, SceneSettings.Point> points) {
     return new SceneSettings("creator_limbo", points, "", 5, 5, 10, 1.4, 5,
-        List.of(), List.of(), 40, List.of(), false);
+        List.of(), List.of(), 40, List.of(), false, false);
   }
 
   private static SceneSettings.Point point(double z) {

@@ -72,6 +72,13 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
    * Podpina {@code /cc scena}. Funkcja dostaje gracza i flage "zamknij" i zwraca komunikat
    * dla wolajacego. Osobny setter, bo scena to opcjonalny modul z wlasnym configiem.
    */
+  /** {@code /cc wybor <gracz>} — scena wyboru postaci (np. "Zmien postac" w menu pod Q). */
+  private java.util.function.Predicate<Player> selectOpener;
+
+  public void setSelectOpener(java.util.function.Predicate<Player> selectOpener) {
+    this.selectOpener = selectOpener;
+  }
+
   public void setSceneOpener(java.util.function.BiFunction<Player, Boolean, String> sceneOpener) {
     this.sceneOpener = sceneOpener;
   }
@@ -94,6 +101,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       case "sessions" -> listSessions(sender);
       case "skin" -> skin(sender, args);
       case "scena" -> scene(sender, args);
+      case "wybor" -> select(sender, args);
       default -> usage(sender, label);
     }
     return true;
@@ -114,6 +122,23 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
         + "[sesja] — pokaż albo nałóż skórkę (domyślnie NA STAŁE)", NamedTextColor.GRAY));
     sender.sendMessage(Component.text("/" + label + " scena [gracz] [zamknij] — kreator w scenie "
         + "(podgląd etapu 1)", NamedTextColor.GRAY));
+  }
+
+  /**
+   * {@code /cc wybor [gracz]}: scena wyboru postaci, a gdy jej nie ma albo sie nie da —
+   * okno MMOProfiles (ta sama komenda, ktora wolal dotad przycisk "Zmien postac").
+   */
+  private void select(CommandSender sender, String[] args) {
+    Player target = args.length >= 2 ? Bukkit.getPlayerExact(args[1])
+        : sender instanceof Player p ? p : null;
+    if (target == null) {
+      sender.sendMessage(Component.text("Podaj gracza online.", NamedTextColor.RED));
+      return;
+    }
+    if (selectOpener != null && selectOpener.test(target)) {
+      return;
+    }
+    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoprofiles open " + target.getName());
   }
 
   /** {@code /cc scena [gracz] [zamknij]} — kreator w scenie (etap 1, tylko do testow). */
@@ -493,7 +518,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       return List.of();
     }
     if (args.length == 1) {
-      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin", "scena"), args[0]);
+      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin", "scena", "wybor"), args[0]);
     }
     if (args.length == 2 && "skin".equalsIgnoreCase(args[0])) {
       return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
