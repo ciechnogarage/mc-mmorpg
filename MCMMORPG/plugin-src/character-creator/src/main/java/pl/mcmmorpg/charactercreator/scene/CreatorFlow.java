@@ -91,14 +91,14 @@ public final class CreatorFlow {
     }
     Location at = view.subject();
     if (view.get(PREVIEW_KEY) == null) {
-      dummies.start(at, player, race, clazz);
+      view.subjectEntity(dummies.start(at, player, race, clazz));
       for (Entity carrier : dummies.carriers(player.getUniqueId())) {
         view.own(carrier);
       }
       view.put(PREVIEW_KEY, Boolean.TRUE);
     } else {
       dummies.moveAnchor(player, at);
-      dummies.select(player, race, clazz);
+      view.subjectEntity(dummies.select(player, race, clazz));
     }
     dummies.applyAppearance(player, race, clazz);
   }

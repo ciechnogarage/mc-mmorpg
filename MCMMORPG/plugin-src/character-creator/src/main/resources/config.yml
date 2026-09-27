@@ -99,6 +99,14 @@ creator-room:
 #   list    — opcjonalnie: panel listy klas po lewej; bez klucza = lustro karty wzgledem postaci,
 #   look    — opcjonalnie: punkt, w ktory patrzy kamera (domyslnie piers postaci);
 #             przesuniety w bok ustawia postac poza srodkiem kadru.
+#   KLIMAT kadru (tylko dla patrzacego gracza, opcjonalnie):
+#   time      — pora dnia 0..24000 (1000 ranek, 6000 poludnie, 12300 zachod, 18000 polnoc),
+#   rain      — deszcz,
+#   particles — lista { type, at?, dx, dy, dz, y, count, speed, every }; bez 'at' wokol postaci
+#               (y = wysokosc nad stopami), every = co ile tickow; tylko czastki bez danych,
+#   idle      — { swing-every: ticki, look-every: ticki, look-yaw: stopnie } — machniecie bronia,
+#               obrot glowy na boki (tulow zostaje przodem do kamery).
+#   Kadry ras + klimat na klonie: patrz tools/scenerie-ras.sh (buduje scenerie).
 # fade.glyph: pelnoekranowy czarny glif Nexo (font minecraft:default). Pusty = bez sciemnien.
 scene:
   # true = nowa postac (MMOProfiles "utworz") przechodzi przez scene zamiast sali kreatora.

@@ -28,10 +28,15 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
    * Jeden kadr: kamera, postac na scenie, karta obok niej (prawa strona) i panel listy
    * (lewa strona). {@code list} null = lustro karty wzgledem postaci.
    */
-  public record Point(Location camera, Location subject, Location card, Location list) {
+  public record Point(Location camera, Location subject, Location card, Location list,
+      Ambience ambience) {
 
     public Point(Location camera, Location subject, Location card) {
-      this(camera, subject, card, null);
+      this(camera, subject, card, null, Ambience.NONE);
+    }
+
+    public Point(Location camera, Location subject, Location card, Location list) {
+      this(camera, subject, card, list, Ambience.NONE);
     }
 
     /** Panel listy: z configu albo odbicie karty po drugiej stronie postaci. */
@@ -71,7 +76,8 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
         Location list = location(world, p.getConfigurationSection("list"));
         if (camera != null && subject != null) {
           Location target = look != null ? look : subject.clone().add(0, 1.0, 0);
-          points.put(id, new Point(aimed(camera, target), subject, card, list));
+          points.put(id, new Point(aimed(camera, target), subject, card, list,
+              Ambience.read(world, p)));
         }
       }
     }
@@ -90,6 +96,74 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
         hud == null ? List.of() : List.copyOf(hud.getStringList("on-close")),
         s != null && s.getBoolean("replace-creator", false),
         s != null && s.getBoolean("replace-selector", false));
+  }
+
+  /**
+   * Klimat kadru — widoczny tylko dla patrzacego gracza: pora dnia, pogoda, czastki i drobny
+   * ruch postaci na scenie. Celowo proste (wlasciciel 28.09: "nie wymyslne animacje, tlo pod
+   * klimat i lekkie animacje pasujace do cech").
+   *
+   * @param time pora dnia gracza (0-24000), -1 = czas swiata
+   * @param rain deszcz tylko dla gracza
+   * @param swingEvery co ile tickow postac macha bronia (0 = nigdy)
+   * @param lookEvery co ile tickow postac rozglada sie na boki (0 = nigdy)
+   * @param lookYaw o ile stopni skreca glowe przy rozgladaniu
+   */
+  public record Ambience(long time, boolean rain, List<Emitter> emitters, int swingEvery,
+      int lookEvery, float lookYaw) {
+
+    public static final Ambience NONE = new Ambience(-1, false, List.of(), 0, 0, 0);
+
+    static Ambience read(World world, ConfigurationSection p) {
+      List<Emitter> emitters = new java.util.ArrayList<>();
+      for (Map<?, ?> m : p.getMapList("particles")) {
+        Emitter e = Emitter.read(world, m);
+        if (e != null) {
+          emitters.add(e);
+        }
+      }
+      ConfigurationSection idle = p.getConfigurationSection("idle");
+      return new Ambience(p.getLong("time", -1), p.getBoolean("rain", false), List.copyOf(emitters),
+          idle == null ? 0 : idle.getInt("swing-every", 0),
+          idle == null ? 0 : idle.getInt("look-every", 0),
+          idle == null ? 0f : (float) idle.getDouble("look-yaw", 25));
+    }
+  }
+
+  /**
+   * Zrodlo czastek: w punkcie {@code at} albo, bez niego, wokol postaci ({@code around}).
+   * Tylko czastki bez dodatkowych danych (bez koloru/bloku) — reszta jest pomijana z ostrzezeniem.
+   */
+  public record Emitter(org.bukkit.Particle type, Location at, double dx, double dy, double dz,
+      double yOffset, int count, double speed, int every) {
+
+    static Emitter read(World world, Map<?, ?> m) {
+      try {
+        org.bukkit.Particle type = org.bukkit.Particle.valueOf(String.valueOf(m.get("type")).toUpperCase(java.util.Locale.ROOT));
+        if (type.getDataType() != Void.class) {
+          Bukkit.getLogger().warning("scene: czastka " + type + " wymaga danych — pomijam.");
+          return null;
+        }
+        Location at = null;
+        if (m.get("at") instanceof Map<?, ?> a) {
+          at = new Location(world, num(a.get("x")), num(a.get("y")), num(a.get("z")));
+        }
+        return new Emitter(type, at, num(m.get("dx"), 0.6), num(m.get("dy"), 0.4), num(m.get("dz"), 0.6),
+            num(m.get("y"), 1.0), (int) num(m.get("count"), 2), num(m.get("speed"), 0.0),
+            Math.max(1, (int) num(m.get("every"), 10)));
+      } catch (IllegalArgumentException ex) {
+        Bukkit.getLogger().warning("scene: nieznana czastka " + m.get("type") + " — pomijam.");
+        return null;
+      }
+    }
+
+    private static double num(Object o) {
+      return num(o, 0);
+    }
+
+    private static double num(Object o, double def) {
+      return o instanceof Number n ? n.doubleValue() : def;
+    }
   }
 
   /** Kadr o tej nazwie, a gdy go nie ma — domyslny. {@code null} tylko przy braku obu. */

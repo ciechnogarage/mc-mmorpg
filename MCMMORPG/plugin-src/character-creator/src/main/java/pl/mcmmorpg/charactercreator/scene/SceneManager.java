@@ -231,6 +231,8 @@ public final class SceneManager {
     }
     player.clearTitle();
     player.sendActionBar(Component.empty());
+    player.resetPlayerTime();
+    player.resetPlayerWeather();
     if (view.topBar != null) {
       player.hideBossBar(view.topBar);
     }
@@ -272,6 +274,58 @@ public final class SceneManager {
     Location listAt = point.listOrMirror();
     view.list.teleport(listAt != null ? listAt : point.camera());
     view.targetReadyTick = Bukkit.getCurrentTick() + settings.targetDelayTicks();
+    applyAmbience(view, player);
+  }
+
+  /** Pora dnia i pogoda kadru — tylko dla tego gracza. */
+  private void applyAmbience(SceneView view, Player player) {
+    SceneSettings.Ambience a = view.currentPoint.ambience();
+    if (a.time() >= 0) {
+      player.setPlayerTime(a.time(), false);
+    } else {
+      player.resetPlayerTime();
+    }
+    player.setPlayerWeather(a.rain() ? org.bukkit.WeatherType.DOWNFALL : org.bukkit.WeatherType.CLEAR);
+  }
+
+  /** Czastki i drobny ruch postaci — co tick, ale kazdy element w swoim rytmie. */
+  private void animate(SceneView view, Player player, int now) {
+    SceneSettings.Ambience a = view.currentPoint.ambience();
+    for (SceneSettings.Emitter e : a.emitters()) {
+      if (now % e.every() != 0) {
+        continue;
+      }
+      Location at = e.at() != null ? e.at()
+          : view.currentPoint.subject().clone().add(0, e.yOffset(), 0);
+      player.spawnParticle(e.type(), at, e.count(), e.dx(), e.dy(), e.dz(), e.speed());
+    }
+    Entity subject = view.subjectEntity;
+    if (!(subject instanceof org.bukkit.entity.LivingEntity living) || !subject.isValid()
+        || subject.getWorld() != player.getWorld()) {
+      return;
+    }
+    // Faza przesunieta o hash gracza: dwoch graczy nie ma postaci ruszajacych sie synchronicznie.
+    int phase = now + (view.playerId().hashCode() & 0xFF);
+    float front = subjectFacingCamera(view).getYaw();
+    if (a.swingEvery() > 0 && phase % a.swingEvery() == 0) {
+      living.swingMainHand();
+    }
+    // Rozgladanie: obraca sie SAMA GLOWA (setRotation ustawia tez tulow — wygladalo jak
+    // obrot calej postaci). Tulow trzymamy na wprost co tick, glowa odchodzi na lookYaw
+    // i wraca po 1,5 s. Zmierzone zrzutami na kliencie.
+    if (a.lookEvery() > 0 && phase % a.lookEvery() == 0) {
+      float side = ((phase / a.lookEvery()) % 2 == 0) ? a.lookYaw() : -a.lookYaw();
+      view.headOffset = side;
+      view.lookBackTick = now + 30;
+    } else if (view.lookBackTick > 0 && now >= view.lookBackTick) {
+      view.headOffset = 0;
+      view.lookBackTick = -1;
+    }
+    living.setBodyYaw(front);
+    if (living.getLocation().getYaw() != front + view.headOffset) {
+      living.setRotation(front + view.headOffset, 0f);
+      living.setBodyYaw(front);
+    }
   }
 
   /** Miejsce postaci w kadrze, obrocone przodem do kamery. */
@@ -435,6 +489,7 @@ public final class SceneManager {
       if (now >= view.targetReadyTick) {
         aimCamera(view);
       }
+      animate(view, player, now);
       if (now % HINT_PERIOD_TICKS == 0) {
         pushHint(view);
       }

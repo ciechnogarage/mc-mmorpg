@@ -53,6 +53,11 @@ public final class SceneView {
   boolean lastBackward;
   boolean lastRight;
   boolean closed;
+  Entity subjectEntity;
+  /** Tick, w ktorym postac ma wrocic glowa na wprost po rozejrzeniu sie. */
+  long lookBackTick = -1;
+  /** Biezace odchylenie glowy postaci od patrzenia w kamere (stopnie). */
+  float headOffset;
 
   SceneView(SceneManager manager, Player player) {
     this.manager = manager;
@@ -132,6 +137,11 @@ public final class SceneView {
   }
 
   /** Encje sceny, ktore maja byc widoczne tylko dla tego gracza (np. podglad postaci). */
+  /** Postac stojaca w kadrze — scena ozywia ja wg klimatu kadru (machniecie, rozgladanie). */
+  public void subjectEntity(Entity entity) {
+    this.subjectEntity = entity;
+  }
+
   public void own(Entity entity) {
     manager.ownEntity(this, entity);
   }
