@@ -75,16 +75,49 @@ public final class ProfileSelectionEnforcer implements Listener {
     scheduleCheck(event.getPlayer().getUniqueId(), config.profileCheckDelayTicks());
   }
 
+  /**
+   * Co ile tickow pytac, czy MMOProfiles wczytal juz dane gracza, i jak dlugo najwyzej
+   * (60 x 5 = 15 s). Dawniej czekalismy na sztywno 100 tickow po wejsciu — gracz stal 5 s
+   * w czarnym pudle MMOProfiles, choc dane byly gotowe po ulamku sekundy, a paczka zasobow
+   * idzie przed wejsciem (Nexo send_pre_join), wiec nie ma na co czekac.
+   */
+  private static final long READY_POLL_TICKS = 5L;
+  private static final int READY_POLL_LIMIT = 60;
+
   private void scheduleCheck(UUID playerId, long delayTicks) {
-    Bukkit.getScheduler().runTaskLater(plugin, () -> check(playerId), delayTicks);
+    scheduleCheck(playerId, delayTicks, 0);
   }
 
-  private void check(UUID playerId) {
+  private void scheduleCheck(UUID playerId, long delayTicks, int attempt) {
+    Bukkit.getScheduler().runTaskLater(plugin, () -> check(playerId, attempt), delayTicks);
+  }
+
+  private void check(UUID playerId, int attempt) {
     Player player = Bukkit.getPlayer(playerId);
     if (player == null || !player.isOnline() || !config.enforceProfileSelection()) {
       return;
     }
+    if (!dataReady(playerId)) {
+      if (attempt < READY_POLL_LIMIT) {
+        scheduleCheck(playerId, READY_POLL_TICKS, attempt + 1);
+      } else {
+        logger.warning("MMOProfiles nie wczytal danych " + player.getName() + " w 15 s — "
+            + "sprawdze ponownie za " + config.profileRecheckIntervalTicks() + " tickow.");
+        long interval = config.profileRecheckIntervalTicks();
+        if (interval > 0) {
+          scheduleCheck(playerId, interval);
+        }
+      }
+      return;
+    }
     if (hasChosenProfile(playerId)) {
+      return;
+    }
+    // Gracz, ktory wyszedl na ekranie smierci, wraca martwy. Scena martwego nie przyjmie,
+    // a zapasowe okno MMOProfiles z wymuszonym wyborem wracalo potem NAD scena i nie dalo
+    // sie go zamknac (zlapane na klonie 30.09). Czekamy na odrodzenie.
+    if (player.isDead()) {
+      scheduleCheck(playerId, READY_POLL_TICKS * 4);
       return;
     }
     // ZLAPANE NA PRODUKCJI, 20.09 16:20-16:21. Gracz W TRAKCIE tworzenia postaci z definicji
@@ -127,6 +160,21 @@ public final class ProfileSelectionEnforcer implements Listener {
     long interval = config.profileRecheckIntervalTicks();
     if (interval > 0) {
       scheduleCheck(playerId, interval);
+    }
+  }
+
+  /** Dane MMOProfiles gracza wczytane i bez profilu w trakcie ladowania. */
+  private boolean dataReady(UUID playerId) {
+    try {
+      ProfileList profiles = MMOProfiles.plugin.getPlayerData(playerId);
+      if (profiles == null) {
+        return false;
+      }
+      return !(profiles instanceof fr.phoenixdevt.mmoprofiles.bukkit.profile.ProfileListImpl impl)
+          || !impl.hasProfilePending();
+    } catch (RuntimeException ex) {
+      // Brak danych w pamieci (getPlayerData rzuca dla niewczytanego gracza) = jeszcze nie gotowe.
+      return false;
     }
   }
 

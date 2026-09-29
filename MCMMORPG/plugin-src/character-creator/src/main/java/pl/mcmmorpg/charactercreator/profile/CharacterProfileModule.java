@@ -177,9 +177,31 @@ public final class CharacterProfileModule implements ProfileDataModule {
                 if (store.isNameTaken(name, profileId)) {
                   return pl.mcmmorpg.charactercreator.creator.NameRules.Rejection.DUPLICATE.message();
                 }
-                view.close();
-                confirmFromScene(p, profileId, pending, snapshot, race.id(), clazz.id(), name, color);
+                view.uiSound("create");
+                // Przelot nad swiatem (D6), dopiero potem zatwierdzenie: gracz nie ma jeszcze
+                // wybranego profilu, wiec nic (okno startera Chowancow, zestaw) nie wskoczy
+                // w srodek ujecia. Bez przelotu w configu done wykonuje sie od razu.
+                org.bukkit.Location exit = sessions.configuredExit();
+                pl.mcmmorpg.charactercreator.scene.SceneSettings.Flyover fly = view.settings().flyover();
+                if (fly != null) {
+                  fly = new pl.mcmmorpg.charactercreator.scene.SceneSettings.Flyover(fly.worldName(),
+                      fly.path(), fly.look(), fly.title().replace("{imie}", name),
+                      fly.subtitle().replace("{imie}", name), fly.time(), fly.holdTicks());
+                }
+                view.flyover(fly, () -> {
+                  view.close(exit);
+                  if (p.isOnline()) {
+                    confirmFromScene(p, profileId, pending, snapshot, race.id(), clazz.id(), name, color);
+                  }
+                });
                 return null;
+              }
+
+              @Override
+              public String randomName(Player p) {
+                return pl.mcmmorpg.charactercreator.scene.NameGenerator.generate(
+                    plugin.getConfig().getConfigurationSection("names"), race.id(),
+                    candidate -> store.isNameTaken(candidate, profileId));
               }
 
               @Override
@@ -228,6 +250,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
         Player online = Bukkit.getPlayer(playerId);
         if (online != null && online.isOnline() && snapshot != null) {
           snapshot.restore(online);
+          AccessoryIcons.refresh(online, logger);
         }
       }, INVENTORY_RESTORE_DELAY_TICKS);
       logger.info("Scena: " + player.getName() + " utworzyl postac " + stored.name() + " ("
@@ -430,6 +453,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
         Player online = Bukkit.getPlayer(player.getUniqueId());
         if (online != null && online.isOnline() && keepEntry) {
           sessions.restoreEntryInventory(online, session);
+          AccessoryIcons.refresh(online, logger);
         }
       }, INVENTORY_RESTORE_DELAY_TICKS);
       player.sendMessage(Component.text("Postać utworzona: " + stored.name(),
@@ -495,13 +519,29 @@ public final class CharacterProfileModule implements ProfileDataModule {
     }
     UUID playerId = player.getUniqueId();
     player.setInvulnerable(true);
-    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+    // Ochrona trwa co najmniej 'exit-invulnerability-ticks', a potem az gracz ruszy sie
+    // z miejsca ladowania (najdluzej 3 min). Zlapane na klonie 30.09: nowa postac w nocy
+    // czytala okno startera Chowancow i po 50 s zginela od zombie, nie zrobiwszy kroku.
+    org.bukkit.Location landing = player.getLocation().clone();
+    long[] elapsed = {0};
+    Bukkit.getScheduler().runTaskTimer(plugin, task -> {
       Player online = Bukkit.getPlayer(playerId);
-      if (online != null && online.isOnline()) {
-        online.setInvulnerable(false);
+      if (online == null || !online.isOnline()) {
+        task.cancel();
+        return;
       }
-    }, ticks);
+      elapsed[0] += 20;
+      boolean moved = online.getWorld() != landing.getWorld()
+          || online.getLocation().distanceSquared(landing) > LANDING_LEAVE_DISTANCE_SQ;
+      if (elapsed[0] >= ticks && (moved || elapsed[0] >= LANDING_PROTECTION_MAX_TICKS)) {
+        online.setInvulnerable(false);
+        task.cancel();
+      }
+    }, 20L, 20L);
   }
+
+  private static final double LANDING_LEAVE_DISTANCE_SQ = 3.0 * 3.0;
+  private static final long LANDING_PROTECTION_MAX_TICKS = 3600L;
 
   private CharacterRecord storeWithFallbackName(CharacterRecord record, Player player) {
     for (int suffix = 2; suffix < 100; suffix++) {

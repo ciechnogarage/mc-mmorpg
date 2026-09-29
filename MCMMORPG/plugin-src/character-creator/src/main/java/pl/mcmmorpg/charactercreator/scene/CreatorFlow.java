@@ -288,6 +288,7 @@ public final class CreatorFlow {
 
     @Override
     public void onPrevious(SceneView view) {
+      view.uiSound("race");
       view.fade(() -> {
         race--;
         showRace(view);
@@ -296,6 +297,7 @@ public final class CreatorFlow {
 
     @Override
     public void onNext(SceneView view) {
+      view.uiSound("race");
       view.fade(() -> {
         race++;
         showRace(view);
@@ -305,22 +307,26 @@ public final class CreatorFlow {
     @Override
     public void onUp(SceneView view) {
       clazz--;
+      view.uiSound("class");
       showClass(view);
     }
 
     @Override
     public void onDown(SceneView view) {
       clazz++;
+      view.uiSound("class");
       showClass(view);
     }
 
     @Override
     public void onSelect(SceneView view) {
+      view.uiSound("select");
       outcome.chosen(view, race(), clazz());
     }
 
     @Override
     public void onBack(SceneView view) {
+      view.uiSound("back");
       dropPreview(view);
       outcome.cancelled(view);
     }

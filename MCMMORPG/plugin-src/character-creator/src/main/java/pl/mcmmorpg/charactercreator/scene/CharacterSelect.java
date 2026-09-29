@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -107,6 +108,10 @@ public final class CharacterSelect {
       createNew(player, list);
       return true;
     }
+    SceneSettings.Lineup lineup = scenes.settings().lineup();
+    if (lineup != null && scenes.settings().points().containsKey(lineup.point())) {
+      return scenes.open(player, new LineupStep(entries, list.getProfileSlots(), lineup));
+    }
     return scenes.open(player, new SelectStep(entries, list.getProfileSlots()));
   }
 
@@ -182,7 +187,7 @@ public final class CharacterSelect {
       showPreview(view, race, clazz);
       view.topBar(Component.text("Wybierz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
       view.list(list());
-      view.card(card(e, race, clazz));
+      view.card(cardFor(e, race, clazz));
       view.hint(CreatorFlow.hint("A/D", "Postać " + (Math.floorMod(index, entries.size()) + 1) + "/"
           + entries.size(), "LPM", "Graj", "PPM", "Księga postaci"));
     }
@@ -204,39 +209,6 @@ public final class CharacterSelect {
       out = out.append(Component.newline()).append(Component.newline())
           .append(Component.text(free > 0 ? "Wolne miejsca: " + free : "Brak wolnych miejsc",
               NamedTextColor.DARK_GRAY));
-      return out;
-    }
-
-    private Component card(Entry e, CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz) {
-      Component out = Component.text(e.name(), iconColor(e)).decoration(TextDecoration.BOLD, true);
-      String className = e.profile().getPlaceholderCache().getPlaceholder("mmocore_class");
-      String level = e.profile().getPlaceholderCache().getPlaceholder("mmocore_level");
-      if (level == null || level.isBlank()) {
-        level = levelFromFile(e.profile().getUniqueId());
-      }
-      if (clazz != null && race != null) {
-        out = out.append(Component.newline())
-            .append(LEGACY.deserialize(clazz.displayFor(race.id())).decoration(TextDecoration.ITALIC, false))
-            .append(Component.text("  " + plain(race.display()) + " · " + plain(clazz.display()),
-                NamedTextColor.GRAY));
-      } else if (className != null && !className.isBlank()) {
-        out = out.append(Component.newline()).append(Component.text(className, NamedTextColor.WHITE));
-      }
-      out = out.append(Component.newline()).append(Component.newline());
-      if (className != null && !className.isBlank() && clazz != null && race != null
-          && !plain(clazz.displayFor(race.id())).equalsIgnoreCase(className)) {
-        // Po 10. poziomie klasa MMOCore to juz specjalizacja — pokazujemy ja osobno.
-        out = out.append(Component.text("Specjalizacja: ", NamedTextColor.GRAY))
-            .append(Component.text(className, NamedTextColor.WHITE)).append(Component.newline());
-      }
-      if (level != null && !level.isBlank()) {
-        out = out.append(Component.text("Poziom: ", NamedTextColor.GRAY))
-            .append(Component.text(level, NamedTextColor.YELLOW)).append(Component.newline());
-      }
-      long minutes = e.profile().getTimePlayed() / 60_000L;
-      out = out.append(Component.text("Czas gry: ", NamedTextColor.GRAY))
-          .append(Component.text(minutes >= 60 ? (minutes / 60) + " h " + (minutes % 60) + " min"
-              : minutes + " min", NamedTextColor.WHITE));
       return out;
     }
 
@@ -287,36 +259,6 @@ public final class CharacterSelect {
           Component.text("Pyta o potwierdzenie"), () -> confirmDelete(view, shown)));
       buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> { }));
       menu.show(player, Component.text("Księga postaci", NamedTextColor.GOLD), null, buttons, 2);
-    }
-
-    private void play(SceneView view, Entry entry) {
-      Player player = view.player();
-      if (player == null) {
-        return;
-      }
-      view.close();
-      // Tick pozniej: zamkniecie sceny oddaje tryb gry i pozycje, dopiero potem MMOProfiles
-      // stawia gracza na zapisanej pozycji postaci.
-      Bukkit.getScheduler().runTask(plugin, () -> {
-        ProfileListImpl list = ProfileListImpl.getOrNull(player);
-        if (list != null && player.isOnline()) {
-          list.applyProfile(entry.profile());
-        }
-      });
-    }
-
-    private void startCreation(SceneView view) {
-      Player player = view.player();
-      if (player == null) {
-        return;
-      }
-      view.close();
-      Bukkit.getScheduler().runTask(plugin, () -> {
-        ProfileListImpl list = ProfileListImpl.getOrNull(player);
-        if (list != null && player.isOnline()) {
-          createNew(player, list);
-        }
-      });
     }
 
     private void confirmDelete(SceneView view, Entry entry) {
@@ -377,6 +319,367 @@ public final class CharacterSelect {
     public void onClose(SceneView view) {
       dropPreview(view);
     }
+  }
+
+  // --- scena wyboru: wszystkie postacie przy ognisku ---------------------------------
+
+  /**
+   * Wszystkie postacie konta stoja naraz w luku wokol ogniska, przodem na zewnatrz; kamera
+   * stoi przed wybrana i obiega krag przy A/D (plynnie, kroki interpolowane po stronie
+   * klienta). Wolne miejsce na koncu luku to "Nowa postac" — LPM na nim otwiera kreator.
+   * Nad kazda postacia imie w kolorze jej ikony. Karta, lista i ksiega (PPM) jak w
+   * {@link SelectStep}.
+   */
+  private final class LineupStep implements SceneController {
+    private static final double MAX_STEP_DEGREES = 6.0;
+
+    private final List<Entry> entries;
+    private final int slots;
+    private final SceneSettings.Lineup lineup;
+    private final List<org.bukkit.entity.LivingEntity> figures = new ArrayList<>();
+    private final List<Entity> labels = new ArrayList<>();
+    private org.bukkit.entity.LivingEntity ghost;
+    private int index;
+
+    LineupStep(List<Entry> entries, int slots, SceneSettings.Lineup lineup) {
+      this.entries = new ArrayList<>(entries);
+      this.slots = slots;
+      this.lineup = lineup;
+    }
+
+    private boolean hasFreeSlot() {
+      return entries.size() < slots;
+    }
+
+    private int count() {
+      return entries.size() + (hasFreeSlot() ? 1 : 0);
+    }
+
+    private int current() {
+      return Math.floorMod(index, count());
+    }
+
+    private boolean onFreeSlot() {
+      return current() >= entries.size();
+    }
+
+    @Override
+    public void onOpen(SceneView view) {
+      Player player = view.player();
+      if (player == null) {
+        return;
+      }
+      spawnAll(view, player);
+      view.placeCamera(lineup.camera(lineup.angle(current(), count())), lineup.point());
+      view.topBar(Component.text("Wybierz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+      refresh(view);
+    }
+
+    private void spawnAll(SceneView view, Player player) {
+      clear();
+      int n = count();
+      for (int i = 0; i < entries.size(); i++) {
+        Entry e = entries.get(i);
+        CreatorConfig.RaceOption race = e.record() == null ? null : config.races().get(e.record().raceId());
+        CreatorConfig.ClassOption clazz = e.record() == null ? null : config.classes().get(e.record().classId());
+        Location spot = lineup.spot(i, n);
+        org.bukkit.entity.LivingEntity figure = dummies.spawnFigure(player, spot, race, clazz);
+        view.own(figure);
+        figures.add(figure);
+        labels.add(label(view, spot.clone().add(0, 2.15, 0),
+            Component.text(e.name(), iconColor(e)).decoration(TextDecoration.BOLD, true)));
+      }
+      if (hasFreeSlot()) {
+        Location spot = lineup.spot(entries.size(), n);
+        ghost = dummies.spawnGhost(player, spot);
+        view.own(ghost);
+        labels.add(label(view, spot.clone().add(0, 2.15, 0),
+            Component.text("+ Nowa postać", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true)));
+      }
+    }
+
+    private Entity label(SceneView view, Location at, Component text) {
+      org.bukkit.entity.TextDisplay d = at.getWorld().spawn(at, org.bukkit.entity.TextDisplay.class, e -> {
+        e.setPersistent(false);
+        e.setVisibleByDefault(false);
+        e.setBillboard(org.bukkit.entity.Display.Billboard.CENTER);
+        e.setShadowed(true);
+        e.setAlignment(org.bukkit.entity.TextDisplay.TextAlignment.CENTER);
+        e.setBackgroundColor(org.bukkit.Color.fromARGB(0, 0, 0, 0));
+        e.text(text);
+      });
+      view.own(d);
+      return d;
+    }
+
+    private void clear() {
+      for (Entity e : labels) {
+        if (e.isValid()) {
+          e.remove();
+        }
+      }
+      labels.clear();
+      figures.clear();
+      ghost = null;
+    }
+
+    /** Karta, lista, podpowiedz i ozywiana postac dla biezacego miejsca. */
+    private void refresh(SceneView view) {
+      int i = current();
+      dummies.setGhostGlow(ghost, onFreeSlot());
+      view.list(list());
+      if (onFreeSlot()) {
+        view.subjectEntity(ghost);
+        view.card(Component.text("Nowa postać", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true)
+            .append(Component.newline()).append(Component.newline())
+            .append(Component.text("Wolne miejsce przy ognisku. Wybierz rasę i klasę, "
+                + "nadaj imię i ruszaj w drogę.", NamedTextColor.WHITE))
+            .append(Component.newline()).append(Component.newline())
+            .append(Component.text("Wolne miejsca: " + (slots - entries.size()), NamedTextColor.GRAY)));
+        view.hint(CreatorFlow.hint("A/D", "Postać", "LPM", "Stwórz postać", "PPM", "Księga postaci"));
+        return;
+      }
+      Entry e = entries.get(i);
+      view.subjectEntity(figures.get(i));
+      CreatorConfig.RaceOption race = e.record() == null ? null : config.races().get(e.record().raceId());
+      CreatorConfig.ClassOption clazz = e.record() == null ? null : config.classes().get(e.record().classId());
+      view.card(cardFor(e, race, clazz));
+      view.hint(CreatorFlow.hint("A/D", "Postać " + (i + 1) + "/" + entries.size(), "LPM", "Graj",
+          "PPM", "Księga postaci"));
+    }
+
+    private Component list() {
+      Component out = Component.text("Twoje postacie  ", NamedTextColor.WHITE)
+          .append(Component.text("[A/D]", NamedTextColor.GOLD));
+      int current = current();
+      for (int i = 0; i < entries.size(); i++) {
+        Entry e = entries.get(i);
+        boolean on = i == current;
+        out = out.append(Component.newline())
+            .append(Component.text(on ? "▶ " : "   ", NamedTextColor.GOLD))
+            .append(Component.text("■ ", iconColor(e)))
+            .append(Component.text(e.name(), on ? NamedTextColor.WHITE : NamedTextColor.GRAY)
+                .decoration(TextDecoration.BOLD, on));
+      }
+      if (hasFreeSlot()) {
+        boolean on = onFreeSlot();
+        out = out.append(Component.newline())
+            .append(Component.text(on ? "▶ " : "   ", NamedTextColor.GOLD))
+            .append(Component.text("+ Nowa postać", on ? NamedTextColor.GREEN : NamedTextColor.DARK_GREEN)
+                .decoration(TextDecoration.BOLD, on));
+      }
+      return out;
+    }
+
+    /** Kamera po luku z kata obecnego miejsca do nowego, najkrotsza droga w kregu. */
+    private void move(SceneView view, int delta) {
+      if (count() < 2) {
+        return;
+      }
+      int n = count();
+      double from = lineup.angle(current(), n);
+      index += delta;
+      double to = lineup.angle(current(), n);
+      int steps = Math.max(1, (int) Math.ceil(Math.abs(to - from) / MAX_STEP_DEGREES));
+      List<Location> path = new ArrayList<>();
+      for (int k = 1; k <= steps; k++) {
+        path.add(lineup.camera(from + (to - from) * k / steps));
+      }
+      view.uiSound("character");
+      view.glideCamera(path, lineup.stepTicks());
+      refresh(view);
+    }
+
+    @Override
+    public void onPrevious(SceneView view) {
+      move(view, -1);
+    }
+
+    @Override
+    public void onNext(SceneView view) {
+      move(view, 1);
+    }
+
+    @Override
+    public void onSelect(SceneView view) {
+      view.uiSound("select");
+      if (onFreeSlot()) {
+        startCreation(view);
+      } else {
+        play(view, entries.get(current()));
+      }
+    }
+
+    @Override
+    public void onBack(SceneView view) {
+      Player player = view.player();
+      if (player == null) {
+        return;
+      }
+      view.uiSound("back");
+      List<SceneMenu.Button> buttons = new ArrayList<>();
+      for (Entry e : entries) {
+        buttons.add(new SceneMenu.Button(
+            Component.text("■ ", iconColor(e)).append(Component.text(e.name(), NamedTextColor.WHITE)),
+            Component.text("Graj tą postacią"), () -> play(view, e)));
+      }
+      if (hasFreeSlot()) {
+        buttons.add(new SceneMenu.Button(Component.text("+ Nowa postać", NamedTextColor.GREEN),
+            Component.text("Otwiera kreator postaci"), () -> startCreation(view)));
+      }
+      if (!onFreeSlot()) {
+        Entry shown = entries.get(current());
+        buttons.add(new SceneMenu.Button(Component.text("Usuń: " + shown.name(), NamedTextColor.RED),
+            Component.text("Pyta o potwierdzenie"), () -> confirmDeleteLineup(view, shown)));
+      }
+      buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> { }));
+      menu.show(player, Component.text("Księga postaci", NamedTextColor.GOLD), null, buttons, 2);
+    }
+
+    private void confirmDeleteLineup(SceneView view, Entry entry) {
+      Player player = view.player();
+      if (player == null) {
+        return;
+      }
+      menu.show(player, Component.text("Usunąć postać?", NamedTextColor.RED),
+          Component.text("Postać ", NamedTextColor.WHITE)
+              .append(Component.text(entry.name(), iconColor(entry)).decoration(TextDecoration.BOLD, true))
+              .append(Component.text(" zniknie na zawsze razem z ekwipunkiem i postępem. "
+                  + "Tego nie da się cofnąć.", NamedTextColor.WHITE)),
+          List.of(
+              new SceneMenu.Button(Component.text("Usuń na zawsze", NamedTextColor.RED), null,
+                  () -> deleteLineup(view, entry)),
+              new SceneMenu.Button(Component.text("Anuluj"), null, () -> { })), 1);
+    }
+
+    private void deleteLineup(SceneView view, Entry entry) {
+      removeAndThen(view, entry, fresh -> {
+        entries.clear();
+        entries.addAll(fresh);
+        if (entries.isEmpty()) {
+          clear();
+          dummies.despawnFigures(view.playerId());
+          startCreation(view);
+          return;
+        }
+        index = 0;
+        view.fade(() -> {
+          Player p = view.player();
+          if (p == null) {
+            return;
+          }
+          dummies.despawnFigures(view.playerId());
+          spawnAll(view, p);
+          view.placeCamera(lineup.camera(lineup.angle(current(), count())), lineup.point());
+          refresh(view);
+        });
+      });
+    }
+
+    @Override
+    public void onClose(SceneView view) {
+      clear();
+      dummies.despawnFigures(view.playerId());
+    }
+  }
+
+private Component cardFor(Entry e, CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz) {
+    Component out = Component.text(e.name(), iconColor(e)).decoration(TextDecoration.BOLD, true);
+    String className = e.profile().getPlaceholderCache().getPlaceholder("mmocore_class");
+    String level = e.profile().getPlaceholderCache().getPlaceholder("mmocore_level");
+    if (level == null || level.isBlank()) {
+      level = levelFromFile(e.profile().getUniqueId());
+    }
+    if (clazz != null && race != null) {
+      out = out.append(Component.newline())
+          .append(LEGACY.deserialize(clazz.displayFor(race.id())).decoration(TextDecoration.ITALIC, false))
+          .append(Component.text("  " + plain(race.display()) + " · " + plain(clazz.display()),
+              NamedTextColor.GRAY));
+    } else if (className != null && !className.isBlank()) {
+      out = out.append(Component.newline()).append(Component.text(className, NamedTextColor.WHITE));
+    }
+    out = out.append(Component.newline()).append(Component.newline());
+    if (className != null && !className.isBlank() && clazz != null && race != null
+        && !plain(clazz.displayFor(race.id())).equalsIgnoreCase(className)) {
+      // Po 10. poziomie klasa MMOCore to juz specjalizacja — pokazujemy ja osobno.
+      out = out.append(Component.text("Specjalizacja: ", NamedTextColor.GRAY))
+          .append(Component.text(className, NamedTextColor.WHITE)).append(Component.newline());
+    }
+    if (level != null && !level.isBlank()) {
+      out = out.append(Component.text("Poziom: ", NamedTextColor.GRAY))
+          .append(Component.text(level, NamedTextColor.YELLOW)).append(Component.newline());
+    }
+    long minutes = e.profile().getTimePlayed() / 60_000L;
+    out = out.append(Component.text("Czas gry: ", NamedTextColor.GRAY))
+        .append(Component.text(minutes >= 60 ? (minutes / 60) + " h " + (minutes % 60) + " min"
+            : minutes + " min", NamedTextColor.WHITE));
+    return out;
+  }
+
+  // --- wspolne dla obu ekranow wyboru ------------------------------------------------
+
+  /**
+   * Usuwa postac i po zniknieciu z listy MMOProfiles woła {@code then} z nowa lista.
+   * NIE czekamy na future z removeProfile: na klonie profil znikal z listy, a future nie
+   * domykal sie wcale — patrzymy na liste.
+   */
+  private void removeAndThen(SceneView view, Entry entry, java.util.function.Consumer<List<Entry>> then) {
+    Player player = view.player();
+    ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
+    if (list == null) {
+      return;
+    }
+    logger.info("Scena: " + player.getName() + " usuwa postac " + entry.name() + " (profil "
+        + entry.profile().getUniqueId() + ")");
+    list.removeProfile(entry.profile()).exceptionally(ex -> {
+      logger.warning("Usuwanie postaci nie powiodlo sie: " + ex);
+      return null;
+    });
+    UUID removed = entry.profile().getUniqueId();
+    int[] tries = {0};
+    Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+      boolean gone = list.getProfiles().stream().noneMatch(p -> p.getUniqueId().equals(removed));
+      if (view.isClosed() || gone || ++tries[0] > 20) {
+        task.cancel();
+        if (view.isClosed()) {
+          return;
+        }
+        if (!gone) {
+          logger.warning("Postac " + entry.name() + " nadal na liscie MMOProfiles po 5 s.");
+        }
+        then.accept(entries(list));
+      }
+    }, 5L, 5L);
+  }
+
+  private void play(SceneView view, Entry entry) {
+    Player player = view.player();
+    if (player == null) {
+      return;
+    }
+    view.close();
+    // Tick pozniej: zamkniecie sceny oddaje tryb gry i pozycje, dopiero potem MMOProfiles
+    // stawia gracza na zapisanej pozycji postaci.
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      ProfileListImpl list = ProfileListImpl.getOrNull(player);
+      if (list != null && player.isOnline()) {
+        list.applyProfile(entry.profile());
+      }
+    });
+  }
+
+  private void startCreation(SceneView view) {
+    Player player = view.player();
+    if (player == null) {
+      return;
+    }
+    view.close();
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      ProfileListImpl list = ProfileListImpl.getOrNull(player);
+      if (list != null && player.isOnline()) {
+        createNew(player, list);
+      }
+    });
   }
 
   // --- podglad postaci (ta sama stajnia nosicieli skorek co w kreatorze) --------------

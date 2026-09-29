@@ -54,10 +54,25 @@ public final class SceneView {
   boolean lastRight;
   boolean closed;
   Entity subjectEntity;
-  /** Tick, w ktorym postac ma wrocic glowa na wprost po rozejrzeniu sie. */
-  long lookBackTick = -1;
-  /** Biezace odchylenie glowy postaci od patrzenia w kamere (stopnie). */
-  float headOffset;
+  /** Glowa postaci: biezace i docelowe odchylenie od patrzenia w kamere (stopnie). */
+  float headYaw;
+  float headPitch;
+  float targetYaw;
+  float targetPitch;
+  float headSpeed = 3f;
+  /** Faza gestu: tick konca trzymania (-1 = nie trzyma) i tick nastepnego gestu. */
+  long holdUntilTick = -1;
+  long nextGestureTick = -1;
+  boolean gestureOut;
+  int lastGesture = -1;
+  /** Podklad biezacego kadru (klucz dzwieku) — do wyciszenia przy zmianie kadru. */
+  String music;
+  /** Nastepny tick kazdego odglosu tla kadru (indeks w Ambience.sounds). */
+  final Map<Integer, Long> nextSound = new HashMap<>();
+  /** Wlasna encja-kamera nadpisujaca kadr (scena wyboru, przelot); null = kamera kadru. */
+  boolean freeCamera;
+  /** Trwa przelot — klimat kadru (czastki, odglosy) stoi, bo kamera jest w innym swiecie. */
+  boolean flying;
 
   SceneView(SceneManager manager, Player player) {
     this.manager = manager;
@@ -136,12 +151,41 @@ public final class SceneView {
     manager.close(playerId);
   }
 
-  /** Encje sceny, ktore maja byc widoczne tylko dla tego gracza (np. podglad postaci). */
+  /** Zamyka scene i stawia gracza w {@code destination}. */
+  public void close(Location destination) {
+    manager.close(playerId, destination);
+  }
+
+  /** Przelot kamery nad swiatem, potem {@code done}. Bez konfiguracji — od razu {@code done}. */
+  public void flyover(SceneSettings.Flyover fly, Runnable done) {
+    manager.flyover(this, fly, done);
+  }
+
+  public SceneSettings settings() {
+    return manager.settings();
+  }
+
   /** Postac stojaca w kadrze — scena ozywia ja wg klimatu kadru (machniecie, rozgladanie). */
   public void subjectEntity(Entity entity) {
     this.subjectEntity = entity;
   }
 
+  /** Dzwiek interfejsu z {@code scene.ui-sounds.<key>} (brak wpisu = cisza). */
+  public void uiSound(String key) {
+    manager.playUi(this, key);
+  }
+
+  /** Kamera plynnie po krokach (np. luk wokol ogniska), kazdy interpolowany po stronie klienta. */
+  public void glideCamera(java.util.List<Location> steps, int ticksPerStep) {
+    manager.glide(this, steps, ticksPerStep);
+  }
+
+  /** Kamera na stale w tym miejscu (bez kadru z configu). Zdejmuje tez panele. */
+  public void placeCamera(Location at, String ambiencePointId) {
+    manager.placeCamera(this, at, ambiencePointId);
+  }
+
+  /** Encje sceny, ktore maja byc widoczne tylko dla tego gracza (np. podglad postaci). */
   public void own(Entity entity) {
     manager.ownEntity(this, entity);
   }

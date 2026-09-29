@@ -79,6 +79,13 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     this.selectOpener = selectOpener;
   }
 
+  private java.util.function.Function<Player, String> flyoverPreview;
+
+  /** {@code /cc przelot <gracz>} — sam przelot po stworzeniu postaci, do podgladu. */
+  public void setFlyoverPreview(java.util.function.Function<Player, String> flyoverPreview) {
+    this.flyoverPreview = flyoverPreview;
+  }
+
   public void setSceneOpener(java.util.function.BiFunction<Player, Boolean, String> sceneOpener) {
     this.sceneOpener = sceneOpener;
   }
@@ -102,6 +109,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       case "skin" -> skin(sender, args);
       case "scena" -> scene(sender, args);
       case "wybor" -> select(sender, args);
+      case "przelot" -> flyover(sender, args);
       default -> usage(sender, label);
     }
     return true;
@@ -139,6 +147,17 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       return;
     }
     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoprofiles open " + target.getName());
+  }
+
+  private void flyover(CommandSender sender, String[] args) {
+    Player target = args.length >= 2 ? Bukkit.getPlayerExact(args[1])
+        : sender instanceof Player p ? p : null;
+    if (flyoverPreview == null || target == null) {
+      sender.sendMessage(Component.text(flyoverPreview == null ? "Scena jest wylaczona."
+          : "Podaj gracza online.", NamedTextColor.RED));
+      return;
+    }
+    sender.sendMessage(Component.text(flyoverPreview.apply(target), NamedTextColor.GRAY));
   }
 
   /** {@code /cc scena [gracz] [zamknij]} — kreator w scenie (etap 1, tylko do testow). */
@@ -518,7 +537,8 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       return List.of();
     }
     if (args.length == 1) {
-      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin", "scena", "wybor"), args[0]);
+      return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin", "scena", "wybor",
+          "przelot"), args[0]);
     }
     if (args.length == 2 && "skin".equalsIgnoreCase(args[0])) {
       return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);

@@ -47,9 +47,10 @@ public final class SceneListener implements Listener {
       return;
     }
     event.setCancelled(true);
-    if (event.getNewSpectatorTarget().equals(view.shield)) {
-      dispatch(view, c -> c.onSelect(view), "LPM");
-    }
+    // Klik w KAZDA encje sceny to LPM — w scenie nie ma nic innego do klikania. Zlapane na
+    // klonie 30.09: w scenie wyboru promien klienta trafial w postac (nosiciel HUSK) zamiast
+    // w tarcze przed kamera i LPM ginal bez sladu.
+    dispatch(view, c -> c.onSelect(view), "LPM");
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
@@ -67,7 +68,7 @@ public final class SceneListener implements Listener {
       return;
     }
     event.setCancelled(true);
-    if (event.getHand() != EquipmentSlot.HAND || !event.getRightClicked().equals(view.shield)) {
+    if (event.getHand() != EquipmentSlot.HAND) {
       return;
     }
     int now = Bukkit.getCurrentTick();

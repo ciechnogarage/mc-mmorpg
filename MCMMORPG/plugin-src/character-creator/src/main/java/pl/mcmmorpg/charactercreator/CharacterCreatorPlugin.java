@@ -379,6 +379,23 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
       profileModule.enableScene(sceneManager, flows, book);
       getLogger().info("Scena ZASTEPUJE sale kreatora przy tworzeniu postaci (scene.replace-creator).");
     }
+    if (command != null) {
+      command.setFlyoverPreview(p -> {
+        if (sceneManager.inScene(p.getUniqueId())) {
+          return "Gracz jest w scenie — najpierw /cc scena " + p.getName() + " zamknij.";
+        }
+        if (!sceneManager.open(p, new pl.mcmmorpg.charactercreator.scene.SceneController() {
+          @Override
+          public void onOpen(SceneView v) {
+            v.flyover(v.settings().flyover(), v::close);
+          }
+        })) {
+          return "Scena sie nie otworzyla (log).";
+        }
+        return sceneManager.settings().flyover() == null ? "Brak scene.flyover w configu."
+            : "Przelot: " + p.getName();
+      });
+    }
     // /cc scena: podglad dla admina — cala droga z ksiega, ale bez tworzenia postaci.
     CreatorFlow[] preview = new CreatorFlow[1];
     preview[0] = flows.apply(new CreatorFlow.Outcome() {

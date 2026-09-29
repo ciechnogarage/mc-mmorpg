@@ -1,0 +1,203 @@
+scene:
+  replace-creator: true
+  replace-selector: true
+  world: 'creator_limbo'
+  shield-distance: 1.4
+  target-delay-ticks: 5
+  fade:
+    glyph: '䈀'
+    in-ticks: 5
+    stay-ticks: 5
+    out-ticks: 10
+  # HUD innych pluginow na czas sceny (komendy z konsoli, %player% = gracz).
+  # Spectator chowa vanillowy HUD, ale nie paski MythicHUD ani action bara MMOCore
+  # (zycie/mana), ktory nadpisywal podpowiedz sterowania. Po zamknieciu — on-close.
+  hud:
+    on-open:
+      - 'hud layout %player% remove default-layout -s'
+      - 'hud layout %player% remove sword-layout -s'
+      - 'hud layout %player% remove chowance-layout -s'
+    repeat:
+      - 'mmocore admin hideab %player% 60'
+    repeat-ticks: 40
+    on-close:
+      - 'hud layout %player% add default-layout -s'
+      - 'hud layout %player% add sword-layout -s'
+      - 'hud layout %player% add chowance-layout -s'
+  # Dzwieki interfejsu (tylko dla gracza w scenie). Brak wpisu = cisza.
+  ui-sounds:
+    race:      { sound: 'item.book.page_turn', volume: 0.9, pitch: 0.9 }
+    class:     { sound: 'ui.button.click', volume: 0.35, pitch: 1.4 }
+    character: { sound: 'item.book.page_turn', volume: 0.8, pitch: 1.1 }
+    select:    { sound: 'block.enchantment_table.use', volume: 0.6, pitch: 1.2 }
+    back:      { sound: 'item.book.put', volume: 0.8, pitch: 1.0 }
+    create:    { sound: 'ui.toast.challenge_complete', volume: 0.5, pitch: 1.0 }
+    flyover:   { sound: 'item.elytra.flying', volume: 0.25, pitch: 1.3 }
+  # KLIMAT KADRU (2026-09-29): postac NIE macha bronia — tylko stoi i rozglada sie po swojemu.
+  #   idle.rest-pitch  pochylenie glowy w spoczynku (+ w dol)
+  #   idle.speed       predkosc obrotu glowy (stopnie/tick), gest moze miec wlasna
+  #   idle.pause       [min, max] tickow miedzy gestami
+  #   idle.gestures    yaw (+ w lewo postaci) / pitch / hold (ticki trzymania) / speed
+  #   music            podklad kadru (gra od wejscia w kadr, gasnie przy zmianie)
+  #   sounds           odglosy tla: every ticki + jitter losowy rozrzut
+  points:
+    default:
+      camera:  { x: 301.5, y: 101.62, z: 285.5 }
+      subject: { x: 301.5, y: 100.0, z: 282.5 }
+      card:    { x: 303.6, y: 100.45, z: 282.4 }
+      list:    { x: 299.4, y: 100.95, z: 282.4 }
+      look:    { x: 301.5, y: 101.0, z: 282.5 }
+      time: 6000
+      idle:
+        speed: 2.5
+        pause: [70, 130]
+        gestures:
+          - { yaw: 22, pitch: 0, hold: 40 }
+          - { yaw: -22, pitch: 0, hold: 40 }
+          - { yaw: 8, pitch: 18, hold: 30 }
+    czlowiek:
+      camera:  { x: 301.5, y: 101.62, z: 285.5 }
+      subject: { x: 301.5, y: 100.0, z: 282.5 }
+      card:    { x: 303.6, y: 100.45, z: 282.4 }
+      list:    { x: 299.4, y: 100.95, z: 282.4 }
+      look:    { x: 301.5, y: 101.0, z: 282.5 }
+      # Czlowiek: grod w poludnie. Spokojny, pewny siebie — patrzy przed siebie, czasem
+      # powoli rozejrzy sie po grodzie albo zerknie na bron w dloni.
+      time: 6000
+      idle:
+        speed: 2.5
+        pause: [70, 130]
+        gestures:
+          - { yaw: 24, pitch: -2, hold: 45 }
+          - { yaw: -24, pitch: -2, hold: 45 }
+          - { yaw: 10, pitch: 22, hold: 30 }
+      music: { sound: 'music.overworld.meadow', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'entity.villager.ambient', volume: 0.35, pitch: 1.0, every: 240, jitter: 200 }
+        - { sound: 'block.bell.use', volume: 0.2, pitch: 0.7, every: 700, jitter: 400 }
+        - { sound: 'entity.chicken.ambient', volume: 0.3, pitch: 1.0, every: 300, jitter: 300 }
+    elf:
+      camera:  { x: 601.5, y: 101.62, z: 285.5 }
+      subject: { x: 601.5, y: 100.0, z: 282.5 }
+      card:    { x: 603.6, y: 100.45, z: 282.4 }
+      list:    { x: 599.4, y: 100.95, z: 282.4 }
+      look:    { x: 601.5, y: 101.0, z: 282.5 }
+      # Elf: gaj wisniowy o poranku. Lekki i czujny — unosi wzrok ku koronom drzew,
+      # czasem szybko nadstawia ucha w bok, jakby cos uslyszal.
+      time: 1000
+      particles:
+        - { type: CHERRY_LEAVES, dx: 4.0, dy: 1.5, dz: 3.0, y: 3.5, count: 2, every: 5 }
+      idle:
+        rest-pitch: -4
+        speed: 2
+        pause: [60, 110]
+        gestures:
+          - { yaw: 16, pitch: -28, hold: 50 }
+          - { yaw: -12, pitch: -24, hold: 45 }
+          - { yaw: -38, pitch: -2, hold: 22, speed: 7 }
+          - { yaw: 34, pitch: -4, hold: 22, speed: 7 }
+      music: { sound: 'music.overworld.cherry_grove', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'block.amethyst_block.chime', volume: 0.3, pitch: 1.2, every: 120, jitter: 120 }
+        - { sound: 'block.cherry_leaves.fall', volume: 0.5, pitch: 1.0, every: 60, jitter: 60 }
+    ork:
+      camera:  { x: 901.5, y: 101.62, z: 285.5 }
+      subject: { x: 901.5, y: 100.0, z: 282.5 }
+      card:    { x: 903.6, y: 100.45, z: 282.4 }
+      list:    { x: 899.4, y: 100.95, z: 282.4 }
+      look:    { x: 901.5, y: 101.0, z: 282.5 }
+      # Ork: obozowisko o zachodzie. Niespokojny drapieznik — patrzy spode lba, szarpie
+      # glowa na boki, rzuca okiem przez ramie i w ziemie, zaraz znowu.
+      time: 12300
+      particles:
+        - { type: LAVA, at: { x: 894.5, y: 100.6, z: 274.5 }, dx: 0.1, dy: 0.1, dz: 0.1, count: 1, every: 25 }
+        - { type: LAVA, at: { x: 908.5, y: 100.6, z: 272.5 }, dx: 0.1, dy: 0.1, dz: 0.1, count: 1, every: 31 }
+        - { type: ASH, dx: 4.0, dy: 2.0, dz: 3.0, y: 2.0, count: 3, every: 6 }
+      idle:
+        rest-pitch: 10
+        speed: 4
+        pause: [30, 70]
+        gestures:
+          - { yaw: 30, pitch: 0, hold: 14, speed: 12 }
+          - { yaw: -30, pitch: 0, hold: 14, speed: 12 }
+          - { yaw: 52, pitch: 4, hold: 24, speed: 8 }
+          - { yaw: -6, pitch: 22, hold: 20, speed: 6 }
+      music: { sound: 'music.overworld.badlands', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'block.campfire.crackle', volume: 0.8, pitch: 1.0, every: 30, jitter: 30 }
+        - { sound: 'entity.piglin_brute.ambient', volume: 0.3, pitch: 0.7, every: 400, jitter: 300 }
+        - { sound: 'block.note_block.basedrum', volume: 0.35, pitch: 0.6, every: 160, jitter: 120 }
+    nieumarly:
+      camera:  { x: 1201.5, y: 101.62, z: 285.5 }
+      subject: { x: 1201.5, y: 100.0, z: 282.5 }
+      card:    { x: 1203.6, y: 100.45, z: 282.4 }
+      list:    { x: 1199.4, y: 100.95, z: 282.4 }
+      look:    { x: 1201.5, y: 101.0, z: 282.5 }
+      # Nieumarly: cmentarzysko o polnocy. Glowa zwieszona, bardzo wolne obroty; od czasu
+      # do czasu martwe szarpniecie i powolne podniesienie wzroku prosto na patrzacego.
+      time: 18000
+      particles:
+        - { type: SOUL, dx: 0.6, dy: 0.1, dz: 0.6, y: 0.2, count: 1, every: 12 }
+        - { type: WHITE_ASH, dx: 5.0, dy: 2.5, dz: 4.0, y: 2.5, count: 4, every: 4 }
+      idle:
+        rest-pitch: 18
+        speed: 0.8
+        pause: [90, 160]
+        gestures:
+          - { yaw: 28, pitch: 6, hold: 60 }
+          - { yaw: -24, pitch: 4, hold: 60 }
+          - { yaw: -10, pitch: 16, hold: 6, speed: 25 }
+          - { yaw: 0, pitch: -20, hold: 70, speed: 0.6 }
+      music: { sound: 'music.overworld.deep_dark', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'ambient.soul_sand_valley.additions', volume: 0.6, pitch: 1.0, every: 120, jitter: 100 }
+        - { sound: 'entity.zombie.ambient', volume: 0.2, pitch: 0.5, every: 500, jitter: 300 }
+    # Scena wyboru postaci: polana z ogniskiem w nocy (tools/ulepszenia/scena-wyboru.sh).
+    # camera/subject tylko dla klimatu i zapasu — kamere ustawia sekcja select nizej.
+    wybor:
+      camera:  { x: 1501.5, y: 101.62, z: 277.5 }
+      subject: { x: 1501.5, y: 100.0, z: 270.5 }
+      time: 18000
+      particles:
+        - { type: LAVA, at: { x: 1501.5, y: 100.5, z: 270.5 }, dx: 0.15, dy: 0.1, dz: 0.15, count: 1, every: 12 }
+        - { type: SMALL_FLAME, at: { x: 1501.5, y: 100.4, z: 270.5 }, dx: 0.2, dy: 0.1, dz: 0.2, count: 2, every: 4 }
+      idle:
+        speed: 2
+        pause: [60, 120]
+        gestures:
+          - { yaw: 20, pitch: 0, hold: 40 }
+          - { yaw: -20, pitch: 0, hold: 40 }
+          - { yaw: 0, pitch: 16, hold: 30 }
+      music: { sound: 'music.overworld.old_growth_taiga', volume: 0.45, category: MUSIC }
+      sounds:
+        - { sound: 'block.campfire.crackle', volume: 0.9, pitch: 1.0, every: 25, jitter: 25 }
+        - { sound: 'entity.fox.ambient', volume: 0.25, pitch: 0.9, every: 500, jitter: 400 }
+  # Wybor postaci: postacie w luku wokol ogniska (center), przodem na zewnatrz, kamera
+  # przed wybrana; A/D obiega krag. start-degrees 0 = srodek luku na poludnie (+z).
+  select:
+    point: wybor
+    center: { x: 1501.5, y: 100.0, z: 270.5 }
+    radius: 3.4
+    camera-distance: 3.2
+    camera-height: 1.55
+    look-height: 1.05
+    spacing-degrees: 40
+    start-degrees: 0
+    step-ticks: 3
+  # Przelot po stworzeniu postaci (D6): znad zatoki nad wybrzeze (~70 blokow), konczy nad startem
+  # (creator-room.exit). ticks = czas dolotu do punktu (1-59). {imie} = imie postaci.
+  flyover:
+    enabled: true
+    world: 'world'
+    # pora dnia na czas lotu (tylko dla gracza); -1 = czas swiata
+    time: 1000
+    # ile tickow ekran zostaje czarny po przeniesieniu do swiata gry (wczytanie terenu)
+    hold-ticks: 40
+    look: { x: 149.5, y: 99.0, z: 197.5 }
+    title: '&6&l{imie}'
+    subtitle: '&7Twoja droga zaczyna się tutaj'
+    path:
+      - { x: 222.5, y: 96.0, z: 160.5 }
+      - { x: 196.5, y: 104.0, z: 178.5, ticks: 55 }
+      - { x: 176.5, y: 108.0, z: 194.5, ticks: 50 }
+      - { x: 163.5, y: 104.0, z: 203.5, ticks: 45 }

@@ -266,8 +266,78 @@ public final class PreviewDummyManager {
     zeroDropChances(eq);
   }
 
+  /** Postacie ustawione naraz (scena wyboru) — osobno od stajni kreatora. */
+  private final Map<UUID, List<LivingEntity>> crowds = new HashMap<>();
+
+  /**
+   * Stawia jedna postac na stale w {@code at}: nosiciel w przebraniu skorki rasy i klasy
+   * (albo skorki gracza), z bronia klasy w rece. Scena wyboru stawia tak wszystkie postacie
+   * konta naraz — kazda to osobna encja, bo dwie postacie moga miec te sama skorke.
+   */
+  public LivingEntity spawnFigure(Player viewer, Location at, CreatorConfig.RaceOption race,
+      CreatorConfig.ClassOption clazz) {
+    LivingEntity carrier = spawnCarrier(at);
+    carrier.setRotation(at.getYaw(), at.getPitch());
+    carrier.setBodyYaw(at.getYaw());
+    SkinService.Skin skin = race == null ? null
+        : skinService.resolve(null, race.id(), clazz == null ? "" : clazz.id());
+    PlayerDisguise disguise = skin == null ? new PlayerDisguise(viewer)
+        : new PlayerDisguise(skinService.disguiseProfile(skin));
+    disguise.setNameVisible(false);
+    ItemStack hand = clazz == null ? null : item(clazz.gear().get("hand"));
+    disguise.getWatcher().setItemInMainHand(hand);
+    DisguiseAPI.disguiseToPlayers(carrier, disguise, viewer);
+    crowds.computeIfAbsent(viewer.getUniqueId(), k -> new ArrayList<>()).add(carrier);
+    return carrier;
+  }
+
+  /**
+   * Zarys pustego miejsca: niewidzialna postac w skorce gracza ze swieceniem — klient rysuje
+   * sam bialy kontur sylwetki. Scena wyboru stawia ja na wolnym miejscu przy ognisku.
+   */
+  public LivingEntity spawnGhost(Player viewer, Location at) {
+    LivingEntity carrier = spawnCarrier(at);
+    carrier.setRotation(at.getYaw(), at.getPitch());
+    carrier.setBodyYaw(at.getYaw());
+    PlayerDisguise disguise = new PlayerDisguise(viewer);
+    disguise.setNameVisible(false);
+    disguise.getWatcher().setInvisible(true);
+    disguise.getWatcher().setGlowing(false);
+    DisguiseAPI.disguiseToPlayers(carrier, disguise, viewer);
+    ghosts.put(carrier.getUniqueId(), disguise);
+    crowds.computeIfAbsent(viewer.getUniqueId(), k -> new ArrayList<>()).add(carrier);
+    return carrier;
+  }
+
+  private final Map<UUID, PlayerDisguise> ghosts = new HashMap<>();
+
+  /** Kontur swieci przez sciany — zapalamy go tylko, gdy wolne miejsce jest wybrane. */
+  public void setGhostGlow(Entity ghost, boolean on) {
+    PlayerDisguise disguise = ghost == null ? null : ghosts.get(ghost.getUniqueId());
+    if (disguise != null) {
+      disguise.getWatcher().setGlowing(on);
+    }
+  }
+
+  public void despawnFigures(UUID viewerId) {
+    List<LivingEntity> crowd = crowds.remove(viewerId);
+    if (crowd == null) {
+      return;
+    }
+    for (LivingEntity carrier : crowd) {
+      if (carrier != null) {
+        ghosts.remove(carrier.getUniqueId());
+      }
+      if (carrier != null && !carrier.isDead()) {
+        DisguiseAPI.undisguiseToAll(carrier);
+        carrier.remove();
+      }
+    }
+  }
+
   /** Sprzata cala stajnie gracza. Wolane z konca sesji — takze wtedy, gdy gracza juz nie ma. */
   public void despawnAll(UUID viewerId) {
+    despawnFigures(viewerId);
     Stable stable = stables.remove(viewerId);
     if (stable == null) {
       return;

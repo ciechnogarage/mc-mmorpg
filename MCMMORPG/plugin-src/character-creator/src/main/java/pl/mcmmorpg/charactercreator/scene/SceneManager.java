@@ -205,6 +205,15 @@ public final class SceneManager {
 
   /** Zamyka scene gracza, oddaje tryb gry i miejsce sprzed wejscia. */
   public void close(UUID playerId) {
+    close(playerId, null);
+  }
+
+  /**
+   * Zamyka scene i stawia gracza w {@code destination} zamiast w miejscu sprzed wejscia —
+   * po przelocie gracz jest juz w swiecie gry i powrot do sali oznaczalby dwa ekrany
+   * ladowania pod rzad.
+   */
+  public void close(UUID playerId, Location destination) {
     SceneView view = views.remove(playerId);
     if (view == null) {
       return;
@@ -229,6 +238,7 @@ public final class SceneManager {
       player.setSpectatorTarget(null);
       view.retargeting = false;
     }
+    stopMusic(view, player);
     player.clearTitle();
     player.sendActionBar(Component.empty());
     player.resetPlayerTime();
@@ -237,8 +247,14 @@ public final class SceneManager {
       player.hideBossBar(view.topBar);
     }
     runAll(settings.hudOnClose(), player);
-    player.setGameMode(view.originMode() == null ? GameMode.SURVIVAL : view.originMode());
-    player.teleport(view.origin());
+    GameMode mode = view.originMode() == null ? GameMode.SURVIVAL : view.originMode();
+    if (destination != null) {
+      player.teleport(destination);
+      player.setGameMode(mode);
+    } else {
+      player.setGameMode(mode);
+      player.teleport(view.origin());
+    }
     reveal(player);
   }
 
@@ -260,6 +276,10 @@ public final class SceneManager {
     }
     view.currentPoint = point;
     view.currentPointId = settings.points().containsKey(pointId) ? pointId : SceneSettings.DEFAULT_POINT;
+    view.freeCamera = false;
+    for (Display d : new Display[] {view.camera, view.card, view.list}) {
+      d.setTeleportDuration(0);
+    }
     // Zdejmujemy kamere na czas przestawienia: przy dalekim skoku klient moglby zgubic
     // encje-kamere, zanim dogoni ja gracz. tick() nalozy ja z powrotem po targetDelayTicks.
     view.retargeting = true;
@@ -277,6 +297,226 @@ public final class SceneManager {
     applyAmbience(view, player);
   }
 
+  /**
+   * Kamera w dowolnym miejscu (scena wyboru stawia ja przed wybrana postacia), klimat
+   * z kadru {@code ambiencePointId}. Panele ida za kamera: 3,1 bloku przed nia, 2,1 w bok —
+   * tak jak w kadrach z configu (blizej zaslanialy postac).
+   */
+  void placeCamera(SceneView view, Location at, String ambiencePointId) {
+    Player player = view.player();
+    SceneSettings.Point point = settings.point(ambiencePointId);
+    if (player == null || point == null) {
+      return;
+    }
+    boolean sameWorld = view.camera.getWorld() == at.getWorld();
+    view.freeCamera = true;
+    boolean ambienceChanged = view.currentPoint != point;
+    view.currentPoint = point;
+    view.currentPointId = ambiencePointId;
+    view.retargeting = true;
+    if (player.getGameMode() == GameMode.SPECTATOR) {
+      player.setSpectatorTarget(null);
+    }
+    view.retargeting = false;
+    for (Display d : new Display[] {view.camera, view.card, view.list}) {
+      d.setTeleportDuration(0);
+    }
+    player.teleport(at);
+    view.camera.teleport(at);
+    view.shield.teleport(shieldLocation(at));
+    view.card.teleport(panelAt(at, true));
+    view.list.teleport(panelAt(at, false));
+    view.targetReadyTick = Bukkit.getCurrentTick() + settings.targetDelayTicks() + (sameWorld ? 0 : 5);
+    if (ambienceChanged) {
+      applyAmbience(view, player);
+    }
+  }
+
+  /**
+   * Przejazd kamery po krokach. Kazdy krok to teleport encji-kamery z interpolacja po stronie
+   * klienta (Display#setTeleportDuration), gracz-spectator jedzie z nia. Panele i tarcza
+   * klikow jada razem z kamera. Wejscie jest polykane do konca przejazdu.
+   */
+  void glide(SceneView view, java.util.List<Location> steps, int ticksPerStep) {
+    if (steps.isEmpty()) {
+      return;
+    }
+    int t = Math.max(1, Math.min(59, ticksPerStep));
+    view.busyUntilTick = Math.max(view.busyUntilTick, Bukkit.getCurrentTick() + (long) steps.size() * t);
+    for (int i = 0; i < steps.size(); i++) {
+      Location step = steps.get(i);
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (view.closed) {
+          return;
+        }
+        for (Display d : new Display[] {view.camera, view.card, view.list}) {
+          d.setTeleportDuration(t);
+        }
+        view.camera.teleport(step);
+        view.card.teleport(panelAt(step, true));
+        view.list.teleport(panelAt(step, false));
+        view.shield.teleport(shieldLocation(step));
+      }, (long) i * t);
+    }
+  }
+
+  /** Karta (prawo) albo lista (lewo) wzgledem kamery. */
+  private static Location panelAt(Location camera, boolean right) {
+    Vector fwd = camera.getDirection().setY(0);
+    if (fwd.lengthSquared() < 1.0E-6) {
+      fwd = new Vector(0, 0, 1);
+    }
+    fwd.normalize();
+    Vector rightVec = new Vector(-fwd.getZ(), 0, fwd.getX());
+    Location at = camera.clone().add(fwd.multiply(3.1));
+    at.add(rightVec.multiply(right ? 2.1 : -2.1));
+    at.add(0, right ? -1.17 : -0.67, 0);
+    return at;
+  }
+
+  /**
+   * Przelot po stworzeniu postaci (D6). Pod sciemnieniem kamera przenosi sie do swiata gry,
+   * leci po punktach i konczy nad startem; potem drugie sciemnienie i {@code done} (zamkniecie
+   * sceny z miejscem docelowym). Panele, pasek i podpowiedz znikaja — przelot jest cichym
+   * ujeciem, bez sterowania.
+   */
+  public void flyover(SceneView view, SceneSettings.Flyover fly, Runnable done) {
+    Player player = view.player();
+    if (player == null || fly == null || !fly.usable()) {
+      done.run();
+      return;
+    }
+    // Ekran przelotu nie ma sterowania. Poprzedni ekran sprzata po sobie (podglad postaci)
+    // dopiero przy zamknieciu sceny — przekazujemy mu to zamkniecie.
+    SceneController previous = view.controller;
+    view.switchTo(new SceneController() {
+      @Override
+      public void onOpen(SceneView v) {
+      }
+
+      @Override
+      public void onClose(SceneView v) {
+        if (v.isClosed() && previous != null) {
+          previous.onClose(v);
+        }
+      }
+    });
+    fade(view, () -> {
+      Player p = view.player();
+      if (p == null) {
+        return;
+      }
+      setPanel(view.card, null);
+      setPanel(view.list, null);
+      setTopBar(view, null);
+      view.hint(Component.empty());
+      view.subjectEntity = null;
+      view.flying = true;
+      stopMusic(view, p);
+      // W nocy z przelotu zostaje czern — pora lotu z configu, po wyladowaniu (pod
+      // sciemnieniem) close() oddaje czas swiata.
+      if (fly.time() >= 0) {
+        p.setPlayerTime(fly.time(), false);
+      } else {
+        p.resetPlayerTime();
+      }
+      p.setPlayerWeather(org.bukkit.WeatherType.CLEAR);
+      java.util.List<Location> path = new java.util.ArrayList<>();
+      for (SceneSettings.FlyPoint fp : fly.path()) {
+        Location at = new Location(fly.world(), fp.x(), fp.y(), fp.z());
+        path.add(fly.look() == null ? at : SceneSettings.aimed(at, fly.look()));
+      }
+      // Kamera to encja — zostaje w swiecie sceny. W swiecie gry stawiamy nowa.
+      Location first = path.get(0);
+      ItemDisplay old = view.camera;
+      view.retargeting = true;
+      p.setSpectatorTarget(null);
+      view.retargeting = false;
+      view.camera = first.getWorld().spawn(first, ItemDisplay.class, e -> {
+        e.setPersistent(false);
+        e.setVisibleByDefault(false);
+      });
+      p.showEntity(plugin, view.camera);
+      if (old != null && old.isValid()) {
+        old.remove();
+      }
+      p.teleport(first);
+      // Multiverse przestawia tryb gry przy zmianie swiata — spectator z powrotem od razu.
+      p.setGameMode(GameMode.SPECTATOR);
+      // Czern trzyma sie, az klient wczyta swiat (ekran "Loading terrain" przy zmianie swiata,
+      // potem chunki trasy) — inaczej pierwsze sekundy lotu ida nad pustym niebem.
+      int settle = settings.targetDelayTicks() + Math.max(10, fly.holdTicks());
+      if (!settings.fadeGlyph().isBlank()) {
+        p.showTitle(Title.title(Component.text(settings.fadeGlyph(), NamedTextColor.WHITE),
+            Component.empty(), Title.Times.times(Duration.ZERO, ticks(settle), ticks(10))));
+      }
+      view.targetReadyTick = Bukkit.getCurrentTick() + settle;
+      view.busyUntilTick = Long.MAX_VALUE;
+      SceneSettings.Sound whoosh = settings.uiSounds().get("flyover");
+      if (whoosh != null) {
+        p.playSound(p, whoosh.key(), org.bukkit.SoundCategory.MASTER, whoosh.volume(), whoosh.pitch());
+      }
+      if (!fly.title().isBlank() || !fly.subtitle().isBlank()) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+          Player q = view.player();
+          if (q != null && !view.closed) {
+            q.showTitle(Title.title(
+                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(fly.title()),
+                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(fly.subtitle()),
+                Title.Times.times(Duration.ofMillis(800), Duration.ofMillis(2500), Duration.ofMillis(1000))));
+          }
+        }, settle + 10L);
+      }
+      // Ruch CO TICK po lamanej z lagodnym startem i hamowaniem. Skoki co odcinek (40 blokow
+      // naraz, interpolowane tylko u klienta) dawaly w logu "moved too quickly": serwer
+      // przestawia spectatora za kamera, a klient zglaszal pozycje z interpolacji.
+      int total = 0;
+      int[] ends = new int[path.size()];
+      for (int i = 1; i < path.size(); i++) {
+        total += fly.path().get(i).ticks();
+        ends[i] = total;
+      }
+      final int totalTicks = Math.max(1, total);
+      view.camera.setTeleportDuration(2);
+      int[] tick = {0};
+      Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+        if (view.closed || !view.camera.isValid()) {
+          task.cancel();
+          return;
+        }
+        tick[0]++;
+        double eased = smooth(Math.min(1.0, tick[0] / (double) totalTicks)) * totalTicks;
+        int seg = 1;
+        while (seg < path.size() - 1 && eased > ends[seg]) {
+          seg++;
+        }
+        double segStart = ends[seg - 1];
+        double f = (eased - segStart) / Math.max(1, ends[seg] - segStart);
+        Location a0 = path.get(seg - 1);
+        Location a1 = path.get(seg);
+        Location at = a0.clone().add(a1.toVector().subtract(a0.toVector()).multiply(f));
+        if (fly.look() != null) {
+          at = SceneSettings.aimed(at, fly.look());
+        }
+        view.camera.teleport(at);
+        if (tick[0] >= totalTicks) {
+          task.cancel();
+          Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!view.closed) {
+              view.busyUntilTick = 0;
+              fade(view, done);
+            }
+          }, 15L);
+        }
+      }, settle, 1L);
+    });
+  }
+
+  /** Lagodny start i hamowanie (smoothstep). */
+  private static double smooth(double t) {
+    return t * t * (3 - 2 * t);
+  }
+
   /** Pora dnia i pogoda kadru — tylko dla tego gracza. */
   private void applyAmbience(SceneView view, Player player) {
     SceneSettings.Ambience a = view.currentPoint.ambience();
@@ -286,9 +526,18 @@ public final class SceneManager {
       player.resetPlayerTime();
     }
     player.setPlayerWeather(a.rain() ? org.bukkit.WeatherType.DOWNFALL : org.bukkit.WeatherType.CLEAR);
+    view.nextSound.clear();
+    view.nextGestureTick = -1;
+    view.gestureOut = false;
+    view.holdUntilTick = -1;
+    view.headYaw = 0;
+    view.targetYaw = 0;
+    view.headPitch = a.idle().restPitch();
+    view.targetPitch = a.idle().restPitch();
+    applyMusic(view, player);
   }
 
-  /** Czastki i drobny ruch postaci — co tick, ale kazdy element w swoim rytmie. */
+  /** Czastki, odglosy tla i spokojne rozgladanie sie postaci — kazdy element w swoim rytmie. */
   private void animate(SceneView view, Player player, int now) {
     SceneSettings.Ambience a = view.currentPoint.ambience();
     for (SceneSettings.Emitter e : a.emitters()) {
@@ -299,33 +548,154 @@ public final class SceneManager {
           : view.currentPoint.subject().clone().add(0, e.yOffset(), 0);
       player.spawnParticle(e.type(), at, e.count(), e.dx(), e.dy(), e.dz(), e.speed());
     }
+    ambientSounds(view, player, a, now);
     Entity subject = view.subjectEntity;
     if (!(subject instanceof org.bukkit.entity.LivingEntity living) || !subject.isValid()
         || subject.getWorld() != player.getWorld()) {
       return;
     }
-    // Faza przesunieta o hash gracza: dwoch graczy nie ma postaci ruszajacych sie synchronicznie.
-    int phase = now + (view.playerId().hashCode() & 0xFF);
-    float front = subjectFacingCamera(view).getYaw();
-    if (a.swingEvery() > 0 && phase % a.swingEvery() == 0) {
-      living.swingMainHand();
+    lookAround(view, living, a.idle(), now);
+  }
+
+  /**
+   * Rozgladanie: obraca sie SAMA GLOWA, tulow trzymany przodem do kamery (setRotation ustawia
+   * tez tulow — wygladalo jak obrot calej postaci, zmierzone zrzutami). Glowa idzie do gestu
+   * z predkoscia gestu, trzyma go i wraca do spoczynku. Zadnych zamachow bronia.
+   */
+  private void lookAround(SceneView view, org.bukkit.entity.LivingEntity living,
+      SceneSettings.Idle idle, int now) {
+    float front = frontYaw(view, living);
+    if (idle.active()) {
+      if (view.nextGestureTick < 0) {
+        view.nextGestureTick = now + pause(idle, view);
+      }
+      if (!view.gestureOut && view.holdUntilTick < 0 && now >= view.nextGestureTick) {
+        int pick = RANDOM.nextInt(idle.gestures().size());
+        if (idle.gestures().size() > 1 && pick == view.lastGesture) {
+          pick = (pick + 1) % idle.gestures().size();
+        }
+        view.lastGesture = pick;
+        SceneSettings.Gesture g = idle.gestures().get(pick);
+        view.targetYaw = g.yaw();
+        view.targetPitch = idle.restPitch() + g.pitch();
+        view.headSpeed = g.speed();
+        view.gestureOut = true;
+        view.holdUntilTick = -1;
+        view.put(GESTURE_HOLD, g.hold());
+      } else if (view.gestureOut && view.holdUntilTick < 0 && reached(view)) {
+        Integer hold = view.get(GESTURE_HOLD);
+        view.holdUntilTick = now + (hold == null ? 30 : hold);
+      } else if (view.gestureOut && view.holdUntilTick >= 0 && now >= view.holdUntilTick) {
+        // Powrot do spoczynku zawsze spokojny — nawet po nerwowym szarpnieciu.
+        view.targetYaw = 0;
+        view.targetPitch = idle.restPitch();
+        view.headSpeed = Math.min(view.headSpeed, idle.speed());
+        view.gestureOut = false;
+        view.holdUntilTick = -1;
+        view.nextGestureTick = now + pause(idle, view);
+      }
+    } else {
+      view.targetYaw = 0;
+      view.targetPitch = idle.restPitch();
     }
-    // Rozgladanie: obraca sie SAMA GLOWA (setRotation ustawia tez tulow — wygladalo jak
-    // obrot calej postaci). Tulow trzymamy na wprost co tick, glowa odchodzi na lookYaw
-    // i wraca po 1,5 s. Zmierzone zrzutami na kliencie.
-    if (a.lookEvery() > 0 && phase % a.lookEvery() == 0) {
-      float side = ((phase / a.lookEvery()) % 2 == 0) ? a.lookYaw() : -a.lookYaw();
-      view.headOffset = side;
-      view.lookBackTick = now + 30;
-    } else if (view.lookBackTick > 0 && now >= view.lookBackTick) {
-      view.headOffset = 0;
-      view.lookBackTick = -1;
-    }
+    view.headYaw = approach(view.headYaw, view.targetYaw, view.headSpeed);
+    view.headPitch = approach(view.headPitch, view.targetPitch, view.headSpeed);
     living.setBodyYaw(front);
-    if (living.getLocation().getYaw() != front + view.headOffset) {
-      living.setRotation(front + view.headOffset, 0f);
+    Location loc = living.getLocation();
+    float yaw = front + view.headYaw;
+    if (loc.getYaw() != yaw || loc.getPitch() != view.headPitch) {
+      living.setRotation(yaw, view.headPitch);
       living.setBodyYaw(front);
     }
+  }
+
+  private static final String GESTURE_HOLD = "cc.scene.gestureHold";
+  private static final java.util.Random RANDOM = new java.util.Random();
+
+  private static int pause(SceneSettings.Idle idle, SceneView view) {
+    int span = Math.max(0, idle.pauseMax() - idle.pauseMin());
+    return idle.pauseMin() + (span == 0 ? 0 : RANDOM.nextInt(span + 1));
+  }
+
+  private static boolean reached(SceneView view) {
+    return Math.abs(view.headYaw - view.targetYaw) < 0.01f
+        && Math.abs(view.headPitch - view.targetPitch) < 0.01f;
+  }
+
+  private static float approach(float current, float target, float step) {
+    float d = target - current;
+    if (Math.abs(d) <= step) {
+      return target;
+    }
+    return current + Math.signum(d) * step;
+  }
+
+  /** Przod postaci: w strone kamery, w poziomie. */
+  private float frontYaw(SceneView view, Entity subject) {
+    Location from = subject.getLocation();
+    Location cam = view.camera != null && view.camera.getWorld() == from.getWorld()
+        ? view.camera.getLocation() : view.currentPoint.camera();
+    Vector toCamera = cam.toVector().subtract(from.toVector()).setY(0);
+    if (toCamera.lengthSquared() < 1.0E-4) {
+      return from.getYaw();
+    }
+    return from.clone().setDirection(toCamera).getYaw();
+  }
+
+  /** Odglosy tla kadru, kazdy co {@code every} tickow z rozrzutem, tylko dla tego gracza. */
+  private void ambientSounds(SceneView view, Player player, SceneSettings.Ambience a, int now) {
+    java.util.List<SceneSettings.Sound> sounds = a.sounds();
+    for (int i = 0; i < sounds.size(); i++) {
+      SceneSettings.Sound snd = sounds.get(i);
+      if (snd.every() <= 0) {
+        continue;
+      }
+      Long next = view.nextSound.get(i);
+      if (next == null) {
+        view.nextSound.put(i, (long) now + RANDOM.nextInt(snd.every()));
+        continue;
+      }
+      if (now < next) {
+        continue;
+      }
+      int jitter = snd.jitter() > 0 ? RANDOM.nextInt(snd.jitter() + 1) : 0;
+      view.nextSound.put(i, (long) now + snd.every() + jitter);
+      Location at = view.camera != null ? view.camera.getLocation() : player.getLocation();
+      player.playSound(at, snd.key(), snd.category(), snd.volume(), snd.pitch());
+    }
+  }
+
+  /** Podklad kadru: gasi poprzedni, gra nowy (jeden raz — utwory trwaja kilka minut). */
+  private void applyMusic(SceneView view, Player player) {
+    SceneSettings.Sound music = view.currentPoint.ambience().music();
+    String key = music == null ? null : music.key();
+    if (java.util.Objects.equals(key, view.music)) {
+      return;
+    }
+    stopMusic(view, player);
+    // Muzyka gry klienta (utwory z menu i swiata) zagluszalaby podklad sceny.
+    player.stopSound(org.bukkit.SoundCategory.MUSIC);
+    if (music != null) {
+      // Zrodlem dzwieku jest gracz — muzyka jedzie z nim (kamera zmienia miejsca w kadrze).
+      player.playSound(player, music.key(), music.category(), music.volume(), music.pitch());
+      view.music = key;
+    }
+  }
+
+  private void stopMusic(SceneView view, Player player) {
+    if (view.music != null) {
+      player.stopSound(view.music);
+      view.music = null;
+    }
+  }
+
+  void playUi(SceneView view, String key) {
+    Player player = view.player();
+    SceneSettings.Sound snd = settings.uiSounds().get(key);
+    if (player == null || snd == null) {
+      return;
+    }
+    player.playSound(player, snd.key(), org.bukkit.SoundCategory.MASTER, snd.volume(), snd.pitch());
   }
 
   /** Miejsce postaci w kadrze, obrocone przodem do kamery. */
@@ -489,7 +859,9 @@ public final class SceneManager {
       if (now >= view.targetReadyTick) {
         aimCamera(view);
       }
-      animate(view, player, now);
+      if (!view.flying) {
+        animate(view, player, now);
+      }
       if (now % HINT_PERIOD_TICKS == 0) {
         pushHint(view);
       }

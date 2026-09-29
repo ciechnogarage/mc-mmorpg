@@ -83,6 +83,11 @@ public final class NewCharacterBook implements Listener {
 
     /** "Wroc" — z powrotem do sceny. */
     void back(Player player);
+
+    /** "Losuj imie" — wolne imie pasujace do rasy albo {@code null} (przycisku nie ma). */
+    default String randomName(Player player) {
+      return null;
+    }
   }
 
   /** Stan otwartej ksiegi — do ponownego pokazania po bledzie albo po nieaktualnym kliku. */
@@ -146,13 +151,18 @@ public final class NewCharacterBook implements Listener {
     ActionButton create = ActionButton.builder(
             Component.text("✔ Stwórz postać", NamedTextColor.GREEN))
         .tooltip(Component.text("Tworzy postać i wpuszcza cię do gry"))
-        .width(150)
+        .width(100)
         .action(DialogAction.customClick(CLICK, payload("stworz", s.nonce())))
         .build();
     ActionButton back = ActionButton.builder(Component.text("Wróć"))
         .tooltip(Component.text("Z powrotem do wyboru rasy i klasy"))
-        .width(150)
+        .width(100)
         .action(DialogAction.customClick(CLICK, payload("wroc", s.nonce())))
+        .build();
+    ActionButton random = ActionButton.builder(Component.text("🎲 Losuj imię", NamedTextColor.YELLOW))
+        .tooltip(Component.text("Imię pasujące do rasy — możesz je potem zmienić"))
+        .width(100)
+        .action(DialogAction.customClick(CLICK, payload("losuj", s.nonce())))
         .build();
 
     return Dialog.create(factory -> factory.empty()
@@ -173,7 +183,7 @@ public final class NewCharacterBook implements Listener {
                     .width(220)
                     .build()))
             .build())
-        .type(DialogType.confirmation(create, back)));
+        .type(DialogType.multiAction(List.of(create, random, back), null, 3)));
   }
 
   private static final java.util.regex.Pattern NONCE = java.util.regex.Pattern.compile("\\bn:(\\d+)");
@@ -221,6 +231,16 @@ public final class NewCharacterBook implements Listener {
       return;
     }
     String chosenColor = COLORS.containsKey(color) ? color : state.color();
+    if ("losuj".equals(action)) {
+      String name = null;
+      try {
+        name = state.handler().randomName(player);
+      } catch (RuntimeException ex) {
+        logger.warning("Ksiega: losowanie imienia rzucilo " + ex);
+      }
+      show(player, state.summary(), name != null ? name : typed, chosenColor, null, state.handler());
+      return;
+    }
     if ("wroc".equals(action)) {
       open.remove(player.getUniqueId());
       state.handler().back(player);
