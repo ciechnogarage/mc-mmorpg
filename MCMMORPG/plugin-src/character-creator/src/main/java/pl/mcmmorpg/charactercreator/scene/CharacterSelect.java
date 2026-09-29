@@ -122,10 +122,32 @@ public final class CharacterSelect {
     return out;
   }
 
-  /** Nowa postac przez MMOProfiles — ProfileCreateEvent otworzy scene kreatora. */
+  /**
+   * Nowa postac przez MMOProfiles — ProfileCreateEvent otworzy scene kreatora.
+   *
+   * <p>Po zatwierdzeniu profil trzeba jeszcze WYBRAC. {@code createProfile} tylko dopisuje go do
+   * listy; ProfileSelectEvent (a z nim dane modulow: Chowance, MMOCore) odpala dopiero
+   * {@code applyProfile}. Okno MMOProfiles robi dokladnie to samo (bajtkod
+   * ProfileListViewer: createProfile -> thenAccept(applyProfile)). Bez tego nowa postac grala
+   * bez wybranego profilu: Chowance bez danych ("wybierz postac"), brak startera.
+   */
   private void createNew(Player player, ProfileListImpl list) {
     int n = list.getProfiles().size() + 1;
-    list.createProfile("Postac " + n).exceptionally(ex -> {
+    UUID playerId = player.getUniqueId();
+    list.createProfile("Postac " + n).thenAccept(profile -> {
+      Runnable select = () -> {
+        Player online = Bukkit.getPlayer(playerId);
+        if (online == null || !online.isOnline() || list.getCurrent() != null) {
+          return;
+        }
+        list.applyProfile(profile);
+      };
+      if (Bukkit.isPrimaryThread()) {
+        select.run();
+      } else {
+        Bukkit.getScheduler().runTask(plugin, select);
+      }
+    }).exceptionally(ex -> {
       logger.warning("Nie udalo sie utworzyc profilu dla " + player.getName() + ": " + ex);
       return null;
     });
