@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import io.lumine.mythic.lib.player.resource.ResourceUpdateReason;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,9 +33,42 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class Zaklecia extends JavaPlugin implements Listener {
 
+  private Ksiega ksiega;
+  private Nosnik nosnik;
+
   @Override
   public void onEnable() {
+    saveDefaultConfig();
+    ksiega = new Ksiega(getConfig());
+    nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
+    getServer().getPluginManager().registerEvents(new Rzucanie(this, ksiega), this);
+    getServer().getPluginManager().registerEvents(nosnik, this);
+    getLogger().info("zaklecia: " + ksiega.poId.keySet());
+  }
+
+  /** {@code zaklecia przypisz <gracz> <id|nic> <prawa|lewa>} — wolane z Ksiegi zaklec (DeluxeMenus, konsola). */
+  @Override
+  public boolean onCommand(org.bukkit.command.CommandSender s, org.bukkit.command.Command c, String l, String[] a) {
+    if (a.length != 4 || !a[0].equalsIgnoreCase("przypisz")) {
+      s.sendMessage("/zaklecia przypisz <gracz> <" + String.join("|", ksiega.poId.keySet()) + "|nic> <prawa|lewa>");
+      return true;
+    }
+    Player p = getServer().getPlayerExact(a[1]);
+    if (p == null) { s.sendMessage("Brak gracza " + a[1]); return true; }
+    String id = a[2].equalsIgnoreCase("nic") ? null : a[2].toLowerCase(Locale.ROOT);
+    String reka = a[3].toLowerCase(Locale.ROOT);
+    if (!reka.equals("prawa") && !reka.equals("lewa")) { s.sendMessage("Reka: prawa albo lewa"); return true; }
+    boolean prawa = reka.equals("prawa");
+    nosnik.komunikat(p, nosnik.przypisz(p, id, prawa));
+    return true;
+  }
+
+  /** Ktora dlon (prawa = glowna, lewa = druga) trzyma zaklecie z (albo dowolne). */
+  private boolean wDloni(Player p, String reka, String z) {
+    ItemStack i = reka.equals("lewa") ? p.getInventory().getItemInOffHand() : p.getInventory().getItemInMainHand();
+    Ksiega.Zaklecie zak = ksiega.w(i);
+    return zak != null && (z.equals("dowolne") || zak.id().equals(z));
   }
 
   private static String zasob(MythicLineConfig cfg) {
@@ -73,6 +107,27 @@ public final class Zaklecia extends JavaPlugin implements Listener {
         }
       }
     });
+  }
+
+  @EventHandler
+  public void warunkiDloni(MythicConditionLoadEvent e) {
+    String nazwa = e.getConditionName().toLowerCase(Locale.ROOT);
+    if (!nazwa.equals("zakdlon") && !nazwa.equals("zakrece")) return;
+    MythicLineConfig cfg = e.getConfig();
+    String z = cfg.getString(new String[] {"zaklecie", "z"}, "dowolne").toLowerCase(Locale.ROOT);
+    if (nazwa.equals("zakdlon")) {
+      // zakDlon{reka=prawa|lewa;z=plomienie|odmrozenie|dowolne}
+      String reka = cfg.getString(new String[] {"reka", "r"}, "prawa").toLowerCase(Locale.ROOT);
+      e.register((IEntityCondition) cel -> cel.getBukkitEntity() instanceof Player p && wDloni(p, reka, z));
+    } else {
+      // zakRece{z=..;min=1;max=2} — w ilu dloniach jest zaklecie z
+      int min = cfg.getInteger("min", 1), max = cfg.getInteger("max", 2);
+      e.register((IEntityCondition) cel -> {
+        if (!(cel.getBukkitEntity() instanceof Player p)) return false;
+        int n = (wDloni(p, "prawa", z) ? 1 : 0) + (wDloni(p, "lewa", z) ? 1 : 0);
+        return n >= min && n <= max;
+      });
+    }
   }
 
   @EventHandler

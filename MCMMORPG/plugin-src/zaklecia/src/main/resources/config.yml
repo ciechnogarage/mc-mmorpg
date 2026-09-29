@@ -1,0 +1,34 @@
+# Zaklecia w dloni (Skyrim). Plugin prowadzi rzucanie (obie rece), MythicMobs rysuje i zadaje obrazenia.
+#
+# id zaklecia -> przedmiot MythicMobs (nosnik w dloni), koszt many za TIK (tik = 10 tickow = 0,5 s), nazwa.
+zaklecia:
+  plomienie:
+    przedmiot: ZAKLECIE_PLOMIENIE
+    mana-za-tik: 2.0
+    nazwa: 'Płomienie'
+  odmrozenie:
+    przedmiot: ZAKLECIE_ODMROZENIE
+    mana-za-tik: 2.5
+    nazwa: 'Odmrożenie'
+
+# Podwojne rzucanie (TO SAMO zaklecie w obu dloniach): koszt = koszt jednej reki x mnoznik.
+# Dwie osobne rece kosztowalyby x2; podwojne jest drozsze, a MythicMobs daje mu ~2,2x obrazen (Traf2).
+podwojne-mnoznik-many: 2.5
+
+# Skille MythicMobs wolane przez plugin (plik MythicMobs/skills/Zaklecia.yml).
+skille:
+  start: Zak_Start
+  stop: Zak_Stop
+  obraz: Zak_Obraz        # co 2 ticki w trakcie rzucania
+  tik: Zak_Tik            # co 10 tickow, po pobraniu many (dzwieki)
+  trafienia: Zak_Trafienia  # co 10 tickow, z celami stozka jako celami skilla
+  brak-many: Zak_BrakMany
+  dlon: Zak_Dlon          # co 4 ticki, gdy zaklecie jest w dloni, a gracz nie rzuca
+
+# Stozek obrazen liczony przez plugin (od oczu gracza): zasieg w blokach, pol-kat w stopniach.
+stozek:
+  zasieg: 6
+  pol-kat: 20
+stozek-podwojny:
+  zasieg: 7
+  pol-kat: 22.5

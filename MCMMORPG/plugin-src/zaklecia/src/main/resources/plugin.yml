@@ -4,3 +4,11 @@ main: pl.mcmmorpg.zaklecia.Zaklecia
 api-version: '1.21'
 depend: [MythicMobs, MMOCore]
 description: Ciche mechaniki zasobow MMOCore dla zaklec MythicMobs/Crucible (Plomienie, Odmrozenie).
+commands:
+  zaklecia:
+    description: Przypisanie zaklecia do dloni (wolane z Ksiegi zaklec jako konsola)
+    usage: /zaklecia przypisz <gracz> <zaklecie|nic> <prawa|lewa>
+    permission: zaklecia.admin
+permissions:
+  zaklecia.admin:
+    default: op
