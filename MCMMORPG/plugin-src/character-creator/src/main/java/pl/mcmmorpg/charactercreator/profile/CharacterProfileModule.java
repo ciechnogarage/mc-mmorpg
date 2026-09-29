@@ -294,6 +294,13 @@ public final class CharacterProfileModule implements ProfileDataModule {
     }
   }
 
+  /** Wejscie testowe botow ({@code /cc testpostac}); null = brak. */
+  private pl.mcmmorpg.charactercreator.command.TestEntry testEntry;
+
+  public void setTestEntry(pl.mcmmorpg.charactercreator.command.TestEntry testEntry) {
+    this.testEntry = testEntry;
+  }
+
   /** Po rezygnacji z kreatora: scena wyboru postaci (etap 3) albo, bez niej, okno MMOProfiles. */
   private java.util.function.Predicate<Player> selectOpener = p -> false;
 
@@ -367,6 +374,18 @@ public final class CharacterProfileModule implements ProfileDataModule {
     };
 
     try {
+      // /cc testpostac (bot na klonie testowym): to samo zatwierdzenie co ksiega sceny, bez klikania.
+      // Zlecenie powstaje tylko za trzema zamkami — patrz TestEntry.
+      pl.mcmmorpg.charactercreator.command.TestEntry.Request test =
+          testEntry == null ? null : testEntry.take(player.getUniqueId());
+      if (test != null) {
+        if (scenes != null && scenes.inScene(player.getUniqueId())) {
+          scenes.close(player.getUniqueId());
+        }
+        confirmFromScene(player, profileId, pending, null, test.raceId(), test.classId(),
+            test.name(), pl.mcmmorpg.charactercreator.scene.NewCharacterBook.DEFAULT_COLOR);
+        return;
+      }
       if (startInScene(player, profileId, pending)) {
         return;
       }
