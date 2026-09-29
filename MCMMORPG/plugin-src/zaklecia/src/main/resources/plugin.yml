@@ -1,0 +1,6 @@
+name: Zaklecia
+version: '${version}'
+main: pl.mcmmorpg.zaklecia.Zaklecia
+api-version: '1.21'
+depend: [MythicMobs, MMOCore]
+description: Ciche mechaniki zasobow MMOCore dla zaklec MythicMobs/Crucible (Plomienie, Odmrozenie).
