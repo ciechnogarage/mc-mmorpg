@@ -362,8 +362,20 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
         outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome);
     SceneMenu sceneMenu = new SceneMenu(this, getLogger());
     getServer().getPluginManager().registerEvents(sceneMenu, this);
+    // Wybor postaci: kosz (trash.yml), straznik kosza i ustawienia 'wybor-postaci'.
+    pl.mcmmorpg.charactercreator.persist.TrashStore trashStore =
+        new pl.mcmmorpg.charactercreator.persist.TrashStore(new java.io.File(getDataFolder(), "trash.yml"), getLogger());
+    trashStore.load();
+    pl.mcmmorpg.charactercreator.select.TrashGuard trashGuard =
+        new pl.mcmmorpg.charactercreator.select.TrashGuard(trashStore, getLogger());
+    getServer().getPluginManager().registerEvents(trashGuard, this);
     CharacterSelect select = new CharacterSelect(this, getLogger(), sceneManager, sceneMenu,
-        creatorConfig, characterStore, previewDummyManager);
+        creatorConfig, characterStore, previewDummyManager, trashStore, trashGuard,
+        pl.mcmmorpg.charactercreator.select.SelectSettings.read(getConfig()));
+    if (command != null) {
+      command.setListOpener(settings.replaceSelector() ? select::openList : null);
+      command.setTrash(trashStore);
+    }
     java.util.function.Predicate<Player> openSelect = p -> {
       try {
         return select.open(p);

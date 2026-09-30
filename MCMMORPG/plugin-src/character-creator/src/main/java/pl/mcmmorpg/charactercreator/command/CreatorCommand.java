@@ -79,6 +79,20 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     this.selectOpener = selectOpener;
   }
 
+  /** {@code /cc wybor <gracz> lista} — lista postaci nad gra (menu Q "Zmien postac"). */
+  private java.util.function.Predicate<Player> listOpener;
+
+  public void setListOpener(java.util.function.Predicate<Player> listOpener) {
+    this.listOpener = listOpener;
+  }
+
+  /** {@code /cc kosz} — podglad i przywracanie postaci z kosza (administracja). */
+  private pl.mcmmorpg.charactercreator.persist.TrashStore trash;
+
+  public void setTrash(pl.mcmmorpg.charactercreator.persist.TrashStore trash) {
+    this.trash = trash;
+  }
+
   private java.util.function.Function<Player, String> flyoverPreview;
 
   /** {@code /cc przelot <gracz>} — sam przelot po stworzeniu postaci, do podgladu. */
@@ -117,6 +131,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       case "scena" -> scene(sender, args);
       case "wybor" -> select(sender, args);
       case "przelot" -> flyover(sender, args);
+      case "kosz" -> trash(sender, args);
       // Zablokowana potrojnie (TestEntry); bez ktoregos zamka zachowuje sie jak nieznana komenda.
       case "testpostac" -> {
         if (testEntry != null && testEntry.allowed(sender)) {
@@ -145,6 +160,10 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
         + "[sesja] — pokaż albo nałóż skórkę (domyślnie NA STAŁE)", NamedTextColor.GRAY));
     sender.sendMessage(Component.text("/" + label + " scena [gracz] [zamknij] — kreator w scenie "
         + "(podgląd etapu 1)", NamedTextColor.GRAY));
+    sender.sendMessage(Component.text("/" + label + " wybor <gracz> [lista] — scena wyboru; 'lista' = "
+        + "lista postaci nad grą (menu Q)", NamedTextColor.GRAY));
+    sender.sendMessage(Component.text("/" + label + " kosz [przywroc <profileId>] — postacie w koszu",
+        NamedTextColor.GRAY));
   }
 
   /**
@@ -158,10 +177,44 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       sender.sendMessage(Component.text("Podaj gracza online.", NamedTextColor.RED));
       return;
     }
+    if (args.length >= 3 && "lista".equalsIgnoreCase(args[2]) && listOpener != null
+        && listOpener.test(target)) {
+      return;
+    }
     if (selectOpener != null && selectOpener.test(target)) {
       return;
     }
     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoprofiles open " + target.getName());
+  }
+
+  /**
+   * {@code /cc kosz}: wszystkie postacie w koszu (kto, co, od kiedy); {@code przywroc <profileId>}
+   * wyjmuje postac z kosza — np. gdy gracz zglosi pomylke po terminie wyswietlanym w oknie.
+   */
+  private void trash(CommandSender sender, String[] args) {
+    if (trash == null) {
+      sender.sendMessage(Component.text("Kosz jest wylaczony (scena wyboru nieaktywna).", NamedTextColor.RED));
+      return;
+    }
+    if (args.length >= 3 && "przywroc".equalsIgnoreCase(args[1])) {
+      try {
+        boolean had = trash.restore(UUID.fromString(args[2]));
+        sender.sendMessage(Component.text(had ? "Przywrócono z kosza: " + args[2]
+            : "Tej postaci nie ma w koszu.", had ? NamedTextColor.GREEN : NamedTextColor.YELLOW));
+      } catch (IllegalArgumentException ex) {
+        sender.sendMessage(Component.text("To nie jest UUID profilu.", NamedTextColor.RED));
+      }
+      return;
+    }
+    List<pl.mcmmorpg.charactercreator.persist.TrashStore.Entry> all = trash.all();
+    sender.sendMessage(Component.text("W koszu: " + all.size(), NamedTextColor.AQUA));
+    java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        .withZone(java.time.ZoneId.of("Europe/Warsaw"));
+    for (pl.mcmmorpg.charactercreator.persist.TrashStore.Entry e : all) {
+      String owner = Bukkit.getOfflinePlayer(e.ownerId()).getName();
+      sender.sendMessage(Component.text("  " + e.name() + " — " + (owner == null ? e.ownerId() : owner)
+          + ", od " + fmt.format(e.trashedAt()) + ", profil " + e.profileId(), NamedTextColor.GRAY));
+    }
   }
 
   private void flyover(CommandSender sender, String[] args) {
@@ -553,7 +606,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     }
     if (args.length == 1) {
       return prefixed(List.of("reload", "info", "delete", "prune", "sessions", "skin", "scena", "wybor",
-          "przelot"), args[0]);
+          "przelot", "kosz"), args[0]);
     }
     if (args.length == 2 && "skin".equalsIgnoreCase(args[0])) {
       return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
@@ -579,6 +632,15 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     }
     if (args.length == 2 && "delete".equalsIgnoreCase(args[0])) {
       return prefixed(store.allByProfile().keySet().stream().map(UUID::toString).toList(), args[1]);
+    }
+    if (args.length == 2 && "wybor".equalsIgnoreCase(args[0])) {
+      return prefixed(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
+    }
+    if (args.length == 3 && "wybor".equalsIgnoreCase(args[0])) {
+      return prefixed(List.of("lista"), args[2]);
+    }
+    if (args.length == 2 && "kosz".equalsIgnoreCase(args[0])) {
+      return prefixed(List.of("przywroc"), args[1]);
     }
     if (args.length == 2 && "prune".equalsIgnoreCase(args[0])) {
       return prefixed(List.of("confirm"), args[1]);

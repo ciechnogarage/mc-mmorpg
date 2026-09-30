@@ -325,3 +325,20 @@ skins:
 # Na world1 ZAWSZE false. Bez ktoregos zamka komenda udaje, ze nie istnieje.
 test-wejscie:
   enabled: false
+
+# ---------------------------------------------------------------------------------------------
+# WYBOR POSTACI (scena wyboru, lista pod PPM i w menu Q, zarzadzanie, kosz) — 2026-09-30
+# ---------------------------------------------------------------------------------------------
+wybor-postaci:
+  # Od ilu aktywnych postaci lista (kafelki, klik = graj) otwiera sie sama po wejsciu do sceny.
+  # 0 = nigdy (lista zawsze pod PPM).
+  lista-od: 6
+  # Ile dni postac lezy w koszu, zanim zniknie naprawde (usuwana przy nastepnym wejsciu
+  # wlasciciela do wyboru postaci). Do tego czasu zajmuje miejsce na postac.
+  kosz-dni: 7
+  # Od ktorego poziomu usuniecie (do kosza i na zawsze) wymaga wpisania imienia postaci.
+  imie-od-poziomu: 10
+  # Napis "Miejsce" na karcie. Najpierw region WorldGuard z greeting-title, potem nazwa mapy
+  # MythicDungeons (swiat <mapa>_<n>), na koncu te wpisy: nazwa swiata (regex) -> napis.
+  miejsca:
+    - { swiat: 'world', nazwa: 'Kraina' }

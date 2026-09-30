@@ -276,7 +276,6 @@ public final class SceneManager {
     }
     view.currentPoint = point;
     view.currentPointId = settings.points().containsKey(pointId) ? pointId : SceneSettings.DEFAULT_POINT;
-    view.freeCamera = false;
     for (Display d : new Display[] {view.camera, view.card, view.list}) {
       d.setTeleportDuration(0);
     }
@@ -295,83 +294,6 @@ public final class SceneManager {
     view.list.teleport(listAt != null ? listAt : point.camera());
     view.targetReadyTick = Bukkit.getCurrentTick() + settings.targetDelayTicks();
     applyAmbience(view, player);
-  }
-
-  /**
-   * Kamera w dowolnym miejscu (scena wyboru stawia ja przed wybrana postacia), klimat
-   * z kadru {@code ambiencePointId}. Panele ida za kamera: 3,1 bloku przed nia, 2,1 w bok —
-   * tak jak w kadrach z configu (blizej zaslanialy postac).
-   */
-  void placeCamera(SceneView view, Location at, String ambiencePointId) {
-    Player player = view.player();
-    SceneSettings.Point point = settings.point(ambiencePointId);
-    if (player == null || point == null) {
-      return;
-    }
-    boolean sameWorld = view.camera.getWorld() == at.getWorld();
-    view.freeCamera = true;
-    boolean ambienceChanged = view.currentPoint != point;
-    view.currentPoint = point;
-    view.currentPointId = ambiencePointId;
-    view.retargeting = true;
-    if (player.getGameMode() == GameMode.SPECTATOR) {
-      player.setSpectatorTarget(null);
-    }
-    view.retargeting = false;
-    for (Display d : new Display[] {view.camera, view.card, view.list}) {
-      d.setTeleportDuration(0);
-    }
-    player.teleport(at);
-    view.camera.teleport(at);
-    view.shield.teleport(shieldLocation(at));
-    view.card.teleport(panelAt(at, true));
-    view.list.teleport(panelAt(at, false));
-    view.targetReadyTick = Bukkit.getCurrentTick() + settings.targetDelayTicks() + (sameWorld ? 0 : 5);
-    if (ambienceChanged) {
-      applyAmbience(view, player);
-    }
-  }
-
-  /**
-   * Przejazd kamery po krokach. Kazdy krok to teleport encji-kamery z interpolacja po stronie
-   * klienta (Display#setTeleportDuration), gracz-spectator jedzie z nia. Panele i tarcza
-   * klikow jada razem z kamera. Wejscie jest polykane do konca przejazdu.
-   */
-  void glide(SceneView view, java.util.List<Location> steps, int ticksPerStep) {
-    if (steps.isEmpty()) {
-      return;
-    }
-    int t = Math.max(1, Math.min(59, ticksPerStep));
-    view.busyUntilTick = Math.max(view.busyUntilTick, Bukkit.getCurrentTick() + (long) steps.size() * t);
-    for (int i = 0; i < steps.size(); i++) {
-      Location step = steps.get(i);
-      Bukkit.getScheduler().runTaskLater(plugin, () -> {
-        if (view.closed) {
-          return;
-        }
-        for (Display d : new Display[] {view.camera, view.card, view.list}) {
-          d.setTeleportDuration(t);
-        }
-        view.camera.teleport(step);
-        view.card.teleport(panelAt(step, true));
-        view.list.teleport(panelAt(step, false));
-        view.shield.teleport(shieldLocation(step));
-      }, (long) i * t);
-    }
-  }
-
-  /** Karta (prawo) albo lista (lewo) wzgledem kamery. */
-  private static Location panelAt(Location camera, boolean right) {
-    Vector fwd = camera.getDirection().setY(0);
-    if (fwd.lengthSquared() < 1.0E-6) {
-      fwd = new Vector(0, 0, 1);
-    }
-    fwd.normalize();
-    Vector rightVec = new Vector(-fwd.getZ(), 0, fwd.getX());
-    Location at = camera.clone().add(fwd.multiply(3.1));
-    at.add(rightVec.multiply(right ? 2.1 : -2.1));
-    at.add(0, right ? -1.17 : -0.67, 0);
-    return at;
   }
 
   /**

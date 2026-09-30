@@ -52,6 +52,7 @@ public final class SceneView {
   boolean lastForward;
   boolean lastBackward;
   boolean lastRight;
+  boolean lastJump;
   boolean closed;
   Entity subjectEntity;
   /** Glowa postaci: biezace i docelowe odchylenie od patrzenia w kamere (stopnie). */
@@ -69,8 +70,6 @@ public final class SceneView {
   String music;
   /** Nastepny tick kazdego odglosu tla kadru (indeks w Ambience.sounds). */
   final Map<Integer, Long> nextSound = new HashMap<>();
-  /** Wlasna encja-kamera nadpisujaca kadr (scena wyboru, przelot); null = kamera kadru. */
-  boolean freeCamera;
   /** Trwa przelot — klimat kadru (czastki, odglosy) stoi, bo kamera jest w innym swiecie. */
   boolean flying;
 
@@ -173,16 +172,6 @@ public final class SceneView {
   /** Dzwiek interfejsu z {@code scene.ui-sounds.<key>} (brak wpisu = cisza). */
   public void uiSound(String key) {
     manager.playUi(this, key);
-  }
-
-  /** Kamera plynnie po krokach (np. luk wokol ogniska), kazdy interpolowany po stronie klienta. */
-  public void glideCamera(java.util.List<Location> steps, int ticksPerStep) {
-    manager.glide(this, steps, ticksPerStep);
-  }
-
-  /** Kamera na stale w tym miejscu (bez kadru z configu). Zdejmuje tez panele. */
-  public void placeCamera(Location at, String ambiencePointId) {
-    manager.placeCamera(this, at, ambiencePointId);
   }
 
   /** Encje sceny, ktore maja byc widoczne tylko dla tego gracza (np. podglad postaci). */

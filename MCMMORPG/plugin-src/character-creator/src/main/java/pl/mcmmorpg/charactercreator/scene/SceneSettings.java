@@ -21,7 +21,7 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
     int fadeInTicks, int fadeStayTicks, int fadeOutTicks, double shieldDistance,
     int targetDelayTicks, List<String> hudOnOpen, List<String> hudRepeat, int hudRepeatTicks,
     List<String> hudOnClose, boolean replaceCreator, boolean replaceSelector,
-    Map<String, Sound> uiSounds, Flyover flyover, Lineup lineup) {
+    Map<String, Sound> uiSounds, Flyover flyover) {
 
   public static final String DEFAULT_POINT = "default";
 
@@ -98,8 +98,7 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
         s != null && s.getBoolean("replace-creator", false),
         s != null && s.getBoolean("replace-selector", false),
         uiSounds(s == null ? null : s.getConfigurationSection("ui-sounds")),
-        Flyover.read(s == null ? null : s.getConfigurationSection("flyover")),
-        Lineup.read(world, s == null ? null : s.getConfigurationSection("select")));
+        Flyover.read(s == null ? null : s.getConfigurationSection("flyover")));
   }
 
   private static Map<String, Sound> uiSounds(ConfigurationSection c) {
@@ -152,56 +151,6 @@ public record SceneSettings(String worldName, Map<String, Point> points, String 
 
   /** Punkt przelotu i czas dolotu do niego (ticki). */
   public record FlyPoint(double x, double y, double z, int ticks) {}
-
-  /**
-   * Scena wyboru postaci: wszystkie postacie gracza stoja w luku wokol {@code center}
-   * (ognisko), przodem na zewnatrz; kamera stoi przed wybrana i obiega krag przy A/D.
-   * Klimat (pora, czastki, dzwiek) bierze z kadru {@code point}.
-   */
-  public record Lineup(String point, Location center, double radius, double cameraDistance,
-      double cameraHeight, double lookHeight, double spacingDegrees, double startDegrees,
-      int stepTicks) {
-
-    static Lineup read(World world, ConfigurationSection c) {
-      if (c == null || world == null) {
-        return null;
-      }
-      Location center = location(world, c.getConfigurationSection("center"));
-      if (center == null) {
-        return null;
-      }
-      return new Lineup(c.getString("point", "wybor"), center, c.getDouble("radius", 3.2),
-          c.getDouble("camera-distance", 3.6), c.getDouble("camera-height", 1.55),
-          c.getDouble("look-height", 1.05), c.getDouble("spacing-degrees", 36),
-          c.getDouble("start-degrees", 0), Math.max(1, Math.min(59, c.getInt("step-ticks", 4))));
-    }
-
-    /** Miejsce postaci nr {@code i} z {@code n}: luk srodkiem na {@code startDegrees}. */
-    public Location spot(int i, int n) {
-      double spacing = Math.min(spacingDegrees, 360.0 / Math.max(1, n));
-      double deg = startDegrees + (i - (n - 1) / 2.0) * spacing;
-      double rad = Math.toRadians(deg);
-      Location at = center.clone().add(-Math.sin(rad) * radius, 0, Math.cos(rad) * radius);
-      at.setYaw((float) deg);
-      at.setPitch(0);
-      return at;
-    }
-
-    /** Kat (stopnie) miejsca nr {@code i} — kamera obiega krag po tych katach. */
-    public double angle(int i, int n) {
-      double spacing = Math.min(spacingDegrees, 360.0 / Math.max(1, n));
-      return startDegrees + (i - (n - 1) / 2.0) * spacing;
-    }
-
-    /** Kamera przed postacia stojaca pod katem {@code deg}, patrzy na nia. */
-    public Location camera(double deg) {
-      double rad = Math.toRadians(deg);
-      double r = radius + cameraDistance;
-      Location cam = center.clone().add(-Math.sin(rad) * r, cameraHeight, Math.cos(rad) * r);
-      Location target = center.clone().add(-Math.sin(rad) * radius, lookHeight, Math.cos(rad) * radius);
-      return aimed(cam, target);
-    }
-  }
 
   /**
    * Klimat kadru — widoczny tylko dla patrzacego gracza: pora dnia, pogoda, czastki, dzwiek

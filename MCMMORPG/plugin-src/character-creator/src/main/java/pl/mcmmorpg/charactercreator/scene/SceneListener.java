@@ -91,6 +91,8 @@ public final class SceneListener implements Listener {
     boolean pressedRight = input.isRight() && !view.lastRight;
     boolean pressedUp = input.isForward() && !view.lastForward;
     boolean pressedDown = input.isBackward() && !view.lastBackward;
+    boolean pressedJump = input.isJump() && !view.lastJump;
+    view.lastJump = input.isJump();
     view.lastLeft = input.isLeft();
     view.lastRight = input.isRight();
     view.lastForward = input.isForward();
@@ -99,6 +101,9 @@ public final class SceneListener implements Listener {
       dispatch(view, c -> c.onPrevious(view), "A");
     } else if (pressedRight) {
       dispatch(view, c -> c.onNext(view), "D");
+    }
+    if (pressedJump) {
+      dispatch(view, c -> c.onJump(view), "Spacja");
     }
     if (pressedUp) {
       dispatch(view, c -> c.onUp(view), "W");

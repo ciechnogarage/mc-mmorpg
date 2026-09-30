@@ -7,6 +7,8 @@ import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.dialog.DialogResponseView;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +42,27 @@ public final class SceneMenu implements Listener {
   private static final Pattern NONCE = Pattern.compile("\\bn:(\\d+)");
   private static final Pattern BUTTON = Pattern.compile("\\bb:(\\d+)");
 
-  /** Przycisk: napis, podpowiedz (moze byc null) i co zrobic. */
-  public record Button(Component label, Component tooltip, Runnable action) {}
+  /**
+   * Przycisk: napis, podpowiedz (moze byc null) i co zrobic. {@code onSubmit} (moze byc null)
+   * dostaje wartosci pol okna — dla okien z polami ({@link #form}); {@code width} 0 = domyslna.
+   */
+  public record Button(Component label, Component tooltip, Runnable action,
+      java.util.function.Consumer<DialogResponseView> onSubmit, int width) {
+
+    public Button(Component label, Component tooltip, Runnable action) {
+      this(label, tooltip, action, null, 0);
+    }
+
+    /** Przycisk okna z polami: akcja dostaje ich wartosci. */
+    public static Button submit(Component label, Component tooltip,
+        java.util.function.Consumer<DialogResponseView> onSubmit) {
+      return new Button(label, tooltip, null, onSubmit, 0);
+    }
+
+    public Button width(int px) {
+      return new Button(label, tooltip, action, onSubmit, px);
+    }
+  }
 
   private record Open(int nonce, List<Button> buttons) {}
 
@@ -59,6 +80,18 @@ public final class SceneMenu implements Listener {
    * @param buttons przyciski; OSTATNI to wyjscie (tez pod Escape)
    */
   public void show(Player player, Component title, Component body, List<Button> buttons, int columns) {
+    form(player, title, body == null ? List.of() : List.of(body), List.of(), buttons, columns);
+  }
+
+  /**
+   * Okno z polami (np. zaznaczanie postaci, wpisanie imienia). Wartosci pol wracaja w kliknieciu
+   * (akcja "dynamic/custom" klienta dokleja je do ladunku) — odbiera je {@link Button#onSubmit}.
+   *
+   * @param bodies kolejne akapity tresci (moga byc puste)
+   * @param buttons przyciski; OSTATNI to wyjscie (tez pod Escape)
+   */
+  public void form(Player player, Component title, List<Component> bodies, List<DialogInput> inputs,
+      List<Button> buttons, int columns) {
     int nonce = nonces.incrementAndGet();
     open.put(player.getUniqueId(), new Open(nonce, List.copyOf(buttons)));
     List<ActionButton> actions = new ArrayList<>();
@@ -66,13 +99,17 @@ public final class SceneMenu implements Listener {
       actions.add(button(buttons.get(i), nonce, i));
     }
     ActionButton exit = button(buttons.get(buttons.size() - 1), nonce, buttons.size() - 1);
-    List<DialogBody> bodies = body == null ? List.of() : List.of(DialogBody.plainMessage(body, 300));
+    List<DialogBody> parts = new ArrayList<>();
+    for (Component c : bodies) {
+      parts.add(DialogBody.plainMessage(c, 300));
+    }
     Dialog dialog = Dialog.create(factory -> factory.empty()
         .base(DialogBase.builder(title)
             .canCloseWithEscape(true)
             .pause(false)
             .afterAction(DialogBase.DialogAfterAction.CLOSE)
-            .body(bodies)
+            .body(parts)
+            .inputs(inputs)
             .build())
         .type(actions.isEmpty()
             ? DialogType.notice(exit)
@@ -81,7 +118,7 @@ public final class SceneMenu implements Listener {
   }
 
   private static ActionButton button(Button b, int nonce, int index) {
-    var builder = ActionButton.builder(b.label()).width(200)
+    var builder = ActionButton.builder(b.label()).width(b.width() > 0 ? b.width() : 200)
         .action(DialogAction.customClick(CLICK,
             BinaryTagHolder.binaryTagHolder("{n:" + nonce + ",b:" + index + "}")));
     if (b.tooltip() != null) {
@@ -107,10 +144,11 @@ public final class SceneMenu implements Listener {
     }
     Player player = connection.getPlayer();
     String tag = event.getTag() == null ? "" : event.getTag().string();
-    Bukkit.getScheduler().runTask(plugin, () -> handle(player, tag));
+    DialogResponseView response = event.getDialogResponseView();
+    Bukkit.getScheduler().runTask(plugin, () -> handle(player, tag, response));
   }
 
-  private void handle(Player player, String tag) {
+  private void handle(Player player, String tag, DialogResponseView response) {
     Open state = open.get(player.getUniqueId());
     Matcher n = NONCE.matcher(tag);
     Matcher b = BUTTON.matcher(tag);
@@ -124,7 +162,12 @@ public final class SceneMenu implements Listener {
     }
     open.remove(player.getUniqueId());
     try {
-      state.buttons().get(index).action().run();
+      Button button = state.buttons().get(index);
+      if (button.onSubmit() != null) {
+        button.onSubmit().accept(response);
+      } else if (button.action() != null) {
+        button.action().run();
+      }
     } catch (RuntimeException ex) {
       logger.severe("Menu sceny: blad przycisku " + index + " dla " + player.getName() + ": " + ex);
       ex.printStackTrace();
