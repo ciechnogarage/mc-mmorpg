@@ -1,6 +1,11 @@
 package pl.mcmmorpg.animacjebroni;
 
+import io.lumine.mythic.lib.UtilityMethods;
 import io.lumine.mythic.lib.api.item.NBTItem;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
+import io.lumine.mythic.lib.damage.DamageType;
+import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.AttackRange;
@@ -63,8 +68,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   record Garda(float redukcja, float kat, float opoznienie, float spowolnienie) {}
 
+  /** Pchniecie z wypadem: puszczenie PPM po >= min tickach trzymania. */
+  record Wypad(int min, double mnoznik, double zasieg, double szerokosc, double sila, int odnowienie) {}
+
   record Ustawienie(SwingAnimation.Animation zamach, int czas, String skala, Rodzaj rodzaj, Float ladowanie,
-                    Float zasieg, Material wzor, Garda garda, boolean ciezka) {}
+                    Float zasieg, Material wzor, Garda garda, boolean ciezka, Wypad wypad) {}
 
   /** Komponenty, ktore plugin ustawia; przy zmianie wracaja do wartosci materialu (resetData). */
   private static final List<DataComponentType> ZARZADZANE = List.of(
@@ -126,8 +134,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           garda = new Garda((float) g.getDouble("redukcja", 0.4), (float) g.getDouble("kat", 90),
               (float) g.getDouble("opoznienie", 0.15), (float) g.getDouble("spowolnienie", 0.5));
         }
+        Wypad wypad = null;
+        ConfigurationSection w = t.getConfigurationSection("wypad");
+        if (w != null) {
+          wypad = new Wypad(w.getInt("min", 10), w.getDouble("mnoznik", 1.5), w.getDouble("zasieg", 4.5),
+              w.getDouble("szerokosc", 0.9), w.getDouble("sila", 0.8), w.getInt("odnowienie", 60));
+        }
         typy.put(typ.toUpperCase(Locale.ROOT), new Ustawienie(zamach, t.getInt("czas", 6), t.getString("skala"), rodzaj,
-            liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false)));
+            liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false), wypad));
       }
     }
     for (String m : getConfig().getStringList("materialy-z-modelami")) {
@@ -184,8 +198,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           .blockSound(Key.key("minecraft", "item.shield.block"))
           .disableSound(Key.key("minecraft", "item.shield.break"))
           .build());
-      item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
-          .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
+      // bron z wzoru (wlocznia) zostaje przy wlasnym use_effects: szarza wymaga sprintu z uniesiona bronia
+      if (u.wzor() == null) {
+        item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
+            .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
+      }
     }
 
     if (u.skala() != null && modele.contains(item.getType())) {
@@ -231,6 +248,52 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void podniesienie(EntityPickupItemEvent e) { if (e.getEntity() instanceof Player p) pozniej(p); }
+
+  /**
+   * Pchniecie z wypadem: gracz trzymal PPM (garda) co najmniej {@code min} tickow i puscil. Krok do przodu i cios
+   * w linii patrzenia (wszystkie cele do {@code zasieg} blokow) za mnoznik x obrazenia broni, przez MythicLib
+   * (statystyki, PvP, party). Odnowienie = vanillowy cooldown przedmiotu (widac go na hotbarze, blokuje PPM).
+   */
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void puszczeniePpm(PlayerStopUsingItemEvent e) {
+    Player p = e.getPlayer();
+    ItemStack item = p.getInventory().getItemInMainHand();
+    Ustawienie u = ustawienie(item);
+    if (u == null || u.wypad() == null || e.getTicksHeldFor() < u.wypad().min()) return;
+    if (!item.isSimilar(e.getItem()) || p.hasCooldown(item) || p.isSprinting()) return;
+    Wypad w = u.wypad();
+    p.setCooldown(item, w.odnowienie());
+    Vector kier = p.getLocation().getDirection().setY(0);
+    if (kier.lengthSquared() > 1e-4) p.setVelocity(p.getVelocity().add(kier.normalize().multiply(w.sila()).setY(0.1)));
+    World swiat = p.getWorld();
+    swiat.playSound(p.getLocation(), Sound.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 0.8f, 0.8f);
+    getServer().getScheduler().runTaskLater(this, () -> {
+      if (!p.isOnline() || p.isDead()) return;
+      Location oko = p.getEyeLocation();
+      Vector d = oko.getDirection().normalize();
+      for (double t = 0.6; t <= w.zasieg(); t += 0.35) {
+        swiat.spawnParticle(Particle.CRIT, oko.clone().add(d.clone().multiply(t)), 1, 0.02, 0.02, 0.02, 0);
+      }
+      double obrazenia = MMOPlayerData.get(p).getStatMap().getStat("ATTACK_DAMAGE") * w.mnoznik();
+      var meta = MMOPlayerData.get(p).getStatMap().cache(io.lumine.mythic.lib.api.player.EquipmentSlot.MAIN_HAND);
+      int trafione = 0;
+      for (var enc : swiat.getNearbyEntities(oko, w.zasieg() + 1, w.zasieg() + 1, w.zasieg() + 1)) {
+        if (!(enc instanceof LivingEntity cel) || cel.equals(p) || cel.isDead()) continue;
+        Vector doCelu = cel.getLocation().add(0, cel.getHeight() / 2, 0).toVector().subtract(oko.toVector());
+        double wzdluz = doCelu.dot(d);
+        if (wzdluz < 0.3 || wzdluz > w.zasieg()) continue;
+        double obok = doCelu.clone().subtract(d.clone().multiply(wzdluz)).length();
+        if (obok > w.szerokosc() + cel.getWidth() / 2) continue;
+        if (!UtilityMethods.canTarget(p, cel, InteractionType.OFFENSE_ACTION)) continue;
+        meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL);
+        Location c = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
+        swiat.spawnParticle(Particle.CRIT, c, 8, 0.15, 0.15, 0.15, 0.2);
+        trafione++;
+      }
+      swiat.playSound(oko, trafione > 0 ? Sound.ITEM_TRIDENT_HIT : Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
+          SoundCategory.PLAYERS, 0.9f, trafione > 0 ? 0.9f : 1f);
+    }, 3L);
+  }
 
   /** Efekt i dzwiek trafienia wg rodzaju obrazen broni w glownej rece. */
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

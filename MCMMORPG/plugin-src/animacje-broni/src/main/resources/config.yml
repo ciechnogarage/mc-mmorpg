@@ -45,6 +45,8 @@ typy:
     wzor: IRON_SPEAR
     ciezka: true
     skala: s130
+    garda: {redukcja: 0.35, kat: 90, opoznienie: 0.2, spowolnienie: 0.5}
+    wypad: {min: 10, mnoznik: 2.0, zasieg: 4.5, szerokosc: 0.9, sila: 0.8, odnowienie: 60}
   LANCE:
     zamach: stab
     czas: 8

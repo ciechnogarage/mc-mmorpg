@@ -14,6 +14,8 @@ import argparse, json, math, os, re, sys, zipfile
 # bron nie da sie "klikac"), ciezka = nizszy, glebszy dzwiek trafienia. zasieg = max zasieg ciosu (vanilla 3 bloki).
 # garda = PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat, opoznienie w s, spowolnienie ruchu przy gardzie).
 # wzor = kopia zestawu vanillowej broni (IRON_SPEAR: pchniecie trafiajace wszystko w linii, zasieg 2-4,5, szarza PPM).
+# wypad = puszczenie PPM po >= min tickach gardy: krok do przodu (sila) i pchniecie przez linie (zasieg, szerokosc)
+# za mnoznik x obrazenia broni; odnowienie w tickach (cooldown przedmiotu na hotbarze).
 G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 TYPY = {
     'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'garda': G_MIECZ},
@@ -23,7 +25,9 @@ TYPY = {
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
                         'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
     'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8},
-    'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR'},
+    'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
+                        'garda': {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.2, 'spowolnienie': 0.5},
+                        'wypad': {'min': 10, 'mnoznik': 2.0, 'zasieg': 4.5, 'szerokosc': 0.9, 'sila': 0.8, 'odnowienie': 60}},
     'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
     'SPEAR':           {'rodzaj': 'klute'},   # materialy *_SPEAR maja juz caly vanillowy zestaw wloczni
     'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6},
@@ -166,8 +170,9 @@ def main():
             linie.append('    ciezka: true')
         if 'skala' in u:
             linie.append('    skala: %s' % skala_nazwa(u['skala']))
-        if 'garda' in u:
-            linie.append('    garda: {%s}' % ', '.join('%s: %s' % kv for kv in u['garda'].items()))
+        for k in ('garda', 'wypad'):
+            if k in u:
+                linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
     linie.append('materialy-z-modelami:')
     linie += ['  - %s' % m for m in sorted(materialy)]
     os.makedirs(a.out, exist_ok=True)
