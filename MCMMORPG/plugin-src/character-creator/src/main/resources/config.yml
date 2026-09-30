@@ -342,3 +342,10 @@ wybor-postaci:
   # MythicDungeons (swiat <mapa>_<n>), na koncu te wpisy: nazwa swiata (regex) -> napis.
   miejsca:
     - { swiat: 'world', nazwa: 'Kraina' }
+  # Pliki postaci, ktore inne pluginy zostawiaja po trwalym usunieciu ({id} = UUID profilu).
+  # Przenoszone (nie kasowane) do CharacterCreator/usuniete/<id>/ — cofniecie = przeniesc z powrotem.
+  po-usunieciu:
+    - 'CoreTools/userdata/{id}.yml'
+    - 'MMOCore/userdata/{id}.yml'
+    - 'MMOItems/userdata/{id}.yml'
+    - 'MMOInventory/userdata/{id}.yml'

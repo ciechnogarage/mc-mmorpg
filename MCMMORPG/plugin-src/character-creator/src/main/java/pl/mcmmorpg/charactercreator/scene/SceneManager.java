@@ -214,6 +214,20 @@ public final class SceneManager {
    * ladowania pod rzad.
    */
   public void close(UUID playerId, Location destination) {
+    close(playerId, destination, false);
+  }
+
+  /**
+   * Zamkniecie przy wyjsciu gracza z serwera: bez {@code hud.on-close}. MythicHUD zdejmuje
+   * posiadacza HUD-u przy wyjsciu PRZED nami, wiec kazda komenda leciala w pustke i zostawiala
+   * w logu "Invalid hud holder specified" + skladnie (3 razy na kazde wyjscie w scenie). Przy
+   * nastepnym wejsciu MythicHUD i tak sklada domyslny uklad od nowa.
+   */
+  public void closeOnQuit(UUID playerId) {
+    close(playerId, null, true);
+  }
+
+  private void close(UUID playerId, Location destination, boolean quitting) {
     SceneView view = views.remove(playerId);
     if (view == null) {
       return;
@@ -246,7 +260,9 @@ public final class SceneManager {
     if (view.topBar != null) {
       player.hideBossBar(view.topBar);
     }
-    runAll(settings.hudOnClose(), player);
+    if (!quitting) {
+      runAll(settings.hudOnClose(), player);
+    }
     GameMode mode = view.originMode() == null ? GameMode.SURVIVAL : view.originMode();
     if (destination != null) {
       player.teleport(destination);

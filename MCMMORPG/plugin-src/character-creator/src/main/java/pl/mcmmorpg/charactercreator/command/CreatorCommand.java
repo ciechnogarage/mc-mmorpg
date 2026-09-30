@@ -93,6 +93,13 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     this.trash = trash;
   }
 
+  /** {@code /cc reload} przeladowuje tez sekcje wybor-postaci. */
+  private Runnable selectReload = () -> { };
+
+  public void setSelectReload(Runnable selectReload) {
+    this.selectReload = selectReload;
+  }
+
   private java.util.function.Function<Player, String> flyoverPreview;
 
   /** {@code /cc przelot <gracz>} — sam przelot po stworzeniu postaci, do podgladu. */
@@ -249,6 +256,7 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
   private void reload(CommandSender sender) {
     config.reload();
     onReload.run();
+    selectReload.run();
     List<CreatorConfig.Problem> problems = config.validate(modelEngineBridge, skinService);
     sender.sendMessage(Component.text("Config przeladowany: " + config.races().size()
         + " ras, " + config.classes().size() + " klas.", NamedTextColor.GREEN));

@@ -19,6 +19,11 @@ const CHARS = [
   ['Tharog', 1, 2, 2, null, null],
   ['Ilynde', 2, 3, 1, null, null],
 ]
+// NAMES=Imie1,Imie2,... — inne konto (imiona sa unikalne na cale serwer): rasy/klasy po kolei, poziom 1-3.
+if (process.env.NAMES) {
+  CHARS.length = 0
+  process.env.NAMES.split(',').forEach((n, i) => CHARS.push([n, i % 4, Math.floor(i / 4) % 4, 1 + (i % 3), null, null]))
+}
 const GEAR = {
   diament: ['armor.head diamond_helmet', 'armor.chest diamond_chestplate', 'armor.legs diamond_leggings', 'armor.feet diamond_boots', 'hotbar.0 diamond_sword'],
   zelazo_luk: ['armor.chest iron_chestplate', 'armor.legs iron_leggings', 'hotbar.0 bow', 'weapon.offhand shield'],

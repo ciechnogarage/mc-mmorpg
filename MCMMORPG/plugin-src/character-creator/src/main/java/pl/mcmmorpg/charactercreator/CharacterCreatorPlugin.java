@@ -375,6 +375,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     if (command != null) {
       command.setListOpener(settings.replaceSelector() ? select::openList : null);
       command.setTrash(trashStore);
+      command.setSelectReload(() -> select.reload(
+          pl.mcmmorpg.charactercreator.select.SelectSettings.read(getConfig())));
     }
     java.util.function.Predicate<Player> openSelect = p -> {
       try {
