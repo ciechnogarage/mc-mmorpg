@@ -211,6 +211,24 @@ public final class SceneManager {
     close(playerId, null);
   }
 
+  /** Gracze wychodzacy z serwera — ich scena zamyka sie bez komend HUD (patrz closeQuitting). */
+  private final java.util.Set<UUID> quitting = ConcurrentHashMap.newKeySet();
+
+  /**
+   * Zamkniecie przy wyjsciu z gry. Komendy HUD z {@code hud.on-close} ida tickiem pozniej,
+   * kiedy gracza juz nie ma — MythicHUD odpowiadal wtedy trzema liniami "Invalid hud holder"
+   * na kazde wyjscie ze sceny (klon 30.09). Przy nastepnym wejsciu scena i tak otwiera sie
+   * pierwsza i sama zdejmuje/zaklada warstwy.
+   */
+  public void closeQuitting(UUID playerId) {
+    quitting.add(playerId);
+    try {
+      close(playerId, null);
+    } finally {
+      quitting.remove(playerId);
+    }
+  }
+
   /**
    * Zamyka scene i stawia gracza w {@code destination} zamiast w miejscu sprzed wejscia —
    * po przelocie gracz jest juz w swiecie gry i powrot do sali oznaczalby dwa ekrany
@@ -249,8 +267,11 @@ public final class SceneManager {
     if (view.topBar != null) {
       player.hideBossBar(view.topBar);
     }
-    runAll(settings.hudOnClose(), player);
+    if (!quitting.contains(playerId)) {
+      runAll(settings.hudOnClose(), player);
+    }
     GameMode mode = view.originMode() == null ? GameMode.SURVIVAL : view.originMode();
+    player.setFallDistance(0f);
     if (destination != null) {
       player.teleport(destination);
       player.setGameMode(mode);
@@ -806,8 +827,10 @@ public final class SceneManager {
    * (15 FPS) przy stalym czasie czerni gracz przez ~0,5 s widzial puste niebo bez terenu,
    * postaci i paneli. Teraz: {@code fade.in-ticks} zaciemnienia, zmiana pod czernia, potem
    * czern co najmniej {@code fade.stay-ticks} i do chwili, gdy kamera jest podpieta, a chunki
-   * kamery i postaci wyslane (+{@value #FADE_SETTLE_TICKS} ticki), najwyzej
-   * {@value #FADE_MAX_HOLD_TICKS}; wtedy {@code fade.out-ticks} rozjasnienia. Zmiana w tym samym
+   * 5x5 wokol kamery i postaci wyslane (+{@value #FADE_SETTLE_TICKS} ticki, po dalekim skoku
+   * {@value #FADE_SETTLE_FAR_TICKS}), najwyzej {@value #FADE_MAX_HOLD_TICKS}; wtedy
+   * {@code fade.out-ticks} rozjasnienia. UWAGA: "wyslane" to nie "narysowane" — klient QA
+   * (programowy OpenGL, 15 FPS) potrafil budowac teren jeszcze ~1 s dluzej. Zmiana w tym samym
    * kadrze (np. klasa z listy) jest gotowa od razu, wiec trwa tyle co minimum.
    * Gdy {@code atBlack} przejmie ekran (przelot ustawia wlasny tytul), nie ruszamy go.
    */
@@ -952,6 +975,12 @@ public final class SceneManager {
       Player player = view.player();
       if (player == null || !player.isOnline()) {
         continue;
+      }
+      // Tryb widza co tick, nie dopiero z kamera: przy przelocie Multiverse przestawia tryb
+      // gry po zmianie swiata kilka tickow PO naszym setGameMode — zmierzone na klonie 30.09:
+      // gracz przez ~1,5 s byl w survivalu nad zatoka i spadal z y=96 na y=65.
+      if (player.getGameMode() != GameMode.SPECTATOR) {
+        player.setGameMode(GameMode.SPECTATOR);
       }
       if (now >= view.targetReadyTick) {
         aimCamera(view);

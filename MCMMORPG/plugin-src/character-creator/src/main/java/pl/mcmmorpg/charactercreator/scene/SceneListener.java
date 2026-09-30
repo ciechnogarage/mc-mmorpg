@@ -150,7 +150,7 @@ public final class SceneListener implements Listener {
    */
   @EventHandler(priority = EventPriority.LOWEST)
   public void onQuit(PlayerQuitEvent event) {
-    scenes.close(event.getPlayer().getUniqueId());
+    scenes.closeQuitting(event.getPlayer().getUniqueId());
   }
 
   /** Wejscie w trakcie sciemnienia jest polykane — dwa szybkie A nie przeskocza dwoch pozycji. */
