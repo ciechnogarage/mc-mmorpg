@@ -361,8 +361,11 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     SceneMenu sceneMenu = new SceneMenu(this, getLogger());
     getServer().getPluginManager().registerEvents(sceneMenu, this);
     // Kreator dostaje okna sceny: potwierdzenie przerwania (PPM) i liste klas (Spacja).
+    pl.mcmmorpg.charactercreator.scene.GridDialog grid =
+        new pl.mcmmorpg.charactercreator.scene.GridDialog(this, getLogger());
+    getServer().getPluginManager().registerEvents(grid, this);
     java.util.function.Function<CreatorFlow.Outcome, CreatorFlow> flows =
-        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome, sceneMenu);
+        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome, sceneMenu, grid);
     CharacterSelect select = new CharacterSelect(this, getLogger(), sceneManager, sceneMenu,
         creatorConfig, characterStore, previewDummyManager);
     java.util.function.Predicate<Player> openSelect = p -> {
