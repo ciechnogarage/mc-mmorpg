@@ -69,7 +69,7 @@ final class Strumien {
     double yaw = Math.toRadians(oko.getYaw());
     Vector wPrawo = new Vector(-Math.cos(yaw), 0, -Math.sin(yaw));
     Vector przod = oko.getDirection();
-    return oko.clone().add(wPrawo.multiply(prawa ? 0.38 : -0.38)).add(przod.multiply(0.6)).add(0, -0.3, 0);
+    return oko.clone().add(wPrawo.multiply(prawa ? 0.38 : -0.38)).add(przod.multiply(0.45)).add(0, -0.3, 0);
   }
 
   private static Transformation ksztalt(float dlugosc) {

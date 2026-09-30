@@ -23,7 +23,7 @@ skille:
   tik: Zak_Tik            # co 10 tickow, po pobraniu many (dzwieki)
   trafienia: Zak_Trafienia  # co 10 tickow, z celami stozka jako celami skilla
   brak-many: Zak_BrakMany
-  dlon: Zak_Dlon          # co 4 ticki, gdy zaklecie jest w dloni, a gracz nie rzuca
+  dlon: ''                # czasteczki przy dloni co 4 ticki (Zak_Dlon); pusto = tylko animowany model dloni
 
 # Stozek obrazen liczony przez plugin (od oczu gracza): zasieg w blokach, pol-kat w stopniach.
 stozek:

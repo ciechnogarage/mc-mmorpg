@@ -179,6 +179,7 @@ final class Rzucanie implements Listener {
 
   /** Zar na dloni, gdy zaklecie jest w rece, ale gracz nie rzuca. */
   private void dlonie() {
+    if (ksiega.skDlon.isBlank()) return;   // modele dloni animuja sie same; czasteczki przy dloni opcjonalne
     for (Player p : Bukkit.getOnlinePlayers()) {
       if (rzuca(p)) continue;
       if (ksiega.w(p.getInventory().getItemInMainHand()) != null || ksiega.w(p.getInventory().getItemInOffHand()) != null)
