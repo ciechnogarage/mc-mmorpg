@@ -153,6 +153,15 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     CreatorCommand command = registerCommand(modelEngineBridge, profileModule);
     startScene(previewDummyManager, command, profileModule);
 
+    // /cc testpostac — wejscie botow na klonach testowych, za trzema zamkami (TestEntry).
+    pl.mcmmorpg.charactercreator.command.TestEntry testEntry =
+        new pl.mcmmorpg.charactercreator.command.TestEntry(this, getLogger(), creatorConfig);
+    testEntry.warnOnStartup();
+    profileModule.setTestEntry(testEntry);
+    if (command != null) {
+      command.setTestEntry(testEntry);
+    }
+
     watchdogTask = getServer().getScheduler().runTaskTimer(this, sessionManager::tick,
         WATCHDOG_PERIOD_TICKS, WATCHDOG_PERIOD_TICKS);
 

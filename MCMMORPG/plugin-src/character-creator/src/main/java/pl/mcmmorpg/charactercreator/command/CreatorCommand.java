@@ -86,6 +86,13 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
     this.flyoverPreview = flyoverPreview;
   }
 
+  /** {@code /cc testpostac} — wejscie botow testowych; null = brak. */
+  private TestEntry testEntry;
+
+  public void setTestEntry(TestEntry testEntry) {
+    this.testEntry = testEntry;
+  }
+
   public void setSceneOpener(java.util.function.BiFunction<Player, Boolean, String> sceneOpener) {
     this.sceneOpener = sceneOpener;
   }
@@ -110,6 +117,14 @@ public final class CreatorCommand implements CommandExecutor, TabCompleter {
       case "scena" -> scene(sender, args);
       case "wybor" -> select(sender, args);
       case "przelot" -> flyover(sender, args);
+      // Zablokowana potrojnie (TestEntry); bez ktoregos zamka zachowuje sie jak nieznana komenda.
+      case "testpostac" -> {
+        if (testEntry != null && testEntry.allowed(sender)) {
+          sender.sendMessage(Component.text(testEntry.run(sender, args), NamedTextColor.GRAY));
+        } else {
+          usage(sender, label);
+        }
+      }
       default -> usage(sender, label);
     }
     return true;

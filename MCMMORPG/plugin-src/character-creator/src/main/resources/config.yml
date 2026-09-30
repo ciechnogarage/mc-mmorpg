@@ -318,3 +318,10 @@ skins:
   # niż slotów) nie ruszamy niczego, żeby nie wstawić komuś cudzej głowy.
   profile-heads: true
 
+
+# /cc testpostac <gracz> <rasa> <archetyp> [imie] — wejscie botow testowych z prawdziwa postacia.
+# Dziala TYLKO gdy naraz: (1) wola konsola/RCON (nigdy gracz, nawet OP), (2) enabled: true tutaj,
+# (3) zmienna srodowiskowa CC_TEST_WEJSCIE=1 (ustawiana wylacznie przy klonach testowych).
+# Na world1 ZAWSZE false. Bez ktoregos zamka komenda udaje, ze nie istnieje.
+test-wejscie:
+  enabled: false
