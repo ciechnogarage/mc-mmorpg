@@ -853,6 +853,12 @@ public final class CharacterSelect {
 
   private List<Component> listBody(Player player, ProfileListImpl list, boolean inGame) {
     int inTrash = trashed(player, list).size();
+    if (entries(list).isEmpty()) {
+      return List.of(Component.text(inTrash > 0
+          ? "Nie masz aktywnych postaci. Przywróć je z kosza (" + SelectOrder.characters(inTrash)
+              + ") albo stwórz nową."
+          : "Nie masz jeszcze postaci — stwórz pierwszą.", NamedTextColor.WHITE));
+    }
     Component text = Component.text(inGame
         ? "Kliknij postać, żeby od razu nią grać. " : "Kliknij postać, żeby grać. ", NamedTextColor.WHITE)
         .append(Component.text(inGame ? "▶" : "★", inGame ? NamedTextColor.GREEN : NamedTextColor.GOLD))

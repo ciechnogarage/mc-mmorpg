@@ -16,6 +16,13 @@ const R = new w.Results('kosz-termin')
   let gone = false
   for (let i = 0; i < 16 && !gone; i++) { gone = !/name: Elwen/.test(fs.readFileSync('/clone-data/plugins/CharacterCreator/characters.yml', 'utf8')); if (!gone) await w.sleep(500) }
   R.assert(gone, 'characters.yml bez Elwen (po zapisie z debounce)')
+  const eid = (log.match(/postac Elwen \(profil ([0-9a-f-]{36})\)/) || [])[1]
+  await w.sleep(6500)
+  const P = '/clone-data/plugins/'
+  const sz = ['CoreTools/userdata/{id}.yml', 'MMOCore/userdata/{id}.yml', 'MMOItems/userdata/{id}.yml', 'MMOInventory/userdata/{id}.yml']
+  R.assert(!!eid && sz.every(t => !fs.existsSync(P + t.replaceAll('{id}', eid))) &&
+    sz.some(t => fs.existsSync(P + 'CharacterCreator/usuniete/' + eid + '/' + t.replaceAll('{id}', eid))),
+    'pliki modulow Elwen przeniesione do CharacterCreator/usuniete/<id>/', eid)
   await w.click(bot, /^(★ )?Grommash /)
   await w.sleep(4000)
   await w.quit(bot)
