@@ -38,6 +38,9 @@ public final class CreatorFlow {
     }
   }
 
+  /** Po tylu tickach bez A/D dochodzi sceneria rasy i postac (jak w wyborze postaci). */
+  private static final long SCENE_DELAY_TICKS = 6L;
+
   private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
   private static final String PREVIEW_KEY = "cc.preview";
 
@@ -354,36 +357,71 @@ public final class CreatorFlow {
       return card;
     }
 
+    /** Kolejne A/D (i W/S w trakcie) uniewazniaja zaplanowane doladowanie kadru rasy. */
+    private int sceneToken;
+    /** Rasa zmieniona, kadr jeszcze nie doszedl — W/S nie stawia wtedy postaci na starej scenerii. */
+    private boolean racePending;
+
+    /**
+     * A/D jak w wyborze postaci (wlasciciel 30.09: "dobrze to dziala"): pasek ras, lista klas
+     * i karta zmieniaja sie OD RAZU, bez sciemnienia i bez polykania klawiszy; sceneria rasy
+     * i postac dochodza {@link #SCENE_DELAY_TICKS} po ostatnim kliknieciu.
+     */
+    private void moveRace(SceneView view, int delta) {
+      race += delta;
+      view.uiSound("race");
+      showText(view);
+      scheduleScene(view);
+    }
+
+    private void showText(SceneView view) {
+      view.topBar(raceStrip());
+      view.hint(normalHint(view));
+      view.list(classList(race()));
+      view.card(classCard(race(), clazz()));
+    }
+
+    private void scheduleScene(SceneView view) {
+      racePending = true;
+      int token = ++sceneToken;
+      org.bukkit.Bukkit.getScheduler().runTaskLater(
+          org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(CreatorFlow.class), () -> {
+            if (!view.isClosed() && view.controller() == this && token == sceneToken) {
+              racePending = false;
+              showRace(view);
+            }
+          }, SCENE_DELAY_TICKS);
+    }
+
     @Override
     public void onPrevious(SceneView view) {
-      view.uiSound("race");
-      view.fade(() -> {
-        race--;
-        showRace(view);
-      });
+      moveRace(view, -1);
     }
 
     @Override
     public void onNext(SceneView view) {
-      view.uiSound("race");
-      view.fade(() -> {
-        race++;
-        showRace(view);
-      });
+      moveRace(view, 1);
+    }
+
+    private void moveClass(SceneView view, int delta) {
+      clazz += delta;
+      view.uiSound("class");
+      if (racePending) {
+        showText(view);
+        scheduleScene(view);
+      } else {
+        showClass(view);
+      }
     }
 
     @Override
     public void onUp(SceneView view) {
-      clazz--;
-      view.uiSound("class");
-      showClass(view);
+      moveClass(view, -1);
     }
 
     @Override
     public void onDown(SceneView view) {
-      clazz++;
-      view.uiSound("class");
-      showClass(view);
+      moveClass(view, 1);
     }
 
     @Override
