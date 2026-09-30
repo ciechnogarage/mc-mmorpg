@@ -29,8 +29,8 @@ async function utworz(bot, name, r, etyk) {
     await s.rcon(`cc wybor ${name}`)
     r.assert(await s.waitScene(bot), 'scena wyboru po "Zmien postac"')
     await s.ppm(bot)
-    let d = await s.waitDialog(bot, /Księga postaci/)
-    r.assert(!!d, 'PPM w wyborze: Ksiega postaci')
+    let d = await s.waitDialog(bot, /Twoje postacie/)  // po scaleniu z WYBOR: PPM = lista postaci
+    r.assert(!!d, 'PPM w wyborze: lista postaci')
     await h.clickDialog(bot, /Nowa postać/)
     r.assert(await s.waitScene(bot), 'kreator po "+ Nowa postac"')
     // --- PPM w kreatorze u gracza z postacia: pytanie
@@ -74,8 +74,8 @@ async function utworz(bot, name, r, etyk) {
     await sleep(3000)
     r.assert(!!s.shield(bot), '"Tak": scena wyboru postaci (dalej w scenie)')
     await s.ppm(bot)
-    d = await s.waitDialog(bot, /Księga postaci/)
-    r.assert(!!d, 'po przerwaniu: wybor postaci z ksiega')
+    d = await s.waitDialog(bot, /Twoje postacie/)  // po scaleniu z WYBOR: PPM = lista postaci
+    r.assert(!!d, 'po przerwaniu: wybor postaci z lista')
     await h.clickDialog(bot, /Nowa postać/)
     await s.waitScene(bot)
     await s.press(bot, 'D', 2500); await s.press(bot, 'D', 2500) // elf

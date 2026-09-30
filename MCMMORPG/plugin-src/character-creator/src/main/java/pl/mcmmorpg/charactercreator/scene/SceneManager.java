@@ -178,6 +178,7 @@ public final class SceneManager {
       player.showEntity(plugin, e);
     }
     isolate(player);
+    emptyHand(view, player);
     runAll(settings.hudOnOpen(), player);
     runAll(settings.hudRepeat(), player);
 
@@ -275,7 +276,33 @@ public final class SceneManager {
       player.setGameMode(mode);
       player.teleport(view.origin());
     }
+    // Slotu paska NIE przywracamy: miedzy zamknieciem sceny a wczytaniem postaci gracz nie ma atrybutow
+    // MMOCore, a reszta klikniecia "Graj" przychodzi wlasnie wtedy — z bronia w rece znowu byl komunikat
+    // o bieglosci (zmierzone). Wybrana postac i tak ustawia swoj slot z profilu MMOProfiles.
     reveal(player);
+  }
+
+  /**
+   * Pusta reka na czas sceny: gracz bez wybranej postaci trzyma przedmiot ostatniej postaci, a MMOItems
+   * sprawdza wymagania broni przy KAZDYM kliknieciu — takze LPM "Graj" w scenie. Bez wczytanej postaci
+   * atrybuty MMOCore sa zerowe, wiec gracz dostawal "Nie mozesz tego uzyc — brakuje: Bieglosc: ..."
+   * (zmierzone na klonie 30.09: rozdzka w rece = komunikat, pusty slot paska = brak). Przestawiamy tylko
+   * wskaznik paska na pusty slot (ekwipunek nietkniety); wybrana potem postac i tak ustawia swoj slot.
+   * Pelny pasek (brak pustego slotu) = zostaje jak bylo.
+   */
+  private static void emptyHand(SceneView view, Player player) {
+    org.bukkit.inventory.PlayerInventory inv = player.getInventory();
+    org.bukkit.inventory.ItemStack held = inv.getItemInMainHand();
+    if (held == null || held.getType().isAir()) {
+      return;
+    }
+    for (int slot = 0; slot < 9; slot++) {
+      org.bukkit.inventory.ItemStack it = inv.getItem(slot);
+      if (it == null || it.getType().isAir()) {
+        inv.setHeldItemSlot(slot);
+        return;
+      }
+    }
   }
 
   public void closeAll() {

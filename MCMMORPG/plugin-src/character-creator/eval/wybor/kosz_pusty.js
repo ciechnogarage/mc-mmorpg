@@ -41,6 +41,8 @@ async function lista(bot) {
   const log = w.logSince(0).split('\n').filter(l => l.includes(NAME)).slice(-6).join('\n')
   R.assert(/Scena otwarta: KoszQA \(PickStep\)/.test(log), 'LPM w pustej scenie -> kreator (PickStep)')
   await w.ppm(bot)
+  // Naprawa kreatora (KREATOR): PPM w kreatorze pyta o potwierdzenie przerwania.
+  if (await w.waitDialog(bot, d => /Przerwać tworzenie/.test(w.plain(d.title)), 5000)) await w.click(bot, /Tak, przerwij/)
   const d2 = await w.waitDialog(bot, d => /Twoje postacie/.test(w.plain(d.title)), 12000)
   R.assert(!!d2, 'rezygnacja z kreatora -> z powrotem lista z koszem')
   await w.click(bot, /^Kosz \(2\)/)
