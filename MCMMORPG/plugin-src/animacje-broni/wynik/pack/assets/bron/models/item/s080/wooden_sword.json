@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/wooden_sword",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    55
+   ],
+   "translation": [
+    0.0,
+    2.461,
+    0.771
+   ],
+   "scale": [
+    0.68,
+    0.68,
+    0.68
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -55
+   ],
+   "translation": [
+    -0.0,
+    2.461,
+    0.771
+   ],
+   "scale": [
+    0.68,
+    0.68,
+    0.68
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    25
+   ],
+   "translation": [
+    1.13,
+    2.025,
+    0.702
+   ],
+   "scale": [
+    0.544,
+    0.544,
+    0.544
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -25
+   ],
+   "translation": [
+    1.13,
+    2.025,
+    0.702
+   ],
+   "scale": [
+    0.544,
+    0.544,
+    0.544
+   ]
+  }
+ }
+}

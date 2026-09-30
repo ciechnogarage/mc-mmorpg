@@ -1,0 +1,14 @@
+name: AnimacjeBroni
+main: pl.mcmmorpg.animacjebroni.AnimacjeBroni
+version: '${version}'
+api-version: '1.21'
+description: Zamach (swing_animation) i model trzymania broni MMOItems wg typu przedmiotu.
+depend: [MMOItems, MythicLib]
+commands:
+  animacjebroni:
+    description: reload | sprawdz <gracz>
+    usage: /animacjebroni <reload|sprawdz <gracz>>
+    permission: animacjebroni.admin
+permissions:
+  animacjebroni.admin:
+    default: op

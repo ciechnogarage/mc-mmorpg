@@ -1,0 +1,103 @@
+# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient 1.21.11) - nie edytowac recznie.
+# typ MMOItems -> zamach (whack|stab|none), czas (ticki), skala = model trzymania <przestrzen>:<skala>/<material>
+przestrzen-modeli: bron
+typy:
+  SWORD:
+    zamach: whack
+    czas: 6
+  LONG_SWORD:
+    zamach: whack
+    czas: 7
+  KATANA:
+    zamach: whack
+    czas: 5
+  AXE:
+    zamach: whack
+    czas: 8
+  GREATSWORD:
+    zamach: whack
+    czas: 10
+    skala: s130
+  GREATAXE:
+    zamach: whack
+    czas: 10
+    skala: s130
+  HALBERD:
+    zamach: whack
+    czas: 10
+    skala: s130
+  LANCE:
+    zamach: stab
+    czas: 8
+    skala: s130
+  DAGGER:
+    zamach: stab
+    czas: 4
+    skala: s080
+  THRUSTING_SWORD:
+    zamach: stab
+    czas: 5
+  WHIP:
+    zamach: whack
+    czas: 7
+  WAND:
+    zamach: stab
+    czas: 5
+    skala: s090
+  STAFF:
+    zamach: stab
+    czas: 7
+    skala: s125
+  GREATSTAFF:
+    zamach: stab
+    czas: 9
+    skala: s140
+  TOME:
+    zamach: stab
+    czas: 5
+  TALISMAN:
+    zamach: stab
+    czas: 5
+  FILAKTERIUM:
+    zamach: stab
+    czas: 5
+  HAMMER:
+    zamach: whack
+    czas: 8
+  GREATHAMMER:
+    zamach: whack
+    czas: 12
+    skala: s130
+  SIERP:
+    zamach: whack
+    czas: 5
+  KOSA:
+    zamach: whack
+    czas: 10
+    skala: s140
+  SHIELD:
+    zamach: whack
+    czas: 7
+  GAUNTLET:
+    zamach: stab
+    czas: 4
+materialy-z-modelami:
+  - BAMBOO
+  - BLAZE_ROD
+  - BONE
+  - BREEZE_ROD
+  - DIAMOND_AXE
+  - DIAMOND_HOE
+  - DIAMOND_SWORD
+  - GOLDEN_SWORD
+  - IRON_AXE
+  - IRON_HOE
+  - IRON_SWORD
+  - MACE
+  - NETHERITE_AXE
+  - NETHERITE_HOE
+  - NETHERITE_SWORD
+  - STICK
+  - STONE_AXE
+  - STONE_SWORD
+  - WOODEN_SWORD

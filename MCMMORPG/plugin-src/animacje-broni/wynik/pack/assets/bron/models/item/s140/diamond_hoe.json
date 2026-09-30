@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/diamond_hoe",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    55
+   ],
+   "translation": [
+    -0.0,
+    7.078,
+    -0.043
+   ],
+   "scale": [
+    1.19,
+    1.19,
+    1.19
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -55
+   ],
+   "translation": [
+    0.0,
+    7.078,
+    -0.043
+   ],
+   "scale": [
+    1.19,
+    1.19,
+    1.19
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    25
+   ],
+   "translation": [
+    1.13,
+    5.55,
+    1.985
+   ],
+   "scale": [
+    0.952,
+    0.952,
+    0.952
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -25
+   ],
+   "translation": [
+    1.13,
+    5.55,
+    1.985
+   ],
+   "scale": [
+    0.952,
+    0.952,
+    0.952
+   ]
+  }
+ }
+}
