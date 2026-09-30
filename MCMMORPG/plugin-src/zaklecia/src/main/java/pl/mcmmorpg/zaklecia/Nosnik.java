@@ -53,7 +53,8 @@ final class Nosnik implements Listener {
 
   private static void pasek(Player p, String tekst) {
     // pasek MMOCore co 5 tickow nadpisuje zwykly actionbar — piszemy przez handler MythicLib z wyzszym priorytetem
-    MMOPlayerData.get(p).getActionBar().show(50, tekst);
+    // Dane MMO bywaja nieaktualne po przelogowaniu w <1 s (MMOCore: "Player is offline") — wtedy zwykly pasek.
+    try { MMOPlayerData.get(p).getActionBar().show(50, tekst); } catch (Throwable t) { p.sendActionBar(net.kyori.adventure.text.Component.text(tekst.replaceAll("§.", ""))); }
   }
 
   /** @return komunikat dla gracza (co sie stalo). */

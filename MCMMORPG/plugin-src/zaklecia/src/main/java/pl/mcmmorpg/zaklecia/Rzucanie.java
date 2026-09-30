@@ -101,6 +101,7 @@ final class Rzucanie implements Listener {
         if (p != null && p.isOnline()) skill(p, ksiega.skStop);
         continue;
       }
+      try {
       int n = wpis.getValue();
       wpis.setValue(n + 1);
       if (n % 2 == 0) skill(p, ksiega.skObraz);
@@ -116,6 +117,10 @@ final class Rzucanie implements Listener {
         skill(p, ksiega.skTik);
         List<Entity> cele = stozek(p, podwojne(p) ? ksiega.stozekPodwojny : ksiega.stozek);
         if (!cele.isEmpty()) trafienia(p, cele);
+      }
+      } catch (Throwable t) {   // np. nieaktualne dane MMOCore po szybkim przelogowaniu: gasimy tylko tego gracza
+        it.remove();
+        plugin.getLogger().warning("rzucanie przerwane (" + p.getName() + "): " + t);
       }
     }
   }
