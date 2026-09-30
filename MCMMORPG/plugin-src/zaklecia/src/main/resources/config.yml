@@ -19,7 +19,7 @@ podwojne-mnoznik-many: 2.5
 skille:
   start: Zak_Start
   stop: Zak_Stop
-  obraz: Zak_Obraz        # co 2 ticki w trakcie rzucania
+  obraz: ''               # stary strumien z pociskow MM (Zak_Obraz); pusto = strumien jako obiekt wyswietlany
   tik: Zak_Tik            # co 10 tickow, po pobraniu many (dzwieki)
   trafienia: Zak_Trafienia  # co 10 tickow, z celami stozka jako celami skilla
   brak-many: Zak_BrakMany

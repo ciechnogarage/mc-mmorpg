@@ -42,9 +42,15 @@ final class Rzucanie implements Listener {
   Rzucanie(Zaklecia plugin, Ksiega ksiega) {
     this.plugin = plugin;
     this.ksiega = ksiega;
+    this.strumien = new Strumien(plugin, ksiega);
     Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1, 1);
     Bukkit.getScheduler().runTaskTimer(plugin, this::dlonie, 4, 4);
   }
+
+  private final Strumien strumien;
+
+  /** Wylaczenie pluginu: zdejmij wszystkie strumienie. */
+  void wylacz() { strumien.stopWszystkie(); rzucajacy.clear(); }
 
   boolean rzuca(Player p) { return rzucajacy.containsKey(p.getUniqueId()); }
 
@@ -73,14 +79,16 @@ final class Rzucanie implements Listener {
   }
 
   @EventHandler
-  public void wyjscie(PlayerQuitEvent e) { rzucajacy.remove(e.getPlayer().getUniqueId()); }
+  public void wyjscie(PlayerQuitEvent e) { rzucajacy.remove(e.getPlayer().getUniqueId()); strumien.stop(e.getPlayer()); }
 
   private void start(Player p) {
     rzucajacy.put(p.getUniqueId(), 0);
     skill(p, ksiega.skStart);
+    strumien.start(p, ksiega.w(p.getInventory().getItemInMainHand()), ksiega.w(p.getInventory().getItemInOffHand()), zasieg(p));
   }
 
   void stop(Player p, boolean dzwiek) {
+    strumien.stop(p);
     if (rzucajacy.remove(p.getUniqueId()) != null && dzwiek && p.isOnline()) skill(p, ksiega.skStop);
   }
 
@@ -98,18 +106,21 @@ final class Rzucanie implements Listener {
       Player p = Bukkit.getPlayer(wpis.getKey());
       if (p == null || p.isDead() || !p.isHandRaised() || ksiega.w(p.getActiveItem()) == null) {
         it.remove();
+        if (p != null) strumien.stop(p);
         if (p != null && p.isOnline()) skill(p, ksiega.skStop);
         continue;
       }
       try {
       int n = wpis.getValue();
       wpis.setValue(n + 1);
-      if (n % 2 == 0) skill(p, ksiega.skObraz);
+      strumien.tick(p, zasieg(p), n);
+      if (n % 2 == 0 && !ksiega.skObraz.isBlank()) skill(p, ksiega.skObraz);
       if (n % 10 == 0) {
         double koszt = koszt(p);
         PlayerData d = PlayerData.get(p);
         if (d.getMana() < koszt) {
           it.remove();
+          strumien.stop(p);
           skill(p, ksiega.skBrakMany);
           continue;
         }
@@ -120,10 +131,13 @@ final class Rzucanie implements Listener {
       }
       } catch (Throwable t) {   // np. nieaktualne dane MMOCore po szybkim przelogowaniu: gasimy tylko tego gracza
         it.remove();
+        strumien.stop(p);
         plugin.getLogger().warning("rzucanie przerwane (" + p.getName() + "): " + t);
       }
     }
   }
+
+  private double zasieg(Player p) { return (podwojne(p) ? ksiega.stozekPodwojny : ksiega.stozek).zasieg(); }
 
   /** To samo zaklecie w obu dloniach. */
   private boolean podwojne(Player p) {

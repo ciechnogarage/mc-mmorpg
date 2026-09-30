@@ -36,6 +36,10 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Ksiega ksiega;
   private Nosnik nosnik;
   private Ulubione ulubione;
+  private Rzucanie rzucanie;
+
+  @Override
+  public void onDisable() { if (rzucanie != null) rzucanie.wylacz(); }
 
   @Override
   public void onEnable() {
@@ -43,7 +47,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     ksiega = new Ksiega(getConfig());
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
-    Rzucanie rzucanie = new Rzucanie(this, ksiega);
+    rzucanie = new Rzucanie(this, ksiega);
     ulubione = new Ulubione(this, ksiega, nosnik, rzucanie);
     getServer().getPluginManager().registerEvents(rzucanie, this);
     getServer().getPluginManager().registerEvents(nosnik, this);
