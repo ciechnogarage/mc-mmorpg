@@ -55,7 +55,9 @@ public final class NameRules {
 
     /** Gotowy komunikat dla gracza — konkretny powod, nie ogolne "zle imie". */
     public String message() {
-      return message;
+      // Tekst z configu (teksty.imie.<powod>), domyslnie jak w kodzie. Bez Bukkita w testach
+      // Teksty ma pusta mape, wiec testy widza tekst domyslny.
+      return pl.mcmmorpg.charactercreator.Teksty.plain("imie." + name().toLowerCase(java.util.Locale.ROOT).replace('_', '-'), message);
     }
   }
 

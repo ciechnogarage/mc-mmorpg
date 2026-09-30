@@ -1,5 +1,6 @@
 package pl.mcmmorpg.charactercreator.scene;
 
+import pl.mcmmorpg.charactercreator.Teksty;
 import io.papermc.paper.connection.PlayerGameConnection;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.dialog.DialogResponseView;
@@ -144,29 +145,29 @@ public final class NewCharacterBook implements Listener {
     String selected = COLORS.containsKey(s.color()) ? s.color() : DEFAULT_COLOR;
     for (var e : COLORS.entrySet()) {
       colorEntries.add(SingleOptionDialogInput.OptionEntry.create(e.getKey(),
-          Component.text("■ ", e.getValue()).append(Component.text(COLOR_NAMES.get(e.getKey()))),
+          Component.text("■ ", e.getValue()).append(Component.text(Teksty.plain("ksiega.kolor." + e.getKey(), COLOR_NAMES.get(e.getKey())))),
           e.getKey().equals(selected)));
     }
 
     ActionButton create = ActionButton.builder(
-            Component.text("✔ Stwórz postać", NamedTextColor.GREEN))
-        .tooltip(Component.text("Tworzy postać i wpuszcza cię do gry"))
+            Teksty.t("ksiega.stworz", "&a✔ Stwórz postać"))
+        .tooltip(Teksty.t("ksiega.stworz-dymek", "Tworzy postać i wpuszcza cię do gry"))
         .width(100)
         .action(DialogAction.customClick(CLICK, payload("stworz", s.nonce())))
         .build();
-    ActionButton back = ActionButton.builder(Component.text("Wróć"))
-        .tooltip(Component.text("Z powrotem do wyboru rasy i klasy"))
+    ActionButton back = ActionButton.builder(Teksty.t("ksiega.wroc", "Wróć"))
+        .tooltip(Teksty.t("ksiega.wroc-dymek", "Z powrotem do wyboru rasy i klasy"))
         .width(100)
         .action(DialogAction.customClick(CLICK, payload("wroc", s.nonce())))
         .build();
-    ActionButton random = ActionButton.builder(Component.text("⚄ Losuj imię", NamedTextColor.YELLOW))
-        .tooltip(Component.text("Imię pasujące do rasy — możesz je potem zmienić"))
+    ActionButton random = ActionButton.builder(Teksty.t("ksiega.losuj", "&e⚄ Losuj imię"))
+        .tooltip(Teksty.t("ksiega.losuj-dymek", "Imię pasujące do rasy — możesz je potem zmienić"))
         .width(100)
         .action(DialogAction.customClick(CLICK, payload("losuj", s.nonce())))
         .build();
 
     return Dialog.create(factory -> factory.empty()
-        .base(DialogBase.builder(Component.text("Nowa postać", NamedTextColor.GOLD))
+        .base(DialogBase.builder(Teksty.t("ksiega.tytul", "&6Nowa postać"))
             .canCloseWithEscape(false)
             // pause(false): gra za oknem dalej zyje (scena), a przy braku Escape Paper
             // wymaga pauzy wylaczonej albo after_action, ktore ja zdejmuje.
@@ -174,12 +175,12 @@ public final class NewCharacterBook implements Listener {
             .afterAction(DialogBase.DialogAfterAction.CLOSE)
             .body(body)
             .inputs(List.of(
-                DialogInput.text("imie", Component.text("Imię postaci"))
+                DialogInput.text("imie", Teksty.t("ksiega.pole-imie", "Imię postaci"))
                     .initial(s.name() == null ? "" : s.name())
                     .maxLength(NameRules.MAX_LENGTH)
                     .width(220)
                     .build(),
-                DialogInput.singleOption("kolor", Component.text("Kolor ikony"), colorEntries)
+                DialogInput.singleOption("kolor", Teksty.t("ksiega.pole-kolor", "Kolor ikony"), colorEntries)
                     .width(220)
                     .build()))
             .build())

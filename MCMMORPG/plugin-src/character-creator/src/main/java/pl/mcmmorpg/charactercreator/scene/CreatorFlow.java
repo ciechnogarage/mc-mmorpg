@@ -9,6 +9,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import pl.mcmmorpg.charactercreator.Teksty;
 import pl.mcmmorpg.charactercreator.CreatorConfig;
 import pl.mcmmorpg.charactercreator.creator.PreviewDummyManager;
 
@@ -76,10 +77,10 @@ public final class CreatorFlow {
     }
     if (v != null && !v.specializations().isEmpty()) {
       out = out.append(Component.newline())
-          .append(Component.text("Od 10. poziomu: ", NamedTextColor.GRAY));
+          .append(Teksty.t("kreator.ksiega.od-10", "&7Od 10. poziomu: "));
       for (int i = 0; i < v.specializations().size(); i++) {
         if (i > 0) {
-          out = out.append(Component.text(" albo ", NamedTextColor.GRAY));
+          out = out.append(Teksty.t("kreator.ksiega.albo", "&7 albo "));
         }
         out = out.append(Component.text(plain(v.specializations().get(i).name()),
             NamedTextColor.WHITE));
@@ -96,14 +97,14 @@ public final class CreatorFlow {
     }
     Component out = Component.empty();
     if (!x.role().isBlank()) {
-      out = out.append(Component.text("Rola: ", NamedTextColor.GRAY))
+      out = out.append(Teksty.t("kreator.karta.rola", "&7Rola: "))
           .append(Component.text(x.role(), NamedTextColor.WHITE));
     }
     if (x.difficulty() > 0) {
       if (!x.role().isBlank()) {
         out = out.append(Component.text("   "));
       }
-      out = out.append(Component.text("Trudność: ", NamedTextColor.GRAY))
+      out = out.append(Teksty.t("kreator.karta.trudnosc", "&7Trudność: "))
           .append(Component.text("★".repeat(x.difficulty()), NamedTextColor.GOLD))
           .append(Component.text("★".repeat(3 - x.difficulty()), NamedTextColor.DARK_GRAY));
     }
@@ -231,8 +232,10 @@ public final class CreatorFlow {
 
     private Component normalHint(SceneView view) {
       return outcome.mustCreate(view)
-          ? hint("A/D", "Rasa", "W/S", "Klasa", "LPM", "Dalej")
-          : hint("A/D", "Rasa", "W/S", "Klasa", "LPM", "Dalej", "PPM", "Wróć");
+          ? hint("A/D", Teksty.plain("podpowiedz.rasa", "Rasa"), "W/S", Teksty.plain("podpowiedz.klasa", "Klasa"),
+              "LPM", Teksty.plain("podpowiedz.dalej", "Dalej"))
+          : hint("A/D", Teksty.plain("podpowiedz.rasa", "Rasa"), "W/S", Teksty.plain("podpowiedz.klasa", "Klasa"),
+              "LPM", Teksty.plain("podpowiedz.dalej", "Dalej"), "PPM", Teksty.plain("podpowiedz.wroc", "Wróć"));
     }
 
     /** Pelne odswiezenie: kadr rasy, postac, oba panele, pasek i podpowiedz. */
@@ -282,8 +285,7 @@ public final class CreatorFlow {
         out = out.append(Component.newline()).append(Component.text(trait, NamedTextColor.GREEN));
       }
       out = out.append(Component.newline()).append(Component.newline())
-          .append(Component.text("Klasy  ", NamedTextColor.WHITE))
-          .append(Component.text("[W/S]", NamedTextColor.GOLD));
+          .append(Teksty.t("kreator.panel.klasy", "&fKlasy  &6[W/S]"));
       List<CreatorConfig.ClassOption> all = classes();
       int current = Math.floorMod(clazz, all.size());
       for (int i = 0; i < all.size(); i++) {
@@ -325,22 +327,22 @@ public final class CreatorFlow {
       CreatorConfig.CardExtras x = config.cardExtras(c.id(), r.id());
       if (x != null && !x.skillName().isBlank()) {
         card = card.append(Component.newline()).append(Component.newline())
-            .append(Component.text(x.skillLevel() <= 1 ? "Na start: " : "Od " + x.skillLevel() + ". poz.: ",
-                NamedTextColor.GRAY))
+            .append(x.skillLevel() <= 1 ? Teksty.t("kreator.karta.na-start", "&7Na start: ")
+                : Teksty.t("kreator.karta.od-poziomu", "&7Od {poziom}. poz.: ", "poziom", x.skillLevel()))
             .append(Component.text(x.skillName(), NamedTextColor.AQUA));
         if (!x.skillText().isBlank()) {
           card = card.append(Component.text(" — " + x.skillText(), NamedTextColor.GRAY));
         }
       }
       card = card.append(Component.newline()).append(Component.newline())
-          .append(Component.text("Zbroja: ", NamedTextColor.GRAY))
+          .append(Teksty.t("kreator.karta.zbroja", "&7Zbroja: "))
           .append(Component.text(v.armor(), NamedTextColor.WHITE))
           .append(Component.newline())
-          .append(Component.text("Broń: ", NamedTextColor.GRAY))
+          .append(Teksty.t("kreator.karta.bron", "&7Broń: "))
           .append(Component.text(v.weapons(), NamedTextColor.WHITE));
       if (!v.specializations().isEmpty()) {
         card = card.append(Component.newline()).append(Component.newline())
-            .append(Component.text("Od 10. poziomu jedna z dwóch:", NamedTextColor.GOLD));
+            .append(Teksty.t("kreator.karta.specjalizacje", "&6Od 10. poziomu jedna z dwóch:"));
         for (CreatorConfig.Specialization spec : v.specializations()) {
           // Nazwa zawsze biala, kolor specjalizacji tylko na znaczniku: czesc kolorow
           // z generatora (&5, &8) byla na ciemnej karcie nieczytelna.
@@ -390,7 +392,7 @@ public final class CreatorFlow {
               racePending = false;
               showRace(view);
             }
-          }, SCENE_DELAY_TICKS);
+          }, pl.mcmmorpg.charactercreator.Ustawienia.l("kreator.scena-po-ticki", SCENE_DELAY_TICKS));
     }
 
     @Override
@@ -440,9 +442,7 @@ public final class CreatorFlow {
       Player player = view.player();
       if (outcome.mustCreate(view)) {
         // Na chwile ZAMIAST podpowiedzi na dole — duzy tytul nachodzil na karte klasy (recenzja 30.09).
-        view.hint(Component.text("Najpierw stwórz postać  ", NamedTextColor.YELLOW)
-            .append(Component.text("[LPM] ", NamedTextColor.GOLD))
-            .append(Component.text("Dalej", NamedTextColor.WHITE)));
+        view.hint(Teksty.t("kreator.najpierw-stworz", "&eNajpierw stwórz postać  &6[LPM] &fDalej"));
         org.bukkit.Bukkit.getScheduler().runTaskLater(
             org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(CreatorFlow.class), () -> {
               if (!view.isClosed() && view.controller() == this) {
@@ -455,16 +455,16 @@ public final class CreatorFlow {
         cancel(view);
         return;
       }
-      menu.show(player, Component.text("Przerwać tworzenie postaci?", NamedTextColor.GOLD),
-          Component.text("Wybrana rasa i klasa nie zostaną zapisane.", NamedTextColor.WHITE),
+      menu.show(player, Teksty.t("kreator.przerwij.tytul", "&6Przerwać tworzenie postaci?"),
+          Teksty.t("kreator.przerwij.opis", "&fWybrana rasa i klasa nie zostaną zapisane."),
           List.of(
-              new SceneMenu.Button(Component.text("Tak, przerwij", NamedTextColor.RED), null,
+              new SceneMenu.Button(Teksty.t("kreator.przerwij.tak", "&cTak, przerwij"), null,
                   () -> {
                     if (!view.isClosed()) {
                       cancel(view);
                     }
                   }),
-              new SceneMenu.Button(Component.text("Nie, tworzę dalej", NamedTextColor.GREEN), null, () -> { })),
+              new SceneMenu.Button(Teksty.t("kreator.przerwij.nie", "&aNie, tworzę dalej"), null, () -> { })),
           2);
     }
 

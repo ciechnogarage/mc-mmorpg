@@ -59,7 +59,8 @@ public final class SceneChatMute extends PacketListenerAbstract {
       return;
     }
     UUID id = event.getUser() == null ? null : event.getUser().getUUID();
-    if (id == null || !scenes.inScene(id)) {
+    if (id == null || !scenes.inScene(id)
+        || !pl.mcmmorpg.charactercreator.Ustawienia.b("scena.cisza-na-czacie", true)) {
       return;
     }
     if (system && new WrapperPlayServerSystemChatMessage(event).isOverlay()) {

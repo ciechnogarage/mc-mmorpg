@@ -53,6 +53,10 @@ public final class SceneManager {
   private static final int PANEL_LINE_WIDTH = 230;
   private static final float PANEL_SCALE = 0.5f;
 
+  private static float panelScale() {
+    return (float) pl.mcmmorpg.charactercreator.Ustawienia.d("scena.panel-skala", PANEL_SCALE);
+  }
+
   private final Plugin plugin;
   private final Logger logger;
   private final Map<UUID, SceneView> views = new ConcurrentHashMap<>();
@@ -686,12 +690,12 @@ public final class SceneManager {
       e.setVisibleByDefault(false);
       e.setBillboard(Display.Billboard.CENTER);
       e.setAlignment(alignment);
-      e.setLineWidth(PANEL_LINE_WIDTH);
+      e.setLineWidth(pl.mcmmorpg.charactercreator.Ustawienia.i("scena.panel-szerokosc", PANEL_LINE_WIDTH));
       e.setShadowed(true);
       e.text(Component.empty());
       e.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
       e.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(),
-          new Vector3f(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE), new AxisAngle4f()));
+          new Vector3f(panelScale(), panelScale(), panelScale()), new AxisAngle4f()));
     });
   }
 
@@ -933,7 +937,7 @@ public final class SceneManager {
       if (!view.flying) {
         animate(view, player, now);
       }
-      if (now % HINT_PERIOD_TICKS == 0) {
+      if (now % Math.max(1, pl.mcmmorpg.charactercreator.Ustawienia.i("scena.podpowiedz-co-ticki", HINT_PERIOD_TICKS)) == 0) {
         pushHint(view);
       }
       if (now % settings.hudRepeatTicks() == 0) {

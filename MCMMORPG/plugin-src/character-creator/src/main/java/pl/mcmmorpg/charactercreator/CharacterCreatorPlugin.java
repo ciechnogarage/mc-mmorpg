@@ -70,6 +70,9 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
 
     creatorConfig = new CreatorConfig(this);
     creatorConfig.reload();
+    // Teksty i pokretla z configu (sekcje teksty: / ustawienia:) — tez przy /cc reload.
+    Teksty.load(getConfig());
+    Ustawienia.load(getConfig());
 
     ModelEngineBridge modelEngineBridge = new ModelEngineBridge(getLogger());
 
@@ -483,6 +486,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     CreatorCommand executor = new CreatorCommand(creatorConfig, characterStore, sessionManager,
         orphanScanner, modelEngineBridge, skinService, profileModule, () -> {
           skinService.reload();
+          Teksty.load(getConfig());
+          Ustawienia.load(getConfig());
           // Kadry sceny tez z /cc reload — strojenie kamery bez restartu serwera.
           // Scena wlaczona po starcie (brak sekcji przy starcie) nadal wymaga restartu.
           if (sceneManager != null) {

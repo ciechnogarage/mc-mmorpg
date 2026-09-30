@@ -23,6 +23,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import pl.mcmmorpg.charactercreator.Teksty;
+import pl.mcmmorpg.charactercreator.Ustawienia;
 import pl.mcmmorpg.charactercreator.CreatorConfig;
 import pl.mcmmorpg.charactercreator.creator.PreviewDummyManager;
 import pl.mcmmorpg.charactercreator.persist.CharacterRecord;
@@ -65,6 +67,10 @@ public final class CharacterSelect {
    * ~450-640 jednostek) — 2 x 150 miesci sie od ~320 wzwyz. Klasa jest w dymku, nie na kafelku.
    */
   private static final int TILE_WIDTH = 150;
+
+  private static int tileWidth() {
+    return Ustawienia.i("wybor.kafelek-szerokosc", TILE_WIDTH);
+  }
   private static final long AUTO_LIST_DELAY_TICKS = 30L;
   /** Po tylu tickach bez A/D dochodzi kadr i podglad postaci. */
   private static final long SCENE_DELAY_TICKS = 6L;
@@ -206,11 +212,11 @@ public final class CharacterSelect {
           places.describe(player.getWorld().getName(), player.getLocation().getX(),
               player.getLocation().getY(), player.getLocation().getZ())) : listed;
       buttons.add(new SceneMenu.Button(tileLabel(e, false, playing), tileTooltip(e, playing),
-          () -> switchInGame(player, e)).width(TILE_WIDTH));
+          () -> switchInGame(player, e)).width(tileWidth()));
     }
     addNewAndManage(player, list, buttons,
         () -> startCreationFromGame(player), () -> open(player, Start.MANAGE), () -> open(player, Start.TRASH));
-    buttons.add(new SceneMenu.Button(Component.text("Zamknij"), null, () -> { }));
+    buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.zamknij", "Zamknij"), null, () -> { }));
     menu.form(player, listTitle(list), listBody(player, list, true), List.of(), buttons, 2);
     return true;
   }
@@ -403,7 +409,7 @@ public final class CharacterSelect {
               if (!view.isClosed() && view.controller() == this) {
                 grid(view);
               }
-            }, AUTO_LIST_DELAY_TICKS);
+            }, Ustawienia.l("wybor.lista-sama-po-ticki", AUTO_LIST_DELAY_TICKS));
           }
         }
       }
@@ -415,9 +421,13 @@ public final class CharacterSelect {
       Player player = view.player();
       ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
       if (list != null && list.getProfiles().size() < list.getProfileSlots()) {
-        out.add(Extra.NEW);
+        if (Ustawienia.b("wybor.ad-nowa-postac", true)) {
+          out.add(Extra.NEW);
+        }
       }
-      out.add(Extra.MANAGE);
+      if (Ustawienia.b("wybor.ad-usun-postacie", true) || entries.isEmpty()) {
+        out.add(Extra.MANAGE);
+      }
       return out;
     }
 
@@ -455,26 +465,23 @@ public final class CharacterSelect {
      * dochodza z opoznieniem ({@link #showScene}) — gracz przewija bez czekania i bez czerni.
      */
     private void showText(SceneView view) {
-      view.topBar(Component.text("Wybierz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+      view.topBar(Teksty.t("wybor.tytul", "&6&lWybierz postać"));
       view.list(sideList(view));
       Extra extra = extraAt(view);
       if (extra == Extra.NEW) {
-        view.card(Component.text("+ Nowa postać", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true)
-            .append(Component.newline()).append(Component.newline())
-            .append(Component.text("Wybierz rasę i klasę, nadaj imię i ruszaj w drogę.", NamedTextColor.WHITE)));
-        view.hint(CreatorFlow.hint("LPM", "Stwórz postać", "A/D", "Przeglądaj", "PPM", "Lista i zarządzanie"));
+        view.card(Teksty.t("wybor.nowa.karta", "&a&l+ Nowa postać\n\n&r&fWybierz rasę i klasę, nadaj imię i ruszaj w drogę."));
+        view.hint(CreatorFlow.hint("LPM", Teksty.plain("podpowiedz.stworz", "Stwórz postać"),
+            "A/D", Teksty.plain("podpowiedz.przegladaj", "Przeglądaj"), "PPM", Teksty.plain("podpowiedz.lista", "Lista i zarządzanie")));
         return;
       }
       if (extra == Extra.MANAGE) {
         int inTrash = trashedCount(view);
-        view.card(Component.text("Usuń postacie", NamedTextColor.RED).decoration(TextDecoration.BOLD, true)
-            .append(Component.newline()).append(Component.newline())
-            .append(Component.text("Zaznacz jedną lub kilka postaci. Trafią do kosza na "
-                + SelectOrder.days(settings.trashTtl().toDays()) + " — możesz je stamtąd przywrócić.",
-                NamedTextColor.WHITE))
+        view.card(Teksty.t("wybor.usun.karta", "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Trafią do kosza na {dni} — możesz je stamtąd przywrócić.",
+                "dni", SelectOrder.days(settings.trashTtl().toDays()))
             .append(inTrash > 0 ? Component.newline().append(Component.newline())
-                .append(Component.text("W koszu: " + SelectOrder.characters(inTrash), MUTED)) : Component.empty()));
-        view.hint(CreatorFlow.hint("LPM", "Usuń / kosz", "A/D", "Przeglądaj", "PPM", "Lista i zarządzanie"));
+                .append(Teksty.t("wybor.usun.w-koszu", "&7W koszu: {ile}", "ile", SelectOrder.characters(inTrash))) : Component.empty()));
+        view.hint(CreatorFlow.hint("LPM", Teksty.plain("podpowiedz.usun", "Usuń / kosz"),
+            "A/D", Teksty.plain("podpowiedz.przegladaj", "Przeglądaj"), "PPM", Teksty.plain("podpowiedz.lista", "Lista i zarządzanie")));
         return;
       }
       Entry e = shownEntry(view);
@@ -486,7 +493,8 @@ public final class CharacterSelect {
       view.card(card(e, race, clazz, e.id().equals(lastUsedId), false));
       // Licznik tylko po postaciach — "Nowa postac" i "Usun postacie" to nie postacie.
       String nav = (Math.floorMod(index, count(view)) + 1) + "/" + entries.size();
-      view.hint(CreatorFlow.hint("LPM/Spacja", "Graj", "A/D", "Postać " + nav, "PPM", "Lista i zarządzanie"));
+      view.hint(CreatorFlow.hint("LPM/Spacja", Teksty.plain("podpowiedz.graj", "Graj"),
+          "A/D", Teksty.plain("podpowiedz.postac", "Postać {nr}", "nr", nav), "PPM", Teksty.plain("podpowiedz.lista", "Lista i zarządzanie")));
     }
 
     /** Kadr rasy i podglad postaci (z prawdziwym ekwipunkiem) — bez sciemnienia. */
@@ -514,13 +522,12 @@ public final class CharacterSelect {
     private void hidePreview(SceneView view) {
       Player player = view.player();
       if (player != null && view.get(PREVIEW_KEY) != null) {
-        dummies.moveAnchor(player, view.subject().clone().subtract(0, HIDE_DROP, 0));
+        dummies.moveAnchor(player, view.subject().clone().subtract(0, Ustawienia.d("wybor.schowaj-podglad-bloki", HIDE_DROP), 0));
       }
     }
 
     private Component sideList(SceneView view) {
-      Component out = Component.text("Twoje postacie  ", NamedTextColor.WHITE)
-          .append(Component.text("[A/D]", NamedTextColor.GOLD));
+      Component out = Teksty.t("wybor.panel.naglowek", "&fTwoje postacie  &6[A/D]");
       int current = Math.floorMod(index, count(view));
       for (int i = 0; i < entries.size(); i++) {
         Entry e = entries.get(i);
@@ -538,7 +545,7 @@ public final class CharacterSelect {
         boolean isNew = ex.get(k) == Extra.NEW;
         out = out.append(Component.newline())
             .append(Component.text(on ? "▶ " : "   ", NamedTextColor.GOLD))
-            .append(Component.text(isNew ? "+ Nowa postać" : "✖ Usuń postacie",
+            .append(Component.text(isNew ? Teksty.plain("wybor.panel.nowa", "+ Nowa postać") : Teksty.plain("wybor.panel.usun", "✖ Usuń postacie"),
                 on ? (isNew ? NamedTextColor.GREEN : NamedTextColor.RED)
                     : (isNew ? NamedTextColor.DARK_GREEN : NamedTextColor.DARK_RED))
                 .decoration(TextDecoration.BOLD, on));
@@ -564,7 +571,7 @@ public final class CharacterSelect {
         if (!view.isClosed() && view.controller() == this && token == sceneToken) {
           showScene(view);
         }
-      }, SCENE_DELAY_TICKS);
+      }, Ustawienia.l("wybor.scena-po-ticki", SCENE_DELAY_TICKS));
     }
 
     @Override
@@ -628,11 +635,11 @@ public final class CharacterSelect {
       List<SceneMenu.Button> buttons = new ArrayList<>();
       for (Entry e : entries) {
         buttons.add(new SceneMenu.Button(tileLabel(e, e.id().equals(lastUsedId), false),
-            tileTooltip(e, false), () -> play(view, e)).width(TILE_WIDTH));
+            tileTooltip(e, false), () -> play(view, e)).width(tileWidth()));
       }
       addNewAndManage(player, list, buttons, () -> startCreation(view), () -> manage(view, null),
           () -> trashScreen(view, null));
-      buttons.add(new SceneMenu.Button(Component.text("Wróć do sceny"), null, () -> { }));
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.wroc-do-sceny", "Wróć do sceny"), null, () -> { }));
       menu.form(player, listTitle(list), listBody(player, list, false), List.of(), buttons, 2);
     }
 
@@ -655,14 +662,14 @@ public final class CharacterSelect {
         body.add(note);
       }
       body.add(entries.isEmpty()
-          ? Component.text("Nie masz aktywnych postaci.", NamedTextColor.WHITE)
-          : Component.text("Kliknij postacie, żeby je zaznaczyć. Usunięte trafią do kosza na "
-              + SelectOrder.days(settings.trashTtl().toDays()) + ".", NamedTextColor.WHITE));
+          ? Teksty.t("wybor.zarzadzaj.brak-postaci", "&fNie masz aktywnych postaci.")
+          : Teksty.t("wybor.zarzadzaj.opis", "&fKliknij postacie, żeby je zaznaczyć. Usunięte trafią do kosza na {dni}.",
+              "dni", SelectOrder.days(settings.trashTtl().toDays())));
       List<SceneMenu.Button> buttons = new ArrayList<>();
       if (!entries.isEmpty()) {
-        buttons.add(new SceneMenu.Button(Component.text("Usuń zaznaczone (" + chosen.size() + ")",
+        buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.zarzadzaj.usun-zaznaczone", "Usuń zaznaczone ({ile})", "ile", chosen.size()),
             chosen.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.RED),
-            Component.text("Pyta o potwierdzenie"), () -> {
+            Teksty.t("wybor.pyta-o-potwierdzenie", "Pyta o potwierdzenie"), () -> {
               List<Entry> picked = new ArrayList<>();
               for (Entry e : entries) {
                 if (chosen.contains(e.id())) {
@@ -670,16 +677,16 @@ public final class CharacterSelect {
                 }
               }
               if (picked.isEmpty()) {
-                manage(view, Component.text("Nic nie zaznaczono — kliknij postać na liście.", NamedTextColor.YELLOW));
+                manage(view, Teksty.t("wybor.nic-nie-zaznaczono", "&eNic nie zaznaczono — kliknij postać na liście."));
               } else {
                 confirm(view, picked, false, null);
               }
-            }).width(TILE_WIDTH));
+            }).width(tileWidth()));
       }
-      buttons.add(new SceneMenu.Button(Component.text("Kosz (" + inTrash.size() + ")",
+      buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.zarzadzaj.kosz", "Kosz ({ile})", "ile", inTrash.size()),
           inTrash.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.GOLD),
-          Component.text(inTrash.isEmpty() ? "Kosz jest pusty" : "Przywróć albo usuń na zawsze"),
-          () -> trashScreen(view, null)).width(TILE_WIDTH));
+          inTrash.isEmpty() ? Teksty.t("wybor.kosz.pusty-dymek", "Kosz jest pusty") : Teksty.t("wybor.kosz.dymek", "Przywróć albo usuń na zawsze"),
+          () -> trashScreen(view, null)).width(tileWidth()));
       for (Entry e : entries) {
         boolean on = chosen.contains(e.id());
         buttons.add(new SceneMenu.Button(toggleLabel(e, on), null, () -> {
@@ -687,13 +694,13 @@ public final class CharacterSelect {
             chosen.add(e.id());
           }
           manage(view, null);
-        }).width(TILE_WIDTH));
+        }).width(tileWidth()));
       }
-      buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> {
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.wroc", "Wróć"), null, () -> {
         chosen.clear();
         grid(view);
       }));
-      menu.form(player, Component.text("Zarządzaj postaciami", NamedTextColor.GOLD), body, List.of(), buttons, 2);
+      menu.form(player, Teksty.t("wybor.zarzadzaj.tytul", "&6Zarządzaj postaciami"), body, List.of(), buttons, 2);
     }
 
     /**
@@ -719,29 +726,28 @@ public final class CharacterSelect {
       }
       body.add(names);
       body.add(forever
-          ? Component.text("Te postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. "
-              + "Tego nie da się cofnąć.", NamedTextColor.RED)
-          : Component.text("Trafią do kosza na " + SelectOrder.days(settings.trashTtl().toDays())
-              + ". Do tego czasu nadal zajmują miejsca na postacie.", NamedTextColor.WHITE));
+          ? Teksty.t("wybor.potwierdz.na-zawsze", "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć.")
+          : Teksty.t("wybor.potwierdz.do-kosza", "&fTrafią do kosza na {dni}. Do tego czasu nadal zajmują miejsca na postacie.",
+              "dni", SelectOrder.days(settings.trashTtl().toDays())));
       List<DialogInput> inputs = new ArrayList<>();
       List<Entry> needName = new ArrayList<>();
       for (Entry e : chosen) {
         if (e.level() >= settings.confirmNameFromLevel()) {
           inputs.add(DialogInput.text("p" + needName.size(),
-              Component.text("Wpisz imię „" + e.name() + "” (poziom " + e.level() + ")"))
+              Teksty.t("wybor.potwierdz.wpisz-imie", "Wpisz imię „{imie}” (poziom {poziom})", "imie", e.name(), "poziom", e.level()))
               .maxLength(32).build());
           needName.add(e);
         }
       }
       Runnable back = forever ? () -> trashScreen(view, null) : () -> manage(view, null);
       List<SceneMenu.Button> buttons = List.of(
-          SceneMenu.Button.submit(Component.text(forever ? "Usuń na zawsze" : "Przenieś do kosza",
-              NamedTextColor.RED), null, r -> {
+          SceneMenu.Button.submit(forever ? Teksty.t("wybor.potwierdz.przycisk-na-zawsze", "&cUsuń na zawsze")
+              : Teksty.t("wybor.potwierdz.przycisk-do-kosza", "&cPrzenieś do kosza"), null, r -> {
                 for (int i = 0; i < needName.size(); i++) {
                   String typed = r == null ? null : r.getText("p" + i);
                   if (!SelectOrder.nameMatches(typed, needName.get(i).name())) {
-                    confirm(view, chosen, forever, Component.text("Imię „" + needName.get(i).name()
-                        + "” się nie zgadza — nic nie usunięto.", NamedTextColor.RED));
+                    confirm(view, chosen, forever, Teksty.t("wybor.potwierdz.zle-imie",
+                        "&cImię „{imie}” się nie zgadza — nic nie usunięto.", "imie", needName.get(i).name()));
                     return;
                   }
                 }
@@ -751,9 +757,9 @@ public final class CharacterSelect {
                   toTrash(view, chosen);
                 }
               }),
-          new SceneMenu.Button(Component.text("Anuluj"), null, back));
-      menu.form(player, Component.text(forever ? "Usunąć na zawsze?" : "Przenieść do kosza?",
-          NamedTextColor.RED), body, inputs, buttons, 2);
+          new SceneMenu.Button(Teksty.t("wybor.przycisk.anuluj", "Anuluj"), null, back));
+      menu.form(player, forever ? Teksty.t("wybor.potwierdz.tytul-na-zawsze", "&cUsunąć na zawsze?")
+          : Teksty.t("wybor.potwierdz.tytul-do-kosza", "&cPrzenieść do kosza?"), body, inputs, buttons, 2);
     }
 
     private void toTrash(SceneView view, List<Entry> chosen) {
@@ -772,8 +778,8 @@ public final class CharacterSelect {
       }
       chosen.clear();
       refresh(view, before);
-      manage(view, Component.text("W koszu: " + String.join(", ", names) + ". Przywrócisz je przez "
-          + SelectOrder.days(settings.trashTtl().toDays()) + " w „Kosz”.", NamedTextColor.GREEN));
+      manage(view, Teksty.t("wybor.kosz.przeniesiono", "&aW koszu: {imiona}. Przywrócisz je przez {dni} w „Kosz”.",
+          "imiona", String.join(", ", names), "dni", SelectOrder.days(settings.trashTtl().toDays())));
     }
 
     /** Kosz: przywroc albo usun na zawsze — ta sama siatka przelacznikow, akcje w pierwszym rzedzie. */
@@ -786,7 +792,7 @@ public final class CharacterSelect {
       List<TrashStore.Entry> inTrash = trashed(player, list);
       if (inTrash.isEmpty()) {
         chosenTrash.clear();
-        manage(view, note != null ? note : Component.text("Kosz jest pusty.", MUTED));
+        manage(view, note != null ? note : Teksty.t("wybor.kosz.pusty", "&7Kosz jest pusty."));
         return;
       }
       Instant now = Instant.now();
@@ -801,9 +807,8 @@ public final class CharacterSelect {
       if (note != null) {
         body.add(note);
       }
-      body.add(Component.text("Postacie w koszu zajmują miejsca na postacie ("
-          + list.getProfiles().size() + "/" + list.getProfileSlots() + " zajętych). Po terminie "
-          + "znikają na zawsze.", NamedTextColor.WHITE));
+      body.add(Teksty.t("wybor.kosz.opis", "&fPostacie w koszu zajmują miejsca na postacie ({zajete}/{wszystkie} zajętych). Po terminie znikają na zawsze.",
+          "zajete", list.getProfiles().size(), "wszystkie", list.getProfileSlots()));
       java.util.function.Supplier<List<Entry>> picked = () -> {
         List<Entry> out = new ArrayList<>();
         for (Entry e : rows) {
@@ -816,11 +821,11 @@ public final class CharacterSelect {
       NamedTextColor restoreColor = chosenTrash.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.GREEN;
       NamedTextColor purgeColor = chosenTrash.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.RED;
       List<SceneMenu.Button> buttons = new ArrayList<>();
-      buttons.add(new SceneMenu.Button(Component.text("Przywróć zaznaczone (" + chosenTrash.size() + ")",
+      buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.kosz.przywroc-zaznaczone", "Przywróć zaznaczone ({ile})", "ile", chosenTrash.size()),
           restoreColor), null, () -> {
             List<Entry> sel = picked.get();
             if (sel.isEmpty()) {
-              trashScreen(view, Component.text("Nic nie zaznaczono — kliknij postać na liście.", NamedTextColor.YELLOW));
+              trashScreen(view, Teksty.t("wybor.nic-nie-zaznaczono", "&eNic nie zaznaczono — kliknij postać na liście."));
               return;
             }
             List<Entry> before = List.copyOf(entries);
@@ -832,35 +837,34 @@ public final class CharacterSelect {
             }
             chosenTrash.clear();
             refresh(view, before);
-            trashScreen(view, Component.text("Przywrócono: " + String.join(", ", names) + ".",
-                NamedTextColor.GREEN));
-          }).width(TILE_WIDTH));
-      buttons.add(new SceneMenu.Button(Component.text("Usuń na zawsze (" + chosenTrash.size() + ")",
-          purgeColor), Component.text("Pyta o potwierdzenie"), () -> {
+            trashScreen(view, Teksty.t("wybor.kosz.przywrocono", "&aPrzywrócono: {imiona}.", "imiona", String.join(", ", names)));
+          }).width(tileWidth()));
+      buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.kosz.usun-na-zawsze", "Usuń na zawsze ({ile})", "ile", chosenTrash.size()),
+          purgeColor), Teksty.t("wybor.pyta-o-potwierdzenie", "Pyta o potwierdzenie"), () -> {
             List<Entry> sel = picked.get();
             if (sel.isEmpty()) {
-              trashScreen(view, Component.text("Nic nie zaznaczono — kliknij postać na liście.", NamedTextColor.YELLOW));
+              trashScreen(view, Teksty.t("wybor.nic-nie-zaznaczono", "&eNic nie zaznaczono — kliknij postać na liście."));
               return;
             }
             confirm(view, sel, true, null);
-          }).width(TILE_WIDTH));
+          }).width(tileWidth()));
       for (int i = 0; i < rows.size(); i++) {
         Entry e = rows.get(i);
         boolean on = chosenTrash.contains(e.id());
         buttons.add(new SceneMenu.Button(toggleLabel(e, on, false)
             .append(Component.text(" · " + SelectOrder.days(daysLeft.get(i)), NamedTextColor.GOLD)),
-            Component.text("Zostało " + SelectOrder.days(daysLeft.get(i)) + " do usunięcia na zawsze"), () -> {
+            Teksty.t("wybor.kosz.zostalo", "Zostało {dni} do usunięcia na zawsze", "dni", SelectOrder.days(daysLeft.get(i))), () -> {
               if (!chosenTrash.remove(e.id())) {
                 chosenTrash.add(e.id());
               }
               trashScreen(view, null);
-            }).width(TILE_WIDTH));
+            }).width(tileWidth()));
       }
-      buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> {
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.wroc", "Wróć"), null, () -> {
         chosenTrash.clear();
         manage(view, null);
       }));
-      menu.form(player, Component.text("Kosz", NamedTextColor.GOLD), body, List.of(), buttons, 2);
+      menu.form(player, Teksty.t("wybor.kosz.tytul", "&6Kosz"), body, List.of(), buttons, 2);
     }
 
     private void purge(SceneView view, List<Entry> chosen) {
@@ -881,12 +885,11 @@ public final class CharacterSelect {
       chosenTrash.clear();
       Component note = Component.empty();
       if (!gone.isEmpty()) {
-        note = note.append(Component.text("Usunięto na zawsze: " + String.join(", ", gone) + ".",
-            NamedTextColor.GREEN));
+        note = note.append(Teksty.t("wybor.kosz.usunieto", "&aUsunięto na zawsze: {imiona}.", "imiona", String.join(", ", gone)));
       }
       if (!failed.isEmpty()) {
-        note = note.append(Component.text((gone.isEmpty() ? "" : " ") + "Nie udało się usunąć: "
-            + String.join(", ", failed) + " — zgłoś to administracji.", NamedTextColor.RED));
+        note = note.append(Component.text(gone.isEmpty() ? "" : " ")).append(Teksty.t("wybor.kosz.blad-usuwania",
+            "&cNie udało się usunąć: {imiona} — zgłoś to administracji.", "imiona", String.join(", ", failed)));
       }
       trashScreen(view, note);
     }
@@ -929,39 +932,39 @@ public final class CharacterSelect {
     int used = list.getProfiles().size();
     int slots = list.getProfileSlots();
     if (used < slots) {
-      buttons.add(new SceneMenu.Button(Component.text("+ Nowa postać", NamedTextColor.GREEN),
-          Component.text("Wolne miejsca: " + (slots - used)), create).width(TILE_WIDTH));
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.nowa", "&a+ Nowa postać"),
+          Teksty.t("wybor.lista.wolne-miejsca", "Wolne miejsca: {ile}", "ile", slots - used), create).width(tileWidth()));
     } else {
       int inTrash = trashed(player, list).size();
-      buttons.add(new SceneMenu.Button(Component.text("Brak wolnych miejsc", NamedTextColor.DARK_GRAY),
-          Component.text(inTrash > 0
-              ? "Postacie w koszu (" + inTrash + ") nadal zajmują miejsca — opróżnij kosz w „Zarządzaj”."
-              : "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."), manage).width(TILE_WIDTH));
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.brak-miejsc", "&8Brak wolnych miejsc"),
+          inTrash > 0
+              ? Teksty.t("wybor.lista.brak-miejsc-kosz", "Postacie w koszu ({ile}) nadal zajmują miejsca — opróżnij kosz w „Zarządzaj”.", "ile", inTrash)
+              : Teksty.t("wybor.lista.brak-miejsc-dymek", "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."), manage).width(tileWidth()));
     }
-    buttons.add(new SceneMenu.Button(Component.text("Zarządzaj postaciami", NamedTextColor.GOLD),
-        Component.text("Usuń kilka naraz, kosz, przywracanie"), manage).width(TILE_WIDTH));
+    buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.zarzadzaj", "&6Zarządzaj postaciami"),
+        Teksty.t("wybor.lista.zarzadzaj-dymek", "Usuń kilka naraz, kosz, przywracanie"), manage).width(tileWidth()));
   }
 
   private static Component listTitle(ProfileListImpl list) {
-    return Component.text("Twoje postacie", NamedTextColor.GOLD)
-        .append(Component.text("  " + list.getProfiles().size() + "/" + list.getProfileSlots(), MUTED));
+    return Teksty.t("wybor.lista.tytul", "&6Twoje postacie  &7{zajete}/{wszystkie}",
+        "zajete", list.getProfiles().size(), "wszystkie", list.getProfileSlots());
   }
 
   private List<Component> listBody(Player player, ProfileListImpl list, boolean inGame) {
     int inTrash = trashed(player, list).size();
     if (entries(list).isEmpty()) {
-      return List.of(Component.text(inTrash > 0
-          ? "Nie masz aktywnych postaci. Przywróć je z kosza (" + SelectOrder.characters(inTrash)
-              + ") albo stwórz nową."
-          : "Nie masz jeszcze postaci — stwórz pierwszą.", NamedTextColor.WHITE));
+      return List.of(inTrash > 0
+          ? Teksty.t("wybor.lista.wszystkie-w-koszu", "&fNie masz aktywnych postaci. Przywróć je z kosza ({ile}) albo stwórz nową.",
+              "ile", SelectOrder.characters(inTrash))
+          : Teksty.t("wybor.lista.brak-postaci", "&fNie masz jeszcze postaci — stwórz pierwszą."));
     }
-    Component text = Component.text(inGame
-        ? "Kliknij postać, żeby od razu nią grać. " : "Kliknij postać, żeby grać. ", NamedTextColor.WHITE)
-        .append(Component.text(inGame ? "▶" : "★", inGame ? NamedTextColor.GREEN : NamedTextColor.GOLD))
-        .append(Component.text(inGame ? " = grasz teraz." : " = ostatnio grana.", NamedTextColor.WHITE));
+    Component text = inGame
+        ? Teksty.t("wybor.lista.opis-w-grze", "&fKliknij postać, żeby od razu nią grać. &a▶&f = grasz teraz.")
+        : Teksty.t("wybor.lista.opis", "&fKliknij postać, żeby grać. &6★&f = ostatnio grana.");
     if (inTrash > 0) {
-      text = text.append(Component.text(" W koszu: " + SelectOrder.characters(inTrash)
-          + (inTrash == 1 ? " (nadal zajmuje miejsce)." : " (nadal zajmują miejsca)."), MUTED));
+      text = text.append(inTrash == 1
+          ? Teksty.t("wybor.lista.w-koszu-1", "&7 W koszu: {ile} (nadal zajmuje miejsce).", "ile", SelectOrder.characters(inTrash))
+          : Teksty.t("wybor.lista.w-koszu", "&7 W koszu: {ile} (nadal zajmują miejsca).", "ile", SelectOrder.characters(inTrash)));
     }
     return List.of(text);
   }
@@ -1005,9 +1008,9 @@ public final class CharacterSelect {
       boolean lastUsed, boolean playing) {
     Component out = Component.text(e.name(), iconColor(e)).decoration(TextDecoration.BOLD, true);
     if (playing) {
-      out = out.append(Component.text("  ▶ grasz teraz", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, false));
+      out = out.append(Teksty.t("wybor.karta.grasz-teraz", "&a  ▶ grasz teraz").decoration(TextDecoration.BOLD, false));
     } else if (lastUsed) {
-      out = out.append(Component.text("  ★ ostatnio grana", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, false));
+      out = out.append(Teksty.t("wybor.karta.ostatnio-grana", "&6  ★ ostatnio grana").decoration(TextDecoration.BOLD, false));
     }
     String className = e.profile().getPlaceholderCache().getPlaceholder("mmocore_class");
     if (clazz != null && race != null) {
@@ -1021,21 +1024,21 @@ public final class CharacterSelect {
     if (className != null && !className.isBlank() && clazz != null && race != null
         && !plain(clazz.displayFor(race.id())).equalsIgnoreCase(className)) {
       // Po 10. poziomie klasa MMOCore to juz specjalizacja — pokazujemy ja osobno.
-      out = out.append(Component.text("Specjalizacja: ", MUTED))
+      out = out.append(Teksty.t("wybor.karta.specjalizacja", "&7Specjalizacja: "))
           .append(Component.text(className, NamedTextColor.WHITE)).append(Component.newline());
     }
     if (e.level() > 0) {
-      out = out.append(Component.text("Poziom: ", MUTED))
+      out = out.append(Teksty.t("wybor.karta.poziom", "&7Poziom: "))
           .append(Component.text(String.valueOf(e.level()), NamedTextColor.YELLOW)).append(Component.newline());
     }
     if (e.place() != null) {
-      out = out.append(Component.text("Miejsce: ", MUTED))
+      out = out.append(Teksty.t("wybor.karta.miejsce", "&7Miejsce: "))
           .append(Component.text(e.place(), NamedTextColor.WHITE)).append(Component.newline());
     }
-    out = out.append(Component.text("Ostatnio: ", MUTED))
-        .append(Component.text(playing ? "teraz" : SelectOrder.when(e.lastPlayed(), Instant.now(), ZONE),
+    out = out.append(Teksty.t("wybor.karta.ostatnio", "&7Ostatnio: "))
+        .append(Component.text(playing ? Teksty.plain("wybor.karta.teraz", "teraz") : SelectOrder.when(e.lastPlayed(), Instant.now(), ZONE),
             NamedTextColor.WHITE)).append(Component.newline());
-    return out.append(Component.text("Czas gry: ", MUTED))
+    return out.append(Teksty.t("wybor.karta.czas-gry", "&7Czas gry: "))
         .append(Component.text(SelectOrder.playTime(e.profile().getTimePlayed()), NamedTextColor.WHITE));
   }
 
@@ -1066,7 +1069,7 @@ public final class CharacterSelect {
       return;
     }
     if (list.getCurrent().getUniqueId().equals(target.id())) {
-      player.sendActionBar(Component.text("Już grasz postacią " + target.name() + ".", NamedTextColor.YELLOW));
+      player.sendActionBar(Teksty.t("wybor.juz-grasz", "&eJuż grasz postacią {imie}.", "imie", target.name()));
       return;
     }
     UUID id = player.getUniqueId();
@@ -1079,9 +1082,8 @@ public final class CharacterSelect {
           if (l != null && online.isOnline() && l.getCurrent() == null) {
             l.applyProfile(target.profile());
             // Zamiast angielskiego "Profile selected" z MMOProfiles (skrypty wyciszone w pakiecie).
-            online.sendMessage(Component.text("Grasz teraz postacią ", NamedTextColor.GRAY)
-                .append(Component.text(target.name(), iconColor(target)).decoration(TextDecoration.BOLD, true))
-                .append(Component.text(".", NamedTextColor.GRAY)));
+            online.sendMessage(Teksty.t("wybor.grasz-teraz", "&7Grasz teraz postacią {imie}&7.",
+                "imie", LEGACY.serialize(Component.text(target.name(), iconColor(target)).decoration(TextDecoration.BOLD, true))));
           }
         }));
   }
@@ -1095,8 +1097,7 @@ public final class CharacterSelect {
     if (current != null && current.getProfiles().size() >= current.getProfileSlots()) {
       // MMOProfiles i tak by odmowil, a zamknieta scena zostawilaby gracza bez postaci.
       if (view.controller() instanceof SelectStep step) {
-        step.manage(view, Component.text("Brak wolnych miejsc na postać — usuń postać albo opróżnij kosz.",
-            NamedTextColor.YELLOW));
+        step.manage(view, Teksty.t("wybor.brak-miejsc", "&eBrak wolnych miejsc na postać — usuń postać albo opróżnij kosz."));
       }
       return;
     }

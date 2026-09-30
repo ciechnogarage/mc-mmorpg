@@ -1,5 +1,6 @@
 package pl.mcmmorpg.charactercreator.profile;
 
+import pl.mcmmorpg.charactercreator.Teksty;
 import fr.phoenixdevt.profiles.PlayerProfile;
 import fr.phoenixdevt.profiles.ProfileDataModule;
 import fr.phoenixdevt.profiles.event.ProfileCreateEvent;
@@ -266,8 +267,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
       }, INVENTORY_RESTORE_DELAY_TICKS);
       logger.info("Scena: " + player.getName() + " utworzyl postac " + stored.name() + " ("
           + raceId + " + " + classId + ", kolor " + color + ", profil " + profileId + ")");
-      player.sendMessage(Component.text("Postać utworzona: " + stored.name(),
-          NamedTextColor.GREEN));
+      player.sendMessage(Teksty.t("kreator.utworzona", "&aPostać utworzona: {imie}", "imie", stored.name()));
     } catch (RuntimeException ex) {
       logger.log(Level.SEVERE, "Awaria przy tworzeniu postaci ze sceny dla " + player.getName(), ex);
       abort(player, "Coś poszło nie tak przy tworzeniu postaci — zgłoś to administracji.");
@@ -323,7 +323,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
   private void cancelFromScene(Player player, UUID profileId) {
     logger.info("Gracz " + player.getName() + " zrezygnowal z tworzenia postaci w scenie (profil "
         + profileId + ") — profil NIE zostal utworzony.");
-    player.sendMessage(Component.text("Tworzenie postaci przerwane.", NamedTextColor.YELLOW));
+    player.sendMessage(Teksty.t("kreator.przerwane", "&eTworzenie postaci przerwane."));
     UUID playerId = player.getUniqueId();
     Bukkit.getScheduler().runTask(plugin, () -> {
       Player online = Bukkit.getPlayer(playerId);
@@ -486,8 +486,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
           AccessoryIcons.refresh(online, logger);
         }
       }, INVENTORY_RESTORE_DELAY_TICKS);
-      player.sendMessage(Component.text("Postać utworzona: " + stored.name(),
-          NamedTextColor.GREEN));
+      player.sendMessage(Teksty.t("kreator.utworzona", "&aPostać utworzona: {imie}", "imie", stored.name()));
     } catch (RuntimeException ex) {
       logger.log(Level.SEVERE, "Awaria przy potwierdzaniu postaci dla " + player.getName(), ex);
       abort(player, "Coś poszło nie tak przy tworzeniu postaci — zgłoś to administracji.");
@@ -515,7 +514,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
     sessions.end(player, CreatorSessionManager.EndReason.CANCELLED);
     logger.info("Gracz " + player.getName() + " zrezygnowal z tworzenia postaci (profil "
         + session.profileId() + ") — profil NIE zostal utworzony.");
-    player.sendMessage(Component.text("Tworzenie postaci przerwane.", NamedTextColor.YELLOW));
+    player.sendMessage(Teksty.t("kreator.przerwane", "&eTworzenie postaci przerwane."));
     // Ekran wyboru postaci otwieramy W NASTEPNYM TICKU, z tego samego powodu, dla ktorego
     // robi to CreatorRoomListener#reopenMenuNextTick: Paper nie obsluguje niezawodnie
     // otwarcia nowego inventory prosto z obslugi zamkniecia poprzedniego, a end() wlasnie
@@ -581,8 +580,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
       if (stored != null) {
         logger.warning("Imie '" + record.name() + "' zostalo zajete w trakcie tworzenia "
             + "postaci dla " + player.getName() + " — zapisano jako '" + candidate + "'.");
-        player.sendMessage(Component.text("Imię było już zajęte — twoja postać nazywa się "
-            + candidate + ".", NamedTextColor.YELLOW));
+        player.sendMessage(Teksty.t("kreator.imie-zajete-zmienione", "&eImię było już zajęte — twoja postać nazywa się {imie}.", "imie", candidate));
         return stored;
       }
     }

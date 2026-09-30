@@ -349,3 +349,170 @@ wybor-postaci:
     - 'MMOCore/userdata/{id}.yml'
     - 'MMOItems/userdata/{id}.yml'
     - 'MMOInventory/userdata/{id}.yml'
+
+# TEKSTY DLA GRACZA (2026-09-30). Zmiana tutaj + /cc reload — bez nowego jara.
+# Kolory kodami & (&6 zloty, &a zielony, &c czerwony, &7 szary, &f bialy, &l pogrubienie, &r reset).
+# {nazwa} to wstawki podmieniane przez plugin (np. {imie}, {dni}, {ile}) — zostaw je w tekscie.
+# \n = nowa linia. Brak wpisu = tekst domyslny z kodu.
+teksty:
+  imie:
+    duplicate: "Postać o tym imieniu już istnieje — wybierz inne."
+    empty: "Imię nie może być puste."
+    illegal-chars: "Dozwolone są tylko litery (w tym polskie), cyfry i podkreślnik."
+    no-letter: "Imię musi zawierać przynajmniej jedną literę."
+    offensive: "To imię jest niedozwolone — wybierz inne."
+    reserved-prefix: "To imię jest zarezerwowane dla obsługi serwera."
+    too-long: "Imię może mieć najwyżej 16 znaków."
+    too-short: "Imię musi mieć co najmniej 3 znaki."
+  kreator:
+    imie-zajete-zmienione: "&eImię było już zajęte — twoja postać nazywa się {imie}."
+    karta:
+      bron: "&7Broń: "
+      na-start: "&7Na start: "
+      od-poziomu: "&7Od {poziom}. poz.: "
+      rola: "&7Rola: "
+      specjalizacje: "&6Od 10. poziomu jedna z dwóch:"
+      trudnosc: "&7Trudność: "
+      zbroja: "&7Zbroja: "
+    ksiega:
+      albo: "&7 albo "
+      od-10: "&7Od 10. poziomu: "
+    najpierw-stworz: "&eNajpierw stwórz postać  &6[LPM] &fDalej"
+    panel:
+      klasy: "&fKlasy  &6[W/S]"
+    przerwane: "&eTworzenie postaci przerwane."
+    przerwij:
+      nie: "&aNie, tworzę dalej"
+      opis: "&fWybrana rasa i klasa nie zostaną zapisane."
+      tak: "&cTak, przerwij"
+      tytul: "&6Przerwać tworzenie postaci?"
+    utworzona: "&aPostać utworzona: {imie}"
+  ksiega:
+    kolor:
+      czerwony: "Czerwony"
+      fioletowy: "Fioletowy"
+      niebieski: "Niebieski"
+      pomaranczowy: "Pomarańczowy"
+      rozowy: "Różowy"
+      szary: "Szary"
+      turkusowy: "Turkusowy"
+      zielony: "Zielony"
+      zolty: "Żółty"
+    losuj: "&e⚄ Losuj imię"
+    losuj-dymek: "Imię pasujące do rasy — możesz je potem zmienić"
+    pole-imie: "Imię postaci"
+    pole-kolor: "Kolor ikony"
+    stworz: "&a✔ Stwórz postać"
+    stworz-dymek: "Tworzy postać i wpuszcza cię do gry"
+    tytul: "&6Nowa postać"
+    wroc: "Wróć"
+    wroc-dymek: "Z powrotem do wyboru rasy i klasy"
+  podpowiedz:
+    dalej: "Dalej"
+    graj: "Graj"
+    klasa: "Klasa"
+    lista: "Lista i zarządzanie"
+    postac: "Postać {nr}"
+    przegladaj: "Przeglądaj"
+    rasa: "Rasa"
+    stworz: "Stwórz postać"
+    usun: "Usuń / kosz"
+    wroc: "Wróć"
+  wybor:
+    brak-miejsc: "&eBrak wolnych miejsc na postać — usuń postać albo opróżnij kosz."
+    grasz-teraz: "&7Grasz teraz postacią {imie}&7."
+    juz-grasz: "&eJuż grasz postacią {imie}."
+    karta:
+      czas-gry: "&7Czas gry: "
+      grasz-teraz: "&a  ▶ grasz teraz"
+      miejsce: "&7Miejsce: "
+      ostatnio: "&7Ostatnio: "
+      ostatnio-grana: "&6  ★ ostatnio grana"
+      poziom: "&7Poziom: "
+      specjalizacja: "&7Specjalizacja: "
+      teraz: "teraz"
+    kosz:
+      blad-usuwania: "&cNie udało się usunąć: {imiona} — zgłoś to administracji."
+      dymek: "Przywróć albo usuń na zawsze"
+      opis: "&fPostacie w koszu zajmują miejsca na postacie ({zajete}/{wszystkie} zajętych). Po terminie znikają na zawsze."
+      przeniesiono: "&aW koszu: {imiona}. Przywrócisz je przez {dni} w „Kosz”."
+      przywroc-zaznaczone: "Przywróć zaznaczone ({ile})"
+      przywrocono: "&aPrzywrócono: {imiona}."
+      pusty: "&7Kosz jest pusty."
+      pusty-dymek: "Kosz jest pusty"
+      tytul: "&6Kosz"
+      usun-na-zawsze: "Usuń na zawsze ({ile})"
+      usunieto: "&aUsunięto na zawsze: {imiona}."
+      zostalo: "Zostało {dni} do usunięcia na zawsze"
+    lista:
+      brak-miejsc: "&8Brak wolnych miejsc"
+      brak-miejsc-dymek: "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."
+      brak-miejsc-kosz: "Postacie w koszu ({ile}) nadal zajmują miejsca — opróżnij kosz w „Zarządzaj”."
+      brak-postaci: "&fNie masz jeszcze postaci — stwórz pierwszą."
+      nowa: "&a+ Nowa postać"
+      opis: "&fKliknij postać, żeby grać. &6★&f = ostatnio grana."
+      opis-w-grze: "&fKliknij postać, żeby od razu nią grać. &a▶&f = grasz teraz."
+      tytul: "&6Twoje postacie  &7{zajete}/{wszystkie}"
+      w-koszu: "&7 W koszu: {ile} (nadal zajmują miejsca)."
+      w-koszu-1: "&7 W koszu: {ile} (nadal zajmuje miejsce)."
+      wolne-miejsca: "Wolne miejsca: {ile}"
+      wszystkie-w-koszu: "&fNie masz aktywnych postaci. Przywróć je z kosza ({ile}) albo stwórz nową."
+      zarzadzaj: "&6Zarządzaj postaciami"
+      zarzadzaj-dymek: "Usuń kilka naraz, kosz, przywracanie"
+    nic-nie-zaznaczono: "&eNic nie zaznaczono — kliknij postać na liście."
+    nowa:
+      karta: "&a&l+ Nowa postać\n\n&r&fWybierz rasę i klasę, nadaj imię i ruszaj w drogę."
+    panel:
+      naglowek: "&fTwoje postacie  &6[A/D]"
+      nowa: "+ Nowa postać"
+      usun: "✖ Usuń postacie"
+    potwierdz:
+      do-kosza: "&fTrafią do kosza na {dni}. Do tego czasu nadal zajmują miejsca na postacie."
+      na-zawsze: "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć."
+      przycisk-do-kosza: "&cPrzenieś do kosza"
+      przycisk-na-zawsze: "&cUsuń na zawsze"
+      tytul-do-kosza: "&cPrzenieść do kosza?"
+      tytul-na-zawsze: "&cUsunąć na zawsze?"
+      wpisz-imie: "Wpisz imię „{imie}” (poziom {poziom})"
+      zle-imie: "&cImię „{imie}” się nie zgadza — nic nie usunięto."
+    przycisk:
+      anuluj: "Anuluj"
+      wroc: "Wróć"
+      wroc-do-sceny: "Wróć do sceny"
+      zamknij: "Zamknij"
+    pyta-o-potwierdzenie: "Pyta o potwierdzenie"
+    tytul: "&6&lWybierz postać"
+    usun:
+      karta: "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Trafią do kosza na {dni} — możesz je stamtąd przywrócić."
+      w-koszu: "&7W koszu: {ile}"
+    zarzadzaj:
+      brak-postaci: "&fNie masz aktywnych postaci."
+      kosz: "Kosz ({ile})"
+      opis: "&fKliknij postacie, żeby je zaznaczyć. Usunięte trafią do kosza na {dni}."
+      tytul: "&6Zarządzaj postaciami"
+      usun-zaznaczone: "Usuń zaznaczone ({ile})"
+
+# POKRETLA (2026-09-30). Zmiana + /cc reload. Ticki: 20 = 1 s. Brak wpisu = wartosc z kodu.
+#  wybor.kafelek-szerokosc   szerokosc kafelka listy postaci (2 kolumny; >200 wyjezdza przy GUI 3-4)
+#  wybor.scena-po-ticki      po ilu tickach od ostatniego A/D dochodzi sceneria i podglad
+#  wybor.lista-sama-po-ticki opoznienie automatycznej listy po wejsciu (od wybor-postaci.lista-od postaci)
+#  wybor.ad-nowa-postac / ad-usun-postacie  pozycje "+ Nowa postac" / "Usun postacie" pod A/D
+#  kreator.scena-po-ticki    to samo dla zmiany rasy w kreatorze
+#  scena.panel-szerokosc / panel-skala  panele z tekstem w scenie (karta i lista)
+#  scena.podpowiedz-co-ticki  odswiezanie podpowiedzi na pasku akcji
+#  scena.cisza-na-czacie     czat wyciszony w wyborze postaci i kreatorze
+ustawienia:
+  kreator:
+    scena-po-ticki: 6
+  scena:
+    cisza-na-czacie: true
+    panel-skala: 0.5
+    panel-szerokosc: 230
+    podpowiedz-co-ticki: 30
+  wybor:
+    ad-nowa-postac: true
+    ad-usun-postacie: true
+    kafelek-szerokosc: 150
+    lista-sama-po-ticki: 30
+    scena-po-ticki: 6
+    schowaj-podglad-bloki: 6.0
