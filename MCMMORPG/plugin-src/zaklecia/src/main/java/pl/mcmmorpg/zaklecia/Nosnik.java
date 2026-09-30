@@ -92,7 +92,7 @@ final class Nosnik implements Listener {
     return "§f" + z.nazwa() + " §7w prawej dłoni.";
   }
 
-  private ItemStack zrob(Ksiega.Zaklecie z) {
+  ItemStack zrob(Ksiega.Zaklecie z) {
     ItemStack i = MythicBukkit.inst().getItemManager().getItemStack(z.przedmiot());
     if (i == null) throw new IllegalStateException("brak przedmiotu MythicMobs " + z.przedmiot());
     i.editMeta(m -> m.getPersistentDataContainer().set(klucz, PersistentDataType.BYTE, (byte) 1));

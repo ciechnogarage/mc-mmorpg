@@ -35,6 +35,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
 
   private Ksiega ksiega;
   private Nosnik nosnik;
+  private Ulubione ulubione;
 
   @Override
   public void onEnable() {
@@ -42,14 +43,27 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     ksiega = new Ksiega(getConfig());
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
-    getServer().getPluginManager().registerEvents(new Rzucanie(this, ksiega), this);
+    Rzucanie rzucanie = new Rzucanie(this, ksiega);
+    ulubione = new Ulubione(this, ksiega, nosnik, rzucanie);
+    getServer().getPluginManager().registerEvents(rzucanie, this);
     getServer().getPluginManager().registerEvents(nosnik, this);
+    getServer().getPluginManager().registerEvents(ulubione, this);
+    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione).register();
     getLogger().info("zaklecia: " + ksiega.poId.keySet());
   }
 
-  /** {@code zaklecia przypisz <gracz> <id|nic> <prawa|lewa>} — wolane z Ksiegi zaklec (DeluxeMenus, konsola). */
+  /**
+   * {@code zaklecia przypisz <gracz> <id|nic> <prawa|lewa>}, {@code zaklecia ulubione <gracz> <id>} — wolane
+   * z Ksiegi zaklec (DeluxeMenus, jako konsola).
+   */
   @Override
   public boolean onCommand(org.bukkit.command.CommandSender s, org.bukkit.command.Command c, String l, String[] a) {
+    if (a.length == 3 && a[0].equalsIgnoreCase("ulubione")) {
+      Player p = getServer().getPlayerExact(a[1]);
+      if (p == null) { s.sendMessage("Brak gracza " + a[1]); return true; }
+      nosnik.komunikat(p, ulubione.przelacz(p, a[2].toLowerCase(Locale.ROOT)));
+      return true;
+    }
     if (a.length != 4 || !a[0].equalsIgnoreCase("przypisz")) {
       s.sendMessage("/zaklecia przypisz <gracz> <" + String.join("|", ksiega.poId.keySet()) + "|nic> <prawa|lewa>");
       return true;
