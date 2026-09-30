@@ -14,8 +14,8 @@ import argparse, json, math, os, re, sys, zipfile
 # bron nie da sie "klikac"), ciezka = nizszy, glebszy dzwiek trafienia. zasieg = max zasieg ciosu (vanilla 3 bloki).
 # garda = PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat, opoznienie w s, spowolnienie ruchu przy gardzie).
 # wzor = kopia zestawu vanillowej broni (IRON_SPEAR: pchniecie trafiajace wszystko w linii, zasieg 2-4,5, szarza PPM).
-# wypad = puszczenie PPM po >= min tickach gardy: krok do przodu (sila) i pchniecie przez linie (zasieg, szerokosc)
-# za mnoznik x obrazenia broni; odnowienie w tickach (cooldown przedmiotu na hotbarze).
+# wypad = kontra: garda >= min tickow, pusc PPM i LPM w ciagu okno tickow: krok do przodu (sila) i pchniecie przez linie
+# (zasieg, szerokosc) za mnoznik x obrazenia broni; odnowienie w tickach tylko wypadu (blok zawsze dostepny).
 # garda_oburacz = bron dwureczna: PPM w pozie kuszy (obie rece z przodu), a model w trakcie PPM (using_item) obraca
 # bron poziomo w poprzek ciala - zaslona trzymana oburacz. Katy dobrane na zrzutach (qa/pozy.sh, warianty b i s).
 GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 0, -45], 'fp_trans': [-3, 4, -3]}
@@ -32,7 +32,7 @@ TYPY = {
     'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
                         'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.2, 'spowolnienie': 0.5},
-                        'wypad': {'min': 10, 'mnoznik': 2.0, 'zasieg': 4.5, 'szerokosc': 0.9, 'sila': 0.8, 'odnowienie': 60}},
+                        'wypad': {'min': 10, 'mnoznik': 2.0, 'zasieg': 4.5, 'szerokosc': 0.9, 'sila': 0.8, 'odnowienie': 60, 'okno': 10}},
     'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
     'SPEAR':           {'rodzaj': 'klute'},   # materialy *_SPEAR maja juz caly vanillowy zestaw wloczni
     'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6},

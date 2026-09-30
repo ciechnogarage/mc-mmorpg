@@ -38,6 +38,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -49,6 +51,7 @@ import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.UUID;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -70,8 +73,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   record Garda(float redukcja, float kat, float opoznienie, float spowolnienie) {}
 
-  /** Pchniecie z wypadem: puszczenie PPM po >= min tickach trzymania. */
-  record Wypad(int min, double mnoznik, double zasieg, double szerokosc, double sila, int odnowienie) {}
+  /** Wypad (kontra): garda >= min tickow, puszczenie PPM i LPM w ciagu okno tickow. Odnowienie tylko wypadu, nie bloku. */
+  record Wypad(int min, double mnoznik, double zasieg, double szerokosc, double sila, int odnowienie, int okno) {}
 
   record Ustawienie(SwingAnimation.Animation zamach, int czas, String skala, Rodzaj rodzaj, Float ladowanie,
                     Float zasieg, Material wzor, Garda garda, boolean ciezka, Wypad wypad,
@@ -88,6 +91,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       DataComponentTypes.KINETIC_WEAPON, DataComponentTypes.USE_EFFECTS);
 
   private final Map<String, Ustawienie> typy = new HashMap<>();
+  private final Map<UUID, Integer> oknoKontry = new HashMap<>();     // do ktorego ticka LPM = wypad
+  private final Map<UUID, Integer> odnowienieWypadu = new HashMap<>(); // do ktorego ticka wypad niedostepny
+  private final Map<UUID, Integer> tlumPchniecie = new HashMap<>();    // do ktorego ticka gasimy zwykly cios (wypad go zastepuje)
+  private boolean wlasnyCios;
   private final Set<Material> modele = new HashSet<>();
   private String przestrzen = "bron";
   private int wersja;
@@ -141,7 +148,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         ConfigurationSection w = t.getConfigurationSection("wypad");
         if (w != null) {
           wypad = new Wypad(w.getInt("min", 10), w.getDouble("mnoznik", 1.5), w.getDouble("zasieg", 4.5),
-              w.getDouble("szerokosc", 0.9), w.getDouble("sila", 0.8), w.getInt("odnowienie", 60));
+              w.getDouble("szerokosc", 0.9), w.getDouble("sila", 0.8), w.getInt("odnowienie", 60), w.getInt("okno", 10));
         }
         ItemUseAnimation poza = null;
         if (t.getString("poza") != null) {
@@ -267,19 +274,46 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   public void podniesienie(EntityPickupItemEvent e) { if (e.getEntity() instanceof Player p) pozniej(p); }
 
   /**
-   * Pchniecie z wypadem: gracz trzymal PPM (garda) co najmniej {@code min} tickow i puscil. Krok do przodu i cios
-   * w linii patrzenia (wszystkie cele do {@code zasieg} blokow) za mnoznik x obrazenia broni, przez MythicLib
-   * (statystyki, PvP, party). Odnowienie = vanillowy cooldown przedmiotu (widac go na hotbarze, blokuje PPM).
+   * Wypad (kontra): po gardzie trzymanej >= min tickow puszczenie PPM otwiera okno; LPM w tym oknie = krok do przodu
+   * i pchniecie przez linie patrzenia (wszystkie cele do zasieg blokow) za mnoznik x obrazenia broni, przez MythicLib
+   * (statystyki, PvP, party). Klient nie wysyla LPM, dopoki trzymany jest PPM - stad "pusc prawy, kliknij lewy".
+   * Blok nie ma odnowienia; odnowienie ma tylko wypad (w tym czasie LPM to zwykle pchniecie).
    */
   @EventHandler(priority = EventPriority.MONITOR)
   public void puszczeniePpm(PlayerStopUsingItemEvent e) {
     Player p = e.getPlayer();
     ItemStack item = p.getInventory().getItemInMainHand();
     Ustawienie u = ustawienie(item);
-    if (u == null || u.wypad() == null || e.getTicksHeldFor() < u.wypad().min()) return;
-    if (!item.isSimilar(e.getItem()) || p.hasCooldown(item) || p.isSprinting()) return;
-    Wypad w = u.wypad();
-    p.setCooldown(item, w.odnowienie());
+    if (u == null || u.wypad() == null || e.getTicksHeldFor() < u.wypad().min() || !item.isSimilar(e.getItem())) return;
+    int teraz = getServer().getCurrentTick();
+    if (odnowienieWypadu.getOrDefault(p.getUniqueId(), 0) > teraz) return;
+    oknoKontry.put(p.getUniqueId(), teraz + u.wypad().okno());
+    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, SoundCategory.PLAYERS, 0.5f, 1.8f);   // sygnal: teraz LPM
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void lpm(PlayerAnimationEvent e) {
+    if (e.getAnimationType() != PlayerAnimationType.ARM_SWING) return;
+    Player p = e.getPlayer();
+    Integer okno = oknoKontry.remove(p.getUniqueId());
+    int teraz = getServer().getCurrentTick();
+    if (okno == null || okno < teraz) return;
+    Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+    if (u == null || u.wypad() == null) return;
+    odnowienieWypadu.put(p.getUniqueId(), teraz + u.wypad().odnowienie());
+    tlumPchniecie.put(p.getUniqueId(), teraz + 3);
+    wypad(p, u.wypad());
+  }
+
+  /** Zwykle pchniecie LPM, ktore zastapil wypad, nie zadaje obrazen (bez tego cel dostalby dwa razy). */
+  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+  public void zgasPchniecie(EntityDamageByEntityEvent e) {
+    if (wlasnyCios || !(e.getDamager() instanceof Player p)) return;
+    Integer do_ = tlumPchniecie.get(p.getUniqueId());
+    if (do_ != null && do_ >= getServer().getCurrentTick()) e.setCancelled(true);
+  }
+
+  private void wypad(Player p, Wypad w) {
     Vector kier = p.getLocation().getDirection().setY(0);
     if (kier.lengthSquared() > 1e-4) p.setVelocity(p.getVelocity().add(kier.normalize().multiply(w.sila()).setY(0.1)));
     World swiat = p.getWorld();
@@ -302,14 +336,20 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         double obok = doCelu.clone().subtract(d.clone().multiply(wzdluz)).length();
         if (obok > w.szerokosc() + cel.getWidth() / 2) continue;
         if (!UtilityMethods.canTarget(p, cel, InteractionType.OFFENSE_ACTION)) continue;
-        meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL);
+        cel.setNoDamageTicks(0);
+        wlasnyCios = true;
+        try {
+          meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL);
+        } finally {
+          wlasnyCios = false;
+        }
         Location c = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
         swiat.spawnParticle(Particle.CRIT, c, 8, 0.15, 0.15, 0.15, 0.2);
         trafione++;
       }
       swiat.playSound(oko, trafione > 0 ? Sound.ITEM_TRIDENT_HIT : Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
           SoundCategory.PLAYERS, 0.9f, trafione > 0 ? 0.9f : 1f);
-    }, 3L);
+    }, 2L);
   }
 
   /** Widoczny blok: iskry w miejscu styku, gdy gracz zablokowal cios bronia z garda (dzwiek daje sam komponent). */

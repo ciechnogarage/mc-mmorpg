@@ -15,7 +15,7 @@ Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko)
 | Klinga elfów (KATANA) | cięte | cios 5 | — | 3 | garda −30%, lżejsza | vanilla |
 | Topór (AXE) | cięte | cios 8 | 60% | 3 | — | vanilla |
 | Miecz dwuręczny (GREATSWORD) | cięte, ciężka | cios 10 | 80% | 3,3 | **garda oburącz** −55% (ostrze poziomo przed ciałem), wolna | ×1,30 |
-| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | **garda oburącz drzewcem −35%** (drzewce poziomo przed ciałem); puszczenie po ≥0,5 s = **wypad** (pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s); w sprincie **szarża** | ×1,30 |
+| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | **garda oburącz drzewcem −35%** (drzewce poziomo przed ciałem, blok bez odnowienia); **kontra**: garda ≥0,5 s, puść PPM i w 0,5 s LPM = wypad (krok + pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s tylko wypadu); w sprincie **szarża** | ×1,30 |
 | Włócznia (SPEAR) | kłute | vanilla | vanilla | 2–4,5 | szarża (vanilla) | vanilla |
 | Sztylet (DAGGER) | kłute | pchnięcie 4 | — | **2,6** | — | ×0,80 |
 | Kosa (KOSA) | cięte, ciężka | cios 10 | 80% | **3,5** | — | ×1,40 |
@@ -42,7 +42,7 @@ obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyga
 zaklęcia/tarczy w lewej ręce albo do umiejętności; plugin zdejmuje i przywraca te komponenty sam (przegląd co 10 ticków).
 Zmierzone na klonie 30.09 (`qa/mechanika.sh`): garda miecza 6 → 4,0 HP bez / 2,4 HP z gardą; halabarda nie trafia
 celu na 1 bloku, trafia dwa w linii na 3 i 4 blokach; młot dwuręczny nie wyprowadza ciosu 0,6 s po poprzednim
-(miecz tak); szarża halabardą w sprincie trafia; garda halabardy 6 → 4,0 / 2,5 HP, miecza dwuręcznego 3,9 / 1,7 HP (4 powtórzenia); wypad trafia dwa cele w linii, druga próba w odnowieniu nic nie robi; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu.
+(miecz tak); klient nie wysyła LPM, dopóki trzymany jest PPM, więc kontra to „puść prawy, kliknij lewy”; szarża halabardą w sprincie trafia; garda halabardy 6 → 4,0 / 2,5 HP, miecza dwuręcznego 3,9 / 1,7 HP (4 powtórzenia); kontra (qa/mechanika.sh G): samo puszczenie PPM nic nie robi, blok+LPM = wypad, blok działa zaraz po wypadzie, dwie kontry w 2,9 s = jeden wypad; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu.
 
 Poza pluginem celowo: zamach i PPM **SPEAR** (materiały `*_SPEAR` mają vanillowe pchnięcie i szarżę; plugin daje im tylko efekt trafienia), **BOW / CROSSBOW /
 GREATBOW / MUSKET** (animacje naciągania). Model trzymania dostaje tylko przedmiot z modelem domyślnym materiału —

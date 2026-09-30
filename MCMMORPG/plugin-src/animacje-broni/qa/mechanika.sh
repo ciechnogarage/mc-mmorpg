@@ -2,7 +2,8 @@
 # mechanika.sh <test> - pomiary mechaniki na klonie ab-test klientem BronQA (mc-client-ab). Wynik: liczby HP.
 # A = halabarda (zasieg 2-4,5 + przebicie w linii), B = minimalne naladowanie (mlot vs miecz),
 # C = garda miecza (obrazenia od zombie bez/z PPM), D = garda gasnie przy przedmiocie w lewej rece,
-# E = garda halabardy, F = wypad halabardy (puszczenie PPM: dwa cele w linii, potem proba w czasie odnowienia).
+# E = garda halabardy, G = kontra halabardy: 1 samo puszczenie PPM nic nie robi, 2 blok+pusc+LPM = wypad w linii
+# (bez dodatkowego zwyklego pchniecia), 3 blok od razu po wypadzie, 4 w odnowieniu LPM = zwykle pchniecie.
 X="docker exec -e DISPLAY=:99 mc-client-ab"; R="docker exec ab-test rcon-cli"
 r(){ $R "$1" | sed 's/\x1b\[[0-9;]*m//g'; }
 hp(){ r "data get entity @e[tag=$1,limit=1] Health" | grep -oE '[0-9.]+f' | tr -d f; }
@@ -35,4 +36,13 @@ F) czysc; bron HALBERD PRZ_WOJ_DRZEWCOWA_1; zombi 0.5 -59 3.0 1 f1 1000; zombi 0
    h1=$(hp f1); h2=$(hp f2); a1=$h1
    echo "F wypad: HP $h1 / $h2 (oba <1000 = trafil linie)"; $X xdotool mousedown 3; sleep 0.9; $X xdotool mouseup 3; sleep 0.6   # < 3 s po pierwszym
    echo "F drugi wypad w odnowieniu: HP f1 $a1 -> $(hp f1) (bez zmiany = odnowienie dziala)"; czysc ;;
+G) czysc; bron HALBERD PRZ_WOJ_DRZEWCOWA_1; zombi 0.5 -59 3.0 1 g1 1000; zombi 0.5 -59 4.4 1 g2 1000; stoj 0 8; sleep 1.5
+   $X xdotool mousedown 3; sleep 0.9; $X xdotool mouseup 3; sleep 0.8; echo "G1 samo puszczenie: HP $(hp g1) / $(hp g2) (1000 = nic)"
+   sleep 0.6; $X xdotool mousedown 3; sleep 0.9; $X xdotool mouseup 3; sleep 0.1; $X xdotool click 1; sleep 0.6
+   w1=$(hp g1); w2=$(hp g2); echo "G2 blok+LPM: HP $w1 / $w2 (oba ok. 863 = wypad x2,0, bez dodatkowego pchniecia)"
+   r "minecraft:effect give BronQA minecraft:instant_health 1 5 true" >/dev/null; sleep 0.5; h0=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f)
+   $X xdotool mousedown 3; sleep 0.6; r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=g1,limit=1]" >/dev/null; sleep 0.3
+   h1=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f); $X xdotool mouseup 3; sleep 0.1; $X xdotool click 1; sleep 0.6
+   echo "G3 blok zaraz po wypadzie: stracone $(python3 -c "print(round($h0-$h1,2))") (ok. 2,5 = blok dziala)"
+   echo "G4 kontra w odnowieniu: HP g1 $w1 -> $(hp g1) (spadek ok. 98 = zwykle pchniecie, nie 137)"; czysc ;;
 esac
