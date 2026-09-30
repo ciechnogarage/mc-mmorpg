@@ -50,7 +50,12 @@ import org.bukkit.util.Vector;
  * Tiki co 1 tick na watku glownym; mana co 10 tickow z aktywnych dloni; cele stozka liczy plugin.
  */
 final class Rzucanie implements Listener {
-  static final class Stan { int n; boolean prawa, lewa; }
+  static final class Stan { int n; boolean prawa, lewa, razem; }
+
+  /** Chwile wcisniec przyciskow (tick): ostatnie i poprzednie — do wykrycia rownoczesnego klikniecia i dwukliku. */
+  static final class Wcisniecia { long lpm = -99, lpmPoprz = -99, lpmPuszczony = -99, ppm = -99, ppmPoprz = -99; }
+  private final Map<UUID, Wcisniecia> wcisniecia = new HashMap<>();
+  private static final int ROWNO = 3, DWUKLIK = 12;   // PPM: klient sam odstepuje kolejne uzycie o >=4 ticki; zmierzony dwuklik = 9
 
   private final Zaklecia plugin;
   private final Ksiega ksiega;
@@ -80,6 +85,20 @@ final class Rzucanie implements Listener {
   }
 
   void ustawWybor(Wybor w) { this.wybor = w; }
+
+  private void log(Player p, String co) {
+    if (plugin.getConfig().getBoolean("debug-wejscie", false)) plugin.getLogger().info("[wejscie] t=" + teraz + " " + p.getName() + " " + co);
+  }
+
+  /** Nowe wcisniecie: gdy blisko wcisniecia drugiego przycisku (ROWNO) albo tego samego (DWUKLIK) — obie dlonie. */
+  private void wcisniecie(Player p, boolean lewy) {
+    Wcisniecia w = wcisniecia.computeIfAbsent(p.getUniqueId(), k -> new Wcisniecia());
+    boolean razem;
+    if (lewy) { w.lpmPoprz = w.lpm; w.lpm = teraz; razem = teraz - w.ppm <= ROWNO || teraz - w.lpmPoprz <= DWUKLIK; }
+    else { w.ppmPoprz = w.ppm; w.ppm = teraz; razem = teraz - w.lpm <= ROWNO || teraz - w.ppmPoprz <= DWUKLIK; }
+    log(p, (lewy ? "LPM" : "PPM") + " wcisniety" + (razem ? " -> RAZEM" : ""));
+    if (razem) { wejdz(p); rzucajacy.get(p.getUniqueId()).razem = true; }
+  }
 
   /** Wylaczenie pluginu: zdejmij strumienie i przejsciowe atrybuty. */
   void wylacz() {
@@ -131,13 +150,19 @@ final class Rzucanie implements Listener {
     if (!trybLpm(p)) return;
     e.setInstaBreak(false);
     if (wybor != null && wybor.otwarty(p)) return;
+    Wcisniecia w = wcisniecia.computeIfAbsent(p.getUniqueId(), k -> new Wcisniecia());
+    boolean nowe = !Long.valueOf(Long.MAX_VALUE).equals(lpmDo.get(p.getUniqueId())) && teraz - w.lpmPuszczony >= 2;   // przeskok kursora = abort+start w tym samym ticku, to nie nowe wcisniecie
     lpmDo.put(p.getUniqueId(), Long.MAX_VALUE);
     wejdz(p);
+    log(p, "kopanie START" + (nowe ? "" : " (przeskok)"));
+    if (nowe) wcisniecie(p, true);
   }
 
   @EventHandler
   public void lpmKoniec(BlockDamageAbortEvent e) {
     lpmDo.computeIfPresent(e.getPlayer().getUniqueId(), (k, v) -> v == Long.MAX_VALUE ? teraz + 3 : v);
+    wcisniecia.computeIfAbsent(e.getPlayer().getUniqueId(), k -> new Wcisniecia()).lpmPuszczony = teraz;
+    log(e.getPlayer(), "kopanie ABORT");
   }
 
   /** Klik LPM w niebo (nic w zasiegu 64): impuls 0,5 s. */
@@ -147,6 +172,8 @@ final class Rzucanie implements Listener {
     if (wybor != null && wybor.otwarty(e.getPlayer())) return;
     lpmDo.merge(e.getPlayer().getUniqueId(), teraz + 10, Math::max);
     wejdz(e.getPlayer());
+    log(e.getPlayer(), "LPM w powietrze");
+    wcisniecie(e.getPlayer(), true);
   }
 
   /** W trybie LPM blok nie moze pasc (tryb kreatywny lamie od razu) ani byc "uzyty" z 64 blokow. */
@@ -168,13 +195,14 @@ final class Rzucanie implements Listener {
     ostatniPpm.put(e.getPlayer().getUniqueId(), teraz);
     if (ksiega.w(e.getItem()) == null) return;
     Player p = e.getPlayer();
+    if (e.getHand() == EquipmentSlot.HAND || ksiega.w(p.getInventory().getItemInMainHand()) == null) wcisniecie(p, false);
     // Uzycie przedmiotu zaczyna sie po obsludze zdarzenia — sprawdzamy w nastepnym ticku, czy reka jest uniesiona.
     Bukkit.getScheduler().runTask(plugin, () -> { if (p.isOnline() && p.isHandRaised()) wejdz(p); });
   }
 
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) {
-    rzucajacy.remove(e.getPlayer().getUniqueId()); lpmDo.remove(e.getPlayer().getUniqueId()); ostatniPpm.remove(e.getPlayer().getUniqueId());
+    rzucajacy.remove(e.getPlayer().getUniqueId()); lpmDo.remove(e.getPlayer().getUniqueId()); ostatniPpm.remove(e.getPlayer().getUniqueId()); wcisniecia.remove(e.getPlayer().getUniqueId());
     strumien.stop(e.getPlayer()); atrybutyLpm(e.getPlayer(), false);
   }
 
@@ -202,7 +230,10 @@ final class Rzucanie implements Listener {
    * niemozliwe: klient Minecrafta przy trzymanym PPM ignoruje LPM, a przy kopaniu nie zaczyna uzywania — serwer
    * nigdy nie dostaje drugiego przycisku (zmierzone 30.09 prawdziwym klientem).
    */
-  private boolean razem(Player p) { return p.getCurrentInput().isSprint() && trzyma(p); }
+  private boolean razem(Player p) {
+    Stan s = rzucajacy.get(p.getUniqueId());
+    return (p.getCurrentInput().isSprint() || (s != null && s.razem)) && trzyma(p);
+  }
 
   private boolean prawaTeraz(Player p) {
     if (ksiega.w(p.getInventory().getItemInMainHand()) == null) return false;
@@ -249,6 +280,7 @@ final class Rzucanie implements Listener {
         }
         if (pr != s.prawa || lw != s.lewa) {                     // zmiana aktywnych dloni
           boolean nowa = (pr && !s.prawa) || (lw && !s.lewa);
+          log(p, "dlonie: prawa=" + pr + " lewa=" + lw + (s.razem ? " (razem)" : ""));
           s.prawa = pr; s.lewa = lw;
           double z = zasieg(p, s);
           strumien.ustaw(p, true, pr ? ksiega.w(p.getInventory().getItemInMainHand()) : null, z);
