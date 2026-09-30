@@ -909,7 +909,7 @@ public final class SceneManager {
     if (view.camera != null && view.camera.isValid()) {
       spots.add(view.camera.getLocation());
     }
-    if (view.currentPoint != null && view.currentPoint.subject() != null && !view.freeCamera) {
+    if (view.currentPoint != null && view.currentPoint.subject() != null) {
       spots.add(view.currentPoint.subject());
     }
     for (Location at : spots) {
