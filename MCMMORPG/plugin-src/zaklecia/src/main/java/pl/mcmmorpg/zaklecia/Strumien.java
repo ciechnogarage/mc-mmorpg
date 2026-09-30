@@ -37,12 +37,16 @@ final class Strumien {
 
   Strumien(Zaklecia plugin, Ksiega ksiega) { this.plugin = plugin; this.ksiega = ksiega; }
 
-  void start(Player p, Ksiega.Zaklecie prawa, Ksiega.Zaklecie lewa, double zasieg) {
-    stop(p);
-    List<Wpis> l = new ArrayList<>();
-    if (prawa != null) l.add(zrob(p, prawa, true, zasieg));
-    if (lewa != null) l.add(zrob(p, lewa, false, zasieg));
-    aktywne.put(p.getUniqueId(), l);
+  /** Wlacza/wylacza strumien jednej dloni (z == null = zgas). Wolane przy kazdej zmianie aktywnych dloni. */
+  void ustaw(Player p, boolean prawa, Ksiega.Zaklecie z, double zasieg) {
+    List<Wpis> l = aktywne.computeIfAbsent(p.getUniqueId(), k -> new ArrayList<>());
+    for (var it = l.iterator(); it.hasNext(); ) {
+      Wpis w = it.next();
+      if (w.prawa() != prawa) continue;
+      if (z != null && w.id().equals(z.id()) && w.d().isValid()) return;   // juz jest ten sam
+      w.d().remove(); it.remove();
+    }
+    if (z != null) l.add(zrob(p, z, prawa, zasieg));
   }
 
   private Wpis zrob(Player p, Ksiega.Zaklecie z, boolean prawa, double zasieg) {

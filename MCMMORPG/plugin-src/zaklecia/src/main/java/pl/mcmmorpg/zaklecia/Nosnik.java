@@ -37,17 +37,22 @@ import org.bukkit.persistence.PersistentDataType;
  */
 final class Nosnik implements Listener {
   private final Ksiega ksiega;
+  private final Zaklecia plugin;
   private final NamespacedKey klucz;
   /** Slot paska prawej dloni z zakleciem — zostaje po odlozeniu kolkiem ("pusta"), zeby kolkiem wrocic. */
   private final NamespacedKey kluczSlotu;
+  /** Lewa dlon byla uzywana do zaklec (Shift+kolko dziala tez przy pustej lewej). */
+  private final NamespacedKey kluczLewej;
   /** Bloki, ktore przyjmuja albo zamieniaja przedmiot z reki. */
   private static final Set<Material> BLOKI_BIORACE = Set.of(Material.DECORATED_POT, Material.FLOWER_POT,
       Material.VAULT, Material.CHISELED_BOOKSHELF, Material.LECTERN, Material.JUKEBOX);
 
   Nosnik(Zaklecia plugin, Ksiega ksiega) {
     this.ksiega = ksiega;
+    this.plugin = plugin;
     this.klucz = new NamespacedKey(plugin, "nosnik");
     this.kluczSlotu = new NamespacedKey(plugin, "slot_zaklec");
+    this.kluczLewej = new NamespacedKey(plugin, "lewa_zaklec");
   }
 
   boolean jest(ItemStack i) {
@@ -67,6 +72,12 @@ final class Nosnik implements Listener {
     else p.getPersistentDataContainer().set(kluczSlotu, PersistentDataType.INTEGER, s);
   }
 
+  boolean lewaUzywana(Player p) { return p.getPersistentDataContainer().has(kluczLewej, PersistentDataType.BYTE); }
+  void ustawLewa(Player p, boolean u) {
+    if (u) p.getPersistentDataContainer().set(kluczLewej, PersistentDataType.BYTE, (byte) 1);
+    else p.getPersistentDataContainer().remove(kluczLewej);
+  }
+
   /** @return komunikat dla gracza (co sie stalo). */
   String przypisz(Player p, String id, boolean prawa) {
     PlayerInventory inv = p.getInventory();
@@ -76,10 +87,11 @@ final class Nosnik implements Listener {
         if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
         inv.setItemInOffHand(null);
       }
-      if (id == null) { inv.setItemInOffHand(null); return "§7Lewa dłoń jest pusta."; }
+      if (id == null) { inv.setItemInOffHand(null); ustawLewa(p, false); return "§7Lewa dłoń jest pusta."; }
       Ksiega.Zaklecie z = ksiega.poId.get(id);
       if (z == null) return "§cNieznane zaklęcie: " + id;
       inv.setItemInOffHand(zrob(z));
+      ustawLewa(p, true);
       return "§f" + z.nazwa() + " §7w lewej dłoni.";
     }
     // prawa: jeden nosnik w pasku/plecaku naraz — stary znika, nowy wchodzi w jego miejsce albo w wolny slot
@@ -133,7 +145,10 @@ final class Nosnik implements Listener {
 
   @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void wyrzucenie(PlayerDropItemEvent e) {
-    if (jest(e.getItemDrop().getItemStack())) { e.setCancelled(true); odmowa(e.getPlayer()); }
+    if (!jest(e.getItemDrop().getItemStack())) return;
+    e.setCancelled(true);   // Q to klawisz menu — bez komunikatu; klient przewidzial wyrzucenie, wiec odswiezamy slot
+    Player p = e.getPlayer();
+    org.bukkit.Bukkit.getScheduler().runTask(plugin, p::updateInventory);
   }
 
   @EventHandler

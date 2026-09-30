@@ -37,6 +37,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Nosnik nosnik;
   private Ulubione ulubione;
   private Rzucanie rzucanie;
+  private Wybor wybor;
 
   @Override
   public void onDisable() { if (rzucanie != null) rzucanie.wylacz(); }
@@ -52,6 +53,9 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     getServer().getPluginManager().registerEvents(rzucanie, this);
     getServer().getPluginManager().registerEvents(nosnik, this);
     getServer().getPluginManager().registerEvents(ulubione, this);
+    wybor = new Wybor(this, ksiega, nosnik, ulubione, rzucanie);
+    rzucanie.ustawWybor(wybor);
+    getServer().getPluginManager().registerEvents(wybor, this);
     if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione).register();
     getLogger().info("zaklecia: " + ksiega.poId.keySet());
   }
@@ -66,7 +70,11 @@ public final class Zaklecia extends JavaPlugin implements Listener {
       // E: klawisz Q (MenuKey wola 'zaklecia q <gracz>'): z Shiftem okno ulubionych, bez — hub jak dotad
       Player p = getServer().getPlayerExact(a[1]);
       if (p == null) { s.sendMessage("Brak gracza " + a[1]); return true; }
-      String k = getConfig().getString(p.isSneaking() ? "klawisz-q.z-shiftem" : "klawisz-q.zwykle", "dm open hub_glowne %gracz%");
+      // MenuKey przechwytuje pakiet Q, a klient juz "wyrzucil" przedmiot z reki (przewidywanie) — odswiez slot
+      getServer().getScheduler().runTask(this, p::updateInventory);
+      // Shift+Q = szybki wybor (pasek, wlacz/wylacz); Q przy otwartym pasku zamyka go; samo Q = hub
+      if (p.isSneaking() || wybor.otwarty(p)) { wybor.przelacz(p); return true; }
+      String k = getConfig().getString("klawisz-q.zwykle", "dm open hub_glowne %gracz%");
       getServer().dispatchCommand(getServer().getConsoleSender(), k.replace("%gracz%", p.getName()));
       return true;
     }
@@ -94,7 +102,8 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private boolean wDloni(Player p, String reka, String z) {
     ItemStack i = reka.equals("lewa") ? p.getInventory().getItemInOffHand() : p.getInventory().getItemInMainHand();
     Ksiega.Zaklecie zak = ksiega.w(i);
-    return zak != null && (z.equals("dowolne") || zak.id().equals(z));
+    // w trakcie rzucania liczy sie tylko AKTYWNA dlon (LPM/PPM osobno) — dzwieki i gesty tylko rzucajacej reki
+    return zak != null && (z.equals("dowolne") || zak.id().equals(z)) && rzucanie.aktywna(p, !reka.equals("lewa"));
   }
 
   private static String zasob(MythicLineConfig cfg) {
