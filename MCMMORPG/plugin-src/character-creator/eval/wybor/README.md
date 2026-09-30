@@ -27,3 +27,10 @@ okno z poprzedniej sesji zostaje w `bot.dialog` — zeruj przed PPM; Paper ma th
 
 **Okno startera Chowancow** (inny plugin) przychodzi kilka sekund po wybraniu postaci bez chowanca i
 ZASTEPUJE otwarte wtedy okno (np. liste z menu Q) — `op.js` najpierw je zamyka ("Pozniej").
+
+## Po scaleniu (cc-naprawa, 30.09)
+
+`pelny.sh` — cala regresja na klonie (sciezki joba 2f21747c — przepisz): jar z build/libs (JEDEN), evale WYBOR
+i KREATORA (eval/scena), na koncu termin.js z cofnieciem daty w koszu i restartem. Dane testowe: Elwen (poz. 15)
+i Morth sa odtwarzane droga gracza, jesli ich brak. `spacja.js`: Spacja raz w kreatorze i w wyborze + LPM bez
+komunikatu o bieglosci. Dzwiek wyboru profilu = sound_effect id 1256 (mineflayer zle go nazywa).
