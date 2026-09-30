@@ -457,15 +457,12 @@ public final class CharacterSelect {
     private void showText(SceneView view) {
       view.topBar(Component.text("Wybierz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
       view.list(sideList(view));
-      int n = count(view);
-      int pos = Math.floorMod(index, n) + 1;
-      String nav = n > 1 ? pos + "/" + n : null;
       Extra extra = extraAt(view);
       if (extra == Extra.NEW) {
         view.card(Component.text("+ Nowa postać", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true)
             .append(Component.newline()).append(Component.newline())
             .append(Component.text("Wybierz rasę i klasę, nadaj imię i ruszaj w drogę.", NamedTextColor.WHITE)));
-        view.hint(CreatorFlow.hint("LPM", "Stwórz postać", "A/D", nav == null ? "" : nav, "PPM", "Lista"));
+        view.hint(CreatorFlow.hint("LPM", "Stwórz postać", "A/D", "Przeglądaj", "PPM", "Lista i zarządzanie"));
         return;
       }
       if (extra == Extra.MANAGE) {
@@ -477,7 +474,7 @@ public final class CharacterSelect {
                 NamedTextColor.WHITE))
             .append(inTrash > 0 ? Component.newline().append(Component.newline())
                 .append(Component.text("W koszu: " + SelectOrder.characters(inTrash), MUTED)) : Component.empty()));
-        view.hint(CreatorFlow.hint("LPM", "Usuń / kosz", "A/D", nav == null ? "" : nav, "PPM", "Lista"));
+        view.hint(CreatorFlow.hint("LPM", "Usuń / kosz", "A/D", "Przeglądaj", "PPM", "Lista i zarządzanie"));
         return;
       }
       Entry e = shownEntry(view);
@@ -487,9 +484,9 @@ public final class CharacterSelect {
       CreatorConfig.RaceOption race = e.record() == null ? null : config.races().get(e.record().raceId());
       CreatorConfig.ClassOption clazz = e.record() == null ? null : config.classes().get(e.record().classId());
       view.card(card(e, race, clazz, e.id().equals(lastUsedId), false));
-      view.hint(nav != null
-          ? CreatorFlow.hint("LPM/Spacja", "Graj", "A/D", "Postać " + nav, "PPM", "Lista")
-          : CreatorFlow.hint("LPM/Spacja", "Graj", "PPM", "Lista"));
+      // Licznik tylko po postaciach — "Nowa postac" i "Usun postacie" to nie postacie.
+      String nav = (Math.floorMod(index, count(view)) + 1) + "/" + entries.size();
+      view.hint(CreatorFlow.hint("LPM/Spacja", "Graj", "A/D", "Postać " + nav, "PPM", "Lista i zarządzanie"));
     }
 
     /** Kadr rasy i podglad postaci (z prawdziwym ekwipunkiem) — bez sciemnienia. */
