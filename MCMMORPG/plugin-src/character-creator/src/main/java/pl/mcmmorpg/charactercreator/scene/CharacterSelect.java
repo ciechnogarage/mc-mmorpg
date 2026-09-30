@@ -61,6 +61,7 @@ public final class CharacterSelect {
   private static final ZoneId ZONE = ZoneId.of("Europe/Warsaw");
   private static final TextColor MUTED = NamedTextColor.GRAY;
   private static final int TILE_WIDTH = 300;
+  private static final long AUTO_LIST_DELAY_TICKS = 30L;
 
   private final Plugin plugin;
   private final Logger logger;
@@ -191,7 +192,7 @@ public final class CharacterSelect {
 
   private List<Entry> entries(ProfileListImpl list) {
     List<Entry> out = new ArrayList<>();
-    for (PlayerProfile p : list.getProfiles()) {
+    for (PlayerProfile p : profiles(list)) {
       if (p instanceof PlayerProfileImpl impl && !trash.isTrashed(impl.getUniqueId())) {
         out.add(entry(impl));
       }
@@ -199,6 +200,25 @@ public final class CharacterSelect {
     // STALA kolejnosc: tak, jak profile leza w MMOProfiles (kolejnosc zakladania). Nie sortujemy
     // po "ostatnio grana" — postac nie moze skakac po liscie miedzy wejsciami.
     return out;
+  }
+
+  /**
+   * Kopia listy profili. Zlapane na klonie 30.09: przy wejsciu MMOProfiles jeszcze dopisuje
+   * profile (inny watek), a przegladanie zywej listy z czytaniem pliku poziomu dla kazdej postaci
+   * trwalo na tyle dlugo, ze lecial ConcurrentModificationException i scena sie nie otwierala.
+   * Kopiujemy szybko, a kolizje przy samym kopiowaniu ponawiamy.
+   */
+  private static List<PlayerProfile> profiles(ProfileListImpl list) {
+    for (int attempt = 0; ; attempt++) {
+      try {
+        return new ArrayList<>(list.getProfiles());
+      } catch (java.util.ConcurrentModificationException ex) {
+        if (attempt >= 4) {
+          throw ex;
+        }
+        Thread.onSpinWait();
+      }
+    }
   }
 
   private Entry entry(PlayerProfileImpl impl) {
@@ -311,7 +331,14 @@ public final class CharacterSelect {
         case MANAGE -> manage(view, null);
         default -> {
           if (settings.listFrom() > 0 && entries.size() >= settings.listFrom()) {
-            grid(view);
+            // Z opoznieniem: scena otwiera sie tuz po zmianie swiata (creator_limbo), a klient
+            // pokazuje wtedy jeszcze ekran ladowania terenu. Okno wyslane w tej chwili potrafi
+            // zniknac razem z nim. 30 tickow — gracz najpierw widzi swoja postac, potem liste.
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+              if (!view.isClosed() && view.controller() == this) {
+                grid(view);
+              }
+            }, AUTO_LIST_DELAY_TICKS);
           }
         }
       }
