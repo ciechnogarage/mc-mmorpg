@@ -1,0 +1,15 @@
+  flyover:
+    enabled: true
+    world: 'world'
+    # pora dnia na czas lotu (tylko dla gracza); -1 = czas swiata
+    time: 1000
+    # ile tickow ekran zostaje czarny po przeniesieniu do swiata gry (wczytanie terenu)
+    hold-ticks: 40
+    look: { x: 149.5, y: 99.0, z: 197.5 }
+    title: '&6&l{imie}'
+    subtitle: '&7Twoja droga zaczyna się tutaj'
+    path:
+      - { x: 222.5, y: 96.0, z: 160.5 }
+      - { x: 196.5, y: 104.0, z: 178.5, ticks: 55 }
+      - { x: 176.5, y: 108.0, z: 194.5, ticks: 50 }
+      - { x: 163.5, y: 104.0, z: 203.5, ticks: 45 }
