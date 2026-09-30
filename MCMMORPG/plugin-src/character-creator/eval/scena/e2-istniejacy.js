@@ -45,7 +45,7 @@ async function utworz(bot, name, r, etyk) {
     await s.press(bot, 'SPACJA', 600)
     d = await s.waitDialog(bot, /Wszystkie klasy/)
     const przyciski = h.dialogButtons(d).map(b => b.label)
-    r.assert(!!d && przyciski.length === 17, 'Spacja: siatka 16 klas + Wroc', String(przyciski.length))
+    r.assert(!!d && przyciski.length === 21, 'Spacja: siatka 4 naglowki ras + 16 klas + Wroc', String(przyciski.length))
     await h.clickDialog(bot, /^Lisz$/)
     await sleep(2500)
     await s.lpm(bot)

@@ -285,14 +285,18 @@ public final class CreatorFlow {
               java.time.Duration.ofMillis(stayTicks * 50L), java.time.Duration.ofMillis(400))));
     }
 
+    private Component normalHint(SceneView view) {
+      return outcome.mustCreate(view)
+          ? hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej")
+          : hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej", "PPM", "Wróć");
+    }
+
     /** Pelne odswiezenie: kadr rasy, postac, oba panele, pasek i podpowiedz. */
     private void showRace(SceneView view) {
       view.point(race().id());
       view.topBar(raceStrip());
       // Przy GUI 4 (1080p) action bar miesci ok. 80 znakow — stad krotkie etykiety.
-      view.hint(outcome.mustCreate(view)
-          ? hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej")
-          : hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej", "PPM", "Wróć"));
+      view.hint(normalHint(view));
       showClass(view);
     }
 
@@ -460,14 +464,16 @@ public final class CreatorFlow {
       view.uiSound("back");
       Player player = view.player();
       if (outcome.mustCreate(view)) {
-        if (player != null) {
-          player.showTitle(net.kyori.adventure.title.Title.title(Component.empty(),
-              Component.text("Najpierw stwórz postać — ", NamedTextColor.YELLOW)
-                  .append(Component.text("[LPM] ", NamedTextColor.GOLD))
-                  .append(Component.text("Dalej", NamedTextColor.WHITE)),
-              net.kyori.adventure.title.Title.Times.times(java.time.Duration.ZERO,
-                  java.time.Duration.ofMillis(1500), java.time.Duration.ofMillis(400))));
-        }
+        // Na chwile ZAMIAST podpowiedzi na dole — duzy tytul nachodzil na karte klasy (recenzja 30.09).
+        view.hint(Component.text("Najpierw stwórz postać  ", NamedTextColor.YELLOW)
+            .append(Component.text("[LPM] ", NamedTextColor.GOLD))
+            .append(Component.text("Dalej", NamedTextColor.WHITE)));
+        org.bukkit.Bukkit.getScheduler().runTaskLater(
+            org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(CreatorFlow.class), () -> {
+              if (!view.isClosed() && view.controller() == this) {
+                view.hint(normalHint(view));
+              }
+            }, 60L);
         return;
       }
       if (menu == null || player == null) {
@@ -507,13 +513,21 @@ public final class CreatorFlow {
       List<CreatorConfig.RaceOption> rs = races();
       List<CreatorConfig.ClassOption> cs = classes();
       List<SceneMenu.Button> buttons = new ArrayList<>();
+      // Pierwszy rzad = naglowki kolumn (rasy). Linia nad siatka nie trafiala w kolumny
+      // (recenzja 30.09); klik w naglowek niczego nie wybiera — okno wraca bez zmian.
+      for (CreatorConfig.RaceOption r : rs) {
+        buttons.add(new SceneMenu.Button(Component.text("▼ ", NamedTextColor.GRAY)
+            // &8 (Nieumarly) na szarym przycisku wygladal na wylaczony — rozjasniony do &7.
+            .append(legacy(r.display().replaceFirst("^&8", "&7")).decoration(TextDecoration.BOLD, true)),
+            Component.text("Kolumna rasy: " + plain(r.display())), () -> onJump(view)));
+      }
       for (int ci = 0; ci < cs.size(); ci++) {
         for (int ri = 0; ri < rs.size(); ri++) {
           CreatorConfig.RaceOption r = rs.get(ri);
           CreatorConfig.ClassOption c = cs.get(ci);
           int targetRace = ri;
           int targetClass = ci;
-          Component tip = Component.text(plain(r.display()) + " · " + plain(c.display()));
+          Component tip = Component.text(plain(r.display()) + " · " + plain(c.display()), NamedTextColor.WHITE);
           Component role = roleLine(c, r);
           if (role != null) {
             tip = tip.append(Component.newline()).append(role);
@@ -528,14 +542,7 @@ public final class CreatorFlow {
         }
       }
       buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> { }));
-      Component header = Component.empty();
-      for (int ri = 0; ri < rs.size(); ri++) {
-        if (ri > 0) {
-          header = header.append(Component.text("   ·   ", NamedTextColor.DARK_GRAY));
-        }
-        header = header.append(legacy(rs.get(ri).display()));
-      }
-      grid.show(player, Component.text("Wszystkie klasy", NamedTextColor.GOLD), header, buttons,
+      grid.show(player, Component.text("Wszystkie klasy", NamedTextColor.GOLD), null, buttons,
           Math.max(1, rs.size()), GridDialog.NARROW);
     }
 
