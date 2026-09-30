@@ -9,35 +9,40 @@ model trzyma sie jak narzedzie (parent handheld / handheld_mace) - inne (ksiazka
 """
 import argparse, json, math, os, re, sys, zipfile
 
-# typ MMOItems -> (zamach whack|stab|none, czas w tickach, skala trzymania lub None)
-# Czas: vanilla 6. Lzejsza bron szybciej (4-5), ciezka wolniej (10-12). Skala: rozmiar w dloni (1 = vanilla).
+# FEELING BRONI: typ MMOItems -> ustawienia. Rodzaj obrazen: ciete (ostrze tnie), klute (grot/szpic kluje),
+# obuchowe (tepa bron miazdzy). Waga: czas zamachu (vanilla 6 tickow), ladowanie = minimalne naladowanie ciosu (ciezka
+# bron nie da sie "klikac"), ciezka = nizszy, glebszy dzwiek trafienia. zasieg = max zasieg ciosu (vanilla 3 bloki).
+# garda = PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat, opoznienie w s, spowolnienie ruchu przy gardzie).
+# wzor = kopia zestawu vanillowej broni (IRON_SPEAR: pchniecie trafiajace wszystko w linii, zasieg 2-4,5, szarza PPM).
+G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 TYPY = {
-    'SWORD':           ('whack', 6,  None),
-    'LONG_SWORD':      ('whack', 7,  None),
-    'KATANA':          ('whack', 5,  None),
-    'AXE':             ('whack', 8,  None),
-    'GREATSWORD':      ('whack', 10, 1.30),
-    'GREATAXE':        ('whack', 10, 1.30),
-    'HALBERD':         ('whack', 10, 1.30),
-    'LANCE':           ('stab',  8,  1.30),
-    'DAGGER':          ('stab',  4,  0.80),
-    'THRUSTING_SWORD': ('stab',  5,  None),
-    'WHIP':            ('whack', 7,  None),
-    'WAND':            ('stab',  5,  0.90),
-    'STAFF':           ('stab',  7,  1.25),
-    'GREATSTAFF':      ('stab',  9,  1.40),
-    'TOME':            ('stab',  5,  None),
-    'TALISMAN':        ('stab',  5,  None),
-    'FILAKTERIUM':     ('stab',  5,  None),
-    'HAMMER':          ('whack', 8,  None),
-    'GREATHAMMER':     ('whack', 12, 1.30),
-    'SIERP':           ('whack', 5,  None),
-    'KOSA':            ('whack', 10, 1.40),
-    'SHIELD':          ('whack', 7,  None),
-    'GAUNTLET':        ('stab',  4,  None),
+    'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'garda': G_MIECZ},
+    'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'garda': G_MIECZ},
+    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}},
+    'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6},
+    'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
+                        'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
+    'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8},
+    'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR'},
+    'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
+    'SPEAR':           {'rodzaj': 'klute'},   # materialy *_SPEAR maja juz caly vanillowy zestaw wloczni
+    'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6},
+    'THRUSTING_SWORD': {'zamach': 'stab',  'czas': 5,  'rodzaj': 'klute', 'garda': G_MIECZ},
+    'WHIP':            {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete'},
+    'WAND':            {'zamach': 'stab',  'czas': 5,  'skala': 0.90},
+    'STAFF':           {'zamach': 'stab',  'czas': 7,  'skala': 1.25},
+    'GREATSTAFF':      {'zamach': 'whack', 'czas': 9,  'skala': 1.40, 'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'zasieg': 3.3},
+    'TOME':            {'zamach': 'stab',  'czas': 5},
+    'TALISMAN':        {'zamach': 'stab',  'czas': 5},
+    'FILAKTERIUM':     {'zamach': 'stab',  'czas': 5},
+    'HAMMER':          {'zamach': 'whack', 'czas': 8,  'rodzaj': 'obuchowe', 'ladowanie': 0.6},
+    'GREATHAMMER':     {'zamach': 'whack', 'czas': 12, 'skala': 1.30, 'rodzaj': 'obuchowe', 'ciezka': True, 'ladowanie': 0.9},
+    'SIERP':           {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'zasieg': 2.8},
+    'KOSA':            {'zamach': 'whack', 'czas': 10, 'skala': 1.40, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.5},
+    'SHIELD':          {'zamach': 'whack', 'czas': 7,  'rodzaj': 'obuchowe'},
+    'GAUNTLET':        {'zamach': 'stab',  'czas': 4,  'rodzaj': 'obuchowe'},
 }
-# SPEAR, BOW, CROSSBOW, GREATBOW, MUSKET celowo poza tabela: wlocznie (IRON_SPEAR itd.) maja wlasny vanillowy
-# zestaw (pchniecie + szarza), luki i kusze - animacje naciagania. Plugin ich nie rusza.
+# BOW, CROSSBOW, GREATBOW, MUSKET celowo poza tabela (vanillowe naciaganie). Plugin ich nie rusza.
 
 PRZESTRZEN = 'bron'
 # punkt chwytu: lewy dolny rog tekstury 16x16 (rekojesc narzedzi i broni vanilli), wzgledem srodka modelu
@@ -117,7 +122,8 @@ def main():
     materialy = set()
     pominiete = {}
     modele_skal = {}  # skala -> set materialow
-    for typ, (_, _, s) in TYPY.items():
+    for typ, u in TYPY.items():
+        s = u.get('skala')
         if s is None:
             continue
         for m in sorted(materialy_typu(a.plugins, typ)):
@@ -149,14 +155,19 @@ def main():
             n += 1
 
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
-             '# typ MMOItems -> zamach (whack|stab|none), czas (ticki), skala = model trzymania <przestrzen>:<skala>/<material>',
+             '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
              'przestrzen-modeli: %s' % PRZESTRZEN, 'typy:']
-    for typ, (zam, czas, s) in TYPY.items():
+    for typ, u in TYPY.items():
         linie.append('  %s:' % typ)
-        linie.append('    zamach: %s' % zam)
-        linie.append('    czas: %d' % czas)
-        if s is not None:
-            linie.append('    skala: %s' % skala_nazwa(s))
+        for k in ('zamach', 'czas', 'rodzaj', 'ladowanie', 'zasieg', 'wzor'):
+            if k in u:
+                linie.append('    %s: %s' % (k, u[k]))
+        if u.get('ciezka'):
+            linie.append('    ciezka: true')
+        if 'skala' in u:
+            linie.append('    skala: %s' % skala_nazwa(u['skala']))
+        if 'garda' in u:
+            linie.append('    garda: {%s}' % ', '.join('%s: %s' % kv for kv in u['garda'].items()))
     linie.append('materialy-z-modelami:')
     linie += ['  - %s' % m for m in sorted(materialy)]
     os.makedirs(a.out, exist_ok=True)

@@ -1,45 +1,73 @@
 # WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient 1.21.11) - nie edytowac recznie.
-# typ MMOItems -> zamach (whack|stab|none), czas (ticki), skala = model trzymania <przestrzen>:<skala>/<material>
+# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>
 przestrzen-modeli: bron
 typy:
   SWORD:
     zamach: whack
     czas: 6
+    rodzaj: ciete
+    garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
   LONG_SWORD:
     zamach: whack
     czas: 7
+    rodzaj: ciete
+    garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
   KATANA:
     zamach: whack
     czas: 5
+    rodzaj: ciete
+    garda: {redukcja: 0.3, kat: 90, opoznienie: 0.1, spowolnienie: 0.6}
   AXE:
     zamach: whack
     czas: 8
+    rodzaj: ciete
+    ladowanie: 0.6
   GREATSWORD:
     zamach: whack
     czas: 10
+    rodzaj: ciete
+    ladowanie: 0.8
+    zasieg: 3.3
+    ciezka: true
     skala: s130
+    garda: {redukcja: 0.55, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
   GREATAXE:
     zamach: whack
     czas: 10
+    rodzaj: ciete
+    ladowanie: 0.8
+    ciezka: true
     skala: s130
   HALBERD:
-    zamach: whack
-    czas: 10
+    zamach: stab
+    czas: 8
+    rodzaj: klute
+    wzor: IRON_SPEAR
+    ciezka: true
     skala: s130
   LANCE:
     zamach: stab
     czas: 8
+    rodzaj: klute
+    wzor: IRON_SPEAR
     skala: s130
+  SPEAR:
+    rodzaj: klute
   DAGGER:
     zamach: stab
     czas: 4
+    rodzaj: klute
+    zasieg: 2.6
     skala: s080
   THRUSTING_SWORD:
     zamach: stab
     czas: 5
+    rodzaj: klute
+    garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
   WHIP:
     zamach: whack
     czas: 7
+    rodzaj: ciete
   WAND:
     zamach: stab
     czas: 5
@@ -49,8 +77,11 @@ typy:
     czas: 7
     skala: s125
   GREATSTAFF:
-    zamach: stab
+    zamach: whack
     czas: 9
+    rodzaj: obuchowe
+    ladowanie: 0.6
+    zasieg: 3.3
     skala: s140
   TOME:
     zamach: stab
@@ -64,23 +95,36 @@ typy:
   HAMMER:
     zamach: whack
     czas: 8
+    rodzaj: obuchowe
+    ladowanie: 0.6
   GREATHAMMER:
     zamach: whack
     czas: 12
+    rodzaj: obuchowe
+    ladowanie: 0.9
+    ciezka: true
     skala: s130
   SIERP:
     zamach: whack
     czas: 5
+    rodzaj: ciete
+    zasieg: 2.8
   KOSA:
     zamach: whack
     czas: 10
+    rodzaj: ciete
+    ladowanie: 0.8
+    zasieg: 3.5
+    ciezka: true
     skala: s140
   SHIELD:
     zamach: whack
     czas: 7
+    rodzaj: obuchowe
   GAUNTLET:
     zamach: stab
     czas: 4
+    rodzaj: obuchowe
 materialy-z-modelami:
   - BAMBOO
   - BLAZE_ROD
