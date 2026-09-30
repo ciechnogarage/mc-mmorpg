@@ -38,7 +38,7 @@ Zmierzone na klonie 30.09 (`qa/mechanika.sh`): garda miecza 6 → 4,0 HP bez / 2
 celu na 1 bloku, trafia dwa w linii na 3 i 4 blokach; młot dwuręczny nie wyprowadza ciosu 0,6 s po poprzednim
 (miecz tak); szarża halabardą w sprincie trafia; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu.
 
-Poza pluginem celowo: **SPEAR** (materiały `*_SPEAR` mają vanillowe pchnięcie i szarżę), **BOW / CROSSBOW /
+Poza pluginem celowo: zamach i PPM **SPEAR** (materiały `*_SPEAR` mają vanillowe pchnięcie i szarżę; plugin daje im tylko efekt trafienia), **BOW / CROSSBOW /
 GREATBOW / MUSKET** (animacje naciągania). Model trzymania dostaje tylko przedmiot z modelem domyślnym materiału —
 model z Nexo/MMOItems (`model:`) zostaje. Materiały bez modelu „narzędzia” (END_ROD, książki, łańcuch) są pomijane.
 
@@ -47,7 +47,7 @@ model z Nexo/MMOItems (`model:`) zostaje. Materiały bez modelu „narzędzia”
 - `generuj.py` — źródło prawdy (tabela `TYPY`): pisze `wynik/config.yml` i `wynik/pack/assets/bron/` (materiały
   zbiera z `MMOItems/item/<typ>.yml` serwera, transformacje rąk z client.jar).
 - Plugin poprawia przedmiot, gdy trafia do ręki (wejście, zmiana slotu, zamiana rąk, klik/przeciąganie, podniesienie)
-  i przeglądem obu rąk co 2 s. `ItemBuildEvent` MMOItems 6.10 jest martwy (nikt go nie wywołuje).
+  i przeglądem obu rąk co 10 ticków. `ItemBuildEvent` MMOItems 6.10 jest martwy (nikt go nie wywołuje).
 - `/animacjebroni sprawdz <gracz>` — typ, zamach i model z głównej ręki; `/animacjebroni reload`.
 
 ## Zmiana / test / wdrożenie
