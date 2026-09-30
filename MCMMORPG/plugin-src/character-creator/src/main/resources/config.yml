@@ -327,16 +327,13 @@ test-wejscie:
   enabled: false
 
 # ---------------------------------------------------------------------------------------------
-# WYBOR POSTACI (scena wyboru, lista pod PPM i w menu Q, zarzadzanie, kosz) — 2026-09-30
+# WYBOR POSTACI (scena wyboru, lista pod PPM i w menu Q, zarzadzanie) — 2026-09-30; kosz usuniety 2026-10-01
 # ---------------------------------------------------------------------------------------------
 wybor-postaci:
   # Od ilu aktywnych postaci lista (kafelki, klik = graj) otwiera sie sama po wejsciu do sceny.
   # 0 = nigdy (lista zawsze pod PPM).
   lista-od: 6
-  # Ile dni postac lezy w koszu, zanim zniknie naprawde (usuwana przy nastepnym wejsciu
-  # wlasciciela do wyboru postaci). Do tego czasu zajmuje miejsce na postac.
-  kosz-dni: 7
-  # Od ktorego poziomu usuniecie (do kosza i na zawsze) wymaga wpisania imienia postaci.
+  # Od ktorego poziomu usuniecie (zawsze ostateczne) wymaga wpisania imienia postaci.
   imie-od-poziomu: 10
   # Napis "Miejsce" na karcie. Najpierw region WorldGuard z greeting-title, potem nazwa mapy
   # MythicDungeons (swiat <mapa>_<n>), na koncu te wpisy: nazwa swiata (regex) -> napis.
@@ -408,6 +405,7 @@ teksty:
     wroc: "Wróć"
     wroc-dymek: "Z powrotem do wyboru rasy i klasy"
   podpowiedz:
+    usun-postac: "Usuń postać"
     dalej: "Dalej"
     graj: "Graj"
     klasa: "Klasa"
@@ -416,10 +414,9 @@ teksty:
     przegladaj: "Przeglądaj"
     rasa: "Rasa"
     stworz: "Stwórz postać"
-    usun: "Usuń / kosz"
     wroc: "Wróć"
   wybor:
-    brak-miejsc: "&eBrak wolnych miejsc na postać — usuń postać albo opróżnij kosz."
+    brak-miejsc-licznik: "&eLimit postaci: {zajete}/{wszystkie} — usuń postać, żeby stworzyć nową."
     grasz-teraz: "&7Grasz teraz postacią {imie}&7."
     juz-grasz: "&eJuż grasz postacią {imie}."
     karta:
@@ -433,45 +430,30 @@ teksty:
       teraz: "teraz"
     kosz:
       blad-usuwania: "&cNie udało się usunąć: {imiona} — zgłoś to administracji."
-      dymek: "Przywróć albo usuń na zawsze"
-      opis: "&fPostacie w koszu zajmują miejsca na postacie ({zajete}/{wszystkie} zajętych). Po terminie znikają na zawsze."
-      przeniesiono: "&aW koszu: {imiona}. Przywrócisz je przez {dni} w „Kosz”."
-      przywroc-zaznaczone: "Przywróć zaznaczone ({ile})"
-      przywrocono: "&aPrzywrócono: {imiona}."
-      pusty: "&7Kosz jest pusty."
-      pusty-dymek: "Kosz jest pusty"
-      tytul: "&6Kosz"
-      usun-na-zawsze: "Usuń na zawsze ({ile})"
       usunieto: "&aUsunięto na zawsze: {imiona}."
-      zostalo: "Zostało {dni} do usunięcia na zawsze"
     lista:
-      brak-miejsc: "&8Brak wolnych miejsc"
+      zarzadzaj-dymek-usun: "Usuń jedną albo kilka postaci naraz"
+      brak-miejsc-licznik: "&8Limit postaci {zajete}/{wszystkie}"
       brak-miejsc-dymek: "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."
-      brak-miejsc-kosz: "Postacie w koszu ({ile}) nadal zajmują miejsca — opróżnij kosz w „Zarządzaj”."
       brak-postaci: "&fNie masz jeszcze postaci — stwórz pierwszą."
       nowa: "&a+ Nowa postać"
       opis: "&fKliknij postać, żeby grać. &6★&f = ostatnio grana."
       opis-w-grze: "&fKliknij postać, żeby od razu nią grać. &a▶&f = grasz teraz."
       tytul: "&6Twoje postacie  &7{zajete}/{wszystkie}"
-      w-koszu: "&7 W koszu: {ile} (nadal zajmują miejsca)."
-      w-koszu-1: "&7 W koszu: {ile} (nadal zajmuje miejsce)."
       wolne-miejsca: "Wolne miejsca: {ile}"
-      wszystkie-w-koszu: "&fNie masz aktywnych postaci. Przywróć je z kosza ({ile}) albo stwórz nową."
       zarzadzaj: "&6Zarządzaj postaciami"
-      zarzadzaj-dymek: "Usuń kilka naraz, kosz, przywracanie"
     nic-nie-zaznaczono: "&eNic nie zaznaczono — kliknij postać na liście."
     nowa:
+      karta-limit: "&c&lLimit postaci: {zajete}/{wszystkie}\n\n&r&fMasz już wszystkie miejsca na postacie. Usuń którąś, żeby stworzyć nową."
       karta: "&a&l+ Nowa postać\n\n&r&fWybierz rasę i klasę, nadaj imię i ruszaj w drogę."
     panel:
-      naglowek: "&fTwoje postacie  &6[A/D]"
+      nowa-limit: "+ Nowa postać (limit)"
+      naglowek-licznik: "&fTwoje postacie &7{zajete}/{wszystkie}  &6[A/D]"
       nowa: "+ Nowa postać"
       usun: "✖ Usuń postacie"
     potwierdz:
-      do-kosza: "&fTrafią do kosza na {dni}. Do tego czasu nadal zajmują miejsca na postacie."
       na-zawsze: "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć."
-      przycisk-do-kosza: "&cPrzenieś do kosza"
       przycisk-na-zawsze: "&cUsuń na zawsze"
-      tytul-do-kosza: "&cPrzenieść do kosza?"
       tytul-na-zawsze: "&cUsunąć na zawsze?"
       wpisz-imie: "Wpisz imię „{imie}” (poziom {poziom})"
       zle-imie: "&cImię „{imie}” się nie zgadza — nic nie usunięto."
@@ -483,12 +465,10 @@ teksty:
     pyta-o-potwierdzenie: "Pyta o potwierdzenie"
     tytul: "&6&lWybierz postać"
     usun:
-      karta: "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Trafią do kosza na {dni} — możesz je stamtąd przywrócić."
-      w-koszu: "&7W koszu: {ile}"
+      karta-na-zawsze: "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Usunięcie jest ostateczne — postać znika razem z ekwipunkiem i postępem."
     zarzadzaj:
+      opis-na-zawsze: "&fKliknij postacie, żeby je zaznaczyć. Usunięcie jest ostateczne ({zajete}/{wszystkie} miejsc zajętych)."
       brak-postaci: "&fNie masz aktywnych postaci."
-      kosz: "Kosz ({ile})"
-      opis: "&fKliknij postacie, żeby je zaznaczyć. Usunięte trafią do kosza na {dni}."
       tytul: "&6Zarządzaj postaciami"
       usun-zaznaczone: "Usuń zaznaczone ({ile})"
 

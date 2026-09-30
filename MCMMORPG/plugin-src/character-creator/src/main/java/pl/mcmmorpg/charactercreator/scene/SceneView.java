@@ -41,6 +41,8 @@ public final class SceneView {
   long busyUntilTick;
   /** Po ilu tickach od otwarcia kamera ma byc juz celem spectatora. */
   long targetReadyTick;
+  /** Tick podpiecia kamery (-1 = niepodpieta) — od niego licza sie ponowienia pakietu kamery. */
+  long aimedTick = -1;
   /**
    * Scena sama zmienia cel kamery — listener przepuszcza wtedy Start/StopSpectating,
    * ktore w kazdej innej sytuacji anuluje.

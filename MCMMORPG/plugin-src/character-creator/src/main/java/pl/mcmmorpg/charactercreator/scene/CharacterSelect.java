@@ -37,7 +37,7 @@ import pl.mcmmorpg.charactercreator.select.SelectSettings;
 import pl.mcmmorpg.charactercreator.select.TrashGuard;
 
 /**
- * Wybor postaci: scena + lista + zarzadzanie + kosz.
+ * Wybor postaci: scena + lista + zarzadzanie.
  *
  * <p><b>Scena.</b> Stoi ostatnio grana postac w scenerii swojej rasy, w swoim PRAWDZIWYM
  * ekwipunku ({@link RealGear}). LPM albo spacja = graj. A/D (albo W/S) = poprzednia / nastepna
@@ -48,10 +48,11 @@ import pl.mcmmorpg.charactercreator.select.TrashGuard;
  * ostatnio grana oznaczona gwiazdka. Ta sama lista jest pod "Zmien postac" w menu Q — wtedy
  * klik zmienia postac od razu, bez sceny ({@link #openList}).
  *
- * <p><b>Zarzadzanie</b>: zaznaczanie wielu postaci naraz i przeniesienie ich do KOSZA. Postac
- * od {@code imie-od-poziomu} wymaga wpisania imienia. Kosz ukrywa postac na
- * {@code kosz-dni}; z kosza mozna przywrocic albo usunac na zawsze. Postac w koszu nadal zajmuje
- * miejsce na postac (MMOProfiles liczy profile, a profil wciaz istnieje) — okna mowia to wprost.
+ * <p><b>Zarzadzanie</b>: zaznaczanie wielu postaci naraz i usuniecie ich NA ZAWSZE (po
+ * potwierdzeniu; postac od {@code imie-od-poziomu} wymaga wpisania imienia). Kosza nie ma —
+ * wlasciciel 01.10: "jak ktos je usuwa, to je usuwa". Kosz zajmowal miejsca na postacie
+ * (profil MMOProfiles dalej istnial), przez co gracz z pelnym koszem nie mogl stworzyc nowej.
+ * Pliki modulow usunietej postaci i tak laduja w {@code CharacterCreator/usuniete/<id>/}.
  *
  * <p>MMOProfiles zostaje magazynem postaci — wybor, tworzenie i usuwanie ida jego API
  * ({@code applyProfile}, {@code createProfile}, {@code removeProfile}).
@@ -92,7 +93,7 @@ public final class CharacterSelect {
   private volatile PlaceNames places;
 
   /** Co otworzyc od razu po wejsciu w scene (klik w liscie z gry: "Zarzadzaj"). */
-  private enum Start { SCENE, LIST, MANAGE, TRASH }
+  private enum Start { SCENE, LIST, MANAGE }
 
   /** Jedna postac: profil MMOProfiles + nasz rekord (null = postac sprzed kreatora) + to, co na karte. */
   private record Entry(PlayerProfileImpl profile, CharacterRecord record, int level, String place) {
@@ -139,7 +140,7 @@ public final class CharacterSelect {
     this.places = new PlaceNames(plugin.getDataFolder().getParentFile(), settings.places());
   }
 
-  /** {@code /cc reload}: nowe {@code wybor-postaci} (lista-od, kosz-dni, imie-od-poziomu, miejsca). */
+  /** {@code /cc reload}: nowe {@code wybor-postaci} (lista-od, imie-od-poziomu, miejsca). */
   public void reload(SelectSettings next) {
     this.settings = next;
     this.places = new PlaceNames(plugin.getDataFolder().getParentFile(), next.places());
@@ -148,7 +149,7 @@ public final class CharacterSelect {
   // --- wejscia -----------------------------------------------------------------------
 
   /**
-   * Otwiera scene wyboru. Gracz BEZ postaci (i z pustym koszem) idzie od razu do kreatora.
+   * Otwiera scene wyboru. Gracz BEZ postaci idzie od razu do kreatora.
    * Gracz W TRAKCIE gry najpierw wychodzi z postaci (jak przy oknie MMOProfiles).
    *
    * @return false, gdy sie nie dalo (brak danych MMOProfiles) — wolajacy moze otworzyc okno MMOProfiles
@@ -200,7 +201,6 @@ public final class CharacterSelect {
     if (list.getCurrent() == null || view != null) {
       return open(player, Start.LIST);
     }
-    purgeExpired(player, list);
     List<Entry> entries = entries(list);
     UUID currentId = list.getCurrent().getUniqueId();
     List<SceneMenu.Button> buttons = new ArrayList<>();
@@ -214,8 +214,7 @@ public final class CharacterSelect {
       buttons.add(new SceneMenu.Button(tileLabel(e, false, playing), tileTooltip(e, playing),
           () -> switchInGame(player, e)).width(tileWidth()));
     }
-    addNewAndManage(player, list, buttons,
-        () -> startCreationFromGame(player), () -> open(player, Start.MANAGE), () -> open(player, Start.TRASH));
+    addNewAndManage(list, buttons, () -> startCreationFromGame(player), () -> open(player, Start.MANAGE));
     buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.zamknij", "Zamknij"), null, () -> { }));
     menu.form(player, listTitle(list), listBody(player, list, true), List.of(), buttons, 2);
     return true;
@@ -260,7 +259,7 @@ public final class CharacterSelect {
   private List<Entry> entries(ProfileListImpl list) {
     List<Entry> out = new ArrayList<>();
     for (PlayerProfile p : profiles(list)) {
-      if (p instanceof PlayerProfileImpl impl && !trash.isTrashed(impl.getUniqueId())) {
+      if (p instanceof PlayerProfileImpl impl) {
         out.add(entry(impl));
       }
     }
@@ -290,16 +289,6 @@ public final class CharacterSelect {
 
   private Entry entry(PlayerProfileImpl impl) {
     return new Entry(impl, store.get(impl.getUniqueId()), level(impl), place(impl));
-  }
-
-  private List<TrashStore.Entry> trashed(Player player, ProfileListImpl list) {
-    List<TrashStore.Entry> out = new ArrayList<>();
-    for (TrashStore.Entry t : trash.byOwner(player.getUniqueId())) {
-      if (list.getProfile(t.profileId()) != null) {
-        out.add(t);
-      }
-    }
-    return out;
   }
 
   private static int indexOf(List<Entry> entries, UUID id) {
@@ -357,9 +346,8 @@ public final class CharacterSelect {
     if (list == null) {
       return false;
     }
-    purgeExpired(player, list);
     List<Entry> entries = entries(list);
-    if (entries.isEmpty() && trashed(player, list).isEmpty()) {
+    if (entries.isEmpty()) {
       createNew(player, list);
       return true;
     }
@@ -373,9 +361,8 @@ public final class CharacterSelect {
     /** Kolejne A/D uniewazniaja zaplanowane odswiezenie kadru. */
     private int sceneToken;
     private UUID lastUsedId;
-    /** Zaznaczone w "Zarzadzaj" / w koszu — trzymane miedzy odswiezeniami okna. */
+    /** Zaznaczone w "Zarzadzaj" — trzymane miedzy odswiezeniami okna. */
     private final java.util.Set<UUID> chosen = new java.util.LinkedHashSet<>();
-    private final java.util.Set<UUID> chosenTrash = new java.util.LinkedHashSet<>();
 
     SelectStep(List<Entry> entries, Start start) {
       this.entries = new ArrayList<>(entries);
@@ -397,11 +384,8 @@ public final class CharacterSelect {
       switch (start) {
         case LIST -> grid(view);
         case MANAGE -> manage(view, null);
-        case TRASH -> trashScreen(view, null);
         default -> {
-          // Wszystkie postacie w koszu: bez listy gracz widzi tylko pusta karte — lista od razu
-          // pokazuje "+ Nowa postac" i "Kosz (n)", zeby mogl przywrocic albo zaczac od nowa.
-          if (entries.isEmpty() || (settings.listFrom() > 0 && entries.size() >= settings.listFrom())) {
+          if (settings.listFrom() > 0 && entries.size() >= settings.listFrom()) {
             // Z opoznieniem: scena otwiera sie tuz po zmianie swiata (creator_limbo), a klient
             // pokazuje wtedy jeszcze ekran ladowania terenu. Okno wyslane w tej chwili potrafi
             // zniknac razem z nim. 30 tickow — gracz najpierw widzi swoja postac, potem liste.
@@ -415,20 +399,25 @@ public final class CharacterSelect {
       }
     }
 
-    /** Dodatkowe miejsca karuzeli A/D za postaciami: nowa postac i usuwanie. */
+    /**
+     * Dodatkowe miejsca karuzeli A/D za postaciami: nowa postac i usuwanie. "Nowa postac" jest
+     * ZAWSZE, takze przy pelnym limicie — wtedy karta mowi wprost "15/15, usun postac". Wczesniej
+     * znikala bez slowa i gracz nie wiedzial, czemu nie moze stworzyc postaci (zgloszenie 01.10).
+     */
     private List<Extra> extras(SceneView view) {
       List<Extra> out = new ArrayList<>();
-      Player player = view.player();
-      ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
-      if (list != null && list.getProfiles().size() < list.getProfileSlots()) {
-        if (Ustawienia.b("wybor.ad-nowa-postac", true)) {
-          out.add(Extra.NEW);
-        }
+      if (Ustawienia.b("wybor.ad-nowa-postac", true) || entries.isEmpty()) {
+        out.add(Extra.NEW);
       }
-      if (Ustawienia.b("wybor.ad-usun-postacie", true) || entries.isEmpty()) {
+      if (Ustawienia.b("wybor.ad-usun-postacie", true) && !entries.isEmpty()) {
         out.add(Extra.MANAGE);
       }
       return out;
+    }
+
+    private ProfileListImpl list(SceneView view) {
+      Player player = view.player();
+      return player == null ? null : ProfileListImpl.getOrNull(player);
     }
 
     private int count(SceneView view) {
@@ -469,18 +458,22 @@ public final class CharacterSelect {
       view.list(sideList(view));
       Extra extra = extraAt(view);
       if (extra == Extra.NEW) {
+        ProfileListImpl list = list(view);
+        if (list != null && list.getProfiles().size() >= list.getProfileSlots()) {
+          view.card(Teksty.t("wybor.nowa.karta-limit", "&c&lLimit postaci: {zajete}/{wszystkie}\n\n&r&fMasz już wszystkie miejsca na postacie. Usuń którąś, żeby stworzyć nową.",
+              "zajete", list.getProfiles().size(), "wszystkie", list.getProfileSlots()));
+          view.hint(CreatorFlow.hint("LPM", Teksty.plain("podpowiedz.usun-postac", "Usuń postać"),
+              "A/D", Teksty.plain("podpowiedz.przegladaj", "Przeglądaj"), "PPM", Teksty.plain("podpowiedz.lista", "Lista i zarządzanie")));
+          return;
+        }
         view.card(Teksty.t("wybor.nowa.karta", "&a&l+ Nowa postać\n\n&r&fWybierz rasę i klasę, nadaj imię i ruszaj w drogę."));
         view.hint(CreatorFlow.hint("LPM", Teksty.plain("podpowiedz.stworz", "Stwórz postać"),
             "A/D", Teksty.plain("podpowiedz.przegladaj", "Przeglądaj"), "PPM", Teksty.plain("podpowiedz.lista", "Lista i zarządzanie")));
         return;
       }
       if (extra == Extra.MANAGE) {
-        int inTrash = trashedCount(view);
-        view.card(Teksty.t("wybor.usun.karta", "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Trafią do kosza na {dni} — możesz je stamtąd przywrócić.",
-                "dni", SelectOrder.days(settings.trashTtl().toDays()))
-            .append(inTrash > 0 ? Component.newline().append(Component.newline())
-                .append(Teksty.t("wybor.usun.w-koszu", "&7W koszu: {ile}", "ile", SelectOrder.characters(inTrash))) : Component.empty()));
-        view.hint(CreatorFlow.hint("LPM", Teksty.plain("podpowiedz.usun", "Usuń / kosz"),
+        view.card(Teksty.t("wybor.usun.karta-na-zawsze", "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Usunięcie jest ostateczne — postać znika razem z ekwipunkiem i postępem."));
+        view.hint(CreatorFlow.hint("LPM", Teksty.plain("podpowiedz.usun-postac", "Usuń postać"),
             "A/D", Teksty.plain("podpowiedz.przegladaj", "Przeglądaj"), "PPM", Teksty.plain("podpowiedz.lista", "Lista i zarządzanie")));
         return;
       }
@@ -527,7 +520,10 @@ public final class CharacterSelect {
     }
 
     private Component sideList(SceneView view) {
-      Component out = Teksty.t("wybor.panel.naglowek", "&fTwoje postacie  &6[A/D]");
+      ProfileListImpl list = list(view);
+      Component out = Teksty.t("wybor.panel.naglowek-licznik", "&fTwoje postacie &7{zajete}/{wszystkie}  &6[A/D]",
+          "zajete", list == null ? entries.size() : list.getProfiles().size(),
+          "wszystkie", list == null ? "?" : list.getProfileSlots());
       int current = Math.floorMod(index, count(view));
       for (int i = 0; i < entries.size(); i++) {
         Entry e = entries.get(i);
@@ -540,15 +536,19 @@ public final class CharacterSelect {
             .append(e.id().equals(lastUsedId) ? Component.text(" ★", NamedTextColor.GOLD) : Component.empty());
       }
       List<Extra> ex = extras(view);
+      boolean full = list != null && list.getProfiles().size() >= list.getProfileSlots();
       for (int k = 0; k < ex.size(); k++) {
         boolean on = entries.size() + k == current;
         boolean isNew = ex.get(k) == Extra.NEW;
+        NamedTextColor color = isNew
+            ? (full ? (on ? NamedTextColor.GRAY : NamedTextColor.DARK_GRAY) : (on ? NamedTextColor.GREEN : NamedTextColor.DARK_GREEN))
+            : (on ? NamedTextColor.RED : NamedTextColor.DARK_RED);
+        String label = isNew
+            ? (full ? Teksty.plain("wybor.panel.nowa-limit", "+ Nowa postać (limit)") : Teksty.plain("wybor.panel.nowa", "+ Nowa postać"))
+            : Teksty.plain("wybor.panel.usun", "✖ Usuń postacie");
         out = out.append(Component.newline())
             .append(Component.text(on ? "▶ " : "   ", NamedTextColor.GOLD))
-            .append(Component.text(isNew ? Teksty.plain("wybor.panel.nowa", "+ Nowa postać") : Teksty.plain("wybor.panel.usun", "✖ Usuń postacie"),
-                on ? (isNew ? NamedTextColor.GREEN : NamedTextColor.RED)
-                    : (isNew ? NamedTextColor.DARK_GREEN : NamedTextColor.DARK_RED))
-                .decoration(TextDecoration.BOLD, on));
+            .append(Component.text(label, color).decoration(TextDecoration.BOLD, on));
       }
       return out;
     }
@@ -637,14 +637,13 @@ public final class CharacterSelect {
         buttons.add(new SceneMenu.Button(tileLabel(e, e.id().equals(lastUsedId), false),
             tileTooltip(e, false), () -> play(view, e)).width(tileWidth()));
       }
-      addNewAndManage(player, list, buttons, () -> startCreation(view), () -> manage(view, null),
-          () -> trashScreen(view, null));
+      addNewAndManage(list, buttons, () -> startCreation(view), () -> manage(view, null));
       buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.wroc-do-sceny", "Wróć do sceny"), null, () -> { }));
       menu.form(player, listTitle(list), listBody(player, list, false), List.of(), buttons, 2);
     }
 
     /**
-     * Zaznaczanie wielu postaci do kosza. Siatka przyciskow-przelacznikow jak w liscie
+     * Zaznaczanie wielu postaci do usuniecia. Siatka przyciskow-przelacznikow jak w liscie
      * ("☐/☑ Imie · poz."), klik przelacza i odswieza okno; akcje w PIERWSZYM rzedzie, zeby byly
      * na widoku bez przewijania nawet przy 15 postaciach. (Pierwsza wersja miala pola wyboru
      * Papera: klient centruje je po dlugosci etykiety — zygzak — a akcje lady pod lista.)
@@ -656,15 +655,14 @@ public final class CharacterSelect {
         return;
       }
       chosen.removeIf(id -> indexOf(entries, id) < 0);
-      List<TrashStore.Entry> inTrash = trashed(player, list);
       List<Component> body = new ArrayList<>();
       if (note != null) {
         body.add(note);
       }
       body.add(entries.isEmpty()
           ? Teksty.t("wybor.zarzadzaj.brak-postaci", "&fNie masz aktywnych postaci.")
-          : Teksty.t("wybor.zarzadzaj.opis", "&fKliknij postacie, żeby je zaznaczyć. Usunięte trafią do kosza na {dni}.",
-              "dni", SelectOrder.days(settings.trashTtl().toDays())));
+          : Teksty.t("wybor.zarzadzaj.opis-na-zawsze", "&fKliknij postacie, żeby je zaznaczyć. Usunięcie jest ostateczne ({zajete}/{wszystkie} miejsc zajętych).",
+              "zajete", list.getProfiles().size(), "wszystkie", list.getProfileSlots()));
       List<SceneMenu.Button> buttons = new ArrayList<>();
       if (!entries.isEmpty()) {
         buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.zarzadzaj.usun-zaznaczone", "Usuń zaznaczone ({ile})", "ile", chosen.size()),
@@ -679,14 +677,10 @@ public final class CharacterSelect {
               if (picked.isEmpty()) {
                 manage(view, Teksty.t("wybor.nic-nie-zaznaczono", "&eNic nie zaznaczono — kliknij postać na liście."));
               } else {
-                confirm(view, picked, false, null);
+                confirm(view, picked, null);
               }
             }).width(tileWidth()));
       }
-      buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.zarzadzaj.kosz", "Kosz ({ile})", "ile", inTrash.size()),
-          inTrash.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.GOLD),
-          inTrash.isEmpty() ? Teksty.t("wybor.kosz.pusty-dymek", "Kosz jest pusty") : Teksty.t("wybor.kosz.dymek", "Przywróć albo usuń na zawsze"),
-          () -> trashScreen(view, null)).width(tileWidth()));
       for (Entry e : entries) {
         boolean on = chosen.contains(e.id());
         buttons.add(new SceneMenu.Button(toggleLabel(e, on), null, () -> {
@@ -703,12 +697,8 @@ public final class CharacterSelect {
       menu.form(player, Teksty.t("wybor.zarzadzaj.tytul", "&6Zarządzaj postaciami"), body, List.of(), buttons, 2);
     }
 
-    /**
-     * Potwierdzenie: lista wybranych, a przy postaciach od {@code imie-od-poziomu} pole na imie.
-     *
-     * @param forever true = usuniecie na zawsze z kosza; false = przeniesienie do kosza
-     */
-    private void confirm(SceneView view, List<Entry> chosen, boolean forever, Component error) {
+    /** Potwierdzenie: lista wybranych, a przy postaciach od {@code imie-od-poziomu} pole na imie. */
+    private void confirm(SceneView view, List<Entry> chosen, Component error) {
       Player player = view.player();
       if (player == null) {
         return;
@@ -725,10 +715,7 @@ public final class CharacterSelect {
             .append(Component.text(e.level() > 0 ? " (poz. " + e.level() + ")" : "", MUTED));
       }
       body.add(names);
-      body.add(forever
-          ? Teksty.t("wybor.potwierdz.na-zawsze", "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć.")
-          : Teksty.t("wybor.potwierdz.do-kosza", "&fTrafią do kosza na {dni}. Do tego czasu nadal zajmują miejsca na postacie.",
-              "dni", SelectOrder.days(settings.trashTtl().toDays())));
+      body.add(Teksty.t("wybor.potwierdz.na-zawsze", "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć."));
       List<DialogInput> inputs = new ArrayList<>();
       List<Entry> needName = new ArrayList<>();
       for (Entry e : chosen) {
@@ -739,140 +726,34 @@ public final class CharacterSelect {
           needName.add(e);
         }
       }
-      Runnable back = forever ? () -> trashScreen(view, null) : () -> manage(view, null);
       List<SceneMenu.Button> buttons = List.of(
-          SceneMenu.Button.submit(forever ? Teksty.t("wybor.potwierdz.przycisk-na-zawsze", "&cUsuń na zawsze")
-              : Teksty.t("wybor.potwierdz.przycisk-do-kosza", "&cPrzenieś do kosza"), null, r -> {
+          SceneMenu.Button.submit(Teksty.t("wybor.potwierdz.przycisk-na-zawsze", "&cUsuń na zawsze"), null, r -> {
                 for (int i = 0; i < needName.size(); i++) {
                   String typed = r == null ? null : r.getText("p" + i);
                   if (!SelectOrder.nameMatches(typed, needName.get(i).name())) {
-                    confirm(view, chosen, forever, Teksty.t("wybor.potwierdz.zle-imie",
+                    confirm(view, chosen, Teksty.t("wybor.potwierdz.zle-imie",
                         "&cImię „{imie}” się nie zgadza — nic nie usunięto.", "imie", needName.get(i).name()));
                     return;
                   }
                 }
-                if (forever) {
-                  purge(view, chosen);
-                } else {
-                  toTrash(view, chosen);
-                }
+                purge(view, chosen);
               }),
-          new SceneMenu.Button(Teksty.t("wybor.przycisk.anuluj", "Anuluj"), null, back));
-      menu.form(player, forever ? Teksty.t("wybor.potwierdz.tytul-na-zawsze", "&cUsunąć na zawsze?")
-          : Teksty.t("wybor.potwierdz.tytul-do-kosza", "&cPrzenieść do kosza?"), body, inputs, buttons, 2);
+          new SceneMenu.Button(Teksty.t("wybor.przycisk.anuluj", "Anuluj"), null, () -> manage(view, null)));
+      menu.form(player, Teksty.t("wybor.potwierdz.tytul-na-zawsze", "&cUsunąć na zawsze?"), body, inputs, buttons, 2);
     }
 
-    private void toTrash(SceneView view, List<Entry> chosen) {
-      Player player = view.player();
-      if (player == null) {
-        return;
-      }
-      List<Entry> before = List.copyOf(entries);
-      Instant now = Instant.now();
-      List<String> names = new ArrayList<>();
-      for (Entry e : chosen) {
-        trash.trash(new TrashStore.Entry(e.id(), player.getUniqueId(), e.name(), now));
-        names.add(e.name());
-        logger.info("Wybor: " + player.getName() + " przenosi do kosza postac " + e.name()
-            + " (profil " + e.id() + ", poz. " + e.level() + ")");
-      }
-      chosen.clear();
-      refresh(view, before);
-      manage(view, Teksty.t("wybor.kosz.przeniesiono", "&aW koszu: {imiona}. Przywrócisz je przez {dni} w „Kosz”.",
-          "imiona", String.join(", ", names), "dni", SelectOrder.days(settings.trashTtl().toDays())));
-    }
-
-    /** Kosz: przywroc albo usun na zawsze — ta sama siatka przelacznikow, akcje w pierwszym rzedzie. */
-    void trashScreen(SceneView view, Component note) {
-      Player player = view.player();
-      ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
-      if (list == null) {
-        return;
-      }
-      List<TrashStore.Entry> inTrash = trashed(player, list);
-      if (inTrash.isEmpty()) {
-        chosenTrash.clear();
-        manage(view, note != null ? note : Teksty.t("wybor.kosz.pusty", "&7Kosz jest pusty."));
-        return;
-      }
-      Instant now = Instant.now();
-      List<Entry> rows = new ArrayList<>();
-      List<Long> daysLeft = new ArrayList<>();
-      for (TrashStore.Entry t : inTrash) {
-        rows.add(entry(list.getProfile(t.profileId())));
-        daysLeft.add(t.daysLeft(now, settings.trashTtl()));
-      }
-      chosenTrash.removeIf(id -> indexOf(rows, id) < 0);
-      List<Component> body = new ArrayList<>();
-      if (note != null) {
-        body.add(note);
-      }
-      body.add(Teksty.t("wybor.kosz.opis", "&fPostacie w koszu zajmują miejsca na postacie ({zajete}/{wszystkie} zajętych). Po terminie znikają na zawsze.",
-          "zajete", list.getProfiles().size(), "wszystkie", list.getProfileSlots()));
-      java.util.function.Supplier<List<Entry>> picked = () -> {
-        List<Entry> out = new ArrayList<>();
-        for (Entry e : rows) {
-          if (chosenTrash.contains(e.id())) {
-            out.add(e);
-          }
-        }
-        return out;
-      };
-      NamedTextColor restoreColor = chosenTrash.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.GREEN;
-      NamedTextColor purgeColor = chosenTrash.isEmpty() ? NamedTextColor.DARK_GRAY : NamedTextColor.RED;
-      List<SceneMenu.Button> buttons = new ArrayList<>();
-      buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.kosz.przywroc-zaznaczone", "Przywróć zaznaczone ({ile})", "ile", chosenTrash.size()),
-          restoreColor), null, () -> {
-            List<Entry> sel = picked.get();
-            if (sel.isEmpty()) {
-              trashScreen(view, Teksty.t("wybor.nic-nie-zaznaczono", "&eNic nie zaznaczono — kliknij postać na liście."));
-              return;
-            }
-            List<Entry> before = List.copyOf(entries);
-            List<String> names = new ArrayList<>();
-            for (Entry e : sel) {
-              trash.restore(e.id());
-              names.add(e.name());
-              logger.info("Wybor: " + player.getName() + " przywraca z kosza " + e.name() + " (" + e.id() + ")");
-            }
-            chosenTrash.clear();
-            refresh(view, before);
-            trashScreen(view, Teksty.t("wybor.kosz.przywrocono", "&aPrzywrócono: {imiona}.", "imiona", String.join(", ", names)));
-          }).width(tileWidth()));
-      buttons.add(new SceneMenu.Button(Component.text(Teksty.plain("wybor.kosz.usun-na-zawsze", "Usuń na zawsze ({ile})", "ile", chosenTrash.size()),
-          purgeColor), Teksty.t("wybor.pyta-o-potwierdzenie", "Pyta o potwierdzenie"), () -> {
-            List<Entry> sel = picked.get();
-            if (sel.isEmpty()) {
-              trashScreen(view, Teksty.t("wybor.nic-nie-zaznaczono", "&eNic nie zaznaczono — kliknij postać na liście."));
-              return;
-            }
-            confirm(view, sel, true, null);
-          }).width(tileWidth()));
-      for (int i = 0; i < rows.size(); i++) {
-        Entry e = rows.get(i);
-        boolean on = chosenTrash.contains(e.id());
-        buttons.add(new SceneMenu.Button(toggleLabel(e, on, false)
-            .append(Component.text(" · " + SelectOrder.days(daysLeft.get(i)), NamedTextColor.GOLD)),
-            Teksty.t("wybor.kosz.zostalo", "Zostało {dni} do usunięcia na zawsze", "dni", SelectOrder.days(daysLeft.get(i))), () -> {
-              if (!chosenTrash.remove(e.id())) {
-                chosenTrash.add(e.id());
-              }
-              trashScreen(view, null);
-            }).width(tileWidth()));
-      }
-      buttons.add(new SceneMenu.Button(Teksty.t("wybor.przycisk.wroc", "Wróć"), null, () -> {
-        chosenTrash.clear();
-        manage(view, null);
-      }));
-      menu.form(player, Teksty.t("wybor.kosz.tytul", "&6Kosz"), body, List.of(), buttons, 2);
-    }
-
+    /**
+     * Usuniecie na zawsze. Po nim scena odswieza sie OD RAZU (lista po lewej, karuzela A/D):
+     * wczesniej po usunieciu wszystkich postaci panel zostawal stary, a A/D przy jednym miejscu
+     * nic nie robilo — "+ Nowa postac" bylo widac dopiero pod PPM (zgloszenie 01.10).
+     */
     private void purge(SceneView view, List<Entry> chosen) {
       Player player = view.player();
       ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
       if (list == null) {
         return;
       }
+      List<Entry> before = List.copyOf(entries);
       List<String> gone = new ArrayList<>();
       List<String> failed = new ArrayList<>();
       for (Entry e : chosen) {
@@ -882,7 +763,8 @@ public final class CharacterSelect {
           failed.add(e.name());
         }
       }
-      chosenTrash.clear();
+      this.chosen.clear();
+      refresh(view, before);
       Component note = Component.empty();
       if (!gone.isEmpty()) {
         note = note.append(Teksty.t("wybor.kosz.usunieto", "&aUsunięto na zawsze: {imiona}.", "imiona", String.join(", ", gone)));
@@ -891,7 +773,12 @@ public final class CharacterSelect {
         note = note.append(Component.text(gone.isEmpty() ? "" : " ")).append(Teksty.t("wybor.kosz.blad-usuwania",
             "&cNie udało się usunąć: {imiona} — zgłoś to administracji.", "imiona", String.join(", ", failed)));
       }
-      trashScreen(view, note);
+      if (entries.isEmpty()) {
+        // Nic nie zostalo do zarzadzania — lista z "+ Nowa postac" zamiast pustego okna.
+        grid(view);
+      } else {
+        manage(view, note);
+      }
     }
 
     /** Po zmianie listy: odswiez wpisy i zostan na tej samej postaci (albo najblizszej). */
@@ -912,12 +799,6 @@ public final class CharacterSelect {
       show(view);
     }
 
-    private int trashedCount(SceneView view) {
-      Player player = view.player();
-      ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
-      return list == null ? 0 : trashed(player, list).size();
-    }
-
     @Override
     public void onClose(SceneView view) {
       dropPreview(view);
@@ -927,22 +808,21 @@ public final class CharacterSelect {
   // --- wspolne: kafelki, karta, akcje --------------------------------------------------
 
   /** "+ Nowa postac" (albo "Brak miejsc") i "Zarzadzaj postaciami" — wspolne dla listy w scenie i w grze. */
-  private void addNewAndManage(Player player, ProfileListImpl list, List<SceneMenu.Button> buttons,
-      Runnable create, Runnable manage, Runnable trashOpener) {
+  private void addNewAndManage(ProfileListImpl list, List<SceneMenu.Button> buttons, Runnable create, Runnable manage) {
     int used = list.getProfiles().size();
     int slots = list.getProfileSlots();
     if (used < slots) {
       buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.nowa", "&a+ Nowa postać"),
           Teksty.t("wybor.lista.wolne-miejsca", "Wolne miejsca: {ile}", "ile", slots - used), create).width(tileWidth()));
     } else {
-      int inTrash = trashed(player, list).size();
-      buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.brak-miejsc", "&8Brak wolnych miejsc"),
-          inTrash > 0
-              ? Teksty.t("wybor.lista.brak-miejsc-kosz", "Postacie w koszu ({ile}) nadal zajmują miejsca — opróżnij kosz w „Zarządzaj”.", "ile", inTrash)
-              : Teksty.t("wybor.lista.brak-miejsc-dymek", "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."), manage).width(tileWidth()));
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.brak-miejsc-licznik", "&8Limit postaci {zajete}/{wszystkie}",
+              "zajete", used, "wszystkie", slots),
+          Teksty.t("wybor.lista.brak-miejsc-dymek", "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."), manage).width(tileWidth()));
     }
-    buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.zarzadzaj", "&6Zarządzaj postaciami"),
-        Teksty.t("wybor.lista.zarzadzaj-dymek", "Usuń kilka naraz, kosz, przywracanie"), manage).width(tileWidth()));
+    if (used > 0) {
+      buttons.add(new SceneMenu.Button(Teksty.t("wybor.lista.zarzadzaj", "&6Zarządzaj postaciami"),
+          Teksty.t("wybor.lista.zarzadzaj-dymek-usun", "Usuń jedną albo kilka postaci naraz"), manage).width(tileWidth()));
+    }
   }
 
   private static Component listTitle(ProfileListImpl list) {
@@ -951,22 +831,12 @@ public final class CharacterSelect {
   }
 
   private List<Component> listBody(Player player, ProfileListImpl list, boolean inGame) {
-    int inTrash = trashed(player, list).size();
     if (entries(list).isEmpty()) {
-      return List.of(inTrash > 0
-          ? Teksty.t("wybor.lista.wszystkie-w-koszu", "&fNie masz aktywnych postaci. Przywróć je z kosza ({ile}) albo stwórz nową.",
-              "ile", SelectOrder.characters(inTrash))
-          : Teksty.t("wybor.lista.brak-postaci", "&fNie masz jeszcze postaci — stwórz pierwszą."));
+      return List.of(Teksty.t("wybor.lista.brak-postaci", "&fNie masz jeszcze postaci — stwórz pierwszą."));
     }
-    Component text = inGame
+    return List.of(inGame
         ? Teksty.t("wybor.lista.opis-w-grze", "&fKliknij postać, żeby od razu nią grać. &a▶&f = grasz teraz.")
-        : Teksty.t("wybor.lista.opis", "&fKliknij postać, żeby grać. &6★&f = ostatnio grana.");
-    if (inTrash > 0) {
-      text = text.append(inTrash == 1
-          ? Teksty.t("wybor.lista.w-koszu-1", "&7 W koszu: {ile} (nadal zajmuje miejsce).", "ile", SelectOrder.characters(inTrash))
-          : Teksty.t("wybor.lista.w-koszu", "&7 W koszu: {ile} (nadal zajmują miejsca).", "ile", SelectOrder.characters(inTrash)));
-    }
-    return List.of(text);
+        : Teksty.t("wybor.lista.opis", "&fKliknij postać, żeby grać. &6★&f = ostatnio grana."));
   }
 
   /** Kafelek listy: "★ Imie  12 · Leśny Łowca". */
@@ -1097,7 +967,8 @@ public final class CharacterSelect {
     if (current != null && current.getProfiles().size() >= current.getProfileSlots()) {
       // MMOProfiles i tak by odmowil, a zamknieta scena zostawilaby gracza bez postaci.
       if (view.controller() instanceof SelectStep step) {
-        step.manage(view, Teksty.t("wybor.brak-miejsc", "&eBrak wolnych miejsc na postać — usuń postać albo opróżnij kosz."));
+        step.manage(view, Teksty.t("wybor.brak-miejsc-licznik", "&eLimit postaci: {zajete}/{wszystkie} — usuń postać, żeby stworzyć nową.",
+            "zajete", current.getProfiles().size(), "wszystkie", current.getProfileSlots()));
       }
       return;
     }
@@ -1172,7 +1043,7 @@ public final class CharacterSelect {
    * otwarty, log mowi, ktory modul nie zwalidowal.
    *
    * @return true, gdy profilu nie ma juz na liscie (rekord w characters.yml sprzata
-   *     CharacterProfileModule#onRemove, wpis kosza — ta metoda)
+   *     CharacterProfileModule#onRemove, ewentualny stary wpis kosza — ta metoda)
    */
   private boolean removeForever(Player player, ProfileListImpl list, PlayerProfileImpl profile, String name) {
     UUID id = profile.getUniqueId();
@@ -1211,22 +1082,6 @@ public final class CharacterSelect {
           + "CharacterCreator/usuniete/" + id + "/: " + (moved.isEmpty() ? "(brak)" : String.join(", ", moved)));
     }, 100L);
     return true;
-  }
-
-  /** Postacie po terminie w koszu — usuwane naprawde przy wejsciu wlasciciela do wyboru. */
-  private void purgeExpired(Player player, ProfileListImpl list) {
-    for (TrashStore.Entry t : trash.expired(player.getUniqueId(), Instant.now(), settings.trashTtl())) {
-      PlayerProfileImpl p = list.getProfile(t.profileId());
-      if (p == null) {
-        trash.restore(t.profileId());
-        continue;
-      }
-      if (list.getCurrent() != null && list.getCurrent().getUniqueId().equals(t.profileId())) {
-        continue;
-      }
-      logger.info("Kosz: termin minal — " + t.name() + " gracza " + player.getName() + " usuwana na zawsze.");
-      removeForever(player, list, p, t.name());
-    }
   }
 
   // --- podglad postaci (ta sama stajnia nosicieli skorek co w kreatorze) --------------

@@ -337,6 +337,7 @@ public final class SceneManager {
       player.setSpectatorTarget(null);
     }
     view.retargeting = false;
+    view.aimedTick = -1;
     player.teleport(point.camera());
     view.camera.teleport(point.camera());
     view.shield.teleport(shieldLocation(point.camera()));
@@ -405,6 +406,7 @@ public final class SceneManager {
       view.retargeting = true;
       p.setSpectatorTarget(null);
       view.retargeting = false;
+      view.aimedTick = -1;
       view.camera = first.getWorld().spawn(first, ItemDisplay.class, e -> {
         e.setPersistent(false);
         e.setVisibleByDefault(false);
@@ -833,7 +835,7 @@ public final class SceneManager {
               Title.Times.times(Duration.ZERO, ticks(FADE_MAX_HOLD_TICKS), ticks(out))));
         }
         boolean ready = held[0] >= minHold && Bukkit.getCurrentTick() > view.targetReadyTick
-            && chunksSent(view, p);
+            && view.aimedTick >= 0 && chunksSent(view, p);
         settled[0] = ready ? settled[0] + 1 : 0;
         if (settled[0] >= settle || held[0] >= FADE_MAX_HOLD_TICKS) {
           task.cancel();
@@ -896,6 +898,14 @@ public final class SceneManager {
     return at;
   }
 
+  /**
+   * Podpina kamere — ale dopiero, gdy klient ma juz chunk, w ktorym ona stoi. Serwer wysyla
+   * encje klientowi dopiero po jej chunku, a klient ignoruje pakiet kamery dla encji, ktorej
+   * nie zna. Staly czas ({@code target-delay-ticks}) wystarczal na szybkim wejsciu, ale przy
+   * wolnym logowaniu albo skoku 300 blokow do kadru innej rasy pakiet wyprzedzal encje:
+   * gracz zostawal z WOLNA kamera, a LPM nic nie robil (zgloszenie 01.10). Dla pewnosci
+   * {@link #refreshCamera} ponawia jeszcze sam pakiet.
+   */
   private void aimCamera(SceneView view) {
     Player player = view.player();
     if (player == null || view.camera == null || !view.camera.isValid()) {
@@ -905,8 +915,45 @@ public final class SceneManager {
       player.setGameMode(GameMode.SPECTATOR);
     }
     if (player.getSpectatorTarget() != view.camera) {
+      if (!cameraChunkSent(view, player)) {
+        return;
+      }
       view.retargeting = true;
       try {
+        player.setSpectatorTarget(view.camera);
+      } finally {
+        view.retargeting = false;
+      }
+      view.aimedTick = Bukkit.getCurrentTick();
+    }
+  }
+
+  private static boolean cameraChunkSent(SceneView view, Player player) {
+    Location at = view.camera.getLocation();
+    return at.getWorld() == player.getWorld()
+        && player.isChunkSent(org.bukkit.Chunk.getChunkKey(at.getBlockX() >> 4, at.getBlockZ() >> 4));
+  }
+
+  /** Ponowienia po podpieciu: 5 i 20 tickow (encja zdazy dojsc), potem co 2 s na wszelki wypadek. */
+  private static final int[] CAMERA_RESEND_AT = {5, 20};
+  private static final int CAMERA_RESEND_EVERY = 40;
+
+  private void refreshCamera(SceneView view, Player player, int now) {
+    if (view.aimedTick < 0 || view.camera == null || !view.camera.isValid()
+        || player.getSpectatorTarget() != view.camera) {
+      return;
+    }
+    long age = now - view.aimedTick;
+    boolean early = age == CAMERA_RESEND_AT[0] || age == CAMERA_RESEND_AT[1];
+    if (CameraPacket.available()) {
+      if (early || (age > 0 && age % CAMERA_RESEND_EVERY == 0)) {
+        CameraPacket.send(player, view.camera);
+      }
+    } else if (early) {
+      // Bez packetevents: zdjecie i nalozenie celu w tym samym ticku — serwer wysle pakiet znowu.
+      view.retargeting = true;
+      try {
+        player.setSpectatorTarget(null);
         player.setSpectatorTarget(view.camera);
       } finally {
         view.retargeting = false;
@@ -933,6 +980,7 @@ public final class SceneManager {
       }
       if (now >= view.targetReadyTick) {
         aimCamera(view);
+        refreshCamera(view, player, now);
       }
       if (!view.flying) {
         animate(view, player, now);

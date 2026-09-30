@@ -34,3 +34,10 @@ ZASTEPUJE otwarte wtedy okno (np. liste z menu Q) — `op.js` najpierw je zamyka
 i KREATORA (eval/scena), na koncu termin.js z cofnieciem daty w koszu i restartem. Dane testowe: Elwen (poz. 15)
 i Morth sa odtwarzane droga gracza, jesli ich brak. `spacja.js`: Spacja raz w kreatorze i w wyborze + LPM bez
 komunikatu o bieglosci. Dzwiek wyboru profilu = sound_effect id 1256 (mineflayer zle go nazywa).
+
+## 2026-10-01: kosz usuniety
+Wlasciciel: "jak ktos je usuwa, to je usuwa" — usuwanie jest od razu na zawsze (potwierdzenie + imie od poz. 10).
+`kosz_pusty.js` i `kosz_prep.js` usuniete. `bez_kosza.js` (konto LimitQA z 5 postaciami: `QA=LimitQA NAMES=Lima,Limb,Limc,Limd,Lime run.sh setup.js`)
+sprawdza: limit pod A/D, Zarzadzaj z licznikiem, usuniecie na zawsze bez slowa "kosz", odswiezenie sceny po usunieciu
+wszystkich, pakiet kamery po spawnie encji-kamery. Wynik na klonie: 13/13. W `scen.js` czesc "Zarzadzaj -> kosz -> przywroc"
+(od "potwierdzenie przeniesienia do kosza") jest NIEAKTUALNA — do przepisania przy nastepnej zmianie wyboru.
