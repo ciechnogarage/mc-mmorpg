@@ -62,6 +62,14 @@ public final class Zaklecia extends JavaPlugin implements Listener {
    */
   @Override
   public boolean onCommand(org.bukkit.command.CommandSender s, org.bukkit.command.Command c, String l, String[] a) {
+    if (a.length == 2 && a[0].equalsIgnoreCase("q")) {
+      // E: klawisz Q (MenuKey wola 'zaklecia q <gracz>'): z Shiftem okno ulubionych, bez — hub jak dotad
+      Player p = getServer().getPlayerExact(a[1]);
+      if (p == null) { s.sendMessage("Brak gracza " + a[1]); return true; }
+      String k = getConfig().getString(p.isSneaking() ? "klawisz-q.z-shiftem" : "klawisz-q.zwykle", "dm open hub_glowne %gracz%");
+      getServer().dispatchCommand(getServer().getConsoleSender(), k.replace("%gracz%", p.getName()));
+      return true;
+    }
     if (a.length == 3 && a[0].equalsIgnoreCase("ulubione")) {
       Player p = getServer().getPlayerExact(a[1]);
       if (p == null) { s.sendMessage("Brak gracza " + a[1]); return true; }

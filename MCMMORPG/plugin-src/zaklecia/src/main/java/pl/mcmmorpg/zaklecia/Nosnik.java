@@ -38,6 +38,8 @@ import org.bukkit.persistence.PersistentDataType;
 final class Nosnik implements Listener {
   private final Ksiega ksiega;
   private final NamespacedKey klucz;
+  /** Slot paska prawej dloni z zakleciem — zostaje po odlozeniu kolkiem ("pusta"), zeby kolkiem wrocic. */
+  private final NamespacedKey kluczSlotu;
   /** Bloki, ktore przyjmuja albo zamieniaja przedmiot z reki. */
   private static final Set<Material> BLOKI_BIORACE = Set.of(Material.DECORATED_POT, Material.FLOWER_POT,
       Material.VAULT, Material.CHISELED_BOOKSHELF, Material.LECTERN, Material.JUKEBOX);
@@ -45,6 +47,7 @@ final class Nosnik implements Listener {
   Nosnik(Zaklecia plugin, Ksiega ksiega) {
     this.ksiega = ksiega;
     this.klucz = new NamespacedKey(plugin, "nosnik");
+    this.kluczSlotu = new NamespacedKey(plugin, "slot_zaklec");
   }
 
   boolean jest(ItemStack i) {
@@ -55,6 +58,13 @@ final class Nosnik implements Listener {
     // pasek MMOCore co 5 tickow nadpisuje zwykly actionbar — piszemy przez handler MythicLib z wyzszym priorytetem
     // Dane MMO bywaja nieaktualne po przelogowaniu w <1 s (MMOCore: "Player is offline") — wtedy zwykly pasek.
     try { MMOPlayerData.get(p).getActionBar().show(50, tekst); } catch (Throwable t) { p.sendActionBar(net.kyori.adventure.text.Component.text(tekst.replaceAll("§.", ""))); }
+  }
+
+  /** Slot paska prawej dloni z zakleciem albo -1. */
+  int slotZaklec(Player p) { return p.getPersistentDataContainer().getOrDefault(kluczSlotu, PersistentDataType.INTEGER, -1); }
+  void ustawSlot(Player p, int s) {
+    if (s < 0) p.getPersistentDataContainer().remove(kluczSlotu);
+    else p.getPersistentDataContainer().set(kluczSlotu, PersistentDataType.INTEGER, s);
   }
 
   /** @return komunikat dla gracza (co sie stalo). */
@@ -75,7 +85,7 @@ final class Nosnik implements Listener {
     // prawa: jeden nosnik w pasku/plecaku naraz — stary znika, nowy wchodzi w jego miejsce albo w wolny slot
     int miejsce = -1;
     for (int s = 0; s < 36; s++) if (jest(inv.getItem(s))) { inv.setItem(s, null); if (s < 9 && miejsce < 0) miejsce = s; }
-    if (id == null) return "§7Prawa dłoń jest pusta.";
+    if (id == null) { ustawSlot(p, -1); return "§7Prawa dłoń jest pusta."; }
     Ksiega.Zaklecie z = ksiega.poId.get(id);
     if (z == null) return "§cNieznane zaklęcie: " + id;
     if (miejsce < 0) {
@@ -90,6 +100,7 @@ final class Nosnik implements Listener {
     if (miejsce < 0) return "§cZwolnij miejsce w pasku, żeby wziąć zaklęcie do prawej dłoni.";
     inv.setItem(miejsce, zrob(z));
     inv.setHeldItemSlot(miejsce);
+    ustawSlot(p, miejsce);
     return "§f" + z.nazwa() + " §7w prawej dłoni.";
   }
 

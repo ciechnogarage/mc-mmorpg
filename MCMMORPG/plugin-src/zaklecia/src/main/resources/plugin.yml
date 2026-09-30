@@ -8,7 +8,7 @@ description: Ciche mechaniki zasobow MMOCore dla zaklec MythicMobs/Crucible (Plo
 commands:
   zaklecia:
     description: Przypisanie zaklecia do dloni (wolane z Ksiegi zaklec jako konsola)
-    usage: /zaklecia przypisz <gracz> <zaklecie|nic> <prawa|lewa> | /zaklecia ulubione <gracz> <zaklecie>
+    usage: /zaklecia przypisz <gracz> <zaklecie|nic> <prawa|lewa> | /zaklecia ulubione <gracz> <zaklecie> | /zaklecia q <gracz>
     permission: zaklecia.admin
 permissions:
   zaklecia.admin:

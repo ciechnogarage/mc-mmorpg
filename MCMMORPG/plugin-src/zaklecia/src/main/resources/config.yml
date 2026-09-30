@@ -32,3 +32,8 @@ stozek:
 stozek-podwojny:
   zasieg: 7
   pol-kat: 22.5
+
+# Klawisz Q (plugin MenuKey wola "zaklecia q <gracz>"): bez Shiftu hub, z Shiftem szybkie ulubione (jak Q w Skyrimie).
+klawisz-q:
+  zwykle: 'dm open hub_glowne %gracz%'
+  z-shiftem: 'dm open ulubione_zaklec %gracz%'
