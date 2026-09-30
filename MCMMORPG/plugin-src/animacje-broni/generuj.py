@@ -42,6 +42,8 @@ TYPY = {
 PRZESTRZEN = 'bron'
 # punkt chwytu: lewy dolny rog tekstury 16x16 (rekojesc narzedzi i broni vanilli), wzgledem srodka modelu
 CHWYT = (-6.5, -6.5, 0.0)
+# w 1. osobie bron jest blisko kamery: zmiana rozmiaru o polowe mniejsza (x1,3 -> x1,15), inaczej zaslania ekran
+TLUMIENIE_1OS = 0.5
 KONTEKSTY = ('thirdperson_righthand', 'thirdperson_lefthand', 'firstperson_righthand', 'firstperson_lefthand')
 
 
@@ -66,7 +68,9 @@ def przeskaluj(display, s):
     """Nowe transformacje rak: skala x s, translacja poprawiona tak, by punkt chwytu zostal w miejscu.
     Poza = t + R*(skala*v); chcemy t' + R*(skala*s*v) == t + R*(skala*v)  ->  t' = t + R*(skala*(1-s)*v)."""
     wynik = {}
+    s3 = s
     for k in KONTEKSTY:
+        s = 1 + (s3 - 1) * TLUMIENIE_1OS if k.startswith('firstperson') else s3
         d = display[k]
         sk = d.get('scale', [1, 1, 1])
         t = d.get('translation', [0, 0, 0])

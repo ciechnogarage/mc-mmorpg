@@ -48,8 +48,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     saveDefaultConfig();
     wczytaj();
     getServer().getPluginManager().registerEvents(this, this);
-    getServer().getGlobalRegionScheduler().runAtFixedRate(this,
-        t -> getServer().getOnlinePlayers().forEach(this::pozniej), 40L, 40L);
+    getServer().getScheduler().runTaskTimer(this,
+        () -> getServer().getOnlinePlayers().forEach(this::dopasujDlonie), 40L, 40L);
   }
 
   private void wczytaj() {
@@ -122,7 +122,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   }
 
   private void pozniej(HumanEntity kto) {
-    if (kto instanceof Player p) p.getScheduler().run(this, t -> dopasujDlonie(p), null);
+    // zwykly scheduler Bukkita: harmonogram encji (p.getScheduler()) Paper wylacza po smierci gracza
+    if (kto instanceof Player p) getServer().getScheduler().runTask(this, () -> { if (p.isOnline()) dopasujDlonie(p); });
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
