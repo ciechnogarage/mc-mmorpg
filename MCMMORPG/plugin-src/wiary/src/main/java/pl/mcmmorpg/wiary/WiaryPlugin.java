@@ -190,18 +190,33 @@ public final class WiaryPlugin extends JavaPlugin implements Listener {
     Stan s = aktywne.get(p.getUniqueId());
     MMOPlayerData mmo = null;
     try { mmo = MMOPlayerData.get(p); } catch (RuntimeException ignored) { }
+    // NIE wołać m.close() samemu: StatInstance.removeModifier sam zamyka modyfikator czasowy, a drugie close()
+    // rzuca (Validate isActive) PRZED update() — modyfikator znikał z mapy, a atrybut vanilli (max_health)
+    // zostawał podbity. Zmierzone na klonie 30.09 (reset nie zdejmował łaski).
     if (s != null) {
-      for (TemporaryStatModifier m : s.mody) {
-        try { m.close(); } catch (RuntimeException ignored) { }
-        if (mmo != null) try { m.unregister(mmo); } catch (RuntimeException ignored) { }
+      if (mmo != null) {
+        for (TemporaryStatModifier m : s.mody) {
+          try {
+            if (m.isActive()) m.unregister(mmo);
+          } catch (RuntimeException ex) {
+            getLogger().warning("Zdjęcie łaski " + p.getName() + " (" + m.getStat() + "): " + ex);
+          }
+        }
       }
       s.mody.clear();
     }
-    // Asekuracja: modyfikator z naszym kluczem, który przeżył poza listą (np. po błędzie), też znika.
+    // Asekuracja: modyfikator z naszym kluczem, który przeżył poza listą (np. po błędzie), też znika,
+    // a każda statystyka łask jest przeliczana (update() przenosi wynik na atrybuty vanilli).
     if (mmo != null) {
       for (Panteon.Bostwo b : panteon.bostwa().values()) {
         for (Panteon.Efekt e : b.efekty()) {
-          try { mmo.getStatMap().getInstance(e.stat()).removeIf(k -> k.equals(KLUCZ)); } catch (RuntimeException ignored) { }
+          try {
+            var inst = mmo.getStatMap().getInstance(e.stat());
+            inst.removeIf(k -> k.equals(KLUCZ));
+            inst.update();
+          } catch (RuntimeException ex) {
+            getLogger().warning("Przeliczenie " + e.stat() + " dla " + p.getName() + ": " + ex);
+          }
         }
       }
     }

@@ -8,8 +8,8 @@
  *  3. klik w Gorratha = patron; klik Módl się = łaska: max_health rośnie, komunikat na czacie,
  *  4. druga modlitwa w trakcie łaski i zmiana patrona w ciągu 24 h są odmawiane,
  *  5. bóstwo obcej rasy odrzucone także z konsoli; gracz nie wywoła /wiary z czatu,
- *  6. DRUGA postać tego samego konta (elf) nie ma patrona orka i widzi bóstwa elfów, łaska orka z niej zeszła,
- *  7. relog: co bot widzi (diagnostyka, bez asercji o scenie wyboru).
+ *  6. relog: w scenie wyboru łaska zdjęta; po wyborze orka (klik w manekina) patron i łaska wracają,
+ *  7. DRUGA postać tego samego konta (elf, zakładana ze sceny) nie ma patrona orka i widzi bóstwa elfów.
  */
 const H = require('/e/lib/harness')
 const { rcon } = require('/s/rcon.js')
@@ -71,7 +71,7 @@ function sprawdzBostwa(r, w, opis, oczekiwane) {
 }
 
 module.exports = async function (r) {
-  const nick = 'WiaraOrk'
+  const nick = 'Wiara' + (Date.now() % 100000)
   for (const c of ['forceload add 143 191 155 203', 'fill 143 97 191 155 97 203 minecraft:stone']) await rcon(c)
   let bot = await H.connect(nick)
   try {
@@ -144,25 +144,46 @@ module.exports = async function (r) {
     const hpOrk = await maxHp(nick)
     r.assert(hpOrk > hp0, 'ork znów ma łaskę', `${hpOrk}`)
 
-    // --- 6. druga postać tego samego konta -------------------------------------------------
-    bot.closeWindow(bot.currentWindow)
-    console.log('KONSOLA testpostac elf:', (await rcon(`cc testpostac ${nick} elf mag Srebrzyk`)).trim())
-    await sleep(9000)
-    console.log('KONSOLA info elf:', (await rcon(`wiary info ${nick}`)).trim())
-    r.assert((await papi(nick, '%wiary_rasa%')) === 'elf', 'druga postać jest elfem')
-    r.assert((await papi(nick, '%wiary_patron%')) === 'brak', 'druga postać NIE dziedziczy patrona orka (dane per postać)')
-    w = await otworzWiare(bot, r, 'elf')
-    if (w) sprawdzBostwa(r, w, 'elf', ['Ordhun', 'Nysara', 'Vharun', 'Aelyra', 'Sylvaen', 'Iridel'])
-    const infoElf = (await rcon(`wiary info ${nick}`)).trim()
-    r.assert(/modyfikatorów=0/.test(infoElf), 'łaska orka nie przeszła na elfa', infoElf)
-
-    // --- 7. relog: diagnostyka --------------------------------------------------------------
+    // --- 6. relog: łaska zdjęta w scenie wyboru, wraca po wyborze orka -----------------------
     bot.quit(); await sleep(3000)
     bot = await H.connect(nick)
     await sleep(8000)
-    const okno = bot.currentWindow
-    console.log('RELOG okno:', okno ? H.windowTitle(okno) : 'brak', JSON.stringify(H.windowSlots(okno).slice(0, 12)))
-    console.log('RELOG info:', (await rcon(`wiary info ${nick}`)).trim())
+    const infoScena = (await rcon(`wiary info ${nick}`)).trim()
+    console.log('RELOG info:', infoScena)
+    r.assert(/profil=brak/.test(infoScena), 'w scenie wyboru postać nie ma aktywnej wiary', infoScena)
+    const manekiny = Object.values(bot.entities).filter(e => e !== bot.entity && e.position.distanceTo(bot.entity.position) < 16)
+      .map(e => ({ e, d: e.position.distanceTo(bot.entity.position) })).sort((x, y) => x.d - y.d)
+    console.log('SCENA encje:', JSON.stringify(manekiny.slice(0, 8).map(x => [x.e.name, x.e.displayName, Math.round(x.d * 10) / 10])))
+    let wybrano = false
+    for (const { e } of manekiny.filter(x => /interaction|mannequin/i.test(x.e.name || '')).slice(0, 4)) {
+      try { await bot.lookAt(e.position.offset(0, 1.5, 0)); await bot.activateEntity(e) } catch (err) { console.log('klik', err.message) }
+      await sleep(3000)
+      if (bot.currentWindow) console.log('SCENA okno po kliku:', H.windowTitle(bot.currentWindow), JSON.stringify(H.windowSlots(bot.currentWindow).slice(0, 8)))
+      if ((await papi(nick, '%wiary_rasa%')) === 'ork') { wybrano = true; break }
+    }
+    if (wybrano) {
+      await sleep(2500)
+      const infoPowrot = (await rcon(`wiary info ${nick}`)).trim()
+      console.log('PO WYBORZE info:', infoPowrot)
+      r.assert(/patron=gorrath/.test(infoPowrot) && /modyfikatorów=1/.test(infoPowrot), 'po powrocie na orka patron i łaska wracają', infoPowrot)
+      r.assert(Math.abs((await maxHp(nick)) - hpOrk) < 0.01, 'max_health orka znów z łaską', `${await maxHp(nick)} vs ${hpOrk}`)
+      bot.quit(); await sleep(3000)
+      bot = await H.connect(nick)
+      await sleep(8000)
+    } else {
+      console.log('UWAGA: bot nie wybrał postaci w scenie — powrót łaski po relogu NIESPRAWDZONY')
+    }
+
+    // --- 7. druga postać tego samego konta (ze sceny wyboru) ------------------------------
+    console.log('KONSOLA testpostac elf:', (await rcon(`cc testpostac ${nick} elf mag Srebrzyk`)).trim())
+    await sleep(9000)
+    const infoElf = (await rcon(`wiary info ${nick}`)).trim()
+    console.log('KONSOLA info elf:', infoElf)
+    r.assert((await papi(nick, '%wiary_rasa%')) === 'elf', 'druga postać jest elfem')
+    r.assert((await papi(nick, '%wiary_patron%')) === 'brak', 'druga postać NIE dziedziczy patrona orka (dane per postać)')
+    r.assert(/modyfikatorów=0/.test(infoElf), 'łaska orka nie przeszła na elfa', infoElf)
+    w = await otworzWiare(bot, r, 'elf')
+    if (w) sprawdzBostwa(r, w, 'elf', ['Ordhun', 'Nysara', 'Vharun', 'Aelyra', 'Sylvaen', 'Iridel'])
   } finally {
     await H.quit(bot)
   }

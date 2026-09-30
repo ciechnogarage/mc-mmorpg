@@ -181,7 +181,7 @@ items:
   'b_aelyra':
     material: SEA_LANTERN
     slot: 14
-    priority: 1
+    priority: 2
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -207,7 +207,7 @@ items:
   'b_sylvaen':
     material: FEATHER
     slot: 15
-    priority: 1
+    priority: 2
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -233,7 +233,7 @@ items:
   'b_iridel':
     material: ENCHANTED_BOOK
     slot: 16
-    priority: 1
+    priority: 2
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -259,7 +259,7 @@ items:
   'b_gorrath':
     material: IRON_AXE
     slot: 14
-    priority: 1
+    priority: 3
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -285,7 +285,7 @@ items:
   'b_kharzuk':
     material: LIGHTNING_ROD
     slot: 15
-    priority: 1
+    priority: 3
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -311,7 +311,7 @@ items:
   'b_mogra':
     material: BONE
     slot: 16
-    priority: 1
+    priority: 3
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -337,7 +337,7 @@ items:
   'b_morvhena':
     material: SKELETON_SKULL
     slot: 14
-    priority: 1
+    priority: 4
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -363,7 +363,7 @@ items:
   'b_vhorax':
     material: ECHO_SHARD
     slot: 15
-    priority: 1
+    priority: 4
     update: true
     item_flags:
       - HIDE_ATTRIBUTES
@@ -389,7 +389,7 @@ items:
   'b_ossyra':
     material: WHITE_CANDLE
     slot: 16
-    priority: 1
+    priority: 4
     update: true
     item_flags:
       - HIDE_ATTRIBUTES

@@ -95,10 +95,12 @@ def main(cfg_path, out_path):
     ]
     for i, bid in enumerate(starsi):
         L += bostwo(bid, bostwa[bid], 10 + i, 1) + [""]
-    for r in RASY:
+    # Kazda rasa ma WLASNY priorytet w slotach 14-16: przy rownym priorytecie DeluxeMenus sprawdza tylko
+    # jeden przedmiot na slot (zmierzone na klonie 30.09 — sloty rasowe byly puste).
+    for ri, r in enumerate(RASY):
         rasowe = [k for k, v in bostwa.items() if v['grupa'] == r]
         for i, bid in enumerate(rasowe):
-            L += bostwo(bid, bostwa[bid], 14 + i, 1) + [""]
+            L += bostwo(bid, bostwa[bid], 14 + i, 1 + ri) + [""]
 
     L += [
         "  'modlitwa':",
