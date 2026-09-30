@@ -14,8 +14,10 @@ load: POSTWORLD
 # z kompletem 16 profili. Pakiet DOCHODZI do klienta — potwierdzone botem protokolowym —
 # ale klient nie pobiera z niego ani jednej tekstury, bo rozwiazuje skorki leniwie, przy
 # rysowaniu. Rozgrzewka stoi wiec na prawdziwych encjach i nie potrzebuje packetevents.
+# packetevents jest w softdepend tylko dla ciszy na czacie w scenie (SceneChatMute) — bez niego
+# czat w scenie po prostu nie jest wyciszany.
 depend: [ModelEngine, MMOProfiles, LibsDisguises, MMOCore, Multiverse-Core]
-softdepend: [LuckPerms, CMI, MythicLib, ProtocolLib]
+softdepend: [LuckPerms, CMI, MythicLib, ProtocolLib, packetevents]
 
 commands:
   charactercreator:

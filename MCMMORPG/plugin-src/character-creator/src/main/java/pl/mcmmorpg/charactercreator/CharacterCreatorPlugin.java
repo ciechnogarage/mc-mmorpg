@@ -61,6 +61,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
   private PreviewRotationTask rotationTask;
   private BukkitTask watchdogTask;
   private SceneManager sceneManager;
+  private pl.mcmmorpg.charactercreator.scene.SceneChatMute chatMute;
   private ProfileSelectionEnforcer profileEnforcer;
 
   @Override
@@ -347,6 +348,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     }
     sceneManager = new SceneManager(this, getLogger(), settings);
     getServer().getPluginManager().registerEvents(new SceneListener(sceneManager, getLogger()), this);
+    // Cisza na czacie w scenie (wybor i kreator); pasek akcji z podpowiedziami przechodzi.
+    chatMute = pl.mcmmorpg.charactercreator.scene.SceneChatMute.register(sceneManager, getLogger());
     sceneManager.start();
     if (profileEnforcer != null) {
       profileEnforcer.setSceneCheck(sceneManager::inScene);
@@ -367,12 +370,9 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     pl.mcmmorpg.charactercreator.select.TrashGuard trashGuard =
         new pl.mcmmorpg.charactercreator.select.TrashGuard(trashStore, getLogger());
     getServer().getPluginManager().registerEvents(trashGuard, this);
-    // Kreator dostaje okna sceny: potwierdzenie przerwania (PPM) i liste klas (Spacja).
-    pl.mcmmorpg.charactercreator.scene.GridDialog grid =
-        new pl.mcmmorpg.charactercreator.scene.GridDialog(this, getLogger());
-    getServer().getPluginManager().registerEvents(grid, this);
+    // Kreator dostaje okno sceny: potwierdzenie przerwania (PPM).
     java.util.function.Function<CreatorFlow.Outcome, CreatorFlow> flows =
-        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome, sceneMenu, grid);
+        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome, sceneMenu);
     CharacterSelect select = new CharacterSelect(this, getLogger(), sceneManager, sceneMenu,
         creatorConfig, characterStore, previewDummyManager, trashStore, trashGuard,
         pl.mcmmorpg.charactercreator.select.SelectSettings.read(getConfig()));
@@ -513,6 +513,10 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
    */
   @Override
   public void onDisable() {
+    if (chatMute != null) {
+      chatMute.unregister();
+      chatMute = null;
+    }
     // Scena pierwsza: oddaje graczom tryb gry i miejsce, zanim reszta sie wylaczy.
     if (sceneManager != null) {
       sceneManager.closeAll();

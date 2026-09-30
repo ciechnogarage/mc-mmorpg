@@ -60,8 +60,18 @@ public final class CharacterSelect {
   private static final String PREVIEW_KEY = "cc.select.preview";
   private static final ZoneId ZONE = ZoneId.of("Europe/Warsaw");
   private static final TextColor MUTED = NamedTextColor.GRAY;
-  private static final int TILE_WIDTH = 300;
+  /**
+   * Szerokosc kafelka. Dwie kolumny po 300 wyjezdzaly poza ekran przy GUI 3-4 (ekran ma wtedy
+   * ~450-640 jednostek) — 2 x 150 miesci sie od ~320 wzwyz. Klasa jest w dymku, nie na kafelku.
+   */
+  private static final int TILE_WIDTH = 150;
   private static final long AUTO_LIST_DELAY_TICKS = 30L;
+  /** Po tylu tickach bez A/D dochodzi kadr i podglad postaci. */
+  private static final long SCENE_DELAY_TICKS = 6L;
+  /** O ile blokow pod ziemie chowamy podglad na miejscach Nowa postac / Usun postacie. */
+  private static final double HIDE_DROP = 6.0;
+
+  private enum Extra { NEW, MANAGE }
 
   private final Plugin plugin;
   private final Logger logger;
@@ -354,6 +364,8 @@ public final class CharacterSelect {
     private final List<Entry> entries;
     private final Start start;
     private int index;
+    /** Kolejne A/D uniewazniaja zaplanowane odswiezenie kadru. */
+    private int sceneToken;
     private UUID lastUsedId;
     /** Zaznaczone w "Zarzadzaj" / w koszu — trzymane miedzy odswiezeniami okna. */
     private final java.util.Set<UUID> chosen = new java.util.LinkedHashSet<>();
@@ -365,10 +377,6 @@ public final class CharacterSelect {
       int last = SelectOrder.lastUsedIndex(this.entries, Entry::lastUsed);
       this.index = Math.max(0, last);
       this.lastUsedId = last < 0 ? null : this.entries.get(last).id();
-    }
-
-    private Entry current() {
-      return entries.isEmpty() ? null : entries.get(Math.floorMod(index, entries.size()));
     }
 
     private String pointOf(Entry e) {
@@ -401,25 +409,98 @@ public final class CharacterSelect {
       }
     }
 
+    /** Dodatkowe miejsca karuzeli A/D za postaciami: nowa postac i usuwanie. */
+    private List<Extra> extras(SceneView view) {
+      List<Extra> out = new ArrayList<>();
+      Player player = view.player();
+      ProfileListImpl list = player == null ? null : ProfileListImpl.getOrNull(player);
+      if (list != null && list.getProfiles().size() < list.getProfileSlots()) {
+        out.add(Extra.NEW);
+      }
+      out.add(Extra.MANAGE);
+      return out;
+    }
+
+    private int count(SceneView view) {
+      return entries.size() + extras(view).size();
+    }
+
+    /** Dodatkowe miejsce pod kursorem albo null, gdy kursor stoi na postaci. */
+    private Extra extraAt(SceneView view) {
+      int n = count(view);
+      int i = Math.floorMod(index, n);
+      if (i < entries.size()) {
+        return null;
+      }
+      List<Extra> ex = extras(view);
+      return ex.get(Math.min(i - entries.size(), ex.size() - 1));
+    }
+
+    /** Postac pod kursorem (null na dodatkowym miejscu albo bez postaci). */
+    private Entry shownEntry(SceneView view) {
+      if (entries.isEmpty()) {
+        return null;
+      }
+      int i = Math.floorMod(index, count(view));
+      return i < entries.size() ? entries.get(i) : null;
+    }
+
     private void show(SceneView view) {
-      Entry e = current();
+      showText(view);
+      showScene(view);
+    }
+
+    /**
+     * Tanie odswiezenie: lista, karta i podpowiedz od razu przy kazdym A/D. Kadr i podglad
+     * dochodza z opoznieniem ({@link #showScene}) — gracz przewija bez czekania i bez czerni.
+     */
+    private void showText(SceneView view) {
+      view.topBar(Component.text("Wybierz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+      view.list(sideList(view));
+      int n = count(view);
+      int pos = Math.floorMod(index, n) + 1;
+      String nav = n > 1 ? pos + "/" + n : null;
+      Extra extra = extraAt(view);
+      if (extra == Extra.NEW) {
+        view.card(Component.text("+ Nowa postać", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true)
+            .append(Component.newline()).append(Component.newline())
+            .append(Component.text("Wybierz rasę i klasę, nadaj imię i ruszaj w drogę.", NamedTextColor.WHITE)));
+        view.hint(CreatorFlow.hint("LPM", "Stwórz postać", "A/D", nav == null ? "" : nav, "PPM", "Lista"));
+        return;
+      }
+      if (extra == Extra.MANAGE) {
+        int inTrash = trashedCount(view);
+        view.card(Component.text("Usuń postacie", NamedTextColor.RED).decoration(TextDecoration.BOLD, true)
+            .append(Component.newline()).append(Component.newline())
+            .append(Component.text("Zaznacz jedną lub kilka postaci. Trafią do kosza na "
+                + SelectOrder.days(settings.trashTtl().toDays()) + " — możesz je stamtąd przywrócić.",
+                NamedTextColor.WHITE))
+            .append(inTrash > 0 ? Component.newline().append(Component.newline())
+                .append(Component.text("W koszu: " + SelectOrder.characters(inTrash), MUTED)) : Component.empty()));
+        view.hint(CreatorFlow.hint("LPM", "Usuń / kosz", "A/D", nav == null ? "" : nav, "PPM", "Lista"));
+        return;
+      }
+      Entry e = shownEntry(view);
+      if (e == null) {
+        return;
+      }
+      CreatorConfig.RaceOption race = e.record() == null ? null : config.races().get(e.record().raceId());
+      CreatorConfig.ClassOption clazz = e.record() == null ? null : config.classes().get(e.record().classId());
+      view.card(card(e, race, clazz, e.id().equals(lastUsedId), false));
+      view.hint(nav != null
+          ? CreatorFlow.hint("LPM/Spacja", "Graj", "A/D", "Postać " + nav, "PPM", "Lista")
+          : CreatorFlow.hint("LPM/Spacja", "Graj", "PPM", "Lista"));
+    }
+
+    /** Kadr rasy i podglad postaci (z prawdziwym ekwipunkiem) — bez sciemnienia. */
+    private void showScene(SceneView view) {
       Player player = view.player();
       if (player == null) {
         return;
       }
-      view.topBar(Component.text("Wybierz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+      Entry e = shownEntry(view);
       if (e == null) {
-        view.point(SceneSettings.DEFAULT_POINT);
-        dropPreview(view);
-        view.list(null);
-        int inTrash = trashedCount(view);
-        view.card(Component.text("Nie masz aktywnych postaci", NamedTextColor.WHITE)
-            .decoration(TextDecoration.BOLD, true)
-            .append(Component.newline()).append(Component.newline())
-            .append(Component.text(inTrash > 0
-                ? "W koszu: " + SelectOrder.characters(inTrash) + ". Przywrócisz je pod PPM → Zarządzaj."
-                : "Stwórz pierwszą postać.", MUTED)));
-        view.hint(CreatorFlow.hint("LPM", "Nowa postać", "PPM", "Lista i zarządzanie"));
+        hidePreview(view);
         return;
       }
       String point = pointOf(e);
@@ -430,19 +511,20 @@ public final class CharacterSelect {
       CreatorConfig.ClassOption clazz = e.record() == null ? null : config.classes().get(e.record().classId());
       Entity shown = showPreview(view, race, clazz);
       RealGear.apply(player, shown, e.profile().getInventory(), e.profile().getHeldItemSlot());
-      view.list(sideList());
-      view.card(card(e, race, clazz, e.id().equals(lastUsedId), false));
-      int pos = Math.floorMod(index, entries.size()) + 1;
-      view.hint(entries.size() > 1
-          ? CreatorFlow.hint("LPM/Spacja", "Graj", "A/D", "Postać " + pos + "/" + entries.size(),
-              "PPM", "Lista i zarządzanie")
-          : CreatorFlow.hint("LPM/Spacja", "Graj", "PPM", "Lista i zarządzanie"));
     }
 
-    private Component sideList() {
+    /** Chowa podglad pod ziemie (nosiciele zostaja — powrot do postaci bez migania skorki). */
+    private void hidePreview(SceneView view) {
+      Player player = view.player();
+      if (player != null && view.get(PREVIEW_KEY) != null) {
+        dummies.moveAnchor(player, view.subject().clone().subtract(0, HIDE_DROP, 0));
+      }
+    }
+
+    private Component sideList(SceneView view) {
       Component out = Component.text("Twoje postacie  ", NamedTextColor.WHITE)
           .append(Component.text("[A/D]", NamedTextColor.GOLD));
-      int current = Math.floorMod(index, entries.size());
+      int current = Math.floorMod(index, count(view));
       for (int i = 0; i < entries.size(); i++) {
         Entry e = entries.get(i);
         boolean on = i == current;
@@ -453,26 +535,39 @@ public final class CharacterSelect {
             .append(Component.text(e.level() > 0 ? "  " + e.level() : "", NamedTextColor.DARK_GRAY))
             .append(e.id().equals(lastUsedId) ? Component.text(" ★", NamedTextColor.GOLD) : Component.empty());
       }
+      List<Extra> ex = extras(view);
+      for (int k = 0; k < ex.size(); k++) {
+        boolean on = entries.size() + k == current;
+        boolean isNew = ex.get(k) == Extra.NEW;
+        out = out.append(Component.newline())
+            .append(Component.text(on ? "▶ " : "   ", NamedTextColor.GOLD))
+            .append(Component.text(isNew ? "+ Nowa postać" : "✖ Usuń postacie",
+                on ? (isNew ? NamedTextColor.GREEN : NamedTextColor.RED)
+                    : (isNew ? NamedTextColor.DARK_GREEN : NamedTextColor.DARK_RED))
+                .decoration(TextDecoration.BOLD, on));
+      }
       return out;
     }
 
+    /**
+     * A/D: kursor przesuwa sie OD RAZU (lista, karta, dzwiek), bez blokady i bez czerni —
+     * mozna klikac do woli. Kadr i podglad dochodza, gdy gracz na chwile przestanie
+     * ({@link #SCENE_DELAY_TICKS}); kazde kolejne klikniecie przesuwa ten termin.
+     */
     private void move(SceneView view, int delta) {
-      if (entries.size() < 2) {
+      int n = count(view);
+      if (n < 2) {
         return;
       }
-      String from = pointOf(current());
-      String to = pointOf(entries.get(Math.floorMod(index + delta, entries.size())));
+      index = Math.floorMod(index + delta, n);
       view.uiSound("character");
-      if (from.equals(to)) {
-        // Ta sama sceneria — bez sciemnienia: nosiciel skorki podmienia sie teleportem od razu.
-        index += delta;
-        show(view);
-        return;
-      }
-      view.fade(() -> {
-        index += delta;
-        show(view);
-      });
+      showText(view);
+      int token = ++sceneToken;
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (!view.isClosed() && view.controller() == this && token == sceneToken) {
+          showScene(view);
+        }
+      }, SCENE_DELAY_TICKS);
     }
 
     @Override
@@ -497,8 +592,17 @@ public final class CharacterSelect {
 
     @Override
     public void onSelect(SceneView view) {
-      Entry e = current();
       view.uiSound("select");
+      Extra extra = extraAt(view);
+      if (extra == Extra.NEW) {
+        startCreation(view);
+        return;
+      }
+      if (extra == Extra.MANAGE) {
+        manage(view, null);
+        return;
+      }
+      Entry e = shownEntry(view);
       if (e == null) {
         startCreation(view);
       } else {
@@ -746,7 +850,7 @@ public final class CharacterSelect {
       for (int i = 0; i < rows.size(); i++) {
         Entry e = rows.get(i);
         boolean on = chosenTrash.contains(e.id());
-        buttons.add(new SceneMenu.Button(toggleLabel(e, on)
+        buttons.add(new SceneMenu.Button(toggleLabel(e, on, false)
             .append(Component.text(" · " + SelectOrder.days(daysLeft.get(i)), NamedTextColor.GOLD)),
             Component.text("Zostało " + SelectOrder.days(daysLeft.get(i)) + " do usunięcia na zawsze"), () -> {
               if (!chosenTrash.remove(e.id())) {
@@ -839,11 +943,6 @@ public final class CharacterSelect {
     }
     buttons.add(new SceneMenu.Button(Component.text("Zarządzaj postaciami", NamedTextColor.GOLD),
         Component.text("Usuń kilka naraz, kosz, przywracanie"), manage).width(TILE_WIDTH));
-    int inTrash = trashed(player, list).size();
-    if (inTrash > 0) {
-      buttons.add(new SceneMenu.Button(Component.text("Kosz (" + inTrash + ")", NamedTextColor.GOLD),
-          Component.text("Przywróć albo usuń na zawsze"), trashOpener).width(TILE_WIDTH));
-    }
   }
 
   private static Component listTitle(ProfileListImpl list) {
@@ -882,10 +981,6 @@ public final class CharacterSelect {
     if (e.level() > 0) {
       out = out.append(Component.text("  " + e.level(), NamedTextColor.YELLOW));
     }
-    String cls = classLine(e);
-    if (cls != null) {
-      out = out.append(Component.text(" · " + cls, MUTED));
-    }
     return out;
   }
 
@@ -897,26 +992,16 @@ public final class CharacterSelect {
 
   /** Przelacznik: "☐ Imie  12 · klasa" / "☑ ..." (☐☑ z BMP — klient ma dla nich glif). */
   private Component toggleLabel(Entry e, boolean on) {
-    Component out = Component.text(on ? "☑ " : "☐ ", on ? NamedTextColor.GREEN : NamedTextColor.GRAY)
-        .append(Component.text(e.name(), iconColor(e)).decoration(TextDecoration.BOLD, true));
-    if (e.level() > 0) {
-      out = out.append(Component.text("  " + e.level(), NamedTextColor.YELLOW));
-    }
-    String cls = classLine(e);
-    return cls == null ? out : out.append(Component.text(" · " + cls, MUTED));
+    return toggleLabel(e, on, true);
   }
 
-  /** Klasa rasowa ("Leśny Łowca") albo, dla postaci sprzed kreatora, klasa MMOCore. */
-  private String classLine(Entry e) {
-    if (e.record() != null) {
-      CreatorConfig.RaceOption race = config.races().get(e.record().raceId());
-      CreatorConfig.ClassOption clazz = config.classes().get(e.record().classId());
-      if (race != null && clazz != null) {
-        return plain(clazz.displayFor(race.id()));
-      }
+  private Component toggleLabel(Entry e, boolean on, boolean withLevel) {
+    Component out = Component.text(on ? "☑ " : "☐ ", on ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+        .append(Component.text(e.name(), iconColor(e)).decoration(TextDecoration.BOLD, true));
+    if (withLevel && e.level() > 0) {
+      out = out.append(Component.text("  " + e.level(), NamedTextColor.YELLOW));
     }
-    String cls = e.profile().getPlaceholderCache().getPlaceholder("mmocore_class");
-    return cls == null || cls.isBlank() ? null : cls;
+    return out;
   }
 
   private Component card(Entry e, CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz,

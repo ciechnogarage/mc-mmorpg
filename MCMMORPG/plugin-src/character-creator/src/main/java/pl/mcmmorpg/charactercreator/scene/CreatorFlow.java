@@ -38,33 +38,24 @@ public final class CreatorFlow {
     }
   }
 
-  /** Ile tickow wisi wprowadzenie z klawiszami przy pierwszym wejsciu do kreatora. */
-  private static final int INTRO_TICKS = 120;
-  /** Ile tickow po zdjeciu czerni (kadr gotowy) startuje wprowadzenie. */
-  private static final int INTRO_AFTER_CHUNK_TICKS = 40;
-
   private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
   private static final String PREVIEW_KEY = "cc.preview";
 
   private final CreatorConfig config;
   private final PreviewDummyManager dummies;
   private final Outcome outcome;
-  /** Okna nad scena (potwierdzenie przerwania, lista klas); null = zachowanie sprzed naprawy. */
+  /** Okna nad scena (potwierdzenie przerwania); null = zachowanie sprzed naprawy. */
   private final SceneMenu menu;
-  /** Lista 16 klas pod Spacja (waskie przyciski); null = Spacja nic nie robi. */
-  private final GridDialog grid;
 
   public CreatorFlow(CreatorConfig config, PreviewDummyManager dummies, Outcome outcome) {
-    this(config, dummies, outcome, null, null);
+    this(config, dummies, outcome, null);
   }
 
-  public CreatorFlow(CreatorConfig config, PreviewDummyManager dummies, Outcome outcome, SceneMenu menu,
-      GridDialog grid) {
+  public CreatorFlow(CreatorConfig config, PreviewDummyManager dummies, Outcome outcome, SceneMenu menu) {
     this.config = config;
     this.dummies = dummies;
     this.outcome = outcome;
     this.menu = menu;
-    this.grid = grid;
   }
 
   /**
@@ -214,9 +205,6 @@ public final class CreatorFlow {
   private final class PickStep implements SceneController {
     private int race;
     private int clazz;
-    private boolean introShown;
-    /** Gracz juz cos nacisnal — druga czesc wprowadzenia nie zaslania mu zmian. */
-    private boolean introInterrupted;
 
     PickStep(int race, int clazz) {
       this.race = race;
@@ -236,59 +224,12 @@ public final class CreatorFlow {
     @Override
     public void onOpen(SceneView view) {
       showRace(view);
-      if (!introShown) {
-        introShown = true;
-        intro(view);
-      }
-    }
-
-    /**
-     * Wprowadzenie przy pierwszym wejsciu: klawisze duzym napisem na srodku przez ~4 s.
-     * Sama podpowiedz na action barze ginela — gracz nie wiedzial, ze klase zmienia W/S.
-     * Sciemnienie (A/D) uzywa tego samego tytulu, wiec naturalnie je zastepuje.
-     */
-    private void intro(SceneView view) {
-      // Tytul wyslany zaraz po wejsciu na serwer ginal pod ekranem "Loading terrain" (klient QA
-      // 30.09: na drugim wejsciu wprowadzenia nie bylo wcale). Czekamy, az scena zdejmie czern
-      // (kadr zbudowany), i dajemy graczowi chwile na rozejrzenie sie.
-      org.bukkit.plugin.Plugin plugin = org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(CreatorFlow.class);
-      int[] waited = {0};
-      int[] sentFor = {0};
-      org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-        Player p = view.player();
-        if (p == null || view.isClosed() || introInterrupted) {
-          task.cancel();
-          return;
-        }
-        waited[0]++;
-        // Gotowe = scena zdjela czern (SceneManager#fade trzyma ja do zbudowania kadru).
-        boolean ready = org.bukkit.Bukkit.getCurrentTick() >= view.busyUntilTick;
-        sentFor[0] = ready ? sentFor[0] + 1 : 0;
-        if (sentFor[0] >= INTRO_AFTER_CHUNK_TICKS || waited[0] >= 200) {
-          task.cancel();
-          introTitle(p, hint("A/D", "rasa", "W/S", "klasa"), INTRO_TICKS / 2);
-          org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Player q = view.player();
-            if (q != null && !view.isClosed() && !introInterrupted) {
-              introTitle(q, hint("Spacja", "lista klas", "LPM", "dalej"), INTRO_TICKS / 2);
-            }
-          }, INTRO_TICKS / 2);
-        }
-      }, 1L, 1L);
-    }
-
-    private void introTitle(Player player, Component subtitle, int stayTicks) {
-      player.showTitle(net.kyori.adventure.title.Title.title(
-          Component.text("Stwórz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true),
-          subtitle,
-          net.kyori.adventure.title.Title.Times.times(java.time.Duration.ZERO,
-              java.time.Duration.ofMillis(stayTicks * 50L), java.time.Duration.ofMillis(400))));
     }
 
     private Component normalHint(SceneView view) {
       return outcome.mustCreate(view)
-          ? hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej")
-          : hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej", "PPM", "Wróć");
+          ? hint("A/D", "Rasa", "W/S", "Klasa", "LPM", "Dalej")
+          : hint("A/D", "Rasa", "W/S", "Klasa", "LPM", "Dalej", "PPM", "Wróć");
     }
 
     /** Pelne odswiezenie: kadr rasy, postac, oba panele, pasek i podpowiedz. */
@@ -415,7 +356,6 @@ public final class CreatorFlow {
 
     @Override
     public void onPrevious(SceneView view) {
-      introInterrupted = true;
       view.uiSound("race");
       view.fade(() -> {
         race--;
@@ -425,7 +365,6 @@ public final class CreatorFlow {
 
     @Override
     public void onNext(SceneView view) {
-      introInterrupted = true;
       view.uiSound("race");
       view.fade(() -> {
         race++;
@@ -435,7 +374,6 @@ public final class CreatorFlow {
 
     @Override
     public void onUp(SceneView view) {
-      introInterrupted = true;
       clazz--;
       view.uiSound("class");
       showClass(view);
@@ -443,7 +381,6 @@ public final class CreatorFlow {
 
     @Override
     public void onDown(SceneView view) {
-      introInterrupted = true;
       clazz++;
       view.uiSound("class");
       showClass(view);
@@ -496,72 +433,6 @@ public final class CreatorFlow {
     private void cancel(SceneView view) {
       dropPreview(view);
       outcome.cancelled(view);
-    }
-
-    /**
-     * Spacja: wszystkie 16 klas w jednym oknie (wiersz = archetyp, kolumna = rasa) — skok
-     * prosto do wybranej zamiast przewijania A/D i W/S pod sciemnieniem.
-     */
-    @Override
-    public void onJump(SceneView view) {
-      Player player = view.player();
-      if (grid == null || player == null) {
-        return;
-      }
-      introInterrupted = true;
-      view.uiSound("class");
-      List<CreatorConfig.RaceOption> rs = races();
-      List<CreatorConfig.ClassOption> cs = classes();
-      List<SceneMenu.Button> buttons = new ArrayList<>();
-      // Pierwszy rzad = naglowki kolumn (rasy). Linia nad siatka nie trafiala w kolumny
-      // (recenzja 30.09); klik w naglowek niczego nie wybiera — okno wraca bez zmian.
-      for (CreatorConfig.RaceOption r : rs) {
-        buttons.add(new SceneMenu.Button(Component.text("▼ ", NamedTextColor.GRAY)
-            // &8 (Nieumarly) na szarym przycisku wygladal na wylaczony — rozjasniony do &7.
-            .append(legacy(r.display().replaceFirst("^&8", "&7")).decoration(TextDecoration.BOLD, true)),
-            Component.text("Kolumna rasy: " + plain(r.display())), () -> onJump(view)));
-      }
-      for (int ci = 0; ci < cs.size(); ci++) {
-        for (int ri = 0; ri < rs.size(); ri++) {
-          CreatorConfig.RaceOption r = rs.get(ri);
-          CreatorConfig.ClassOption c = cs.get(ci);
-          int targetRace = ri;
-          int targetClass = ci;
-          Component tip = Component.text(plain(r.display()) + " · " + plain(c.display()), NamedTextColor.WHITE);
-          Component role = roleLine(c, r);
-          if (role != null) {
-            tip = tip.append(Component.newline()).append(role);
-          }
-          boolean current = ri == Math.floorMod(race, rs.size()) && ci == Math.floorMod(clazz, cs.size());
-          // Biezaca klasa podkreslona, nie ze strzalka — przycisk ma 100 jednostek i
-          // "▶ Nosiciel Relikwii" by sie w nim nie zmiescil.
-          // Szary archetyp (&7/&8) na szarym przycisku byl ledwo czytelny (zrzut QA) — bialy.
-          String name = c.displayFor(r.id()).replaceFirst("^&[78]", "&f");
-          Component label = legacy(name).decoration(TextDecoration.UNDERLINED, current);
-          buttons.add(new SceneMenu.Button(label, tip, () -> jumpTo(view, targetRace, targetClass)));
-        }
-      }
-      buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> { }));
-      grid.show(player, Component.text("Wszystkie klasy", NamedTextColor.GOLD), null, buttons,
-          Math.max(1, rs.size()), GridDialog.NARROW);
-    }
-
-    private void jumpTo(SceneView view, int targetRace, int targetClass) {
-      if (view.isClosed()) {
-        return;
-      }
-      boolean raceChanges = Math.floorMod(race, races().size()) != targetRace;
-      clazz = targetClass;
-      if (raceChanges) {
-        view.uiSound("race");
-        view.fade(() -> {
-          race = targetRace;
-          showRace(view);
-        });
-      } else {
-        view.uiSound("class");
-        showClass(view);
-      }
     }
 
     @Override

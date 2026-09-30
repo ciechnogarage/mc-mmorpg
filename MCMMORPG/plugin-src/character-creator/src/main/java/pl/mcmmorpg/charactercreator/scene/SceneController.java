@@ -24,7 +24,7 @@ public interface SceneController {
   /** S: pozycja nizej na liscie. */
   default void onDown(SceneView view) {}
 
-  /** Spacja (skok): w scenie wyboru graj, w kreatorze lista wszystkich klas. Domyslnie nic. */
+  /** Spacja (skok): w scenie wyboru graj. Domyslnie nic. */
   default void onJump(SceneView view) {}
 
   /** LPM. */
