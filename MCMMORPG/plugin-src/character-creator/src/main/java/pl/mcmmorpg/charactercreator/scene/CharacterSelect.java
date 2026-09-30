@@ -176,8 +176,13 @@ public final class CharacterSelect {
     List<Entry> entries = entries(list);
     UUID currentId = list.getCurrent().getUniqueId();
     List<SceneMenu.Button> buttons = new ArrayList<>();
-    for (Entry e : entries) {
-      boolean playing = e.id().equals(currentId);
+    for (Entry listed : entries) {
+      boolean playing = listed.id().equals(currentId);
+      // Zapis MMOProfiles postaci, ktora sie gra, jest nieaktualny do najblizszego zapisu —
+      // miejsce bierzemy z tego, gdzie gracz stoi teraz.
+      Entry e = playing ? new Entry(listed.profile(), listed.record(), listed.level(),
+          places.describe(player.getWorld().getName(), player.getLocation().getX(),
+              player.getLocation().getY(), player.getLocation().getZ())) : listed;
       buttons.add(new SceneMenu.Button(tileLabel(e, false, playing), tileTooltip(e, playing),
           () -> switchInGame(player, e)).width(TILE_WIDTH));
     }
@@ -766,7 +771,7 @@ public final class CharacterSelect {
         .append(Component.text(inGame ? " = grasz teraz." : " = ostatnio grana.", NamedTextColor.WHITE));
     if (inTrash > 0) {
       text = text.append(Component.text(" W koszu: " + SelectOrder.characters(inTrash)
-          + " (nadal zajmują miejsca).", MUTED));
+          + (inTrash == 1 ? " (nadal zajmuje miejsce)." : " (nadal zajmują miejsca)."), MUTED));
     }
     return List.of(text);
   }

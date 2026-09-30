@@ -1,0 +1,23 @@
+# Evale wyboru postaci (lista, zarzadzanie, kosz)
+
+Bot mineflayer wchodzi na **klon** world1 jak gracz (bez OP, `rank.mvp` = 12 miejsc). Klawisze sceny
+ida pakietem `player_input`, LPM = atak w encje sceny, PPM = interakcja, okna Papera = `show_dialog`
++ recznie skladany `custom_click_action` z wartosciami pol (checkboxy, tekst). Konsola klonu tylko do
+obserwacji (`papi parse`, pliki danych) i do "menu Q" — DeluxeMenus wola dokladnie
+`cc wybor <gracz> lista` z konsoli.
+
+| plik | co |
+|---|---|
+| `setup.js` | 11 postaci drogą gracza (scena -> lista -> "+ Nowa postac" -> kreator -> ksiega), poziomy i ekwipunek konsola |
+| `scen.js` | 45 sprawdzen: lista po wejsciu, stala kolejnosc po relogu, gwiazdka, karta (poziom/miejsce/ostatnio/czas), klik = graj, A/D, spacja, menu Q bez sceny, zarzadzanie 3 naraz, imie od poz. 10, zle imie, kosz: przywroc/usun na zawsze, nowy gracz |
+| `termin.js` | kosz po terminie (trash.yml cofniety o 8 dni przy zatrzymanym serwerze) -> postac znika przy wejsciu |
+| `op.js` | ta sama sciezka kontem z OP |
+| `reset.js` | stan startowy: kosz pusty; kod 3 = brak Mortha (dorob: `OD=3 DO=4 ./run.sh setup.js`) |
+
+Klon: `klon-start.sh` (sciezki joba 2f21747c — przepisz), `test-wejscie` niepotrzebne. Wymagane w klonie:
+velocity wylaczone, `rcon.password=wybor`, jar z tej galezi, `pliki/apply_config.py` z pakietu wdrozenia.
+
+**Pulapki harnessu** (kazda kosztowala przebieg): mineflayer NIE emituje `actionBar` dla paska w formie
+NBT — `lib/w.js` czyta pakiet `action_bar` sam; `logSince` tnie BUFOR (przesuniecie w bajtach, polskie
+znaki); po ponownym otwarciu sceny w `bot.entities` wisi stara tarcza — bierz najnowsza (najwyzsze id);
+okno z poprzedniej sesji zostaje w `bot.dialog` — zeruj przed PPM; Paper ma throttling polaczen (4 s).
