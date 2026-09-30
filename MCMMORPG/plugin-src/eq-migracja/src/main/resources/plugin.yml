@@ -1,0 +1,6 @@
+name: EqMigracja
+version: ${version}
+main: pl.mcmmorpg.eqmigracja.EqMigracja
+api-version: '1.21'
+depend: [MMOInventory, MMOItems, MythicLib]
+softdepend: [MMOProfiles]
