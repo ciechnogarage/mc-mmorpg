@@ -3,6 +3,7 @@ const R = new w.Results('op')
 ;(async () => {
   await w.rcon('minecraft:op WyborQA')
   const bot = await w.connect('WyborQA')
+  bot._client.on('show_dialog', p => { try { console.log('DLG', Date.now() % 100000, w.plain(require('prismarine-nbt').simplify(p.dialog.data).title)) } catch {} })
   const d = await w.waitDialog(bot, d => /Twoje postacie/.test(w.plain(d.title)), 12000)
   R.assert(!!d, 'OP: lista po wejsciu', d && w.plain(d.title))
   await w.click(bot, /^(★ )?Lirael /)
@@ -11,6 +12,8 @@ const R = new w.Results('op')
   R.assert(bot.game.gameMode !== 'spectator', 'OP: klik = gra')
   await w.sleep(2000)
   R.assert((await w.rcon('papi parse WyborQA %mmocore_level%')).trim() === '2', 'OP: gra Lirael (poziom 2)')
+  // Postac bez chowanca dostaje po chwili okno startera Chowancow (inny plugin) — gracz je zamyka.
+  if (await w.waitDialog(bot, d => /Pierwszy chowaniec/.test(w.plain(d.title)), 6000)) await w.click(bot, /Później/)
   bot.dialog = null
   await w.rcon('cc wybor WyborQA lista')
   R.assert(!!await w.waitDialog(bot, d => /Twoje postacie/.test(w.plain(d.title)), 5000), 'OP: lista w grze')

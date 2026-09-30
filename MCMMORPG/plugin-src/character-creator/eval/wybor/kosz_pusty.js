@@ -31,7 +31,7 @@ async function lista(bot) {
   R.assert(!!d, 'wejscie z pustym kontem: lista otwiera sie sama')
   const b = btn(bot)
   R.assert(b.some(l => /\+ Nowa postać/.test(l)) && b.some(l => /^Kosz \(2\)/.test(l)) && b.some(l => /Zarządzaj/.test(l)), 'lista: + Nowa postac, Zarzadzaj, Kosz (2)', b.join(' | '))
-  R.assert(/W koszu: 2 postacie/.test(w.text(bot)), 'lista mowi o koszu', w.text(bot))
+  R.assert(/Nie masz aktywnych postaci\. Przywróć je z kosza \(2 postacie\) albo stwórz nową/.test(w.text(bot)), 'lista mowi, co zrobic (kosz albo nowa)', w.text(bot))
   await w.click(bot, /Wróć do sceny/)
   await w.sleep(2000)
   R.assert(/\[LPM\] Nowa postać/.test(hint(bot)), 'scena bez postaci: podpowiedz "[LPM] Nowa postac"', hint(bot))
