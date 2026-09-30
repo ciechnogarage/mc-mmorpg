@@ -19,7 +19,7 @@ B) for w in "SWORD PRZ_WOJ_MIECZ_1" "GREATHAMMER PRZ_AKO_MLOT_DWURECZNY_1"; do c
    zombi 0.5 -59 2.3 1 t; stoj 0 15; sleep 1.6; $X xdotool click 1; sleep 0.3; h1=$(hp t); sleep 0.3; $X xdotool click 1; sleep 0.5
    echo "B $w: po pelnym ciosie HP $h1, po drugim (0,6 s) HP $(hp t) (bez zmiany = cios zablokowany przez naladowanie)"; done ;;
 C|E) czysc; [ $1 = E ] && bron HALBERD PRZ_WOJ_DRZEWCOWA_1 || bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.5 1 atak; stoj 0 10
-   for tryb in bez garda bez garda; do r "minecraft:effect give BronQA minecraft:instant_health 1 5 true" >/dev/null; sleep 0.8
+   for tryb in bez garda bez garda; do r "minecraft:effect give BronQA minecraft:instant_health 1 5 true" >/dev/null; sleep 1.2
    h0=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f)
    [ $tryb = garda ] && { $X xdotool mousedown 3; sleep 0.6; }
    r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=atak,limit=1]" >/dev/null; sleep 0.3
@@ -32,7 +32,7 @@ D) czysc; bron SWORD PRZ_WOJ_MIECZ_1; echo "D pusta lewa: $(r 'animacjebroni spr
    echo "D znow pusta: $(r 'animacjebroni sprawdz BronQA' | grep -oE 'garda=[a-z]+|lewa=[A-Z_]+' | tr '\n' ' ')" ;;
 F) czysc; bron HALBERD PRZ_WOJ_DRZEWCOWA_1; zombi 0.5 -59 3.0 1 f1 1000; zombi 0.5 -59 4.4 1 f2 1000; stoj 0 8; sleep 1.2
    $X xdotool mousedown 3; sleep 0.9; $X import -window root /review/captures/halabarda-garda.png; $X xdotool mouseup 3; sleep 0.6
-   echo "F wypad: HP $(hp f1) / $(hp f2) (oba <1000 = trafil linie), pozycja gracza z=$(r 'data get entity BronQA Pos[2]' | grep -oE '[0-9.]+d' | tr -d d)"
-   a1=$(hp f1); stoj 0 8; $X xdotool mousedown 3; sleep 0.9; $X xdotool mouseup 3; sleep 0.6
+   h1=$(hp f1); h2=$(hp f2); a1=$h1
+   echo "F wypad: HP $h1 / $h2 (oba <1000 = trafil linie)"; $X xdotool mousedown 3; sleep 0.9; $X xdotool mouseup 3; sleep 0.6   # < 3 s po pierwszym
    echo "F drugi wypad w odnowieniu: HP f1 $a1 -> $(hp f1) (bez zmiany = odnowienie dziala)"; czysc ;;
 esac

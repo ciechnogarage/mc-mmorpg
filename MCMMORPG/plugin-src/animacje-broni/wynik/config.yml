@@ -28,8 +28,9 @@ typy:
     rodzaj: ciete
     ladowanie: 0.8
     zasieg: 3.3
+    poza: crossbow
     ciezka: true
-    skala: s130
+    skala: s130g
     garda: {redukcja: 0.55, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
   GREATAXE:
     zamach: whack
@@ -43,8 +44,9 @@ typy:
     czas: 8
     rodzaj: klute
     wzor: IRON_SPEAR
+    poza: crossbow
     ciezka: true
-    skala: s130
+    skala: s130g
     garda: {redukcja: 0.35, kat: 90, opoznienie: 0.2, spowolnienie: 0.5}
     wypad: {min: 10, mnoznik: 2.0, zasieg: 4.5, szerokosc: 0.9, sila: 0.8, odnowienie: 60}
   LANCE:

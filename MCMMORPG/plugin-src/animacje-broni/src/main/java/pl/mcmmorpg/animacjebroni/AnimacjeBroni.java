@@ -10,6 +10,8 @@ import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.AttackRange;
 import io.papermc.paper.datacomponent.item.BlocksAttacks;
+import io.papermc.paper.datacomponent.item.Consumable;
+import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import io.papermc.paper.datacomponent.item.SwingAnimation;
 import io.papermc.paper.datacomponent.item.UseEffects;
 import io.papermc.paper.datacomponent.item.blocksattacks.DamageReduction;
@@ -72,13 +74,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   record Wypad(int min, double mnoznik, double zasieg, double szerokosc, double sila, int odnowienie) {}
 
   record Ustawienie(SwingAnimation.Animation zamach, int czas, String skala, Rodzaj rodzaj, Float ladowanie,
-                    Float zasieg, Material wzor, Garda garda, boolean ciezka, Wypad wypad) {}
+                    Float zasieg, Material wzor, Garda garda, boolean ciezka, Wypad wypad,
+                    ItemUseAnimation poza) {}
 
   /** Komponenty, ktore plugin ustawia; przy zmianie wracaja do wartosci materialu (resetData). */
   private static final List<DataComponentType> ZARZADZANE = List.of(
       DataComponentTypes.SWING_ANIMATION, DataComponentTypes.MINIMUM_ATTACK_CHARGE, DataComponentTypes.ATTACK_RANGE,
       DataComponentTypes.PIERCING_WEAPON, DataComponentTypes.KINETIC_WEAPON, DataComponentTypes.USE_EFFECTS,
-      DataComponentTypes.BLOCKS_ATTACKS);
+      DataComponentTypes.BLOCKS_ATTACKS, DataComponentTypes.CONSUMABLE);
   private static final Set<DataComponentType> Z_WZORU_LPM = Set.of(
       DataComponentTypes.PIERCING_WEAPON, DataComponentTypes.ATTACK_RANGE, DataComponentTypes.MINIMUM_ATTACK_CHARGE);
   private static final Set<DataComponentType> Z_WZORU_PPM = Set.of(
@@ -140,8 +143,16 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           wypad = new Wypad(w.getInt("min", 10), w.getDouble("mnoznik", 1.5), w.getDouble("zasieg", 4.5),
               w.getDouble("szerokosc", 0.9), w.getDouble("sila", 0.8), w.getInt("odnowienie", 60));
         }
+        ItemUseAnimation poza = null;
+        if (t.getString("poza") != null) {
+          try {
+            poza = (ItemUseAnimation) ItemUseAnimation.class.getField(t.getString("poza").toUpperCase(Locale.ROOT)).get(null);
+          } catch (ReflectiveOperationException ex) {
+            getLogger().warning("Typ " + typ + ": nieznana poza '" + t.getString("poza") + "' (bow|crossbow|block|spear|trident|...)");
+          }
+        }
         typy.put(typ.toUpperCase(Locale.ROOT), new Ustawienie(zamach, t.getInt("czas", 6), t.getString("skala"), rodzaj,
-            liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false), wypad));
+            liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false), wypad, poza));
       }
     }
     for (String m : getConfig().getStringList("materialy-z-modelami")) {
@@ -203,6 +214,12 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
             .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
       }
+    }
+
+    if (ppm && u.poza() != null) {
+      // tylko wyglad trzymania PPM: "jedzenie" trwa godzine, bez dzwieku i czasteczek (jak nosniki zaklec)
+      item.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable().consumeSeconds(3600f).animation(u.poza())
+          .hasConsumeParticles(false).sound(Key.key("minecraft", "intentionally_empty")).build());
     }
 
     if (u.skala() != null && modele.contains(item.getType())) {
@@ -293,6 +310,23 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       swiat.playSound(oko, trafione > 0 ? Sound.ITEM_TRIDENT_HIT : Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
           SoundCategory.PLAYERS, 0.9f, trafione > 0 ? 0.9f : 1f);
     }, 3L);
+  }
+
+  /** Widoczny blok: iskry w miejscu styku, gdy gracz zablokowal cios bronia z garda (dzwiek daje sam komponent). */
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void zablokowano(EntityDamageByEntityEvent e) {
+    if (!(e.getEntity() instanceof Player p) || !p.isBlocking()) return;
+    Vector doNapastnika = e.getDamager().getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+    Vector patrzy = p.getLocation().getDirection().setY(0);
+    if (doNapastnika.lengthSquared() < 1e-4 || patrzy.lengthSquared() < 1e-4) return;
+    Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+    if (u == null || u.garda() == null) return;
+    if (Math.toDegrees(doNapastnika.angle(patrzy)) > u.garda().kat()) return;   // cios z boku/tylu nie jest blokowany
+    Location oko = p.getEyeLocation();
+    Location styk = oko.clone().add(oko.getDirection().multiply(0.8)).subtract(0, 0.35, 0);
+    p.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, styk, 12, 0.15, 0.15, 0.15, 0.25);
+    p.getWorld().spawnParticle(Particle.CRIT, styk, 6, 0.1, 0.1, 0.1, 0.3);
+    p.getWorld().playSound(styk, Sound.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS, 0.25f, 1.8f);
   }
 
   /** Efekt i dzwiek trafienia wg rodzaju obrazen broni w glownej rece. */

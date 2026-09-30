@@ -16,6 +16,9 @@ import argparse, json, math, os, re, sys, zipfile
 # wzor = kopia zestawu vanillowej broni (IRON_SPEAR: pchniecie trafiajace wszystko w linii, zasieg 2-4,5, szarza PPM).
 # wypad = puszczenie PPM po >= min tickach gardy: krok do przodu (sila) i pchniecie przez linie (zasieg, szerokosc)
 # za mnoznik x obrazenia broni; odnowienie w tickach (cooldown przedmiotu na hotbarze).
+# garda_oburacz = bron dwureczna: PPM w pozie kuszy (obie rece z przodu), a model w trakcie PPM (using_item) obraca
+# bron poziomo w poprzek ciala - zaslona trzymana oburacz. Katy dobrane na zrzutach (qa/pozy.sh, warianty b i s).
+GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 0, -45], 'fp_trans': [-3, 4, -3]}
 G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 TYPY = {
     'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'garda': G_MIECZ},
@@ -23,9 +26,11 @@ TYPY = {
     'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}},
     'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6},
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
+                        'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
     'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8},
     'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
+                        'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.2, 'spowolnienie': 0.5},
                         'wypad': {'min': 10, 'mnoznik': 2.0, 'zasieg': 4.5, 'szerokosc': 0.9, 'sila': 0.8, 'odnowienie': 60}},
     'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
@@ -126,6 +131,7 @@ def main():
     materialy = set()
     pominiete = {}
     modele_skal = {}  # skala -> set materialow
+    garda_skal = {}   # skala -> materialy broni z garda oburacz (model w trakcie PPM)
     for typ, u in TYPY.items():
         s = u.get('skala')
         if s is None:
@@ -142,6 +148,8 @@ def main():
                 continue
             materialy.add(m)
             modele_skal.setdefault(s, set()).add((m, par))
+            if u.get('garda_oburacz'):
+                garda_skal.setdefault(s, set()).add(m)
 
     baza = os.path.join(a.out, 'pack', 'assets', PRZESTRZEN)
     n = 0
@@ -158,18 +166,41 @@ def main():
             json.dump({'model': {'type': 'minecraft:model', 'model': '%s:item/%s/%s' % (PRZESTRZEN, sc, nazwa)}}, open(p, 'w'), indent=1)
             n += 1
 
+    for s, zb in sorted(garda_skal.items()):
+        for m in sorted(zb):
+            nazwa = m.lower(); sc = skala_nazwa(s); scg = sc + 'g'
+            g = GARDA_OBURACZ
+            disp = {}
+            for k in KONTEKSTY:
+                fp = k.startswith('firstperson')
+                r = g['fp_rot'] if fp else g['tp_rot']
+                if 'lefthand' in k:
+                    r = [r[0], -r[1], -r[2]]
+                sk = round((0.62 if fp else 0.92) * s, 4)
+                disp[k] = {'rotation': r, 'translation': g['fp_trans'] if fp else g['tp_trans'], 'scale': [sk] * 3}
+            p = os.path.join(baza, 'models', 'item', scg, nazwa + '.json')
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            json.dump({'parent': 'minecraft:item/' + nazwa, 'display': disp}, open(p, 'w'), indent=1)
+            p = os.path.join(baza, 'items', scg, nazwa + '.json')
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            json.dump({'model': {'type': 'minecraft:condition', 'property': 'minecraft:using_item',
+                                 'on_true': {'type': 'minecraft:model', 'model': '%s:item/%s/%s' % (PRZESTRZEN, scg, nazwa)},
+                                 'on_false': {'type': 'minecraft:model', 'model': '%s:item/%s/%s' % (PRZESTRZEN, sc, nazwa)}}},
+                      open(p, 'w'), indent=1)
+            n += 1
+
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
              '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
              'przestrzen-modeli: %s' % PRZESTRZEN, 'typy:']
     for typ, u in TYPY.items():
         linie.append('  %s:' % typ)
-        for k in ('zamach', 'czas', 'rodzaj', 'ladowanie', 'zasieg', 'wzor'):
+        for k in ('zamach', 'czas', 'rodzaj', 'ladowanie', 'zasieg', 'wzor', 'poza'):
             if k in u:
                 linie.append('    %s: %s' % (k, u[k]))
         if u.get('ciezka'):
             linie.append('    ciezka: true')
         if 'skala' in u:
-            linie.append('    skala: %s' % skala_nazwa(u['skala']))
+            linie.append('    skala: %s%s' % (skala_nazwa(u['skala']), 'g' if u.get('garda_oburacz') else ''))
         for k in ('garda', 'wypad'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))

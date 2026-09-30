@@ -14,8 +14,8 @@ Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko)
 | Miecz (SWORD) | cięte | cios 6 | — | 3 | garda −40% | vanilla |
 | Klinga elfów (KATANA) | cięte | cios 5 | — | 3 | garda −30%, lżejsza | vanilla |
 | Topór (AXE) | cięte | cios 8 | 60% | 3 | — | vanilla |
-| Miecz dwuręczny (GREATSWORD) | cięte, ciężka | cios 10 | 80% | 3,3 | garda −55%, wolna | ×1,30 |
-| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | **garda drzewcem −35%**; puszczenie po ≥0,5 s = **wypad** (pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s); w sprincie **szarża** | ×1,30 |
+| Miecz dwuręczny (GREATSWORD) | cięte, ciężka | cios 10 | 80% | 3,3 | **garda oburącz** −55% (ostrze poziomo przed ciałem), wolna | ×1,30 |
+| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | **garda oburącz drzewcem −35%** (drzewce poziomo przed ciałem); puszczenie po ≥0,5 s = **wypad** (pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s); w sprincie **szarża** | ×1,30 |
 | Włócznia (SPEAR) | kłute | vanilla | vanilla | 2–4,5 | szarża (vanilla) | vanilla |
 | Sztylet (DAGGER) | kłute | pchnięcie 4 | — | **2,6** | — | ×0,80 |
 | Kosa (KOSA) | cięte, ciężka | cios 10 | 80% | **3,5** | — | ×1,40 |
@@ -28,6 +28,12 @@ Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko)
 | Tarcza (SHIELD) | obuchowe | cios 7 | — | 3 | blok (vanilla) | vanilla |
 | Łańcuch (WHIP) | cięte | cios 7 | — | LPM bicz MMOItems | — | vanilla |
 
+Garda oburącz (halabarda, miecz dwuręczny): PPM w pozie ładowania kuszy (obie ręce z przodu), a definicja modelu
+`bron:s130g/<materiał>` podczas PPM (`using_item`) obraca broń poziomo w poprzek ciała, w 1. osobie w poprzek ekranu
+(kąty z `qa/pozy.sh`: 3. osoba [90,0,-45], 1. osoba [-30,0,-45]). Trzymanie oburącz BEZ wciśniętego PPM jest w vanilli
+niemożliwe (poza oburęczną ma tylko naładowana kusza, przypięta do samego przedmiotu kuszy).
+Zablokowany cios: iskry w miejscu styku + dźwięk bloku tarczy i metalu (tylko cios z przodu, w kącie gardy).
+
 Efekt trafienia (plugin, każdy cios): cięte = łuk cięcia + świst; kłute = iskry krytyka w linii ciosu + stuk grotu;
 obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyganu w ziemię). Do tego efekty MMOItems
 (rozprysk obrażeń co 3 s: cięte stożek 60°, kłute 30°, obuchowe wokół celu).
@@ -36,7 +42,7 @@ obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyga
 zaklęcia/tarczy w lewej ręce albo do umiejętności; plugin zdejmuje i przywraca te komponenty sam (przegląd co 10 ticków).
 Zmierzone na klonie 30.09 (`qa/mechanika.sh`): garda miecza 6 → 4,0 HP bez / 2,4 HP z gardą; halabarda nie trafia
 celu na 1 bloku, trafia dwa w linii na 3 i 4 blokach; młot dwuręczny nie wyprowadza ciosu 0,6 s po poprzednim
-(miecz tak); szarża halabardą w sprincie trafia; garda halabardy 6 → 4,0 / 2,5 HP; wypad trafia dwa cele w linii, druga próba w odnowieniu nic nie robi; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu.
+(miecz tak); szarża halabardą w sprincie trafia; garda halabardy 6 → 4,0 / 2,5 HP, miecza dwuręcznego 3,9 / 1,7 HP (4 powtórzenia); wypad trafia dwa cele w linii, druga próba w odnowieniu nic nie robi; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu.
 
 Poza pluginem celowo: zamach i PPM **SPEAR** (materiały `*_SPEAR` mają vanillowe pchnięcie i szarżę; plugin daje im tylko efekt trafienia), **BOW / CROSSBOW /
 GREATBOW / MUSKET** (animacje naciągania). Model trzymania dostaje tylko przedmiot z modelem domyślnym materiału —
