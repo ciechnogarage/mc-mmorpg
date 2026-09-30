@@ -59,9 +59,44 @@ public final class MmocoreProfileSwitchFix implements Listener {
       Class<?> bound = Class.forName("net.Indyuce.mmocore.skill.binding.BoundSkillInfo");
       skillOpen = field(bound, "open");
       skillClose = bound.getMethod("close");
+      // Typy sprawdzamy od razu (naprawa 30.09): zmiana typu pola w nowym MMOCore wylaczala
+      // obejscie dopiero przy PIERWSZEJ zmianie postaci, po czesciowym czyszczeniu.
+      String bad = typeProblem();
+      if (bad != null) {
+        disable(bad);
+        return;
+      }
+      org.bukkit.plugin.Plugin mmocore = org.bukkit.Bukkit.getPluginManager().getPlugin("MMOCore");
+      logger.info("Obejscie zmiany postaci MMOCore aktywne (MMOCore "
+          + (mmocore == null ? "?" : mmocore.getPluginMeta().getVersion()) + "; sprawdzone na "
+          + TESTED_ON + "). Do usuniecia, gdy MMOCore naprawi blad — patrz javadoc.");
     } catch (ReflectiveOperationException | RuntimeException ex) {
       disable("nie znaleziono pol MMOCore (" + ex + ")");
     }
+  }
+
+  /**
+   * Build MMOCore, na ktorym blad zmierzono i obejscie sprawdzono. Stan 30.09: nowszy build
+   * 1.13.1-SNAPSHOT (12.09.2026, nexus phoenixdevt) ma w historii zmian tylko poprawki
+   * atrybutow i blokow MMOItems — nic o sesjach/umiejetnosciach, wiec obejscie zostaje.
+   */
+  static final String TESTED_ON = "1.13.1-SNAPSHOT 20260330.110342";
+
+  /** Null = typy pol takie, jakich obejscie oczekuje; inaczej opis problemu. */
+  private String typeProblem() {
+    if (!Map.class.isAssignableFrom(boundSkills.getType())) {
+      return "PlayerData.boundSkills nie jest Map (" + boundSkills.getType().getName() + ")";
+    }
+    if (!AtomicBoolean.class.isAssignableFrom(forced.getType())) {
+      return "PlayerData.bufferedForcedClassSelection nie jest AtomicBoolean (" + forced.getType().getName() + ")";
+    }
+    if (forcedCallback.getType().isPrimitive()) {
+      return "PlayerData.bufferedForcedClassSelectionCallback jest prymitywem";
+    }
+    if (skillOpen.getType() != boolean.class && skillOpen.getType() != Boolean.class) {
+      return "BoundSkillInfo.open nie jest boolean (" + skillOpen.getType().getName() + ")";
+    }
+    return null;
   }
 
   private static Field field(Class<?> owner, String name) throws NoSuchFieldException {

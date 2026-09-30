@@ -161,14 +161,20 @@ public final class CharacterProfileModule implements ProfileDataModule {
     if (scenes == null || sessions.isActive(player) || scenes.inScene(player.getUniqueId())) {
       return false;
     }
-    Snapshot snapshot = mayKeepEntryInventory(player, profileId) ? Snapshot.of(player) : null;
-    String[] draft = {player.getName(), pl.mcmmorpg.charactercreator.scene.NewCharacterBook.DEFAULT_COLOR};
+    boolean firstCharacter = mayKeepEntryInventory(player, profileId);
+    Snapshot snapshot = firstCharacter ? Snapshot.of(player) : null;
+    // Imie startowe: null = ksiega wylosuje imie rasy (dawniej nick konta — tak powstala postac "Miau").
+    String[] draft = {null, pl.mcmmorpg.charactercreator.scene.NewCharacterBook.DEFAULT_COLOR};
     pl.mcmmorpg.charactercreator.scene.CreatorFlow[] flow = new pl.mcmmorpg.charactercreator.scene.CreatorFlow[1];
     flow[0] = flows.apply(new pl.mcmmorpg.charactercreator.scene.CreatorFlow.Outcome() {
       @Override
       public void chosen(pl.mcmmorpg.charactercreator.scene.SceneView view,
           CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz) {
-        book.open(player, flow[0].summary(race, clazz), draft[0], draft[1],
+        String initialName = draft[0] != null ? draft[0]
+            : pl.mcmmorpg.charactercreator.scene.NameGenerator.generate(
+                plugin.getConfig().getConfigurationSection("names"), race.id(),
+                candidate -> store.isNameTaken(candidate, profileId));
+        book.open(player, flow[0].summary(race, clazz), initialName == null ? "" : initialName, draft[1],
             new pl.mcmmorpg.charactercreator.scene.NewCharacterBook.Handler() {
               @Override
               public String create(Player p, String name, String color) {
@@ -215,6 +221,11 @@ public final class CharacterProfileModule implements ProfileDataModule {
       public void cancelled(pl.mcmmorpg.charactercreator.scene.SceneView view) {
         view.close();
         cancelFromScene(player, profileId);
+      }
+
+      @Override
+      public boolean mustCreate(pl.mcmmorpg.charactercreator.scene.SceneView view) {
+        return firstCharacter;
       }
     });
     // Okno MMOProfiles jest jeszcze otwarte (gracz kliknal w nim "nowa postac") — przykryloby scene.

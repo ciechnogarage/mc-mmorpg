@@ -190,6 +190,9 @@ public final class SceneManager {
         view.controller.onOpen(view);
       }
     }, settings.targetDelayTicks() + 1L);
+    // Pierwsze wejscie: czern do chwili, gdy klient zbuduje kadr (naprawa 30.09 — klient QA
+    // przez ~2 s po wejsciu na serwer pokazywal puste niebo z samymi panelami).
+    fade(view, () -> { }, true);
     logger.info("Scena otwarta: " + player.getName() + " (" + controller.getClass().getSimpleName() + ")");
     return true;
   }
@@ -264,6 +267,7 @@ public final class SceneManager {
       runAll(settings.hudOnClose(), player);
     }
     GameMode mode = view.originMode() == null ? GameMode.SURVIVAL : view.originMode();
+    player.setFallDistance(0f);
     if (destination != null) {
       player.teleport(destination);
       player.setGameMode(mode);
@@ -718,12 +722,42 @@ public final class SceneManager {
     }
   }
 
+  /** Czern trzyma najwyzej tyle — potem rozjasniamy, nawet gdy klient jeszcze doczytuje. */
+  private static final int FADE_MAX_HOLD_TICKS = 40;
+  /** Ile tickow po wyslaniu chunkow kadru czekamy, zeby klient zdazyl zbudowac teren. */
+  private static final int FADE_SETTLE_TICKS = 3;
+  /**
+   * To samo po DALEKIM skoku kamery (inny kadr rasy, 300 blokow). Zmierzone na kliencie QA
+   * (15 FPS): 3 ticki po wyslaniu chunkow to za malo — przez ~0,2 s bylo widac puste niebo.
+   */
+  private static final int FADE_SETTLE_FAR_TICKS = 10;
+  private static final double FADE_FAR_JUMP = 64.0;
+  /** Znacznik: sciemnienie w toku, czern jeszcze nasza (atBlack jej nie przejal). */
+  private static final long FADE_OURS = Long.MAX_VALUE - 1;
+
   /**
    * Sciemnienie przez tytul z pelnoekranowym czarnym glifem Nexo. {@code &f} (tu: kolor
    * bialy) PRZED glifem jest obowiazkowy — bez niego klient barwi teksture tytulu i czern
    * wychodzi szara (patrz notatka o tincie tytulu).
+   *
+   * <p><b>Czern trzyma sie do gotowosci kadru</b> (naprawa 30.09). Kadry ras leza 300 blokow
+   * od siebie; po teleporcie klient musi od nowa dostac i zbudowac chunki. Na kliencie QA
+   * (15 FPS) przy stalym czasie czerni gracz przez ~0,5 s widzial puste niebo bez terenu,
+   * postaci i paneli. Teraz: {@code fade.in-ticks} zaciemnienia, zmiana pod czernia, potem
+   * czern co najmniej {@code fade.stay-ticks} i do chwili, gdy kamera jest podpieta, a chunki
+   * 5x5 wokol kamery i postaci wyslane (+{@value #FADE_SETTLE_TICKS} ticki, po dalekim skoku
+   * {@value #FADE_SETTLE_FAR_TICKS}), najwyzej {@value #FADE_MAX_HOLD_TICKS}; wtedy
+   * {@code fade.out-ticks} rozjasnienia. UWAGA: "wyslane" to nie "narysowane" — klient QA
+   * (programowy OpenGL, 15 FPS) potrafil budowac teren jeszcze ~1 s dluzej. Zmiana w tym samym
+   * kadrze (np. klasa z listy) jest gotowa od razu, wiec trwa tyle co minimum.
+   * Gdy {@code atBlack} przejmie ekran (przelot ustawia wlasny tytul), nie ruszamy go.
    */
   void fade(SceneView view, Runnable atBlack) {
+    fade(view, atBlack, false);
+  }
+
+  /** @param forceFar czekaj jak po dalekim skoku (np. pierwsze wejscie w scene) */
+  private void fade(SceneView view, Runnable atBlack, boolean forceFar) {
     Player player = view.player();
     if (player == null) {
       return;
@@ -733,18 +767,84 @@ public final class SceneManager {
       return;
     }
     int in = settings.fadeInTicks();
-    int stay = settings.fadeStayTicks();
+    int minHold = settings.fadeStayTicks();
     int out = settings.fadeOutTicks();
-    player.showTitle(Title.title(
-        Component.text(settings.fadeGlyph(), NamedTextColor.WHITE),
-        Component.empty(),
-        Title.Times.times(ticks(in), ticks(stay), ticks(out))));
-    view.busyUntilTick = Bukkit.getCurrentTick() + in + stay + out / 2;
+    Component glyph = Component.text(settings.fadeGlyph(), NamedTextColor.WHITE);
+    player.showTitle(Title.title(glyph, Component.empty(),
+        Title.Times.times(ticks(in), ticks(FADE_MAX_HOLD_TICKS + 5), ticks(out))));
+    view.busyUntilTick = FADE_OURS;
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-      if (!view.closed) {
-        atBlack.run();
+      if (view.closed) {
+        return;
       }
+      Location before = view.camera != null && view.camera.isValid() ? view.camera.getLocation() : null;
+      atBlack.run();
+      Location after = view.camera != null && view.camera.isValid() ? view.camera.getLocation() : null;
+      boolean far = forceFar || before == null || after == null || before.getWorld() != after.getWorld()
+          || before.distanceSquared(after) > FADE_FAR_JUMP * FADE_FAR_JUMP;
+      int settle = far ? FADE_SETTLE_FAR_TICKS : FADE_SETTLE_TICKS;
+      if (view.busyUntilTick != FADE_OURS) {
+        return; // atBlack przejal czern (przelot) — jego sprawa, kiedy ja zdjac
+      }
+      int[] held = {0};
+      int[] settled = {0};
+      Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+        Player p = view.player();
+        if (view.closed || p == null || view.busyUntilTick != FADE_OURS) {
+          task.cancel();
+          return;
+        }
+        held[0]++;
+        // Tytul wyslany, gdy klient jest jeszcze na ekranie "Loading terrain", przepada
+        // (pierwsze wejscie w scene) — ponawiamy czern, dopoki ja trzymamy.
+        if (held[0] % 10 == 0) {
+          p.showTitle(Title.title(glyph, Component.empty(),
+              Title.Times.times(Duration.ZERO, ticks(FADE_MAX_HOLD_TICKS), ticks(out))));
+        }
+        boolean ready = held[0] >= minHold && Bukkit.getCurrentTick() > view.targetReadyTick
+            && chunksSent(view, p);
+        settled[0] = ready ? settled[0] + 1 : 0;
+        if (settled[0] >= settle || held[0] >= FADE_MAX_HOLD_TICKS) {
+          task.cancel();
+          p.showTitle(Title.title(glyph, Component.empty(),
+              Title.Times.times(Duration.ZERO, ticks(1), ticks(out))));
+          view.busyUntilTick = Bukkit.getCurrentTick() + 1 + out / 2;
+          if (held[0] >= FADE_MAX_HOLD_TICKS && settled[0] < settle) {
+            logger.fine("Scena: czern zdjeta po limicie " + FADE_MAX_HOLD_TICKS + " tickow dla " + p.getName());
+          }
+        }
+      }, 1L, 1L);
     }, in + 1L);
+  }
+
+  /**
+   * Czy klient dostal juz chunki kamery i postaci biezacego kadru — z pierscieniem 5x5:
+   * klient buduje sekcje chunka dopiero, gdy ma wszystkich jego sasiadow, wiec sam srodek
+   * "wyslany" nie znaczy jeszcze "widac teren" (zmierzone: puste niebo mimo wyslanego srodka).
+   */
+  private static boolean chunksSent(SceneView view, Player player) {
+    java.util.List<Location> spots = new java.util.ArrayList<>();
+    if (view.camera != null && view.camera.isValid()) {
+      spots.add(view.camera.getLocation());
+    }
+    if (view.currentPoint != null && view.currentPoint.subject() != null) {
+      spots.add(view.currentPoint.subject());
+    }
+    for (Location at : spots) {
+      if (at.getWorld() != player.getWorld()) {
+        return false;
+      }
+      int cx = at.getBlockX() >> 4;
+      int cz = at.getBlockZ() >> 4;
+      for (int dx = -2; dx <= 2; dx++) {
+        for (int dz = -2; dz <= 2; dz++) {
+          if (!player.isChunkSent(org.bukkit.Chunk.getChunkKey(cx + dx, cz + dz))) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 
   private static Duration ticks(int t) {
@@ -793,6 +893,12 @@ public final class SceneManager {
       Player player = view.player();
       if (player == null || !player.isOnline()) {
         continue;
+      }
+      // Tryb widza co tick, nie dopiero z kamera: przy przelocie Multiverse przestawia tryb
+      // gry po zmianie swiata kilka tickow PO naszym setGameMode — zmierzone na klonie 30.09:
+      // gracz przez ~1,5 s byl w survivalu nad zatoka i spadal z y=96 na y=65.
+      if (player.getGameMode() != GameMode.SPECTATOR) {
+        player.setGameMode(GameMode.SPECTATOR);
       }
       if (now >= view.targetReadyTick) {
         aimCamera(view);

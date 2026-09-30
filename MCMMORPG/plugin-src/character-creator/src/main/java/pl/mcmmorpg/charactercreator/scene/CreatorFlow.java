@@ -28,7 +28,20 @@ public final class CreatorFlow {
     void chosen(SceneView view, CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz);
 
     void cancelled(SceneView view);
+
+    /**
+     * Czy gracz MUSI dokonczyc tworzenie (nie ma zadnej innej postaci). Wtedy PPM nie
+     * przerywa — wyjscie i tak wracaloby do kreatora od zera, gubiac wybrana rase i klase.
+     */
+    default boolean mustCreate(SceneView view) {
+      return false;
+    }
   }
+
+  /** Ile tickow wisi wprowadzenie z klawiszami przy pierwszym wejsciu do kreatora. */
+  private static final int INTRO_TICKS = 120;
+  /** Ile tickow po zdjeciu czerni (kadr gotowy) startuje wprowadzenie. */
+  private static final int INTRO_AFTER_CHUNK_TICKS = 40;
 
   private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
   private static final String PREVIEW_KEY = "cc.preview";
@@ -36,11 +49,22 @@ public final class CreatorFlow {
   private final CreatorConfig config;
   private final PreviewDummyManager dummies;
   private final Outcome outcome;
+  /** Okna nad scena (potwierdzenie przerwania, lista klas); null = zachowanie sprzed naprawy. */
+  private final SceneMenu menu;
+  /** Lista 16 klas pod Spacja (waskie przyciski); null = Spacja nic nie robi. */
+  private final GridDialog grid;
 
   public CreatorFlow(CreatorConfig config, PreviewDummyManager dummies, Outcome outcome) {
+    this(config, dummies, outcome, null, null);
+  }
+
+  public CreatorFlow(CreatorConfig config, PreviewDummyManager dummies, Outcome outcome, SceneMenu menu,
+      GridDialog grid) {
     this.config = config;
     this.dummies = dummies;
     this.outcome = outcome;
+    this.menu = menu;
+    this.grid = grid;
   }
 
   /**
@@ -52,6 +76,10 @@ public final class CreatorFlow {
     Component out = legacy(clazz.displayFor(race.id())).decoration(TextDecoration.BOLD, true)
         .append(Component.text("   " + plain(race.display()) + " · " + plain(clazz.display()),
             NamedTextColor.GRAY));
+    Component role = roleLine(clazz, race);
+    if (role != null) {
+      out = out.append(Component.newline()).append(role);
+    }
     if (v != null && !v.specializations().isEmpty()) {
       out = out.append(Component.newline())
           .append(Component.text("Od 10. poziomu: ", NamedTextColor.GRAY));
@@ -63,8 +91,29 @@ public final class CreatorFlow {
             NamedTextColor.WHITE));
       }
     }
-    return out.append(Component.newline())
-        .append(Component.text("Tryby specjalne (Hardcore): wkrótce", NamedTextColor.DARK_GRAY));
+    return out;
+  }
+
+  /** "Rola: X   Trudność: ★★☆" albo null, gdy generator tego nie zapisal. */
+  private Component roleLine(CreatorConfig.ClassOption clazz, CreatorConfig.RaceOption race) {
+    CreatorConfig.CardExtras x = config.cardExtras(clazz.id(), race.id());
+    if (x == null || (x.role().isBlank() && x.difficulty() == 0)) {
+      return null;
+    }
+    Component out = Component.empty();
+    if (!x.role().isBlank()) {
+      out = out.append(Component.text("Rola: ", NamedTextColor.GRAY))
+          .append(Component.text(x.role(), NamedTextColor.WHITE));
+    }
+    if (x.difficulty() > 0) {
+      if (!x.role().isBlank()) {
+        out = out.append(Component.text("   "));
+      }
+      out = out.append(Component.text("Trudność: ", NamedTextColor.GRAY))
+          .append(Component.text("★".repeat(x.difficulty()), NamedTextColor.GOLD))
+          .append(Component.text("★".repeat(3 - x.difficulty()), NamedTextColor.DARK_GRAY));
+    }
+    return out;
   }
 
   /** Pierwszy ekran kreatora. */
@@ -165,6 +214,9 @@ public final class CreatorFlow {
   private final class PickStep implements SceneController {
     private int race;
     private int clazz;
+    private boolean introShown;
+    /** Gracz juz cos nacisnal — druga czesc wprowadzenia nie zaslania mu zmian. */
+    private boolean introInterrupted;
 
     PickStep(int race, int clazz) {
       this.race = race;
@@ -184,13 +236,67 @@ public final class CreatorFlow {
     @Override
     public void onOpen(SceneView view) {
       showRace(view);
+      if (!introShown) {
+        introShown = true;
+        intro(view);
+      }
+    }
+
+    /**
+     * Wprowadzenie przy pierwszym wejsciu: klawisze duzym napisem na srodku przez ~4 s.
+     * Sama podpowiedz na action barze ginela — gracz nie wiedzial, ze klase zmienia W/S.
+     * Sciemnienie (A/D) uzywa tego samego tytulu, wiec naturalnie je zastepuje.
+     */
+    private void intro(SceneView view) {
+      // Tytul wyslany zaraz po wejsciu na serwer ginal pod ekranem "Loading terrain" (klient QA
+      // 30.09: na drugim wejsciu wprowadzenia nie bylo wcale). Czekamy, az scena zdejmie czern
+      // (kadr zbudowany), i dajemy graczowi chwile na rozejrzenie sie.
+      org.bukkit.plugin.Plugin plugin = org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(CreatorFlow.class);
+      int[] waited = {0};
+      int[] sentFor = {0};
+      org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+        Player p = view.player();
+        if (p == null || view.isClosed() || introInterrupted) {
+          task.cancel();
+          return;
+        }
+        waited[0]++;
+        // Gotowe = scena zdjela czern (SceneManager#fade trzyma ja do zbudowania kadru).
+        boolean ready = org.bukkit.Bukkit.getCurrentTick() >= view.busyUntilTick;
+        sentFor[0] = ready ? sentFor[0] + 1 : 0;
+        if (sentFor[0] >= INTRO_AFTER_CHUNK_TICKS || waited[0] >= 200) {
+          task.cancel();
+          introTitle(p, hint("A/D", "rasa", "W/S", "klasa"), INTRO_TICKS / 2);
+          org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Player q = view.player();
+            if (q != null && !view.isClosed() && !introInterrupted) {
+              introTitle(q, hint("Spacja", "lista klas", "LPM", "dalej"), INTRO_TICKS / 2);
+            }
+          }, INTRO_TICKS / 2);
+        }
+      }, 1L, 1L);
+    }
+
+    private void introTitle(Player player, Component subtitle, int stayTicks) {
+      player.showTitle(net.kyori.adventure.title.Title.title(
+          Component.text("Stwórz postać", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true),
+          subtitle,
+          net.kyori.adventure.title.Title.Times.times(java.time.Duration.ZERO,
+              java.time.Duration.ofMillis(stayTicks * 50L), java.time.Duration.ofMillis(400))));
+    }
+
+    private Component normalHint(SceneView view) {
+      return outcome.mustCreate(view)
+          ? hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej")
+          : hint("A/D", "Rasa", "W/S", "Klasa", "Spacja", "Lista klas", "LPM", "Dalej", "PPM", "Wróć");
     }
 
     /** Pelne odswiezenie: kadr rasy, postac, oba panele, pasek i podpowiedz. */
     private void showRace(SceneView view) {
       view.point(race().id());
       view.topBar(raceStrip());
-      view.hint(hint("A/D", "Rasa", "W/S", "Klasa", "LPM", "Dalej", "PPM", "Wyjdź"));
+      // Przy GUI 4 (1080p) action bar miesci ok. 80 znakow — stad krotkie etykiety.
+      view.hint(normalHint(view));
       showClass(view);
     }
 
@@ -225,8 +331,13 @@ public final class CreatorFlow {
           .decoration(TextDecoration.BOLD, true)
           .append(Component.text("  " + nz(r.bonus()), NamedTextColor.GOLD))
           .append(Component.newline())
-          .append(Component.text(nz(r.description()), NamedTextColor.GRAY))
-          .append(Component.newline()).append(Component.newline())
+          .append(Component.text(nz(r.description()), NamedTextColor.GRAY));
+      // Prawdziwe roznice ras (generator klas, funkcja rasowe) — wczesniej karta pokazywala
+      // tylko nazwe frakcji i jedno zdanie, a rasa zmienia statystyki.
+      for (String trait : config.raceTraits(r.id())) {
+        out = out.append(Component.newline()).append(Component.text(trait, NamedTextColor.GREEN));
+      }
+      out = out.append(Component.newline()).append(Component.newline())
           .append(Component.text("Klasy  ", NamedTextColor.WHITE))
           .append(Component.text("[W/S]", NamedTextColor.GOLD));
       List<CreatorConfig.ClassOption> all = classes();
@@ -244,21 +355,40 @@ public final class CreatorFlow {
       return out;
     }
 
-    /** Prawy panel: karta klasy rasowej z obiema specjalizacjami. */
+    /**
+     * Prawy panel: karta klasy rasowej. Hierarchia (naprawa 30.09): nazwa, rola i trudnosc,
+     * jedno zdanie opisu, umiejetnosc na start, sprzet jednym wierszem, specjalizacje po
+     * jednym wierszu (nazwa — co daje). Opisy specjalizacji sa w ksiedze i w oknie /class;
+     * na karcie robily sciane tekstu.
+     */
     private Component classCard(CreatorConfig.RaceOption r, CreatorConfig.ClassOption c) {
       CreatorConfig.RaceVariant v = c.variant(r.id());
       Component card = legacy(c.displayFor(r.id())).decoration(TextDecoration.BOLD, true)
           .append(Component.newline())
-          .append(Component.text(plain(r.display()) + " · " + plain(c.display()), NamedTextColor.GRAY))
-          .append(Component.newline()).append(Component.newline());
+          .append(Component.text(plain(r.display()) + " · " + plain(c.display()), NamedTextColor.GRAY));
+      Component role = roleLine(c, r);
+      if (role != null) {
+        card = card.append(Component.newline()).append(role);
+      }
+      card = card.append(Component.newline()).append(Component.newline());
       if (v == null || v.lore().isBlank()) {
         // Config bez pol sceny (stary generator) — opis wielowierszowy jak w starym kreatorze.
         return card.append(lines(c.descriptionFor(r.id()), NamedTextColor.WHITE))
             .append(Component.newline()).append(Component.newline())
             .append(Component.text(nz(c.bonusFor(r.id())), NamedTextColor.GOLD));
       }
-      card = card.append(Component.text(v.lore(), NamedTextColor.WHITE))
-          .append(Component.newline()).append(Component.newline())
+      card = card.append(Component.text(v.lore(), NamedTextColor.WHITE));
+      CreatorConfig.CardExtras x = config.cardExtras(c.id(), r.id());
+      if (x != null && !x.skillName().isBlank()) {
+        card = card.append(Component.newline()).append(Component.newline())
+            .append(Component.text(x.skillLevel() <= 1 ? "Na start: " : "Od " + x.skillLevel() + ". poz.: ",
+                NamedTextColor.GRAY))
+            .append(Component.text(x.skillName(), NamedTextColor.AQUA));
+        if (!x.skillText().isBlank()) {
+          card = card.append(Component.text(" — " + x.skillText(), NamedTextColor.GRAY));
+        }
+      }
+      card = card.append(Component.newline()).append(Component.newline())
           .append(Component.text("Zbroja: ", NamedTextColor.GRAY))
           .append(Component.text(v.armor(), NamedTextColor.WHITE))
           .append(Component.newline())
@@ -266,7 +396,7 @@ public final class CreatorFlow {
           .append(Component.text(v.weapons(), NamedTextColor.WHITE));
       if (!v.specializations().isEmpty()) {
         card = card.append(Component.newline()).append(Component.newline())
-            .append(Component.text("Specjalizacje od 10. poziomu", NamedTextColor.GOLD));
+            .append(Component.text("Od 10. poziomu jedna z dwóch:", NamedTextColor.GOLD));
         for (CreatorConfig.Specialization spec : v.specializations()) {
           // Nazwa zawsze biala, kolor specjalizacji tylko na znaczniku: czesc kolorow
           // z generatora (&5, &8) byla na ciemnej karcie nieczytelna.
@@ -274,12 +404,9 @@ public final class CreatorFlow {
           card = card.append(Component.newline())
               .append(marker)
               .append(Component.text(plain(spec.name()), NamedTextColor.WHITE)
-                  .decoration(TextDecoration.BOLD, true))
-              .append(Component.newline())
-              .append(Component.text(spec.description(), NamedTextColor.GRAY));
+                  .decoration(TextDecoration.BOLD, true));
           if (!spec.perks().isBlank()) {
-            card = card.append(Component.newline())
-                .append(Component.text("+ " + spec.perks(), NamedTextColor.GREEN));
+            card = card.append(Component.text(" — " + spec.perks(), NamedTextColor.GREEN));
           }
         }
       }
@@ -288,6 +415,7 @@ public final class CreatorFlow {
 
     @Override
     public void onPrevious(SceneView view) {
+      introInterrupted = true;
       view.uiSound("race");
       view.fade(() -> {
         race--;
@@ -297,6 +425,7 @@ public final class CreatorFlow {
 
     @Override
     public void onNext(SceneView view) {
+      introInterrupted = true;
       view.uiSound("race");
       view.fade(() -> {
         race++;
@@ -306,6 +435,7 @@ public final class CreatorFlow {
 
     @Override
     public void onUp(SceneView view) {
+      introInterrupted = true;
       clazz--;
       view.uiSound("class");
       showClass(view);
@@ -313,6 +443,7 @@ public final class CreatorFlow {
 
     @Override
     public void onDown(SceneView view) {
+      introInterrupted = true;
       clazz++;
       view.uiSound("class");
       showClass(view);
@@ -324,11 +455,113 @@ public final class CreatorFlow {
       outcome.chosen(view, race(), clazz());
     }
 
+    /**
+     * PPM = "wroc". Gracz bez zadnej postaci nie ma dokad wrocic — dostaje komunikat, a wybor
+     * zostaje. Pozostali dostaja pytanie: jeden przypadkowy PPM kasowal caly wybor.
+     */
     @Override
     public void onBack(SceneView view) {
       view.uiSound("back");
+      Player player = view.player();
+      if (outcome.mustCreate(view)) {
+        // Na chwile ZAMIAST podpowiedzi na dole — duzy tytul nachodzil na karte klasy (recenzja 30.09).
+        view.hint(Component.text("Najpierw stwórz postać  ", NamedTextColor.YELLOW)
+            .append(Component.text("[LPM] ", NamedTextColor.GOLD))
+            .append(Component.text("Dalej", NamedTextColor.WHITE)));
+        org.bukkit.Bukkit.getScheduler().runTaskLater(
+            org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(CreatorFlow.class), () -> {
+              if (!view.isClosed() && view.controller() == this) {
+                view.hint(normalHint(view));
+              }
+            }, 60L);
+        return;
+      }
+      if (menu == null || player == null) {
+        cancel(view);
+        return;
+      }
+      menu.show(player, Component.text("Przerwać tworzenie postaci?", NamedTextColor.GOLD),
+          Component.text("Wybrana rasa i klasa nie zostaną zapisane.", NamedTextColor.WHITE),
+          List.of(
+              new SceneMenu.Button(Component.text("Tak, przerwij", NamedTextColor.RED), null,
+                  () -> {
+                    if (!view.isClosed()) {
+                      cancel(view);
+                    }
+                  }),
+              new SceneMenu.Button(Component.text("Nie, tworzę dalej", NamedTextColor.GREEN), null, () -> { })),
+          2);
+    }
+
+    private void cancel(SceneView view) {
       dropPreview(view);
       outcome.cancelled(view);
+    }
+
+    /**
+     * Spacja: wszystkie 16 klas w jednym oknie (wiersz = archetyp, kolumna = rasa) — skok
+     * prosto do wybranej zamiast przewijania A/D i W/S pod sciemnieniem.
+     */
+    @Override
+    public void onJump(SceneView view) {
+      Player player = view.player();
+      if (grid == null || player == null) {
+        return;
+      }
+      introInterrupted = true;
+      view.uiSound("class");
+      List<CreatorConfig.RaceOption> rs = races();
+      List<CreatorConfig.ClassOption> cs = classes();
+      List<SceneMenu.Button> buttons = new ArrayList<>();
+      // Pierwszy rzad = naglowki kolumn (rasy). Linia nad siatka nie trafiala w kolumny
+      // (recenzja 30.09); klik w naglowek niczego nie wybiera — okno wraca bez zmian.
+      for (CreatorConfig.RaceOption r : rs) {
+        buttons.add(new SceneMenu.Button(Component.text("▼ ", NamedTextColor.GRAY)
+            // &8 (Nieumarly) na szarym przycisku wygladal na wylaczony — rozjasniony do &7.
+            .append(legacy(r.display().replaceFirst("^&8", "&7")).decoration(TextDecoration.BOLD, true)),
+            Component.text("Kolumna rasy: " + plain(r.display())), () -> onJump(view)));
+      }
+      for (int ci = 0; ci < cs.size(); ci++) {
+        for (int ri = 0; ri < rs.size(); ri++) {
+          CreatorConfig.RaceOption r = rs.get(ri);
+          CreatorConfig.ClassOption c = cs.get(ci);
+          int targetRace = ri;
+          int targetClass = ci;
+          Component tip = Component.text(plain(r.display()) + " · " + plain(c.display()), NamedTextColor.WHITE);
+          Component role = roleLine(c, r);
+          if (role != null) {
+            tip = tip.append(Component.newline()).append(role);
+          }
+          boolean current = ri == Math.floorMod(race, rs.size()) && ci == Math.floorMod(clazz, cs.size());
+          // Biezaca klasa podkreslona, nie ze strzalka — przycisk ma 100 jednostek i
+          // "▶ Nosiciel Relikwii" by sie w nim nie zmiescil.
+          // Szary archetyp (&7/&8) na szarym przycisku byl ledwo czytelny (zrzut QA) — bialy.
+          String name = c.displayFor(r.id()).replaceFirst("^&[78]", "&f");
+          Component label = legacy(name).decoration(TextDecoration.UNDERLINED, current);
+          buttons.add(new SceneMenu.Button(label, tip, () -> jumpTo(view, targetRace, targetClass)));
+        }
+      }
+      buttons.add(new SceneMenu.Button(Component.text("Wróć"), null, () -> { }));
+      grid.show(player, Component.text("Wszystkie klasy", NamedTextColor.GOLD), null, buttons,
+          Math.max(1, rs.size()), GridDialog.NARROW);
+    }
+
+    private void jumpTo(SceneView view, int targetRace, int targetClass) {
+      if (view.isClosed()) {
+        return;
+      }
+      boolean raceChanges = Math.floorMod(race, races().size()) != targetRace;
+      clazz = targetClass;
+      if (raceChanges) {
+        view.uiSound("race");
+        view.fade(() -> {
+          race = targetRace;
+          showRace(view);
+        });
+      } else {
+        view.uiSound("class");
+        showClass(view);
+      }
     }
 
     @Override

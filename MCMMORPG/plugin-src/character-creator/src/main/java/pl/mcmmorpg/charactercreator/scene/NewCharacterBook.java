@@ -159,7 +159,7 @@ public final class NewCharacterBook implements Listener {
         .width(100)
         .action(DialogAction.customClick(CLICK, payload("wroc", s.nonce())))
         .build();
-    ActionButton random = ActionButton.builder(Component.text("🎲 Losuj imię", NamedTextColor.YELLOW))
+    ActionButton random = ActionButton.builder(Component.text("⚄ Losuj imię", NamedTextColor.YELLOW))
         .tooltip(Component.text("Imię pasujące do rasy — możesz je potem zmienić"))
         .width(100)
         .action(DialogAction.customClick(CLICK, payload("losuj", s.nonce())))

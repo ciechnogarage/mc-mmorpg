@@ -160,6 +160,7 @@ public final class CreatorConfig {
             parseRaceVariants(s.getConfigurationSection("races"))));
       }
     }
+    loadCardExtras(cfg);
   }
 
   private static String str(Object o) {
@@ -464,5 +465,60 @@ public final class CreatorConfig {
 
   public Map<String, ClassOption> classes() {
     return classes;
+  }
+
+  // --- karta kreatora: rola, trudnosc, umiejetnosc startowa, cechy rasy (naprawa 2026-09-30) ---
+
+  /**
+   * Dodatki karty klasy rasowej w scenie kreatora. Pisze je generator klas
+   * (tools/klasy-rasowe/karta_kreatora.py) w {@code classes.<arch>.races.<rasa>}: {@code role},
+   * {@code difficulty} (1-3), {@code start-skill} (nazwa jak w grze), {@code start-skill-text}
+   * (jedno zdanie), {@code start-skill-level}. Brak pola = karta go nie pokazuje.
+   */
+  public record CardExtras(String role, int difficulty, String skillName, String skillText,
+      int skillLevel) {
+  }
+
+  private final Map<String, CardExtras> cardExtras = new LinkedHashMap<>();
+  private final Map<String, List<String>> raceTraits = new LinkedHashMap<>();
+
+  private void loadCardExtras(org.bukkit.configuration.file.FileConfiguration cfg) {
+    cardExtras.clear();
+    raceTraits.clear();
+    // Filtr imion czyta liste z tego samego configu (names.blocked; pusta = lista wbudowana).
+    pl.mcmmorpg.charactercreator.creator.NameRules.setBlockedWords(cfg.getStringList("names.blocked"));
+    ConfigurationSection classesSection = cfg.getConfigurationSection("classes");
+    if (classesSection != null) {
+      for (String arch : classesSection.getKeys(false)) {
+        ConfigurationSection races = classesSection.getConfigurationSection(arch + ".races");
+        if (races == null) continue;
+        for (String raceId : races.getKeys(false)) {
+          ConfigurationSection r = races.getConfigurationSection(raceId);
+          if (r == null) continue;
+          cardExtras.put(arch + "/" + raceId, new CardExtras(r.getString("role", ""),
+              Math.max(0, Math.min(3, r.getInt("difficulty", 0))), r.getString("start-skill", ""),
+              r.getString("start-skill-text", ""), r.getInt("start-skill-level", 1)));
+        }
+      }
+    }
+    ConfigurationSection racesSection = cfg.getConfigurationSection("races");
+    if (racesSection != null) {
+      for (String id : racesSection.getKeys(false)) {
+        List<String> traits = racesSection.getStringList(id + ".traits");
+        if (!traits.isEmpty()) {
+          raceTraits.put(id, List.copyOf(traits));
+        }
+      }
+    }
+  }
+
+  /** Dodatki karty albo null, gdy generator ich nie zapisal. */
+  public CardExtras cardExtras(String classId, String raceId) {
+    return cardExtras.get(classId + "/" + raceId);
+  }
+
+  /** Cechy rasy slowami gracza (np. "+10% szybkości ruchu"); pusta lista = brak. */
+  public List<String> raceTraits(String raceId) {
+    return raceTraits.getOrDefault(raceId, List.of());
   }
 }

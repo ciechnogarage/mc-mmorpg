@@ -51,8 +51,8 @@ public final class SceneView {
   boolean lastLeft;
   boolean lastForward;
   boolean lastBackward;
-  boolean lastRight;
   boolean lastJump;
+  boolean lastRight;
   boolean closed;
   Entity subjectEntity;
   /** Glowa postaci: biezace i docelowe odchylenie od patrzenia w kamere (stopnie). */
