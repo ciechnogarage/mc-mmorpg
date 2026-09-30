@@ -358,10 +358,11 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
         sessionManager::configuredExit);
     NewCharacterBook book = new NewCharacterBook(this, getLogger());
     getServer().getPluginManager().registerEvents(book, this);
-    java.util.function.Function<CreatorFlow.Outcome, CreatorFlow> flows =
-        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome);
     SceneMenu sceneMenu = new SceneMenu(this, getLogger());
     getServer().getPluginManager().registerEvents(sceneMenu, this);
+    // Kreator dostaje okna sceny: potwierdzenie przerwania (PPM) i liste klas (Spacja).
+    java.util.function.Function<CreatorFlow.Outcome, CreatorFlow> flows =
+        outcome -> new CreatorFlow(creatorConfig, previewDummyManager, outcome, sceneMenu);
     CharacterSelect select = new CharacterSelect(this, getLogger(), sceneManager, sceneMenu,
         creatorConfig, characterStore, previewDummyManager);
     java.util.function.Predicate<Player> openSelect = p -> {

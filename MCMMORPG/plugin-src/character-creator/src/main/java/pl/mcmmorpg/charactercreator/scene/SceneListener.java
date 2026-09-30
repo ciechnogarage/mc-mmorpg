@@ -105,6 +105,11 @@ public final class SceneListener implements Listener {
     } else if (pressedDown) {
       dispatch(view, c -> c.onDown(view), "S");
     }
+    boolean pressedJump = input.isJump() && !view.lastJump;
+    view.lastJump = input.isJump();
+    if (pressedJump) {
+      dispatch(view, c -> c.onJump(view), "Spacja");
+    }
   }
 
   @EventHandler(priority = EventPriority.LOWEST)

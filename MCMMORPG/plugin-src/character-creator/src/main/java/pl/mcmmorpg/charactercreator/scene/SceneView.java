@@ -51,6 +51,7 @@ public final class SceneView {
   boolean lastLeft;
   boolean lastForward;
   boolean lastBackward;
+  boolean lastJump;
   boolean lastRight;
   boolean closed;
   Entity subjectEntity;
