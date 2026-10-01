@@ -94,6 +94,9 @@ final class Nosnik implements Listener {
   /** Niewidoczny nosnik jest wylacznie w aktualnie wybranym pustym slocie przy czarze w lewej. */
   void odswiezPusta(Player p) {
     PlayerInventory inv = p.getInventory();
+    // Widz (scena kreatora postaci, kamera areny) nie rzuca. Pusta dlon ma attack_range 64, a klient z nia nie uderza
+    // niczego blizej niz 64 bl. — w scenie kreatora LPM w tarcze przed kamera ginal bez sladu (01.10 wieczor).
+    if (widz(p)) { usunPuste(p); return; }
     int wybrany = inv.getHeldItemSlot();
     for (int s = 0; s < 9; s++) if (s != wybrany && pusta(inv.getItem(s))) inv.setItem(s, null);
     ItemStack w = inv.getItem(wybrany);
@@ -110,6 +113,8 @@ final class Nosnik implements Listener {
       if (w == null || w.getType().isAir()) inv.setItem(wybrany, zrobPusta());
     } else if (pusta(w)) inv.setItem(wybrany, null);
   }
+
+  static boolean widz(Player p) { return p.getGameMode() == org.bukkit.GameMode.SPECTATOR; }
 
   private void odswiezPuste() { for (Player p : org.bukkit.Bukkit.getOnlinePlayers()) if (!p.isDead()) odswiezPusta(p); }
 

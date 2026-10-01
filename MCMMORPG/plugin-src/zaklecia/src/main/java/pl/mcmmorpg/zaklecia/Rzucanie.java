@@ -104,6 +104,7 @@ final class Rzucanie implements Listener {
 
   /** Nosnik w prawej oznacza tryb zaklec, takze niewidoczna pusta dlon. */
   boolean trybLpm(Player p) {
+    if (Nosnik.widz(p)) return false;   // widz: bez zasiegu istot 0, kotwicy i rzucania (scena kreatora)
     ItemStack prawa = p.getInventory().getItemInMainHand();
     return prawa.getType() == org.bukkit.Material.DEBUG_STICK && prawa.hasItemMeta()
         && prawa.getItemMeta().getPersistentDataContainer().has(kNosnik)
