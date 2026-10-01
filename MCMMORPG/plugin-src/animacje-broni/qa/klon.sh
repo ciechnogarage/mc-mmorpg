@@ -22,7 +22,7 @@ P=$D/data/plugins
 rm -f "$P"/animacje-broni-*.jar; cp "$(ls -t "$H"/build/libs/animacje-broni-*.jar | head -1)" "$P/"
 mkdir -p "$P/AnimacjeBroni"; cp "$H/wynik/config.yml" "$P/AnimacjeBroni/config.yml"
 rm -rf "$P/Nexo/pack/assets/bron"; cp -a "$H/wynik/pack/assets/bron" "$P/Nexo/pack/assets/bron"
-docker network inspect ab-net >/dev/null 2>&1 || docker network create ab-net >/dev/null
+docker network inspect ab-net >/dev/null 2>&1 || docker network create --subnet ${AB_SUBNET:-10.99.40.0/24} ab-net >/dev/null   # nie 192.168.64/20 (LAN wlasciciela); po testach: docker network rm ab-net
 docker rm -f ab-test >/dev/null 2>&1 || true
 docker run -d --name ab-test --network ab-net --memory 3400m -u 1000:1000 -v "$D/data:/data" \
   -e EULA=true -e TYPE=CUSTOM -e CUSTOM_SERVER=/data/paper-1.21.11-132.jar -e VERSION=1.21.11 \

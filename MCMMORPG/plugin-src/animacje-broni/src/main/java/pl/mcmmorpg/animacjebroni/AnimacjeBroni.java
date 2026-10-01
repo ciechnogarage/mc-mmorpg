@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataType;
@@ -183,18 +184,22 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   }
 
   /** Zwraca true, gdy cos zmieniono. Przedmioty spoza MMOItems i typy spoza configu zostaja nietkniete. */
-  boolean dopasuj(ItemStack item, boolean lewaPusta) {
+  boolean dopasuj(ItemStack item, boolean lewaPusta, boolean sprint) {
     Ustawienie u = ustawienie(item);
     if (u == null) return false;
     boolean ppm = lewaPusta && !maUmiejetnoscPpm(item);
-    String stan = wersja + ":" + ppm;
+    boolean dwaTryby = u.wzor() != null && u.garda() != null;
+    boolean trybSprintu = dwaTryby && sprint;
+    boolean szarza = ppm && trybSprintu;
+    String stan = wersja + ":" + ppm + (dwaTryby ? ":" + sprint : "");
     if (stan.equals(item.getPersistentDataContainer().get(kluczStanu, PersistentDataType.STRING))) return false;
 
     for (DataComponentType t : ZARZADZANE) item.resetData(t);
 
     if (u.wzor() != null) {
       ItemStack wzor = new ItemStack(u.wzor());
-      item.copyDataFrom(wzor, t -> Z_WZORU_LPM.contains(t) || (ppm && Z_WZORU_PPM.contains(t)));
+      item.copyDataFrom(wzor, t -> Z_WZORU_LPM.contains(t)
+          || (ppm && (!dwaTryby || sprint) && Z_WZORU_PPM.contains(t)));
     }
     if (u.zamach() != null) {
       item.setData(DataComponentTypes.SWING_ANIMATION,
@@ -207,7 +212,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           .minReach(wz != null ? wz.minReach() : 0f).maxReach(u.zasieg())
           .minCreativeReach(0f).maxCreativeReach(Math.max(5f, u.zasieg())).hitboxMargin(0.3f).mobFactor(1f).build());
     }
-    if (ppm && u.garda() != null) {
+    if (ppm && u.garda() != null && !szarza) {
       Garda g = u.garda();
       item.setData(DataComponentTypes.BLOCKS_ATTACKS, BlocksAttacks.blocksAttacks()
           .blockDelaySeconds(g.opoznienie())
@@ -216,21 +221,20 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           .blockSound(Key.key("minecraft", "item.shield.block"))
           .disableSound(Key.key("minecraft", "item.shield.break"))
           .build());
-      // bron z wzoru (wlocznia) zostaje przy wlasnym use_effects: szarza wymaga sprintu z uniesiona bronia
-      if (u.wzor() == null) {
-        item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
-            .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
-      }
+      item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
+          .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
     }
 
-    if (ppm && u.poza() != null) {
+    if (ppm && !szarza && u.poza() != null) {
       // tylko wyglad trzymania PPM: "jedzenie" trwa godzine, bez dzwieku i czasteczek (jak nosniki zaklec)
       item.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable().consumeSeconds(3600f).animation(u.poza())
           .hasConsumeParticles(false).sound(Key.key("minecraft", "intentionally_empty")).build());
     }
 
     if (u.skala() != null && modele.contains(item.getType())) {
-      Key cel = Key.key(przestrzen, u.skala() + "/" + item.getType().getKey().getKey());
+      String skala = trybSprintu && u.skala().endsWith("g")
+          ? u.skala().substring(0, u.skala().length() - 1) : u.skala();
+      Key cel = Key.key(przestrzen, skala + "/" + item.getType().getKey().getKey());
       Key jest = item.getData(DataComponentTypes.ITEM_MODEL);
       // podmieniamy tylko model domyslny materialu albo nasz wlasny - model z Nexo/MMOItems zostaje
       boolean domyslny = jest == null || jest.equals(item.getType().getKey()) || jest.namespace().equals(przestrzen);
@@ -246,8 +250,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     ItemStack druga = inv.getItemInOffHand();
     boolean lewaPusta = druga.getType().isAir();
     ItemStack glowna = inv.getItemInMainHand();
-    if (dopasuj(glowna, lewaPusta)) inv.setItemInMainHand(glowna);
-    if (dopasuj(druga, false)) inv.setItemInOffHand(druga);
+    if (dopasuj(glowna, lewaPusta, p.isSprinting())) inv.setItemInMainHand(glowna);
+    if (dopasuj(druga, false, false)) inv.setItemInOffHand(druga);
   }
 
   private void pozniej(HumanEntity kto) {
@@ -263,6 +267,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void zamiana(PlayerSwapHandItemsEvent e) { pozniej(e.getPlayer()); }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void sprint(PlayerToggleSprintEvent e) { pozniej(e.getPlayer()); }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void klik(InventoryClickEvent e) { pozniej(e.getWhoClicked()); }
@@ -284,7 +291,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     Player p = e.getPlayer();
     ItemStack item = p.getInventory().getItemInMainHand();
     Ustawienie u = ustawienie(item);
-    if (u == null || u.wypad() == null || e.getTicksHeldFor() < u.wypad().min() || !item.isSimilar(e.getItem())) return;
+    if (u == null || u.wypad() == null || e.getTicksHeldFor() < u.wypad().min()
+        || !e.getItem().hasData(DataComponentTypes.BLOCKS_ATTACKS) || !item.isSimilar(e.getItem())) return;
     int teraz = getServer().getCurrentTick();
     if (odnowienieWypadu.getOrDefault(p.getUniqueId(), 0) > teraz) return;
     oknoKontry.put(p.getUniqueId(), teraz + u.wypad().okno());
@@ -424,6 +432,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           + " pierce=" + i.hasData(DataComponentTypes.PIERCING_WEAPON)
           + " szarza=" + i.hasData(DataComponentTypes.KINETIC_WEAPON)
           + " garda=" + i.hasData(DataComponentTypes.BLOCKS_ATTACKS)
+          + " sprint=" + p.isSprinting()
           + " lewa=" + p.getInventory().getItemInOffHand().getType());
       return true;
     }

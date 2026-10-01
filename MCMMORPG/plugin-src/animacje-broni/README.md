@@ -1,4 +1,4 @@
-# AnimacjeBroni — feeling broni MMOItems (2026-09-30)
+# AnimacjeBroni — feeling broni MMOItems (2026-10-01)
 
 Vanilla 1.21.11 ma komponent przedmiotu `swing_animation` (`whack` = cios, `stab` = pchnięcie, `none`, plus długość
 w tickach). Działa w 1. i 3. osobie, u wszystkich patrzących, bez modów. MMOItems 6.10 go nie ustawia, więc robi to
@@ -15,7 +15,7 @@ Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko)
 | Klinga elfów (KATANA) | cięte | cios 5 | — | 3 | garda −30%, lżejsza | vanilla |
 | Topór (AXE) | cięte | cios 8 | 60% | 3 | — | vanilla |
 | Miecz dwuręczny (GREATSWORD) | cięte, ciężka | cios 10 | 80% | 3,3 | **garda oburącz** −55% (ostrze poziomo przed ciałem), wolna | ×1,30 |
-| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | **garda oburącz drzewcem −35%** (drzewce poziomo przed ciałem, blok bez odnowienia); **kontra**: garda ≥0,5 s, puść PPM i w 0,5 s LPM = wypad (krok + pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s tylko wypadu); w sprincie **szarża** | ×1,30 |
+| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | PPM = blok oburącz (garda −35%); sprint + PPM = szarża (vanilla, obrażenia przy zderzeniu zależne od prędkości); kontra po bloku jak dotąd: garda ≥0,5 s, puść PPM i w 0,5 s LPM = wypad (krok + pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s tylko wypadu) | ×1,30 |
 | Włócznia (SPEAR) | kłute | vanilla | vanilla | 2–4,5 | szarża (vanilla) | vanilla |
 | Sztylet (DAGGER) | kłute | pchnięcie 4 | — | **2,6** | — | ×0,80 |
 | Kosa (KOSA) | cięte, ciężka | cios 10 | 80% | **3,5** | — | ×1,40 |
@@ -32,6 +32,10 @@ Garda oburącz (halabarda, miecz dwuręczny): PPM w pozie ładowania kuszy (obie
 `bron:s130g/<materiał>` podczas PPM (`using_item`) obraca broń poziomo w poprzek ciała, w 1. osobie w poprzek ekranu
 (kąty z `qa/pozy.sh`: 3. osoba [90,0,-45], 1. osoba [-30,0,-45]). Trzymanie oburącz BEZ wciśniętego PPM jest w vanilli
 niemożliwe (poza oburęczną ma tylko naładowana kusza, przypięta do samego przedmiotu kuszy).
+Halabarda podczas sprintu używa zwykłego modelu `bron:s130/<materiał>` i vanillowej animacji szarży włócznią;
+nie blokuje ciosów ani nie przyjmuje pozy ładowania kuszy. Po zwolnieniu sprintu PPM znów uruchamia gardę.
+Zmiana sprintu podczas trzymania PPM podmienia przedmiot i może przerwać jego używanie po stronie klienta;
+szarżę zaczyna się, biegnąc przed wciśnięciem PPM.
 Zablokowany cios: iskry w miejscu styku + dźwięk bloku tarczy i metalu (tylko cios z przodu, w kącie gardy).
 
 Efekt trafienia (plugin, każdy cios): cięte = łuk cięcia + świst; kłute = iskry krytyka w linii ciosu + stuk grotu;
@@ -42,7 +46,7 @@ obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyga
 zaklęcia/tarczy w lewej ręce albo do umiejętności; plugin zdejmuje i przywraca te komponenty sam (przegląd co 10 ticków).
 Zmierzone na klonie 30.09 (`qa/mechanika.sh`): garda miecza 6 → 4,0 HP bez / 2,4 HP z gardą; halabarda nie trafia
 celu na 1 bloku, trafia dwa w linii na 3 i 4 blokach; młot dwuręczny nie wyprowadza ciosu 0,6 s po poprzednim
-(miecz tak); klient nie wysyła LPM, dopóki trzymany jest PPM, więc kontra to „puść prawy, kliknij lewy”; szarża halabardą w sprincie trafia; garda halabardy 6 → 4,0 / 2,5 HP, miecza dwuręcznego 3,9 / 1,7 HP (4 powtórzenia); kontra (qa/mechanika.sh G): samo puszczenie PPM nic nie robi, blok+LPM = wypad, blok działa zaraz po wypadzie, dwie kontry w 2,9 s = jeden wypad; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu.
+(miecz tak); klient nie wysyła LPM, dopóki trzymany jest PPM, więc kontra to „puść prawy, kliknij lewy”; szarża halabardą trafiała w poprzednim układzie komponentów; garda halabardy 6 → 4,0 / 2,5 HP, miecza dwuręcznego 3,9 / 1,7 HP (4 powtórzenia); kontra (qa/mechanika.sh G): samo puszczenie PPM nic nie robi, blok+LPM = wypad, blok działa zaraz po wypadzie, dwie kontry w 2,9 s = jeden wypad; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu. Nowy podział gardy i szarży wymaga ponownego sprawdzenia w grze.
 
 Poza pluginem celowo: zamach i PPM **SPEAR** (materiały `*_SPEAR` mają vanillowe pchnięcie i szarżę; plugin daje im tylko efekt trafienia), **BOW / CROSSBOW /
 GREATBOW / MUSKET** (animacje naciągania). Model trzymania dostaje tylko przedmiot z modelem domyślnym materiału —
