@@ -4,6 +4,7 @@ version: '${version}'
 api-version: '1.21'
 description: Zamach (swing_animation) i model trzymania broni MMOItems wg typu przedmiotu.
 depend: [MMOItems, MythicLib]
+softdepend: [MMOCore]
 commands:
   animacjebroni:
     description: reload | sprawdz <gracz>

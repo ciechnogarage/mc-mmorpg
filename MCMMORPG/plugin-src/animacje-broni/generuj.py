@@ -19,6 +19,9 @@ import argparse, json, math, os, re, sys, zipfile
 # garda_oburacz = bron dwureczna: PPM w pozie kuszy (obie rece z przodu), a model w trakcie PPM (using_item) obraca
 # bron poziomo w poprzek ciala - zaslona trzymana oburacz. Katy dobrane na zrzutach (qa/pozy.sh, warianty b i s).
 GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 0, -45], 'fp_trans': [-3, 4, -3]}
+# katy 3. osoby dobrane na zrzutach 2.10 (qa: warianty a-f, wybrany e - glowica wyraznie nad glowa)
+UNIESIONY_MLOT = {'tp_rot': [-90, 0, 45], 'tp_trans': [0, 6, 0],
+                 'fp_rot': [-15, 0, -12], 'fp_trans': [-2, 8, -4]}
 G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 PAROWANIE = {'okno': 6, 'riposta_ticki': 30, 'riposta_mnoznik': 1.5}
 KRWAWIENIE = {'procent': 0.25, 'czas': 60, 'stosy': 1}
@@ -55,6 +58,32 @@ TYPY = {
     'SHIELD':          {'zamach': 'whack', 'czas': 7,  'rodzaj': 'obuchowe'},
     'GAUNTLET':        {'zamach': 'stab',  'czas': 4,  'rodzaj': 'obuchowe'},
 }
+# Kierunkowe ciosy i rytm sa cechami typu, a nie domyslnym zachowaniem kazdej broni.
+MIECZE = ('SWORD', 'LONG_SWORD', 'KATANA', 'THRUSTING_SWORD')
+for typ in MIECZE:
+    TYPY[typ]['ciezkie'] = {'przod': 'wypad', 'bok': 'zamach_boczny', 'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu', 'koszt': 12}
+TYPY['GREATSWORD']['ciezkie'] = {'przod': 'znad_glowy', 'bok': 'zamach_boczny', 'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu', 'koszt': 12}
+for typ in ('AXE', 'GREATAXE'):
+    TYPY[typ]['ciezkie'] = {'przod': 'znad_glowy', 'bok': 'zamach_boczny', 'bieg': 'z_rozbiegu', 'koszt': 12}
+for typ in ('HAMMER', 'GREATHAMMER', 'GREATSTAFF'):
+    TYPY[typ]['ciezkie'] = {'przod': 'znad_glowy', 'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu', 'koszt': 12}
+TYPY['DAGGER']['ciezkie'] = {'przod': 'wypad', 'koszt': 12}
+TYPY['SIERP']['ciezkie'] = {'bok': 'zamach_boczny', 'koszt': 12}
+TYPY['KOSA']['ciezkie'] = {'przod': 'znad_glowy', 'bok': 'zamach_boczny', 'koszt': 12}
+for typ in (*MIECZE, 'GREATSWORD', 'AXE', 'GREATAXE', 'HAMMER', 'GREATHAMMER', 'GREATSTAFF',
+            'DAGGER', 'SIERP', 'KOSA', 'SHIELD', 'GAUNTLET', 'WHIP'):
+    TYPY[typ]['rytm'] = True
+
+CIEZKIE = {'czekanie': 10}
+CIEZKIE_WARIANTY = {
+    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6},
+    'znad_glowy': {'mnoznik': 1.4},
+    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180},
+    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1},
+    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1},
+}
+RYTM = {'prog_rytmu': 0.9, 'okno_rytmu': 8, 'koszt_rytmu': 2, 'dlugosc': 3,
+        'mnoznik': 1.4, 'luk_mnoznik': 0.5}
 # BOW, CROSSBOW, GREATBOW, MUSKET celowo poza tabela (vanillowe naciaganie). Plugin ich nie rusza.
 
 PRZESTRZEN = 'bron'
@@ -136,6 +165,7 @@ def main():
     pominiete = {}
     modele_skal = {}  # skala -> set materialow
     garda_skal = {}   # skala -> materialy broni z garda oburacz (model w trakcie PPM)
+    mlot_skal = {}    # skala -> mlot dwureczny uniesiony podczas using_item
     for typ, u in TYPY.items():
         s = u.get('skala')
         if s is None:
@@ -154,6 +184,8 @@ def main():
             modele_skal.setdefault(s, set()).add((m, par))
             if u.get('garda_oburacz'):
                 garda_skal.setdefault(s, set()).add(m)
+            if typ == 'GREATHAMMER':
+                mlot_skal.setdefault(s, set()).add(m)
 
     baza = os.path.join(a.out, 'pack', 'assets', PRZESTRZEN)
     n = 0
@@ -193,9 +225,37 @@ def main():
                       open(p, 'w'), indent=1)
             n += 1
 
+    for s, zb in sorted(mlot_skal.items()):
+        for m in sorted(zb):
+            nazwa = m.lower(); sc = skala_nazwa(s); scu = sc + 'u'
+            disp = {}
+            for k in KONTEKSTY:
+                fp = k.startswith('firstperson')
+                r = UNIESIONY_MLOT['fp_rot'] if fp else UNIESIONY_MLOT['tp_rot']
+                if 'lefthand' in k:
+                    r = [r[0], -r[1], -r[2]]
+                sk = round((0.72 if fp else 0.92) * s, 4)
+                disp[k] = {'rotation': r, 'translation': UNIESIONY_MLOT['fp_trans'] if fp else UNIESIONY_MLOT['tp_trans'], 'scale': [sk] * 3}
+            p = os.path.join(baza, 'models', 'item', scu, nazwa + '.json')
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            json.dump({'parent': 'minecraft:item/' + nazwa, 'display': disp}, open(p, 'w'), indent=1)
+            p = os.path.join(baza, 'items', scu, nazwa + '.json')
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            json.dump({'model': {'type': 'minecraft:condition', 'property': 'minecraft:using_item',
+                                 'on_true': {'type': 'minecraft:model', 'model': '%s:item/%s/%s' % (PRZESTRZEN, scu, nazwa)},
+                                 'on_false': {'type': 'minecraft:model', 'model': '%s:item/%s/%s' % (PRZESTRZEN, sc, nazwa)}}},
+                      open(p, 'w'), indent=1)
+            n += 1
+
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
              '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
-             'przestrzen-modeli: %s' % PRZESTRZEN, 'typy:']
+             'przestrzen-modeli: %s' % PRZESTRZEN]
+    for nazwa, dane in (('ciezkie', CIEZKIE), ('rytm', RYTM)):
+        linie.append('%s: {%s}' % (nazwa, ', '.join('%s: %s' % kv for kv in dane.items())))
+    linie.append('ciezkie_warianty:')
+    for nazwa, dane in CIEZKIE_WARIANTY.items():
+        linie.append('  %s: {%s}' % (nazwa, ', '.join('%s: %s' % kv for kv in dane.items())))
+    linie.append('typy:')
     for typ, u in TYPY.items():
         linie.append('  %s:' % typ)
         for k in ('zamach', 'czas', 'rodzaj', 'reakcja', 'ladowanie', 'zasieg', 'wzor', 'poza'):
@@ -203,9 +263,12 @@ def main():
                 linie.append('    %s: %s' % (k, u[k]))
         if u.get('ciezka'):
             linie.append('    ciezka: true')
+        if u.get('rytm'):
+            linie.append('    rytm: true')
         if 'skala' in u:
-            linie.append('    skala: %s%s' % (skala_nazwa(u['skala']), 'g' if u.get('garda_oburacz') else ''))
-        for k in ('garda', 'wypad', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz'):
+            sufiks = 'g' if u.get('garda_oburacz') else 'u' if typ == 'GREATHAMMER' else ''
+            linie.append('    skala: %s%s' % (skala_nazwa(u['skala']), sufiks))
+        for k in ('garda', 'wypad', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
     linie.append('materialy-z-modelami:')

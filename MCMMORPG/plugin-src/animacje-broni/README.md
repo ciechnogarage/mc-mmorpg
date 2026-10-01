@@ -46,6 +46,25 @@ obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyga
 
 Reakcje zwykłego ciosu działają przy naładowaniu co najmniej 90%. Źródłem wartości jest `TYPY` w `generuj.py`.
 
+Szybko zadane ciosy budują rytm/kombinację, a cierpliwie wyczekany cios staje się ciężki. Ciężki cios wymaga
+pełnego naładowania broni (`ceil(20 / attack_speed)` ticków) i jeszcze `ciezkie.czekanie` ticków bez zamachu
+(domyślnie 10). Każdy zamach, także w powietrze, i każde trafienie zaczynają liczenie od nowa. Gotowość jest
+sygnalizowana raz na ładowanie cichym dźwiękiem słyszanym tylko przez gracza i kilkoma iskrami przy dłoni.
+Ciężki cios kosztuje dodatkowo 12% maksymalnej staminy MMOCore: sprint, W, A/D, S są sprawdzane w tej kolejności;
+bez kierunku używany jest wariant przedni. Bez przypisanego wariantu albo przy zbyt małej staminie trafienie pozostaje zwykłe.
+Ciężki cios przerywa kombinację. W konfiguracji `ciezkie_warianty` są mnożniki, siła odrzutu i kąt łuku; halabarda
+i włócznia zachowują własne mechaniki bez ciężkich ciosów. Bez MMOCore dodatkowe koszty są zerowe (jedno ostrzeżenie
+przy uruchomieniu); zwykłe koszty MMOItems nadal działają.
+
+Kombinacja obejmuje trzy zwykłe trafienia bronią w walce wręcz (bez halabardy i włóczni). Pierwszy cios jest zwykły;
+od drugiego każdy cios serii kosztuje dodatkowo 2% maksymalnej staminy. Kolejny cios musi mieć co najmniej 90% naładowania i trafić najpóźniej 8 ticków po pełnym
+odnowieniu broni (`20 / attack_speed` ticków od poprzedniego trafienia). Trzeci cios zadaje ×1,4 obrażeń i efekt rodzaju
+broni. Po drugim trafieniu następny zamach dostaje odwrotną animację `whack`/`stab`; znacznik PDC z końcowym tickiem
+chroni ją przed okresowym `dopasuj()`, a po wykończeniu lub przerwaniu serii animacja wraca.
+
+Młot dwuręczny ma osobny model `s130u` podczas `using_item`, wstępnie ustawiony pionowo nad głową. Przy naładowanym
+zamachu pojawia się dwutickowa smuga widoczna w świecie; kształt i cząsteczki zależą od rodzaju broni.
+
 | Broń | Rodzaj | Reakcja trafienia | PPM |
 |---|---|---|---|
 | Miecz, długi miecz, katana, miecz dwuręczny, miecz kłujący | cięte / kłute | Krytyki pozostają w MMOItems; parowanie otwiera ripostę x1,5 na 30 ticków | Garda: pełne parowanie przez pierwsze 6 ticków, potem zwykły blok |
@@ -74,13 +93,13 @@ model z Nexo/MMOItems (`model:`) zostaje. Materiały bez modelu „narzędzia”
   zbiera z `MMOItems/item/<typ>.yml` serwera, transformacje rąk z client.jar).
 - Plugin poprawia przedmiot, gdy trafia do ręki (wejście, zmiana slotu, zamiana rąk, klik/przeciąganie, podniesienie)
   i przeglądem obu rąk co 10 ticków. `ItemBuildEvent` MMOItems 6.10 jest martwy (nikt go nie wywołuje).
-- `/animacjebroni sprawdz <gracz>` — typ, zamach i model z głównej ręki; `/animacjebroni reload`.
+- `/animacjebroni sprawdz <gracz>` — typ, zamach i model z głównej ręki oraz `ciezkiGotowy` i `ciezkiZa` (ticki do gotowości, −1 bez wariantu); `/animacjebroni reload`.
 
 ## Zmiana / test / wdrożenie
     python3 generuj.py && cp wynik/config.yml src/main/resources/ && ./build.sh
     qa/klon.sh <katalog> --fresh        # klon world1 ab-test (+ klient: docker run ... mc-client-test qa/launch.sh)
     qa/scena.sh GREATSWORD HARDENED_STEEL_CLAYMORE   # dane komponentów + zrzuty 1. osoba / zamach / przód
-    qa/mechanika.sh A|A2|B|C|D|E|G|P|U|S|K   # pomiary mechanik, parowania, uderzenia, sztyletu i krwawienia
+    qa/mechanika.sh A|A2|B0|C|D|E|G|P|U|S|K|W|B|T|Z|N|C3   # pomiary mechanik, w tym ciezkich i kombinacji
     qa/efekty.sh SWORD PRZ_WOJ_MIECZ_1 miecz   # zrzuty trafienia i pozy PPM
     ./wdroz.sh                          # world1: kopia + cofnij.sh, tylko przy 0 graczy, RESTART
 

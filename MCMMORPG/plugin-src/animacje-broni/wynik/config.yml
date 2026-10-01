@@ -1,35 +1,51 @@
 # WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient 1.21.11) - nie edytowac recznie.
 # typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>
 przestrzen-modeli: bron
+ciezkie: {czekanie: 10}
+rytm: {prog_rytmu: 0.9, okno_rytmu: 8, koszt_rytmu: 2, dlugosc: 3, mnoznik: 1.4, luk_mnoznik: 0.5}
+ciezkie_warianty:
+  wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6}
+  znad_glowy: {mnoznik: 1.4}
+  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180}
+  odepchniecie: {mnoznik: 1.0, sila: 1.1}
+  z_rozbiegu: {mnoznik: 1.5, sila: 1.1}
 typy:
   SWORD:
     zamach: whack
     czas: 6
     rodzaj: ciete
     reakcja: krytyk
+    rytm: true
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   LONG_SWORD:
     zamach: whack
     czas: 7
     rodzaj: ciete
     reakcja: krytyk
+    rytm: true
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   KATANA:
     zamach: whack
     czas: 5
     rodzaj: ciete
     reakcja: krytyk
+    rytm: true
     garda: {redukcja: 0.3, kat: 90, opoznienie: 0.1, spowolnienie: 0.6}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   AXE:
     zamach: whack
     czas: 8
     rodzaj: ciete
     reakcja: krwawienie
     ladowanie: 0.6
+    rytm: true
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12}
   GREATSWORD:
     zamach: whack
     czas: 10
@@ -39,9 +55,11 @@ typy:
     zasieg: 3.3
     poza: crossbow
     ciezka: true
+    rytm: true
     skala: s130g
     garda: {redukcja: 0.55, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   GREATAXE:
     zamach: whack
     czas: 10
@@ -49,8 +67,10 @@ typy:
     reakcja: krwawienie
     ladowanie: 0.8
     ciezka: true
+    rytm: true
     skala: s130
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12}
   HALBERD:
     zamach: stab
     czas: 8
@@ -75,19 +95,24 @@ typy:
     rodzaj: klute
     reakcja: z_ukrycia
     zasieg: 2.6
+    rytm: true
     skala: s080
     z_ukrycia: {plecy: 2.0, ukrycie: 3.0}
+    ciezkie: {przod: wypad, koszt: 12}
   THRUSTING_SWORD:
     zamach: stab
     czas: 5
     rodzaj: klute
     reakcja: krytyk
+    rytm: true
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   WHIP:
     zamach: whack
     czas: 7
     rodzaj: ciete
+    rytm: true
   WAND:
     zamach: stab
     czas: 5
@@ -103,8 +128,10 @@ typy:
     reakcja: pancerz
     ladowanie: 0.6
     zasieg: 3.3
+    rytm: true
     skala: s140
     pancerz: {procent: 0.3}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   TOME:
     zamach: stab
     czas: 5
@@ -120,7 +147,9 @@ typy:
     rodzaj: obuchowe
     reakcja: pancerz
     ladowanie: 0.6
+    rytm: true
     pancerz: {procent: 0.3}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   GREATHAMMER:
     zamach: whack
     czas: 12
@@ -129,16 +158,20 @@ typy:
     ladowanie: 0.9
     poza: trident
     ciezka: true
-    skala: s130
+    rytm: true
+    skala: s130u
     uderzenie: {min: 16, promien: 3.5, mnoznik: 1.6, odnowienie: 120}
     pancerz: {procent: 0.3}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
   SIERP:
     zamach: whack
     czas: 5
     rodzaj: ciete
     reakcja: krwawienie
     zasieg: 2.8
+    rytm: true
     krwawienie: {procent: 0.25, czas: 60, stosy: 3}
+    ciezkie: {bok: zamach_boczny, koszt: 12}
   KOSA:
     zamach: whack
     czas: 10
@@ -147,16 +180,20 @@ typy:
     ladowanie: 0.8
     zasieg: 3.5
     ciezka: true
+    rytm: true
     skala: s140
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, koszt: 12}
   SHIELD:
     zamach: whack
     czas: 7
     rodzaj: obuchowe
+    rytm: true
   GAUNTLET:
     zamach: stab
     czas: 4
     rodzaj: obuchowe
+    rytm: true
 materialy-z-modelami:
   - BAMBOO
   - BLAZE_ROD

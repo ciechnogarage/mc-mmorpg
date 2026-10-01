@@ -1,17 +1,25 @@
 #!/bin/bash
 # mechanika.sh <test> - pomiary mechaniki na klonie ab-test klientem BronQA (mc-client-ab). Wynik: liczby HP.
-# A = halabarda (zasieg 2-4,5 + przebicie w linii), B = minimalne naladowanie (mlot vs miecz),
+# A = halabarda (zasieg 2-4,5 + przebicie w linii), B0 = minimalne naladowanie (mlot vs miecz),
 # C = garda miecza (obrazenia od zombie bez/z PPM), D = garda gasnie przy przedmiocie w lewej rece,
 # E = garda halabardy, G = kontra halabardy: 1 samo puszczenie PPM nic nie robi, 2 blok+pusc+LPM = wypad w linii
 # (bez dodatkowego zwyklego pchniecia), 3 blok od razu po wypadzie, 4 w odnowieniu LPM = zwykle pchniecie.
 # P = parowanie, U = uderzenie mlota, S = sztylet od tylu/przodu, K = krwawienie, A2 = pancerz.
+# W/B/T/Z = ciezkie kierunkowe; N = W zaraz po pelnym naladowaniu; C3 = kombinacja i pozne trafienia.
 X="docker exec -e DISPLAY=:99 mc-client-ab"; R="docker exec ab-test rcon-cli"
 r(){ $R "$1" | sed 's/\x1b\[[0-9;]*m//g'; }
 hp(){ r "data get entity @e[tag=$1,limit=1] Health" | grep -oE '[0-9.]+f' | tr -d f; }
+stamina(){ r 'animacjebroni sprawdz BronQA' | grep -oE 'stamina=[0-9.]+/[0-9.]+'; }
+pos(){ r "data get entity @e[tag=$1,limit=1] Pos" | grep -oE '\[[^]]+\]' | tr -d 'd[]' | cut -d, -f3; }
 bron(){ r "minecraft:clear BronQA" >/dev/null; $X xdotool key 1; r "mi give $1 $2 BronQA" >/dev/null; sleep 0.5; $X xdotool key 2; sleep 0.3; $X xdotool key 1; sleep 1.2; }  # zmiana slotu = MMOItems przelicza statystyki (jak u gracza)
 zombi(){ z=${6:-100}; r "minecraft:summon husk $1 $2 $3 {NoAI:$4b,Tags:[\"$5\"],PersistenceRequired:1b,Silent:1b,attributes:[{id:\"minecraft:max_health\",base:$z}],Health:${z}f}" >/dev/null; }
 czysc(){ r "minecraft:kill @e[type=husk]" >/dev/null; }
 stoj(){ r "minecraft:tp BronQA 0.5 -59 0.5 $1 $2" >/dev/null; sleep 0.6; }
+pelne_s(){ local szybkosc; szybkosc=$(r 'minecraft:attribute BronQA minecraft:attack_speed get' | grep -oE '[0-9]+(\.[0-9]+)?' | tail -1); python3 -c "import math; print(math.ceil(20/max(float('${szybkosc:-4}'),0.1))/20)"; }
+czekaj_zwykly(){ local pelne; pelne=$(pelne_s); sleep "$(python3 -c "print($pelne+0.05)")"; }
+zamroz(){ r "minecraft:attribute BronQA minecraft:movement_speed base set 0" >/dev/null; }   # klawisze ruchu dochodza, postac stoi
+odmroz(){ r "minecraft:attribute BronQA minecraft:movement_speed base set 0.1" >/dev/null; }
+czekaj_ciezki(){ local pelne; pelne=$(pelne_s); sleep "$(python3 -c "print($pelne+10/20+0.25)")"; }
 case $1 in
 A) czysc; bron HALBERD PRZ_WOJ_DRZEWCOWA_1; echo "sprawdz: $(r 'animacjebroni sprawdz BronQA')"
    zombi 0.5 -59 1.6 1 blisko; stoj 0 25; sleep 1.2; $X xdotool click 1; sleep 0.6; echo "A1 cel 1 blok: HP $(hp blisko) (100 = nie trafil)"
@@ -22,9 +30,41 @@ A2) czysc; bron HAMMER PRZ_AKO_BULAWA_1; zombi 0.5 -59 2.3 1 bezpancerza 1000; s
     zombi 0.5 -59 2.3 1 pancerz 1000; r "minecraft:attribute @e[tag=pancerz,limit=1] minecraft:armor base set 10" >/dev/null
     stoj 0 10; sleep 1.2; $X xdotool click 1; sleep 0.5
     echo "A2 mlot: HP bez pancerza $b, armor 10 $(hp pancerz) (redukcja czesciowo przebita)"; czysc ;;
-B) for w in "SWORD PRZ_WOJ_MIECZ_1" "GREATHAMMER PRZ_AKO_MLOT_DWURECZNY_1"; do czysc; bron $w
+B0) for w in "SWORD PRZ_WOJ_MIECZ_1" "GREATHAMMER PRZ_AKO_MLOT_DWURECZNY_1"; do czysc; bron $w
    zombi 0.5 -59 2.3 1 t; stoj 0 15; sleep 1.6; $X xdotool click 1; sleep 0.3; h1=$(hp t); sleep 0.3; $X xdotool click 1; sleep 0.5
    echo "B $w: po pelnym ciosie HP $h1, po drugim (0,6 s) HP $(hp t) (bez zmiany = cios zablokowany przez naladowanie)"; done ;;
+W) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz; zombi 0.5 -59 2.3 1 zwykly 1000; sleep 0.5
+   $X xdotool click 1; czekaj_zwykly; $X xdotool click 1; sleep 0.3; h0=$(hp zwykly); czysc
+   zombi 0.5 -59 2.3 1 wypad 1000; stoj 0 10; s0=$(stamina); czekaj_ciezki
+   $X xdotool keydown w; sleep 0.05; $X xdotool click 1; $X xdotool keyup w; sleep 0.3; s1=$(stamina); odmroz
+   echo "W miecz: zwykly (rytm) 1000->$h0, ciezki z W 1000->$(hp wypad) (oczekiwane x1.3); stamina $s0 -> $s1"; czysc ;;
+B) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz; zombi 0.5 -59 2.3 1 srodek 1000; zombi 1.7 -59 1.9 1 bok1 1000
+   zombi -0.7 -59 1.9 1 bok2 1000; sleep 0.5; $X xdotool click 1; czekaj_ciezki
+   $X xdotool keydown a; sleep 0.05; $X xdotool click 1; $X xdotool keyup a; sleep 0.4; odmroz
+   echo "B miecz A (ciezki boczny): HP srodek $(hp srodek), bok1 $(hp bok1), bok2 $(hp bok2) (wszystkie <1000; boki ok. x0,7)"; czysc ;;
+T) czysc; bron GREATHAMMER PRZ_AKO_MLOT_DWURECZNY_1; stoj 0 10; zamroz
+   # husk Z AI (moby bez AI ignoruja odrzut), ale bez ruchu wlasnego
+   r "minecraft:summon husk 0.5 -59 2.3 {Tags:[\"zwykly\"],Silent:1b,attributes:[{id:\"minecraft:max_health\",base:1000},{id:\"minecraft:movement_speed\",base:0}],Health:1000f}" >/dev/null
+   sleep 0.5; p0=$(pos zwykly); $X xdotool click 1; czekaj_zwykly; $X xdotool click 1; sleep 0.6; p1=$(pos zwykly); czysc
+   r "minecraft:summon husk 0.5 -59 2.3 {Tags:[\"tyl\"],Silent:1b,attributes:[{id:\"minecraft:max_health\",base:1000},{id:\"minecraft:movement_speed\",base:0}],Health:1000f}" >/dev/null
+   stoj 0 10; sleep 0.5; p2=$(pos tyl); czekaj_ciezki; $X xdotool keydown s; sleep 0.05; $X xdotool click 1; $X xdotool keyup s; sleep 0.6
+   p3=$(pos tyl); odmroz
+   echo "T mlot: zwykly (rytm) z=$p0->$p1, ciezki z S z=$p2->$p3 (S dalej)"; czysc ;;
+Z) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; $X xdotool click 1; zombi 0.5 -59 2.3 1 wzor 1000; czekaj_zwykly
+   $X xdotool click 1; sleep 0.3; h0=$(hp wzor); czysc
+   zombi 0.5 -59 2.3 1 zmeczony 1000; stoj 0 10; czekaj_ciezki
+   echo "Z komenda MMOCore: $(r 'mmocore admin resource-stamina give BronQA -1000')"
+   echo "Z stamina przed: $(stamina)"; $X xdotool keydown w; sleep 0.12; $X xdotool click 1; $X xdotool keyup w; sleep 0.3
+   echo "Z miecz: zwykly HP $h0, bez staminy W HP $(hp zmeczony) (zbliżone); stamina po $(stamina)"; czysc ;;
+N) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz; zombi 0.5 -59 2.3 1 wczesny 1000; sleep 0.5; s0=$(stamina)
+   $X xdotool click 1; czekaj_zwykly; $X xdotool keydown w; sleep 0.05; $X xdotool click 1; $X xdotool keyup w; sleep 0.3
+   s1=$(stamina); odmroz
+   echo "N miecz: W zaraz po pelnym naladowaniu 1000->$(hp wczesny) (zwykle, nie x1.3); stamina $s0 -> $s1 (bez 12%)"; czysc ;;
+C3) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz; zombi 0.5 -59 2.3 1 c3 2000; sleep 0.5
+    # 1 klik w powietrze/cel zeruje gotowosc ciezkiego; potem 4 ciosy co (pelne + 0,1 s) BEZ RCON miedzy nimi
+    odstep=$(python3 -c "print($(pelne_s)+0.1)"); h0=$(hp c3)
+    $X xdotool click 1; for i in 1 2 3 4; do sleep "$odstep"; $X xdotool click 1; done; sleep 0.4; odmroz
+    echo "C3: 5 ciosow w rytmie, lacznie $(python3 -c "print(round($h0-$(hp c3),1))") obrazen (w logu DBG: RYTM numer 1,2,3 i wykonczenie x1,4)"; czysc ;;
 C|E) czysc; [ $1 = E ] && bron HALBERD PRZ_WOJ_DRZEWCOWA_1 || bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.5 1 atak; stoj 0 10
    for tryb in bez garda bez garda; do r "minecraft:effect give BronQA minecraft:instant_health 1 5 true" >/dev/null; sleep 1.2
    h0=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f)

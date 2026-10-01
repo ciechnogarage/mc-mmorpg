@@ -6,6 +6,7 @@ import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.damage.DamageType;
 import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
+import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.AttackRange;
@@ -15,14 +16,19 @@ import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import io.papermc.paper.datacomponent.item.SwingAnimation;
 import io.papermc.paper.datacomponent.item.UseEffects;
 import io.papermc.paper.datacomponent.item.blocksattacks.DamageReduction;
+import net.Indyuce.mmocore.api.player.PlayerData;
+import net.Indyuce.mmocore.api.event.PlayerResourceUpdateEvent;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Input;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -43,6 +49,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.ItemStack;
@@ -55,6 +62,8 @@ import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.UUID;
 import java.util.List;
 import java.util.Locale;
@@ -84,6 +93,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   record Ukrycie(double plecy, double ukrycie) {}
   record Krwawienie(double procent, int czas, int stosy) {}
   record Riposta(int doTicka, double mnoznik) {}
+  record Ciezkie(String przod, String bok, String tyl, String bieg, double koszt) {}
+  record RytmStan(int trafienia, int ostatniTick, String typ) {}
   record StosKrwawienia(double obrazenia, UUID gracz) {}
   static final class Krwawiacy {
     final List<StosKrwawienia> stosy = new java.util.ArrayList<>();
@@ -94,7 +105,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   record Ustawienie(SwingAnimation.Animation zamach, int czas, String skala, Rodzaj rodzaj, Float ladowanie,
                     Float zasieg, Material wzor, Garda garda, boolean ciezka, Wypad wypad,
                     ItemUseAnimation poza, String reakcja, Parowanie parowanie, Uderzenie uderzenie,
-                    Ukrycie ukrycie, Krwawienie krwawienie, double pancerz) {}
+                    Ukrycie ukrycie, Krwawienie krwawienie, double pancerz, Ciezkie ciezkie, boolean rytm) {}
 
   /** Komponenty, ktore plugin ustawia; przy zmianie wracaja do wartosci materialu (resetData). */
   private static final List<DataComponentType> ZARZADZANE = List.of(
@@ -113,6 +124,20 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Riposta> riposty = new HashMap<>();
   private final Map<UUID, Integer> odnowienieUderzenia = new HashMap<>();
   private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
+  private final Map<UUID, RytmStan> serie = new HashMap<>();
+  private final Map<UUID, UUID> podwojKrwawienie = new HashMap<>();
+  private final Map<UUID, Integer> naladowanyZamach = new HashMap<>();
+  private final Map<UUID, Integer> ostatniZamach = new HashMap<>();
+  /** Cel prawdziwego ciosu gracza (PrePlayerAttackEntityEvent) i tick - odroznia cios od rozprysku MMOItems/MythicLib,
+   *  ktory tez przychodzi jako ENTITY_ATTACK od gracza (zmierzone: 1 klik = 3 zdarzenia przy 3 mobach obok siebie). */
+  private final Map<UUID, UUID> celCiosu = new HashMap<>();
+  private final Map<UUID, Integer> tickCiosu = new HashMap<>();
+  private final Set<UUID> sygnalCiezkiego = new HashSet<>();
+  private final Set<UUID> wykonczenieZamach = new HashSet<>();
+  private final Map<UUID, Runnable> oczekujacyZamach = new HashMap<>();
+  private boolean mmocore;
+  private double progRytmu, kosztRytmu, mnoznikRytmu, lukRytmu;
+  private int czekanieCiezkiego, oknoRytmu, dlugoscRytmu;
   private boolean wlasnyCios;
   private boolean debug;
   private void dbg(String m) { if (debug) getLogger().info("DBG t=" + getServer().getCurrentTick() + " " + m); }
@@ -120,16 +145,21 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private String przestrzen = "bron";
   private int wersja;
   private NamespacedKey kluczStanu;
+  private NamespacedKey kluczZamachu;
 
   @Override
   public void onEnable() {
     kluczStanu = new NamespacedKey(this, "stan");
+    kluczZamachu = new NamespacedKey(this, "zamach_do_ticka");
+    mmocore = getServer().getPluginManager().isPluginEnabled("MMOCore");
+    if (!mmocore) getLogger().warning("Brak MMOCore: dodatkowe koszty staminy sa wylaczone.");
     saveDefaultConfig();
     wczytaj();
     getServer().getPluginManager().registerEvents(this, this);
     getServer().getScheduler().runTaskTimer(this,
         () -> getServer().getOnlinePlayers().forEach(this::dopasujDlonie), 10L, 10L);
     getServer().getScheduler().runTaskTimer(this, this::tyknijKrwawienie, 1L, 1L);
+    getServer().getScheduler().runTaskTimer(this, this::sygnalizujCiezkie, 2L, 2L);
   }
 
   private static Float liczbaLubNull(ConfigurationSection t, String k) {
@@ -142,6 +172,13 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     modele.clear();
     przestrzen = getConfig().getString("przestrzen-modeli", "bron");
     debug = getConfig().getBoolean("debug", false);
+    czekanieCiezkiego = Math.max(0, getConfig().getInt("ciezkie.czekanie", 10));
+    progRytmu = getConfig().getDouble("rytm.prog_rytmu", 0.9);
+    oknoRytmu = getConfig().getInt("rytm.okno_rytmu", 8);
+    kosztRytmu = getConfig().getDouble("rytm.koszt_rytmu", 2);
+    dlugoscRytmu = Math.max(2, getConfig().getInt("rytm.dlugosc", 3));
+    mnoznikRytmu = getConfig().getDouble("rytm.mnoznik", 1.4);
+    lukRytmu = getConfig().getDouble("rytm.luk_mnoznik", 0.5);
     ConfigurationSection sek = getConfig().getConfigurationSection("typy");
     if (sek != null) {
       for (String typ : sek.getKeys(false)) {
@@ -184,6 +221,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         ConfigurationSection kr = t.getConfigurationSection("krwawienie");
         Krwawienie krwawienie = kr == null ? null : new Krwawienie(kr.getDouble("procent", 0.25),
             kr.getInt("czas", 60), kr.getInt("stosy", 1));
+        ConfigurationSection ci = t.getConfigurationSection("ciezkie");
+        Ciezkie ciezkie = ci == null ? null : new Ciezkie(ci.getString("przod"), ci.getString("bok"),
+            ci.getString("tyl"), ci.getString("bieg"), ci.getDouble("koszt", 12));
         ItemUseAnimation poza = null;
         if (t.getString("poza") != null) {
           try {
@@ -195,7 +235,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         typy.put(typ.toUpperCase(Locale.ROOT), new Ustawienie(zamach, t.getInt("czas", 6), t.getString("skala"), rodzaj,
             liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false), wypad,
             poza, t.getString("reakcja", "brak"), parowanie, uderzenie, ukrycie, krwawienie,
-            t.getDouble("pancerz.procent", 0.30)));
+            t.getDouble("pancerz.procent", 0.30), ciezkie, t.getBoolean("rytm", false)));
       }
     }
     for (String m : getConfig().getStringList("materialy-z-modelami")) {
@@ -206,6 +246,15 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     wersja = getConfig().saveToString().hashCode();
     riposty.clear();
     krwawiacy.clear();
+    serie.clear();
+    podwojKrwawienie.clear();
+    naladowanyZamach.clear();
+    ostatniZamach.clear();
+    celCiosu.clear();
+    tickCiosu.clear();
+    sygnalCiezkiego.clear();
+    wykonczenieZamach.clear();
+    oczekujacyZamach.clear();
     getLogger().info("Typy broni: " + typy.size() + ", materialy z modelami trzymania: " + modele.size());
   }
 
@@ -228,7 +277,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     boolean dwaTryby = u.wzor() != null && u.garda() != null;
     boolean trybSprintu = dwaTryby && sprint;
     boolean szarza = ppm && trybSprintu;
-    String stan = wersja + ":" + ppm + (dwaTryby ? ":" + sprint : "");
+    Integer zamachDo = item.getPersistentDataContainer().get(kluczZamachu, PersistentDataType.INTEGER);
+    boolean odwrotnyZamach = zamachDo != null && zamachDo > getServer().getCurrentTick();
+    String stan = wersja + ":" + ppm + (dwaTryby ? ":" + sprint : "") + ":" + odwrotnyZamach;
     if (stan.equals(item.getPersistentDataContainer().get(kluczStanu, PersistentDataType.STRING))) return false;
 
     for (DataComponentType t : ZARZADZANE) item.resetData(t);
@@ -239,8 +290,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           || (ppm && (!dwaTryby || sprint) && Z_WZORU_PPM.contains(t)));
     }
     if (u.zamach() != null) {
+      SwingAnimation.Animation zamach = odwrotnyZamach
+          ? (u.zamach() == SwingAnimation.Animation.STAB ? SwingAnimation.Animation.WHACK : SwingAnimation.Animation.STAB)
+          : u.zamach();
       item.setData(DataComponentTypes.SWING_ANIMATION,
-          SwingAnimation.swingAnimation().type(u.zamach()).duration(u.czas()).build());
+          SwingAnimation.swingAnimation().type(zamach).duration(u.czas()).build());
     }
     if (u.ladowanie() != null) item.setData(DataComponentTypes.MINIMUM_ATTACK_CHARGE, u.ladowanie());
     if (u.zasieg() != null) {
@@ -283,6 +337,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       if (domyslny) item.setData(DataComponentTypes.ITEM_MODEL, cel);
     }
     item.editPersistentDataContainer(pdc -> pdc.set(kluczStanu, PersistentDataType.STRING, stan));
+    if (zamachDo != null && !odwrotnyZamach) item.editPersistentDataContainer(pdc -> pdc.remove(kluczZamachu));
     return true;
   }
 
@@ -304,11 +359,31 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.MONITOR)
   public void wejscie(PlayerJoinEvent e) { pozniej(e.getPlayer()); }
 
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void slot(PlayerItemHeldEvent e) { pozniej(e.getPlayer()); }
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void wyjscie(PlayerQuitEvent e) {
+    UUID id = e.getPlayer().getUniqueId();
+    serie.remove(id);
+    podwojKrwawienie.remove(id);
+    naladowanyZamach.remove(id);
+    ostatniZamach.remove(id);
+    sygnalCiezkiego.remove(id);
+    celCiosu.remove(id);
+    tickCiosu.remove(id);
+    wykonczenieZamach.remove(id);
+    oczekujacyZamach.remove(id);
+  }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void zamiana(PlayerSwapHandItemsEvent e) { pozniej(e.getPlayer()); }
+  public void slot(PlayerItemHeldEvent e) {
+    wyzerujCiezkie(e.getPlayer());
+    pozniej(e.getPlayer());
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void zamiana(PlayerSwapHandItemsEvent e) {
+    wyzerujCiezkie(e.getPlayer());
+    pozniej(e.getPlayer());
+  }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void sprint(PlayerToggleSprintEvent e) { pozniej(e.getPlayer()); }
@@ -355,7 +430,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   public void lpm(PlayerAnimationEvent e) {
     if (e.getAnimationType() != PlayerAnimationType.ARM_SWING) return;
     Player p = e.getPlayer();
+    ItemStack bron = p.getInventory().getItemInMainHand();
+    Ustawienie smuga = ustawienie(bron);
+    if (smuga != null && smuga.zamach() != null && smuga.rodzaj() != Rodzaj.BRAK
+        && (p.getAttackCooldown() >= 0.9f || naladowanyZamach.getOrDefault(p.getUniqueId(), -1) >= getServer().getCurrentTick() - 1))
+      smuga(p, smuga);
+    Runnable nastepny = oczekujacyZamach.remove(p.getUniqueId());
+    if (nastepny != null) getServer().getScheduler().runTask(this, nastepny);
+    if (wykonczenieZamach.remove(p.getUniqueId()))
+      getServer().getScheduler().runTask(this, () -> przywrocZamach(p));
     int teraz = getServer().getCurrentTick();
+    if (smuga != null) wyzerujCiezkie(p);
     Integer okno = oknoKontry.remove(p.getUniqueId());
     if (okno == null || okno < teraz) return;
     Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
@@ -475,15 +560,270 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     p.getWorld().playSound(styk, Sound.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS, 0.8f, 1.5f);
   }
 
-  /** Reakcje tylko dla zwyklego, naladowanego ciosu w glownej rece. HIGHEST: MythicLib liczy obrazenia broni wczesniej
+  private boolean pobierzStamine(Player p, double procent) {
+    if (!mmocore || procent <= 0) return true;
+    double koszt = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA")) * procent / 100.0;
+    PlayerData dane = PlayerData.get(p);
+    if (dane == null || dane.getStamina() + 1e-6 < koszt) return false;
+    dane.giveStamina(-koszt, PlayerResourceUpdateEvent.UpdateReason.SKILL_COST);
+    return true;
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void zapiszCelCiosu(PrePlayerAttackEntityEvent e) {
+    if (!e.willAttack()) return;
+    celCiosu.put(e.getPlayer().getUniqueId(), e.getAttacked().getUniqueId());
+    tickCiosu.put(e.getPlayer().getUniqueId(), getServer().getCurrentTick());
+  }
+
+  /** Czy to zdarzenie to cios gracza w cel, ktory zaatakowal (a nie rozprysk na sasiada w tym samym ticku). */
+  private boolean prawdziwyCios(Player p, LivingEntity cel) {
+    Integer tick = tickCiosu.get(p.getUniqueId());
+    return tick != null && tick == getServer().getCurrentTick() && cel.getUniqueId().equals(celCiosu.get(p.getUniqueId()));
+  }
+
+  private int pelneNaladowanie(Player p) {
+    double szybkosc = p.getAttribute(Attribute.ATTACK_SPEED) == null ? 4
+        : p.getAttribute(Attribute.ATTACK_SPEED).getValue();
+    return (int) Math.ceil(20.0 / Math.max(0.1, szybkosc));
+  }
+
+  private int tickiDoCiezkiego(Player p) {
+    int teraz = getServer().getCurrentTick();
+    int ostatni = ostatniZamach.computeIfAbsent(p.getUniqueId(), id -> teraz);
+    return Math.max(0, ostatni + pelneNaladowanie(p) + czekanieCiezkiego - teraz);
+  }
+
+  private void wyzerujCiezkie(Player p) {
+    ostatniZamach.put(p.getUniqueId(), getServer().getCurrentTick());
+    sygnalCiezkiego.remove(p.getUniqueId());
+  }
+
+  private void sygnalizujCiezkie() {
+    for (Player p : getServer().getOnlinePlayers()) {
+      UUID id = p.getUniqueId();
+      Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+      if (u == null || u.ciezkie() == null) {
+        ostatniZamach.remove(id);
+        sygnalCiezkiego.remove(id);
+        continue;
+      }
+      if (tickiDoCiezkiego(p) > 0 || !sygnalCiezkiego.add(id)) continue;
+      p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, SoundCategory.PLAYERS, 0.25f, 1.6f);
+      Vector przod = p.getEyeLocation().getDirection().setY(0);
+      if (przod.lengthSquared() < 1e-4) przod = new Vector(1, 0, 0);
+      przod.normalize();
+      Vector prawo = new Vector(-przod.getZ(), 0, przod.getX());
+      Location dlon = p.getEyeLocation().add(przod.multiply(0.45)).add(prawo.multiply(0.28)).subtract(0, 0.4, 0);
+      p.getWorld().spawnParticle(Particle.ENCHANTED_HIT, dlon, 3, 0.08, 0.08, 0.08, 0.01);
+    }
+  }
+
+  private String kierunekCiezkiego(Player p, Ciezkie c) {
+    Input wejscie = p.getCurrentInput();
+    if (p.isSprinting() && c.bieg() != null) return c.bieg();
+    if (wejscie.isForward() && c.przod() != null) return c.przod();
+    if ((wejscie.isLeft() || wejscie.isRight()) && c.bok() != null) return c.bok();
+    if (wejscie.isBackward() && c.tyl() != null) return c.tyl();
+    return c.przod();
+  }
+
+  private void odrzuc(LivingEntity cel, Player p, double sila) {
+    Vector d = cel.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+    if (d.lengthSquared() > 1e-4) {
+      d.normalize().multiply(sila).setY(Math.max(cel.getVelocity().getY(), 0.18));
+      cel.setVelocity(d);
+    }
+  }
+
+  private void dodatkowyCios(Player p, LivingEntity cel, double obrazenia) {
+    if (!UtilityMethods.canTarget(p, cel, InteractionType.OFFENSE_ACTION)) return;
+    var meta = MMOPlayerData.get(p).getStatMap().cache(io.lumine.mythic.lib.api.player.EquipmentSlot.MAIN_HAND);
+    cel.setNoDamageTicks(0);
+    wlasnyCios = true;
+    try { meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL); }
+    finally { wlasnyCios = false; }
+  }
+
+  private double zasieg(Ustawienie u) { return u.zasieg() == null ? 3.0 : u.zasieg(); }
+
+  private void luk(Player p, LivingEntity pierwotny, Ustawienie u, double obrazenia, double kat) {
+    Location oko = p.getEyeLocation();
+    Vector patrzy = oko.getDirection().setY(0);
+    if (patrzy.lengthSquared() < 1e-4) return;
+    patrzy.normalize();
+    double zasieg = zasieg(u);
+    for (var enc : p.getWorld().getNearbyEntities(p.getLocation(), zasieg + 1, 2.5, zasieg + 1)) {
+      if (!(enc instanceof LivingEntity cel) || cel.equals(p) || cel.equals(pierwotny) || cel.isDead()) continue;
+      Vector d = cel.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+      if (d.lengthSquared() > (zasieg + cel.getWidth() / 2) * (zasieg + cel.getWidth() / 2)
+          || d.lengthSquared() < 1e-4 || Math.toDegrees(patrzy.angle(d)) > kat / 2) continue;
+      dodatkowyCios(p, cel, obrazenia);
+    }
+    Vector bok = new Vector(-patrzy.getZ(), 0, patrzy.getX());
+    for (int i = 0; i < 12; i++) {
+      double a = Math.toRadians(-kat / 2 + kat * i / 11);
+      Vector d = patrzy.clone().multiply(Math.cos(a)).add(bok.clone().multiply(Math.sin(a)));
+      p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, oko.clone().add(d.multiply(Math.min(zasieg, 2.2))).subtract(0, 0.5, 0),
+          1, 0, 0, 0, 0);
+    }
+  }
+
+  private void linia(Player p, LivingEntity pierwotny, Ustawienie u, double obrazenia) {
+    Location oko = p.getEyeLocation();
+    Vector patrzy = oko.getDirection().normalize();
+    double poczatek = pierwotny.getLocation().add(0, pierwotny.getHeight() / 2, 0).toVector()
+        .subtract(oko.toVector()).dot(patrzy);
+    double koniec = Math.max(zasieg(u), poczatek) + 2.5;
+    List<LivingEntity> cele = new ArrayList<>();
+    for (var enc : p.getWorld().getNearbyEntities(oko, koniec, koniec, koniec)) {
+      if (!(enc instanceof LivingEntity cel) || cel.equals(p) || cel.equals(pierwotny) || cel.isDead()) continue;
+      Vector d = cel.getLocation().add(0, cel.getHeight() / 2, 0).toVector().subtract(oko.toVector());
+      double t = d.dot(patrzy);
+      if (t <= poczatek + 0.2 || t > koniec
+          || d.subtract(patrzy.clone().multiply(t)).length() > 0.75 + cel.getWidth() / 2) continue;
+      cele.add(cel);
+    }
+    cele.sort(Comparator.comparingDouble(c -> c.getLocation().toVector().subtract(oko.toVector()).dot(patrzy)));
+    for (int i = 0; i < Math.min(2, cele.size()); i++) dodatkowyCios(p, cele.get(i), obrazenia);
+  }
+
+  private void ciezkiEfekt(Player p, LivingEntity cel, Ustawienie u, String wariant, double baza) {
+    String sciezka = "ciezkie_warianty." + wariant + ".";
+    switch (wariant) {
+      case "wypad" -> {
+        Vector d = p.getLocation().getDirection().setY(0);
+        if (d.lengthSquared() > 1e-4) p.setVelocity(p.getVelocity().add(d.normalize().multiply(getConfig().getDouble(sciezka + "sila", 0.45))));
+        if (u.rodzaj() == Rodzaj.KLUTE) linia(p, cel, u, baza * getConfig().getDouble(sciezka + "linia_mnoznik", 0.6));
+      }
+      case "znad_glowy" -> {
+        zachwiej(cel, p.getLocation());
+        Block pod = cel.getLocation().subtract(0, 0.2, 0).getBlock();
+        if (!pod.getType().isAir()) p.getWorld().spawnParticle(Particle.BLOCK,
+            pod.getLocation().add(0.5, 1, 0.5), 4, 0.2, 0, 0.2, 0, pod.getBlockData());
+      }
+      case "zamach_boczny" -> luk(p, cel, u, baza * getConfig().getDouble(sciezka + "luk_mnoznik", 0.7),
+          getConfig().getDouble(sciezka + ("KOSA".equals(NBTItem.get(p.getInventory().getItemInMainHand()).getType()) ? "kat_kosa" : "kat"), 120));
+      case "odepchniecie" -> { zachwiej(cel, p.getLocation()); odrzuc(cel, p, getConfig().getDouble(sciezka + "sila", 1.1)); }
+      case "z_rozbiegu" -> { odrzuc(cel, p, getConfig().getDouble(sciezka + "sila", 1.1)); p.setSprinting(false); }
+      default -> { }
+    }
+  }
+
+  private void odwrocZamach(Player p, ItemStack bron, int naTickow) {
+    ItemStack wzor = bron.clone();
+    // Damage poprzedza ARM_SWING: czekamy na zamach drugiego ciosu, potem ustawiamy animacje trzeciego.
+    Runnable ustaw = () -> {
+      if (!p.isOnline()) return;
+      ItemStack trzymany = p.getInventory().getItemInMainHand();
+      if (!trzymany.isSimilar(wzor)) return;
+      trzymany.editPersistentDataContainer(pdc -> pdc.set(kluczZamachu, PersistentDataType.INTEGER,
+          getServer().getCurrentTick() + naTickow));
+      trzymany.editPersistentDataContainer(pdc -> pdc.remove(kluczStanu));
+      p.getInventory().setItemInMainHand(trzymany);
+      dopasujDlonie(p);
+      getServer().getScheduler().runTaskLater(this, () -> dopasujDlonie(p), naTickow + 1L);
+    };
+    oczekujacyZamach.put(p.getUniqueId(), ustaw);
+    getServer().getScheduler().runTaskLater(this, () -> {
+      Runnable awaryjnie = oczekujacyZamach.remove(p.getUniqueId());
+      if (awaryjnie != null) awaryjnie.run();
+    }, 4L);
+  }
+
+  private void przywrocZamach(Player p) {
+    oczekujacyZamach.remove(p.getUniqueId());
+    if (!p.isOnline()) return;
+    ItemStack bron = p.getInventory().getItemInMainHand();
+    if (!bron.getPersistentDataContainer().has(kluczZamachu, PersistentDataType.INTEGER)) return;
+    bron.editPersistentDataContainer(pdc -> {
+      pdc.remove(kluczZamachu);
+      pdc.remove(kluczStanu);
+    });
+    p.getInventory().setItemInMainHand(bron);
+    dopasujDlonie(p);
+  }
+
+  private void rytm(Player p, LivingEntity cel, ItemStack bron, Ustawienie u, EntityDamageByEntityEvent e,
+                    int teraz, float naladowanie) {
+    String typ = NBTItem.get(bron).getType();
+    RytmStan poprzedni = serie.get(p.getUniqueId());
+    int pelne = pelneNaladowanie(p);
+    boolean wOknie = poprzedni != null && typ.equals(poprzedni.typ())
+        && teraz >= poprzedni.ostatniTick() + pelne
+        && teraz <= poprzedni.ostatniTick() + pelne + oknoRytmu;
+    int numer = naladowanie >= progRytmu && wOknie ? poprzedni.trafienia() + 1 : 1;
+    if (numer > 1 && !pobierzStamine(p, kosztRytmu)) numer = 1;
+    if (numer == 1 && poprzedni != null && poprzedni.trafienia() == dlugoscRytmu - 1) przywrocZamach(p);
+    dbg("RYTM numer=" + numer + " pelne=" + pelne + " okno=" + wOknie + " naladowanie=" + naladowanie);
+    float ton = numer >= dlugoscRytmu ? 1.6f : numer == 1 ? 0.8f : numer == 2 ? 1.0f : 1.3f;
+    p.getWorld().playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.PLAYERS,
+        numer >= dlugoscRytmu ? 0.9f : 0.3f, ton);
+    if (numer >= dlugoscRytmu) {
+      double baza = e.getDamage();
+      e.setDamage(baza * mnoznikRytmu);
+      switch (u.rodzaj()) {
+        case CIETE -> {
+          if (u.krwawienie() != null) podwojKrwawienie.put(p.getUniqueId(), cel.getUniqueId());
+          else luk(p, cel, u, baza * lukRytmu, 120);
+        }
+        case KLUTE -> linia(p, cel, u, baza * getConfig().getDouble("ciezkie_warianty.wypad.linia_mnoznik", 0.6));
+        case OBUCHOWE -> { zachwiej(cel, p.getLocation()); odrzuc(cel, p, 0.6); }
+        default -> { }
+      }
+      serie.remove(p.getUniqueId());
+      oczekujacyZamach.remove(p.getUniqueId());
+      wykonczenieZamach.add(p.getUniqueId());
+      getServer().getScheduler().runTaskLater(this, () -> {
+        if (wykonczenieZamach.remove(p.getUniqueId())) przywrocZamach(p);
+      }, 4L);
+    } else {
+      serie.put(p.getUniqueId(), new RytmStan(numer, teraz, typ));
+      if (numer == dlugoscRytmu - 1 && u.zamach() != null) odwrocZamach(p, bron, oknoRytmu + pelne);
+    }
+  }
+
+  private void smuga(Player p, Ustawienie u) {
+    Location oko = p.getEyeLocation();
+    Vector przod = oko.getDirection().normalize();
+    Vector bok = new Vector(-przod.getZ(), 0, przod.getX());
+    boolean klute = u.rodzaj() == Rodzaj.KLUTE;
+    int punkty = klute ? 8 : 12;
+    for (int i = 0; i < punkty; i++) {
+      double t = (double) i / (punkty - 1);
+      Location punkt = klute ? oko.clone().add(przod.clone().multiply(0.5 + t * 2.0))
+          : oko.clone().add(przod.clone().multiply(1.4)).add(bok.clone().multiply(0.8 - 1.6 * t)).add(0, 0.65 - 1.3 * t, 0);
+      Runnable pokaz = () -> {
+        if (!p.isOnline()) return;
+        if (klute) p.getWorld().spawnParticle(Particle.CRIT, punkt, 1, 0, 0, 0, 0);
+        else p.getWorld().spawnParticle(Particle.DUST, punkt, 1, 0, 0, 0, 0,
+            new Particle.DustOptions(u.rodzaj() == Rodzaj.OBUCHOWE ? Color.fromRGB(116, 83, 52) : Color.fromRGB(210, 216, 220), 0.8f));
+      };
+      if (i < punkty / 2) pokaz.run();
+      else getServer().getScheduler().runTaskLater(this, pokaz, 1L);
+    }
+    if (u.rodzaj() == Rodzaj.CIETE) p.getWorld().spawnParticle(Particle.SWEEP_ATTACK,
+        oko.clone().add(przod.multiply(1.8)), 1, 0, 0, 0, 0);
+    if (u.rodzaj() == Rodzaj.OBUCHOWE) {
+      Block pod = p.getLocation().subtract(0, 0.2, 0).getBlock();
+      if (!pod.getType().isAir()) p.getWorld().spawnParticle(Particle.BLOCK, pod.getLocation().add(0.5, 1, 0.5),
+          3, 0.2, 0, 0.2, 0, pod.getBlockData());
+    }
+  }
+
+  /** Ciezki cios, rytm i reakcje trafienia bronia w glownej rece. HIGHEST: MythicLib liczy obrazenia broni wczesniej
    *  i nadpisalby zmiane z nizszego priorytetu (zmierzone: na HIGH mnoznik ciosu w plecy znikal). */
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void reakcja(EntityDamageByEntityEvent e) {
     if (wlasnyCios || !(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity cel)
-        || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
-    Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+        || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK || !prawdziwyCios(p, cel)) return;
+    ItemStack bron = p.getInventory().getItemInMainHand();
+    Ustawienie u = ustawienie(bron);
     if (u == null) return;
     int teraz = getServer().getCurrentTick();
+    boolean ciezkiGotowy = u.ciezkie() != null && tickiDoCiezkiego(p) == 0;
+    wyzerujCiezkie(p); // trafienie poprzedza ARM_SWING; decyzja uzywa poprzedniego zamachu
+    podwojKrwawienie.remove(p.getUniqueId());
     // riposta zuzywa sie przy trafieniu (klient wysyla cios PRZED machnieciem, wiec nie przez PlayerAnimationEvent)
     Riposta riposta = u.parowanie() != null ? riposty.remove(p.getUniqueId()) : null;
     if (riposta != null && riposta.doTicka() >= teraz) {
@@ -492,8 +832,24 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       cel.getWorld().playSound(cel.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 0.6f, 1.2f);
     }
     // naladowanie z chwili ciosu: Paper resetuje je (PlayerAttackEntityCooldownResetEvent) dopiero PO tym zdarzeniu - zmierzone
-    dbg("REAKCJA " + u.reakcja() + " cel=" + cel.getType() + " naladowanie=" + p.getAttackCooldown() + " dmg=" + e.getDamage());
-    if (p.getAttackCooldown() < 0.9f) return;
+    float naladowanie = p.getAttackCooldown();
+    dbg("REAKCJA " + u.reakcja() + " cel=" + cel.getType() + " naladowanie=" + naladowanie + " dmg=" + e.getDamage());
+    if (naladowanie >= 0.9f) naladowanyZamach.put(p.getUniqueId(), teraz);
+    String wariant = ciezkiGotowy ? kierunekCiezkiego(p, u.ciezkie()) : null;
+    if (wariant != null && getConfig().isConfigurationSection("ciezkie_warianty." + wariant)) {
+      if (pobierzStamine(p, u.ciezkie().koszt())) {
+        double baza = e.getDamage();
+        e.setDamage(baza * getConfig().getDouble("ciezkie_warianty." + wariant + ".mnoznik", 1));
+        serie.remove(p.getUniqueId());
+        przywrocZamach(p);
+        ciezkiEfekt(p, cel, u, wariant, baza);
+        dbg("CIEZKI " + wariant + " dmg=" + e.getDamage());
+      } else {
+        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.2f, 0.7f);
+        if (u.rytm()) rytm(p, cel, bron, u, e, teraz, naladowanie);
+      }
+    } else if (u.rytm()) rytm(p, cel, bron, u, e, teraz, naladowanie);
+    if (naladowanie < 0.9f) return;
     switch (u.reakcja()) {
       case "pancerz" -> {
         double procent = Math.max(0, Math.min(1, u.pancerz()));
@@ -527,14 +883,18 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void uruchomKrwawienie(EntityDamageByEntityEvent e) {
     if (wlasnyCios || !(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity cel)
-        || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK || e.getFinalDamage() <= 0) return;
+        || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK || e.getFinalDamage() <= 0 || !prawdziwyCios(p, cel)) return;
     Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
     if (u == null || !"krwawienie".equals(u.reakcja()) || u.krwawienie() == null || p.getAttackCooldown() < 0.9f) return;
     Krwawienie k = u.krwawienie();
     int teraz = getServer().getCurrentTick();
     Krwawiacy stan = krwawiacy.computeIfAbsent(cel.getUniqueId(), id -> new Krwawiacy());
-    while (stan.stosy.size() >= Math.max(1, k.stosy())) stan.stosy.remove(0);
-    stan.stosy.add(new StosKrwawienia(e.getFinalDamage() * k.procent() / Math.max(1, k.czas() / 20), p.getUniqueId()));
+    boolean podwoj = cel.getUniqueId().equals(podwojKrwawienie.remove(p.getUniqueId()));
+    int nowe = podwoj ? 2 : 1;
+    int limit = Math.max(k.stosy(), nowe);
+    while (stan.stosy.size() > Math.max(0, limit - nowe)) stan.stosy.remove(0);
+    for (int i = 0; i < nowe; i++) stan.stosy.add(new StosKrwawienia(
+        e.getFinalDamage() * k.procent() / Math.max(1, k.czas() / 20), p.getUniqueId()));
     stan.doTicka = teraz + k.czas();
     if (stan.nastepnyTick <= teraz) stan.nastepnyTick = teraz + 20;
   }
@@ -628,6 +988,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       if (p == null) { s.sendMessage("Brak gracza " + args[1]); return true; }
       ItemStack i = p.getInventory().getItemInMainHand();
       String typ = i.getType().isAir() ? null : NBTItem.get(i).getType();
+      Ustawienie u = ustawienie(i);
+      int ciezkiZa = u == null || u.ciezkie() == null ? -1 : tickiDoCiezkiego(p);
       s.sendMessage("typ=" + typ + " swing=" + i.getData(DataComponentTypes.SWING_ANIMATION)
           + " model=" + i.getData(DataComponentTypes.ITEM_MODEL)
           + " ladowanie=" + i.getData(DataComponentTypes.MINIMUM_ATTACK_CHARGE)
@@ -635,11 +997,15 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           + " pierce=" + i.hasData(DataComponentTypes.PIERCING_WEAPON)
           + " szarza=" + i.hasData(DataComponentTypes.KINETIC_WEAPON)
           + " garda=" + i.hasData(DataComponentTypes.BLOCKS_ATTACKS)
-          + " reakcja=" + (ustawienie(i) == null ? "brak" : ustawienie(i).reakcja())
+          + " reakcja=" + (u == null ? "brak" : u.reakcja())
+          + " ciezkiGotowy=" + (ciezkiZa == 0)
+          + " ciezkiZa=" + ciezkiZa
           + " wypadZa=" + Math.max(0, odnowienieWypadu.getOrDefault(p.getUniqueId(), 0) - getServer().getCurrentTick())
           + " uderzenieZa=" + Math.max(0, odnowienieUderzenia.getOrDefault(p.getUniqueId(), 0) - getServer().getCurrentTick())
           + " ripostaZa=" + Math.max(0, riposty.getOrDefault(p.getUniqueId(), new Riposta(0, 1)).doTicka() - getServer().getCurrentTick())
           + " sprint=" + p.isSprinting()
+          + " stamina=" + (mmocore ? PlayerData.get(p).getStamina() + "/"
+              + MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA") : "bez MMOCore")
           + " lewa=" + p.getInventory().getItemInOffHand().getType());
       return true;
     }
