@@ -85,6 +85,7 @@ final class Wybor implements Listener {
 
   private void przypisz(Player p, boolean prawa) {
     Sesja s = otwarte.get(p.getUniqueId());
+    if (s == null) return;
     List<String> k = ulubione.kolo(p);
     String id = k.get(Math.floorMod(s.i, k.size()));
     nosnik.komunikat(p, nosnik.przypisz(p, id, prawa));
@@ -92,6 +93,9 @@ final class Wybor implements Listener {
     s.ostatnio = System.currentTimeMillis();
     odswiez(p, s);
   }
+
+  void wcisnietoLpm(Player p) { przypisz(p, false); }
+  void wcisnietoPpm(Player p) { przypisz(p, true); }
 
   // ------------------------------------------------------------------ wejscie gracza przy otwartym pasku
 
@@ -115,21 +119,29 @@ final class Wybor implements Listener {
     if (!prawy && !lewy) return;
     // Machniecie po PPM Paper moze zglosic jako LEFT_CLICK_AIR.
     if (e.getAction() == Action.LEFT_CLICK_AIR && rzucanie.swiezyPpm(e.getPlayer())) { e.setCancelled(true); return; }
+    if (e.getAction() == Action.LEFT_CLICK_AIR) {   // moze to machniecie po klawiszu Q (zamykajacym pasek) — sprawdz pozniej
+      e.setCancelled(true);
+      Player p = e.getPlayer();
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (p.isOnline() && otwarty(p) && !rzucanie.swiezeQ(p)) wcisnietoLpm(p);
+      }, Rzucanie.Q_OKNO);
+      return;
+    }
     e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
     e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
-    przypisz(e.getPlayer(), prawy);
+    if (prawy) wcisnietoPpm(e.getPlayer()); else wcisnietoLpm(e.getPlayer());
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void kliknietaIstota(PlayerInteractEntityEvent e) {
     if (!otwarty(e.getPlayer()) || e.getHand() != EquipmentSlot.HAND) return;
-    e.setCancelled(true); przypisz(e.getPlayer(), true);
+    e.setCancelled(true); wcisnietoPpm(e.getPlayer());
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void uderzenie(EntityDamageByEntityEvent e) {
     if (!(e.getDamager() instanceof Player p) || !otwarty(p)) return;
-    e.setCancelled(true); przypisz(p, false);
+    e.setCancelled(true); wcisnietoLpm(p);
   }
 
   @EventHandler

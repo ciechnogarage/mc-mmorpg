@@ -35,9 +35,8 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 /**
- * DEBUG_STICK nie niszczy bloku (DebugStickItem.canDestroyBlock); szybki tool sprawia, ze
- * MultiPlayerGameMode.startDestroyBlock wysyla START co tick bez isDestroying. Dlatego
- * Minecraft.startUseItem moze rownolegle wysylac PPM. Znaczniki pakietow gasna niezaleznie.
+ * STRUCTURE_VOID ma postep kopania bez przejscia w isDestroying, wiec klient moze
+ * wysylac LPM i PPM rownolegle. Znaczniki przyciskow gasna niezaleznie.
  */
 final class Rzucanie implements Listener {
   static final class Stan { int n; boolean prawa, lewa; }
@@ -115,7 +114,7 @@ final class Rzucanie implements Listener {
   private void trybyLpm() { for (Player p : Bukkit.getOnlinePlayers()) atrybutyLpm(p, trybLpm(p)); }
 
   private void atrybutyLpm(Player p, boolean wl) {
-    modDo(p, Attribute.BLOCK_INTERACTION_RANGE, kZasieg, plugin.getConfig().getDouble("lpm-zasieg-blokow", 24), wl);
+    modDo(p, Attribute.BLOCK_INTERACTION_RANGE, kZasieg, plugin.getConfig().getDouble("lpm-zasieg-blokow", 8), wl);
     modDo(p, Attribute.ENTITY_INTERACTION_RANGE, kIstoty, 0, wl);
     modDo(p, Attribute.BLOCK_BREAK_SPEED, kSzybkosc, 1024, wl);
     // Usun pozostalosci po poprzedniej wersji podczas ponownego zaladowania.
@@ -145,14 +144,40 @@ final class Rzucanie implements Listener {
     if (e.getHand() != EquipmentSlot.HAND || !trybLpm(e.getPlayer())) return;
     if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
       e.setCancelled(true);
-      if (wybor == null || !wybor.otwarty(e.getPlayer())) {
-        lpmBlok.put(e.getPlayer().getUniqueId(), teraz);
-        wejdz(e.getPlayer());
-      }
+      if (wybor == null || !wybor.otwarty(e.getPlayer())) wcisnietoLpm(e.getPlayer());
     } else if (e.getAction() == Action.LEFT_CLICK_AIR && !swiezyPpm(e.getPlayer())
         && (wybor == null || !wybor.otwarty(e.getPlayer()))) {
-      lpmPowietrze.put(e.getPlayer().getUniqueId(), teraz);
-      wejdz(e.getPlayer());
+      // Klawisz Q tez macha reka (klient po wyrzuceniu) = LEFT_CLICK_AIR; MenuKey woła "zaklecia q" chwile pozniej.
+      Player p = e.getPlayer();
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (!p.isOnline() || swiezeQ(p) || !trybLpm(p) || (wybor != null && wybor.otwarty(p))) return;
+        lpmPowietrze.put(p.getUniqueId(), teraz);
+        wejdz(p);
+      }, Q_OKNO);
+    }
+  }
+
+  /** Ticki, przez ktore machniecie reka uznajemy za skutek klawisza Q, a nie LPM. */
+  static final int Q_OKNO = 3;
+  private final Map<UUID, Long> ostatnieQ = new HashMap<>();
+  void oznaczQ(Player p) { ostatnieQ.put(p.getUniqueId(), teraz); }
+  boolean swiezeQ(Player p) { Long t = ostatnieQ.get(p.getUniqueId()); return t != null && teraz - t <= Q_OKNO + 1; }
+
+  /** Ta sama sciezka dla realnego bloku i pakietu na kotwicy. Wybor w zdarzeniu obsluguje wlasny listener. */
+  void wcisnietoLpm(Player p) {
+    if (!trybLpm(p)) return;
+    if (wybor != null && wybor.otwarty(p)) { wybor.wcisnietoLpm(p); return; }
+    lpmBlok.put(p.getUniqueId(), teraz);
+    wejdz(p);
+  }
+
+  void wcisnietoPpm(Player p) {
+    if (!trybLpm(p)) return;
+    ostatniPpm.put(p.getUniqueId(), teraz);
+    if (wybor != null && wybor.otwarty(p)) { wybor.wcisnietoPpm(p); return; }
+    if (ksiega.w(p.getInventory().getItemInMainHand()) != null) {
+      ppmPrawa.put(p.getUniqueId(), teraz);
+      wejdz(p);
     }
   }
 
@@ -167,11 +192,8 @@ final class Rzucanie implements Listener {
       e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
       e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
       if (e.getHand() != EquipmentSlot.HAND) return;
-      ostatniPpm.put(p.getUniqueId(), teraz);
-      if (ksiega.w(e.getItem()) != null && (wybor == null || !wybor.otwarty(p))) {
-        ppmPrawa.put(p.getUniqueId(), teraz);
-        wejdz(p);
-      }
+      if (wybor == null || !wybor.otwarty(p)) wcisnietoPpm(p);
+      else ostatniPpm.put(p.getUniqueId(), teraz);
     } else if (e.getHand() == EquipmentSlot.OFF_HAND
         && ksiega.w(e.getItem()) != null && (wybor == null || !wybor.otwarty(p))) {
       ppmLewa.put(p.getUniqueId(), teraz);
@@ -191,7 +213,7 @@ final class Rzucanie implements Listener {
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) {
     UUID u = e.getPlayer().getUniqueId();
-    rzucajacy.remove(u); lpmBlok.remove(u); lpmPowietrze.remove(u); ppmPrawa.remove(u); ppmLewa.remove(u); ostatniPpm.remove(u);
+    rzucajacy.remove(u); lpmBlok.remove(u); lpmPowietrze.remove(u); ppmPrawa.remove(u); ppmLewa.remove(u); ostatniPpm.remove(u); ostatnieQ.remove(u);
     strumien.stop(e.getPlayer()); atrybutyLpm(e.getPlayer(), false); ruch(e.getPlayer(), false);
   }
 

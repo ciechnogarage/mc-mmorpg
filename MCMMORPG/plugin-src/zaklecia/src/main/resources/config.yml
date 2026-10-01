@@ -39,8 +39,13 @@ klawisz-q:
   z-shiftem: 'dm open ulubione_zaklec %gracz%'
 
 # Wejscie przytrzymanych przyciskow i atrybuty trybu zaklec.
-ppm-tolerancja: 6
-lpm-tolerancja: 3
+ppm-tolerancja: 7
+lpm-tolerancja: 5
 lpm-impuls: 10
-lpm-zasieg-blokow: 24
+lpm-zasieg-blokow: 17
+kotwica:
+  wlaczona: true
+  min: 3
+  max: 16
+  wyprzedzenie: 1.0
 spowolnienie: -0.5

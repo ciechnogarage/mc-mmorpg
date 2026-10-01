@@ -16,6 +16,7 @@ val pinnedPluginJars = listOf(
   "MythicLib-dist-1.7.1-20260330.110510-95.jar",
   "MythicMobs-5.11.2.jar",
   "PlaceholderAPI-2.12.2.jar",
+  "packetevents-spigot-2.11.2.jar",
 ).map { serverPluginsDir.resolve(it) }
 
 val missing = pinnedPluginJars.filterNot { it.isFile }

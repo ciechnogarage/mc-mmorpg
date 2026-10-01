@@ -38,9 +38,11 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Ulubione ulubione;
   private Rzucanie rzucanie;
   private Wybor wybor;
+  private Kotwica kotwica;
 
   @Override
   public void onDisable() {
+    if (kotwica != null) kotwica.wylacz();
     if (rzucanie != null) rzucanie.wylacz();
     if (nosnik != null) for (Player p : getServer().getOnlinePlayers()) nosnik.usunPuste(p);
   }
@@ -59,6 +61,8 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     wybor = new Wybor(this, ksiega, nosnik, ulubione, rzucanie);
     rzucanie.ustawWybor(wybor);
     getServer().getPluginManager().registerEvents(wybor, this);
+    kotwica = new Kotwica(this, rzucanie);
+    getServer().getPluginManager().registerEvents(kotwica, this);
     if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione).register();
     getLogger().info("zaklecia: " + ksiega.poId.keySet());
   }
@@ -73,6 +77,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
       // E: klawisz Q (MenuKey wola 'zaklecia q <gracz>'): z Shiftem okno ulubionych, bez — hub jak dotad
       Player p = getServer().getPlayerExact(a[1]);
       if (p == null) { s.sendMessage("Brak gracza " + a[1]); return true; }
+      rzucanie.oznaczQ(p);
       // MenuKey przechwytuje pakiet Q, a klient juz "wyrzucil" przedmiot z reki (przewidywanie) — odswiez slot
       getServer().getScheduler().runTask(this, p::updateInventory);
       // Shift+Q = szybki wybor (pasek, wlacz/wylacz); Q przy otwartym pasku zamyka go; samo Q = hub
