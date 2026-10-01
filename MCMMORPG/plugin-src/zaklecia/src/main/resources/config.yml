@@ -1,4 +1,4 @@
-# Zaklecia w dloni (Skyrim). Plugin prowadzi rzucanie (obie rece), MythicMobs rysuje i zadaje obrazenia.
+# Zaklecia w dloni (Skyrim). Plugin prowadzi rzucanie i wyswietla strumien, MythicMobs odtwarza efekty oraz zadaje obrazenia.
 #
 # id zaklecia -> przedmiot MythicMobs (nosnik w dloni), koszt many za TIK (tik = 10 tickow = 0,5 s), nazwa.
 zaklecia:
@@ -6,24 +6,27 @@ zaklecia:
     przedmiot: ZAKLECIE_PLOMIENIE
     mana-za-tik: 2.0
     nazwa: 'Płomienie'
+    skille:
+      obraz: ''
+      dlon: ''
   odmrozenie:
     przedmiot: ZAKLECIE_ODMROZENIE
     mana-za-tik: 2.5
     nazwa: 'Odmrożenie'
+    skille:
+      obraz: ''
+      dlon: ''
 
 # Podwojne rzucanie (TO SAMO zaklecie w obu dloniach): koszt = koszt jednej reki x mnoznik.
 # Dwie osobne rece kosztowalyby x2; podwojne jest drozsze, a MythicMobs daje mu ~2,2x obrazen (Traf2).
 podwojne-mnoznik-many: 2.5
 
-# Skille MythicMobs wolane przez plugin (plik MythicMobs/skills/Zaklecia.yml).
+# Kazde zaklecie ma wlasne skille w MythicMobs/skills/zaklecia/<id>.yml.
+# Domyslnie Zak_<Id>_Start/Stop/Tik/Traf/Uderzenie. Start, Stop, Traf i Uderzenie
+# uzywaja odmian _P/_L; Traf i Start maja tez _Obie. Nadpisz baze w skille.<typ>.
+# Opcjonalne skille obraz i dlon sa domyslnie puste.
 skille:
-  start: Zak_Start
-  stop: Zak_Stop
-  obraz: ''               # stary strumien z pociskow MM (Zak_Obraz); pusto = strumien jako obiekt wyswietlany
-  tik: Zak_Tik            # co 10 tickow, po pobraniu many (dzwieki)
-  trafienia: Zak_Trafienia  # co 10 tickow, z celami stozka jako celami skilla
   brak-many: Zak_BrakMany
-  dlon: ''                # czasteczki przy dloni co 4 ticki (Zak_Dlon); pusto = tylko animowany model dloni
 
 # Stozek obrazen liczony przez plugin (od oczu gracza): zasieg w blokach, pol-kat w stopniach.
 stozek:

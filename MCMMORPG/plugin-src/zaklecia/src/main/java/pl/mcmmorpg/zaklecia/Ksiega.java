@@ -8,13 +8,17 @@ import org.bukkit.inventory.ItemStack;
 
 /** Znane zaklecia z config.yml i rozpoznawanie ich w przedmiotach (po typie MythicMobs). */
 final class Ksiega {
-  record Zaklecie(String id, String przedmiot, double manaZaTik, String nazwa) {}
+  record Skille(String start, String stop, String tik, String traf, String uderzenie, String obraz, String dlon) {
+    String reka(String baza, boolean prawa) { return baza.isBlank() ? "" : baza + (prawa ? "_P" : "_L"); }
+    String obie(String baza) { return baza.isBlank() ? "" : baza + "_Obie"; }
+  }
+  record Zaklecie(String id, String przedmiot, double manaZaTik, String nazwa, String modelStrumienia, Skille skille) {}
   record Stozek(double zasieg, double polKat) {}
 
   final Map<String, Zaklecie> poId = new LinkedHashMap<>();
   private final Map<String, Zaklecie> poPrzedmiocie = new LinkedHashMap<>();
   final double podwojneMnoznik;
-  final String skStart, skStop, skObraz, skTik, skTrafienia, skBrakMany, skDlon;
+  final String skBrakMany;
   final Stozek stozek, stozekPodwojny;
 
   Ksiega(ConfigurationSection cfg) {
@@ -22,21 +26,22 @@ final class Ksiega {
     if (z != null) {
       for (String id : z.getKeys(false)) {
         ConfigurationSection s = z.getConfigurationSection(id);
-        Zaklecie zak = new Zaklecie(id, s.getString("przedmiot"), s.getDouble("mana-za-tik"), s.getString("nazwa", id));
+        String prefiks = "Zak_" + Character.toUpperCase(id.charAt(0)) + id.substring(1);
+        Skille skille = new Skille(
+            s.getString("skille.start", prefiks + "_Start"), s.getString("skille.stop", prefiks + "_Stop"),
+            s.getString("skille.tik", prefiks + "_Tik"), s.getString("skille.traf", prefiks + "_Traf"),
+            s.getString("skille.uderzenie", prefiks + "_Uderzenie"), s.getString("skille.obraz", ""),
+            s.getString("skille.dlon", ""));
+        Zaklecie zak = new Zaklecie(id, s.getString("przedmiot"), s.getDouble("mana-za-tik"),
+            s.getString("nazwa", id), s.getString("model-strumienia", "strumien_" + id), skille);
         poId.put(id, zak);
         poPrzedmiocie.put(zak.przedmiot().toUpperCase(), zak);
       }
     }
     podwojneMnoznik = cfg.getDouble("podwojne-mnoznik-many", 2.5);
-    skStart = cfg.getString("skille.start", "Zak_Start");
-    skStop = cfg.getString("skille.stop", "Zak_Stop");
-    skObraz = cfg.getString("skille.obraz", "Zak_Obraz");
-    skTik = cfg.getString("skille.tik", "Zak_Tik");
-    skTrafienia = cfg.getString("skille.trafienia", "Zak_Trafienia");
     stozek = new Stozek(cfg.getDouble("stozek.zasieg", 6), cfg.getDouble("stozek.pol-kat", 20));
     stozekPodwojny = new Stozek(cfg.getDouble("stozek-podwojny.zasieg", 7), cfg.getDouble("stozek-podwojny.pol-kat", 22.5));
     skBrakMany = cfg.getString("skille.brak-many", "Zak_BrakMany");
-    skDlon = cfg.getString("skille.dlon", "Zak_Dlon");
   }
 
   /** Zaklecie w tym przedmiocie albo null. */

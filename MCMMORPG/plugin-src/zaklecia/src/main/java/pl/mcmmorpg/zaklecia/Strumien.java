@@ -1,6 +1,5 @@
 package pl.mcmmorpg.zaklecia;
 
-import io.lumine.mythic.bukkit.MythicBukkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,13 +28,12 @@ import org.joml.Vector3f;
  * do pierwszej przeszkody/istoty. Model: os +Z = kierunek strumienia, dlugosc modelu 1 blok (0..16 w z).
  */
 final class Strumien {
-  private record Wpis(ItemDisplay d, boolean prawa, String id, float[] dlugosc) {}
+  private record Wpis(ItemDisplay d, boolean prawa, Ksiega.Zaklecie zaklecie, float[] dlugosc) {}
 
-  private final Zaklecia plugin;
-  private final Ksiega ksiega;
+  private final Skille skille;
   private final Map<UUID, List<Wpis>> aktywne = new HashMap<>();
 
-  Strumien(Zaklecia plugin, Ksiega ksiega) { this.plugin = plugin; this.ksiega = ksiega; }
+  Strumien(Skille skille) { this.skille = skille; }
 
   /** Wlacza/wylacza strumien jednej dloni (z == null = zgas). Wolane przy kazdej zmianie aktywnych dloni. */
   void ustaw(Player p, boolean prawa, Ksiega.Zaklecie z, double zasieg) {
@@ -43,7 +41,7 @@ final class Strumien {
     for (var it = l.iterator(); it.hasNext(); ) {
       Wpis w = it.next();
       if (w.prawa() != prawa) continue;
-      if (z != null && w.id().equals(z.id()) && w.d().isValid()) return;   // juz jest ten sam
+      if (z != null && w.zaklecie().id().equals(z.id()) && w.d().isValid()) return;   // juz jest ten sam
       w.d().remove(); it.remove();
     }
     if (z != null) l.add(zrob(p, z, prawa, zasieg));
@@ -53,7 +51,7 @@ final class Strumien {
     Location gdzie = dlon(p, prawa);
     ItemDisplay d = p.getWorld().spawn(gdzie, ItemDisplay.class, e -> {
       ItemStack i = new ItemStack(Material.PAPER);
-      i.editMeta(m -> m.setItemModel(new NamespacedKey("zaklecia", "strumien_" + z.id())));
+      i.editMeta(m -> m.setItemModel(new NamespacedKey("zaklecia", z.modelStrumienia())));
       e.setItemStack(i);
       e.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
       e.setBillboard(Display.Billboard.FIXED);
@@ -64,7 +62,7 @@ final class Strumien {
       e.setPersistent(false);          // restart/crash nie zostawi strumieni w swiecie
       e.setTransformation(ksztalt(0.4f));
     });
-    return new Wpis(d, prawa, z.id(), new float[] {0.4f});
+    return new Wpis(d, prawa, z, new float[] {0.4f});
   }
 
   /** Punkt startu strumienia: przed dlonia (poza z rekami przed siebie), prawa/lewa strona. */
@@ -81,7 +79,7 @@ final class Strumien {
     return new Transformation(new Vector3f(0, 0, dlugosc / 2), new AxisAngle4f(), new Vector3f(1, 1, dlugosc), new AxisAngle4f());
   }
 
-  /** Co tick: dlon, kierunek, dlugosc; co 4 ticki efekt uderzenia w punkcie trafienia (skill MM Zak_Uderzenie_<id>). */
+  /** Co tick: dlon, kierunek, dlugosc; co 4 ticki skill uderzenia danej dloni w punkcie trafienia. */
   void tick(Player p, double zasieg, int n) {
     List<Wpis> l = aktywne.get(p.getUniqueId());
     if (l == null) return;
@@ -102,7 +100,7 @@ final class Strumien {
       }
       if (r != null && n % 4 == 0) {                    // male uderzenie w miejscu trafienia
         Location hit = r.getHitPosition().toLocation(p.getWorld());
-        try { MythicBukkit.inst().getAPIHelper().castSkill(p, "Zak_Uderzenie_" + w.id(), hit); } catch (Throwable ignored) {}
+        skille.punkt(p, w.zaklecie().skille().reka(w.zaklecie().skille().uderzenie(), w.prawa()), hit);
       }
     }
   }

@@ -1,13 +1,11 @@
 package pl.mcmmorpg.zaklecia;
 
-import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.lib.player.resource.ResourceUpdateReason;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,6 +45,7 @@ final class Rzucanie implements Listener {
   private final Zaklecia plugin;
   private final Ksiega ksiega;
   private final Strumien strumien;
+  private final Skille skille;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
   private final Map<UUID, Integer> generacja = new HashMap<>();
   private final Map<UUID, Long> ppmPrawa = new HashMap<>(), ppmLewa = new HashMap<>();
@@ -65,7 +64,8 @@ final class Rzucanie implements Listener {
   Rzucanie(Zaklecia plugin, Ksiega ksiega) {
     this.plugin = plugin;
     this.ksiega = ksiega;
-    this.strumien = new Strumien(plugin, ksiega);
+    this.skille = new Skille(plugin);
+    this.strumien = new Strumien(skille);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
     kSzybkosc = new NamespacedKey(plugin, "lpm_szybkosc");
@@ -91,6 +91,18 @@ final class Rzucanie implements Listener {
 
   boolean rzuca(Player p) { return rzucajacy.containsKey(p.getUniqueId()); }
 
+  boolean przelacznikLewej(Player p) {
+    Stan s = rzucajacy.get(p.getUniqueId());
+    return s != null && s.przelacznik && trybLpm(p);
+  }
+
+  String stanDloni(Player p, boolean prawa) {
+    Ksiega.Zaklecie z = ksiega.w(prawa ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand());
+    if (z == null) return "nic";
+    Stan s = rzucajacy.get(p.getUniqueId());
+    return s != null && (prawa ? s.prawa : s.lewa) ? "rzuca" : "gotowa";
+  }
+
   /** Czy dana dlon jest aktywna (w trakcie rzucania); poza rzucaniem — czy trzyma zaklecie. Dla warunkow MM. */
   boolean aktywna(Player p, boolean prawa) {
     Stan s = rzucajacy.get(p.getUniqueId());
@@ -98,21 +110,22 @@ final class Rzucanie implements Listener {
     return prawa ? s.prawa : s.lewa;
   }
 
-  private void skill(Player p, String nazwa) {
-    try { MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa); }
-    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "skill " + nazwa + ": " + t, t); }
-  }
+  private void skill(Player p, String nazwa) { skille.cast(p, nazwa); }
 
   // ------------------------------------------------------------------ tryb LPM
 
   /** Nosnik w prawej oznacza tryb zaklec, takze niewidoczna pusta dlon. */
   boolean trybLpm(Player p) {
-    if (Nosnik.widz(p)) return false;   // widz: bez zasiegu istot 0, kotwicy i rzucania (scena kreatora)
+    return trybHud(p) && (ksiega.w(p.getInventory().getItemInMainHand()) != null
+        || ksiega.w(p.getInventory().getItemInOffHand()) != null);
+  }
+
+  /** HUD pokazuje tryb rowniez wtedy, gdy nosnik jest chwilowo pusty. */
+  boolean trybHud(Player p) {
+    if (Nosnik.widz(p)) return false;
     ItemStack prawa = p.getInventory().getItemInMainHand();
     return prawa.getType() == org.bukkit.Material.DEBUG_STICK && prawa.hasItemMeta()
-        && prawa.getItemMeta().getPersistentDataContainer().has(kNosnik)
-        && (ksiega.w(p.getInventory().getItemInMainHand()) != null
-            || ksiega.w(p.getInventory().getItemInOffHand()) != null);
+        && prawa.getItemMeta().getPersistentDataContainer().has(kNosnik);
   }
 
   private void trybyLpm() { for (Player p : Bukkit.getOnlinePlayers()) atrybutyLpm(p, trybLpm(p)); }
@@ -259,7 +272,8 @@ final class Rzucanie implements Listener {
     Stan s = rzucajacy.get(u);
     ppmPrawa.remove(u); ppmLewa.remove(u);
     if (s == null) return;
-    if (dzwiek && p.isOnline() && (s.prawa || s.lewa)) skill(p, ksiega.skStop);   // przed usunieciem: warunki widza dlonie
+    if (dzwiek && p.isOnline()) przejscie(p, s.prawa ? zak(p, true) : null,
+        s.lewa ? zak(p, false) : null, null, null);
     if (s.przelacznik || s.razem || s.prawa || s.lewa) log(p, "stop: prawa=false lewa=false razem=false przelacznik=false");
     rzucajacy.remove(u);
     strumien.stop(p);
@@ -302,6 +316,44 @@ final class Rzucanie implements Listener {
 
   private double zasieg(Player p, Stan s) { return (podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek).zasieg(); }
 
+  private Ksiega.Zaklecie zak(Player p, boolean prawa) {
+    return ksiega.w(prawa ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand());
+  }
+
+  private static boolean toSamo(Ksiega.Zaklecie a, Ksiega.Zaklecie b) {
+    return a != null && b != null && a.id().equals(b.id());
+  }
+
+  private void przejscie(Player p, Ksiega.Zaklecie staraP, Ksiega.Zaklecie staraL,
+      Ksiega.Zaklecie nowaP, Ksiega.Zaklecie nowaL) {
+    if (staraP != null && !toSamo(staraP, nowaP) && !toSamo(staraP, nowaL)) skill(p, staraP.skille().stop());
+    if (staraL != null && !toSamo(staraL, staraP) && !toSamo(staraL, nowaP) && !toSamo(staraL, nowaL))
+      skill(p, staraL.skille().stop());
+    if (staraP != null && !toSamo(staraP, nowaP)) skill(p, staraP.skille().reka(staraP.skille().stop(), true));
+    if (staraL != null && !toSamo(staraL, nowaL)) skill(p, staraL.skille().reka(staraL.skille().stop(), false));
+    if (nowaP != null && !toSamo(nowaP, staraP) && !toSamo(nowaP, staraL)) skill(p, nowaP.skille().start());
+    if (nowaL != null && !toSamo(nowaL, staraP) && !toSamo(nowaL, staraL)
+        && !toSamo(nowaL, nowaP)) skill(p, nowaL.skille().start());
+    if (nowaP != null && !toSamo(nowaP, staraP)) skill(p, nowaP.skille().reka(nowaP.skille().start(), true));
+    if (nowaL != null && !toSamo(nowaL, staraL)) skill(p, nowaL.skille().reka(nowaL.skille().start(), false));
+    if (toSamo(nowaP, nowaL) && !toSamo(staraP, staraL)) skill(p, nowaP.skille().obie(nowaP.skille().start()));
+  }
+
+  private void tikZaklec(Player p, Ksiega.Zaklecie prawa, Ksiega.Zaklecie lewa) {
+    if (toSamo(prawa, lewa)) {
+      skill(p, prawa.skille().obie(prawa.skille().tik()));
+      return;
+    }
+    if (prawa != null) skill(p, prawa.skille().reka(prawa.skille().tik(), true));
+    if (lewa != null) skill(p, lewa.skille().reka(lewa.skille().tik(), false));
+  }
+
+  private void obraz(Player p, Ksiega.Zaklecie prawa, Ksiega.Zaklecie lewa) {
+    if (prawa != null) skill(p, prawa.skille().reka(prawa.skille().obraz(), true));
+    if (lewa != null) skill(p, lewa.skille().reka(lewa.skille().obraz(), false));
+    if (toSamo(prawa, lewa)) skill(p, prawa.skille().obie(prawa.skille().obraz()));
+  }
+
   private void tick() {
     teraz++;
     for (var it = rzucajacy.entrySet().iterator(); it.hasNext(); ) {
@@ -327,24 +379,30 @@ final class Rzucanie implements Listener {
         boolean lw = lewaTeraz(p, s, pr);
         if (!pr && !lw) {                                        // obie dlonie puszczone — koniec
           if (s.oczekujeLpm >= 0) continue;
-          if (s.prawa || s.lewa) skill(p, ksiega.skStop);
+          if (s.prawa || s.lewa) przejscie(p, s.prawa ? zak(p, true) : null,
+              s.lewa ? zak(p, false) : null, null, null);
           if (s.prawa || s.lewa) log(p, "dlonie: prawa=false lewa=false");
           it.remove(); strumien.stop(p); ruch(p, false);
           continue;
         }
         if (pr != s.prawa || lw != s.lewa) {                     // zmiana aktywnych dloni
-          boolean nowa = (pr && !s.prawa) || (lw && !s.lewa);
+          Ksiega.Zaklecie staraP = s.prawa ? zak(p, true) : null;
+          Ksiega.Zaklecie staraL = s.lewa ? zak(p, false) : null;
+          Ksiega.Zaklecie nowaP = pr ? zak(p, true) : null;
+          Ksiega.Zaklecie nowaL = lw ? zak(p, false) : null;
           log(p, "dlonie: prawa=" + pr + " lewa=" + lw);
           s.prawa = pr; s.lewa = lw;
           ruch(p, true);
           double z = zasieg(p, s);
           strumien.ustaw(p, true, pr ? ksiega.w(p.getInventory().getItemInMainHand()) : null, z);
           strumien.ustaw(p, false, lw ? ksiega.w(p.getInventory().getItemInOffHand()) : null, z);
-          if (nowa) skill(p, ksiega.skStart);
+          przejscie(p, staraP, staraL, nowaP, nowaL);
         }
         int n = s.n++;
         strumien.tick(p, zasieg(p, s), n);
-        if (n % 2 == 0 && !ksiega.skObraz.isBlank()) skill(p, ksiega.skObraz);
+        Ksiega.Zaklecie prawa = s.prawa ? zak(p, true) : null;
+        Ksiega.Zaklecie lewa = s.lewa ? zak(p, false) : null;
+        if (n % 2 == 0) obraz(p, prawa, lewa);
         if (n % 10 == 0) {
           double koszt = koszt(p, s);
           PlayerData d = PlayerData.get(p);
@@ -355,9 +413,9 @@ final class Rzucanie implements Listener {
             continue;
           }
           d.giveMana(-koszt, ResourceUpdateReason.SKILL);
-          skill(p, ksiega.skTik);
+          tikZaklec(p, prawa, lewa);
           List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
-          if (!cele.isEmpty()) trafienia(p, cele);
+          if (!cele.isEmpty()) trafienia(p, cele, prawa, lewa);
         }
       } catch (Throwable t) {   // np. nieaktualne dane MMOCore po szybkim przelogowaniu: gasimy tylko tego gracza
         s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
@@ -390,18 +448,22 @@ final class Rzucanie implements Listener {
     return wynik;
   }
 
-  private void trafienia(Player p, List<Entity> cele) {
-    try { MythicBukkit.inst().getAPIHelper().castSkill(p, ksiega.skTrafienia, p, p.getLocation(), cele, List.of(), 1f); }
-    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "trafienia: " + t, t); }
+  private void trafienia(Player p, List<Entity> cele, Ksiega.Zaklecie prawa, Ksiega.Zaklecie lewa) {
+    if (toSamo(prawa, lewa)) {
+      skille.cele(p, prawa.skille().obie(prawa.skille().traf()), cele);
+      return;
+    }
+    if (prawa != null) skille.cele(p, prawa.skille().reka(prawa.skille().traf(), true), cele);
+    if (lewa != null) skille.cele(p, lewa.skille().reka(lewa.skille().traf(), false), cele);
   }
 
   /** Zar na dloni, gdy zaklecie jest w rece, ale gracz nie rzuca (domyslnie wylaczony — modele animuja sie same). */
   private void dlonie() {
-    if (ksiega.skDlon.isBlank()) return;
     for (Player p : Bukkit.getOnlinePlayers()) {
       if (rzuca(p)) continue;
-      if (ksiega.w(p.getInventory().getItemInMainHand()) != null || ksiega.w(p.getInventory().getItemInOffHand()) != null)
-        skill(p, ksiega.skDlon);
+      Ksiega.Zaklecie prawa = zak(p, true), lewa = zak(p, false);
+      if (prawa != null) skill(p, prawa.skille().reka(prawa.skille().dlon(), true));
+      if (lewa != null) skill(p, lewa.skille().reka(lewa.skille().dlon(), false));
     }
   }
 }

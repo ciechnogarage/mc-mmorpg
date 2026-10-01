@@ -63,7 +63,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     getServer().getPluginManager().registerEvents(wybor, this);
     kotwica = new Kotwica(this, rzucanie);
     getServer().getPluginManager().registerEvents(kotwica, this);
-    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione).register();
+    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione, rzucanie).register();
     getLogger().info("zaklecia: " + ksiega.poId.keySet());
   }
 
