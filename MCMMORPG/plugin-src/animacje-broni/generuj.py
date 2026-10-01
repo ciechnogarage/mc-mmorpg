@@ -20,34 +20,38 @@ import argparse, json, math, os, re, sys, zipfile
 # bron poziomo w poprzek ciala - zaslona trzymana oburacz. Katy dobrane na zrzutach (qa/pozy.sh, warianty b i s).
 GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 0, -45], 'fp_trans': [-3, 4, -3]}
 G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
+PAROWANIE = {'okno': 6, 'riposta_ticki': 30, 'riposta_mnoznik': 1.5}
+KRWAWIENIE = {'procent': 0.25, 'czas': 60, 'stosy': 1}
+PANCERZ = {'procent': 0.30}
 TYPY = {
-    'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'garda': G_MIECZ},
-    'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'garda': G_MIECZ},
-    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}},
-    'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6},
+    'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
                         'poza': 'crossbow', 'garda_oburacz': True,
-                        'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
-    'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8},
+                        'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
                         'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.2, 'spowolnienie': 0.5},
                         'wypad': {'min': 10, 'mnoznik': 2.0, 'zasieg': 4.5, 'szerokosc': 0.9, 'sila': 0.8, 'odnowienie': 60, 'okno': 10}},
     'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
     'SPEAR':           {'rodzaj': 'klute'},   # materialy *_SPEAR maja juz caly vanillowy zestaw wloczni
-    'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6},
-    'THRUSTING_SWORD': {'zamach': 'stab',  'czas': 5,  'rodzaj': 'klute', 'garda': G_MIECZ},
+    'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6, 'reakcja': 'z_ukrycia', 'z_ukrycia': {'plecy': 2.0, 'ukrycie': 3.0}},
+    'THRUSTING_SWORD': {'zamach': 'stab',  'czas': 5,  'rodzaj': 'klute', 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'WHIP':            {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete'},
     'WAND':            {'zamach': 'stab',  'czas': 5,  'skala': 0.90},
     'STAFF':           {'zamach': 'stab',  'czas': 7,  'skala': 1.25},
-    'GREATSTAFF':      {'zamach': 'whack', 'czas': 9,  'skala': 1.40, 'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'zasieg': 3.3},
+    'GREATSTAFF':      {'zamach': 'whack', 'czas': 9,  'skala': 1.40, 'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'zasieg': 3.3, 'reakcja': 'pancerz', 'pancerz': PANCERZ},
     'TOME':            {'zamach': 'stab',  'czas': 5},
     'TALISMAN':        {'zamach': 'stab',  'czas': 5},
     'FILAKTERIUM':     {'zamach': 'stab',  'czas': 5},
-    'HAMMER':          {'zamach': 'whack', 'czas': 8,  'rodzaj': 'obuchowe', 'ladowanie': 0.6},
-    'GREATHAMMER':     {'zamach': 'whack', 'czas': 12, 'skala': 1.30, 'rodzaj': 'obuchowe', 'ciezka': True, 'ladowanie': 0.9},
-    'SIERP':           {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'zasieg': 2.8},
-    'KOSA':            {'zamach': 'whack', 'czas': 10, 'skala': 1.40, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.5},
+    'HAMMER':          {'zamach': 'whack', 'czas': 8,  'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'reakcja': 'pancerz', 'pancerz': PANCERZ},
+    'GREATHAMMER':     {'zamach': 'whack', 'czas': 12, 'skala': 1.30, 'rodzaj': 'obuchowe', 'ciezka': True, 'ladowanie': 0.9,
+                        'reakcja': 'pancerz', 'pancerz': PANCERZ, 'poza': 'trident', 'uderzenie': {'min': 16, 'promien': 3.5, 'mnoznik': 1.6, 'odnowienie': 120}},
+    'SIERP':           {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'zasieg': 2.8, 'reakcja': 'krwawienie', 'krwawienie': {'procent': 0.25, 'czas': 60, 'stosy': 3}},
+    'KOSA':            {'zamach': 'whack', 'czas': 10, 'skala': 1.40, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.5, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'SHIELD':          {'zamach': 'whack', 'czas': 7,  'rodzaj': 'obuchowe'},
     'GAUNTLET':        {'zamach': 'stab',  'czas': 4,  'rodzaj': 'obuchowe'},
 }
@@ -194,14 +198,14 @@ def main():
              'przestrzen-modeli: %s' % PRZESTRZEN, 'typy:']
     for typ, u in TYPY.items():
         linie.append('  %s:' % typ)
-        for k in ('zamach', 'czas', 'rodzaj', 'ladowanie', 'zasieg', 'wzor', 'poza'):
+        for k in ('zamach', 'czas', 'rodzaj', 'reakcja', 'ladowanie', 'zasieg', 'wzor', 'poza'):
             if k in u:
                 linie.append('    %s: %s' % (k, u[k]))
         if u.get('ciezka'):
             linie.append('    ciezka: true')
         if 'skala' in u:
             linie.append('    skala: %s%s' % (skala_nazwa(u['skala']), 'g' if u.get('garda_oburacz') else ''))
-        for k in ('garda', 'wypad'):
+        for k in ('garda', 'wypad', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
     linie.append('materialy-z-modelami:')

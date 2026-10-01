@@ -6,39 +6,51 @@ typy:
     zamach: whack
     czas: 6
     rodzaj: ciete
+    reakcja: krytyk
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
+    parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
   LONG_SWORD:
     zamach: whack
     czas: 7
     rodzaj: ciete
+    reakcja: krytyk
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
+    parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
   KATANA:
     zamach: whack
     czas: 5
     rodzaj: ciete
+    reakcja: krytyk
     garda: {redukcja: 0.3, kat: 90, opoznienie: 0.1, spowolnienie: 0.6}
+    parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
   AXE:
     zamach: whack
     czas: 8
     rodzaj: ciete
+    reakcja: krwawienie
     ladowanie: 0.6
+    krwawienie: {procent: 0.25, czas: 60, stosy: 1}
   GREATSWORD:
     zamach: whack
     czas: 10
     rodzaj: ciete
+    reakcja: krytyk
     ladowanie: 0.8
     zasieg: 3.3
     poza: crossbow
     ciezka: true
     skala: s130g
     garda: {redukcja: 0.55, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
+    parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
   GREATAXE:
     zamach: whack
     czas: 10
     rodzaj: ciete
+    reakcja: krwawienie
     ladowanie: 0.8
     ciezka: true
     skala: s130
+    krwawienie: {procent: 0.25, czas: 60, stosy: 1}
   HALBERD:
     zamach: stab
     czas: 8
@@ -61,13 +73,17 @@ typy:
     zamach: stab
     czas: 4
     rodzaj: klute
+    reakcja: z_ukrycia
     zasieg: 2.6
     skala: s080
+    z_ukrycia: {plecy: 2.0, ukrycie: 3.0}
   THRUSTING_SWORD:
     zamach: stab
     czas: 5
     rodzaj: klute
+    reakcja: krytyk
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
+    parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
   WHIP:
     zamach: whack
     czas: 7
@@ -84,9 +100,11 @@ typy:
     zamach: whack
     czas: 9
     rodzaj: obuchowe
+    reakcja: pancerz
     ladowanie: 0.6
     zasieg: 3.3
     skala: s140
+    pancerz: {procent: 0.3}
   TOME:
     zamach: stab
     czas: 5
@@ -100,27 +118,37 @@ typy:
     zamach: whack
     czas: 8
     rodzaj: obuchowe
+    reakcja: pancerz
     ladowanie: 0.6
+    pancerz: {procent: 0.3}
   GREATHAMMER:
     zamach: whack
     czas: 12
     rodzaj: obuchowe
+    reakcja: pancerz
     ladowanie: 0.9
+    poza: trident
     ciezka: true
     skala: s130
+    uderzenie: {min: 16, promien: 3.5, mnoznik: 1.6, odnowienie: 120}
+    pancerz: {procent: 0.3}
   SIERP:
     zamach: whack
     czas: 5
     rodzaj: ciete
+    reakcja: krwawienie
     zasieg: 2.8
+    krwawienie: {procent: 0.25, czas: 60, stosy: 3}
   KOSA:
     zamach: whack
     czas: 10
     rodzaj: ciete
+    reakcja: krwawienie
     ladowanie: 0.8
     zasieg: 3.5
     ciezka: true
     skala: s140
+    krwawienie: {procent: 0.25, czas: 60, stosy: 1}
   SHIELD:
     zamach: whack
     czas: 7

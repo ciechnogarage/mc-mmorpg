@@ -21,7 +21,7 @@ Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko)
 | Kosa (KOSA) | cięte, ciężka | cios 10 | 80% | **3,5** | — | ×1,40 |
 | Sierp (SIERP) | cięte | cios 5 | — | 2,8 | — | vanilla |
 | Buława (HAMMER) | obuchowe | cios 8 | 60% | 3 | — | vanilla |
-| Młot dwuręczny (GREATHAMMER) | obuchowe, ciężka | cios 12 | **90%** | 3 | — | ×1,30 |
+| Młot dwuręczny (GREATHAMMER) | obuchowe, ciężka | cios 12 | **90%** | 3 | uniesienie i uderzenie obszarowe | ×1,30 |
 | Kostur dwuręczny (GREATSTAFF) | obuchowe | cios 9 | 60% | 3,3 | — | ×1,40 |
 | Różdżka / kostur (WAND / STAFF) | magia (LPM pocisk MMOItems) | pchnięcie 5 / 7 | — | 3 | — | ×0,90 / ×1,25 |
 | Grimuar, totem, filakterium | — | pchnięcie 5 | — | 3 | — | vanilla |
@@ -42,7 +42,23 @@ Efekt trafienia (plugin, każdy cios): cięte = łuk cięcia + świst; kłute = 
 obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyganu w ziemię). Do tego efekty MMOItems
 (rozprysk obrażeń co 3 s: cięte stożek 60°, kłute 30°, obuchowe wokół celu).
 
-**PPM (garda, szarża) tylko przy pustej lewej ręce i bez umiejętności MMOItems na PPM** — inaczej PPM należy do
+## Feeling jak w Skyrimie
+
+Reakcje zwykłego ciosu działają przy naładowaniu co najmniej 90%. Źródłem wartości jest `TYPY` w `generuj.py`.
+
+| Broń | Rodzaj | Reakcja trafienia | PPM |
+|---|---|---|---|
+| Miecz, długi miecz, katana, miecz dwuręczny, miecz kłujący | cięte / kłute | Krytyki pozostają w MMOItems; parowanie otwiera ripostę x1,5 na 30 ticków | Garda: pełne parowanie przez pierwsze 6 ticków, potem zwykły blok |
+| Topór, topór dwuręczny, kosa | cięte | Krwawienie: 25% obrażeń ciosu przez 3 s, odświeżane | — |
+| Sierp | cięte | Krwawienie do 3 stosów po 25% | — |
+| Buława, młot dwuręczny, kostur dwuręczny | obuchowe | Osłabienie redukcji pancerza o 30% | Młot dwuręczny: uniesienie, po 16 tickach uderzenie wokół gracza x1,6 w promieniu 3,5; odnowienie 120 ticków |
+| Sztylet | kłute | Cios w plecy x2; ze skradania, gdy cel nie ściga gracza, x3 | — |
+
+Parowanie i uderzenie młota zachwieją cel: spowolnienie na 20 ticków, animacja obrażeń i lekki odrzut.
+Uderzenie młota wymaga pustej lewej ręki i braku umiejętności MMOItems na PPM. Krótsze przytrzymanie
+oraz puszczenie PPM podczas odnowienia nie wywołują uderzenia.
+
+**PPM (garda, szarża, uderzenie młota) tylko przy pustej lewej ręce i bez umiejętności MMOItems na PPM** — inaczej PPM należy do
 zaklęcia/tarczy w lewej ręce albo do umiejętności; plugin zdejmuje i przywraca te komponenty sam (przegląd co 10 ticków).
 Zmierzone na klonie 30.09 (`qa/mechanika.sh`): garda miecza 6 → 4,0 HP bez / 2,4 HP z gardą; halabarda nie trafia
 celu na 1 bloku, trafia dwa w linii na 3 i 4 blokach; młot dwuręczny nie wyprowadza ciosu 0,6 s po poprzednim
@@ -64,7 +80,7 @@ model z Nexo/MMOItems (`model:`) zostaje. Materiały bez modelu „narzędzia”
     python3 generuj.py && cp wynik/config.yml src/main/resources/ && ./build.sh
     qa/klon.sh <katalog> --fresh        # klon world1 ab-test (+ klient: docker run ... mc-client-test qa/launch.sh)
     qa/scena.sh GREATSWORD HARDENED_STEEL_CLAYMORE   # dane komponentów + zrzuty 1. osoba / zamach / przód
-    qa/mechanika.sh A|B|C|D             # pomiary: zasieg/przebicie, naladowanie, garda, garda vs lewa reka
+    qa/mechanika.sh A|A2|B|C|D|E|G|P|U|S|K   # pomiary mechanik, parowania, uderzenia, sztyletu i krwawienia
     qa/efekty.sh SWORD PRZ_WOJ_MIECZ_1 miecz   # zrzuty trafienia i pozy PPM
     ./wdroz.sh                          # world1: kopia + cofnij.sh, tylko przy 0 graczy, RESTART
 

@@ -29,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,6 +49,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -76,10 +79,22 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   /** Wypad (kontra): garda >= min tickow, puszczenie PPM i LPM w ciagu okno tickow. Odnowienie tylko wypadu, nie bloku. */
   record Wypad(int min, double mnoznik, double zasieg, double szerokosc, double sila, int odnowienie, int okno) {}
+  record Parowanie(int okno, int ripostaTicki, double ripostaMnoznik) {}
+  record Uderzenie(int min, double promien, double mnoznik, int odnowienie) {}
+  record Ukrycie(double plecy, double ukrycie) {}
+  record Krwawienie(double procent, int czas, int stosy) {}
+  record Riposta(int doTicka, double mnoznik) {}
+  record StosKrwawienia(double obrazenia, UUID gracz) {}
+  static final class Krwawiacy {
+    final List<StosKrwawienia> stosy = new java.util.ArrayList<>();
+    int doTicka;
+    int nastepnyTick;
+  }
 
   record Ustawienie(SwingAnimation.Animation zamach, int czas, String skala, Rodzaj rodzaj, Float ladowanie,
                     Float zasieg, Material wzor, Garda garda, boolean ciezka, Wypad wypad,
-                    ItemUseAnimation poza) {}
+                    ItemUseAnimation poza, String reakcja, Parowanie parowanie, Uderzenie uderzenie,
+                    Ukrycie ukrycie, Krwawienie krwawienie, double pancerz) {}
 
   /** Komponenty, ktore plugin ustawia; przy zmianie wracaja do wartosci materialu (resetData). */
   private static final List<DataComponentType> ZARZADZANE = List.of(
@@ -95,7 +110,12 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Integer> oknoKontry = new HashMap<>();     // do ktorego ticka LPM = wypad
   private final Map<UUID, Integer> odnowienieWypadu = new HashMap<>(); // do ktorego ticka wypad niedostepny
   private final Map<UUID, Integer> tlumPchniecie = new HashMap<>();    // do ktorego ticka gasimy zwykly cios (wypad go zastepuje)
+  private final Map<UUID, Riposta> riposty = new HashMap<>();
+  private final Map<UUID, Integer> odnowienieUderzenia = new HashMap<>();
+  private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
   private boolean wlasnyCios;
+  private boolean debug;
+  private void dbg(String m) { if (debug) getLogger().info("DBG t=" + getServer().getCurrentTick() + " " + m); }
   private final Set<Material> modele = new HashSet<>();
   private String przestrzen = "bron";
   private int wersja;
@@ -109,6 +129,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     getServer().getPluginManager().registerEvents(this, this);
     getServer().getScheduler().runTaskTimer(this,
         () -> getServer().getOnlinePlayers().forEach(this::dopasujDlonie), 10L, 10L);
+    getServer().getScheduler().runTaskTimer(this, this::tyknijKrwawienie, 1L, 1L);
   }
 
   private static Float liczbaLubNull(ConfigurationSection t, String k) {
@@ -120,6 +141,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     typy.clear();
     modele.clear();
     przestrzen = getConfig().getString("przestrzen-modeli", "bron");
+    debug = getConfig().getBoolean("debug", false);
     ConfigurationSection sek = getConfig().getConfigurationSection("typy");
     if (sek != null) {
       for (String typ : sek.getKeys(false)) {
@@ -151,6 +173,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           wypad = new Wypad(w.getInt("min", 10), w.getDouble("mnoznik", 1.5), w.getDouble("zasieg", 4.5),
               w.getDouble("szerokosc", 0.9), w.getDouble("sila", 0.8), w.getInt("odnowienie", 60), w.getInt("okno", 10));
         }
+        ConfigurationSection par = t.getConfigurationSection("parowanie");
+        Parowanie parowanie = par == null ? null : new Parowanie(par.getInt("okno", 6),
+            par.getInt("riposta_ticki", 30), par.getDouble("riposta_mnoznik", 1.5));
+        ConfigurationSection ud = t.getConfigurationSection("uderzenie");
+        Uderzenie uderzenie = ud == null ? null : new Uderzenie(ud.getInt("min", 16),
+            ud.getDouble("promien", 3.5), ud.getDouble("mnoznik", 1.6), ud.getInt("odnowienie", 120));
+        ConfigurationSection uk = t.getConfigurationSection("z_ukrycia");
+        Ukrycie ukrycie = uk == null ? null : new Ukrycie(uk.getDouble("plecy", 2), uk.getDouble("ukrycie", 3));
+        ConfigurationSection kr = t.getConfigurationSection("krwawienie");
+        Krwawienie krwawienie = kr == null ? null : new Krwawienie(kr.getDouble("procent", 0.25),
+            kr.getInt("czas", 60), kr.getInt("stosy", 1));
         ItemUseAnimation poza = null;
         if (t.getString("poza") != null) {
           try {
@@ -160,7 +193,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           }
         }
         typy.put(typ.toUpperCase(Locale.ROOT), new Ustawienie(zamach, t.getInt("czas", 6), t.getString("skala"), rodzaj,
-            liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false), wypad, poza));
+            liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda, t.getBoolean("ciezka", false), wypad,
+            poza, t.getString("reakcja", "brak"), parowanie, uderzenie, ukrycie, krwawienie,
+            t.getDouble("pancerz.procent", 0.30)));
       }
     }
     for (String m : getConfig().getStringList("materialy-z-modelami")) {
@@ -169,6 +204,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       else modele.add(mat);
     }
     wersja = getConfig().saveToString().hashCode();
+    riposty.clear();
+    krwawiacy.clear();
     getLogger().info("Typy broni: " + typy.size() + ", materialy z modelami trzymania: " + modele.size());
   }
 
@@ -223,6 +260,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           .build());
       item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
           .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
+    }
+
+    if (ppm && u.uderzenie() != null) {
+      item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
+          .canSprint(false).speedMultiplier(0.4f).interactVibrations(true).build());
     }
 
     if (ppm && !szarza && u.poza() != null) {
@@ -291,6 +333,16 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     Player p = e.getPlayer();
     ItemStack item = p.getInventory().getItemInMainHand();
     Ustawienie u = ustawienie(item);
+    if (u != null && u.uderzenie() != null && e.getItem().hasData(DataComponentTypes.CONSUMABLE)
+        && item.isSimilar(e.getItem())) {
+      int teraz = getServer().getCurrentTick();
+      if (e.getTicksHeldFor() >= u.uderzenie().min()
+          && odnowienieUderzenia.getOrDefault(p.getUniqueId(), 0) <= teraz) {
+        odnowienieUderzenia.put(p.getUniqueId(), teraz + u.uderzenie().odnowienie());
+        uderzenie(p, u.uderzenie());
+      }
+      return;
+    }
     if (u == null || u.wypad() == null || e.getTicksHeldFor() < u.wypad().min()
         || !e.getItem().hasData(DataComponentTypes.BLOCKS_ATTACKS) || !item.isSimilar(e.getItem())) return;
     int teraz = getServer().getCurrentTick();
@@ -303,8 +355,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   public void lpm(PlayerAnimationEvent e) {
     if (e.getAnimationType() != PlayerAnimationType.ARM_SWING) return;
     Player p = e.getPlayer();
-    Integer okno = oknoKontry.remove(p.getUniqueId());
     int teraz = getServer().getCurrentTick();
+    Integer okno = oknoKontry.remove(p.getUniqueId());
     if (okno == null || okno < teraz) return;
     Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
     if (u == null || u.wypad() == null) return;
@@ -358,6 +410,157 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       swiat.playSound(oko, trafione > 0 ? Sound.ITEM_TRIDENT_HIT : Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
           SoundCategory.PLAYERS, 0.9f, trafione > 0 ? 0.9f : 1f);
     }, 2L);
+  }
+
+  private void uderzenie(Player p, Uderzenie u) {
+    World swiat = p.getWorld();
+    Location srodek = p.getLocation();
+    Block pod = srodek.clone().subtract(0, 0.2, 0).getBlock();
+    for (int i = 0; i < 32; i++) {
+      double kat = i * Math.PI * 2 / 32;
+      Location punkt = srodek.clone().add(Math.cos(kat) * u.promien(), 0.12, Math.sin(kat) * u.promien());
+      if (!pod.getType().isAir()) swiat.spawnParticle(Particle.BLOCK, punkt, 3, 0.12, 0.05, 0.12, 0.1, pod.getBlockData());
+    }
+    swiat.spawnParticle(Particle.EXPLOSION, srodek.clone().add(0, 0.2, 0), 3, 0.6, 0.1, 0.6, 0);
+    swiat.playSound(srodek, Sound.ITEM_MACE_SMASH_GROUND_HEAVY, SoundCategory.PLAYERS, 1f, 0.8f);
+    double obrazenia = MMOPlayerData.get(p).getStatMap().getStat("ATTACK_DAMAGE") * u.mnoznik();
+    var meta = MMOPlayerData.get(p).getStatMap().cache(io.lumine.mythic.lib.api.player.EquipmentSlot.MAIN_HAND);
+    for (var enc : swiat.getNearbyEntities(srodek, u.promien(), u.promien(), u.promien())) {
+      if (!(enc instanceof LivingEntity cel) || cel.equals(p) || cel.isDead()
+          || cel.getLocation().distanceSquared(srodek) > u.promien() * u.promien()
+          || !UtilityMethods.canTarget(p, cel, InteractionType.OFFENSE_ACTION)) continue;
+      cel.setNoDamageTicks(0);
+      wlasnyCios = true;
+      try {
+        meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL);
+      } finally {
+        wlasnyCios = false;
+      }
+      zachwiej(cel, p.getLocation());
+    }
+  }
+
+  private void zachwiej(LivingEntity cel, Location skad) {
+    cel.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 2, false, true, true));
+    cel.playHurtAnimation(0);
+    Vector od = cel.getLocation().toVector().subtract(skad.toVector()).setY(0);
+    if (od.lengthSquared() > 1e-4) cel.setVelocity(cel.getVelocity().add(od.normalize().multiply(0.35).setY(0.1)));
+  }
+
+
+  /** Parowanie zachowuje vanillowa garde; tylko cios z przodu w pierwszych tickach odbija calosc. */
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  public void parowanie(EntityDamageByEntityEvent e) {
+    if (e.getEntity() instanceof Player pp) dbg("PAROWANIE? blokuje=" + pp.isBlocking() + " uzyte=" + pp.getActiveItemUsedTime()
+        + " przyczyna=" + e.getCause() + " napastnik=" + e.getDamager().getType());
+    if (!(e.getEntity() instanceof Player p) || !(e.getDamager() instanceof LivingEntity napastnik)
+        || !p.isBlocking() || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+    ItemStack bron = p.getInventory().getItemInMainHand();
+    Ustawienie u = ustawienie(bron);
+    if (u == null || u.parowanie() == null || u.garda() == null || !"krytyk".equals(u.reakcja())
+        || !bron.hasData(DataComponentTypes.BLOCKS_ATTACKS) || !p.getInventory().getItemInOffHand().getType().isAir()) return;
+    Vector doNapastnika = napastnik.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+    Vector patrzy = p.getLocation().getDirection().setY(0);
+    if (doNapastnika.lengthSquared() < 1e-4 || patrzy.lengthSquared() < 1e-4
+        || Math.toDegrees(doNapastnika.angle(patrzy)) > u.garda().kat()
+        // okno liczone od chwili, gdy garda zaczyna dzialac (opoznienie bloku), nie od wcisniecia PPM -
+        // inaczej miecz dwureczny (opoznienie 0,3 s = 6 tickow) mialby okno ~1 tick
+        || p.getActiveItemUsedTime() > Math.round(u.garda().opoznienie() * 20) + u.parowanie().okno()) return;
+    e.setDamage(0);
+    riposty.put(p.getUniqueId(), new Riposta(getServer().getCurrentTick() + u.parowanie().ripostaTicki(),
+        u.parowanie().ripostaMnoznik()));
+    zachwiej(napastnik, p.getLocation());
+    Location styk = p.getEyeLocation().add(p.getEyeLocation().getDirection().multiply(0.8));
+    p.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, styk, 28, 0.2, 0.2, 0.2, 0.3);
+    p.getWorld().playSound(styk, Sound.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS, 0.8f, 1.5f);
+  }
+
+  /** Reakcje tylko dla zwyklego, naladowanego ciosu w glownej rece. HIGHEST: MythicLib liczy obrazenia broni wczesniej
+   *  i nadpisalby zmiane z nizszego priorytetu (zmierzone: na HIGH mnoznik ciosu w plecy znikal). */
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void reakcja(EntityDamageByEntityEvent e) {
+    if (wlasnyCios || !(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity cel)
+        || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+    Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+    if (u == null) return;
+    int teraz = getServer().getCurrentTick();
+    // riposta zuzywa sie przy trafieniu (klient wysyla cios PRZED machnieciem, wiec nie przez PlayerAnimationEvent)
+    Riposta riposta = u.parowanie() != null ? riposty.remove(p.getUniqueId()) : null;
+    if (riposta != null && riposta.doTicka() >= teraz) {
+      e.setDamage(e.getDamage() * riposta.mnoznik());
+      cel.getWorld().spawnParticle(Particle.CRIT, cel.getLocation().add(0, cel.getHeight() * 0.6, 0), 12, 0.2, 0.2, 0.2, 0.1);
+      cel.getWorld().playSound(cel.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 0.6f, 1.2f);
+    }
+    // naladowanie z chwili ciosu: Paper resetuje je (PlayerAttackEntityCooldownResetEvent) dopiero PO tym zdarzeniu - zmierzone
+    dbg("REAKCJA " + u.reakcja() + " cel=" + cel.getType() + " naladowanie=" + p.getAttackCooldown() + " dmg=" + e.getDamage());
+    if (p.getAttackCooldown() < 0.9f) return;
+    switch (u.reakcja()) {
+      case "pancerz" -> {
+        double procent = Math.max(0, Math.min(1, u.pancerz()));
+        double przed = e.getFinalDamage();
+        if (e.isApplicable(EntityDamageEvent.DamageModifier.ARMOR)) {
+          double oslabienie = e.getDamage(EntityDamageEvent.DamageModifier.ARMOR);
+          e.setDamage(EntityDamageEvent.DamageModifier.ARMOR, oslabienie * (1 - procent));
+        }
+        if (e.getFinalDamage() <= przed + 1e-6) {
+          double roznica = Math.max(0, e.getDamage() - przed);
+          e.setDamage(e.getDamage() + roznica * procent);
+        }
+      }
+      case "z_ukrycia" -> {
+        if (u.ukrycie() == null) return;
+        Vector patrzy = cel.getLocation().getDirection().setY(0);
+        Vector doGracza = p.getLocation().toVector().subtract(cel.getLocation().toVector()).setY(0);
+        if (patrzy.lengthSquared() < 1e-4 || doGracza.lengthSquared() < 1e-4
+            || Math.toDegrees(patrzy.angle(doGracza)) <= 120) return;
+        boolean ukryty = p.isSneaking() && (!(cel instanceof Mob mob) || !p.equals(mob.getTarget()));
+        e.setDamage(e.getDamage() * (ukryty ? u.ukrycie().ukrycie() : u.ukrycie().plecy()));
+        Location punkt = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
+        cel.getWorld().spawnParticle(Particle.ENCHANTED_HIT, punkt, 8, 0.15, 0.15, 0.15, 0.05);
+        cel.getWorld().playSound(punkt, Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 0.3f, 1.4f);
+      }
+      default -> { }
+    }
+    dbg("REAKCJA po: dmg=" + e.getDamage() + " final=" + e.getFinalDamage());
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void uruchomKrwawienie(EntityDamageByEntityEvent e) {
+    if (wlasnyCios || !(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity cel)
+        || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK || e.getFinalDamage() <= 0) return;
+    Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+    if (u == null || !"krwawienie".equals(u.reakcja()) || u.krwawienie() == null || p.getAttackCooldown() < 0.9f) return;
+    Krwawienie k = u.krwawienie();
+    int teraz = getServer().getCurrentTick();
+    Krwawiacy stan = krwawiacy.computeIfAbsent(cel.getUniqueId(), id -> new Krwawiacy());
+    while (stan.stosy.size() >= Math.max(1, k.stosy())) stan.stosy.remove(0);
+    stan.stosy.add(new StosKrwawienia(e.getFinalDamage() * k.procent() / Math.max(1, k.czas() / 20), p.getUniqueId()));
+    stan.doTicka = teraz + k.czas();
+    if (stan.nastepnyTick <= teraz) stan.nastepnyTick = teraz + 20;
+  }
+
+  private void tyknijKrwawienie() {
+    int teraz = getServer().getCurrentTick();
+    var it = krwawiacy.entrySet().iterator();
+    while (it.hasNext()) {
+      var wpis = it.next();
+      var enc = getServer().getEntity(wpis.getKey());
+      Krwawiacy stan = wpis.getValue();
+      if (!(enc instanceof LivingEntity cel) || cel.isDead() || teraz > stan.doTicka) { it.remove(); continue; }
+      if (teraz < stan.nastepnyTick) continue;
+      stan.nastepnyTick = teraz + 20;
+      for (StosKrwawienia stos : stan.stosy) {
+        Player p = getServer().getPlayer(stos.gracz());
+        if (p == null || !p.isOnline() || !UtilityMethods.canTarget(p, cel, InteractionType.OFFENSE_ACTION)) continue;
+        var meta = MMOPlayerData.get(p).getStatMap().cache(io.lumine.mythic.lib.api.player.EquipmentSlot.MAIN_HAND);
+        cel.setNoDamageTicks(0);
+        wlasnyCios = true;
+        try { meta.attack(cel, stos.obrazenia(), DamageType.DOT); }
+        finally { wlasnyCios = false; }
+      }
+      cel.getWorld().spawnParticle(Particle.DUST, cel.getLocation().add(0, cel.getHeight() * 0.6, 0),
+          8, 0.2, 0.2, 0.2, new Particle.DustOptions(org.bukkit.Color.fromRGB(95, 12, 18), 1.1f));
+    }
   }
 
   /** Widoczny blok: iskry w miejscu styku, gdy gracz zablokowal cios bronia z garda (dzwiek daje sam komponent). */
@@ -432,6 +635,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           + " pierce=" + i.hasData(DataComponentTypes.PIERCING_WEAPON)
           + " szarza=" + i.hasData(DataComponentTypes.KINETIC_WEAPON)
           + " garda=" + i.hasData(DataComponentTypes.BLOCKS_ATTACKS)
+          + " reakcja=" + (ustawienie(i) == null ? "brak" : ustawienie(i).reakcja())
+          + " wypadZa=" + Math.max(0, odnowienieWypadu.getOrDefault(p.getUniqueId(), 0) - getServer().getCurrentTick())
+          + " uderzenieZa=" + Math.max(0, odnowienieUderzenia.getOrDefault(p.getUniqueId(), 0) - getServer().getCurrentTick())
+          + " ripostaZa=" + Math.max(0, riposty.getOrDefault(p.getUniqueId(), new Riposta(0, 1)).doTicka() - getServer().getCurrentTick())
           + " sprint=" + p.isSprinting()
           + " lewa=" + p.getInventory().getItemInOffHand().getType());
       return true;
