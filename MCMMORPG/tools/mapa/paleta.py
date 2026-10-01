@@ -39,9 +39,25 @@ KONCOWKI = [("_leaves", 7), ("_ore", 11), ("_log", 13), ("_planks", 13), ("_wood
 KWIATY = {"poppy", "dandelion", "cornflower", "azure_bluet", "oxeye_daisy", "allium", "blue_orchid",
           "lily_of_the_valley", "pink_petals"}
 
+# budowle (Stolica): kolor materialu; schody/plyty/murki -> material bazowy
+MATERIALY = [("deepslate", 59), ("blackstone", 29), ("tuff", 45), ("mud_brick", 44), ("andesite", 11),
+             ("diorite", 14), ("calcite", 36), ("stone_brick", 11), ("cobblestone", 11), ("stone", 11),
+             ("weathered", 56), ("oxidized", 58), ("exposed", 44), ("copper", 15),
+             ("dark_oak", 26), ("spruce", 34), ("birch", 2), ("jungle", 10), ("oak", 13), ("mangrove", 28),
+             ("cherry", 36), ("bamboo", 18), ("amethyst", 24), ("obsidian", 29), ("quartz", 14),
+             ("sandstone", 2), ("brick", 28), ("lantern", 6), ("hay", 18), ("campfire", 26)]
+WELNA = {"white": 8, "orange": 15, "magenta": 16, "light_blue": 17, "yellow": 18, "lime": 19, "pink": 20,
+         "gray": 21, "light_gray": 22, "cyan": 23, "purple": 24, "blue": 25, "brown": 26, "green": 27,
+         "red": 28, "black": 29}
+
 def baza(nazwa):
-    n = (nazwa or "").replace("minecraft:", "")
+    if not nazwa: return 0                      # pustka (VoidGen) / brak danych
+    n = nazwa.replace("minecraft:", "")
     if n in DOKLADNE: return DOKLADNE[n]
+    for kol, b in WELNA.items():
+        if n in (kol + "_wool", kol + "_carpet", kol + "_concrete"): return b
+    for rdzen, b in MATERIALY:
+        if rdzen in n and not n.endswith("_leaves"): return b
     if n in KWIATY: return 7
     for k, b in KONCOWKI:
         if n.endswith(k): return b

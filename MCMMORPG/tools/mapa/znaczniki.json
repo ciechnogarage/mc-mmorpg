@@ -7,7 +7,9 @@
   "opis": [
    "Tu zaczyna każda nowa postać."
   ],
-  "ikona": "minecraft:campfire"
+  "ikona": "minecraft:campfire",
+  "swiat": "world",
+  "typ": "start"
  },
  {
   "nazwa": "Gromowładca",
@@ -18,7 +20,9 @@
    "Legendarny Chowaniec.",
    "Walka dla zaprawionych drużyn."
   ],
-  "ikona": "nexo:chw_gromowladca"
+  "ikona": "nexo:chw_gromowladca",
+  "swiat": "world",
+  "typ": "legendarny"
  },
  {
   "nazwa": "Żelaznoróg",
@@ -29,7 +33,9 @@
    "Legendarny Chowaniec.",
    "Walka dla zaprawionych drużyn."
   ],
-  "ikona": "nexo:chw_zelaznorog"
+  "ikona": "nexo:chw_zelaznorog",
+  "swiat": "world",
+  "typ": "legendarny"
  },
  {
   "nazwa": "Szepczący Gaj",
@@ -39,7 +45,9 @@
   "opis": [
    "Tu żyje: Pędzik."
   ],
-  "ikona": "nexo:chw_pedzik"
+  "ikona": "nexo:chw_pedzik",
+  "swiat": "world",
+  "typ": "strefa"
  },
  {
   "nazwa": "Wilcze Ostępy",
@@ -49,7 +57,9 @@
   "opis": [
    "Tu żyje: Wilkor."
   ],
-  "ikona": "nexo:chw_wilkor"
+  "ikona": "nexo:chw_wilkor",
+  "swiat": "world",
+  "typ": "strefa"
  },
  {
   "nazwa": "Świetlisty Gąszcz",
@@ -59,7 +69,9 @@
   "opis": [
    "Tu żyje: Promiennik."
   ],
-  "ikona": "nexo:chw_promiennik"
+  "ikona": "nexo:chw_promiennik",
+  "swiat": "world",
+  "typ": "strefa"
  },
  {
   "nazwa": "Wietrzne Turnie",
@@ -69,7 +81,9 @@
   "opis": [
    "Tu żyje: Wichrzan."
   ],
-  "ikona": "nexo:chw_wichrzan"
+  "ikona": "nexo:chw_wichrzan",
+  "swiat": "world",
+  "typ": "strefa"
  },
  {
   "nazwa": "Perłowa Zatoka",
@@ -79,7 +93,9 @@
   "opis": [
    "Tu żyje: Muszlik."
   ],
-  "ikona": "nexo:chw_muszlik"
+  "ikona": "nexo:chw_muszlik",
+  "swiat": "world",
+  "typ": "strefa"
  },
  {
   "nazwa": "Rdzawe Wąwozy",
@@ -89,7 +105,9 @@
   "opis": [
    "Tu żyje: Głazogrzbiet."
   ],
-  "ikona": "nexo:chw_glazogrzbiet"
+  "ikona": "nexo:chw_glazogrzbiet",
+  "swiat": "world",
+  "typ": "strefa"
  },
  {
   "nazwa": "Wygasłe Palenisko",
@@ -99,6 +117,129 @@
   "opis": [
    "Tu żyje: Iskrzyk."
   ],
-  "ikona": "nexo:chw_iskrzyk"
+  "ikona": "nexo:chw_iskrzyk",
+  "swiat": "world",
+  "typ": "strefa"
+ },
+ {
+  "nazwa": "Nexus",
+  "x": 0,
+  "z": 19,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Wejście do lochów."
+  ]
+ },
+ {
+  "nazwa": "Przewodnik",
+  "x": 0,
+  "z": 51,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Przystań i pierwsze kroki."
+  ]
+ },
+ {
+  "nazwa": "Rynek",
+  "x": -22,
+  "z": 19,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Sklep, skup i aukcje."
+  ]
+ },
+ {
+  "nazwa": "Kuźnia",
+  "x": -37,
+  "z": 30,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Naprawa i rozbiórka przedmiotów."
+  ]
+ },
+ {
+  "nazwa": "Dziedziniec rzemiosła",
+  "x": 36,
+  "z": 20,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "13 warsztatów profesji."
+  ]
+ },
+ {
+  "nazwa": "Hala postaci",
+  "x": -27,
+  "z": -29,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Postać i umiejętności."
+  ]
+ },
+ {
+  "nazwa": "Menażeria",
+  "x": 29,
+  "z": -35,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Chowańce."
+  ]
+ },
+ {
+  "nazwa": "Świątynia",
+  "x": 0,
+  "z": -35,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Wybór patrona i łaski."
+  ]
+ },
+ {
+  "nazwa": "Dom drużyn",
+  "x": 25,
+  "z": 48,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Drużyna, znajomi i gildie."
+  ]
+ },
+ {
+  "nazwa": "Plac ćwiczeń",
+  "x": -22,
+  "z": 52,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Trening walki."
+  ]
+ },
+ {
+  "nazwa": "Tablica",
+  "x": 9,
+  "z": 42,
+  "kolor": "yellow",
+  "swiat": "stolica_odnowa",
+  "typ": "miasto",
+  "opis": [
+   "Zadania i drogowskazy."
+  ]
  }
 ]

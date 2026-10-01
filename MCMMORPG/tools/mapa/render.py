@@ -17,6 +17,7 @@ def main(wej, wyj):
     for k, (nm, y, glab) in kol.items():
         x, z = map(int, k.split(","))
         b = baza(nm)
+        if b == 0: continue
         if b == 12:                   # woda: odcien z glebokosci + szachownica (jak vanilla)
             d = glab * 0.1 + ((x + z) & 1) * 0.2
             o = 2 if d < 0.5 else (0 if d > 0.9 else 1)
