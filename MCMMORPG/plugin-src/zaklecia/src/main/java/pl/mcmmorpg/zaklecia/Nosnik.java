@@ -5,7 +5,6 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.item.AttackRange;
 import io.papermc.paper.datacomponent.item.SwingAnimation;
-import io.papermc.paper.datacomponent.item.Tool;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.keys.DataComponentTypeKeys;
@@ -197,9 +196,8 @@ final class Nosnik implements Listener {
     i.setData(DataComponentTypes.SWING_ANIMATION,
         SwingAnimation.swingAnimation().type(SwingAnimation.Animation.NONE));
     i.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, false);
-    i.setData(DataComponentTypes.TOOL, Tool.tool().defaultMiningSpeed(1_000_000f));
-    // Klient (LocalPlayer.raycastHitResult) z attack_range szuka istot dopiero od min_reach: przy 64 celownik przechodzi
-    // przez moby do terenu za nimi, wiec LPM trzymany na wrogu dalej "kopie" blok za nim (bez tego: pudlo = impuls).
+    i.unsetData(DataComponentTypes.TOOL);
+    // Przy attack_range 64 celownik klienta ignoruje pobliskie istoty; LPM trafia w MISS.
     i.setData(DataComponentTypes.ATTACK_RANGE, AttackRange.attackRange().minReach(64f).maxReach(64f)
         .minCreativeReach(64f).maxCreativeReach(64f).hitboxMargin(0f).build());
   }

@@ -72,7 +72,7 @@ final class Kotwica implements Listener {
 
   private void odswiez() {
     tick++;
-    if (!plugin.getConfig().getBoolean("kotwica.wlaczona", true)) {
+    if (!plugin.getConfig().getBoolean("kotwica.wlaczona", false)) {
       for (Player p : Bukkit.getOnlinePlayers()) usun(p);
       return;
     }

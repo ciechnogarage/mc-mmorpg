@@ -40,11 +40,10 @@ klawisz-q:
 
 # Wejscie przytrzymanych przyciskow i atrybuty trybu zaklec.
 ppm-tolerancja: 7
-lpm-tolerancja: 5
-lpm-impuls: 10
-lpm-zasieg-blokow: 17
+rowno: 4
+zasieg-blokow: 0
 kotwica:
-  wlaczona: true
+  wlaczona: false
   min: 3
   max: 16
   wyprzedzenie: 1.0

@@ -55,7 +55,7 @@ final class Wybor implements Listener {
   void przelacz(Player p) { if (otwarty(p)) zamknij(p, p.getUniqueId()); else otworz(p); }
 
   void otworz(Player p) {
-    if (rzucanie.rzuca(p)) rzucanie.stop(p, false);
+    rzucanie.stop(p, false);
     Sesja s = new Sesja();
     Ksiega.Zaklecie wPrawej = ksiega.w(p.getInventory().getItemInMainHand());
     List<String> k = ulubione.kolo(p);
