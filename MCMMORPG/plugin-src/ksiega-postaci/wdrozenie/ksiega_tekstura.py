@@ -1,460 +1,48 @@
 #!/usr/bin/env python3
-"""Skórzana księga postaci: tekstura 176×166 w atlasie 256×256.
+"""Księga postaci v7: pikselowa tekstura GUI 176×166 w atlasie 256×256.
 
-Plan światła (jawny, od góry i lewej):
-* okładka: górna/lewa krawędź L3, płaszczyzna L2, prawa/dół L0;
-* grzbiet: lewa połowa L3/L2, prawa L1; dwa wypukłe paski mają
-  jasny górny rant L3 i dolny cień L0;
-* kartki: płaszczyzna P2, jasny model P3, zgięcie przy grzbiecie
-  w trzech płaskich kolumnach P1/P0/P1 (bez gradientu);
-* wnęki: P0 na górze i po lewej, P3 na dole i po prawej;
-  wnętrze P1. Skórzane wnęki: I/L0/L1/L3 analogicznie.
-
-Paleta tekstury (14 barw, przezroczystość poza okładką):
-I #1D1412, L0 #2F1E1A, L1 #4D3126, L2 #774C31, L3 #A56E44,
-L1G #56392B, L2D #6B432D, L2G #825639,
-P0 #8E704D, P1 #BA9A6C, P2 #DEC497, P3 #F5E3BE.
-R #A65C50, B #63839A: punktowe znaczniki pasa na mikstury.
-
-Małe bryły są rysowane ręcznie siatką znaków (jeden znak = piksel).
-Ziarno skóry powtarza ręcznie wskazane, rzadkie punkty bez losowania.
+Geometria 46 slotów pozostaje z v4/v5. Wzorce i ikony służą tylko do podglądu.
 """
 
 from pathlib import Path
-import sys
+import argparse
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
-PACK = Path('/opt/docker/mc/data/world1/plugins/Nexo/pack/assets/nexo/textures/item/mmo_equipment')
-sys.path.insert(0, '/opt/docker/mc/data/world1/tools/pixelart')
-from siatka import do_obrazu  # noqa: E402
-from warsztat import wymus_palete  # noqa: E402
+WORLD = Path('/opt/docker/mc/data/world1')
+ASSETS = WORLD / 'plugins/Nexo/pack/assets'
+EQUIPMENT = ASSETS / 'nexo/textures/item/mmo_equipment'
+PROFESSIONS = ASSETS / 'nexo/textures/item/profesje'
+WYNN = WORLD / 'docs/research/wynncraft/klatki/17_ekwipunek_E_pergamin_A8m00.jpg'
 
-I = (0x1D, 0x14, 0x12, 255)
-L0 = (0x2F, 0x1E, 0x1A, 255)
-L1 = (0x4D, 0x31, 0x26, 255)
-L2 = (0x77, 0x4C, 0x31, 255)
-L3 = (0xA5, 0x6E, 0x44, 255)
-L1G = (0x56, 0x39, 0x2B, 255)
-L2D = (0x6B, 0x43, 0x2D, 255)
-L2G = (0x82, 0x56, 0x39, 255)
-P0 = (0x8E, 0x70, 0x4D, 255)
-P1 = (0xBA, 0x9A, 0x6C, 255)
-P2 = (0xDE, 0xC4, 0x97, 255)
-P3 = (0xF5, 0xE3, 0xBE, 255)
-R = (0xA6, 0x5C, 0x50, 255)
-B = (0x63, 0x83, 0x9A, 255)
-PALETTE = (I, L0, L1, L2, L3, L1G, L2D, L2G, P0, P1, P2, P3, R, B)
-T = (0, 0, 0, 0)
+# Trzynaście nieprzezroczystych barw; malinowa skóra służy tylko zakładce.
+C = '#50352D'  # pojedynczy ciemny kontur
+L0 = '#614335'  # cień skóry
+J = '#6C533F'   # wspólne ciemne tło biżuterii i sakiewki
+L1 = '#805D42'  # skóra
+L2 = '#A1805D'  # oświetlony rant skóry
+P0 = '#AF996D'  # cień pergaminu
+P1 = '#CAB486'  # arkusz spod spodu
+P2 = '#D7C191'  # płytka wnęka
+P3 = '#E5D1A5'  # czysta strona
+B0 = '#B79969'  # wnęka torby
+B1 = '#C7AB7B'  # materiał torby
+B2 = '#BFA776'  # bardzo płytkie pola torby
+R = '#A46954'   # skórzana wstążka
+PALETTE = (C, L0, J, L1, L2, P0, P1, P2, P3, B0, B1, B2, R)
 
-# Ręcznie rozplanowane krawędzie. Każdy wiersz wzorca ma 18 znaków.
-PAPER_SLOT = (
-    'aaaaaaaaaaaaaaaaaa',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'accccccccccccccccc',
-)
 
-LEATHER_SLOT = (
-    'aaaaaaaaaaaaaaaaaa',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'abbbbbbbbbbbbbbbbc',
-    'accccccccccccccccc',
-)
+def rect(draw, xy, color):
+    draw.rectangle(xy, fill=color)
 
-# Narożnik wszytej kieszeni nad sakwą, 22×6. Dalsze boki są rysowane
-# tym samym motywem, więc wnętrze slotu pozostaje pełne i czytelne.
-POUCH_TOP = (
-    '....iiiiiiiiiiiiii....',
-    '..ii33333333333333ii..',
-    '.i322222222222222223i.',
-    'i32222222222222222223i',
-    'i32222112112112222223i',
-    'i22222222222222222222i',
-)
 
-# 5×5 szew rogu, miejscowo wyjaśnia promień zamiast miękkiego AA.
-CORNER_TL = (
-    '.....',
-    '..i33',
-    '.i333',
-    '.3332',
-    '.3322',
-)
+def polygon(draw, points, color):
+    draw.polygon(points, fill=color)
 
-def box(d, xy, color):
-    d.rectangle(xy, fill=color)
-
-def grid(im, rows, x, y, legend):
-    assert rows and len({len(r) for r in rows}) == 1, 'Nierówne wiersze siatki'
-    assert all(set(r) <= set(legend) | {'.'} for r in rows)
-    tile = do_obrazu(legend, rows)
-    im.alpha_composite(tile, (x, y))
-
-def cover(im):
-    d = ImageDraw.Draw(im)
-    # Obrys z narożnikami o promieniu 3 px, bez prostokątnego podkładu.
-    box(d, (4, 0, 171, 165), I)
-    box(d, (2, 2, 173, 163), I)
-    box(d, (1, 4, 174, 161), I)
-    box(d, (4, 2, 171, 161), L0)
-    box(d, (2, 4, 173, 159), L0)
-    box(d, (5, 4, 170, 158), L2)
-    box(d, (4, 6, 171, 156), L2)
-    box(d, (5, 5, 169, 5), L3)
-    box(d, (5, 6, 5, 155), L3)
-    box(d, (6, 158, 169, 159), L1)
-    box(d, (170, 6, 171, 157), L1)
-    grid(im, CORNER_TL, 1, 1, {'i': I, '3': L3, '2': L2})
-    # Rząd pojedynczych ściegów co 3 px: jasna nić na ciemnej skórze.
-    for sx in range(9, 168, 3):
-        d.point((sx, 3), fill=P1)
-        d.point((sx, 161), fill=P1)
-    for sy in range(10, 155, 3):
-        d.point((3, sy), fill=P1)
-        d.point((172, sy), fill=P1)
-
-def paper_and_spine(im):
-    d = ImageDraw.Draw(im)
-    # Lewa kartka schodzi pod sloty 9-13; krawędź na dole ma 2 px.
-    box(d, (4, 7, 79, 101), P2)
-    box(d, (80, 82, 97, 101), P2)
-    box(d, (7, 7, 74, 7), P3)
-    box(d, (4, 8, 4, 98), P1)
-    box(d, (5, 8, 5, 98), P3)
-    box(d, (5, 99, 97, 99), P1)
-    box(d, (5, 100, 97, 100), P0)
-    box(d, (4, 101, 97, 101), P1)
-    box(d, (76, 8, 76, 80), P1)
-    box(d, (77, 8, 77, 80), P0)
-    box(d, (78, 8, 78, 80), P1)
-    # Okno postaci ma wyraźny ciemny kontur i jasne, gładkie wnętrze.
-    box(d, (25, 8, 75, 78), I)
-    box(d, (26, 9, 74, 77), L2)
-    box(d, (27, 10, 73, 76), P3)
-    box(d, (27, 10, 72, 10), P2)
-    box(d, (27, 11, 27, 75), P2)
-    # Skórzany, lekko wypukły grzbiet. Zagięcia kartki są płaskimi polami.
-    box(d, (79, 4, 95, 83), I)
-    box(d, (80, 5, 94, 81), L1)
-    box(d, (82, 6, 91, 80), L2)
-    box(d, (82, 7, 83, 80), L3)
-    box(d, (84, 6, 84, 80), L3)
-    box(d, (92, 7, 94, 80), L0)
-    box(d, (86, 6, 89, 80), L2)
-    # Dwa poprzeczne wypukłe paski, światło tylko na górze i po lewej.
-    for by in (25, 52):
-        box(d, (80, by, 94, by), L0)
-        box(d, (81, by+1, 93, by+2), L3)
-        box(d, (82, by+3, 93, by+4), L2)
-        box(d, (82, by+5, 94, by+5), L0)
-        d.point((82, by+1), fill=P1)
-        d.point((86, by+1), fill=P1)
-        d.point((90, by+1), fill=P1)
-    # Kartka prawa ma 1-2 px przyciemniony brzeg na zewnętrznej stronie.
-    box(d, (96, 6, 169, 81), P2)
-    box(d, (97, 6, 169, 8), P3)
-    box(d, (97, 9, 97, 80), P1)
-    box(d, (98, 9, 98, 80), P0)
-    box(d, (99, 9, 99, 80), P1)
-    box(d, (100, 9, 169, 80), P2)
-    box(d, (168, 9, 168, 79), P1)
-    box(d, (169, 9, 169, 80), P0)
-    # Odtwórz czysty pas tytułu: czytelny dla tekstu klienta #404040.
-    box(d, (97, 6, 169, 16), P2)
-    box(d, (97, 6, 169, 6), P3)
-    box(d, (104, 61, 123, 78), P2)
-    box(d, (96, 81, 169, 81), P1)
-
-def leather_bag_and_bar(im):
-    d = ImageDraw.Draw(im)
-    # Torba L: w górnym rzędzie od slotu 14, pełna szerokość od y=102.
-    box(d, (98, 82, 170, 139), L0)
-    box(d, (5, 102, 170, 139), L0)
-    box(d, (98, 83, 168, 100), L2)
-    box(d, (6, 103, 168, 136), L2)
-    box(d, (6, 103, 168, 103), L3)
-    box(d, (6, 104, 6, 135), L3)
-    box(d, (7, 136, 169, 138), L1)
-    box(d, (169, 84, 170, 138), L1)
-    # Płaskie szwy po zewnętrznej krawędzi torby, co 3 piksele.
-    for sx in range(9, 168, 3):
-        d.point((sx, 139), fill=P1)
-    # Hotbar jako osobny, grubszy pas skóry.
-    box(d, (4, 140, 171, 162), I)
-    box(d, (5, 141, 170, 160), L1)
-    box(d, (6, 142, 168, 158), L2)
-    box(d, (5, 141, 169, 141), L3)
-    box(d, (6, 142, 6, 158), L3)
-    box(d, (6, 159, 169, 160), L0)
-    for sx in range(8, 168, 3):
-        d.point((sx, 140), fill=P1)
-        d.point((sx, 161), fill=P1)
-
-def sewn_frame(im, x, y, count, tight=False):
-    d = ImageDraw.Draw(im)
-    left = x - 4
-    if tight:
-        # Zapas 11+12: cienka, papierowa oprawa. Jej prawy brzeg x=78
-        # sąsiaduje z ciemnym x=79 aktywnej pary, tworząc podwójną linię.
-        right, top, bottom = x + count*18 - 2, y - 3, y + 17
-        box(d, (left, top, right, top), P0)
-        box(d, (left, bottom, right, bottom), P0)
-        box(d, (left, top, left, bottom), P0)
-        box(d, (right, top, right, bottom-2), P0)
-        d.point((right, bottom-1), fill=P3)
-        box(d, (left+1, top+1, right-1, top+1), P3)
-        box(d, (left+1, top+1, left+1, bottom-1), P3)
-        for sx in range(left+4, right-2, 3):
-            d.point((sx, top), fill=P3)
-            d.point((sx, bottom), fill=P3)
-        for sy in range(top+3, bottom-2, 3):
-            d.point((left, sy), fill=P3)
-        return
-
-    # Hotbar 0+1: te same dwie ciemne warstwy i jasne ściegi co aktywna L.
-    right, top, bottom = x + count*18 - 1, y - 4, y + 20
-    box(d, (left, top, right, top+1), I)
-    box(d, (left, bottom-1, right, bottom), I)
-    box(d, (left, top, left+1, bottom), I)
-    box(d, (right-1, top, right, bottom), I)
-    box(d, (left+1, top+2, right-1, top+2), L0)
-    box(d, (left+1, top+2, left+1, bottom-2), L0)
-    box(d, (right-1, top+2, right-1, bottom-2), L0)
-    box(d, (left+1, bottom-2, right-1, bottom-2), L0)
-    for sx in range(left+4, right-2, 3):
-        d.point((sx, top+1), fill=P1)
-        d.point((sx, bottom-1), fill=P1)
-    for sy in range(top+4, bottom-2, 3):
-        d.point((left, sy), fill=P1)
-        d.point((right, sy), fill=P1)
-    d.point((right-1, y+16), fill=L2)
-
-def potion_belt_frame(im):
-    """Niższy, wspólny przeszyty pas wokół hotbarowych slotów 2–4."""
-    d = ImageDraw.Draw(im)
-    box(d, (44, 140, 96, 140), L0)
-    box(d, (46, 141, 94, 141), L3)
-    d.point((44, 141), fill=L3)
-    box(d, (44, 143, 44, 157), L3)
-    box(d, (96, 141, 96, 157), L0)
-    box(d, (46, 159, 94, 159), L2)
-    box(d, (44, 160, 96, 160), L0)
-    for sx in range(48, 94, 4):
-        d.point((sx, 140), fill=P1)
-        d.point((sx, 160), fill=P1)
-    for sy in range(145, 158, 4):
-        d.point((44, sy), fill=P1)
-        d.point((96, sy), fill=P1)
-    # Po jednym barwnym ściegu na 2 i 3; slot 4 ma nić w kolorze skóry.
-    d.point((53, 141), fill=R)
-    d.point((71, 141), fill=B)
-    d.point((89, 141), fill=P1)
-
-def active_hands_frame(im):
-    """Jedna schodkowa oprawa dla przesuniętych o 3 px aktywnych rąk."""
-    d = ImageDraw.Draw(im)
-    # Ciemna, dwuwarstwowa L łączy drugą rękę (77,62) ze slotem 13.
-    # Dolny brzeg górnego ramienia jest w y=79; w y=80 zostaje papier.
-    outline = [(74, 57), (93, 57), (95, 59), (95, 78),
-               (97, 78), (97, 80), (97, 100), (96, 101),
-               (79, 101), (79, 80), (78, 79), (74, 79),
-               (72, 77), (72, 59)]
-    d.line(outline + [outline[0]], fill=I)
-    box(d, (74, 58, 93, 58), I)
-    box(d, (73, 59, 73, 77), I)
-    box(d, (94, 59, 94, 77), I)
-    box(d, (97, 80, 97, 100), I)
-    box(d, (80, 101, 96, 101), I)
-    box(d, (75, 59, 93, 59), L0)
-    box(d, (74, 60, 74, 77), L0)
-    box(d, (93, 60, 93, 77), L0)
-    box(d, (96, 81, 96, 82), L0)
-    box(d, (80, 81, 80, 82), L0)
-    box(d, (80, 101, 96, 101), L0)
-    box(d, (74, 79, 78, 79), I)
-    box(d, (74, 80, 78, 80), P2)
-    # Ciemny lewy brzeg x=79 i jasny zapas x=78 rozcinają obie oprawy.
-    box(d, (79, 80, 79, 101), I)
-    # Szwy na całym obwodzie, w tej samej barwie co hotbar.
-    for sx in range(77, 93, 3):
-        d.point((sx, 58), fill=P1)
-    for sy in range(62, 78, 3):
-        d.point((73, sy), fill=P1)
-        d.point((95, sy), fill=P1)
-    for sx in range(82, 96, 3):
-        d.point((sx, 101), fill=P1)
-    for sy in (84, 88, 92, 96, 100):
-        d.point((79, sy), fill=P1)
-        d.point((97, sy), fill=P1)
-    d.point((78, 79), fill=P1)
-    d.point((97, 79), fill=P1)
-
-def pouch(im):
-    d = ImageDraw.Draw(im)
-    # Kieszonka jest wszyta wokół obszaru (154,28), a nie położona na nim.
-    # Sama wnęka 18×18 przyjdzie później, dlatego pozostaje czytelna.
-    box(d, (151, 25, 171, 43), I)
-    box(d, (152, 44, 170, 45), I)
-    box(d, (154, 46, 168, 47), I)
-    box(d, (157, 48, 165, 48), I)
-    box(d, (152, 26, 170, 43), L1)
-    box(d, (153, 44, 169, 45), L1)
-    box(d, (155, 46, 167, 46), L2)
-    box(d, (158, 47, 164, 47), L0)
-    box(d, (152, 26, 152, 42), L3)
-    grid(im, POUCH_TOP, 150, 23,
-         {'i': I, '3': L3, '2': L2, '1': P1})
-    for sy in (31, 34, 37, 40):
-        d.point((151, sy), fill=P1)
-        d.point((171, sy), fill=P1)
-    for sx in (156, 159, 162, 165):
-        d.point((sx, 46), fill=P1)
-
-def slot(im, x, y, material):
-    assert material in ('paper', 'leather')
-    rows = PAPER_SLOT if material == 'paper' else LEATHER_SLOT
-    legend = ({'a': P0, 'b': P1, 'c': P3} if material == 'paper'
-              else {'a': L0, 'b': L1, 'c': L2})
-    grid(im, rows, x-1, y-1, legend)
-
-def leather_grain(im):
-    """Rzadkie, ręcznie rozłożone punkty tylko we wnętrzu pól skóry."""
-    grain = (
-        (1, 1), (7, 2), (14, 1), (18, 4), (4, 5), (11, 5),
-        (16, 7), (2, 9), (8, 8), (13, 10), (0, 13), (5, 12),
-        (10, 14), (17, 13), (3, 16), (8, 17), (15, 17),
-        (20, 2), (22, 9), (21, 15), (12, 19), (6, 20),
-        (19, 20), (0, 21), (14, 22), (23, 22),
-        (3, 3), (9, 3), (12, 7), (21, 6), (3, 19), (18, 11),
-    )
-    # Dwa przesunięte kafle 24×23 dają ok. 7% na gotowych płaszczyznach,
-    # bez losowego szumu i bez dotykania krawędzi.
-    seed = set(grain)
-    src = im.copy()
-    for y in range(2, 164):
-        for x in range(2, 174):
-            base = src.getpixel((x, y))
-            if base not in (L1, L2):
-                continue
-            if any(src.getpixel(p) != base for p in
-                   ((x-1, y), (x+1, y), (x, y-1), (x, y+1))):
-                continue
-            a = (x % 24, y % 23) in seed
-            b = ((x+9) % 24, (y+7) % 23) in seed
-            if a or b:
-                im.putpixel((x, y),
-                            L1G if base == L1 else (L2G if a else L2D))
-
-def gray_figure(im):
-    """Sylwetka wyłącznie w podglądzie; nie trafia do tekstury."""
-    d = ImageDraw.Draw(im)
-    shade = (110, 107, 101, 255)
-    light = (145, 141, 133, 255)
-    box(d, (46, 16, 56, 26), shade)
-    box(d, (47, 16, 53, 17), light)
-    box(d, (40, 28, 62, 49), shade)
-    box(d, (41, 28, 56, 29), light)
-    box(d, (35, 30, 39, 55), shade)
-    box(d, (63, 30, 67, 55), shade)
-    box(d, (42, 50, 48, 71), shade)
-    box(d, (54, 50, 60, 71), shade)
-
-def equipment_icon(kind):
-    """Szary miecz lub tarcza, w palecie ikon wyposażenia Nexo."""
-    icon = Image.new('RGBA', (16, 16), T)
-    d = ImageDraw.Draw(icon)
-    shadow = (8, 11, 16, 190)
-    dark = (58, 68, 82, 175)
-    mid = (126, 142, 162, 160)
-    light = (190, 205, 224, 185)
-    if kind == 'sword':
-        d.polygon([(10, 3), (13, 2), (14, 3), (13, 6), (7, 12),
-                   (5, 10)], fill=dark)
-        d.line((11, 4, 6, 10), fill=light, width=2)
-        d.point((13, 3), fill=light)
-        d.line((3, 8, 8, 13), fill=shadow, width=2)
-        d.line((4, 8, 8, 12), fill=mid, width=1)
-        d.line((5, 11, 3, 13), fill=dark, width=2)
-        d.point((2, 14), fill=light)
-    else:
-        d.polygon([(3, 3), (12, 3), (13, 5), (12, 11),
-                   (8, 14), (4, 12), (2, 10), (2, 5)], fill=shadow)
-        d.polygon([(4, 4), (11, 4), (12, 6), (11, 10),
-                   (8, 13), (5, 11), (3, 9), (3, 6)], fill=mid)
-        d.line((4, 5, 10, 5), fill=light, width=2)
-        d.line((5, 7, 5, 10), fill=light)
-        d.line((7, 11, 8, 12), fill=dark)
-    return icon
-
-def consumable_icon(kind):
-    """Ikony 16×16 tylko do podglądu: dwa eliksiry i bochenek chleba."""
-    icon = Image.new('RGBA', (16, 16), T)
-    d = ImageDraw.Draw(icon)
-    outline = (40, 30, 27, 255)
-    glass_dark = (82, 88, 91, 255)
-    glass_light = (201, 207, 197, 255)
-    if kind in ('health', 'mana'):
-        liquid = ((171, 49, 53, 255) if kind == 'health'
-                  else (47, 99, 178, 255))
-        liquid_light = ((230, 100, 86, 255) if kind == 'health'
-                        else (100, 170, 218, 255))
-        d.rectangle((6, 1, 9, 3), fill=outline)
-        d.rectangle((6, 1, 9, 2), fill=(153, 113, 70, 255))
-        d.polygon([(5, 3), (10, 3), (10, 5), (12, 7), (12, 12),
-                   (10, 14), (5, 14), (3, 12), (3, 7), (5, 5)], fill=outline)
-        d.polygon([(5, 6), (10, 6), (11, 8), (11, 12), (10, 13),
-                   (5, 13), (4, 12), (4, 8)], fill=glass_dark)
-        d.polygon([(5, 8), (10, 8), (11, 9), (11, 12), (10, 13),
-                   (5, 13), (4, 12), (4, 9)], fill=liquid)
-        d.line((5, 8, 9, 8), fill=liquid_light)
-        d.point((5, 10), fill=liquid_light)
-        d.line((5, 5, 6, 4), fill=glass_light)
-        d.point((10, 6), fill=glass_light)
-    else:
-        crust = (142, 82, 39, 255)
-        top = (207, 148, 71, 255)
-        crumb = (237, 188, 105, 255)
-        d.polygon([(2, 9), (4, 6), (7, 4), (11, 5), (13, 8),
-                   (13, 12), (11, 14), (4, 14), (2, 12)], fill=outline)
-        d.polygon([(3, 9), (5, 6), (8, 5), (11, 6), (12, 9),
-                   (12, 12), (10, 13), (5, 13), (3, 12)], fill=crust)
-        d.polygon([(4, 9), (6, 6), (9, 6), (11, 8), (11, 11),
-                   (9, 12), (5, 12), (4, 11)], fill=top)
-        d.line((6, 8, 8, 6), fill=crumb)
-        d.line((9, 10, 10, 8), fill=crumb)
-    return icon
 
 def slot_positions():
+    """Dokładne współrzędne 46 slotów z ksiega_v4.py."""
     armor = [(8, y) for y in (8, 26, 44, 62)]
     jewelry = [(98, 18), (116, 18), (98, 36), (116, 36)]
     special = [(154, 28), (77, 62)]
@@ -463,73 +51,323 @@ def slot_positions():
     hotbar = [(x, 142) for x in (8, 26, 44, 62, 80, 98, 116, 134, 152)]
     return armor, jewelry, special, inventory, hotbar
 
+
+def cover(draw):
+    # Stopniowane narożniki i pas skóry widoczny wokół obu kart oraz torby.
+    polygon(draw, [(5, 0), (170, 0), (170, 1), (173, 1),
+                   (173, 4), (175, 4), (175, 160), (173, 160),
+                   (173, 163), (170, 163), (170, 165), (5, 165),
+                   (5, 163), (2, 163), (2, 160), (0, 160),
+                   (0, 5), (2, 5), (2, 2), (5, 2)], C)
+    polygon(draw, [(5, 2), (170, 2), (172, 4), (173, 6),
+                   (173, 158), (171, 161), (168, 163), (7, 163),
+                   (4, 161), (2, 158), (2, 7)], L0)
+    polygon(draw, [(6, 3), (168, 3), (171, 5), (172, 8),
+                   (172, 157), (169, 161), (7, 161),
+                   (4, 158), (4, 8)], L1)
+    draw.line([(7, 4), (167, 4)], fill=L2)
+    draw.line([(4, 9), (4, 156)], fill=L2)
+    draw.line([(8, 162), (167, 162)], fill=L0)
+
+
+def cover_rim(draw):
+    """Gruba skórzana oprawa na wierzchu krawędzi arkuszy."""
+    draw.rounded_rectangle((0, 0, 175, 165), radius=3, outline=C)
+    draw.rounded_rectangle((1, 1, 174, 164), radius=3, outline=L0)
+    draw.rounded_rectangle((2, 2, 173, 163), radius=2, outline=L1)
+    draw.rounded_rectangle((3, 3, 172, 162), radius=2, outline=L1)
+    draw.line([(7, 4), (168, 4)], fill=L2)
+    draw.line([(4, 7), (4, 157)], fill=L2)
+    draw.line([(171, 8), (171, 157)], fill=L0)
+    draw.line([(8, 161), (167, 161)], fill=L0)
+    # Jednopikselowy cień arkuszy na skórze.
+    draw.line([(5, 11), (5, 95)], fill=L0)
+    draw.line([(170, 12), (170, 73)], fill=L0)
+
+
+def bookmarks(draw):
+    # Trzy miękkie języki nad krawędzią kart, bez metalowych elementów.
+    polygon(draw, [(34, 1), (39, 1), (39, 7), (37, 9),
+                   (35, 7), (35, 3), (34, 3)], L0)
+    rect(draw, (35, 1, 37, 6), L2)
+    polygon(draw, [(67, 1), (71, 1), (71, 7), (69, 9),
+                   (67, 7)], L1)
+    rect(draw, (68, 2, 69, 6), L2)
+    polygon(draw, [(161, 0), (167, 0), (167, 8), (164, 10),
+                   (161, 8)], L0)
+    polygon(draw, [(162, 1), (166, 1), (166, 7), (164, 9),
+                   (162, 7)], R)
+
+
+def pages(draw):
+    # Dolne i prawe krawędzie dwóch luźnych arkuszy, przesuniętych o 1 px.
+    polygon(draw, [(6, 8), (18, 8), (18, 6), (46, 6), (46, 7),
+                   (73, 7), (73, 9), (96, 9), (96, 99),
+                   (99, 99), (99, 102), (82, 102), (82, 101),
+                   (59, 101), (59, 102), (27, 102), (27, 101),
+                   (7, 101), (7, 98), (5, 98), (5, 49),
+                   (6, 49)], P0)
+    polygon(draw, [(6, 7), (18, 7), (18, 5), (44, 5), (44, 6),
+                   (74, 6), (74, 8), (94, 8), (94, 81),
+                   (97, 81), (97, 99), (79, 99), (79, 100),
+                   (57, 100), (57, 101), (29, 101), (29, 100),
+                   (8, 100), (8, 98), (6, 98), (6, 47),
+                   (7, 47)], P1)
+    polygon(draw, [(8, 8), (20, 8), (20, 6), (42, 6), (42, 7),
+                   (73, 7), (73, 9), (93, 9), (93, 80),
+                   (96, 80), (96, 98), (78, 98), (78, 99),
+                   (56, 99), (56, 100), (30, 100), (30, 99),
+                   (9, 99), (9, 97), (7, 97), (7, 48),
+                   (8, 48)], P3)
+    # Prawa strona ma osobną, lekko nierówną górną krawędź.
+    polygon(draw, [(98, 8), (114, 8), (114, 6), (138, 6),
+                   (138, 7), (157, 7), (157, 6), (167, 6),
+                   (167, 8), (170, 8), (170, 11), (171, 11),
+                   (171, 76), (170, 76), (170, 81),
+                   (168, 81), (168, 83), (98, 83)], P0)
+    polygon(draw, [(97, 7), (115, 7), (115, 5), (137, 5),
+                   (137, 6), (156, 6), (156, 5), (166, 5),
+                   (166, 7), (169, 7), (169, 10), (170, 10),
+                   (170, 75), (169, 75), (169, 80),
+                   (167, 80), (167, 81), (97, 81)], P1)
+    polygon(draw, [(99, 8), (117, 8), (117, 6), (135, 6),
+                   (135, 7), (155, 7), (155, 6), (165, 6),
+                   (165, 8), (168, 8), (168, 11), (169, 11),
+                   (169, 74), (168, 74), (168, 79),
+                   (166, 79), (166, 80), (98, 80)], P3)
+    # Dwa pojedyncze podwinięcia na zewnętrznych rogach kart.
+    polygon(draw, [(7, 94), (9, 94), (9, 98), (12, 98),
+                   (12, 99), (8, 99), (8, 97), (7, 97)], P2)
+    polygon(draw, [(165, 75), (169, 74), (169, 78),
+                   (166, 78), (166, 80), (163, 80)], P2)
+    # Strony łagodnie schodzą w zagłębienie grzbietu; żadnej skórzanej kolumny.
+    polygon(draw, [(79, 8), (84, 8), (83, 39), (84, 57),
+                   (82, 79), (78, 79)], P2)
+    polygon(draw, [(85, 8), (89, 8), (88, 44), (89, 79),
+                   (83, 79), (84, 56), (83, 39)], P1)
+    polygon(draw, [(90, 8), (92, 8), (92, 79), (89, 79),
+                   (88, 44), (89, 25)], P0)
+    draw.line([(91, 9), (90, 46), (91, 78)], fill=L2)
+    polygon(draw, [(93, 8), (96, 8), (95, 38), (96, 79),
+                   (92, 79), (92, 8)], P1)
+    rect(draw, (97, 8, 98, 79), P2)
+    # Odpryski krawędzi mają długość 1–2 px i nie dotykają ikon.
+    for y in (14, 40, 76):
+        rect(draw, (7, y, 7, y + 1), P0)
+    for y in (19, 53, 68):
+        rect(draw, (168, y, 169, y), L1)
+    # Okno modelu: jasna cisza za sylwetką, tylko lekka krawędź.
+    rect(draw, (25, 8, 75, 78), P0)
+    rect(draw, (26, 9, 74, 77), P3)
+    rect(draw, (26, 9, 73, 9), P2)
+    rect(draw, (26, 10, 26, 76), P2)
+
+
+def bag(draw):
+    # Torba z matowego płótna; pojedyncze wyraźne załamanie klapy.
+    polygon(draw, [(98, 81), (170, 81), (170, 139),
+                   (168, 141), (7, 141), (5, 139),
+                   (5, 101), (98, 101)], P0)
+    polygon(draw, [(99, 82), (169, 82), (169, 138),
+                   (167, 139), (8, 139), (6, 138),
+                   (6, 102), (99, 102)], B1)
+    rect(draw, (6, 102, 97, 102), P0)
+    rect(draw, (99, 82, 168, 82), P0)
+    rect(draw, (7, 139, 168, 140), P0)
+    polygon(draw, [(5, 141), (170, 141), (170, 161),
+                   (168, 163), (7, 163), (5, 161)], P0)
+    rect(draw, (6, 142, 169, 160), B1)
+    rect(draw, (7, 142, 168, 142), P0)
+    rect(draw, (7, 160, 168, 161), B0)
+
+
+def groups(draw):
+    # Jeden ciemny panel obejmuje biżuterię i pole do sakiewki.
+    polygon(draw, [(97, 14), (168, 14), (171, 17), (171, 54),
+                   (168, 57), (97, 57), (94, 54), (94, 17)], C)
+    polygon(draw, [(97, 15), (168, 15), (170, 17), (170, 54),
+                   (168, 56), (97, 56), (95, 54), (95, 17)], L0)
+    rect(draw, (97, 16, 168, 55), J)
+    draw.line([(97, 16), (168, 16)], fill=L1)
+    draw.line([(96, 17), (96, 54)], fill=L1)
+    # Dwie czynne ręce tworzą pionową naszywkę mimo uskoku slotu 13.
+    polygon(draw, [(77, 57), (94, 57), (97, 60), (97, 80),
+                   (100, 83), (100, 100), (97, 103), (78, 103),
+                   (75, 100), (75, 81), (73, 79), (73, 61)], P0)
+    polygon(draw, [(77, 59), (93, 59), (95, 61), (95, 81),
+                   (98, 84), (98, 99), (96, 101), (79, 101),
+                   (77, 99), (77, 80), (75, 78), (75, 62)], P1)
+    # Zapas leży na jaśniejszym, oddzielnym płacie.
+    polygon(draw, [(43, 81), (75, 81), (78, 83), (78, 100),
+                   (75, 103), (44, 103), (41, 100), (41, 84)], P1)
+    rect(draw, (43, 83, 76, 100), P2)
+    # Ta sama forma naszywki pod parą 0+1.
+    polygon(draw, [(8, 138), (42, 138), (45, 141), (45, 160),
+                   (42, 163), (8, 163), (5, 160), (5, 141)], L2)
+    polygon(draw, [(9, 140), (41, 140), (43, 142), (43, 159),
+                   (41, 161), (9, 161), (7, 159), (7, 142)], P0)
+    # Kieszeń 2–4 ma klapkę i jedno ciemne załamanie u góry.
+    polygon(draw, [(46, 137), (94, 137), (98, 141), (98, 161),
+                   (95, 164), (45, 164), (42, 161), (42, 141)], L2)
+    polygon(draw, [(46, 139), (94, 139), (96, 142), (96, 160),
+                   (94, 162), (46, 162), (44, 160), (44, 142)], P1)
+    polygon(draw, [(46, 139), (94, 139), (96, 142), (94, 144),
+                   (46, 144), (44, 142)], P0)
+    rect(draw, (46, 144, 94, 144), L2)
+    # Sakiewka pozostawia dwa piksele skóry pomiędzy slotem a prawym rantem.
+    polygon(draw, [(157, 23), (165, 23), (167, 26), (170, 28),
+                   (172, 32), (172, 41), (170, 45), (166, 49),
+                   (156, 49), (152, 46), (150, 42), (150, 32),
+                   (152, 28), (155, 26)], L2)
+    polygon(draw, [(158, 25), (164, 25), (165, 28), (168, 29),
+                   (170, 33), (170, 41), (168, 44), (164, 47),
+                   (157, 47), (153, 43), (152, 40), (152, 33),
+                   (155, 29), (157, 28)], P1)
+    rect(draw, (157, 26, 165, 27), L1)
+    draw.line([(153, 31), (151, 35), (151, 40)], fill=P0)
+    draw.line([(170, 32), (171, 35), (171, 40)], fill=P0)
+    # Blady znak herbowy w jedynej wolnej partii prawej karty.
+    draw.line([(134, 61), (145, 61), (145, 70), (139, 76),
+               (133, 70), (133, 62)], fill=P2, width=1)
+    draw.line([(136, 64), (142, 64), (142, 69), (139, 72),
+               (136, 69), (136, 64)], fill=P2, width=1)
+
+
+def slot(draw, x, y, paper):
+    # Widoczne, lecz płytkie zagłębienie bez obrysu dookoła komórki.
+    if (x, y) in ((98, 18), (116, 18), (98, 36), (116, 36)):
+        rect(draw, (x, y, x + 15, y + 15), L1)
+        rect(draw, (x + 1, y + 1, x + 14, y + 14), L2)
+        return
+    if (x, y) in ((77, 62), (80, 84)):
+        recess = P0
+    elif y == 142 and x in (8, 26):
+        recess = B0
+    elif y == 142 and x in (44, 62, 80):
+        recess = B0
+    elif y == 84 and x in (44, 62):
+        recess = P1
+    else:
+        recess = P2 if paper else B2
+    rect(draw, (x, y, x + 15, y + 15), recess)
+
+
 def make_texture():
-    im = Image.new('RGBA', (256, 256), T)
-    cover(im)
-    paper_and_spine(im)
-    leather_bag_and_bar(im)
-    pouch(im)
+    image = Image.new('RGBA', (256, 256))
+    d = ImageDraw.Draw(image)
+    cover(d)
+    pages(d)
+    bag(d)
+    groups(d)
     armor, jewelry, special, inventory, hotbar = slot_positions()
     positions = armor + jewelry + special + inventory + hotbar
     assert len(positions) == 46 and len(set(positions)) == 46
-    paper_slots = set(armor + jewelry + special + [(x, 84) for x in (8, 26, 44, 62, 80)])
+    paper_slots = set(armor + jewelry + special +
+                      [(x, 84) for x in (8, 26, 44, 62, 80)])
     for x, y in positions:
-        assert 0 <= x-1 and x+16 < 176 and 0 <= y-1 and y+16 < 166
-        material = 'paper' if (x, y) in paper_slots else 'leather'
-        slot(im, x, y, material)
-    active_hands_frame(im)
-    sewn_frame(im, 44, 84, 2, tight=True)
-    sewn_frame(im, 8, 142, 2)
-    leather_grain(im)
-    potion_belt_frame(im)
-    # Nie ma rysunku na strefie sprite książki ani na tytule.
-    d = ImageDraw.Draw(im)
-    box(d, (104, 61, 123, 78), P2)
-    box(d, (97, 6, 169, 16), P2)
-    wymus_palete(im, PALETTE)
-    assert all(im.getpixel((x, y))[3] == 0 for y in range(166, 256) for x in range(256))
-    assert all(im.getpixel((x, y))[3] == 0 for y in range(166) for x in range(176, 256))
-    assert set(p for p in im.get_flattened_data() if p[3]) <= set(PALETTE)
-    # Krawędzie 18×18 obejmują dokładnie wnętrza 16×16 z blockout_v3.
-    for x, y in positions:
-        paper = (x, y) in paper_slots
-        assert im.getpixel((x, y)) in ((P1,) if paper else (L1, L1G))
-        edge = im.getpixel((x+16, y+16))
-        assert edge in ((P3, L2) if paper else (L2,)), ((x, y), edge)
-    return im
+        slot(d, x, y, (x, y) in paper_slots)
+    # Te obszary nadpisują ewentualny brzeg podkładki.
+    rect(d, (104, 61, 123, 78), P3)  # klient rysuje przycisk książki
+    rect(d, (97, 6, 169, 13), P3)    # jasny pasek tytułu (97,6)
+    cover_rim(d)
+    bookmarks(d)
+    assert all(image.getpixel((x, y))[3] == 0
+               for y in range(166, 256) for x in range(256))
+    assert all(image.getpixel((x, y))[3] == 0
+               for y in range(166) for x in range(176, 256))
+    colors = {pixel[:3] for pixel in image.get_flattened_data() if pixel[3]}
+    assert len(colors) <= 14, colors
+    assert colors <= {Image.new('RGB', (1, 1), c).getpixel((0, 0)) for c in PALETTE}
+    return image
 
-def make_preview(texture, icons=False):
+
+def gray_figure(image):
+    d = ImageDraw.Draw(image)
+    shade = '#767672'
+    light = '#A5A49D'
+    rect(d, (45, 16, 55, 26), shade)
+    rect(d, (46, 16, 52, 17), light)
+    rect(d, (40, 28, 62, 49), shade)
+    rect(d, (41, 28, 56, 29), light)
+    rect(d, (35, 30, 39, 54), shade)
+    rect(d, (63, 30, 67, 54), shade)
+    rect(d, (42, 50, 48, 71), shade)
+    rect(d, (54, 50, 60, 71), shade)
+
+
+def sword_icon():
+    # Vanilla-like miecz testowy: 16×16, jeden mocny obrys i lewe światło.
+    image = Image.new('RGBA', (16, 16))
+    d = ImageDraw.Draw(image)
+    polygon(d, [(12, 1), (14, 1), (14, 4), (7, 11), (5, 9)], '#251B1E')
+    polygon(d, [(12, 2), (13, 2), (13, 4), (7, 10), (6, 9)], '#849EAB')
+    d.line((12, 2, 7, 8), fill='#D6DAD0')
+    d.line((4, 8, 9, 13), fill='#251B1E', width=2)
+    d.line((4, 8, 8, 12), fill='#8F693F')
+    d.line((5, 10, 2, 13), fill='#251B1E', width=2)
+    d.point((2, 13), fill='#BE9B5D')
+    return image
+
+
+def _paste_icon(panel, path, x, y):
+    icon = Image.open(path).convert('RGBA')
+    assert icon.size == (16, 16), path
+    panel.alpha_composite(icon, (x, y))
+
+
+def make_preview(texture):
     panel = texture.copy()
-    if icons:
-        gray_figure(panel)
-        overlays = [
-            ('necklace.png', 98, 18), ('ring.png', 116, 18),
-            ('ring.png', 98, 36), ('charm.png', 116, 36),
-            ('gloves.png', 8, 84), ('belt.png', 26, 84),
-        ]
-        for filename, x, y in overlays:
-            icon = Image.open(PACK / filename).convert('RGBA')
-            assert icon.size == (16, 16)
-            panel.alpha_composite(icon, (x, y))
-        for kind, x, y in (
-            ('sword', 44, 84), ('shield', 62, 84),
-            ('sword', 8, 142), ('shield', 26, 142),
-            ('shield', 77, 62), ('sword', 80, 84),
-        ):
-            panel.alpha_composite(equipment_icon(kind), (x, y))
-        for kind, x in (('health', 44), ('mana', 62), ('bread', 80)):
-            panel.alpha_composite(consumable_icon(kind), (x, 142))
-    bg = Image.new('RGBA', (256, 256), (40, 40, 40, 255))
-    bg.alpha_composite(panel)
-    return bg.convert('RGB').resize((1024, 1024), Image.Resampling.NEAREST)
+    gray_figure(panel)
+    for name, x, y in (
+        ('head', 8, 8), ('chest', 8, 26), ('legs', 8, 44),
+        ('feet', 8, 62), ('necklace', 98, 18), ('ring', 116, 18),
+        ('ring', 98, 36), ('charm', 116, 36),
+        ('gloves', 8, 84), ('belt', 26, 84),
+    ):
+        _paste_icon(panel, EQUIPMENT / f'{name}.png', x, y)
+    shield = ASSETS / 'minecraft/textures/gui/sprites/container/slot/shield.png'
+    for x, y in ((62, 84), (77, 62), (26, 142)):
+        _paste_icon(panel, shield, x, y)
+    sword = sword_icon()
+    for x, y in ((44, 84), (80, 84), (8, 142)):
+        panel.alpha_composite(sword, (x, y))
+    for name, x in (('combat_tonic', 44), ('antidote', 62), ('trail_ration', 80)):
+        _paste_icon(panel, PROFESSIONS / f'{name}.png', x, 142)
+    bg = Image.new('RGBA', (176, 166), '#292724')
+    bg.alpha_composite(panel.crop((0, 0, 176, 166)))
+    return bg.convert('RGB')
+
+
+def make_comparison(texture):
+    left = make_preview(texture).resize((528, 498), Image.Resampling.NEAREST)
+    # Wynn w zrzucie zajmuje ok. 352 px, czyli 2× natywny panel.
+    # Cofamy tę skalę i ponownie pokazujemy oba GUI w skali 3×.
+    reference = Image.open(WYNN).convert('RGB')
+    right = reference.crop((460, 176, 820, 524))
+    right = right.resize((180, 174), Image.Resampling.NEAREST)
+    right = right.resize((540, 522), Image.Resampling.NEAREST)
+    canvas = Image.new('RGB', (1100, 554), '#242321')
+    canvas.paste(left, (4, 28))
+    canvas.paste(right, (548, 28))
+    d = ImageDraw.Draw(canvas)
+    font = ImageFont.load_default()
+    d.text((4, 7), 'NASZE E  |  v7  |  x3', fill='#E5D1A5', font=font)
+    d.text((548, 7), 'WYNNCRAFT  |  klatka 17  |  skala podobna',
+           fill='#E5D1A5', font=font)
+    return canvas
+
 
 def main():
-    tex = make_texture()
-    tex.save(HERE / 'tekstura_v4.png')
-    make_preview(tex).save(HERE / 'podglad_v4.png')
-    make_preview(tex, True).save(HERE / 'podglad_v4_z_ikonami.png')
-    print('Zapisano teksturę 256×256 i podglądy 1024×1024; slotów 18×18:',
-          sum(map(len, slot_positions())), 'kolorów:', len(set(p for p in tex.get_flattened_data() if p[3])))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--suffix', default='', help='np. _iter1')
+    args = parser.parse_args()
+    texture = make_texture()
+    texture.save(HERE / f'tekstura_v7{args.suffix}.png')
+    make_comparison(texture).save(HERE / f'podglad_porownanie_v7{args.suffix}.png')
+    print('rozmiar:', texture.size,
+          'sloty:', sum(map(len, slot_positions())),
+          'barwy:', len({p for p in texture.get_flattened_data() if p[3]}))
+
 
 if __name__ == '__main__':
     main()

@@ -42,15 +42,15 @@ ikony:
   necklace: nexo:mmo_icon_necklace
   ring: nexo:mmo_icon_ring
   charm: nexo:mmo_icon_charm
-  pusta-prawa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_right_hand
-  pusta-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_left_hand
-  zapas-prawa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_spare_right
-  zapas-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_spare_left
-  zajeta-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_left_occupied
-  zajety-zapas-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_spare_left_occupied
-  mikstura-zycia: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_health_potion
-  mikstura-many: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_mana_potion
-  przedmiot-uzytkowy: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_utility
+  pusta-prawa: nexo:mmo_icon_right_hand
+  pusta-lewa: nexo:mmo_icon_left_hand
+  zapas-prawa: nexo:mmo_icon_spare_right
+  zapas-lewa: nexo:mmo_icon_spare_left
+  zajeta-lewa: nexo:mmo_icon_left_occupied
+  zajety-zapas-lewa: nexo:mmo_icon_spare_left_occupied
+  mikstura-zycia: nexo:mmo_icon_health_potion
+  mikstura-many: nexo:mmo_icon_mana_potion
+  przedmiot-uzytkowy: nexo:mmo_icon_utility
 nazwy-ikon:
   necklace: '§6Naszyjnik'
   ring-1: '§6Pierścień 1'
