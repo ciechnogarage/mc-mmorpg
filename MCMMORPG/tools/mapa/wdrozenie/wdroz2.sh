@@ -47,5 +47,6 @@ for i in $(seq 1 120); do sleep 5; [[ "$(stat -c %i "$LOG" 2>/dev/null)" != "$I0
 grep -q "Done (" "$LOG" || { echo "BLAD: serwer nie wstal w 10 min"; exit 6; }
 echo "== Mapa: $(grep -E '\[Mapa\] (Enabling|.*WARN|.*Brak)' "$LOG" | tail -3)"
 grep -E "\[Mapa\].*" "$LOG" | grep -iE "warn|error|brak|niepoprawn" || echo "== Mapa bez ostrzezen"
+for i in $(seq 1 30); do grep -q "Finished generating resourcepack" "$LOG" && break; sleep 2; done
 unzip -l "$P/Nexo/pack/pack.zip" | grep -c "assets/mapa/items/" | sed 's/^/== kafelki w pack.zip: /'
 echo "wdrozone; cofniecie: $KOPIA/cofnij.sh"
