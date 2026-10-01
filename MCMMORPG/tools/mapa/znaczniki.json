@@ -1,0 +1,104 @@
+[
+ {
+  "nazwa": "Start",
+  "x": 149,
+  "z": 197,
+  "kolor": "white",
+  "opis": [
+   "Tu zaczyna każda nowa postać."
+  ],
+  "ikona": "minecraft:campfire"
+ },
+ {
+  "nazwa": "Gromowładca",
+  "x": 28,
+  "z": -188,
+  "kolor": "red",
+  "opis": [
+   "Legendarny Chowaniec.",
+   "Walka dla zaprawionych drużyn."
+  ],
+  "ikona": "nexo:chw_gromowladca"
+ },
+ {
+  "nazwa": "Żelaznoróg",
+  "x": 580,
+  "z": 364,
+  "kolor": "red",
+  "opis": [
+   "Legendarny Chowaniec.",
+   "Walka dla zaprawionych drużyn."
+  ],
+  "ikona": "nexo:chw_zelaznorog"
+ },
+ {
+  "nazwa": "Szepczący Gaj",
+  "x": -236,
+  "z": -284,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Pędzik."
+  ],
+  "ikona": "nexo:chw_pedzik"
+ },
+ {
+  "nazwa": "Wilcze Ostępy",
+  "x": -188,
+  "z": 28,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Wilkor."
+  ],
+  "ikona": "nexo:chw_wilkor"
+ },
+ {
+  "nazwa": "Świetlisty Gąszcz",
+  "x": -188,
+  "z": 196,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Promiennik."
+  ],
+  "ikona": "nexo:chw_promiennik"
+ },
+ {
+  "nazwa": "Wietrzne Turnie",
+  "x": 28,
+  "z": 28,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Wichrzan."
+  ],
+  "ikona": "nexo:chw_wichrzan"
+ },
+ {
+  "nazwa": "Perłowa Zatoka",
+  "x": 196,
+  "z": 364,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Muszlik."
+  ],
+  "ikona": "nexo:chw_muszlik"
+ },
+ {
+  "nazwa": "Rdzawe Wąwozy",
+  "x": 412,
+  "z": 460,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Głazogrzbiet."
+  ],
+  "ikona": "nexo:chw_glazogrzbiet"
+ },
+ {
+  "nazwa": "Wygasłe Palenisko",
+  "x": 292,
+  "z": 580,
+  "kolor": "lime",
+  "opis": [
+   "Tu żyje: Iskrzyk."
+  ],
+  "ikona": "nexo:chw_iskrzyk"
+ }
+]

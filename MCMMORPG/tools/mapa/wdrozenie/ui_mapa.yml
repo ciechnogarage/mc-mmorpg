@@ -1,0 +1,10 @@
+UI_MAPA:
+  base:
+    material: FILLED_MAP
+    name: '<#E0C38C>&lMapa świata'
+    lore:
+      - '&7Weź do ręki (klawisz &f8&7),'
+      - '&7aby zobaczyć, gdzie jesteś.'
+      - ''
+      - '&fKlik &7— duża mapa ze znacznikami'
+    hide-enchants: true
