@@ -292,7 +292,11 @@ public final class SceneManager {
    * atrybuty MMOCore sa zerowe, wiec gracz dostawal "Nie mozesz tego uzyc — brakuje: Bieglosc: ..."
    * (zmierzone na klonie 30.09: rozdzka w rece = komunikat, pusty slot paska = brak). Przestawiamy tylko
    * wskaznik paska na pusty slot (ekwipunek nietkniety); wybrana potem postac i tak ustawia swoj slot.
-   * Pelny pasek (brak pustego slotu) = zostaje jak bylo.
+   * Pelny pasek: bron z komponentami wloczni (AnimacjeBroni: piercing_weapon, attack_range od 2 bl.,
+   * minimum_attack_charge) idzie do wolnego miejsca w plecaku — zawartosc ekwipunku ta sama, zmienia sie
+   * tylko pozycja. Klient z taka bronia robi pchniecie zamiast uderzenia w encje, wiec LPM w tarcze sceny
+   * nie dochodzil wcale (zgloszenie 01.10: wojownik, pelny pasek, topor w slocie 0). Inne przedmioty
+   * zostaja — stale sloty (Dziennik) odtwarza CoreTools, przeniesienie zrobiloby duplikat.
    */
   private static void emptyHand(SceneView view, Player player) {
     org.bukkit.inventory.PlayerInventory inv = player.getInventory();
@@ -307,6 +311,25 @@ public final class SceneManager {
         return;
       }
     }
+    if (!blocksSceneClick(held)) {
+      return;
+    }
+    for (int slot = 9; slot < 36; slot++) {
+      org.bukkit.inventory.ItemStack it = inv.getItem(slot);
+      if (it == null || it.getType().isAir()) {
+        inv.setItem(slot, held);
+        inv.setItem(inv.getHeldItemSlot(), null);
+        return;
+      }
+    }
+  }
+
+  /** Przedmiot, z ktorym LPM klienta nie jest zwyklym uderzeniem w encje. */
+  private static boolean blocksSceneClick(org.bukkit.inventory.ItemStack item) {
+    return item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.PIERCING_WEAPON)
+        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.KINETIC_WEAPON)
+        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.ATTACK_RANGE)
+        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.MINIMUM_ATTACK_CHARGE);
   }
 
   public void closeAll() {
