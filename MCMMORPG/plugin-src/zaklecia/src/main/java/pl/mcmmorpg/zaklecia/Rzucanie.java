@@ -22,6 +22,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -40,12 +43,15 @@ final class Rzucanie implements Listener {
     long oczekujeLpm = -1;
     boolean cofnijPrzelacznik, cofnijRazem;
     long cofnijOd = -99;
+    double oslonaP, oslonaL;
+    boolean oplaconeP, oplaconeL;
   }
 
   private final Zaklecia plugin;
   private final Ksiega ksiega;
   private final Strumien strumien;
   private final Skille skille;
+  private final RzutyOdrzutowe odrzutowe;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
   private final Map<UUID, Integer> generacja = new HashMap<>();
   private final Map<UUID, Long> ppmPrawa = new HashMap<>(), ppmLewa = new HashMap<>();
@@ -65,6 +71,7 @@ final class Rzucanie implements Listener {
     this.plugin = plugin;
     this.ksiega = ksiega;
     this.skille = new Skille(plugin);
+    this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille);
     this.strumien = new Strumien(skille);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
@@ -85,11 +92,11 @@ final class Rzucanie implements Listener {
 
   /** Wylaczenie pluginu: zdejmij strumienie i przejsciowe atrybuty. */
   void wylacz() {
-    strumien.stopWszystkie(); rzucajacy.clear();
+    odrzutowe.wylacz(); strumien.stopWszystkie(); rzucajacy.clear();
     for (Player p : Bukkit.getOnlinePlayers()) { atrybutyLpm(p, false); ruch(p, false); }
   }
 
-  boolean rzuca(Player p) { return rzucajacy.containsKey(p.getUniqueId()); }
+  boolean rzuca(Player p) { return rzucajacy.containsKey(p.getUniqueId()) || odrzutowe.rzuca(p); }
 
   boolean przelacznikLewej(Player p) {
     Stan s = rzucajacy.get(p.getUniqueId());
@@ -99,12 +106,18 @@ final class Rzucanie implements Listener {
   String stanDloni(Player p, boolean prawa) {
     Ksiega.Zaklecie z = ksiega.w(prawa ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand());
     if (z == null) return "nic";
+    if (z.odrzutowe()) {
+      String faza = odrzutowe.stan(p, prawa);
+      return faza == null ? "gotowa" : faza;
+    }
     Stan s = rzucajacy.get(p.getUniqueId());
     return s != null && (prawa ? s.prawa : s.lewa) ? "rzuca" : "gotowa";
   }
 
   /** Czy dana dlon jest aktywna (w trakcie rzucania); poza rzucaniem — czy trzyma zaklecie. Dla warunkow MM. */
   boolean aktywna(Player p, boolean prawa) {
+    Ksiega.Zaklecie z = zak(p, prawa);
+    if (z != null && z.odrzutowe()) return odrzutowe.aktywna(p, prawa);
     Stan s = rzucajacy.get(p.getUniqueId());
     if (s == null) return ksiega.w(prawa ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand()) != null;
     return prawa ? s.prawa : s.lewa;
@@ -161,11 +174,19 @@ final class Rzucanie implements Listener {
     if (e.getHand() != EquipmentSlot.HAND || !trybLpm(e.getPlayer())) return;
     if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
       e.setCancelled(true);
+      Ksiega.Zaklecie lewa = zak(e.getPlayer(), false);
+      if (lewa != null && lewa.odrzutowe() && (wybor == null || !wybor.otwarty(e.getPlayer())))
+        odrzutowe.lpm(e.getPlayer(), lewa, rowno());
     } else if (e.getAction() == Action.LEFT_CLICK_AIR && (wybor == null || !wybor.otwarty(e.getPlayer()))) {
       // LPM dziala od razu (naraz z PPM = obie w tym samym ticku). Klawisz Q tez macha reka = LEFT_CLICK_AIR, a MenuKey
       // woła "zaklecia q" chwile pozniej — wtedy oznaczQ cofa skutek tego klikniecia (stan sprzed klikniecia).
       Player p = e.getPlayer();
       if (swiezeQ(p)) return;
+      Ksiega.Zaklecie lewa = zak(p, false);
+      if (lewa != null && lewa.odrzutowe()) {
+        odrzutowe.lpm(p, lewa, rowno());
+        return;
+      }
       Stan s = rzucajacy.computeIfAbsent(p.getUniqueId(), k -> new Stan());
       s.cofnijPrzelacznik = s.przelacznik; s.cofnijRazem = s.razem; s.cofnijOd = teraz;
       boolean bylaPrawa = prawaTeraz(p);
@@ -177,6 +198,7 @@ final class Rzucanie implements Listener {
   static final int Q_OKNO = 3;
   private final Map<UUID, Long> ostatnieQ = new HashMap<>();
   void oznaczQ(Player p) {
+    odrzutowe.przerwij(p);
     ostatnieQ.put(p.getUniqueId(), teraz);
     Stan s = rzucajacy.get(p.getUniqueId());
     if (s != null && teraz - s.cofnijOd <= Q_OKNO + 1) {   // machniecie bylo od Q, nie od LPM: cofnij jego skutek
@@ -211,9 +233,16 @@ final class Rzucanie implements Listener {
     if (!trybLpm(p)) return;
     ostatniPpm.put(p.getUniqueId(), teraz);
     if (wybor != null && wybor.otwarty(p)) { wybor.wcisnietoPpm(p); return; }
+    Ksiega.Zaklecie prawa = zak(p, true);
+    if (prawa != null && prawa.odrzutowe()) {
+      odrzutowe.ppm(p, prawa, true, rowno());
+      return;
+    }
     if (ksiega.w(p.getInventory().getItemInMainHand()) == null) {
       // Prawa pusta, zaklecie tylko w lewej: trzymany PPM prowadzi LEWA (puszczenie PPM serwer widzi zawsze).
       if (ksiega.w(p.getInventory().getItemInOffHand()) != null) {
+        Ksiega.Zaklecie lewa = zak(p, false);
+        if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, false, rowno()); return; }
         ppmLewa.put(p.getUniqueId(), teraz);
         rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
       }
@@ -245,6 +274,8 @@ final class Rzucanie implements Listener {
       else ostatniPpm.put(p.getUniqueId(), teraz);
     } else if (e.getHand() == EquipmentSlot.OFF_HAND
         && ksiega.w(e.getItem()) != null && (wybor == null || !wybor.otwarty(p))) {
+      Ksiega.Zaklecie lewa = ksiega.w(e.getItem());
+      if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, false, rowno()); return; }
       ppmLewa.put(p.getUniqueId(), teraz);
       rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
     }
@@ -252,6 +283,12 @@ final class Rzucanie implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void animacja(PlayerAnimationEvent e) { if (trybLpm(e.getPlayer())) e.setCancelled(true); }
+
+  // Uwaga: NIE traktowac EntityDamageByEntityEvent z graczem jako LPM — obrazenia zaklec (mmodamage) tez maja gracza
+  // jako sprawce: anulowalo to trafienia i odpalalo kolejny strzal z lewej (petla). Wrecz w trybie zaklec i tak nie ma (zasieg istot 0).
+
+  @EventHandler
+  public void smierc(PlayerDeathEvent e) { stop(e.getPlayer(), false); }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void zmianaSlotu(PlayerItemHeldEvent e) {
@@ -264,9 +301,11 @@ final class Rzucanie implements Listener {
     UUID u = e.getPlayer().getUniqueId();
     rzucajacy.remove(u); generacja.remove(u); ppmPrawa.remove(u); ppmLewa.remove(u); ostatniPpm.remove(u); ostatnieQ.remove(u);
     strumien.stop(e.getPlayer()); atrybutyLpm(e.getPlayer(), false); ruch(e.getPlayer(), false);
+    odrzutowe.wyjscie(e.getPlayer());
   }
 
   void stop(Player p, boolean dzwiek) {
+    odrzutowe.przerwij(p);
     UUID u = p.getUniqueId();
     generacja.merge(u, 1, Integer::sum); // uniewaznij LPM oczekujacy na odsiew Q
     Stan s = rzucajacy.get(u);
@@ -288,12 +327,12 @@ final class Rzucanie implements Listener {
   }
 
   private boolean prawaTeraz(Player p) {
-    if (ksiega.w(p.getInventory().getItemInMainHand()) == null) return false;
+    if (zak(p, true) == null || !zak(p, true).koncentracja()) return false;
     return trybLpm(p) && swiezy(ppmPrawa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
   }
 
   private boolean lewaTeraz(Player p, Stan s, boolean pr) {
-    if (ksiega.w(p.getInventory().getItemInOffHand()) == null) return false;
+    if (zak(p, false) == null || !zak(p, false).koncentracja()) return false;
     if (!trybLpm(p)) return swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
     boolean ppmTrzymaLewa = ksiega.w(p.getInventory().getItemInMainHand()) == null
         && swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
@@ -304,7 +343,10 @@ final class Rzucanie implements Listener {
   double koszt(Player p, Stan s) {
     Ksiega.Zaklecie a = s.prawa ? ksiega.w(p.getInventory().getItemInMainHand()) : null;
     Ksiega.Zaklecie b = s.lewa ? ksiega.w(p.getInventory().getItemInOffHand()) : null;
-    if (a != null && b != null && a.id().equals(b.id())) return a.manaZaTik() * ksiega.podwojneMnoznik;
+    if (a != null && b != null && a.id().equals(b.id()))
+      return a.manaZaTik() * (a.typ().equals("koncentracja") && !a.cel().equals("siebie")
+          && !plugin.getConfig().contains("zaklecia." + a.id() + ".oburacz.mana")
+          ? ksiega.podwojneMnoznik : a.manaOburacz());
     return (a == null ? 0 : a.manaZaTik()) + (b == null ? 0 : b.manaZaTik());
   }
 
@@ -356,6 +398,7 @@ final class Rzucanie implements Listener {
 
   private void tick() {
     teraz++;
+    odrzutowe.tick(teraz, plugin.getConfig().getInt("ppm-tolerancja", 6), rowno());
     for (var it = rzucajacy.entrySet().iterator(); it.hasNext(); ) {
       var wpis = it.next();
       Stan s = wpis.getValue();
@@ -364,7 +407,7 @@ final class Rzucanie implements Listener {
       try {
         boolean tryb = trybLpm(p);
         boolean pr = prawaTeraz(p);
-        if (!tryb || ksiega.w(p.getInventory().getItemInOffHand()) == null) {
+        if (!tryb || zak(p, false) == null || !zak(p, false).koncentracja()) {
           s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
         }
         if (!pr && s.razem) {
@@ -391,11 +434,17 @@ final class Rzucanie implements Listener {
           Ksiega.Zaklecie nowaP = pr ? zak(p, true) : null;
           Ksiega.Zaklecie nowaL = lw ? zak(p, false) : null;
           log(p, "dlonie: prawa=" + pr + " lewa=" + lw);
+          if (pr != s.prawa) s.oplaconeP = false;
+          if (lw != s.lewa) s.oplaconeL = false;
           s.prawa = pr; s.lewa = lw;
+          if (!pr) s.oslonaP = 0;
+          if (!lw) s.oslonaL = 0;
           ruch(p, true);
           double z = zasieg(p, s);
-          strumien.ustaw(p, true, pr ? ksiega.w(p.getInventory().getItemInMainHand()) : null, z);
-          strumien.ustaw(p, false, lw ? ksiega.w(p.getInventory().getItemInOffHand()) : null, z);
+          strumien.ustaw(p, true, pr && zak(p, true).typ().equals("koncentracja")
+              && !zak(p, true).cel().equals("siebie") ? zak(p, true) : null, z);
+          strumien.ustaw(p, false, lw && zak(p, false).typ().equals("koncentracja")
+              && !zak(p, false).cel().equals("siebie") ? zak(p, false) : null, z);
           przejscie(p, staraP, staraL, nowaP, nowaL);
         }
         int n = s.n++;
@@ -413,10 +462,21 @@ final class Rzucanie implements Listener {
             continue;
           }
           d.giveMana(-koszt, ResourceUpdateReason.SKILL);
+          if (prawa != null) s.oplaconeP = true;
+          if (lewa != null) s.oplaconeL = true;
           tikZaklec(p, prawa, lewa);
-          List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
-          if (!cele.isEmpty()) trafienia(p, cele, prawa, lewa);
+          if ((prawa != null && prawa.cel().equals("stozek")) || (lewa != null && lewa.cel().equals("stozek"))) {
+            List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
+            if (!cele.isEmpty()) trafienia(p, cele,
+                prawa != null && prawa.cel().equals("stozek") ? prawa : null,
+                lewa != null && lewa.cel().equals("stozek") ? lewa : null);
+          }
         }
+        if (prawa != null && prawa.typ().equals("tarcza") && s.oplaconeP) s.oslonaP = Math.min(
+            prawa.sila() * (podwojne(p, s) ? prawa.efektOburacz() : 1),
+            s.oslonaP + prawa.sila() / prawa.narastanie());
+        if (lewa != null && lewa.typ().equals("tarcza") && !toSamo(prawa, lewa) && s.oplaconeL)
+          s.oslonaL = Math.min(lewa.sila(), s.oslonaL + lewa.sila() / lewa.narastanie());
       } catch (Throwable t) {   // np. nieaktualne dane MMOCore po szybkim przelogowaniu: gasimy tylko tego gracza
         s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
         it.remove(); strumien.stop(p); ruch(p, false);
@@ -455,6 +515,35 @@ final class Rzucanie implements Listener {
     }
     if (prawa != null) skille.cele(p, prawa.skille().reka(prawa.skille().traf(), true), cele);
     if (lewa != null) skille.cele(p, lewa.skille().reka(lewa.skille().traf(), false), cele);
+  }
+
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  public void obrazenia(EntityDamageEvent e) {
+    if (!(e.getEntity() instanceof Player p)) return;
+    Stan s = rzucajacy.get(p.getUniqueId());
+    if (s == null || e.getDamage() <= 0) return;
+    Ksiega.Zaklecie zp = s.prawa ? zak(p, true) : null;
+    Ksiega.Zaklecie zl = s.lewa ? zak(p, false) : null;
+    if (zp != null && zp.typ().equals("tarcza") && s.oslonaP > 0) {
+      double blok = Math.min(e.getDamage() * Math.max(0, Math.min(1, zp.redukcja())), s.oslonaP);
+      s.oslonaP -= blok; e.setDamage(Math.max(0, e.getDamage() - blok));
+      if (s.oslonaP <= 0) pekla(p, s, zp, true, toSamo(zp, zl));
+    }
+    if (zl != null && zl.typ().equals("tarcza") && !toSamo(zp, zl) && s.oslonaL > 0) {
+      double blok = Math.min(e.getDamage() * Math.max(0, Math.min(1, zl.redukcja())), s.oslonaL);
+      s.oslonaL -= blok; e.setDamage(Math.max(0, e.getDamage() - blok));
+      if (s.oslonaL <= 0) pekla(p, s, zl, false, false);
+    }
+  }
+
+  private void pekla(Player p, Stan s, Ksiega.Zaklecie z, boolean prawa, boolean obie) {
+    skill(p, "Zak_" + Character.toUpperCase(z.id().charAt(0)) + z.id().substring(1) + "_Peka");
+    Ksiega.Zaklecie staraP = s.prawa ? zak(p, true) : null;
+    Ksiega.Zaklecie staraL = s.lewa ? zak(p, false) : null;
+    if (prawa) { s.prawa = false; s.oslonaP = 0; ppmPrawa.remove(p.getUniqueId()); }
+    else { s.lewa = false; s.oslonaL = 0; s.przelacznik = false; ppmLewa.remove(p.getUniqueId()); }
+    if (obie) { s.lewa = false; s.oslonaL = 0; s.razem = false; ppmLewa.remove(p.getUniqueId()); }
+    przejscie(p, staraP, staraL, s.prawa ? zak(p, true) : null, s.lewa ? zak(p, false) : null);
   }
 
   /** Zar na dloni, gdy zaklecie jest w rece, ale gracz nie rzuca (domyslnie wylaczony — modele animuja sie same). */

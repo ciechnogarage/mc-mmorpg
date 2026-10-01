@@ -102,6 +102,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     String reka = a[3].toLowerCase(Locale.ROOT);
     if (!reka.equals("prawa") && !reka.equals("lewa")) { s.sendMessage("Reka: prawa albo lewa"); return true; }
     boolean prawa = reka.equals("prawa");
+    rzucanie.stop(p, false);
     nosnik.komunikat(p, nosnik.przypisz(p, id, prawa));
     return true;
   }

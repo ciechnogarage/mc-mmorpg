@@ -1,24 +1,73 @@
 # Zaklecia w dloni (Skyrim). Plugin prowadzi rzucanie i wyswietla strumien, MythicMobs odtwarza efekty oraz zadaje obrazenia.
 #
-# id zaklecia -> przedmiot MythicMobs (nosnik w dloni), koszt many za TIK (tik = 10 tickow = 0,5 s), nazwa.
+# id zaklecia -> typ, przedmiot MythicMobs, koszt (mana-za-tik = 0,5 s lub mana jednorazowo), nazwa.
 zaklecia:
   plomienie:
+    typ: koncentracja
+    cel: stozek
+    oburacz: {efekt: 2.2, mana: 2.8}
     przedmiot: ZAKLECIE_PLOMIENIE
-    mana-za-tik: 2.0
+    mana-za-tik: 0.5   # TEST
     nazwa: 'Płomienie'
     skille:
       obraz: ''
       dlon: ''
   odmrozenie:
+    typ: koncentracja
+    cel: stozek
+    oburacz: {efekt: 2.2, mana: 2.8}
     przedmiot: ZAKLECIE_ODMROZENIE
-    mana-za-tik: 2.5
+    mana-za-tik: 0.5   # TEST
     nazwa: 'Odmrożenie'
     skille:
       obraz: ''
       dlon: ''
 
-# Podwojne rzucanie (TO SAMO zaklecie w obu dloniach): koszt = koszt jednej reki x mnoznik.
-# Dwie osobne rece kosztowalyby x2; podwojne jest drozsze, a MythicMobs daje mu ~2,2x obrazen (Traf2).
+  ognisty_pocisk:
+    typ: ladowany
+    przedmiot: ZAKLECIE_OGNISTY_POCISK
+    nazwa: 'Ognisty pocisk'
+    czas-ladowania-t: 8
+    mana: 3
+    oburacz: {efekt: 2.2, mana: 2.8}
+  kula_ognia:
+    typ: ladowany
+    przedmiot: ZAKLECIE_KULA_OGNIA
+    nazwa: 'Kula ognia'
+    czas-ladowania-t: 14
+    mana: 5
+    oburacz: {efekt: 2.2, mana: 2.8}
+  leczenie:
+    typ: koncentracja
+    cel: siebie
+    przedmiot: ZAKLECIE_LECZENIE
+    nazwa: 'Leczenie'
+    mana-za-tik: 0.5
+    oburacz: {efekt: 2.2, mana: 2.8}
+  runa_ognia:
+    typ: runa
+    przedmiot: ZAKLECIE_RUNA_OGNIA
+    nazwa: 'Runa ognia'
+    czas-ladowania-t: 16
+    mana: 6
+    zasieg: 8
+    promien: 2
+    limit-aktywnych: 1
+    czas-zycia-t: 1200
+    oburacz: {efekt: 2.2, mana: 2.8}
+  oslona:
+    typ: tarcza
+    cel: siebie
+    przedmiot: ZAKLECIE_OSLONA
+    nazwa: 'Osłona'
+    mana-za-tik: 0.5
+    sila: 40
+    redukcja: 0.6
+    narastanie-t: 10
+    oburacz: {efekt: 2.2, mana: 2.8}
+
+# Podwojne rzucanie (to samo zaklecie w obu dloniach): mnozniki w oburacz wpisu.
+# Ponizsza wartosc jest zgodnoscia wsteczna dla starszych wpisow bez oburacz.mana.
 podwojne-mnoznik-many: 2.5
 
 # Kazde zaklecie ma wlasne skille w MythicMobs/skills/zaklecia/<id>.yml.

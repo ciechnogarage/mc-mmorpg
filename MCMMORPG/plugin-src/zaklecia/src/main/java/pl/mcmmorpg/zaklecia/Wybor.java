@@ -141,6 +141,8 @@ final class Wybor implements Listener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void uderzenie(EntityDamageByEntityEvent e) {
     if (!(e.getDamager() instanceof Player p) || !otwarty(p)) return;
+    // tylko prawdziwy cios wrecz; obrazenia zaklec (mmodamage) tez maja gracza jako sprawce
+    if (e.getCause() != org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK || rzucanie.trybLpm(p)) return;
     e.setCancelled(true); wcisnietoLpm(p);
   }
 
