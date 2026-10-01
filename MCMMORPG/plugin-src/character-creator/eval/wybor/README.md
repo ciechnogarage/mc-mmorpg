@@ -41,3 +41,9 @@ Wlasciciel: "jak ktos je usuwa, to je usuwa" — usuwanie jest od razu na zawsze
 sprawdza: limit pod A/D, Zarzadzaj z licznikiem, usuniecie na zawsze bez slowa "kosz", odswiezenie sceny po usunieciu
 wszystkich, pakiet kamery po spawnie encji-kamery. Wynik na klonie: 13/13. W `scen.js` czesc "Zarzadzaj -> kosz -> przywroc"
 (od "potwierdzenie przeniesienia do kosza") jest NIEAKTUALNA — do przepisania przy nastepnej zmianie wyboru.
+
+## 2026-10-01 wieczor: LPM w kreatorze znow martwy (Zaklecia v2.6+)
+`widz.js` — reka KLIENTA (bot.heldItem) probkowana co 50 ms w scenie, gdy postac ma zaklecie w lewej: Zaklecia wkladaly
+"pusta dlon" z attack_range min 64 (klient nie trafia tarczy 1,4 bl.). Bot sam tego nie odczuje (mineflayer nie liczy
+attack_range) — dlatego mierzymy reke, a nie klik. Jary sprzed poprawki: 80/80 probek z debug_stick; po: 10/10 PASS.
+Wymaga Zaklec z regula widza (galaz zaklecia-widz) — sam kreator przegrywa wyscig z wkladaniem co tick.
