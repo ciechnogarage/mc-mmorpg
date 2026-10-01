@@ -59,6 +59,8 @@ public final class SceneView {
   boolean lastJump;
   boolean lastRight;
   boolean closed;
+  /** Ostrzezenie o reki, ktorej nie da sie oproznic, juz w logu — raz na scene. */
+  boolean handWarned;
   Entity subjectEntity;
   /** Glowa postaci: biezace i docelowe odchylenie od patrzenia w kamere (stopnie). */
   float headYaw;

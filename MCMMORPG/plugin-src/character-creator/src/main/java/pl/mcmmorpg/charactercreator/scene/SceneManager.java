@@ -283,53 +283,98 @@ public final class SceneManager {
     // Slotu paska NIE przywracamy: miedzy zamknieciem sceny a wczytaniem postaci gracz nie ma atrybutow
     // MMOCore, a reszta klikniecia "Graj" przychodzi wlasnie wtedy — z bronia w rece znowu byl komunikat
     // o bieglosci (zmierzone). Wybrana postac i tak ustawia swoj slot z profilu MMOProfiles.
+    sceneReach(player, false);
     reveal(player);
   }
 
   /**
-   * Pusta reka na czas sceny: gracz bez wybranej postaci trzyma przedmiot ostatniej postaci, a MMOItems
-   * sprawdza wymagania broni przy KAZDYM kliknieciu — takze LPM "Graj" w scenie. Bez wczytanej postaci
-   * atrybuty MMOCore sa zerowe, wiec gracz dostawal "Nie mozesz tego uzyc — brakuje: Bieglosc: ..."
-   * (zmierzone na klonie 30.09: rozdzka w rece = komunikat, pusty slot paska = brak). Przestawiamy tylko
-   * wskaznik paska na pusty slot (ekwipunek nietkniety); wybrana potem postac i tak ustawia swoj slot.
-   * Pelny pasek: bron z komponentami wloczni (AnimacjeBroni: piercing_weapon, attack_range od 2 bl.,
-   * minimum_attack_charge) idzie do wolnego miejsca w plecaku — zawartosc ekwipunku ta sama, zmienia sie
-   * tylko pozycja. Klient z taka bronia robi pchniecie zamiast uderzenia w encje, wiec LPM w tarcze sceny
-   * nie dochodzil wcale (zgloszenie 01.10: wojownik, pelny pasek, topor w slocie 0). Inne przedmioty
-   * zostaja — stale sloty (Dziennik) odtwarza CoreTools, przeniesienie zrobiloby duplikat.
+   * LPM w scenie = klient uderza tarcze (Interaction 1,4 bl. przed kamera). Wszystko, co zmienia uderzenie
+   * klienta, zabiera LPM bez sladu na serwerze — dlatego na czas sceny reka jest PUSTA, a zasieg istot
+   * co najmniej domyslny. Sprawdzone 01.10:
+   * <ul>
+   *   <li>AnimacjeBroni daje wiekszosci broni minimum_attack_charge, attack_range (od 2 bl. — tarcza jest
+   *       blizej), halabardzie/lancy piercing_weapon (pchniecie zamiast uderzenia) — wojownik z toporem;</li>
+   *   <li>MMOItems sprawdza wymagania broni przy kliknieciu — bez wczytanej postaci "Nie mozesz tego uzyc";</li>
+   *   <li>Zaklecia: zaklecie w lewej i pusta prawa = zasieg istot 0 (tryb LPM) — kompensujemy modyfikatorem.</li>
+   * </ul>
+   * Ekwipunek przy wejsciu dochodzi PO otwarciu sceny, wiec to idzie tez co 10 tickow. Kolejnosc: pusty slot
+   * paska; inaczej przedmiot z paska do wolnego miejsca plecaka (zawartosc ta sama, inna pozycja). Nie ruszamy
+   * przedmiotow pilnowanych przez inne pluginy: slot 8 (Dziennik, CoreTools wstawia go do PUSTEGO slotu 8 —
+   * przeniesienie = duplikat), slot 18 jako cel (Sakwa), nosnik zaklecia (Zaklecia trzymaja go w dloni).
+   * Nic sie nie da (pelny ekwipunek) = raz WARN w logu, zeby zgloszenie "LPM nie dziala" mialo slad.
    */
-  private static void emptyHand(SceneView view, Player player) {
+  private void emptyHand(SceneView view, Player player) {
+    sceneReach(player, true);
     org.bukkit.inventory.PlayerInventory inv = player.getInventory();
-    org.bukkit.inventory.ItemStack held = inv.getItemInMainHand();
-    if (held == null || held.getType().isAir()) {
+    if (isEmpty(inv.getItemInMainHand())) {
       return;
     }
     for (int slot = 0; slot < 9; slot++) {
-      org.bukkit.inventory.ItemStack it = inv.getItem(slot);
-      if (it == null || it.getType().isAir()) {
+      if (isEmpty(inv.getItem(slot))) {
         inv.setHeldItemSlot(slot);
         return;
       }
     }
-    if (!blocksSceneClick(held)) {
+    int free = -1;
+    for (int slot = 9; slot < 36 && free < 0; slot++) {
+      if (slot != SAKWA_SLOT && isEmpty(inv.getItem(slot))) {
+        free = slot;
+      }
+    }
+    int source = movable(inv, inv.getHeldItemSlot()) ? inv.getHeldItemSlot() : -1;
+    for (int slot = 0; slot < 9 && source < 0; slot++) {
+      if (movable(inv, slot)) {
+        source = slot;
+      }
+    }
+    if (free >= 0 && source >= 0) {
+      inv.setItem(free, inv.getItem(source));
+      inv.setItem(source, null);
+      inv.setHeldItemSlot(source);
       return;
     }
-    for (int slot = 9; slot < 36; slot++) {
-      org.bukkit.inventory.ItemStack it = inv.getItem(slot);
-      if (it == null || it.getType().isAir()) {
-        inv.setItem(slot, held);
-        inv.setItem(inv.getHeldItemSlot(), null);
-        return;
-      }
+    if (!view.handWarned) {
+      view.handWarned = true;
+      logger.warning("Scena: " + player.getName() + " ma w rece " + inv.getItemInMainHand().getType()
+          + " i nie da sie jej oproznic (pelny ekwipunek) — LPM w scenie moze nie dzialac.");
     }
   }
 
-  /** Przedmiot, z ktorym LPM klienta nie jest zwyklym uderzeniem w encje. */
-  private static boolean blocksSceneClick(org.bukkit.inventory.ItemStack item) {
-    return item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.PIERCING_WEAPON)
-        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.KINETIC_WEAPON)
-        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.ATTACK_RANGE)
-        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.MINIMUM_ATTACK_CHARGE);
+  private static final int DZIENNIK_SLOT = 8;
+  private static final int SAKWA_SLOT = 18;
+  private static final double MIN_REACH = 3.0;
+  private static final org.bukkit.NamespacedKey REACH_KEY = new org.bukkit.NamespacedKey("charactercreator", "scena_zasieg");
+  private static final org.bukkit.NamespacedKey NOSNIK_KEY = new org.bukkit.NamespacedKey("zaklecia", "nosnik");
+
+  private static boolean isEmpty(org.bukkit.inventory.ItemStack it) {
+    return it == null || it.getType().isAir();
+  }
+
+  private static boolean movable(org.bukkit.inventory.PlayerInventory inv, int slot) {
+    org.bukkit.inventory.ItemStack it = inv.getItem(slot);
+    return slot != DZIENNIK_SLOT && !isEmpty(it)
+        && !(it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(NOSNIK_KEY));
+  }
+
+  /** Zasieg istot co najmniej {@link #MIN_REACH} na czas sceny, cokolwiek go obniza (Zaklecia, przedmioty). */
+  private static void sceneReach(Player player, boolean on) {
+    org.bukkit.attribute.AttributeInstance ai = player.getAttribute(org.bukkit.attribute.Attribute.ENTITY_INTERACTION_RANGE);
+    if (ai == null) {
+      return;
+    }
+    org.bukkit.attribute.AttributeModifier ours = ai.getModifier(REACH_KEY);
+    double add = ours == null ? 0 : ours.getAmount();
+    double need = on ? Math.max(0, MIN_REACH - (ai.getValue() - add)) : 0;
+    if (Math.abs(need - add) < 1e-6) {
+      return;
+    }
+    if (ours != null) {
+      ai.removeModifier(REACH_KEY);
+    }
+    if (need > 0) {
+      ai.addTransientModifier(new org.bukkit.attribute.AttributeModifier(REACH_KEY, need,
+          org.bukkit.attribute.AttributeModifier.Operation.ADD_NUMBER, org.bukkit.inventory.EquipmentSlotGroup.ANY));
+    }
   }
 
   public void closeAll() {
