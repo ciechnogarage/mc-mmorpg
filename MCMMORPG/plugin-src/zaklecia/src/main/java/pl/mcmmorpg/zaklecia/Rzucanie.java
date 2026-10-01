@@ -198,7 +198,15 @@ final class Rzucanie implements Listener {
     if (!trybLpm(p)) return;
     ostatniPpm.put(p.getUniqueId(), teraz);
     if (wybor != null && wybor.otwarty(p)) { wybor.wcisnietoPpm(p); return; }
-    if (ksiega.w(p.getInventory().getItemInMainHand()) != null) {
+    if (ksiega.w(p.getInventory().getItemInMainHand()) == null) {
+      // Prawa pusta, zaklecie tylko w lewej: trzymany PPM prowadzi LEWA (puszczenie PPM serwer widzi zawsze).
+      if (ksiega.w(p.getInventory().getItemInOffHand()) != null) {
+        ppmLewa.put(p.getUniqueId(), teraz);
+        rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
+      }
+      return;
+    }
+    {
       ppmPrawa.put(p.getUniqueId(), teraz);
       Stan s = rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
       if (s.oczekujeLpm >= 0 && teraz - s.oczekujeLpm <= rowno() && !swiezeQ(p)) {
@@ -273,7 +281,9 @@ final class Rzucanie implements Listener {
   private boolean lewaTeraz(Player p, Stan s, boolean pr) {
     if (ksiega.w(p.getInventory().getItemInOffHand()) == null) return false;
     if (!trybLpm(p)) return swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
-    return s.przelacznik || (s.razem && pr);
+    boolean ppmTrzymaLewa = ksiega.w(p.getInventory().getItemInMainHand()) == null
+        && swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
+    return s.przelacznik || (s.razem && pr) || ppmTrzymaLewa;
   }
 
   /** Koszt many za tik z aktywnych dloni; to samo zaklecie w obu = jedna reka x mnoznik podwojnego. */
