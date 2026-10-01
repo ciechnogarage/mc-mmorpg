@@ -1037,6 +1037,11 @@ public final class SceneManager {
       if (player.getGameMode() != GameMode.SPECTATOR) {
         player.setGameMode(GameMode.SPECTATOR);
       }
+      // Reka tez tu, nie tylko przy otwarciu: przy wejsciu na serwer ekwipunek postaci dochodzi PO
+      // otwarciu sceny (zmierzone na klonie 01.10: przy open() reka pusta, kilka tickow pozniej topor).
+      if (now % 10 == 0) {
+        emptyHand(view, player);
+      }
       if (now >= view.targetReadyTick) {
         aimCamera(view);
         refreshCamera(view, player, now);
