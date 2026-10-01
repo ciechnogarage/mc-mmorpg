@@ -12,13 +12,17 @@ import java.util.List;
 /**
  * Sklada tekst paska ze znakow czcionki `paskimobow:pasek`. Kody i szerokosci = generuj.py (zrodlo prawdy).
  * Szerokosc znaku bitmapowego = szerokosc obrazka + 1, wiec kursor liczymy sami i dosuwamy spacjami U+F000+dx+128.
+ * Znaki NIE moga na siebie zachodzic (klient rysuje je w nieustalonej kolejnosci - cyfra na tle wychodzila
+ * przyciemniona), dlatego pasek i plakietka to kafle stykajace sie krawedziami, a liczby HP stoja obok paska.
  */
 final class Wyglad {
   static final Key FONT = Key.key("paskimobow", "pasek");
 
   static final int BAR_W = 50;
-  static final char CYFRA_PLAKIETKI = '', PLAKIETKA = '', RAMKA = '', RZADKOSC = '';
-  static final char DUCH = '', HP = '', CYFRA_HP = '', UKOSNIK_HP = '', STATUS = '';
+  static final char CYFRA_PLAKIETKI = '\uE000', PLAKIETKA_L = '\uE010', PLAKIETKA_P = '\uE011';
+  static final char RAMKA_L = '\uE020', RAMKA_P = '\uE021', RZADKOSC = '\uE030';
+  static final char DUCH = '\uE100', HP = '\uE200', TLO = '\uE500', CYFRA_HP = '\uE300', UKOSNIK_HP = '\uE30A';
+  static final char STATUS = '\uE400';
   static final int SPACJA = 0xF000;
 
   /** Indeksy jak STATUSY w generuj.py. */
@@ -41,6 +45,12 @@ final class Wyglad {
       if (!kolor.equals(kolorBufora)) zrzuc(kolor);
       bufor.append(c);
       x += szerokosc;
+    }
+
+    /** Kafel o szerokosci w: znak + spacja -1, wiec nastepny kafel styka sie bez szczeliny. */
+    void kafel(char c, int w, TextColor kolor) {
+      znak(c, w + 1, kolor);
+      doX(x - 1);
     }
 
     void doX(int cel) {
@@ -92,34 +102,33 @@ final class Wyglad {
 
   private static Component liniaPaska(Rzadkosc r, int poziom, double hp, double duch, double max,
                                       boolean pasek, boolean liczby) {
-    Linia l = new Linia();
     String cyfry = String.valueOf(Math.max(0, Math.min(999, poziom)));
-    int n = cyfry.length();
-    int szerPlakietki = 4 * n + 4;
-    l.znak((char) (PLAKIETKA + n), szerPlakietki, r.kolor());
-    l.doX(2);
-    for (char c : cyfry.toCharArray()) l.znak((char) (CYFRA_PLAKIETKI + (c - '0')), 4, CIEMNY);
+    int lewa = 2 + 4 * cyfry.length() + 1 + ODSTEP;          // plakietka + odstep
+    String t = (int) Math.ceil(hp) + "/" + Math.round(max);
+    int prawa = pasek && liczby ? 3 + 4 * t.length() : 0;    // odstep + liczby
+    Linia l = new Linia();
+    if (pasek) l.doX(Math.max(0, prawa - lewa));            // pasek na srodku nad mobem
+    int x0 = l.x;
+    l.kafel(PLAKIETKA_L, 2, r.kolor());
+    for (char c : cyfry.toCharArray()) l.kafel((char) (CYFRA_PLAKIETKI + (c - '0')), 4, r.kolor());
+    l.kafel(PLAKIETKA_P, 1, r.kolor());
     if (!pasek) return l.gotowa();
-    int bx = szerPlakietki + ODSTEP;
-    l.doX(bx);
-    l.znak(RAMKA, BAR_W + 3, NamedTextColor.WHITE);
+    l.doX(x0 + lewa);
     int k = max <= 0 ? 0 : (int) Math.ceil(Math.min(1, hp / max) * BAR_W);
     if (hp > 0) k = Math.max(1, k);
     int j = max <= 0 ? 0 : (int) Math.ceil(Math.min(1, duch / max) * BAR_W);
-    if (j > k) { l.doX(bx); l.znak((char) (DUCH + j), j + 2, NamedTextColor.WHITE); }
-    if (k > 0) { l.doX(bx); l.znak((char) (HP + k), k + 2, NamedTextColor.WHITE); }
-    if (liczby) {
-      String t = (int) Math.ceil(hp) + "/" + Math.round(max);
-      if (4 * t.length() > BAR_W) t = String.valueOf((int) Math.ceil(hp));
-      int tx = bx + 1 + (BAR_W - 4 * t.length()) / 2;
-      l.doX(tx);
-      for (char c : t.toCharArray()) {
-        l.znak(c == '/' ? UKOSNIK_HP : (char) (CYFRA_HP + (c - '0')), 5, NamedTextColor.WHITE);
-        l.doX(l.x - 1);   // cyfra 3 px + cien 1 px: odstep 4 zamiast 5
-      }
+    j = Math.max(k, Math.min(BAR_W, j));
+    l.kafel(RAMKA_L, 1, NamedTextColor.WHITE);
+    if (k > 0) l.kafel((char) (HP + k), k, NamedTextColor.WHITE);
+    if (j > k) l.kafel((char) (DUCH + (j - k)), j - k, NamedTextColor.WHITE);
+    if (j < BAR_W) l.kafel((char) (TLO + (BAR_W - j)), BAR_W - j, NamedTextColor.WHITE);
+    l.kafel(RAMKA_P, 1, NamedTextColor.WHITE);
+    if (prawa > 0) {
+      l.doX(l.x + 3);
+      for (char c : t.toCharArray())   // cyfra 3 px + cien 1 px = kafel 4
+        l.kafel(c == '/' ? UKOSNIK_HP : (char) (CYFRA_HP + (c - '0')), 4, NamedTextColor.WHITE);
     }
-    l.doX(bx + BAR_W + 3);
-    l.doX(l.x + szerPlakietki + ODSTEP);   // symetria: pasek na srodku nad mobem
+    l.doX(l.x + Math.max(0, lewa - prawa));
     return l.gotowa();
   }
 }

@@ -5,7 +5,7 @@ Nad mobem bojowym wisi:
 ```
    [ikony statusów]            ← tylko gdy jakiś status trwa
  ◆ Nazwa moba                  ← kolor rzadkości, ikona rzadkości (klejnot / korona / gwiazda)
- [12] ███████████░░░ 89/140    ← plakietka poziomu w kolorze rzadkości, HP + jasny "duch" obrażeń
+ [12] ███████████░░░  89/140   ← plakietka poziomu w kolorze rzadkości, HP + jasny "duch" obrażeń, liczby obok
 ```
 
 - **Rzadkość** (drabina jak w przedmiotach): Pospolity (szary), Magiczny (niebieski, klejnot), Rzadki (żółty,
@@ -26,6 +26,9 @@ moby vanilla. Bez paska: NPC, węzły zasobów, pieczęcie, sługi Akolity, Chow
   zapisu chunków. Spawn przy `PlayerTrackEntityEvent` (tick później), usunięcie przy untrack/śmierci.
 - Vanillowa nazwa moba (wisiałaby drugi raz po najechaniu celownikiem) jest wycinana z wychodzących metadanych
   (indeksy 2/3) tylko dla mobów z paskiem; serwer dalej ma prawdziwą nazwę (MM, wiadomości śmierci).
+- **Znaki nie mogą na siebie zachodzić** (zmierzone 01.10 klientem QA: cyfra HP narysowana na tle ramki wychodziła
+  przyciemniona — klient rysuje znaki w nieustalonej kolejności). Pasek i plakietka to kafle stykające się krawędziami,
+  liczby HP stoją obok paska.
 - Grafika: czcionka `paskimobow:pasek` z `generuj.py` (źródło prawdy kodów znaków i szerokości; `Wyglad.java`
   ma te same stałe). Kursor liczony w pluginie, przesunięcia znakami spacji U+F000+dx+128.
 - Krwawienie AnimacjeBroni czytane refleksją z prywatnej mapy `krwawiacy` (tylko klucze); brak pola = ostrzeżenie
@@ -47,3 +50,10 @@ docker stop pm-test mc-client-pm; docker network rm pm-net
 Wdrożenie na world1: nowy plugin = restart (przy 0 graczy). Pliki: jar → `plugins/`, `config.yml` →
 `plugins/PaskiMobow/`, `wynik/pack/assets/paskimobow` → `plugins/Nexo/pack/assets/` (pack Nexo składa się przy starcie).
 Komendy: `/paskimobow przeladuj` (config), `/paskimobow info` (mob pod celownikiem).
+
+## Zmierzone na klonie 01.10 (klient QA)
+
+Pasek, ikony rzadkości, plakietka, duch obrażeń, ikona trucizny, liczby (też 656/1024 bossa) i brak podwójnej
+nazwy pod celownikiem — działa; w logu zero błędów PaskiMobow. Przy okazji (nie z tego pluginu): wilki MM mają na
+klonie max HP 8 zamiast 55–170 z configu, a Władca Krypty 1024 zamiast 1100 (limit atrybutu max_health w Paperze).
+Pułapki klonu: powierzchnia płaskiego świata to y=-59; gamerule w 1.21.11 to `spawn_mobs` (nie doMobSpawning).

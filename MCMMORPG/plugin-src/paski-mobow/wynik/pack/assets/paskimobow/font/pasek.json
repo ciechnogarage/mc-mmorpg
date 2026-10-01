@@ -191,7 +191,16 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/plakietka1.png",
+   "file": "paskimobow:font/plakietka_l.png",
+   "ascent": 8,
+   "height": 9,
+   "chars": [
+    "\ue010"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/plakietka_p.png",
    "ascent": 8,
    "height": 9,
    "chars": [
@@ -200,29 +209,20 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/plakietka2.png",
-   "ascent": 8,
-   "height": 9,
-   "chars": [
-    "\ue012"
-   ]
-  },
-  {
-   "type": "bitmap",
-   "file": "paskimobow:font/plakietka3.png",
-   "ascent": 8,
-   "height": 9,
-   "chars": [
-    "\ue013"
-   ]
-  },
-  {
-   "type": "bitmap",
-   "file": "paskimobow:font/ramka.png",
+   "file": "paskimobow:font/ramka_l.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue020"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/ramka_p.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue021"
    ]
   },
   {
@@ -245,6 +245,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo1.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue501"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch2.png",
    "ascent": 7,
    "height": 7,
@@ -259,6 +268,15 @@
    "height": 7,
    "chars": [
     "\ue202"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo2.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue502"
    ]
   },
   {
@@ -281,6 +299,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo3.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue503"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch4.png",
    "ascent": 7,
    "height": 7,
@@ -295,6 +322,15 @@
    "height": 7,
    "chars": [
     "\ue204"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo4.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue504"
    ]
   },
   {
@@ -317,6 +353,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo5.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue505"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch6.png",
    "ascent": 7,
    "height": 7,
@@ -331,6 +376,15 @@
    "height": 7,
    "chars": [
     "\ue206"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo6.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue506"
    ]
   },
   {
@@ -353,6 +407,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo7.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue507"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch8.png",
    "ascent": 7,
    "height": 7,
@@ -367,6 +430,15 @@
    "height": 7,
    "chars": [
     "\ue208"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo8.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue508"
    ]
   },
   {
@@ -389,6 +461,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo9.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue509"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch10.png",
    "ascent": 7,
    "height": 7,
@@ -403,6 +484,15 @@
    "height": 7,
    "chars": [
     "\ue20a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo10.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue50a"
    ]
   },
   {
@@ -425,6 +515,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo11.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue50b"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch12.png",
    "ascent": 7,
    "height": 7,
@@ -439,6 +538,15 @@
    "height": 7,
    "chars": [
     "\ue20c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo12.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue50c"
    ]
   },
   {
@@ -461,6 +569,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo13.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue50d"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch14.png",
    "ascent": 7,
    "height": 7,
@@ -475,6 +592,15 @@
    "height": 7,
    "chars": [
     "\ue20e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo14.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue50e"
    ]
   },
   {
@@ -497,6 +623,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo15.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue50f"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch16.png",
    "ascent": 7,
    "height": 7,
@@ -511,6 +646,15 @@
    "height": 7,
    "chars": [
     "\ue210"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo16.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue510"
    ]
   },
   {
@@ -533,6 +677,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo17.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue511"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch18.png",
    "ascent": 7,
    "height": 7,
@@ -547,6 +700,15 @@
    "height": 7,
    "chars": [
     "\ue212"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo18.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue512"
    ]
   },
   {
@@ -569,6 +731,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo19.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue513"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch20.png",
    "ascent": 7,
    "height": 7,
@@ -583,6 +754,15 @@
    "height": 7,
    "chars": [
     "\ue214"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo20.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue514"
    ]
   },
   {
@@ -605,6 +785,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo21.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue515"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch22.png",
    "ascent": 7,
    "height": 7,
@@ -619,6 +808,15 @@
    "height": 7,
    "chars": [
     "\ue216"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo22.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue516"
    ]
   },
   {
@@ -641,6 +839,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo23.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue517"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch24.png",
    "ascent": 7,
    "height": 7,
@@ -655,6 +862,15 @@
    "height": 7,
    "chars": [
     "\ue218"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo24.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue518"
    ]
   },
   {
@@ -677,6 +893,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo25.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue519"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch26.png",
    "ascent": 7,
    "height": 7,
@@ -691,6 +916,15 @@
    "height": 7,
    "chars": [
     "\ue21a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo26.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue51a"
    ]
   },
   {
@@ -713,6 +947,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo27.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue51b"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch28.png",
    "ascent": 7,
    "height": 7,
@@ -727,6 +970,15 @@
    "height": 7,
    "chars": [
     "\ue21c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo28.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue51c"
    ]
   },
   {
@@ -749,6 +1001,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo29.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue51d"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch30.png",
    "ascent": 7,
    "height": 7,
@@ -763,6 +1024,15 @@
    "height": 7,
    "chars": [
     "\ue21e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo30.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue51e"
    ]
   },
   {
@@ -785,6 +1055,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo31.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue51f"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch32.png",
    "ascent": 7,
    "height": 7,
@@ -799,6 +1078,15 @@
    "height": 7,
    "chars": [
     "\ue220"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo32.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue520"
    ]
   },
   {
@@ -821,6 +1109,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo33.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue521"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch34.png",
    "ascent": 7,
    "height": 7,
@@ -835,6 +1132,15 @@
    "height": 7,
    "chars": [
     "\ue222"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo34.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue522"
    ]
   },
   {
@@ -857,6 +1163,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo35.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue523"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch36.png",
    "ascent": 7,
    "height": 7,
@@ -871,6 +1186,15 @@
    "height": 7,
    "chars": [
     "\ue224"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo36.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue524"
    ]
   },
   {
@@ -893,6 +1217,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo37.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue525"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch38.png",
    "ascent": 7,
    "height": 7,
@@ -907,6 +1240,15 @@
    "height": 7,
    "chars": [
     "\ue226"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo38.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue526"
    ]
   },
   {
@@ -929,6 +1271,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo39.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue527"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch40.png",
    "ascent": 7,
    "height": 7,
@@ -943,6 +1294,15 @@
    "height": 7,
    "chars": [
     "\ue228"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo40.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue528"
    ]
   },
   {
@@ -965,6 +1325,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo41.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue529"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch42.png",
    "ascent": 7,
    "height": 7,
@@ -979,6 +1348,15 @@
    "height": 7,
    "chars": [
     "\ue22a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo42.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue52a"
    ]
   },
   {
@@ -1001,6 +1379,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo43.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue52b"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch44.png",
    "ascent": 7,
    "height": 7,
@@ -1015,6 +1402,15 @@
    "height": 7,
    "chars": [
     "\ue22c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo44.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue52c"
    ]
   },
   {
@@ -1037,6 +1433,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo45.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue52d"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch46.png",
    "ascent": 7,
    "height": 7,
@@ -1051,6 +1456,15 @@
    "height": 7,
    "chars": [
     "\ue22e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo46.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue52e"
    ]
   },
   {
@@ -1073,6 +1487,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo47.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue52f"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch48.png",
    "ascent": 7,
    "height": 7,
@@ -1087,6 +1510,15 @@
    "height": 7,
    "chars": [
     "\ue230"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo48.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue530"
    ]
   },
   {
@@ -1109,6 +1541,15 @@
   },
   {
    "type": "bitmap",
+   "file": "paskimobow:font/tlo49.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue531"
+   ]
+  },
+  {
+   "type": "bitmap",
    "file": "paskimobow:font/duch50.png",
    "ascent": 7,
    "height": 7,
@@ -1123,6 +1564,15 @@
    "height": 7,
    "chars": [
     "\ue232"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/tlo50.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue532"
    ]
   },
   {
