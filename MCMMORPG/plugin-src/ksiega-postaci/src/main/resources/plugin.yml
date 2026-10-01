@@ -1,0 +1,6 @@
+name: KsiegaPostaci
+version: ${version}
+main: pl.mcmmorpg.ksiega.KsiegaPostaci
+api-version: '1.21'
+depend: [MMOItems, MythicLib, MMOInventory]
+softdepend: [MMOProfiles, CoreTools]

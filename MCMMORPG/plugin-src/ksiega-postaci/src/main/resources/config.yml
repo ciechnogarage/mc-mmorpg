@@ -1,0 +1,56 @@
+karta-komenda: player
+typy-broni:
+  - SWORD
+  - DAGGER
+  - SPEAR
+  - HAMMER
+  - GAUNTLET
+  - WHIP
+  - STAFF
+  - BOW
+  - CROSSBOW
+  - MUSKET
+  - LUTE
+  - CATALYST
+  - MAIN_CATALYST
+  - OFF_CATALYST
+  - SHIELD
+  - AXE
+  - LONG_SWORD
+  - KATANA
+  - THRUSTING_SWORD
+  - GREATAXE
+  - HALBERD
+  - GREATHAMMER
+  - SIERP
+  - KOSA
+  - FILAKTERIUM
+  - GREATSWORD
+  - GREATSTAFF
+  - STAVE
+  - TOME
+  - TALISMAN
+  - WAND
+  - GREATBOW
+  - LANCE
+ikony:
+  necklace: nexo:mmo_icon_necklace
+  ring: nexo:mmo_icon_ring
+  charm: nexo:mmo_icon_charm
+  zapas-prawa: nexo:mmo_icon_gloves # TODO: osobna tekstura broni
+  zapas-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
+  pusta-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
+nazwy-ikon:
+  necklace: '§6Naszyjnik'
+  ring-1: '§6Pierścień 1'
+  ring-2: '§6Pierścień 2'
+  charm: '§6Talizman'
+  zapas-prawa: '§7Zapasowa prawa'
+  zapas-lewa: '§7Zapasowa lewa'
+  pusta-lewa: '§7Lewa ręka'
+komunikaty:
+  zly-typ: '&cTen przedmiot nie pasuje do tego slotu.'
+  wymagania: '&cTa postac nie spelnia wymagan przedmiotu.'
+  dwureczna: '&cBron dwureczna wymaga pustej lewej reki.'
+  okno: '&cZamknij inne okno przed zmiana zestawu.'
+  migracja-blad: '&cNie udalo sie zapisac bizuterii; zglos to administracji.'
