@@ -28,13 +28,17 @@ class MapaMathTest {
     assertEquals(-128, MapaMath.cursorCoordinate(21, 149, 2));
     assertTrue(MapaMath.cursorInRange(21, 149, 2));
     assertFalse(MapaMath.cursorInRange(277, 149, 2));
+    assertEquals(4, MapaMath.cursorCoordinate(150, 149, 0.5));
+    assertTrue(MapaMath.cursorInRange(150, 149, 0.5));
   }
 
   @Test
   void slotsAndPanning() {
     assertEquals(5, MapaMath.tileX(0, 5));
     assertEquals(13, MapaMath.tileX(44, 5));
-    assertEquals(8, MapaMath.tileZ(44, 4));
+    assertEquals(7, MapaMath.tileZ(44, 4));
+    assertEquals(4, MapaMath.tileZ(9, 4));
+    assertEquals(7, MapaMath.tileZ(36, 4));
     assertEquals(-4, MapaMath.clamp(-20, -4, 17));
     assertEquals(17, MapaMath.clamp(40, -4, 17));
   }

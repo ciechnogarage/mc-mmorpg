@@ -12,12 +12,32 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 final class MapaData {
-  record Terrain(int x0, int z0, int width, int height, byte[] pixels) {
+  record Terrain(int x0, int z0, int width, int height, byte[] pixels, byte[] blocks, byte[] textures) {
     byte color(int x, int z) {
       long ix = (long) x - x0;
       long iz = (long) z - z0;
       if (ix < 0 || iz < 0 || ix >= width || iz >= height) return 0;
       return pixels[(int) (iz * width + ix)];
+    }
+
+    byte pixel(int centerX, int centerZ, double zoom, int px, int py) {
+      if (zoom >= 1) return color((int) Math.floor(centerX + (px - 64) * zoom),
+          (int) Math.floor(centerZ + (py - 64) * zoom));
+      int k = (int) Math.round(1 / zoom);
+      int x = centerX + Math.floorDiv(px - 64, k);
+      int z = centerZ + Math.floorDiv(py - 64, k);
+      if (blocks == null || textures == null) return color(x, z);
+      long ix = (long) x - x0, iz = (long) z - z0;
+      if (ix < 0 || iz < 0 || ix >= width || iz >= height) return 0;
+      int offset = (int) (iz * width + ix) * 2;
+      int value = (blocks[offset] & 255) | ((blocks[offset + 1] & 255) << 8);
+      int index = value & 0x3fff;
+      int shade = value >>> 14;
+      long texture = (long) index * 48 + shade * 16L;
+      if (index == 0 || shade > 2 || texture + 16 > textures.length) return color(x, z);
+      int sx = Math.floorMod(px - 64, k) * (4 / k);
+      int sy = Math.floorMod(py - 64, k) * (4 / k);
+      return textures[(int) texture + sy * 4 + sx];
     }
   }
 
@@ -27,25 +47,49 @@ final class MapaData {
   }
 
   record Marker(String world, int x, int z, String name, String type, List<String> description) {}
+  record Tab(String world, String name, String icon) {}
 
   private final Map<String, Terrain> terrain;
   private final Map<String, Grid> grids;
   private final List<Marker> markers;
+  private final List<Tab> tabs;
 
-  private MapaData(Map<String, Terrain> terrain, Map<String, Grid> grids, List<Marker> markers) {
+  private MapaData(Map<String, Terrain> terrain, Map<String, Grid> grids, List<Marker> markers, List<Tab> tabs) {
     this.terrain = Map.copyOf(terrain);
     this.grids = Map.copyOf(grids);
     this.markers = List.copyOf(markers);
+    this.tabs = List.copyOf(tabs);
   }
 
-  Terrain terrain(String world) { return terrain.get(world); }
-  Grid grid(String world) { return grids.get(world); }
+  static String klucz(String world) { return world.replaceFirst("_\\d+$", ""); }
+  private static <T> T find(Map<String, T> values, String world) {
+    T exact = values.get(world);
+    return exact != null ? exact : values.get(klucz(world));
+  }
+
+  Terrain terrain(String world) { return find(terrain, world); }
+  Grid grid(String world) { return find(grids, world); }
   List<Marker> markers() { return markers; }
+  List<Marker> markers(String world) {
+    String key = markers.stream().anyMatch(marker -> marker.world().equals(world)) ? world : klucz(world);
+    return markers.stream().filter(marker -> marker.world().equals(key)).toList();
+  }
+  List<Tab> tabs() { return tabs; }
+  static Tab tab(List<Tab> tabs, int slot) { return slot >= 0 && slot < tabs.size() ? tabs.get(slot) : null; }
 
   static MapaData load(File folder, ConfigurationSection config, Logger log) {
     Map<String, Terrain> terrain = new HashMap<>();
     Map<String, Grid> grids = new HashMap<>();
     List<Marker> markers = new ArrayList<>();
+    List<Tab> tabs = new ArrayList<>();
+
+    for (Map<?, ?> raw : config.getMapList("zakladki")) {
+      if (tabs.size() == 9) break;
+      String world = String.valueOf(raw.get("swiat"));
+      if (!world.matches("[a-z0-9_.-]+")) continue;
+      tabs.add(new Tab(world, String.valueOf(raw.containsKey("nazwa") ? raw.get("nazwa") : world),
+          String.valueOf(raw.containsKey("ikona") ? raw.get("ikona") : "mapa:pusty")));
+    }
 
     for (Map<?, ?> raw : config.getMapList("znaczniki")) {
       String world = String.valueOf(raw.containsKey("swiat") ? raw.get("swiat") : "world");
@@ -83,6 +127,15 @@ final class MapaData {
     }
 
     File worldsFolder = new File(folder, "swiaty");
+    byte[] textures = null;
+    File texturesFile = new File(folder, "tekstury.bin");
+    if (texturesFile.isFile()) try {
+      byte[] loaded = Files.readAllBytes(texturesFile.toPath());
+      if (loaded.length % 48 == 0) textures = loaded;
+      else log.warning("Niepoprawna długość tekstur: tekstury.bin");
+    } catch (IOException ex) {
+      log.warning("Nie można wczytać tekstur: " + ex.getMessage());
+    }
     File[] metadata = worldsFolder.listFiles((dir, name) -> name.matches("[a-z0-9_.-]+\\.json"));
     if (metadata == null || metadata.length == 0)
       log.warning("Brak danych w katalogu swiaty; mapa w ręce pokaże brak danych.");
@@ -109,12 +162,19 @@ final class MapaData {
           log.warning("Niepoprawna długość terenu: " + bin.getName());
           continue;
         }
-        terrain.put(world, new Terrain(info.getInt("x0"), info.getInt("z0"), w, h, pixels));
+        byte[] blocks = null;
+        File blk = new File(worldsFolder, world + ".blk");
+        if (blk.isFile()) {
+          if (Files.size(blk.toPath()) == (long) w * h * 2) blocks = Files.readAllBytes(blk.toPath());
+          else log.warning("Niepoprawna długość bloków: " + blk.getName());
+        }
+        terrain.put(world, new Terrain(info.getInt("x0"), info.getInt("z0"), w, h, pixels,
+            blocks, textures));
       } catch (IOException ex) {
         log.warning("Nie można wczytać terenu " + world + ": " + ex.getMessage());
       }
     }
-    return new MapaData(terrain, grids, markers);
+    return new MapaData(terrain, grids, markers, tabs);
   }
 
   private static int number(Object value) {

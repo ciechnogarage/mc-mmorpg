@@ -7,7 +7,7 @@
   "opis": [
    "Tu zaczyna każda nowa postać."
   ],
-  "ikona": "minecraft:campfire",
+  "ikona": "mc:item/campfire",
   "swiat": "world",
   "typ": "start"
  },
@@ -130,7 +130,8 @@
   "typ": "miasto",
   "opis": [
    "Wejście do lochów."
-  ]
+  ],
+  "ikona": "mc:item/ender_eye"
  },
  {
   "nazwa": "Przewodnik",
@@ -141,7 +142,8 @@
   "typ": "miasto",
   "opis": [
    "Przystań i pierwsze kroki."
-  ]
+  ],
+  "ikona": "mc:item/book"
  },
  {
   "nazwa": "Rynek",
@@ -152,7 +154,8 @@
   "typ": "miasto",
   "opis": [
    "Sklep, skup i aukcje."
-  ]
+  ],
+  "ikona": "mc:item/emerald"
  },
  {
   "nazwa": "Kuźnia",
@@ -163,7 +166,8 @@
   "typ": "miasto",
   "opis": [
    "Naprawa i rozbiórka przedmiotów."
-  ]
+  ],
+  "ikona": "mc:item/iron_ingot"
  },
  {
   "nazwa": "Dziedziniec rzemiosła",
@@ -174,7 +178,8 @@
   "typ": "miasto",
   "opis": [
    "13 warsztatów profesji."
-  ]
+  ],
+  "ikona": "mc:item/iron_pickaxe"
  },
  {
   "nazwa": "Hala postaci",
@@ -185,7 +190,8 @@
   "typ": "miasto",
   "opis": [
    "Postać i umiejętności."
-  ]
+  ],
+  "ikona": "mc:item/armor_stand"
  },
  {
   "nazwa": "Menażeria",
@@ -196,7 +202,8 @@
   "typ": "miasto",
   "opis": [
    "Chowańce."
-  ]
+  ],
+  "ikona": "mc:item/lead"
  },
  {
   "nazwa": "Świątynia",
@@ -207,7 +214,8 @@
   "typ": "miasto",
   "opis": [
    "Wybór patrona i łaski."
-  ]
+  ],
+  "ikona": "mc:item/totem_of_undying"
  },
  {
   "nazwa": "Dom drużyn",
@@ -218,7 +226,8 @@
   "typ": "miasto",
   "opis": [
    "Drużyna, znajomi i gildie."
-  ]
+  ],
+  "ikona": "mc:item/name_tag"
  },
  {
   "nazwa": "Plac ćwiczeń",
@@ -229,7 +238,8 @@
   "typ": "miasto",
   "opis": [
    "Trening walki."
-  ]
+  ],
+  "ikona": "mc:item/iron_sword"
  },
  {
   "nazwa": "Tablica",
@@ -240,6 +250,7 @@
   "typ": "miasto",
   "opis": [
    "Zadania i drogowskazy."
-  ]
+  ],
+  "ikona": "mc:item/writable_book"
  }
 ]

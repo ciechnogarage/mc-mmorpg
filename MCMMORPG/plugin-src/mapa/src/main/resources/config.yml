@@ -1,13 +1,19 @@
 mapa-id: 30000
-zoom-reka: [1, 2, 4, 8]
-zoom-reka-domyslny: 2
+zoom-reka: [0.25, 0.5, 1, 2, 4, 8]
+zoom-reka-domyslny: 1
 zoom-reka-swiat:          # domyslny zoom w danym swiecie (Stolica jest mala i gesta)
-  stolica_odnowa: 1
+  stolica_odnowa: 0.5
+  loch_001: 0.5
 odswiezanie-ms: 250
 tytul-okna: "䅐"
 nazwy-swiatow:
   world: "Kraina"
   stolica_odnowa: "Stolica"
+  loch_001: "Loch 001 · Kwietna Polana"
+zakladki:
+  - {swiat: world, nazwa: "Kraina", ikona: "minecraft:grass_block"}
+  - {swiat: stolica_odnowa, nazwa: "Stolica", ikona: "minecraft:bell"}
+  - {swiat: loch_001, nazwa: "Loch 001 · Kwietna Polana", ikona: "minecraft:flowering_azalea"}
 znaczniki:   # WYGENEROWANE z tools/mapa/znaczniki.json
   - {swiat: world, x: 149, z: 197, nazwa: "Start", typ: start, opis: ["Tu zaczyna każda nowa postać."]}
   - {swiat: world, x: 28, z: -188, nazwa: "Gromowładca", typ: legendarny, opis: ["Legendarny Chowaniec.", "Walka dla zaprawionych drużyn."]}

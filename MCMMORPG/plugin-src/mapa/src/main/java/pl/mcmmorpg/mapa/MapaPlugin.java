@@ -36,14 +36,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MapaPlugin extends JavaPlugin implements Listener {
   private static final NamespacedKey EMPTY_MODEL = new NamespacedKey("mapa", "pusty");
-  private final Map<UUID, Integer> handZooms = new HashMap<>();
+  private final Map<UUID, Double> handZooms = new HashMap<>();
   private final Map<UUID, AtlasState> atlases = new HashMap<>();
   private MapaData data;
   private HandMapRenderer renderer;
   private MapView mapView;
   private int mapId;
-  private List<Integer> zooms = List.of(1, 2, 4, 8);
-  private int defaultZoom = 2;
+  private List<Double> zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
+  private double defaultZoom = 1;
   private long refreshMillis = 250;
 
   private static final class AtlasHolder implements InventoryHolder {
@@ -85,10 +85,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   MapaData data() { return data; }
   // zoom wybrany przez gracza, inaczej domyslny dla swiata (zoom-reka-swiat), inaczej globalny
-  int handZoom(Player player) {
-    Integer own = handZooms.get(player.getUniqueId());
+  double handZoom(Player player) {
+    Double own = handZooms.get(player.getUniqueId());
     if (own != null) return own;
-    int perWorld = getConfig().getInt("zoom-reka-swiat." + player.getWorld().getName(), defaultZoom);
+    String world = player.getWorld().getName();
+    String key = getConfig().contains("zoom-reka-swiat." + world) ? world : MapaData.klucz(world);
+    double perWorld = getConfig().getDouble("zoom-reka-swiat." + key, defaultZoom);
     return zooms.contains(perWorld) ? perWorld : defaultZoom;
   }
   long refreshMillis() { return refreshMillis; }
@@ -97,10 +99,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     reloadConfig();
     FileConfiguration config = getConfig();
     mapId = config.getInt("mapa-id", 30000);
-    List<Integer> configuredZooms = config.getIntegerList("zoom-reka");
-    zooms = configuredZooms.stream().filter(n -> n > 0).distinct().toList();
-    if (zooms.isEmpty()) zooms = List.of(1, 2, 4, 8);
-    defaultZoom = config.getInt("zoom-reka-domyslny", 2);
+    zooms = config.getList("zoom-reka", List.of()).stream().filter(Number.class::isInstance)
+        .map(value -> ((Number) value).doubleValue())
+        .filter(value -> value >= 1 || value == 0.5 || value == 0.25)
+        .distinct().toList();
+    if (zooms.isEmpty()) zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
+    defaultZoom = config.getDouble("zoom-reka-domyslny", 1);
     if (!zooms.contains(defaultZoom)) defaultZoom = zooms.get(0);
     refreshMillis = Math.max(0, config.getLong("odswiezanie-ms", 250));
     data = MapaData.load(getDataFolder(), config, getLogger());
@@ -132,11 +136,13 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     event.setCancelled(true);
     Player player = event.getPlayer();
     if (player.isSneaking()) {
-      int current = handZoom(player);
+      double current = handZoom(player);
       int index = zooms.indexOf(current);
-      int next = zooms.get((index + 1) % zooms.size());
+      double next = zooms.get((index + 1) % zooms.size());
       handZooms.put(player.getUniqueId(), next);
-      player.sendActionBar(Component.text("Przybliżenie: 1 piksel = " + next + " bl."));
+      String label = next < 1 ? (int) (1 / next) + " piksele na blok"
+          : "1 piksel = " + (next == Math.rint(next) ? Integer.toString((int) next) : next) + " bl.";
+      player.sendActionBar(Component.text("Przybliżenie: " + label));
     } else openAtlas(player);
   }
 
@@ -157,6 +163,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     if (state == null || state.holder != holder) return;
     int slot = event.getRawSlot();
     if (slot < 0 || slot >= 54) return;
+    if (slot < 9) {
+      MapaData.Tab tab = MapaData.tab(data.tabs(), slot);
+      if (tab != null && data.grid(tab.world()) != null)
+        Bukkit.getScheduler().runTask(this, () -> openAtlas(player, tab.world(), false));
+      return;
+    }
     if (slot < 45) {
       MapaData.Grid grid = data.grid(state.world);
       if (grid == null) return;
@@ -182,7 +194,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       case 49 -> move(player, state, 3, 0);
       case 50 -> {
         String targetWorld = data.grid(player.getWorld().getName()) != null
-            ? player.getWorld().getName() : "world";
+            ? data.grid(player.getWorld().getName()).world() : "world";
         if (data.grid(targetWorld) == null) player.sendMessage("Mapa świata jest niedostępna.");
         else if (!targetWorld.equals(state.world))
           Bukkit.getScheduler().runTask(this, () -> openAtlas(player));
@@ -234,19 +246,26 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   }
 
   private void openAtlas(Player player) {
-    String world = data.grid(player.getWorld().getName()) != null ? player.getWorld().getName() : "world";
+    String world = data.grid(player.getWorld().getName()) != null
+        ? data.grid(player.getWorld().getName()).world() : "world";
+    openAtlas(player, world, true);
+  }
+
+  private void openAtlas(Player player, String world, boolean initial) {
     MapaData.Grid grid = data.grid(world);
     if (grid == null) {
       player.sendMessage("Mapa świata jest niedostępna.");
       return;
     }
+    world = grid.world();
     int level = Math.min(1, grid.levels().size() - 1);
     AtlasHolder holder = new AtlasHolder();
     Component title = Component.text(getConfig().getString("tytul-okna", "")
-        + "Mapa · " + getConfig().getString("nazwy-swiatow." + world, world), NamedTextColor.WHITE);
+        + "Mapa świata · " + worldName(world), NamedTextColor.WHITE);
     holder.inventory = Bukkit.createInventory(holder, 54, title);
     AtlasState state = new AtlasState(holder, world, level);
-    centerOnPlayerOrStart(player, state);
+    if (initial) centerOnPlayerOrStart(player, state);
+    else centerOnWorld(player, state);
     paintAll(player, state);
     atlases.put(player.getUniqueId(), state);
     player.openInventory(holder.inventory);
@@ -254,15 +273,37 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   private void centerOnPlayerOrStart(Player player, AtlasState state) {
     if (data.grid(player.getWorld().getName()) != null) {
-      state.world = player.getWorld().getName();
+      state.world = data.grid(player.getWorld().getName()).world();
       state.level = Math.min(state.level, data.grid(state.world).levels().size() - 1);
       centerAt(state, player.getLocation().getX(), player.getLocation().getZ());
       return;
     }
     state.world = "world";
-    MapaData.Marker start = data.markers().stream()
+    MapaData.Marker start = data.markers("world").stream()
         .filter(m -> m.world().equals("world") && m.type().equals("start")).findFirst().orElse(null);
     centerAt(state, start == null ? 149 : start.x(), start == null ? 197 : start.z());
+  }
+
+  private void centerOnWorld(Player player, AtlasState state) {
+    if (sameWorld(player.getWorld().getName(), state.world)) {
+      centerAt(state, player.getLocation().getX(), player.getLocation().getZ());
+      return;
+    }
+    MapaData.Marker first = data.markers(state.world).stream().findFirst().orElse(null);
+    MapaData.Grid grid = data.grid(state.world);
+    MapaData.Level level = grid.level(state.level);
+    if (first != null) centerAt(state, first.x(), first.z());
+    else centerAt(state, grid.x0() + level.columns() * 9.0 * level.bpp(),
+        grid.z0() + level.rows() * 9.0 * level.bpp());
+  }
+
+  private boolean sameWorld(String playerWorld, String shownWorld) {
+    return playerWorld.equals(shownWorld) || playerWorld.matches(java.util.regex.Pattern.quote(shownWorld) + "_\\d+");
+  }
+
+  private String worldName(String world) {
+    String key = getConfig().contains("nazwy-swiatow." + world) ? world : MapaData.klucz(world);
+    return getConfig().getString("nazwy-swiatow." + key, world);
   }
 
   private void centerAt(AtlasState state, double x, double z) {
@@ -294,7 +335,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   private void paintAll(Player player, AtlasState state) {
     Inventory inventory = state.holder.inventory;
-    for (int slot = 0; slot < 45; slot++) inventory.setItem(slot, tileItem(state, slot, false, 0));
+    for (int slot = 0; slot < 9; slot++) inventory.setItem(slot, tabItem(state, slot));
+    for (int slot = 9; slot < 45; slot++) inventory.setItem(slot, tileItem(state, slot, false, 0));
     String[] names = {"Wstecz", "←", "↑", "↓", "→", "Wyśrodkuj na mnie", "Przybliż", "Oddal", "Zamknij"};
     String[] models = {"nexo:hub_wstecz", "mapa:ui/lewo", "mapa:ui/gora", "mapa:ui/dol",
         "mapa:ui/prawo", "mapa:ui/srodek", "mapa:ui/plus", "mapa:ui/minus", "nexo:hub_zamknij"};
@@ -302,6 +344,20 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     state.playerSlot = -1;
     state.playerDirection = -1;
     updatePlayerTile(player, state);
+  }
+
+  private ItemStack tabItem(AtlasState state, int slot) {
+    MapaData.Tab tab = MapaData.tab(data.tabs(), slot);
+    if (tab == null) {
+      ItemStack empty = item(EMPTY_MODEL, " ", List.of());
+      empty.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().hideTooltip(true));
+      return empty;
+    }
+    boolean active = sameWorld(state.world, tab.world());
+    ItemStack item = item(tab.icon(), tab.name(), List.of(Component.text(
+        active ? "Oglądasz tę mapę" : "Klik — pokaż tę mapę", NamedTextColor.GRAY)));
+    if (active) item.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
+    return item;
   }
 
   private ItemStack tileItem(AtlasState state, int slot, boolean playerTile, int direction) {
@@ -313,8 +369,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     int bpp = level.bpp();
     int x = grid.x0() + tx * 18 * bpp;
     int z = grid.z0() + tz * 18 * bpp;
-    List<MapaData.Marker> onTile = data.markers().stream().filter(marker ->
-        marker.world().equals(state.world) && marker.x() >= x && marker.x() < x + 18 * bpp
+    List<MapaData.Marker> onTile = data.markers(state.world).stream().filter(marker ->
+        marker.x() >= x && marker.x() < x + 18 * bpp
             && marker.z() >= z && marker.z() < z + 18 * bpp).toList();
     String name = playerTile ? "Tu jesteś" : onTile.isEmpty()
         ? "Okolica"
@@ -358,13 +414,13 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     MapaData.Grid grid = data.grid(state.world);
     int slot = -1;
     int direction = MapaMath.modelDirection(player.getLocation().getYaw());
-    if (grid != null && player.getWorld().getName().equals(state.world)) {
+    if (grid != null && sameWorld(player.getWorld().getName(), state.world)) {
       MapaData.Level level = grid.level(state.level);
       int tx = Math.floorDiv(player.getLocation().getBlockX() - grid.x0(), 18 * level.bpp());
       int tz = Math.floorDiv(player.getLocation().getBlockZ() - grid.z0(), 18 * level.bpp());
       int col = tx - state.left, row = tz - state.top;
       if (tx >= 0 && tz >= 0 && tx < level.columns() && tz < level.rows()
-          && col >= 0 && col < 9 && row >= 0 && row < 5) slot = row * 9 + col;
+          && col >= 0 && col < 9 && row >= 0 && row < 4) slot = (row + 1) * 9 + col;
     }
     if (slot == state.playerSlot && direction == state.playerDirection) return;
     if (state.playerSlot >= 0) state.holder.inventory.setItem(state.playerSlot,

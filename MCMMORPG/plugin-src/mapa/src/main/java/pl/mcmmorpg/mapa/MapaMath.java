@@ -11,11 +11,11 @@ final class MapaMath {
     return Math.floorMod(Math.round(yaw / 22.5f), 16);
   }
 
-  static int cursorCoordinate(int marker, int center, int zoom) {
-    return (int) (((long) marker - center) * 2 / zoom);
+  static int cursorCoordinate(int marker, int center, double zoom) {
+    return (int) (((double) marker - center) * 2 / zoom);
   }
 
-  static boolean cursorInRange(int marker, int center, int zoom) {
+  static boolean cursorInRange(int marker, int center, double zoom) {
     double value = ((double) marker - center) * 2 / zoom;
     return value >= -128 && value <= 127;
   }
@@ -25,7 +25,7 @@ final class MapaMath {
   }
 
   static int tileZ(int slot, int top) {
-    return top + slot / 9;
+    return top + slot / 9 - 1;
   }
 
   static int leftForCenter(double blockX, int origin, int bpp, int columns) {
@@ -34,7 +34,7 @@ final class MapaMath {
   }
 
   static int topForCenter(double blockZ, int origin, int bpp, int rows) {
-    int desired = (int) Math.round((blockZ - origin) / (18.0 * bpp) - 2.5);
+    int desired = (int) Math.round((blockZ - origin) / (18.0 * bpp) - 2.0);
     return clamp(desired, -4, Math.max(-4, rows - 1));
   }
 
@@ -43,7 +43,7 @@ final class MapaMath {
   }
 
   static double centerZ(int top, int origin, int bpp) {
-    return origin + (top + 2.5) * 18.0 * bpp;
+    return origin + (top + 2.0) * 18.0 * bpp;
   }
 
   static int clamp(int value, int min, int max) {

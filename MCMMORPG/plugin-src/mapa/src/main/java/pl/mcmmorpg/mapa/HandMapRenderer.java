@@ -17,7 +17,7 @@ final class HandMapRenderer extends MapRenderer {
     String world;
     int centerX;
     int centerZ;
-    int zoom;
+    double zoom;
     long lastDraw;
     boolean drawn;
   }
@@ -37,13 +37,14 @@ final class HandMapRenderer extends MapRenderer {
   public void render(MapView view, MapCanvas canvas, Player player) {
     State state = states.computeIfAbsent(player.getUniqueId(), id -> new State());
     String world = player.getWorld().getName();
-    int zoom = plugin.handZoom(player);
+    double zoom = plugin.handZoom(player);
     int x = player.getLocation().getBlockX();
     int z = player.getLocation().getBlockZ();
     MapaData.Terrain terrain = plugin.data().terrain(world);
     boolean worldChanged = !state.drawn || !world.equals(state.world);
     boolean changed = worldChanged || (terrain != null && (zoom != state.zoom
-        || Math.abs((long) x - state.centerX) >= zoom || Math.abs((long) z - state.centerZ) >= zoom));
+        || Math.abs((long) x - state.centerX) >= Math.max(1, zoom)
+        || Math.abs((long) z - state.centerZ) >= Math.max(1, zoom)));
     long now = System.currentTimeMillis();
     if (changed && (!state.drawn || now - state.lastDraw >= plugin.refreshMillis())) {
       if (terrain == null) {
@@ -59,8 +60,8 @@ final class HandMapRenderer extends MapRenderer {
     }
 
     MapCursorCollection cursors = new MapCursorCollection();
-    if (state.drawn && world.equals(state.world)) for (MapaData.Marker marker : plugin.data().markers()) {
-      if (!world.equals(marker.world()) || !MapaMath.cursorInRange(marker.x(), state.centerX, state.zoom)
+    if (state.drawn && world.equals(state.world)) for (MapaData.Marker marker : plugin.data().markers(world)) {
+      if (!MapaMath.cursorInRange(marker.x(), state.centerX, state.zoom)
           || !MapaMath.cursorInRange(marker.z(), state.centerZ, state.zoom)) continue;
       cursors.addCursor(new MapCursor((byte) MapaMath.cursorCoordinate(marker.x(), state.centerX, state.zoom),
           (byte) MapaMath.cursorCoordinate(marker.z(), state.centerZ, state.zoom), (byte) 0,
@@ -78,9 +79,9 @@ final class HandMapRenderer extends MapRenderer {
   }
 
   @SuppressWarnings("deprecation")
-  private void drawTerrain(MapCanvas canvas, MapaData.Terrain terrain, int x, int z, int zoom) {
+  private void drawTerrain(MapCanvas canvas, MapaData.Terrain terrain, int x, int z, double zoom) {
     for (int py = 0; py < 128; py++) for (int px = 0; px < 128; px++) {
-      canvas.setPixel(px, py, terrain.color(x + (px - 64) * zoom, z + (py - 64) * zoom));
+      canvas.setPixel(px, py, terrain.pixel(x, z, zoom, px, py));
     }
   }
 

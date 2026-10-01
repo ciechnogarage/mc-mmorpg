@@ -83,6 +83,26 @@ def ikony(pack):
     rysuj("minus", lambda d: d.rectangle([3,7,13,9], fill=zl))
     rysuj("srodek",lambda d: (d.ellipse([3,3,13,13], outline=zl, width=2), d.rectangle([7,7,9,9], fill=zl)))
 
+JAR = "/home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client/client.jar"
+NEXO_TEX = "/opt/docker/mc/data/world1/plugins/Nexo/pack/assets/nexo/textures/item/chowance"
+_ikony = {}
+def ikona(nazwa, rozmiar):
+    """Ikona znacznika: nexo:chw_* (pack Nexo) albo mc:item/* (client.jar), przeskalowana z konturem."""
+    klucz = (nazwa, rozmiar)
+    if klucz in _ikony: return _ikony[klucz]
+    import zipfile, io
+    if nazwa.startswith("nexo:"):
+        im = Image.open(os.path.join(NEXO_TEX, nazwa[5:] + ".png")).convert("RGBA")
+    else:
+        im = Image.open(io.BytesIO(zipfile.ZipFile(JAR).read("assets/minecraft/textures/%s.png" % nazwa[3:]))).convert("RGBA")
+    im = im.crop(im.getbbox()); bok = max(im.size); kw = Image.new("RGBA", (bok, bok)); kw.paste(im, ((bok - im.width) // 2, (bok - im.height) // 2))
+    im = kw.resize((rozmiar, rozmiar), Image.NEAREST if bok <= rozmiar * 2 else Image.BOX)
+    a = im.getchannel("A").point(lambda v: 255 if v > 100 else 0); im.putalpha(a)
+    wyn = Image.new("RGBA", (rozmiar + 2, rozmiar + 2))
+    for dx, dy in ((0,1),(2,1),(1,0),(1,2)): wyn.paste(Image.new("RGBA", im.size, KONTUR + (255,)), (dx, dy), a)
+    wyn.alpha_composite(im, (1, 1)); _ikony[klucz] = wyn
+    return wyn
+
 def main():
     wyj = sys.argv[1]; argi = sys.argv[2:]
     zn = []
@@ -131,8 +151,13 @@ def main():
                         if z.get("swiat", "world") != swiat: continue
                         mx = (z["x"] - gx0 - tx * bl) // bpp; mz = (z["z"] - gz0 - tz * bl) // bpp
                         if 0 <= mx < K and 0 <= mz < K:
-                            dr.rectangle([mx - 2, mz - 2, mx + 2, mz + 2], fill=KONTUR)
-                            dr.rectangle([mx - 1, mz - 1, mx + 1, mz + 1], fill=KOLOR_ZN.get(z.get("typ"), (255, 255, 255)))
+                            if z.get("ikona"):
+                                ic = ikona(z["ikona"], 12); rgba = im.convert("RGBA")
+                                rgba.alpha_composite(ic, (max(0, min(K - ic.width, mx - ic.width // 2)), max(0, min(K - ic.height, mz - ic.height // 2))))
+                                im = rgba.convert("RGB"); dr = ImageDraw.Draw(im)
+                            else:
+                                dr.rectangle([mx - 2, mz - 2, mx + 2, mz + 2], fill=KONTUR)
+                                dr.rectangle([mx - 1, mz - 1, mx + 1, mz + 1], fill=KOLOR_ZN.get(z.get("typ"), (255, 255, 255)))
                     nazwa = "%s/b%d/%d_%d" % (swiat, bpp, tx, tz)
                     p = os.path.join(pack, "assets/mapa/textures/item", nazwa + ".png"); os.makedirs(os.path.dirname(p), exist_ok=True); im.save(p, optimize=True)
                     model(os.path.join(pack, "assets/mapa/models/item", nazwa + ".json"), "mapa:item/" + nazwa)
