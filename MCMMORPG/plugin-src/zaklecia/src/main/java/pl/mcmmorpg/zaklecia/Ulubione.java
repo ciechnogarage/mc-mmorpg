@@ -84,7 +84,7 @@ final class Ulubione implements Listener {
     } else {
       ItemStack wRece = inv.getItem(slot);
       boolean zaklecie = ksiega.w(wRece) != null;
-      if (!zaklecie && !(pusty(wRece) && nosnik.slotZaklec(p) == slot)) return;   // np. miecz w rece — zwykle Ctrl+kolko
+      if (!zaklecie && !nosnik.pusta(wRece) && !(pusty(wRece) && nosnik.slotZaklec(p) == slot)) return;
     }
     e.setCancelled(true);
 
@@ -98,6 +98,7 @@ final class Ulubione implements Listener {
     ItemStack nowy = nastepne == null ? null : nosnik.zrob(ksiega.poId.get(nastepne));
     if (naLewej) { inv.setItemInOffHand(nowy); nosnik.ustawLewa(p, true); }
     else { inv.setItem(slot, nowy); nosnik.ustawSlot(p, slot); }
+    nosnik.odswiezPusta(p);
     p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.7f, nastepne == null ? 0.9f : 1.4f);
     nosnik.komunikat(p, pasek(p, k, nastepne) + "  §8· §7" + (naLewej ? "lewa dłoń" : "prawa dłoń"));
   }

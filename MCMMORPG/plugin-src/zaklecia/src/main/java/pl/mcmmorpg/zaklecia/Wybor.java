@@ -113,8 +113,8 @@ final class Wybor implements Listener {
     boolean prawy = e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK;
     boolean lewy = e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK;
     if (!prawy && !lewy) return;
-    // machniecie reka po PPM Paper zglasza jako LPM (w powietrze albo — przy zasiegu 64 — w blok)
-    if (lewy && rzucanie.swiezyPpm(e.getPlayer())) { e.setCancelled(true); return; }
+    // Machniecie po PPM Paper moze zglosic jako LEFT_CLICK_AIR.
+    if (e.getAction() == Action.LEFT_CLICK_AIR && rzucanie.swiezyPpm(e.getPlayer())) { e.setCancelled(true); return; }
     e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
     e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
     przypisz(e.getPlayer(), prawy);

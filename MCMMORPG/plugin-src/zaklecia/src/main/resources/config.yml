@@ -37,3 +37,10 @@ stozek-podwojny:
 klawisz-q:
   zwykle: 'dm open hub_glowne %gracz%'
   z-shiftem: 'dm open ulubione_zaklec %gracz%'
+
+# Wejscie przytrzymanych przyciskow i atrybuty trybu zaklec.
+ppm-tolerancja: 6
+lpm-tolerancja: 3
+lpm-impuls: 10
+lpm-zasieg-blokow: 24
+spowolnienie: -0.5

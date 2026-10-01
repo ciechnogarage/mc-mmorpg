@@ -40,7 +40,10 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Wybor wybor;
 
   @Override
-  public void onDisable() { if (rzucanie != null) rzucanie.wylacz(); }
+  public void onDisable() {
+    if (rzucanie != null) rzucanie.wylacz();
+    if (nosnik != null) for (Player p : getServer().getOnlinePlayers()) nosnik.usunPuste(p);
+  }
 
   @Override
   public void onEnable() {
