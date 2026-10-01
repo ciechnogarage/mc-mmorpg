@@ -150,10 +150,9 @@ final class Migracja {
   }
 
   private static int[] safeSlots() {
-    int[] slots = new int[29];
+    int[] slots = new int[22];
     int next = 0;
-    for (int i = 2; i <= 7; i++) slots[next++] = i;
-    for (int i = 13; i <= 35; i++) slots[next++] = i;
+    for (int i = 14; i <= 35; i++) slots[next++] = i;
     return slots;
   }
 }

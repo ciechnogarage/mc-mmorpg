@@ -37,17 +37,19 @@ ikony:
   necklace: nexo:mmo_icon_necklace
   ring: nexo:mmo_icon_ring
   charm: nexo:mmo_icon_charm
+  pusta-prawa: nexo:mmo_icon_gloves # TODO: osobna tekstura prawej reki
+  pusta-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
   zapas-prawa: nexo:mmo_icon_gloves # TODO: osobna tekstura broni
   zapas-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
-  pusta-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
 nazwy-ikon:
   necklace: '§6Naszyjnik'
   ring-1: '§6Pierścień 1'
   ring-2: '§6Pierścień 2'
   charm: '§6Talizman'
-  zapas-prawa: '§7Zapasowa prawa'
-  zapas-lewa: '§7Zapasowa lewa'
-  pusta-lewa: '§7Lewa ręka'
+  pusta-prawa: '§7Prawa ręka – aktywna'
+  pusta-lewa: '§7Lewa ręka – aktywna'
+  zapas-prawa: '§7Prawa ręka – zapas'
+  zapas-lewa: '§7Lewa ręka – zapas'
 komunikaty:
   zly-typ: '&cTen przedmiot nie pasuje do tego slotu.'
   wymagania: '&cTa postac nie spelnia wymagan przedmiotu.'
