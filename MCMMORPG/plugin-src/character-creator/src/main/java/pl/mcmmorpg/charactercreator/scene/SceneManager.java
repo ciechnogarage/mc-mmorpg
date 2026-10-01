@@ -296,6 +296,10 @@ public final class SceneManager {
    *       blizej), halabardzie/lancy piercing_weapon (pchniecie zamiast uderzenia) — wojownik z toporem;</li>
    *   <li>MMOItems sprawdza wymagania broni przy kliknieciu — bez wczytanej postaci "Nie mozesz tego uzyc";</li>
    *   <li>Zaklecia: zaklecie w lewej i pusta prawa = zasieg istot 0 (tryb LPM) — kompensujemy modyfikatorem.</li>
+   *   <li>Zaklecia v2.6+: "pusta dlon" (niewidoczny nosnik z attack_range min 64) wkladana co tick do wybranego
+   *       slotu, gdy postac ma zaklecie w lewej — klient nie uderza wtedy niczego blizej niz 64 bl. (01.10 wieczor,
+   *       LPM znow martwy). Od wersji z regula widza Zaklecia nie wkladaja jej graczowi w SPECTATOR; tu ja dodatkowo
+   *       usuwamy (to nie przedmiot gracza — Zaklecia same ja tworza i kasuja).</li>
    * </ul>
    * Ekwipunek przy wejsciu dochodzi PO otwarciu sceny, wiec to idzie tez co 10 tickow. Kolejnosc: pusty slot
    * paska; inaczej przedmiot z paska do wolnego miejsca plecaka (zawartosc ta sama, inna pozycja). Nie ruszamy
@@ -306,6 +310,12 @@ public final class SceneManager {
   private void emptyHand(SceneView view, Player player) {
     sceneReach(player, true);
     org.bukkit.inventory.PlayerInventory inv = player.getInventory();
+    for (int slot = 0; slot < 9; slot++) {
+      org.bukkit.inventory.ItemStack it = inv.getItem(slot);
+      if (!isEmpty(it) && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(PUSTA_DLON_KEY)) {
+        inv.setItem(slot, null);
+      }
+    }
     if (isEmpty(inv.getItemInMainHand())) {
       return;
     }
@@ -335,9 +345,19 @@ public final class SceneManager {
     }
     if (!view.handWarned) {
       view.handWarned = true;
-      logger.warning("Scena: " + player.getName() + " ma w rece " + inv.getItemInMainHand().getType()
-          + " i nie da sie jej oproznic (pelny ekwipunek) — LPM w scenie moze nie dzialac.");
+      org.bukkit.inventory.ItemStack held = inv.getItemInMainHand();
+      logger.warning("Scena: " + player.getName() + " ma w rece " + held.getType()
+          + (changesClick(held) ? " (zmienia uderzenie klienta: attack_range/wlocznia/naladowanie)" : "")
+          + " i nie da sie jej oproznic (pelny ekwipunek albo nosnik zaklecia) — LPM w scenie moze nie dzialac.");
     }
+  }
+
+  /** Przedmiot, z ktorym LPM klienta nie jest zwyklym uderzeniem w encje w zasiegu tarczy. */
+  private static boolean changesClick(org.bukkit.inventory.ItemStack item) {
+    return item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.ATTACK_RANGE)
+        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.PIERCING_WEAPON)
+        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.KINETIC_WEAPON)
+        || item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.MINIMUM_ATTACK_CHARGE);
   }
 
   private static final int DZIENNIK_SLOT = 8;
@@ -345,6 +365,7 @@ public final class SceneManager {
   private static final double MIN_REACH = 3.0;
   private static final org.bukkit.NamespacedKey REACH_KEY = new org.bukkit.NamespacedKey("charactercreator", "scena_zasieg");
   private static final org.bukkit.NamespacedKey NOSNIK_KEY = new org.bukkit.NamespacedKey("zaklecia", "nosnik");
+  private static final org.bukkit.NamespacedKey PUSTA_DLON_KEY = new org.bukkit.NamespacedKey("zaklecia", "pusta_dlon");
 
   private static boolean isEmpty(org.bukkit.inventory.ItemStack it) {
     return it == null || it.getType().isAir();
@@ -1084,9 +1105,9 @@ public final class SceneManager {
       }
       // Reka tez tu, nie tylko przy otwarciu: przy wejsciu na serwer ekwipunek postaci dochodzi PO
       // otwarciu sceny (zmierzone na klonie 01.10: przy open() reka pusta, kilka tickow pozniej topor).
-      if (now % 10 == 0) {
-        emptyHand(view, player);
-      }
+      // Co tick: inny plugin moze wlozyc cos do reki w dowolnym ticku, a jeden tick z takim przedmiotem
+      // u klienta wystarczy, zeby LPM nie trafil w tarcze.
+      emptyHand(view, player);
       if (now >= view.targetReadyTick) {
         aimCamera(view);
         refreshCamera(view, player, now);
