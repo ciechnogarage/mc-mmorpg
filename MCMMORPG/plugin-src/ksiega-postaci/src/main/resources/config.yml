@@ -33,14 +33,24 @@ typy-broni:
   - WAND
   - GREATBOW
   - LANCE
+typy-mikstur-i-uzytkowych:
+  - CONSUMABLE
+staty-mikstur:
+  zycie: RESTORE_HEALTH
+  mana: RESTORE_MANA
 ikony:
   necklace: nexo:mmo_icon_necklace
   ring: nexo:mmo_icon_ring
   charm: nexo:mmo_icon_charm
-  pusta-prawa: nexo:mmo_icon_gloves # TODO: osobna tekstura prawej reki
-  pusta-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
-  zapas-prawa: nexo:mmo_icon_gloves # TODO: osobna tekstura broni
-  zapas-lewa: nexo:mmo_icon_gloves # TODO: osobna tekstura lewej reki
+  pusta-prawa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_right_hand
+  pusta-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_left_hand
+  zapas-prawa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_spare_right
+  zapas-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_spare_left
+  zajeta-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_left_occupied
+  zajety-zapas-lewa: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_spare_left_occupied
+  mikstura-zycia: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_health_potion
+  mikstura-many: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_mana_potion
+  przedmiot-uzytkowy: nexo:mmo_icon_gloves # TODO: nexo:mmo_icon_utility
 nazwy-ikon:
   necklace: '§6Naszyjnik'
   ring-1: '§6Pierścień 1'
@@ -50,9 +60,20 @@ nazwy-ikon:
   pusta-lewa: '§7Lewa ręka – aktywna'
   zapas-prawa: '§7Prawa ręka – zapas'
   zapas-lewa: '§7Lewa ręka – zapas'
+  zajeta-lewa: '§7Lewa ręka – zajęta (broń dwuręczna)'
+  zajety-zapas-lewa: '§7Zapasowa lewa – zajęta (broń dwuręczna)'
+  mikstura-zycia: '§cMikstura życia'
+  mikstura-many: '§9Mikstura many'
+  przedmiot-uzytkowy: '§ePrzedmiot użytkowy'
+opisy-ikon:
+  mikstura-zycia: '§7Włóż miksturę życia'
+  mikstura-many: '§7Włóż miksturę many'
+  przedmiot-uzytkowy: '§7Włóż przedmiot użytkowy'
 komunikaty:
   zly-typ: '&cTen przedmiot nie pasuje do tego slotu.'
   wymagania: '&cTa postac nie spelnia wymagan przedmiotu.'
-  dwureczna: '&cBron dwureczna wymaga pustej lewej reki.'
+  dwureczna: '&cBroń dwuręczna zajmuje obie ręce.'
+  brak-zapasu-lewej: '&cZapasowa lewa ręka jest zajęta; nie można zmienić prawej.'
+  brak-miejsca-lewej: '&cBrak miejsca na broń z lewej ręki.'
   okno: '&cZamknij inne okno przed zmiana zestawu.'
   migracja-blad: '&cNie udalo sie zapisac bizuterii; zglos to administracji.'

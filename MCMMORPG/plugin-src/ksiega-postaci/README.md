@@ -12,11 +12,20 @@ Wynik craftingu jest przyciskiem Sakwy (`MISCELLANEOUS/UI_SAKWA`); klik wykonuje
 | Hotbar 0 | Prawa aktywna, prawdziwa broń używana do ataku |
 | Plecak 13 (80,84) | Obraz prawej aktywnej, PDC `ksiega:obraz` |
 | Hotbar 1 | Obraz lewej aktywnej, PDC `ksiega:klon` |
+| Hotbar 2 | Mikstura życia: `CONSUMABLE` z `RESTORE_HEALTH > 0` |
+| Hotbar 3 | Mikstura many: `CONSUMABLE` z `RESTORE_MANA > 0` |
+| Hotbar 4 | Przedmiot użytkowy: dowolny `CONSUMABLE` |
+| Hotbar 5–7 | Wolne sloty |
+| Hotbar 8 | Dziennik |
 | 11, 12 | Prawa i lewa zapasowa, prawdziwe bronie |
 | 9, 10 | Rękawice i pas MMOInventory |
-| 14–17, 18–35 | Plecak; hotbar 8: Dziennik |
+| 14–17, 18–35 | Plecak |
 
-Obrazy nie mają danych MMOItems i nigdy nie są przedmiotami wyposażenia. Klik obrazu zamienia kursor z prawdziwym przedmiotem odpowiedniej ręki; shift-klik z plecaka zakłada broń kolejno w 0, offhand, 11, 12. Shift-klik z ręki lub zapasu przenosi broń do plecaka 14–35. Shift+F w E zamienia cały zestaw. Obie ręce i zapas przyjmują tylko typy z `typy-broni` w `config.yml`; gdy prawa aktywna broń jest dwuręczna, lewa aktywna musi być pusta. Niedozwolony typ jest odrzucany z komunikatem na pasku akcji. Klawisz cyfry nad obrazem jest blokowany. Stary prawdziwy przedmiot ze slotu 13 jest odkładany do 14–35 albo pod nogi; dawna zaślepka jest usuwana.
+Obrazy i zaślepki nie mają danych MMOItems i nigdy nie są przedmiotami wyposażenia. Nie można ich użyć, wyrzucić ani przenieść; znikają z listy przedmiotów po śmierci. Klik obrazu zamienia kursor z prawdziwym przedmiotem odpowiedniej ręki. Lewy klik w zapasie wkłada lub wyjmuje broń, a prawy klik **pustym kursorem** na 11 zmienia tylko prawą rękę, na 12 tylko lewą. Prawy klik z przedmiotem na kursorze dalej wkłada broń z walidacją. Shift+F w E zamienia obie ręce i oba zapasy. Po pojedynczej zmianie pasek akcji pokazuje nową broń. Shift-klik z plecaka zakłada broń kolejno w 0, offhand, 11, 12; z ręki lub zapasu przenosi ją do 14–35.
+
+Broń dwuręczna w prawej aktywnej lub zapasowej zajmuje odpowiadającą jej lewą rękę: offhand lub slot 12 musi być pusty, a obraz pokazuje „zajęta”. Próba włożenia tam przedmiotu jest odrzucana. Przy osobnej zmianie prawej na dwuręczną dotychczasowa lewa aktywna trafia do pustego zapasu L; zajęty zapas blokuje zmianę. Przy zwykłym założeniu dwuręcznej do 0 lewa broń trafia najpierw do zapasu L, potem do plecaka 14–35; przy braku miejsca operacja jest odrzucana. Zmiana prawej z dwuręcznej na jednoręczną pozostawia lewą aktywną pustą. Jeżeli zapas L był zajęty, jego przedmiot jest przenoszony do plecaka albo upuszczany pod nogi, aby zapas z dwuręczną pozostał spójny. Każda zmiana zestawu sprawdza obie pary przed zapisem.
+
+Sloty 2–4 przyjmują typy i statystyki z `typy-mikstur-i-uzytkowych` oraz `staty-mikstur` w `config.yml`. Shift-klik z plecaka umieszcza pasujący stos najpierw w pustym 2, 3 lub 4. Można też użyć zwykłego kliknięcia lub cyfry; niepasujący przedmiot jest odrzucany. Prawdziwy przedmiot po wyborze slotu działa normalnie po PPM. Po zużyciu ostatniej sztuki zaślepka wraca w następnym ticku. Przy odświeżeniu ekwipunku niepasujące rzeczy z 2–4 trafiają do plecaka 14–35 albo pod nogi; pasujące zostają. Stary prawdziwy przedmiot ze slotu 13 podlega tej samej migracji.
 
 ## Pliki wdrożeniowe
 
@@ -29,7 +38,7 @@ Obrazy nie mają danych MMOItems i nigdy nie są przedmiotami wyposażenia. Klik
 1. Zrób kopię konfiguracji, profili i ekwipunków staging. Zatrzymaj backend `items`.
 2. Wgraj nową konfigurację MMOInventory i skrypt CoreTools, dodaj tłumaczenia do paczki. Nie nadpisuj całych plików lang, jeśli mają inne klucze.
 3. Nadzorca buduje `./build.sh` i instaluje JAR. Uruchamia tylko backend `items` za Velocity.
-4. Na testowym profilu sprawdź migrację 9–14, obrazy w 1 i 13, klik/shift-klik/cyfry/drag/Q/double-click, zapisy po relogu/przełączeniu profilu, staty MMOItems, F i Shift+F, broń dwuręczną, śmierć i Sakwe. Przejrzyj `./mc logs items` oraz `MCMMORPG/logs/latest.log`.
+4. Na testowym profilu sprawdź migrację 9–14 oraz 2–4, obrazy w 1 i 13, klik/shift-klik/cyfry/drag/Q/double-click, PPM konsumpcji z 2–4, zapisy po relogu/przełączeniu profilu, staty MMOItems, F i Shift+F, osobne zmiany P/L, broń dwuręczną, śmierć i Sakwe. Przejrzyj `./mc logs items` oraz `MCMMORPG/logs/latest.log`.
 5. Po potwierdzeniu działania można usunąć stary EqMigracja. Nie uruchamiaj go równocześnie z tą migracją.
 
 ## Cofnięcie
@@ -38,4 +47,10 @@ Zatrzymaj backend, usuń JAR Księgi, przywróć kopie konfiguracji, paczki oraz
 
 ## Ograniczenia do sprawdzenia na staging
 
-Nadzorca powinien potwierdzić kompilację sygnatur Paper i MMOItems oraz zachowanie NBT obrazu, zwłaszcza flagę `TWO_HANDED`. Test awaryjnego zatrzymania w trakcie migracji wymaga osobnej kopii profilu. Ikony zapasu i pustych rąk tymczasowo używają `nexo:mmo_icon_gloves`; przygotować własne tekstury.
+Nadzorca powinien potwierdzić kompilację sygnatur Paper i MMOItems oraz zachowanie NBT obrazu i statów `TWO_HANDED`, `RESTORE_HEALTH`, `RESTORE_MANA`. Test awaryjnego zatrzymania w trakcie migracji wymaga osobnej kopii profilu. Ikony zapasu, pustych i zajętych rąk oraz slotów 2–4 tymczasowo używają `nexo:mmo_icon_gloves`. Docelowo potrzebne są: `nexo:mmo_icon_right_hand`, `nexo:mmo_icon_left_hand`, `nexo:mmo_icon_spare_right`, `nexo:mmo_icon_spare_left`, `nexo:mmo_icon_left_occupied`, `nexo:mmo_icon_spare_left_occupied`, `nexo:mmo_icon_health_potion`, `nexo:mmo_icon_mana_potion`, `nexo:mmo_icon_utility`.
+
+## Wymagana zmiana MMOCore (zmierzone klientem 2026-10-01)
+`plugins/MMOCore/config.yml` -> `skill-casting.ignore-sneak: true`. Przy `false` Shift+F oprócz zamiany broni
+włącza też tryb SKILL CASTING. Z `true`: Shift+F = zamiana zestawu broni, samo F = pasek umiejętności (bez zmian).
+Tekstura okna E: `wdrozenie/inventory.png` (generator `wdrozenie/ksiega_tekstura.py`) -> pack Nexo
+`assets/minecraft/textures/gui/container/inventory.png`.
