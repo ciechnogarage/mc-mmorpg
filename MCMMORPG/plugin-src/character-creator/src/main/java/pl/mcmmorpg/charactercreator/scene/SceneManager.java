@@ -934,6 +934,42 @@ public final class SceneManager {
         && player.isChunkSent(org.bukkit.Chunk.getChunkKey(at.getBlockX() >> 4, at.getBlockZ() >> 4));
   }
 
+  /** Po podpieciu/teleporcie klient raz odpowiada pozycja z obrotem — to nie zgubiona kamera. */
+  private static final int CAMERA_LOST_GRACE_TICKS = 10;
+  private static final int CAMERA_LOST_MIN_GAP_TICKS = 20;
+
+  /**
+   * Klient obraca gracza w scenie = patrzy z wlasnych oczu, nie przez kamere (patrz
+   * SceneListener#onMove). Podpinamy kamere od nowa: zdjecie + nalozenie celu wysyla pakiet
+   * i teleport do kamery, a pakiet packetevents dokladamy na wszelki wypadek.
+   */
+  void cameraLost(SceneView view) {
+    Player player = view.player();
+    int now = Bukkit.getCurrentTick();
+    if (player == null || view.flying || view.aimedTick < 0 || view.camera == null || !view.camera.isValid()
+        || now - view.aimedTick < CAMERA_LOST_GRACE_TICKS || now - view.lostFixTick < CAMERA_LOST_MIN_GAP_TICKS
+        || player.getGameMode() != GameMode.SPECTATOR) {
+      return;
+    }
+    view.lostFixTick = now;
+    view.lostCount++;
+    if (view.lostCount <= 3) {
+      logger.info("Scena: " + player.getName() + " ma wolna kamere (obrot gracza w scenie) — podpinam ponownie"
+          + " (" + view.lostCount + ")");
+    }
+    view.retargeting = true;
+    try {
+      player.setSpectatorTarget(null);
+      player.setSpectatorTarget(view.camera);
+    } finally {
+      view.retargeting = false;
+    }
+    view.aimedTick = now;
+    if (CameraPacket.available()) {
+      CameraPacket.send(player, view.camera);
+    }
+  }
+
   /** Ponowienia po podpieciu: 5 i 20 tickow (encja zdazy dojsc), potem co 2 s na wszelki wypadek. */
   private static final int[] CAMERA_RESEND_AT = {5, 20};
   private static final int CAMERA_RESEND_EVERY = 40;

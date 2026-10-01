@@ -43,6 +43,9 @@ public final class SceneView {
   long targetReadyTick;
   /** Tick podpiecia kamery (-1 = niepodpieta) — od niego licza sie ponowienia pakietu kamery. */
   long aimedTick = -1;
+  /** Ostatnie podpiecie po wykryciu wolnej kamery i ich liczba (do logu). */
+  long lostFixTick = -1000;
+  int lostCount;
   /**
    * Scena sama zmienia cel kamery — listener przepuszcza wtedy Start/StopSpectating,
    * ktore w kazdej innej sytuacji anuluje.

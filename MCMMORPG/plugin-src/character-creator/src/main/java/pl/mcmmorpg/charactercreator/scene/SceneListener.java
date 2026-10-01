@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInputEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -109,6 +110,24 @@ public final class SceneListener implements Listener {
       dispatch(view, c -> c.onUp(view), "W");
     } else if (pressedDown) {
       dispatch(view, c -> c.onDown(view), "S");
+    }
+  }
+
+  /**
+   * Klient z podpieta kamera NIE wysyla obrotu gracza (LocalPlayer#sendPosition dziala tylko,
+   * gdy kamera to sam gracz). Obrot w scenie = klient patrzy z wlasnych oczu, czyli zgubil
+   * kamere: wolny widok, LPM w nic nie trafia. Podpinamy od razu i zapisujemy w logu.
+   */
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void onMove(PlayerMoveEvent event) {
+    SceneView view = scenes.view(event.getPlayer());
+    if (view == null || view.closed) {
+      return;
+    }
+    org.bukkit.Location from = event.getFrom();
+    org.bukkit.Location to = event.getTo();
+    if (from.getYaw() != to.getYaw() || from.getPitch() != to.getPitch()) {
+      scenes.cameraLost(view);
     }
   }
 
