@@ -11,15 +11,20 @@ final class PelnaSesja {
   final IMapDisplay display;
   final IDrawingSpace drawing;
   final double planeX, planeY, planeZ;
+  final double startX, startZ;
   final float facingYaw;
   final int width, height;
   String world;
   double centerX, centerZ, zoom;
   PelnaMath.Punkt cursor, previousCursor;
   long lastRightTick = -100;
+  long lastAttackTick = -100;
   long lastClickTick = -100;
-  long lastSendTick = -2, lastBaseTick = -10;
+  long lastSendTick = -2;
   boolean dirty = true, busy;
+  boolean sentPlayerVisible;
+  double sentPlayerX, sentPlayerZ;
+  float sentPlayerYaw;
   PelnaMath.Punkt sentCursor;
   BufferedImage base;
 
@@ -27,6 +32,8 @@ final class PelnaSesja {
       double planeX, double planeY, double planeZ, float facingYaw,
       int width, int height, String world, double centerX, double centerZ, double zoom) {
     this.id = player.getUniqueId();
+    this.startX = player.getLocation().getX();
+    this.startZ = player.getLocation().getZ();
     this.display = display;
     this.drawing = drawing;
     this.planeX = planeX;

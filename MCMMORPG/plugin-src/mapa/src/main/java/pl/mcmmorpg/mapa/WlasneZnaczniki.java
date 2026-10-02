@@ -34,6 +34,7 @@ final class WlasneZnaczniki {
   private final Map<UUID, UUID> playerKeys = new HashMap<>();
   private final Map<UUID, List<Entry>> entries = new HashMap<>();
   private volatile Map<UUID, List<Entry>> snapshot = Map.of();
+  private long revision;
 
   WlasneZnaczniki(File folder, Logger log) { this.folder = folder; this.log = log; }
 
@@ -103,6 +104,7 @@ final class WlasneZnaczniki {
     List<Entry> copy = List.copyOf(values);
     entries.put(key, copy);
     snapshot = Map.copyOf(entries);
+    revision++;
     String yaml = serialize(copy);
     writer.execute(() -> {
       try {
@@ -115,6 +117,8 @@ final class WlasneZnaczniki {
       } catch (IOException ex) { log.warning("Nie mozna zapisac znacznikow " + key + ": " + ex.getMessage()); }
     });
   }
+
+  long revision() { return revision; }
 
   private List<Entry> load(UUID key) {
     File file = new File(folder, key + ".yml");

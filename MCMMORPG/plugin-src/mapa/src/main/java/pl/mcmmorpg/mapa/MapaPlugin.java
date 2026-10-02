@@ -31,6 +31,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
@@ -115,7 +117,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   @Override
   public void onDisable() {
     if (navigation != null) for (Player player : Bukkit.getOnlinePlayers()) navigation.clear(player);
-    if (fullMap != null) fullMap.closeAll();
+    if (fullMap != null) fullMap.shutdown();
     if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
     if (renderer != null) renderer.forgetAll();
     if (panel != null) {
@@ -170,6 +172,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     result.addAll(own.asyncForPlayer(player, world));
     return List.copyOf(result);
   }
+  long markerRevision() { return own.revision(); }
   // domyslny zoom swiata (zoom-reka-swiat, z fallbackiem na szablon lochu), inaczej globalny
   double zoomSwiata(String world) {
     String key = getConfig().contains("zoom-reka-swiat." + world) ? world : MapaData.klucz(world);
@@ -219,6 +222,43 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     mapView.setLocked(true);
   }
 
+  // Stare mapy (opis "Klik — duza mapa") dostaja nowy opis sterowania. Zmieniamy TYLKO lore przez ItemMeta —
+  // aktualizacja rewizji MMOItems przebudowalaby przedmiot i zgubila map_id.
+  private static final String STARY_OPIS = "duża mapa ze znacznikami";
+  private void odswiezOpis(Player player) {
+    ItemStack[] zawartosc = player.getInventory().getContents();
+    for (int i = 0; i < zawartosc.length; i++) {
+      ItemStack item = zawartosc[i];
+      if (!ourMap(item) || item.lore() == null) continue;
+      List<Component> lore = item.lore();
+      boolean stary = lore.stream().anyMatch(l -> net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+          .plainText().serialize(l).contains(STARY_OPIS));
+      if (!stary) continue;
+      List<Component> nowy = new ArrayList<>();
+      for (Component l : lore) {
+        String tekst = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(l);
+        if (tekst.contains(STARY_OPIS)) {
+          nowy.add(Component.text("PPM", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
+              .append(Component.text(" — przybliż / oddal", NamedTextColor.GRAY)));
+          nowy.add(Component.text("Shift+PPM", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
+              .append(Component.text(" — mapa na cały ekran", NamedTextColor.GRAY)));
+        } else nowy.add(l);
+      }
+      item.lore(nowy);
+      player.getInventory().setItem(i, item);
+    }
+  }
+
+  @EventHandler
+  public void onJoinOpis(PlayerJoinEvent event) {
+    Bukkit.getScheduler().runTaskLater(this, () -> odswiezOpis(event.getPlayer()), 40L);
+  }
+
+  @EventHandler
+  public void onHeldOpis(PlayerItemHeldEvent event) {
+    if (ourMap(event.getPlayer().getInventory().getItem(event.getNewSlot()))) odswiezOpis(event.getPlayer());
+  }
+
   private boolean ourMap(ItemStack item) {
     return item != null && item.getType() == Material.FILLED_MAP
         && item.getItemMeta() instanceof MapMeta meta && meta.hasMapId() && meta.getMapId() == mapId;
@@ -234,7 +274,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       default -> { return; }
     }
     Player player = event.getPlayer();
-    if (player.isSneaking()) {
+    if (!player.isSneaking()) {
       double current = handZoom(player);
       int index = zooms.indexOf(current);
       double next = zooms.get((index + 1) % zooms.size());

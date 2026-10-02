@@ -63,4 +63,36 @@ class PelnaMathTest {
     assertEquals(b, PelnaMath.najblizszy(List.of(a, b), 116, 100, 200, 200, 0, 0, 1));
     assertNull(PelnaMath.najblizszy(List.of(a, b), 130, 100, 200, 200, 0, 0, 1));
   }
+
+  @Test void machnieciePoPpmNieJestKliknieciem() {
+    assertTrue(PelnaMath.ignorujMachniecie(102, 100, -100));
+    assertFalse(PelnaMath.ignorujMachniecie(103, 100, -100));
+    assertTrue(PelnaMath.ignorujMachniecie(103, -100, 102));
+    assertFalse(PelnaMath.ignorujMachniecie(104, -100, 102));
+  }
+
+  @Test void ruchPoziomyZamykaMapeAleObrotISkokNie() {
+    assertFalse(PelnaMath.zamknijPoRuchu(10, 20, 10.3, 20));
+    assertTrue(PelnaMath.zamknijPoRuchu(10, 20, 10.301, 20));
+    assertFalse(PelnaMath.zamknijPoRuchu(10, 20, 10, 20));
+  }
+
+  @Test void pelnyObrazDopieroPoObrocieO15StopniLubPikselu() {
+    assertFalse(PelnaMath.pelnePrzerysowanie(false, true, true, true,
+        0, 0, 0, 0, 0, 14, 1));
+    assertTrue(PelnaMath.pelnePrzerysowanie(false, true, true, true,
+        0, 0, 0, 0, 0, 15, 1));
+    assertTrue(PelnaMath.pelnePrzerysowanie(false, true, true, true,
+        0, 0, 0, 1, 0, 0, 1));
+    assertTrue(PelnaMath.pelnePrzerysowanie(true, true, true, true,
+        0, 0, 0, 0, 0, 0, 1));
+  }
+
+  @Test void kursorWObrebieJednegoPikselaNieWymagaWysylki() {
+    assertTrue(PelnaMath.tenSamPiksel(new PelnaMath.Punkt(10.1, 20.2),
+        new PelnaMath.Punkt(10.4, 20.3)));
+    assertFalse(PelnaMath.tenSamPiksel(new PelnaMath.Punkt(10.1, 20.2),
+        new PelnaMath.Punkt(10.6, 20.3)));
+    assertFalse(PelnaMath.tenSamPiksel(null, new PelnaMath.Punkt(10, 20)));
+  }
 }

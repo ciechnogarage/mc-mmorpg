@@ -6,5 +6,6 @@ UI_MAPA:
       - '&7Weź do ręki (klawisz &f8&7),'
       - '&7aby zobaczyć, gdzie jesteś.'
       - ''
-      - '&fKlik &7— duża mapa ze znacznikami'
+      - '&fPPM &7— przybliż / oddal'
+      - '&fShift+PPM &7— mapa na cały ekran'
     hide-enchants: true

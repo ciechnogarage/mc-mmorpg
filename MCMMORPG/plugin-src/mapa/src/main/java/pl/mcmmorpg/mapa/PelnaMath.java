@@ -34,6 +34,30 @@ final class PelnaMath {
     return new Punkt(centerX - du * zoom, centerZ - dv * zoom);
   }
 
+  static boolean ignorujMachniecie(long tick, long lastRightTick, long lastAttackTick) {
+    return tick - lastRightTick <= 2 || tick - lastAttackTick <= 1;
+  }
+
+  static boolean zamknijPoRuchu(double startX, double startZ, double x, double z) {
+    double dx = x - startX, dz = z - startZ;
+    return dx * dx + dz * dz > 0.09 + 1e-9;
+  }
+
+  static boolean pelnePrzerysowanie(boolean dirty, boolean hasBase,
+      boolean previousVisible, boolean visible, double previousX, double previousZ,
+      float previousYaw, double x, double z, float yaw, double zoom) {
+    if (dirty || !hasBase || previousVisible != visible) return true;
+    if (!visible) return false;
+    if (Math.hypot(x - previousX, z - previousZ) >= zoom) return true;
+    return Math.abs(Math.IEEEremainder(yaw - previousYaw, 360)) >= 15;
+  }
+
+  static boolean tenSamPiksel(Punkt first, Punkt second) {
+    if (first == null || second == null) return first == second;
+    return Math.round(first.u()) == Math.round(second.u())
+        && Math.round(first.v()) == Math.round(second.v());
+  }
+
   static Punkt punktSwiata(double u, double v, int width, int height,
       double centerX, double centerZ, double zoom) {
     return new Punkt(centerX + (u - width / 2.0) * zoom,

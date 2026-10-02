@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.imageio.ImageIO;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -41,6 +43,10 @@ final class PelnaMapa implements Listener {
   private final MapEngineApi api;
   private final PelnaRysownik renderer = new PelnaRysownik();
   private final Map<UUID, PelnaSesja> sessions = new HashMap<>();
+  private volatile Set<UUID> activeIds = Set.of();
+  private final Set<UUID> pendingRight = ConcurrentHashMap.newKeySet();
+  private final Set<UUID> pendingAttack = ConcurrentHashMap.newKeySet();
+  private final PelnaPakiety packets;
   private Map<String, BufferedImage> icons = Map.of();
   private long tick;
 
@@ -49,6 +55,7 @@ final class PelnaMapa implements Listener {
     this.api = Bukkit.getServicesManager().load(MapEngineApi.class);
     if (api == null) throw new IllegalStateException("MapEngine nie udostępnia MapEngineApi");
     reloadIcons();
+    packets = Bukkit.getPluginManager().isPluginEnabled("packetevents") ? new PelnaPakiety(this, plugin) : null;
     Bukkit.getPluginManager().registerEvents(this, plugin);
     Bukkit.getScheduler().runTaskTimer(plugin, () -> tick(), 1L, 1L);
   }
@@ -147,6 +154,7 @@ final class PelnaMapa implements Listener {
       sessions.put(player.getUniqueId(), new PelnaSesja(player, display, drawing,
           planeX, planeY, planeZ, yaw, mapsWide * 128, mapsHigh * 128,
           world, x, z, plugin.handZoom(player)));
+      activeIds = Set.copyOf(sessions.keySet());
     } catch (RuntimeException ex) {
       display.destroy();
       display.despawn(player);
@@ -158,9 +166,36 @@ final class PelnaMapa implements Listener {
   void close(Player player) {
     PelnaSesja session = sessions.remove(player.getUniqueId());
     if (session == null) return;
+    activeIds = Set.copyOf(sessions.keySet());
+    pendingRight.remove(session.id);
+    pendingAttack.remove(session.id);
     if (plugin.dialogs() != null) plugin.dialogs().forget(player);
+    if (!session.busy) destroy(session, player);
+  }
+
+  private void destroy(PelnaSesja session, Player player) {
     session.display.destroy();
-    session.display.despawn(player);
+    if (player != null) session.display.despawn(player);
+  }
+
+  boolean packetActive(UUID id) { return activeIds.contains(id); }
+
+  void packetPending(UUID id, boolean attack) {
+    if (attack) pendingAttack.add(id); else pendingRight.add(id);
+  }
+
+  void packetInput(UUID id, boolean attack) {
+    try {
+      PelnaSesja session = sessions.get(id);
+      if (session == null) return;
+      if (attack) {
+        session.lastAttackTick = tick;
+        Player player = Bukkit.getPlayer(id);
+        if (player != null) click(player, session, true);
+      } else session.lastRightTick = tick;
+    } finally {
+      if (attack) pendingAttack.remove(id); else pendingRight.remove(id);
+    }
   }
 
   boolean active(Player player) { return sessions.containsKey(player.getUniqueId()); }
@@ -175,17 +210,25 @@ final class PelnaMapa implements Listener {
       if (player != null) close(player);
       else {
         PelnaSesja session = sessions.remove(id);
-        if (session != null) session.display.destroy();
+        if (session != null && !session.busy) destroy(session, null);
       }
     }
+    activeIds = Set.of();
+  }
+
+  void shutdown() {
+    closeAll();
+    if (packets != null) packets.close();
   }
 
   private void tick() {
     tick++;
+    if (sessions.isEmpty()) return;
     for (PelnaSesja session : List.copyOf(sessions.values())) {
       Player player = Bukkit.getPlayer(session.id);
       if (player == null || !player.isOnline()) continue;
       Location eye = player.getEyeLocation();
+      Location position = player.getLocation();
       Vector ray = eye.getDirection();
       PelnaMath.Punkt cursor = PelnaMath.przeciecie(eye.getX(), eye.getY(), eye.getZ(),
           ray.getX(), ray.getY(), ray.getZ(), session.planeX, session.planeY,
@@ -203,57 +246,76 @@ final class PelnaMapa implements Listener {
       }
       session.previousCursor = cursor;
       if (session.busy || tick - session.lastSendTick < 2) continue;
-      boolean redraw = session.dirty || session.base == null || tick - session.lastBaseTick >= 10;
-      if (!redraw && java.util.Objects.equals(cursor, session.sentCursor)) continue;
-      PelnaRysownik.Dane data = new PelnaRysownik.Dane(session.width, session.height, session.world,
-          session.centerX, session.centerZ, session.zoom, plugin.data().terrain(session.world),
-          plugin.znacznikiDla(player, session.world), plugin.data().tabs().subList(0,
-              Math.min(8, plugin.data().tabs().size())), icons,
-          MapaData.klucz(player.getWorld().getName()).equals(MapaData.klucz(session.world)),
-          player.getLocation().getX(), player.getLocation().getZ(), player.getLocation().getYaw(),
-          cursor, plugin.navigation().target(player));
-      BufferedImage previous = redraw ? null : session.base;
+      boolean visible = MapaData.klucz(player.getWorld().getName()).equals(MapaData.klucz(session.world));
+      double playerX = position.getX(), playerZ = position.getZ();
+      float playerYaw = position.getYaw();
+      boolean redraw = PelnaMath.pelnePrzerysowanie(session.dirty, session.base != null,
+          session.sentPlayerVisible, visible, session.sentPlayerX, session.sentPlayerZ,
+          session.sentPlayerYaw, playerX, playerZ, playerYaw, session.zoom);
+      if (!redraw && PelnaMath.tenSamPiksel(cursor, session.sentCursor)) continue;
+      PelnaRysownik.Dane data = redraw ? new PelnaRysownik.Dane(session.width, session.height,
+          session.world, session.centerX, session.centerZ, session.zoom,
+          plugin.data().terrain(session.world), plugin.znacznikiDla(player, session.world),
+          plugin.data().tabs().subList(0, Math.min(8, plugin.data().tabs().size())),
+          icons, visible, playerX, playerZ, playerYaw, cursor, plugin.navigation().target(player)) : null;
+      BufferedImage base = session.base;
+      PelnaMath.Punkt oldCursor = session.sentCursor;
       session.busy = true;
       session.dirty = false;
       session.lastSendTick = tick;
       Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-        PelnaRysownik.Obraz image;
-        try { image = renderer.rysuj(data, previous); }
-        catch (RuntimeException ex) {
-          Bukkit.getScheduler().runTask(plugin, () -> {
-            session.busy = false;
-            session.dirty = true;
-            plugin.getLogger().warning("Blad rysowania pelnej mapy: " + ex.getMessage());
-          });
-          return;
-        }
-        Bukkit.getScheduler().runTask(plugin, () -> {
-          if (sessions.get(session.id) != session) return;
-          session.base = image.base();
-          if (redraw) session.lastBaseTick = tick;
-          try {
+        BufferedImage newBase = base;
+        RuntimeException failure = null;
+        try {
+          if (redraw) {
+            PelnaRysownik.Obraz image = renderer.rysuj(data, null);
+            newBase = image.base();
             session.drawing.image(image.image(), 0, 0);
-            session.drawing.flush();
-            session.sentCursor = data.cursor();
-          } catch (RuntimeException ex) {
+          } else {
+            if (oldCursor != null) {
+              PelnaRysownik.Wycinek old = renderer.wycinekKursora(base, oldCursor, false);
+              session.drawing.image(old.image(), old.x(), old.y());
+            }
+            if (cursor != null) {
+              PelnaRysownik.Wycinek next = renderer.wycinekKursora(base, cursor, true);
+              session.drawing.image(next.image(), next.x(), next.y());
+            }
+          }
+          session.drawing.flush();
+        } catch (RuntimeException ex) { failure = ex; }
+        BufferedImage completedBase = newBase;
+        RuntimeException completedFailure = failure;
+        Bukkit.getScheduler().runTask(plugin, () -> {
+          session.busy = false;
+          if (sessions.get(session.id) != session) {
+            destroy(session, Bukkit.getPlayer(session.id));
+            return;
+          }
+          if (completedFailure != null) {
             session.dirty = true;
-            plugin.getLogger().warning("Blad wysylania pelnej mapy: " + ex.getMessage());
-          } finally { session.busy = false; }
+            plugin.getLogger().warning("Blad wysylania pelnej mapy: " + completedFailure.getMessage());
+            return;
+          }
+          session.base = completedBase;
+          session.sentCursor = cursor;
+          if (redraw) {
+            session.sentPlayerVisible = visible;
+            session.sentPlayerX = playerX;
+            session.sentPlayerZ = playerZ;
+            session.sentPlayerYaw = playerYaw;
+          }
         });
       });
     }
   }
 
-  @EventHandler public void onMove(PlayerMoveEvent event) {
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void onMove(PlayerMoveEvent event) {
     PelnaSesja session = sessions.get(event.getPlayer().getUniqueId());
     if (session == null || event instanceof PlayerTeleportEvent || event.getTo() == null) return;
-    Location from = event.getFrom(), to = event.getTo();
-    if (from.getX() != to.getX() || from.getY() != to.getY() || from.getZ() != to.getZ()) {
-      Location fixed = from.clone();
-      fixed.setYaw(to.getYaw());
-      fixed.setPitch(to.getPitch());
-      event.setTo(fixed);
-    }
+    Location to = event.getTo();
+    if (PelnaMath.zamknijPoRuchu(session.startX, session.startZ, to.getX(), to.getZ()))
+      close(event.getPlayer());
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -296,7 +358,7 @@ final class PelnaMapa implements Listener {
     if (event.getHand() != EquipmentSlot.HAND) return;
     switch (event.getAction()) {
       case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> session.lastRightTick = tick;
-      case LEFT_CLICK_AIR, LEFT_CLICK_BLOCK -> click(event.getPlayer(), session);
+      case LEFT_CLICK_AIR, LEFT_CLICK_BLOCK -> click(event.getPlayer(), session, false);
       default -> { }
     }
   }
@@ -309,7 +371,7 @@ final class PelnaMapa implements Listener {
     PelnaSesja session = sessions.get(event.getPlayer().getUniqueId());
     if (session != null && event.getAnimationType() == PlayerAnimationType.ARM_SWING) {
       event.setCancelled(true);
-      click(event.getPlayer(), session);
+      click(event.getPlayer(), session, false);
     }
   }
 
@@ -322,7 +384,9 @@ final class PelnaMapa implements Listener {
     if (sessions.containsKey(event.getPlayer().getUniqueId())) event.setCancelled(true);
   }
 
-  private void click(Player player, PelnaSesja session) {
+  private void click(Player player, PelnaSesja session, boolean packetAttack) {
+    if (!packetAttack && (pendingRight.contains(session.id) || pendingAttack.contains(session.id)
+        || PelnaMath.ignorujMachniecie(tick, session.lastRightTick, session.lastAttackTick))) return;
     if (session.lastClickTick == tick) return;
     session.lastClickTick = tick;
     PelnaMath.Punkt cursor = session.cursor;

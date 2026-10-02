@@ -1,6 +1,7 @@
 package pl.mcmmorpg.mapa;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
@@ -20,6 +21,11 @@ final class HandMapRenderer extends MapRenderer {
     double zoom;
     long lastDraw;
     boolean drawn;
+    long renderCount;
+    long markersRefresh = -20;
+    long markersRevision = -1;
+    String markersWorld;
+    List<MapaData.Marker> markers = List.of();
   }
 
   private final MapaPlugin plugin;
@@ -36,6 +42,7 @@ final class HandMapRenderer extends MapRenderer {
   @Override
   public void render(MapView view, MapCanvas canvas, Player player) {
     State state = states.computeIfAbsent(player.getUniqueId(), id -> new State());
+    state.renderCount++;
     String world = player.getWorld().getName();
     double zoom = plugin.handZoom(player);
     int x = player.getLocation().getBlockX();
@@ -60,7 +67,15 @@ final class HandMapRenderer extends MapRenderer {
     }
 
     MapCursorCollection cursors = new MapCursorCollection();
-    if (state.drawn && world.equals(state.world)) for (MapaData.Marker marker : plugin.znacznikiDla(player, world)) {
+    long revision = plugin.markerRevision();
+    if (!world.equals(state.markersWorld) || revision != state.markersRevision
+        || state.renderCount - state.markersRefresh >= 20) {
+      state.markers = plugin.znacznikiDla(player, world);
+      state.markersWorld = world;
+      state.markersRevision = plugin.markerRevision();
+      state.markersRefresh = state.renderCount;
+    }
+    if (state.drawn && world.equals(state.world)) for (MapaData.Marker marker : state.markers) {
       if (!MapaMath.cursorInRange(marker.x(), state.centerX, state.zoom)
           || !MapaMath.cursorInRange(marker.z(), state.centerZ, state.zoom)) continue;
       cursors.addCursor(new MapCursor((byte) MapaMath.cursorCoordinate(marker.x(), state.centerX, state.zoom),

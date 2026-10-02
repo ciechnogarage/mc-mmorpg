@@ -34,17 +34,38 @@ final class PelnaRysownik {
     BufferedImage image = new BufferedImage(data.width(), data.height(), BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = image.createGraphics();
     g.drawImage(base, 0, 0, null);
-    if (data.cursor() != null) {
-      int x = (int) Math.round(data.cursor().u()), y = (int) Math.round(data.cursor().v());
-      g.setColor(Color.BLACK);
-      g.drawLine(x - 4, y, x + 4, y);
-      g.drawLine(x, y - 4, x, y + 4);
-      g.setColor(Color.WHITE);
-      g.drawLine(x - 3, y, x + 3, y);
-      g.drawLine(x, y - 3, x, y + 3);
-    }
+    rysujKursor(g, data.cursor());
     g.dispose();
     return new Obraz(base, image);
+  }
+
+  record Wycinek(BufferedImage image, int x, int y) {}
+
+  Wycinek wycinekKursora(BufferedImage base, PelnaMath.Punkt cursor, boolean draw) {
+    int centerX = (int) Math.round(cursor.u()), centerY = (int) Math.round(cursor.v());
+    int x = Math.max(0, centerX - 4), y = Math.max(0, centerY - 4);
+    int width = Math.min(base.getWidth(), centerX + 5) - x;
+    int height = Math.min(base.getHeight(), centerY + 5) - y;
+    BufferedImage part = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = part.createGraphics();
+    g.drawImage(base, -x, -y, null);
+    if (draw) {
+      g.translate(-x, -y);
+      rysujKursor(g, cursor);
+    }
+    g.dispose();
+    return new Wycinek(part, x, y);
+  }
+
+  private void rysujKursor(Graphics2D g, PelnaMath.Punkt cursor) {
+    if (cursor == null) return;
+    int x = (int) Math.round(cursor.u()), y = (int) Math.round(cursor.v());
+    g.setColor(Color.BLACK);
+    g.drawLine(x - 4, y, x + 4, y);
+    g.drawLine(x, y - 4, x, y + 4);
+    g.setColor(Color.WHITE);
+    g.drawLine(x - 3, y, x + 3, y);
+    g.drawLine(x, y - 3, x, y + 3);
   }
 
   private BufferedImage podklad(Dane data) {
