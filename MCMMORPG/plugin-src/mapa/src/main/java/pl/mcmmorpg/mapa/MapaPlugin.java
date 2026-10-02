@@ -62,6 +62,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private MapView mapView;
   private MapyGraczy playerMaps = new MapyGraczy();
   private final Map<UUID, Integer> replacedMapIds = new HashMap<>();
+  // numery map zajete przez innych: wspolna 30000 i minimapa NMinimap (map-id w jej configu). Osobista mapa
+  // gracza z takim numerem = klient dostaje pod nim na zmiane nasz obraz i minimape -> "mapa znika" (02.10).
+  private Set<Integer> reserved = Set.of();
   private final MapRenderer emptyRenderer = new MapRenderer() {
     @Override public void render(MapView view, org.bukkit.map.MapCanvas canvas, Player player) { }
   };
@@ -226,6 +229,10 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     if (renderer != null) renderer.forgetAll();
     detachRenderers();
     replacedMapIds.clear();
+    Set<Integer> zajete = new HashSet<>(); zajete.add(mapId);
+    File nmm = new File(getDataFolder().getParentFile(), "NMinimap/config.yml");
+    if (nmm.isFile()) zajete.add(YamlConfiguration.loadConfiguration(nmm).getInt("map-id", 0));
+    reserved = Set.copyOf(zajete);
     File registryFile = new File(getDataFolder(), "mapy-graczy.yml");
     playerMaps = MapyGraczy.fromYaml(YamlConfiguration.loadConfiguration(registryFile));
     mapView = Bukkit.getMap(mapId);
@@ -236,11 +243,10 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     boolean changed = false;
     for (Map.Entry<UUID, Integer> entry : playerMaps.entries().entrySet()) {
       int id = entry.getValue();
-      MapView view = id == mapId || !used.add(id) ? null : Bukkit.getMap(id);
+      MapView view = reserved.contains(id) || !used.add(id) ? null : Bukkit.getMap(id);
       if (view == null) {
         replacedMapIds.put(entry.getKey(), id);
-        view = Bukkit.createMap(worldForMap(entry.getKey()));
-        if (view.getId() == mapId) view = Bukkit.createMap(worldForMap(entry.getKey()));
+        view = nowaMapa(worldForMap(entry.getKey()));
         playerMaps.put(entry.getKey(), view.getId());
         used.add(view.getId());
         changed = true;
@@ -248,6 +254,16 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       configureMap(view, renderer);
     }
     if (changed) savePlayerMaps();
+  }
+
+  // nowa mapa vanilli z numerem spoza zarezerwowanych (pominiete dostaja pusty renderer, zeby nic nie rysowaly)
+  private MapView nowaMapa(org.bukkit.World world) {
+    MapView view = Bukkit.createMap(world);
+    while (reserved.contains(view.getId())) {
+      configureMap(view, emptyRenderer);
+      view = Bukkit.createMap(world);
+    }
+    return view;
   }
 
   private org.bukkit.World worldForMap(UUID player) {
@@ -276,11 +292,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   private void personalMap(Player player) {
     if (playerMaps.id(player.getUniqueId()) != null) return;
-    MapView view = Bukkit.createMap(player.getWorld());
-    if (view.getId() == mapId) {
-      configureMap(view, emptyRenderer);
-      view = Bukkit.createMap(player.getWorld());
-    }
+    MapView view = nowaMapa(player.getWorld());
     playerMaps.put(player.getUniqueId(), view.getId());
     configureMap(view, renderer);
     savePlayerMaps();
