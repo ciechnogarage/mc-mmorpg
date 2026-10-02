@@ -13,6 +13,7 @@ import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import net.kyori.adventure.text.Component;
@@ -28,8 +29,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Pakiety paska: text_display istnieje tylko u klienta i jedzie na mobie jako pasazer (SET_PASSENGERS).
- * Indeksy metadanych 1.21.11: 2 nazwa, 3 nazwa widoczna; Display 11 przesuniecie, 12 skala, 15 billboard,
+ * Pakiety paska: text_display istnieje tylko u klienta; pasazer albo wyswietlacz podazajacy.
+ * Indeksy metadanych 1.21.11: 2 nazwa, 3 nazwa widoczna; Display 10 interpolacja, 11 przesuniecie, 12 skala, 15 billboard,
  * 16 jasnosc, 17 zasieg; TextDisplay 23 tekst, 24 szerokosc linii, 25 tlo, 27 flagi (cien/przezroczystosc).
  */
 final class Pakiety {
@@ -57,7 +58,7 @@ final class Pakiety {
         } else if (e.getPacketType() == PacketType.Play.Server.SET_PASSENGERS) {
           WrapperPlayServerSetPassengers w = new WrapperPlayServerSetPassengers(e);
           Pasek p = poMobie.get(w.getEntityId());
-          if (p == null) return;
+          if (p == null || p.podazanie) return;
           int[] pas = w.getPassengers();
           for (int id : pas) if (id == p.idWyswietlacza) return;
           int[] nowe = Arrays.copyOf(pas, pas.length + 1);
@@ -79,10 +80,13 @@ final class Pakiety {
   void pokaz(Player gracz, Pasek p, Entity mob, Component tekst, Ustawienia u) {
     Location l = mob.getLocation();
     wyslij(gracz, new WrapperPlayServerSpawnEntity(p.idWyswietlacza, Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
-        new Vector3d(l.getX(), l.getY() + mob.getHeight(), l.getZ()), 0f, 0f, 0f, 0, Optional.empty()));
+        new Vector3d(l.getX(), l.getY() + (p.podazanie ? p.wysokoscModelu : mob.getHeight()), l.getZ()),
+        0f, 0f, 0f, 0, Optional.empty()));
     float s = (float) u.skala();
     List<EntityData<?>> m = new ArrayList<>();
-    m.add(new EntityData<>(11, EntityDataTypes.VECTOR3F, new Vector3f(0f, (float) u.wysokosc(), 0f)));
+    if (p.podazanie) m.add(new EntityData<>(10, EntityDataTypes.INT, 3));
+    m.add(new EntityData<>(11, EntityDataTypes.VECTOR3F,
+        new Vector3f(0f, (float) (u.wysokosc() + (p.podazanie ? 0 : p.dodatkowaWysokosc)), 0f)));
     m.add(new EntityData<>(12, EntityDataTypes.VECTOR3F, new Vector3f(s, s, s)));
     m.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) 3));          // billboard CENTER
     m.add(new EntityData<>(16, EntityDataTypes.INT, JASNOSC_PELNA));      // nie ciemnieje w nocy i w jaskini
@@ -92,10 +96,17 @@ final class Pakiety {
     m.add(new EntityData<>(25, EntityDataTypes.INT, 0));                  // bez tla
     m.add(new EntityData<>(27, EntityDataTypes.BYTE, (byte) 0));          // bez cienia (cien psuje glify)
     wyslij(gracz, new WrapperPlayServerEntityMetadata(p.idWyswietlacza, m));
-    int[] pasazerowie = mob.getPassengers().stream().mapToInt(Entity::getEntityId).toArray();
-    int[] z = Arrays.copyOf(pasazerowie, pasazerowie.length + 1);
-    z[pasazerowie.length] = p.idWyswietlacza;
-    wyslij(gracz, new WrapperPlayServerSetPassengers(mob.getEntityId(), z));
+    if (!p.podazanie) {
+      int[] pasazerowie = mob.getPassengers().stream().mapToInt(Entity::getEntityId).toArray();
+      int[] z = Arrays.copyOf(pasazerowie, pasazerowie.length + 1);
+      z[pasazerowie.length] = p.idWyswietlacza;
+      wyslij(gracz, new WrapperPlayServerSetPassengers(mob.getEntityId(), z));
+    }
+  }
+
+  void przesun(Player gracz, Pasek p, Location l) {
+    wyslij(gracz, new WrapperPlayServerEntityTeleport(p.idWyswietlacza,
+        new Vector3d(l.getX(), l.getY() + p.wysokoscModelu, l.getZ()), 0f, 0f, false));
   }
 
   void tekst(Player gracz, Pasek p, Component tekst) {

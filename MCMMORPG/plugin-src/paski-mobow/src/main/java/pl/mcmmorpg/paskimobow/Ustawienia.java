@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 record Ustawienia(double skala, double wysokosc, double zasieg, boolean liczbyHp, boolean ukryjNazwe,
-                  boolean tylkoPoTrafieniu, Map<String, Wyglad.Rzadkosc> rzadkosci, Set<String> frakcje,
+                  boolean kolorHp, String pozaWalka, int walkaSekundy, boolean modelEngineWlaczone,
+                  String modelEngineTryb, Map<String, Wyglad.Rzadkosc> rzadkosci, Set<String> frakcje,
                   List<Pattern> wzorce, List<Pattern> pomin, boolean vanillaPotwory, int vanillaPoziom,
                   boolean poziomZMm, List<Wpis> moby) {
 
@@ -44,10 +45,20 @@ record Ustawienia(double skala, double wysokosc, double zasieg, boolean liczbyHp
     }
     return new Ustawienia(c.getDouble("wyglad.skala", 0.7), c.getDouble("wyglad.wysokosc", 0.3),
         c.getDouble("wyglad.zasieg", 24), c.getBoolean("wyglad.liczby-hp", true),
-        c.getBoolean("wyglad.ukryj-nazwe-vanilla", true), c.getBoolean("wyglad.tylko-po-trafieniu", false), rz,
+        c.getBoolean("wyglad.ukryj-nazwe-vanilla", true),
+        wybor(c.getString("wyglad.kolor-hp", "stopnie"), "stopnie", List.of("stopnie", "czerwony"), log).equals("stopnie"),
+        wybor(c.getString("wyglad.poza-walka", "nazwa"), "nazwa", List.of("wszystko", "nazwa", "nic"), log),
+        Math.max(0, c.getInt("wyglad.walka-sekundy", 8)), c.getBoolean("modelengine.wlaczone", true),
+        wybor(c.getString("modelengine.tryb", "pasazer"), "pasazer", List.of("pasazer", "podazanie"), log), rz,
         Set.copyOf(c.getStringList("frakcje")), c.getStringList("wzorce").stream().map(Ustawienia::glob).toList(),
         c.getStringList("pomin").stream().map(Ustawienia::glob).toList(), c.getBoolean("vanilla-potwory", true),
         c.getInt("vanilla-poziom", 1), c.getBoolean("poziom-z-mm", true), moby);
+  }
+
+  private static String wybor(String wartosc, String domyslny, List<String> dozwolone, Logger log) {
+    if (dozwolone.contains(wartosc)) return wartosc;
+    log.warning("Nieznana wartosc '" + wartosc + "', biore '" + domyslny + "'");
+    return domyslny;
   }
 
   static Pattern glob(String g) {

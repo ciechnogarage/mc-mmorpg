@@ -34,6 +34,11 @@ final class Wyglad {
 
   record Rzadkosc(String id, String nazwa, TextColor kolor, int ikona, boolean pogrubiona) {}
 
+  static int stopienHp(double hp, double max, boolean kolorHp) {
+    double procent = max <= 0 ? 0 : hp / max;
+    return !kolorHp || procent <= 0.15 ? 3 : procent > 0.60 ? 0 : procent > 0.35 ? 1 : 2;
+  }
+
   /** Linia z kursorem: kazdy fragment ma swoj kolor (kolor mnozy piksele znaku). */
   private static final class Linia {
     final TextComponent.Builder b = Component.text();
@@ -73,12 +78,12 @@ final class Wyglad {
   }
 
   /**
-   * @param hp      biezace HP (zaokraglone w gore, zeby zywy mob nie mial 0)
-   * @param duch    HP "ducha" obrazen (>= hp), jasny odcinek za czerwonym
-   * @param pasek   false = sama nazwa i poziom (tryb tylko-po-trafieniu)
+   * @param hp      biezace HP (liczba w tekscie zaokraglana w gore)
+   * @param duch    HP "ducha" obrazen (>= hp), jasny odcinek za kolorem HP
+   * @param pasek   false = sama nazwa i poziom
    */
   static Component tekst(Component nazwa, Rzadkosc r, int poziom, double hp, double duch, double max,
-                         List<Status> statusy, boolean pasek, boolean liczby) {
+                         List<Status> statusy, boolean pasek, boolean liczby, boolean kolorHp) {
     Component wynik = Component.empty();
     if (!statusy.isEmpty()) {
       Linia s = new Linia();
@@ -86,7 +91,7 @@ final class Wyglad {
       wynik = wynik.append(s.gotowa()).append(Component.newline());
     }
     wynik = wynik.append(liniaNazwy(nazwa, r)).append(Component.newline());
-    return wynik.append(liniaPaska(r, poziom, hp, duch, max, pasek, liczby));
+    return wynik.append(liniaPaska(r, poziom, hp, duch, max, pasek, liczby, kolorHp));
   }
 
   private static Component liniaNazwy(Component nazwa, Rzadkosc r) {
@@ -101,7 +106,7 @@ final class Wyglad {
   }
 
   private static Component liniaPaska(Rzadkosc r, int poziom, double hp, double duch, double max,
-                                      boolean pasek, boolean liczby) {
+                                      boolean pasek, boolean liczby, boolean kolorHp) {
     String cyfry = String.valueOf(Math.max(0, Math.min(999, poziom)));
     int lewa = 2 + 4 * cyfry.length() + 1 + ODSTEP;          // plakietka + odstep
     String t = (int) Math.ceil(hp) + "/" + Math.round(max);
@@ -119,7 +124,8 @@ final class Wyglad {
     int j = max <= 0 ? 0 : (int) Math.ceil(Math.min(1, duch / max) * BAR_W);
     j = Math.max(k, Math.min(BAR_W, j));
     l.kafel(RAMKA_L, 1, NamedTextColor.WHITE);
-    if (k > 0) l.kafel((char) (HP + k), k, NamedTextColor.WHITE);
+    int stopien = stopienHp(hp, max, kolorHp);
+    if (k > 0) l.kafel((char) (HP + stopien * 64 + k), k, NamedTextColor.WHITE);
     if (j > k) l.kafel((char) (DUCH + (j - k)), j - k, NamedTextColor.WHITE);
     if (j < BAR_W) l.kafel((char) (TLO + (BAR_W - j)), BAR_W - j, NamedTextColor.WHITE);
     l.kafel(RAMKA_P, 1, NamedTextColor.WHITE);

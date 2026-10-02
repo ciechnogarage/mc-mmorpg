@@ -1,5 +1,5 @@
 # PaskiMobow - pasek nad glowa moba: ikona rzadkosci + nazwa w jej kolorze, plakietka poziomu, HP z "duchem"
-# obrazen, ikony statusow. Pasek istnieje tylko u klientow (pakietowy text_display jako pasazer moba) - serwer
+# obrazen, ikony statusow. Pasek istnieje tylko u klientow (pakietowy text_display) - serwer
 # go nie widzi, wiec nie psuje teleportow MM ani AI. Po zmianie: /paskimobow przeladuj.
 
 wyglad:
@@ -7,8 +7,14 @@ wyglad:
   wysokosc: 0.3           # blokow nad punktem pasazera moba (zwykle czubek glowy)
   zasieg: 24              # z ilu blokow widac pasek
   liczby-hp: true         # "36/40" na pasku
+  kolor-hp: stopnie       # stopnie (>60% zielony, >35% zolty, >15% pomaranczowy, reszta czerwony) | czerwony
+  poza-walka: nazwa       # wszystko | nazwa (statusy + nazwa + poziom) | nic
+  walka-sekundy: 8        # czas od ostatnich obrazen; celowanie w gracza tez oznacza walke
   ukryj-nazwe-vanilla: true   # bez tego nazwa MM wisi drugi raz po najechaniu celownikiem
-  tylko-po-trafieniu: false   # true = pasek dopiero po pierwszym ciosie (nazwa i poziom zawsze)
+
+modelengine:
+  wlaczone: true          # moby z aktywnym modelem podlegaja tym samym regułom frakcji/wzorcow
+  tryb: pasazer           # pasazer (SET_PASSENGERS) | podazanie (teleport wyswietlacza co 2 ticki)
 
 rzadkosci:              # kolejnosc = drabina; ikona: brak | klejnot | korona | gwiazda
   pospolity:  {nazwa: Pospolity,  kolor: '#d8d8d8', ikona: brak}
@@ -19,7 +25,7 @@ rzadkosci:              # kolejnosc = drabina; ikona: brak | klejnot | korona | 
 
 # Ktore moby MythicMobs dostaja pasek: frakcja z listy ALBO id pasujace do `wzorce`; `pomin` wygrywa.
 # Bez paska: NPC (brak frakcji), wezly zasobow, pieczecie, slugi Akolity i Chowance (maja wlasny HUD areny),
-# moby z modelem ModelEngine.
+# moby z modelem ModelEngine przechodza te same reguly, gdy modelengine.wlaczone=true.
 frakcje: [bestie, nieumarli, humanoidy, magiczne, gaj]
 wzorce: ['WIEZA_P01_*']
 pomin: []

@@ -236,11 +236,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp1.png",
+   "file": "paskimobow:font/hp0_1.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue201"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_1.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue241"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_1.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue281"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_1.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c1"
    ]
   },
   {
@@ -263,11 +290,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp2.png",
+   "file": "paskimobow:font/hp0_2.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue202"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_2.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue242"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_2.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue282"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_2.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c2"
    ]
   },
   {
@@ -290,11 +344,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp3.png",
+   "file": "paskimobow:font/hp0_3.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue203"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_3.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue243"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_3.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue283"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_3.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c3"
    ]
   },
   {
@@ -317,11 +398,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp4.png",
+   "file": "paskimobow:font/hp0_4.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue204"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_4.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue244"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_4.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue284"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_4.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c4"
    ]
   },
   {
@@ -344,11 +452,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp5.png",
+   "file": "paskimobow:font/hp0_5.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue205"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_5.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue245"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_5.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue285"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_5.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c5"
    ]
   },
   {
@@ -371,11 +506,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp6.png",
+   "file": "paskimobow:font/hp0_6.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue206"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_6.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue246"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_6.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue286"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_6.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c6"
    ]
   },
   {
@@ -398,11 +560,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp7.png",
+   "file": "paskimobow:font/hp0_7.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue207"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_7.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue247"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_7.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue287"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_7.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c7"
    ]
   },
   {
@@ -425,11 +614,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp8.png",
+   "file": "paskimobow:font/hp0_8.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue208"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_8.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue248"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_8.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue288"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_8.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c8"
    ]
   },
   {
@@ -452,11 +668,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp9.png",
+   "file": "paskimobow:font/hp0_9.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue209"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_9.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue249"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_9.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue289"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_9.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2c9"
    ]
   },
   {
@@ -479,11 +722,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp10.png",
+   "file": "paskimobow:font/hp0_10.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue20a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_10.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue24a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_10.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue28a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_10.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ca"
    ]
   },
   {
@@ -506,11 +776,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp11.png",
+   "file": "paskimobow:font/hp0_11.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue20b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_11.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue24b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_11.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue28b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_11.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2cb"
    ]
   },
   {
@@ -533,11 +830,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp12.png",
+   "file": "paskimobow:font/hp0_12.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue20c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_12.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue24c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_12.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue28c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_12.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2cc"
    ]
   },
   {
@@ -560,11 +884,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp13.png",
+   "file": "paskimobow:font/hp0_13.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue20d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_13.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue24d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_13.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue28d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_13.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2cd"
    ]
   },
   {
@@ -587,11 +938,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp14.png",
+   "file": "paskimobow:font/hp0_14.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue20e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_14.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue24e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_14.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue28e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_14.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ce"
    ]
   },
   {
@@ -614,11 +992,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp15.png",
+   "file": "paskimobow:font/hp0_15.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue20f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_15.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue24f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_15.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue28f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_15.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2cf"
    ]
   },
   {
@@ -641,11 +1046,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp16.png",
+   "file": "paskimobow:font/hp0_16.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue210"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_16.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue250"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_16.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue290"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_16.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d0"
    ]
   },
   {
@@ -668,11 +1100,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp17.png",
+   "file": "paskimobow:font/hp0_17.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue211"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_17.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue251"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_17.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue291"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_17.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d1"
    ]
   },
   {
@@ -695,11 +1154,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp18.png",
+   "file": "paskimobow:font/hp0_18.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue212"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_18.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue252"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_18.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue292"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_18.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d2"
    ]
   },
   {
@@ -722,11 +1208,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp19.png",
+   "file": "paskimobow:font/hp0_19.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue213"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_19.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue253"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_19.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue293"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_19.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d3"
    ]
   },
   {
@@ -749,11 +1262,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp20.png",
+   "file": "paskimobow:font/hp0_20.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue214"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_20.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue254"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_20.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue294"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_20.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d4"
    ]
   },
   {
@@ -776,11 +1316,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp21.png",
+   "file": "paskimobow:font/hp0_21.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue215"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_21.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue255"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_21.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue295"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_21.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d5"
    ]
   },
   {
@@ -803,11 +1370,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp22.png",
+   "file": "paskimobow:font/hp0_22.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue216"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_22.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue256"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_22.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue296"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_22.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d6"
    ]
   },
   {
@@ -830,11 +1424,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp23.png",
+   "file": "paskimobow:font/hp0_23.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue217"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_23.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue257"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_23.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue297"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_23.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d7"
    ]
   },
   {
@@ -857,11 +1478,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp24.png",
+   "file": "paskimobow:font/hp0_24.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue218"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_24.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue258"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_24.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue298"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_24.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d8"
    ]
   },
   {
@@ -884,11 +1532,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp25.png",
+   "file": "paskimobow:font/hp0_25.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue219"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_25.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue259"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_25.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue299"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_25.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2d9"
    ]
   },
   {
@@ -911,11 +1586,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp26.png",
+   "file": "paskimobow:font/hp0_26.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue21a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_26.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue25a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_26.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue29a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_26.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2da"
    ]
   },
   {
@@ -938,11 +1640,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp27.png",
+   "file": "paskimobow:font/hp0_27.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue21b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_27.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue25b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_27.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue29b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_27.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2db"
    ]
   },
   {
@@ -965,11 +1694,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp28.png",
+   "file": "paskimobow:font/hp0_28.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue21c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_28.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue25c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_28.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue29c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_28.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2dc"
    ]
   },
   {
@@ -992,11 +1748,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp29.png",
+   "file": "paskimobow:font/hp0_29.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue21d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_29.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue25d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_29.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue29d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_29.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2dd"
    ]
   },
   {
@@ -1019,11 +1802,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp30.png",
+   "file": "paskimobow:font/hp0_30.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue21e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_30.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue25e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_30.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue29e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_30.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2de"
    ]
   },
   {
@@ -1046,11 +1856,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp31.png",
+   "file": "paskimobow:font/hp0_31.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue21f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_31.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue25f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_31.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue29f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_31.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2df"
    ]
   },
   {
@@ -1073,11 +1910,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp32.png",
+   "file": "paskimobow:font/hp0_32.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue220"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_32.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue260"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_32.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a0"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_32.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e0"
    ]
   },
   {
@@ -1100,11 +1964,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp33.png",
+   "file": "paskimobow:font/hp0_33.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue221"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_33.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue261"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_33.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a1"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_33.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e1"
    ]
   },
   {
@@ -1127,11 +2018,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp34.png",
+   "file": "paskimobow:font/hp0_34.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue222"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_34.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue262"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_34.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a2"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_34.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e2"
    ]
   },
   {
@@ -1154,11 +2072,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp35.png",
+   "file": "paskimobow:font/hp0_35.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue223"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_35.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue263"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_35.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a3"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_35.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e3"
    ]
   },
   {
@@ -1181,11 +2126,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp36.png",
+   "file": "paskimobow:font/hp0_36.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue224"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_36.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue264"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_36.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a4"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_36.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e4"
    ]
   },
   {
@@ -1208,11 +2180,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp37.png",
+   "file": "paskimobow:font/hp0_37.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue225"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_37.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue265"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_37.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a5"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_37.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e5"
    ]
   },
   {
@@ -1235,11 +2234,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp38.png",
+   "file": "paskimobow:font/hp0_38.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue226"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_38.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue266"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_38.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a6"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_38.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e6"
    ]
   },
   {
@@ -1262,11 +2288,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp39.png",
+   "file": "paskimobow:font/hp0_39.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue227"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_39.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue267"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_39.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a7"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_39.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e7"
    ]
   },
   {
@@ -1289,11 +2342,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp40.png",
+   "file": "paskimobow:font/hp0_40.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue228"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_40.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue268"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_40.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a8"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_40.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e8"
    ]
   },
   {
@@ -1316,11 +2396,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp41.png",
+   "file": "paskimobow:font/hp0_41.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue229"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_41.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue269"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_41.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2a9"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_41.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2e9"
    ]
   },
   {
@@ -1343,11 +2450,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp42.png",
+   "file": "paskimobow:font/hp0_42.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue22a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_42.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue26a"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_42.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2aa"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_42.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ea"
    ]
   },
   {
@@ -1370,11 +2504,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp43.png",
+   "file": "paskimobow:font/hp0_43.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue22b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_43.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue26b"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_43.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ab"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_43.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2eb"
    ]
   },
   {
@@ -1397,11 +2558,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp44.png",
+   "file": "paskimobow:font/hp0_44.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue22c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_44.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue26c"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_44.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ac"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_44.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ec"
    ]
   },
   {
@@ -1424,11 +2612,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp45.png",
+   "file": "paskimobow:font/hp0_45.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue22d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_45.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue26d"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_45.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ad"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_45.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ed"
    ]
   },
   {
@@ -1451,11 +2666,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp46.png",
+   "file": "paskimobow:font/hp0_46.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue22e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_46.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue26e"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_46.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ae"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_46.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ee"
    ]
   },
   {
@@ -1478,11 +2720,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp47.png",
+   "file": "paskimobow:font/hp0_47.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue22f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_47.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue26f"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_47.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2af"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_47.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2ef"
    ]
   },
   {
@@ -1505,11 +2774,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp48.png",
+   "file": "paskimobow:font/hp0_48.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue230"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_48.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue270"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_48.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2b0"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_48.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2f0"
    ]
   },
   {
@@ -1532,11 +2828,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp49.png",
+   "file": "paskimobow:font/hp0_49.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue231"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_49.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue271"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_49.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2b1"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_49.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2f1"
    ]
   },
   {
@@ -1559,11 +2882,38 @@
   },
   {
    "type": "bitmap",
-   "file": "paskimobow:font/hp50.png",
+   "file": "paskimobow:font/hp0_50.png",
    "ascent": 7,
    "height": 7,
    "chars": [
     "\ue232"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp1_50.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue272"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp2_50.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2b2"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "paskimobow:font/hp3_50.png",
+   "ascent": 7,
+   "height": 7,
+   "chars": [
+    "\ue2f2"
    ]
   },
   {

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generator grafik PaskiMobow: czcionka `paskimobow:pasek` (Nexo pack/assets/paskimobow).
 
-Zrodlo prawdy dla znakow - Glify.java MUSI miec te same kody i szerokosci (sprawdza `--sprawdz` + test w Javie nie ma,
-wiec stale sa tu i tam opisane tym samym komentarzem). Zasady czcionki bitmapowej MC:
+Zrodlo prawdy dla znakow - Wyglad.java MUSI miec te same kody i szerokosci.
+Zasady czcionki bitmapowej MC:
 - NIC SIE NIE NAKLADA: klient nie gwarantuje kolejnosci rysowania nakladajacych sie znakow (zmierzone 01.10:
   cyfra HP na tle ramki wychodzila przyciemniona) -> pasek i plakietka to kafle stykajace sie krawedziami,
 - ascent <= height (inaczej klient odrzuca caly plik czcionki),
@@ -22,18 +22,18 @@ TEX = os.path.join(OUT, 'textures', 'font')
 K = (28, 12, 24, 255)          # obrys z karty stylu
 NIEWIDOCZNY = (0, 0, 0, 1)     # trzyma szerokosc znaku
 
-# --- wymiary (Glify.java) ---
+# --- wymiary (Wyglad.java) ---
 BAR_W = 50                     # wnetrze paska w px = 50 krokow (2%)
 BAR_H = 7                      # ramka 1 + wnetrze 5 + ramka 1
 
-# --- kody znakow (Glify.java) ---
+# --- kody znakow (Wyglad.java) ---
 C_CYFRA_PLAKIETKI = 0xE000     # +0..9: kafel 4x9 (cyfra + tlo plakietki), barwiony kolorem rzadkosci
 C_PLAKIETKA = 0xE010           # +0 lewy brzeg (2 kol.), +1 prawy brzeg (1 kol.)
 C_RAMKA = 0xE020               # +0 lewy koniec paska, +1 prawy koniec (po 1 kol.)
 C_TLO = 0xE500                 # +1..50 puste wnetrze paska z ramka gora/dol
 C_RZADKOSC = 0xE030            # +0 klejnot, +1 korona, +2 gwiazda
 C_DUCH = 0xE100                # +1..50
-C_HP = 0xE200                  # +1..50
+C_HP = 0xE200                  # +stopien*64+1..50: zielony, zolty, pomaranczowy, czerwony
 C_CYFRA_HP = 0xE300            # +0..9, +10 '/'
 C_STATUS = 0xE400              # +indeks z STATUSY
 C_SPACJA = 0xF000              # +dx+128, dx -128..128
@@ -67,7 +67,7 @@ PAL = {
     'f': (255, 238, 150), 'F': (206, 140, 30),                                                       # zlote serce
     'k': K[:3],
 }
-STATUSY = [  # kolejnosc = kolejnosc na pasku (najpierw szkodliwe) i indeks w Glify.STATUS_*
+STATUSY = [  # kolejnosc = kolejnosc na pasku (najpierw szkodliwe) i indeks w Wyglad.Status
     ('ogien', ["...r...", "..ror..", ".royor.", ".royyor", "roywyor", "royyyor", ".rooor."]),
     ('trucizna', ["...l...", "...G...", "..lGg..", ".lGGGg.", "lvGGGgg", "GGGGGgg", ".ggggg."]),
     ('krwawienie', ["...p...", "...R...", "..pRq..", ".pRRRq.", "pwRRRqq", "RRRRRqq", ".qqqqq."]),
@@ -194,7 +194,12 @@ def wypelnienie(n, tony):
     return im
 
 
-HP_TONY = [(238, 92, 80, 255), (204, 44, 44, 255), (186, 34, 40, 255), (160, 26, 36, 255), (122, 18, 32, 255)]
+HP_TONY = [
+    [(156, 242, 100, 255), (100, 214, 60, 255), (70, 180, 48, 255), (48, 146, 42, 255), (32, 108, 36, 255)],
+    [(255, 240, 112, 255), (250, 214, 62, 255), (226, 178, 40, 255), (192, 142, 30, 255), (150, 102, 26, 255)],
+    [(255, 188, 92, 255), (250, 144, 48, 255), (224, 110, 30, 255), (190, 78, 28, 255), (148, 52, 28, 255)],
+    [(238, 92, 80, 255), (204, 44, 44, 255), (186, 34, 40, 255), (160, 26, 36, 255), (122, 18, 32, 255)],
+]
 DUCH_TONY = [(255, 238, 200, 255), (240, 214, 170, 255), (232, 200, 150, 255), (214, 180, 130, 255), (186, 150, 108, 255)]
 
 
@@ -219,7 +224,8 @@ def main():
     dodaj('ramka_p', koniec_paska(), C_RAMKA + 1, 7)
     for i in range(1, BAR_W + 1):
         dodaj(f'duch{i}', wypelnienie(i, DUCH_TONY), C_DUCH + i, 7)
-        dodaj(f'hp{i}', wypelnienie(i, HP_TONY), C_HP + i, 7)
+        for stopien, tony in enumerate(HP_TONY):
+            dodaj(f'hp{stopien}_{i}', wypelnienie(i, tony), C_HP + stopien * 64 + i, 7)
         dodaj(f'tlo{i}', wypelnienie(i, TLO_TONY), C_TLO + i, 7)
     for i, (nazwa, w) in enumerate(RZADKOSCI_IKONY):
         dodaj(f'rz_{nazwa}', ikona(w, SZAROSCI), C_RZADKOSC + i, 8)
@@ -237,7 +243,7 @@ def podglad():
     """Arkusz x8: ikony statusow, rzadkosci (zabarwione), plakietki, paski w kilku stanach."""
     kolory = [(200, 200, 200), (90, 150, 255), (255, 220, 80), (210, 110, 255), (255, 150, 40)]
     S = 8
-    tlo = Image.new('RGBA', (140, 70), (110, 140, 90, 255))
+    tlo = Image.new('RGBA', (140, 80), (110, 140, 90, 255))
 
     def wklej(im, x, y, kolor=None):
         if kolor:
@@ -257,8 +263,8 @@ def podglad():
         nazwa = RZADKOSCI_IKONY[min(2, max(0, i - 2))][0] if i >= 1 else 'klejnot'
         wklej(Image.open(os.path.join(TEX, f'rz_{nazwa}.png')), x, 14, kol); x += 10
     y = 26
-    for i, (proc, duch, poz) in enumerate([(100, 0, 1), (64, 80, 12), (18, 18, 100)]):
-        kol = kolory[i * 2]
+    for i, (proc, duch, poz) in enumerate([(80, 0, 1), (50, 70, 12), (25, 25, 25), (10, 10, 100)]):
+        kol = kolory[min(i, len(kolory) - 1)]
         x = 2
         def kafel(nazwa, k=None):
             nonlocal x
@@ -269,7 +275,7 @@ def podglad():
         kafel('plakietka_p', kol)
         x += 2; y += 1
         k = max(1, proc * BAR_W // 100); j = max(k, duch * BAR_W // 100)
-        kafel('ramka_l'); kafel(f'hp{k}')
+        kafel('ramka_l'); kafel(f'hp{i}_{k}')
         if j > k: kafel(f'duch{j - k}')
         if j < BAR_W: kafel(f'tlo{BAR_W - j}')
         kafel('ramka_p'); x += 2

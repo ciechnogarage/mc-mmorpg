@@ -16,6 +16,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Enemy;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class PaskiMobow extends JavaPlugin implements Listener {
   private final Map<UUID, Pasek> paski = new HashMap<>();
+  private final Map<UUID, Integer> ostatnieTrafienia = new HashMap<>();
   private final Map<Integer, Pasek> poMobie = new ConcurrentHashMap<>();
   private final Pakiety pakiety = new Pakiety(poMobie);
   private Ustawienia u;
@@ -82,7 +84,7 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
   /** Wypelnia nazwe/rzadkosc/poziom; false = ten mob nie dostaje paska. */
   private boolean opisz(Pasek p, LivingEntity e) {
     if (e instanceof Player || e instanceof ArmorStand || !e.isValid() || e.isDead()) return false;
-    if (modelEngine && com.ticxo.modelengine.api.ModelEngineAPI.isModeledEntity(e.getUniqueId())) return false;
+    if (modelEngine && !u.modelEngineWlaczone() && ModeleME.jestModelowany(e.getUniqueId())) return false;
     ActiveMob am = mythic ? MythicBukkit.inst().getMobManager().getActiveMob(e.getUniqueId()).orElse(null) : null;
     if (am != null) {
       String id = am.getType().getInternalName();
@@ -144,22 +146,26 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void smierc(EntityDeathEvent e) {
+    ostatnieTrafienia.remove(e.getEntity().getUniqueId());
     Pasek p = paski.get(e.getEntity().getUniqueId());
     if (p != null) usun(p, false);
   }
 
   @EventHandler public void znika(EntityRemoveFromWorldEvent e) {
+    ostatnieTrafienia.remove(e.getEntity().getUniqueId());
     Pasek p = paski.get(e.getEntity().getUniqueId());
     if (p != null) usun(p, false);
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void obrazenia(EntityDamageEvent e) {
+    if (!(e.getEntity() instanceof LivingEntity mob) || mob instanceof Player) return;
+    int teraz = getServer().getCurrentTick();
+    ostatnieTrafienia.put(mob.getUniqueId(), teraz);
     Pasek p = paski.get(e.getEntity().getUniqueId());
-    if (p == null || !(e.getEntity() instanceof LivingEntity mob)) return;
+    if (p == null) return;
     p.duch = Math.max(p.duch, mob.getHealth());   // HP sprzed ciosu
-    p.ostatnieTrafienie = getServer().getCurrentTick();
-    p.trafiony = true;
+    p.ostatnieTrafienie = teraz;
   }
 
   private void dodajWidza(Player gracz, LivingEntity mob) {
@@ -167,7 +173,9 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
     if (p == null) {
       p = new Pasek(mob.getUniqueId(), mob.getEntityId(), Bukkit.getUnsafe().nextEntityId());
       if (!opisz(p, mob)) return;
+      ustawGeometrie(p, mob);
       p.duch = mob.getHealth();
+      p.ostatnieTrafienie = ostatnieTrafienia.getOrDefault(p.mob, -1000);
       paski.put(p.mob, p);
       poMobie.put(p.idMoba, p);
       if (u.ukryjNazwe()) odswiezNazwe(mob);
@@ -187,6 +195,33 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
     if (przywrocNazwe && getServer().getEntity(p.mob) instanceof LivingEntity mob && mob.isValid()) odswiezNazwe(mob);
   }
 
+  private void ustawGeometrie(Pasek p, LivingEntity mob) {
+    Double h = modelEngine && u.modelEngineWlaczone() ? ModeleME.wysokosc(mob.getUniqueId()) : null;
+    p.wysokoscModelu = h == null ? mob.getHeight() : h;
+    p.dodatkowaWysokosc = h == null ? 0 : h - mob.getHeight();
+    p.podazanie = h != null && u.modelEngineTryb().equals("podazanie");
+    org.bukkit.Location l = mob.getLocation();
+    p.ostatnieX = l.getX(); p.ostatnieY = l.getY(); p.ostatnieZ = l.getZ();
+    p.ostatniSwiat = l.getWorld().getName();
+  }
+
+  private void sprawdzGeometrie(Pasek p, LivingEntity mob) {
+    Double h = modelEngine && u.modelEngineWlaczone() ? ModeleME.wysokosc(mob.getUniqueId()) : null;
+    double nowa = h == null ? mob.getHeight() : h;
+    boolean podazanie = h != null && u.modelEngineTryb().equals("podazanie");
+    if (Math.abs(nowa - p.wysokoscModelu) < 0.001 && podazanie == p.podazanie) return;
+    for (UUID w : p.widzowie) {
+      Player g = getServer().getPlayer(w);
+      if (g != null) pakiety.ukryj(g, p);
+    }
+    ustawGeometrie(p, mob);
+    Component t = tekst(p, mob);
+    for (UUID w : p.widzowie) {
+      Player g = getServer().getPlayer(w);
+      if (g != null) pakiety.pokaz(g, p, mob, t, u);
+    }
+  }
+
   /** Dwie zmiany w jednym ticku = Paper wysyla nazwe jeszcze raz (przez filtr pakietow albo juz bez niego). */
   private static void odswiezNazwe(LivingEntity mob) {
     Component n = mob.customName();
@@ -204,6 +239,18 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
     for (Pasek p : new ArrayList<>(paski.values())) {
       if (p.widzowie.isEmpty()) continue;
       if (!(getServer().getEntity(p.mob) instanceof LivingEntity mob) || !mob.isValid()) { usun(p, false); continue; }
+      if (p.podazanie) {
+        org.bukkit.Location l = mob.getLocation();
+        double dx = l.getX() - p.ostatnieX, dy = l.getY() - p.ostatnieY, dz = l.getZ() - p.ostatnieZ;
+        if (!l.getWorld().getName().equals(p.ostatniSwiat) || dx * dx + dy * dy + dz * dz > 0.0001) {
+          p.ostatnieX = l.getX(); p.ostatnieY = l.getY(); p.ostatnieZ = l.getZ();
+          p.ostatniSwiat = l.getWorld().getName();
+          for (UUID w : p.widzowie) {
+            Player g = getServer().getPlayer(w);
+            if (g != null && g.getWorld().equals(l.getWorld())) pakiety.przesun(g, p, l);
+          }
+        }
+      }
       double hp = mob.getHealth();
       if (p.duch < hp) p.duch = hp;
       else if (p.duch > hp && teraz - p.ostatnieTrafienie > 12)
@@ -221,11 +268,18 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
 
   /** Co sekunde: moby, ktore MM zarejestrowal po wejsciu w zasieg, i paski "vanilla", ktore okazaly sie mobami MM. */
   private void przeglad() {
+    int teraz = getServer().getCurrentTick();
+    ostatnieTrafienia.entrySet().removeIf(x -> teraz - x.getValue() >= u.walkaSekundy() * 20);
     double r = u.zasieg() + 8;
     for (Player g : getServer().getOnlinePlayers()) {
       for (Entity e : g.getNearbyEntities(r, r, r)) {
         if (!(e instanceof LivingEntity mob) || e instanceof Player) continue;
         Pasek p = paski.get(mob.getUniqueId());
+        if (p != null && modelEngine && !u.modelEngineWlaczone() && ModeleME.jestModelowany(mob.getUniqueId())) {
+          usun(p, true);
+          continue;
+        }
+        if (p != null) sprawdzGeometrie(p, mob);
         if (p != null && (p.zMythicMobs || !mythic || !MythicBukkit.inst().getMobManager().isActiveMob(mob.getUniqueId()))) {
           if (!p.widzowie.contains(g.getUniqueId()) && mob.getTrackedBy().contains(g)) dodajWidza(g, mob);
           continue;
@@ -242,24 +296,31 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
 
   private String klucz(Pasek p, LivingEntity mob) {
     double max = maxHp(mob);
+    int k = max <= 0 ? 0 : (int) Math.ceil(Math.min(1, mob.getHealth() / max) * Wyglad.BAR_W);
     int j = max <= 0 ? 0 : (int) Math.ceil(Math.min(1, p.duch / max) * Wyglad.BAR_W);
     return p.nazwa + '|' + p.poziom + '|' + p.rzadkosc.id() + '|' + (int) Math.ceil(mob.getHealth()) + '|'
-        + Math.round(max) + '|' + j + '|' + statusy(mob) + '|' + widac(p, mob) + '|' + pokazPasek(p, mob);
+        + Math.round(max) + '|' + k + '|' + j + '|' + Wyglad.stopienHp(mob.getHealth(), max, u.kolorHp())
+        + '|' + statusy(mob) + '|' + widac(p, mob) + '|' + trybTekstu(p, mob);
   }
 
   private Component tekst(Pasek p, LivingEntity mob) {
-    if (!widac(p, mob)) return Component.empty();
+    String tryb = trybTekstu(p, mob);
+    if (tryb.equals("nic")) return Component.empty();
     Component nazwa = p.nazwa != null ? Component.text(p.nazwa) : Component.translatable(mob.getType().translationKey());
-    return Wyglad.tekst(nazwa, p.rzadkosc, p.poziom, Math.ceil(mob.getHealth()), Math.max(p.duch, mob.getHealth()),
-        maxHp(mob), statusy(mob), pokazPasek(p, mob), u.liczbyHp());
+    return Wyglad.tekst(nazwa, p.rzadkosc, p.poziom, mob.getHealth(), Math.max(p.duch, mob.getHealth()),
+        maxHp(mob), statusy(mob), tryb.equals("wszystko"), u.liczbyHp(), u.kolorHp());
   }
 
   private static boolean widac(Pasek p, LivingEntity mob) {
     return !mob.hasPotionEffect(PotionEffectType.INVISIBILITY) && !mob.isInvisible();
   }
 
-  private boolean pokazPasek(Pasek p, LivingEntity mob) {
-    return !u.tylkoPoTrafieniu() || p.trafiony || mob.getHealth() < maxHp(mob);
+  private String trybTekstu(Pasek p, LivingEntity mob) {
+    if (!widac(p, mob)) return "nic";
+    int czas = getServer().getCurrentTick() - p.ostatnieTrafienie;
+    boolean walka = p.ostatnieTrafienie >= 0 && czas >= 0 && czas < u.walkaSekundy() * 20;
+    if (mob instanceof Mob m && m.getTarget() instanceof Player) walka = true;
+    return walka ? "wszystko" : u.pozaWalka();
   }
 
   private static double maxHp(LivingEntity mob) {
@@ -311,6 +372,10 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
       s.sendMessage(p == null ? "Bez paska: " + mm
           : "Pasek: " + p.nazwa + " | " + p.rzadkosc.nazwa() + " | poz. " + p.poziom + " | widzow " + p.widzowie.size()
             + " | " + mm + " | statusy " + statusy(mob));
+      Double h = modelEngine ? ModeleME.wysokosc(mob.getUniqueId()) : null;
+      s.sendMessage("ModelEngine: " + (h == null ? "brak aktywnego modelu" : "wysokosc=" + String.format(java.util.Locale.ROOT, "%.2f", h))
+          + " | tryb=" + (p != null ? (p.podazanie ? "podazanie" : "pasazer")
+              : h != null && u.modelEngineWlaczone() ? u.modelEngineTryb() : "pasazer"));
       return true;
     }
     s.sendMessage("/paskimobow przeladuj | info");

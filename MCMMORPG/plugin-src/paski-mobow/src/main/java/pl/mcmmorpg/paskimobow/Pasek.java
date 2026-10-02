@@ -16,7 +16,11 @@ final class Pasek {
   boolean zMythicMobs;
   double duch = -1;
   int ostatnieTrafienie = -1000;
-  boolean trafiony;
+  double wysokoscModelu;
+  volatile double dodatkowaWysokosc;
+  volatile boolean podazanie;
+  double ostatnieX, ostatnieY, ostatnieZ;
+  String ostatniSwiat;
   String ostatniKlucz = "";
 
   Pasek(UUID mob, int idMoba, int idWyswietlacza) {
