@@ -17,13 +17,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 
-/** Jednorazowe rzuty. Lewa ręka kończy ładowanie automatycznie; prawa czeka na puszczenie PPM. */
+/** Jednorazowe rzuty: PPM trzyma lewą, sprint trzyma prawą, LPM ładuje prawą automatycznie. */
 final class RzutyOdrzutowe {
   private static final class Ladunek {
+    UUID gracz;
     Ksiega.Zaklecie zaklecie;
-    long start, ostatniPpm;
-    boolean obie, prawa, gotowe;
-    boolean ppm;
+    long start, startP, startL, ostatniPpm, ostatniSprint;
+    boolean prawa, lewa, sprint, ppm, gotowe;
+    boolean obie() { return prawa && lewa; }
   }
   private record Runa(ArmorStand znacznik, Ksiega.Zaklecie zaklecie, long wygasa, boolean obie) {}
 
@@ -32,7 +33,6 @@ final class RzutyOdrzutowe {
   private final Ksiega ksiega;
   private final EfektyCzasowe efekty;
   private final Map<UUID, Ladunek> prawa = new HashMap<>(), lewa = new HashMap<>();
-  private final Map<UUID, Long> czekaLpm = new HashMap<>();
   private final Map<UUID, Deque<Runa>> runy = new HashMap<>();
   private long czas;
 
@@ -44,66 +44,71 @@ final class RzutyOdrzutowe {
     return "Zak_" + Character.toUpperCase(z.id().charAt(0)) + z.id().substring(1) + "_" + faza + "_" + reka;
   }
 
-  private Ladunek zacznij(Player p, Ksiega.Zaklecie z, boolean prawy, boolean ppm) {
+  private Ladunek zacznij(Player p, Ksiega.Zaklecie z, boolean prawy, boolean trzymany, int rowno) {
+    UUID u = p.getUniqueId();
+    Ladunek drugi = (prawy ? lewa : prawa).get(u);
+    long startDrugiej = drugi == null ? -1 : prawy ? drugi.startL : drugi.startP;
+    if (drugi != null && drugi.zaklecie.id().equals(z.id()) && czas - startDrugiej <= rowno) {
+      if (prawy) { drugi.prawa = true; drugi.sprint = trzymany; drugi.startP = czas; drugi.ostatniSprint = czas; prawa.put(u, drugi); }
+      else { drugi.lewa = true; drugi.ppm = true; drugi.startL = czas; drugi.ostatniPpm = czas; lewa.put(u, drugi); }
+      drugi.start = czas; drugi.gotowe = false;
+      return drugi;
+    }
     Ladunek l = new Ladunek();
-    l.zaklecie = z; l.start = czas; l.ostatniPpm = czas; l.prawa = prawy; l.ppm = ppm;
-    (prawy ? prawa : lewa).put(p.getUniqueId(), l);
+    l.gracz = u;
+    l.zaklecie = z; l.start = czas; l.ostatniPpm = czas; l.ostatniSprint = czas;
+    l.prawa = prawy; l.lewa = !prawy; l.startP = prawy ? czas : -1; l.startL = prawy ? -1 : czas;
+    l.sprint = prawy && trzymany; l.ppm = !prawy;
+    (prawy ? prawa : lewa).put(u, l);
     return l;
   }
 
-  void ppm(Player p, Ksiega.Zaklecie z, boolean prawy, int rowno) {
+  void ppm(Player p, Ksiega.Zaklecie z, int rowno) {
     if (z == null || !z.odrzutowe()) return;
     UUID u = p.getUniqueId();
-    Map<UUID, Ladunek> mapa = prawy ? prawa : lewa;
-    Ladunek l = mapa.get(u);
-    if (l == null || !l.zaklecie.id().equals(z.id()) || !l.ppm) l = zacznij(p, z, prawy, true);
+    Ladunek l = lewa.get(u);
+    if (l == null || !l.zaklecie.id().equals(z.id())) l = zacznij(p, z, false, true, rowno);
     l.ostatniPpm = czas;
-    Long klik = czekaLpm.get(u);
-    if (prawy && klik != null && czas - klik <= rowno &&
-        z.equals(ksiega.w(p.getInventory().getItemInOffHand()))) {
-      lewa.remove(u); l.obie = true; l.start = Math.max(l.start, klik); l.gotowe = false; czekaLpm.remove(u);
-    }
+  }
+
+  void sprint(Player p, Ksiega.Zaklecie z, int rowno) {
+    if (z == null || !z.odrzutowe()) return;
+    Ladunek l = prawa.get(p.getUniqueId());
+    if (l == null || !l.zaklecie.id().equals(z.id())) l = zacznij(p, z, true, true, rowno);
+    l.sprint = true;
+    l.ostatniSprint = czas;
   }
 
   void lpm(Player p, Ksiega.Zaklecie z, int rowno) {
     if (z == null || !z.odrzutowe()) return;
-    UUID u = p.getUniqueId();
-    Ladunek trzymanaLewa = lewa.get(u);
-    if (trzymanaLewa != null && trzymanaLewa.ppm) return;
-    Ladunek r = prawa.get(u);
-    if (r != null && czas - r.ostatniPpm <= rowno && r.zaklecie.id().equals(z.id())) {
-      r.obie = true; r.start = czas; r.gotowe = false; lewa.remove(u); czekaLpm.remove(u);
-    } else czekaLpm.put(u, czas);
+    Ladunek r = prawa.get(p.getUniqueId());
+    if (r == null || !r.zaklecie.id().equals(z.id())) zacznij(p, z, true, false, rowno);
   }
 
   String stan(Player p, boolean prawaDlon) {
     Ladunek l = (prawaDlon ? prawa : lewa).get(p.getUniqueId());
-    if (l == null && !prawaDlon) {
-      l = prawa.get(p.getUniqueId());
-      if (l == null || !l.obie) return czekaLpm.containsKey(p.getUniqueId()) ? "laduje" : null;
-    }
     return l == null ? null : l.gotowe ? "gotowe" : "laduje";
   }
 
   boolean aktywna(Player p, boolean prawaDlon) {
     Ladunek l = (prawaDlon ? prawa : lewa).get(p.getUniqueId());
-    return l != null || (!prawaDlon && prawa.containsKey(p.getUniqueId()) && prawa.get(p.getUniqueId()).obie);
+    return l != null;
   }
 
   boolean rzuca(Player p) {
     UUID u = p.getUniqueId();
-    return prawa.containsKey(u) || lewa.containsKey(u) || czekaLpm.containsKey(u);
+    return prawa.containsKey(u) || lewa.containsKey(u);
   }
 
   void przerwij(Player p) {
     UUID u = p.getUniqueId();
-    prawa.remove(u); lewa.remove(u); czekaLpm.remove(u);
+    prawa.remove(u); lewa.remove(u);
   }
 
   void wyjscie(Player p) { przerwij(p); usunRuny(p.getUniqueId()); }
 
   void wylacz() {
-    prawa.clear(); lewa.clear(); czekaLpm.clear();
+    prawa.clear(); lewa.clear();
     for (UUID u : java.util.List.copyOf(runy.keySet())) usunRuny(u);
   }
 
@@ -112,45 +117,43 @@ final class RzutyOdrzutowe {
     if (lista != null) for (Runa r : lista) r.znacznik.remove();
   }
 
-  void tick(long teraz, int tolerancja, int rowno) {
+  void ustawCzas(long teraz) { czas = teraz; }
+
+  void tick(long teraz, int tolerancja) {
     czas = teraz;
-    for (Iterator<Map.Entry<UUID, Long>> it = czekaLpm.entrySet().iterator(); it.hasNext();) {
-      var e = it.next();
-      if (czas - e.getValue() <= rowno) continue;
-      Player p = Bukkit.getPlayer(e.getKey());
-      Ksiega.Zaklecie z = p == null ? null : ksiega.w(p.getInventory().getItemInOffHand());
-      if (p != null && p.isOnline() && !p.isDead() && wejscie.trybLpm(p) && z != null && z.odrzutowe())
-        zacznij(p, z, false, false).start = e.getValue();
-      it.remove();
-    }
-    ladunki(prawa, tolerancja);
-    ladunki(lewa, tolerancja);
+    for (Ladunek l : java.util.List.copyOf(new java.util.HashSet<>(prawa.values()))) ladunek(l, tolerancja);
+    for (Ladunek l : java.util.List.copyOf(new java.util.HashSet<>(lewa.values())))
+      if (!l.prawa) ladunek(l, tolerancja);
     runy();
   }
 
-  private void ladunki(Map<UUID, Ladunek> mapa, int tolerancja) {
-    for (Iterator<Map.Entry<UUID, Ladunek>> it = mapa.entrySet().iterator(); it.hasNext();) {
-      var e = it.next(); Ladunek l = e.getValue();
-      Player p = Bukkit.getPlayer(e.getKey());
-      if (p == null || !p.isOnline() || p.isDead() ||
-          (!wejscie.trybLpm(p) && !(wejscie.prawaBron(p) && !l.prawa && l.ppm)) ||
-          !l.zaklecie.equals(ksiega.w(l.prawa ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand())) ||
-          (l.obie && !l.zaklecie.equals(ksiega.w(p.getInventory().getItemInOffHand())))) { it.remove(); continue; }
-      String reka = l.obie ? "Obie" : l.prawa ? "P" : "L";
-      boolean trzyma = !l.ppm || czas - l.ostatniPpm <= tolerancja;
-      if (!trzyma) {
-        if (l.gotowe) wystrzel(p, l, reka);
-        it.remove(); continue;
-      }
-      // Gotowość prawa/obie wymaga pakietu PPM po czasie ładowania. Samo okno tolerancji
-      // mogłoby uznać puszczenie tuż przed progiem za pełne ładowanie.
-      if (!l.gotowe && (l.ppm ? l.ostatniPpm : czas) - l.start >= l.zaklecie.czasLadowania()) {
-        l.gotowe = true;
-        skille.cast(p, skill(l.zaklecie, "Gotowe", reka));
-        if (!l.ppm) { wystrzel(p, l, reka); it.remove(); continue; }
-      }
-      if (!l.gotowe && (czas - l.start) % 3 == 0) skille.cast(p, skill(l.zaklecie, "Laduj", reka));
+  private void usun(UUID u, Ladunek l) {
+    prawa.remove(u, l); lewa.remove(u, l);
+  }
+
+  private void ladunek(Ladunek l, int tolerancja) {
+    UUID u = l.gracz;
+    Player p = Bukkit.getPlayer(u);
+    if (p == null || !p.isOnline() || p.isDead() ||
+        (!wejscie.trybLpm(p) && l.prawa) ||
+        (l.prawa && !l.zaklecie.equals(ksiega.w(p.getInventory().getItemInMainHand()))) ||
+        (l.lewa && !l.zaklecie.equals(ksiega.w(p.getInventory().getItemInOffHand())))) {
+      usun(u, l); return;
     }
+    String reka = l.obie() ? "Obie" : l.prawa ? "P" : "L";
+    boolean trzymaP = l.sprint && wejscie.trzymaSprint(p);
+    boolean trzymaL = l.ppm && czas - l.ostatniPpm <= tolerancja;
+    long czasTrzymania = l.sprint || l.ppm
+        ? Math.max(l.sprint ? l.ostatniSprint : l.start, l.ppm ? l.ostatniPpm : l.start) : czas;
+    if (!l.gotowe && czasTrzymania - l.start >= l.zaklecie.czasLadowania()) {
+      l.gotowe = true;
+      skille.cast(p, skill(l.zaklecie, "Gotowe", reka));
+    }
+    if ((!l.sprint && !l.ppm && l.gotowe) || ((l.sprint || l.ppm) && !trzymaP && !trzymaL)) {
+      if (l.gotowe) wystrzel(p, l, reka);
+      usun(u, l); return;
+    }
+    if (!l.gotowe && (czas - l.start) % 3 == 0) skille.cast(p, skill(l.zaklecie, "Laduj", reka));
   }
 
   private void wystrzel(Player p, Ladunek l, String reka) {
@@ -164,19 +167,19 @@ final class RzutyOdrzutowe {
       if (!r.getHitBlock().getRelative(BlockFace.UP).isPassable() ||
           !r.getHitBlock().getRelative(BlockFace.UP, 2).isPassable()) return;
     }
-    if (!efekty.przygotuj(p, z, l.obie)) { p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.6f); return; }   // brak celu/miejsca: bez kosztu
-    double koszt = z.mana() * (l.obie ? z.manaOburacz() : 1);
+    if (!efekty.przygotuj(p, z, l.obie())) { p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.6f); return; }   // brak celu/miejsca: bez kosztu
+    double koszt = z.mana() * (l.obie() ? z.manaOburacz() : 1);
     org.bukkit.Bukkit.getLogger().info("[Zaklecia] [wystrzal] t=" + czas + " " + p.getName() + " " + z.id() + " " + reka + " koszt=" + koszt);
     PlayerData dane = PlayerData.get(p);
     if (dane.getMana() < koszt) { skille.cast(p, ksiega.skBrakMany); return; }
     dane.giveMana(-koszt, ResourceUpdateReason.SKILL);
     if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel")
         || z.typ().equals("ladowany") && !z.cel().equals("stozek"))
-      efekty.wystrzel(p, z, l.prawa, l.obie, reka);
+      efekty.wystrzel(p, z, l.prawa, l.obie(), reka);
     else if (miejsce == null) skille.cast(p, skill(z, "Wystrzal", reka));
     else {
       skille.punkt(p, skill(z, "Wystrzal", reka), miejsce);
-      postaw(p, z, miejsce, l.obie);
+      postaw(p, z, miejsce, l.obie());
     }
   }
 
