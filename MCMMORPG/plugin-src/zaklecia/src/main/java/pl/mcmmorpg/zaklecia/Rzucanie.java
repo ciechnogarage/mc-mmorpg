@@ -1,10 +1,13 @@
 package pl.mcmmorpg.zaklecia;
 
 import io.lumine.mythic.lib.player.resource.ResourceUpdateReason;
+import io.lumine.mythic.lib.api.event.AttackEvent;
+import io.lumine.mythic.lib.damage.DamageType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.UUID;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import org.bukkit.Bukkit;
@@ -17,6 +20,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -54,6 +59,7 @@ final class Rzucanie implements Listener {
   private final RzutyOdrzutowe odrzutowe;
   private final EfektyCzasowe efekty;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
+  private final Map<EntityDamageEvent, Boolean> typyMythicLib = new WeakHashMap<>();
   private final Map<UUID, Integer> generacja = new HashMap<>();
   private final Map<UUID, Long> ppmPrawa = new HashMap<>(), ppmLewa = new HashMap<>();
   private long teraz;
@@ -459,29 +465,8 @@ final class Rzucanie implements Listener {
         if (n % 2 == 0) obraz(p, prawa, lewa);
         boolean prawaInni = prawa != null && prawa.cel().equals("inni");
         boolean lewaInni = lewa != null && lewa.cel().equals("inni");
-        if (prawaInni || lewaInni) {
-          LivingEntity sojusznik = EfektyCzasowe.cel(p,
-              Math.max(prawaInni ? prawa.zasieg() : 0, lewaInni ? lewa.zasieg() : 0),
-              e -> efekty.sojusznik(p, e));
-          if (sojusznik != null) {
-            double kosztInni = (toSamo(prawa, lewa) ? prawa.manaZaTik() * prawa.manaOburacz()
-                : (prawaInni ? prawa.manaZaTik() : 0) + (lewaInni ? lewa.manaZaTik() : 0)) / 10.0;
-            PlayerData d = PlayerData.get(p);
-            if (d.getMana() >= kosztInni) {
-              d.giveMana(-kosztInni, ResourceUpdateReason.SKILL);
-              if (toSamo(prawa, lewa)) skille.cele(p, prawa.skille().obie(prawa.skille().traf()), List.of(sojusznik));
-              else {
-                if (prawaInni) skille.cele(p, prawa.skille().reka(prawa.skille().traf(), true), List.of(sojusznik));
-                if (lewaInni) skille.cele(p, lewa.skille().reka(lewa.skille().traf(), false), List.of(sojusznik));
-              }
-            } else skill(p, ksiega.skBrakMany);
-          }
-        }
         if (n % 10 == 0) {
           double koszt = koszt(p, s);
-          if (prawaInni && lewaInni) koszt = 0;
-          else if (prawaInni) koszt = lewa == null ? 0 : lewa.manaZaTik();
-          else if (lewaInni) koszt = prawa == null ? 0 : prawa.manaZaTik();
           PlayerData d = PlayerData.get(p);
           if (d.getMana() < koszt) {
             skill(p, ksiega.skBrakMany);
@@ -498,6 +483,19 @@ final class Rzucanie implements Listener {
             if (!cele.isEmpty()) trafienia(p, cele,
                 prawa != null && prawa.cel().equals("stozek") ? prawa : null,
                 lewa != null && lewa.cel().equals("stozek") ? lewa : null);
+          }
+        }
+        if (prawaInni && s.oplaconeP || lewaInni && s.oplaconeL) {
+          LivingEntity sojusznik = EfektyCzasowe.cel(p,
+              Math.max(prawaInni ? prawa.zasieg() : 0, lewaInni ? lewa.zasieg() : 0),
+              e -> efekty.sojusznik(p, e));
+          if (sojusznik != null) {
+            if (toSamo(prawa, lewa) && s.oplaconeP && s.oplaconeL)
+              skille.cele(p, prawa.skille().obie(prawa.skille().traf()), List.of(sojusznik));
+            else {
+              if (prawaInni && s.oplaconeP) skille.cele(p, prawa.skille().reka(prawa.skille().traf(), true), List.of(sojusznik));
+              if (lewaInni && s.oplaconeL) skille.cele(p, lewa.skille().reka(lewa.skille().traf(), false), List.of(sojusznik));
+            }
           }
         }
         if (prawa != null && prawa.typ().equals("tarcza") && s.oplaconeP) s.oslonaP = Math.min(
@@ -545,6 +543,27 @@ final class Rzucanie implements Listener {
     if (lewa != null) skille.cele(p, lewa.skille().reka(lewa.skille().traf(), false), cele);
   }
 
+  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+  public void typMythicLib(AttackEvent e) {
+    typyMythicLib.put(e.toBukkit(), e.getAttack().getDamage().hasType(DamageType.MAGIC)
+        || e.getAttack().getDamage().hasType(DamageType.SKILL));
+  }
+
+  private boolean magiczne(EntityDamageEvent e) {
+    Boolean typ = typyMythicLib.remove(e);
+    if (Boolean.TRUE.equals(typ)) return true;
+    switch (e.getCause()) {
+      case MAGIC, DRAGON_BREATH, FIRE, FIRE_TICK, LAVA, HOT_FLOOR, FREEZE,
+          BLOCK_EXPLOSION, ENTITY_EXPLOSION, SONIC_BOOM -> { return true; }
+      default -> { }
+    }
+    if (e instanceof EntityDamageByEntityEvent by && by.getDamager() instanceof Projectile pocisk)
+      return !(pocisk instanceof AbstractArrow);
+    String typZrodla = e.getDamageSource().getDamageType().getKey().getKey();
+    return typZrodla.contains("magic") || typZrodla.contains("spell") || typZrodla.contains("fireball")
+        || typZrodla.contains("explosion");
+  }
+
   @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void obrazenia(EntityDamageEvent e) {
     if (!(e.getEntity() instanceof Player p)) return;
@@ -552,13 +571,16 @@ final class Rzucanie implements Listener {
     if (s == null || e.getDamage() <= 0) return;
     Ksiega.Zaklecie zp = s.prawa ? zak(p, true) : null;
     Ksiega.Zaklecie zl = s.lewa ? zak(p, false) : null;
+    boolean magia = magiczne(e);
     if (zp != null && zp.typ().equals("tarcza") && s.oslonaP > 0) {
-      double blok = Math.min(e.getDamage() * Math.max(0, Math.min(1, zp.redukcja())), s.oslonaP);
+      double redukcja = plugin.getConfig().getDouble("zaklecia." + zp.id() + (magia ? ".redukcja-magia" : ".redukcja-fizyczne"), zp.redukcja());
+      double blok = Math.min(e.getDamage() * Math.max(0, Math.min(1, redukcja)), s.oslonaP);
       s.oslonaP -= blok; e.setDamage(Math.max(0, e.getDamage() - blok));
       if (s.oslonaP <= 0) pekla(p, s, zp, true, toSamo(zp, zl));
     }
     if (zl != null && zl.typ().equals("tarcza") && !toSamo(zp, zl) && s.oslonaL > 0) {
-      double blok = Math.min(e.getDamage() * Math.max(0, Math.min(1, zl.redukcja())), s.oslonaL);
+      double redukcja = plugin.getConfig().getDouble("zaklecia." + zl.id() + (magia ? ".redukcja-magia" : ".redukcja-fizyczne"), zl.redukcja());
+      double blok = Math.min(e.getDamage() * Math.max(0, Math.min(1, redukcja)), s.oslonaL);
       s.oslonaL -= blok; e.setDamage(Math.max(0, e.getDamage() - blok));
       if (s.oslonaL <= 0) pekla(p, s, zl, false, false);
     }

@@ -62,7 +62,8 @@ zaklecia:
     nazwa: 'Osłona'
     mana-za-tik: 0.5
     sila: 40
-    redukcja: 0.6
+    redukcja-magia: 0.6
+    redukcja-fizyczne: 0.3
     narastanie-t: 10
     oburacz: {efekt: 2.2, mana: 2.8}
   przywolany_miecz:
@@ -81,7 +82,6 @@ zaklecia:
     nazwa: 'Duch wilka'
     czas-ladowania-t: 12
     czas-trwania-t: 1200
-    limit-aktywnych: 1
     zasieg: 8
     mana: 3
     oburacz: {efekt: 2.0, mana: 2.8}
@@ -92,7 +92,6 @@ zaklecia:
     nazwa: 'Atronach ognia'
     czas-ladowania-t: 12
     czas-trwania-t: 1200
-    limit-aktywnych: 1
     zasieg: 8
     mana: 3
     oburacz: {efekt: 2.0, mana: 2.8}
@@ -110,10 +109,39 @@ zaklecia:
     nazwa: 'Uspokojenie'
     czas-ladowania-t: 12
     czas-trwania-t: 300
-    maks-poziom: 10
+    maks-poziom: 9
     zasieg: 8
     mana: 3
-    oburacz: {efekt: 2.0, mana: 2.8}
+    oburacz: {efekt: 2.2, mana: 2.8}
+  uzdrowienie_innego:
+    typ: ladowany
+    cel: inny
+    przedmiot: ZAKLECIE_UZDROWIENIE_INNEGO
+    nazwa: 'Uzdrowienie innego'
+    czas-ladowania-t: 12
+    zasieg: 6
+    mana: 2
+    oburacz: {efekt: 2.2, mana: 2.8}
+  zasklepienie_ran:
+    typ: ladowany
+    cel: siebie
+    przedmiot: ZAKLECIE_ZASKLEPIENIE_RAN
+    nazwa: 'Zasklepienie ran'
+    czas-ladowania-t: 14
+    mana: 3
+    oburacz: {efekt: 2.2, mana: 2.8}
+  wielkie_uzdrowienie:
+    typ: ladowany
+    cel: obszar
+    przedmiot: ZAKLECIE_WIELKIE_UZDROWIENIE
+    nazwa: 'Wielkie uzdrowienie'
+    czas-ladowania-t: 24
+    promien: 5
+    mana: 5
+    oburacz: {efekt: 2.2, mana: 2.8}
+
+przywolania:
+  limit: 1   # globalnie na gracza; perk Twin Souls moze ustawic 2
 
 # Podwojne rzucanie (to samo zaklecie w obu dloniach): mnozniki w oburacz wpisu.
 # Ponizsza wartosc jest zgodnoscia wsteczna dla starszych wpisow bez oburacz.mana.

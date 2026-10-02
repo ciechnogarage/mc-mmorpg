@@ -164,13 +164,14 @@ final class RzutyOdrzutowe {
       if (!r.getHitBlock().getRelative(BlockFace.UP).isPassable() ||
           !r.getHitBlock().getRelative(BlockFace.UP, 2).isPassable()) return;
     }
-    if (!efekty.przygotuj(p, z)) { p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.6f); return; }   // brak celu/miejsca: bez kosztu
+    if (!efekty.przygotuj(p, z, l.obie)) { p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.6f); return; }   // brak celu/miejsca: bez kosztu
     double koszt = z.mana() * (l.obie ? z.manaOburacz() : 1);
     org.bukkit.Bukkit.getLogger().info("[Zaklecia] [wystrzal] t=" + czas + " " + p.getName() + " " + z.id() + " " + reka + " koszt=" + koszt);
     PlayerData dane = PlayerData.get(p);
     if (dane.getMana() < koszt) { skille.cast(p, ksiega.skBrakMany); return; }
     dane.giveMana(-koszt, ResourceUpdateReason.SKILL);
-    if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel"))
+    if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel")
+        || z.typ().equals("ladowany") && !z.cel().equals("stozek"))
       efekty.wystrzel(p, z, l.prawa, l.obie, reka);
     else if (miejsce == null) skille.cast(p, skill(z, "Wystrzal", reka));
     else {

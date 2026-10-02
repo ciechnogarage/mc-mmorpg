@@ -18,7 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -76,18 +76,31 @@ final class EfektyCzasowe implements Listener {
     RayTraceResult blok = p.getWorld().rayTraceBlocks(oko, oko.getDirection(), zasieg, FluidCollisionMode.NEVER, true);
     if (blok != null) max = Math.min(max, blok.getHitPosition().distance(oko.toVector()));
     RayTraceResult traf = p.getWorld().rayTraceEntities(oko, oko.getDirection(), max, 0.6,   // wspomaganie celowania (cel sie rusza)
-        e -> e instanceof LivingEntity le && !le.isDead() && e != p && warunek.test(le));
-    return traf != null && traf.getHitEntity() instanceof LivingEntity le ? le : null;
+        e -> e instanceof LivingEntity le && !le.isDead() && e != p && !(e instanceof ArmorStand));
+    return traf != null && traf.getHitEntity() instanceof LivingEntity le && warunek.test(le) ? le : null;
   }
 
   boolean sojusznik(Player p, LivingEntity cel) {
-    boolean powiazany = cel instanceof Player
-        || p.getUniqueId().toString().equals(cel.getPersistentDataContainer().get(kWlasciciel, PersistentDataType.STRING))
-        || cel instanceof Tameable t && t.getOwner() != null && t.getOwner().getUniqueId().equals(p.getUniqueId());
-    if (!powiazany) return false;
-    // MythicLib nie pozwala "wspierac" istot niebedacych graczami — wlasne przywolance i zwierzeta leczymy bez tego testu;
-    // gracze dalej przez reguly druzyny/PvP.
-    return !(cel instanceof Player) || MythicLib.inst().getEntities().canTarget(p, cel, InteractionType.SUPPORT_ACTION);
+    String nazwa = cel.getName().toLowerCase(java.util.Locale.ROOT);
+    if (cel.isDead() || org.bukkit.Tag.ENTITY_TYPES_UNDEAD.isTagged(cel.getType())
+        || nazwa.contains("atronach") || nazwa.contains("nieumar") || nazwa.contains("undead")
+        || nazwa.contains("golem") || nazwa.contains("konstrukt") || nazwa.contains("construct")
+        || cel.getType().name().contains("GOLEM")) return false;
+    try {
+      var am = MythicBukkit.inst().getAPIHelper().getMythicMobInstance(cel);
+      if (am != null) {
+        String id = am.getType().getInternalName().toLowerCase(java.util.Locale.ROOT);
+        if (id.contains("atronach") || id.contains("undead") || id.contains("nieumar")
+            || id.contains("zombie") || id.contains("skeleton") || id.contains("szkielet")
+            || id.contains("wither") || id.contains("golem") || id.contains("construct")
+            || id.contains("konstrukt")) return false;
+      }
+    } catch (Throwable ex) { return false; }
+    if (cel instanceof Player) return MythicLib.inst().getEntities().canTarget(p, cel, InteractionType.SUPPORT_ACTION);
+    String wlasciciel = cel.getPersistentDataContainer().get(kWlasciciel, PersistentDataType.STRING);
+    if (wlasciciel != null) return wlasciciel.equals(p.getUniqueId().toString());
+    // MythicLib SUPPORT odmawia nie-graczom; przyjazne NPC i zwierzeta wybieramy przez Bukkit.
+    return !(cel instanceof org.bukkit.entity.Enemy);
   }
 
   private boolean chowance(Entity e) {
@@ -103,7 +116,7 @@ final class EfektyCzasowe implements Listener {
         && MythicLib.inst().getEntities().canTarget(p, cel, InteractionType.OFFENSE_ACTION);
   }
 
-  boolean przygotuj(Player p, Ksiega.Zaklecie z) {
+  boolean przygotuj(Player p, Ksiega.Zaklecie z, boolean obie) {
     if (z.typ().equals("bron")) {
       return MythicBukkit.inst().getItemManager().getItemStack(bronId(z)) != null;
     }
@@ -119,8 +132,15 @@ final class EfektyCzasowe implements Listener {
       return at.getBlock().isPassable() && at.clone().add(0, 1, 0).getBlock().isPassable();
     }
     if (z.typ().equals("na_cel")) return cel(p, z.zasieg(), e -> wrog(p, e) && poziom(e) <=
-        plugin.getConfig().getInt("zaklecia." + z.id() + ".maks-poziom", 10)) != null;
+        maksPoziom(z, obie)) != null;
+    if (z.typ().equals("ladowany") && z.cel().equals("inny"))
+      return cel(p, z.zasieg(), e -> sojusznik(p, e)) != null;
     return true;
+  }
+
+  private int maksPoziom(Ksiega.Zaklecie z, boolean obie) {
+    int baza = plugin.getConfig().getInt("zaklecia." + z.id() + ".maks-poziom", 9);
+    return obie ? (int) Math.floor(baza * z.efektOburacz()) : baza;
   }
 
   private String bronId(Ksiega.Zaklecie z) {
@@ -135,13 +155,27 @@ final class EfektyCzasowe implements Listener {
   }
 
   void wystrzel(Player p, Ksiega.Zaklecie z, boolean prawa, boolean obie, String reka) {
-    if (z.typ().equals("bron")) { dajBron(p, z, prawa, obie); skille.cast(p, nazwa(z, "Wystrzal", reka)); }
+    if (z.typ().equals("bron")) { dajBron(p, z, prawa || obie, obie); skille.cast(p, nazwa(z, "Wystrzal", reka)); }
     else if (z.typ().equals("przywolanie")) przywolaj(p, z, obie, reka);
     else if (z.typ().equals("na_cel")) {
-      LivingEntity cel = cel(p, z.zasieg(), e -> wrog(p, e) && poziom(e) <=
-          plugin.getConfig().getInt("zaklecia." + z.id() + ".maks-poziom", 10));
+      LivingEntity cel = cel(p, z.zasieg(), e -> wrog(p, e) && poziom(e) <= maksPoziom(z, obie));
       if (cel == null) return;
       skille.cele(p, nazwa(z, "Wystrzal", reka), List.of(cel));
+    } else if (z.typ().equals("ladowany")) {
+      String nazwa = nazwa(z, "Wystrzal", reka);
+      if (z.cel().equals("inny")) {
+        LivingEntity cel = cel(p, z.zasieg(), e -> sojusznik(p, e));
+        if (cel != null) skille.cele(p, nazwa, List.of(cel));
+      } else if (z.cel().equals("obszar")) {
+        List<Entity> cele = new java.util.ArrayList<>();
+        cele.add(p);
+        for (Entity e : p.getNearbyEntities(z.promien(), z.promien(), z.promien()))
+          if (e instanceof LivingEntity zywy && !zywy.isDead()
+              && e.getLocation().distanceSquared(p.getLocation()) <= z.promien() * z.promien()
+              && sojusznik(p, zywy)) cele.add(e);
+        skille.cele(p, nazwa, cele);
+      } else if (z.cel().equals("siebie")) skille.cele(p, nazwa, List.of(p));
+      else skille.cast(p, nazwa);
     }
   }
 
@@ -156,11 +190,6 @@ final class EfektyCzasowe implements Listener {
     int slot = prawa ? p.getInventory().getHeldItemSlot() : 40;
     ItemStack teraz = prawa ? p.getInventory().getItem(slot) : p.getInventory().getItemInOffHand();
     Map<Boolean, Bron> mapa = bronie.computeIfAbsent(p.getUniqueId(), u -> new HashMap<>());
-    Bron druga = mapa.get(!prawa);
-    if (druga != null && z.equals(ksiega.w(druga.nosnik()))) {
-      mapa.put(!prawa, new Bron(druga.slot(), !prawa, druga.nosnik(), tick + z.czasZycia() * (obie ? 2 : 1)));
-      return;
-    }
     Bron stara = mapa.get(prawa);
     ItemStack oryginal = stara == null ? teraz.clone() : stara.nosnik();
     if (stara == null && ksiega.w(teraz) == null) return;
@@ -194,10 +223,8 @@ final class EfektyCzasowe implements Listener {
       e.setPersistent(false);
       e.getPersistentDataContainer().set(kWlasciciel, PersistentDataType.STRING, p.getUniqueId().toString());
       Deque<Sluga> lista = sludzy.computeIfAbsent(p.getUniqueId(), u -> new ArrayDeque<>());
-      while (lista.stream().filter(s -> s.zaklecie().equals(z.id())).count() >= z.limitAktywnych()) {
-        Sluga stary = lista.stream().filter(s -> s.zaklecie().equals(z.id())).findFirst().orElseThrow();
-        usun(stary.byt()); lista.remove(stary);
-      }
+      int limit = Math.max(1, plugin.getConfig().getInt("przywolania.limit", 1));
+      while (lista.size() >= limit) usun(lista.removeFirst().byt());
       lista.addLast(new Sluga(e, z.id(), tick + z.czasZycia() * (obie ? 2 : 1)));
       skille.punkt(p, nazwa(z, "Wystrzal", reka), at);
     } catch (Throwable ex) { plugin.getLogger().warning("Przywolanie " + mob + ": " + ex); }
