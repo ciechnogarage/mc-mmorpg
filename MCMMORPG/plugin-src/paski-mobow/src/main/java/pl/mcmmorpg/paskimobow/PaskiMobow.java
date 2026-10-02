@@ -84,6 +84,7 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
   /** Wypelnia nazwe/rzadkosc/poziom; false = ten mob nie dostaje paska. */
   private boolean opisz(Pasek p, LivingEntity e) {
     if (e instanceof Player || e instanceof ArmorStand || !e.isValid() || e.isDead()) return false;
+    if (u.pominSwiaty().contains(e.getWorld().getName())) return false;   // np. sala kreatora postaci
     if (modelEngine && !u.modelEngineWlaczone() && ModeleME.jestModelowany(e.getUniqueId())) return false;
     ActiveMob am = mythic ? MythicBukkit.inst().getMobManager().getActiveMob(e.getUniqueId()).orElse(null) : null;
     if (am != null) {
@@ -103,6 +104,8 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
       return true;
     }
     if (!u.vanillaPotwory() || !(e instanceof Enemy)) return false;
+    // nieśmiertelny albo bez AI = dekoracja (manekin podglądu kreatora to przebrany husk), nie przeciwnik
+    if (e.isInvulnerable() || (e instanceof Mob m && !m.hasAI())) return false;
     p.rzadkosc = u.rzadkosc(null);
     p.poziom = u.vanillaPoziom();
     p.nazwa = e.customName() != null ? PlainTextComponentSerializer.plainText().serialize(e.customName()) : null;

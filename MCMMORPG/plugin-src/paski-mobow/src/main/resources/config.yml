@@ -29,7 +29,8 @@ rzadkosci:              # kolejnosc = drabina; ikona: brak | klejnot | korona | 
 frakcje: [bestie, nieumarli, humanoidy, magiczne, gaj]
 wzorce: ['WIEZA_P01_*']
 pomin: []
-vanilla-potwory: true     # zwykle wrogie moby bez MM (nazwa z jezyka klienta)
+pomin-swiaty: [creator_limbo]   # swiaty bez paskow (sala kreatora postaci)
+vanilla-potwory: true     # zwykle wrogie moby bez MM (nazwa z jezyka klienta); niesmiertelne/bez AI pomijane
 vanilla-poziom: 1
 poziom-z-mm: true         # do poziomu z tabeli dochodzi (poziom MM - 1), gdy spawner MM nada wyzszy
 

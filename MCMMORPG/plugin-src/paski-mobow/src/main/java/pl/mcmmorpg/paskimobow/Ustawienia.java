@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 record Ustawienia(double skala, double wysokosc, double zasieg, boolean liczbyHp, boolean ukryjNazwe,
                   boolean kolorHp, String pozaWalka, int walkaSekundy, boolean modelEngineWlaczone,
                   String modelEngineTryb, Map<String, Wyglad.Rzadkosc> rzadkosci, Set<String> frakcje,
-                  List<Pattern> wzorce, List<Pattern> pomin, boolean vanillaPotwory, int vanillaPoziom,
+                  List<Pattern> wzorce, List<Pattern> pomin, Set<String> pominSwiaty, boolean vanillaPotwory, int vanillaPoziom,
                   boolean poziomZMm, List<Wpis> moby) {
 
   record Wpis(Pattern wzorzec, Integer poziom, String rzadkosc) {}
@@ -51,7 +51,7 @@ record Ustawienia(double skala, double wysokosc, double zasieg, boolean liczbyHp
         Math.max(0, c.getInt("wyglad.walka-sekundy", 8)), c.getBoolean("modelengine.wlaczone", true),
         wybor(c.getString("modelengine.tryb", "pasazer"), "pasazer", List.of("pasazer", "podazanie"), log), rz,
         Set.copyOf(c.getStringList("frakcje")), c.getStringList("wzorce").stream().map(Ustawienia::glob).toList(),
-        c.getStringList("pomin").stream().map(Ustawienia::glob).toList(), c.getBoolean("vanilla-potwory", true),
+        c.getStringList("pomin").stream().map(Ustawienia::glob).toList(), Set.copyOf(c.getStringList("pomin-swiaty")), c.getBoolean("vanilla-potwory", true),
         c.getInt("vanilla-poziom", 1), c.getBoolean("poziom-z-mm", true), moby);
   }
 
