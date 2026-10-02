@@ -1,442 +1,399 @@
 #!/usr/bin/env python3
-"""Finalny render ekwipunku A. Uruchom: python3 ksiega_A_final.py.
+"""Rysuje teksture InventoryScreen 176x166 w skali 2 i dwa podglady."""
 
-Tekstura klienta ma 256x256 px; gotowy panel zajmuje 176x166 px od (0, 0).
-Podgląd i arkusz porównawczy są generowane osobno, bez zmiany world1.
-"""
-import ast
+from collections import Counter
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
+
+from PIL import Image, ImageDraw
+
 
 HERE = Path(__file__).resolve().parent
-ICONS = HERE.parent / 'ikony'
-WORLD = Path('/opt/docker/mc/data/world1')
-HUB = WORLD / 'plugins/Nexo/pack/assets/nexo/textures/gui/menu_hub_bg.png'
-WYNN = WORLD / 'docs/research/wynncraft/klatki/17_ekwipunek_E_pergamin_A8m00.jpg'
-PW, PH = 176, 166
+ICONS = HERE.parent / "ikony"
+ITEMS = Path("/opt/docker/mc/data/world1/plugins/Nexo/pack/assets")
+S = 2
 
-# Kolory wybrane z istniejącego huba. 17 nieprzezroczystych barw w teksturze.
-P = {
-    'ink': '#0d0704',
-    'wood0': '#32190b', 'wood1': '#4c2b16', 'wood2': '#664126',
-    'wood3': '#7f5a3a', 'wood4': '#997552',
-    'brass0': '#784f1e', 'brass1': '#b99953', 'brass2': '#d9c277',
-    'brass3': '#f9eba2',
-    'green0': '#0c2d19', 'green1': '#143d21', 'green2': '#1d4c29',
-    'green3': '#285b31',
-    'canvas0': '#78603e', 'canvas1': '#997552', 'canvas2': '#b2926e',
-    'red': '#954321',
+# Szesnascie plaskich barw, bez szumu i gradientow.
+C = {
+    "cover": "#3C2A1E",
+    "cover_light": "#6A4B32",
+    "cover_dark": "#271A13",
+    "left": "#D6C4A0",
+    "right": "#DECDAA",
+    "paper_edge": "#BCA77F",
+    "paper_light": "#E9DBB8",
+    "spine": "#785537",
+    "spine_dark": "#4D3525",
+    "bag": "#5A402C",
+    "bag_light": "#866448",
+    "bag_dark": "#362619",
+    "paper_slot": "#C4AF89",
+    "paper_shadow": "#A58D68",
+    "bag_slot": "#473220",
+    "bag_slot_shadow": "#2E1F16",
 }
 
-FONT = {
- 'A':['010','101','111','101','101'], 'B':['110','101','110','101','110'],
- 'C':['011','100','100','100','011'], 'D':['110','101','101','101','110'],
- 'E':['111','100','110','100','111'], 'I':['111','010','010','010','111'],
- 'J':['011','001','001','101','010'], 'K':['101','101','110','101','101'],
- 'L':['100','100','100','100','111'], 'N':['101','111','111','111','101'],
- 'O':['010','101','101','101','010'], 'P':['110','101','110','100','100'],
- 'R':['110','101','110','101','101'], 'S':['011','100','010','001','110'],
- 'T':['111','010','010','010','010'], 'U':['101','101','101','101','111'],
- 'W':['101','101','111','111','101'], 'Y':['101','101','010','010','010'],
- 'Z':['111','001','010','100','111'], 'Ż':['111','001','010','100','111'],
- 'Ć':['011','100','100','100','011'], 'Ń':['101','111','111','111','101'],
- '1':['010','110','010','010','111'], '2':['111','001','111','100','111'],
- '3':['111','001','111','001','111'], '4':['101','101','111','001','001'],
- '5':['111','100','111','001','111'], '6':['111','100','111','101','111'],
- '7':['111','001','010','010','010'], '8':['111','101','111','101','111'],
- '9':['111','101','111','001','111'], ' ':['000']*5,
-}
-LABELS = ((38,9,'POSTAĆ'), (104,9,'BIŻUTERIA'), (146,19,'SAKWA'))
 
-def rect(d, box, color): d.rectangle(box, fill=P.get(color, color))
-def line(d, points, color): d.line(points, fill=P.get(color, color), width=1)
-def poly(d, points, color): d.polygon(points, fill=P.get(color, color))
-def dot(d, x, y, color): d.point((x, y), fill=P.get(color, color))
+def box(draw, x0, y0, x1, y1, color):
+    draw.rectangle((x0, y0, x1, y1), fill=C.get(color, color))
 
-def small(d, x, y, s, color):
-    for ch in s.upper():
-        for yy, row in enumerate(FONT[ch]):
-            for xx, on in enumerate(row):
-                if on == '1': dot(d, x+xx, y+yy, color)
-        if ch == 'Ż': dot(d, x+1, y-2, color)
-        if ch == 'Ć':
-            dot(d, x+2, y-2, color)
-            dot(d, x+1, y-1, color)
-        x += 4
 
-def label(d, x, y, s):
-    # Wersaliki 3x5, odstęp 1 px; akcenty zajmują dwa piksele nad nimi.
-    # Cień o jeden piksel poniżej i na prawo od całego glifu.
-    small(d, x+1, y+1, s, 'green0')
-    small(d, x, y, s, 'brass2')
+def line(draw, points, color, width=1):
+    draw.line(points, fill=C.get(color, color), width=width)
 
-# Dokładnie te same współrzędne co w rysuj_koncepty.py.
-ARMOR = [(8,y) for y in (8,26,44,62)]
-JEWELRY = [(98,18),(116,18),(98,36),(116,36)]
-EQUIP = [(8,84),(26,84),(44,84),(62,84),(80,84),(77,62),(154,28)]
-BAG = [(x,y) for y in (84,102,120) for x in (8,26,44,62,80,98,116,134,152)
-       if not (y == 84 and x in (8,26,44,62,80))]
-BAR = [(x,142) for x in (8,26,44,62,80,98,116,134,152)]
-SLOTS = ARMOR + JEWELRY + EQUIP + BAG + BAR
-assert len(SLOTS) == len(set(SLOTS)) == 46
 
-def verify_original_geometry():
-    """Odczytaj listy pozycji z funkcji pixel_slots w źródle konceptów."""
-    tree=ast.parse((HERE/'rysuj_koncepty.py').read_text())
-    fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='pixel_slots')
-    picks=[]
-    for node in fn.body:
-        if isinstance(node,ast.Assign) and isinstance(node.targets[0],ast.Name):
-            if node.targets[0].id in ('armor','jewelry','equip','bag','bar'):
-                picks.append(node)
-    source=ast.Module(body=picks,type_ignores=[])
-    scope={}
-    exec(compile(source,str(HERE/'rysuj_koncepty.py'),'exec'),scope)
-    old=scope['armor']+scope['jewelry']+scope['equip']+scope['bag']+scope['bar']
-    assert len(old)==46 and set(old)==set(SLOTS), 'Geometria slotów różni się od konceptu A'
+def frame(draw, mask_draw, bounds, width=2):
+    """Jednolity obrys bez osobnych linii swiatla na stykach."""
+    draw.rectangle(bounds, outline=C["spine_dark"], width=width)
+    mask_draw.rectangle(bounds, outline=1, width=width)
 
-def slot(d, x, y, group):
-    # Jedna barwa obrysu. Wnętrze o ton ciemniejsze od otaczającego materiału.
-    if group in ('armor', 'jewel', 'equip'):
-        base, bottom = 'green0', 'green2'
-    elif group == 'bag':
-        base, bottom = 'canvas0', 'canvas2'
-    else:
-        base, bottom = 'wood0', 'wood3'
-    rect(d,(x,y,x+15,y+15),'ink')
-    rect(d,(x+1,y+1,x+14,y+14),base)
-    # Wklęsłość: cień na górnej i lewej ścianie, odbite światło na dolnej.
-    line(d,[(x+2,y+14),(x+13,y+14)],bottom)
-    dot(d,x+14,y+13,bottom)
 
-def corner(d,x,y,sx,sy):
-    rect(d,(x,y,x+5,y+5),'brass0')
-    rect(d,(x+1,y+1,x+4,y+4),'brass1')
-    line(d,[(x+1,y+1),(x+4,y+1)],'brass2')
-    dot(d,x+2,y+2,'ink')
-    dot(d,x+1 if sx>0 else x+4,y+1 if sy>0 else y+4,'brass3')
+def active_hands_frame(draw, mask_draw):
+    """Jeden trzytekselowy obrys schodka obejmujacy obie aktywne rece."""
+    segments = (
+        (150, 118, 189, 120), (150, 118, 152, 163),
+        (187, 118, 189, 163), (187, 161, 197, 163),
+        (195, 161, 197, 205), (159, 203, 197, 205),
+        (159, 161, 161, 205), (150, 161, 161, 163),
+    )
+    for bounds in segments:
+        box(draw, *bounds, "spine_dark")
+        mask_draw.rectangle(bounds, fill=1)
 
-def frame(d):
-    rect(d,(0,0,175,165),'ink')
-    rect(d,(1,1,174,164),'wood0')
-    rect(d,(2,2,173,163),'wood2')
-    line(d,[(2,2),(173,2)],'wood4')
-    line(d,[(2,2),(2,163)],'wood4')
-    line(d,[(173,3),(173,163)],'wood0')
-    line(d,[(3,163),(173,163)],'wood0')
-    # Deski: tylko dwie świadome kreski na długi odcinek.
-    line(d,[(11,3),(76,3)],'wood3')
-    line(d,[(92,3),(165,3)],'wood3')
-    line(d,[(3,41),(3,82)],'wood3')
-    line(d,[(172,61),(172,95)],'wood3')
-    line(d,[(16,162),(65,162)],'wood3')
-    line(d,[(110,162),(153,162)],'wood3')
-    for x,y,sx,sy in ((1,1,1,1),(169,1,-1,1),(1,159,1,-1),(169,159,-1,-1)):
-        corner(d,x,y,sx,sy)
 
-def upper(d):
-    rect(d,(5,3,170,101),'ink')
-    rect(d,(6,4,169,100),'brass0')
-    line(d,[(6,4),(169,4)],'brass2')
-    line(d,[(6,6),(6,100)],'brass1')
-    rect(d,(8,5,167,98),'green1')
-    line(d,[(8,5),(167,5)],'green3')
-    line(d,[(8,5),(8,98)],'green3')
-    # Portret: bez nadrukowanej postaci; klient maluje model w tym polu.
-    rect(d,(25,17,74,78),'green2')
-    line(d,[(25,17),(74,17)],'green3')
-    line(d,[(25,17),(25,78)],'green3')
-    line(d,[(74,18),(74,78)],'green0')
-    line(d,[(26,78),(74,78)],'green0')
-    # Cokół pod modelem, czytelny także przy jego renderze z klienta.
-    rect(d,(32,75,68,78),'green0')
-    line(d,[(33,75),(67,75)],'brass0')
-    # Tylko jedna podziałka między postacią i biżuterią.
-    line(d,[(95,13),(95,57)],'green3')
-    dot(d,95,12,'brass1')
-    dot(d,95,58,'brass0')
-    for x,y,s in LABELS:
-        label(d,x,y,s)
+def frame_spurs(im, frame_texels):
+    """Wykrywa konce linii; naroza grubszych ramek maja blok 2x2."""
+    pixels = im.load()
+    result = []
+    for x, y in sorted(frame_texels):
+        color = pixels[x, y]
+        same = lambda px, py: ((px, py) in frame_texels
+                               and pixels[px, py] == color)
+        linear = ((same(x-1, y) and same(x+1, y))
+                  or (same(x, y-1) and same(x, y+1)))
+        corner = any(same(x+dx, y) and same(x, y+dy)
+                     and same(x+dx, y+dy)
+                     for dx in (-1, 1) for dy in (-1, 1))
+        if not (linear or corner):
+            result.append((x, y))
+    return result
 
-def hand_patch(d):
-    # Jedna skórzana naszywka obejmuje drugą rękę i slot 13 pod nią.
-    rect(d,(75,59,96,101),'ink')
-    rect(d,(76,60,95,100),'wood2')
-    line(d,[(76,60),(95,60)],'wood4')
-    line(d,[(76,60),(76,99)],'wood4')
-    line(d,[(95,61),(95,100)],'wood0')
-    for y in (65,72,80,88,95):
-        dot(d,94,y,'brass1')
-    # Pionowy szew między dwoma aktywnymi polami.
-    line(d,[(84,78),(84,83)],'brass0')
-    line(d,[(87,78),(87,83)],'brass2')
-    dot(d,85,81,'brass2')
-    dot(d,86,81,'brass2')
 
-def equipment_strip(d):
-    rect(d,(6,80,96,101),'ink')
-    rect(d,(7,81,95,100),'wood2')
-    rect(d,(8,82,94,99),'green2')
-    line(d,[(7,81),(94,81)],'brass1')
-    line(d,[(7,82),(7,99)],'wood4')
-    for x in (42,76):
-        line(d,[(x,82),(x,99)],'brass0')
-        line(d,[(x+1,83),(x+1,98)],'green3')
-    hand_patch(d)
+def paper_slot(draw, gx, gy):
+    """16x16 GUI wewnatrz ramki x-1..x+16, y-1..y+16."""
+    x, y = gx * S, gy * S
+    x0, y0, x1, y1 = x - 2, y - 2, x + 33, y + 33
+    box(draw, x0, y0, x1, y1, "paper_shadow")
+    box(draw, x - 1, y - 1, x + 32, y + 32, "paper_light")
+    box(draw, x, y, x + 31, y + 31, "paper_slot")
+    line(draw, [(x, y + 31), (x, y), (x + 31, y)], "paper_shadow")
+    line(draw, [(x + 1, y + 31), (x + 31, y + 31),
+                (x + 31, y + 1)], "paper_light")
 
-def satchel(d):
-    # Cztery górne pola tworzą klapę; 18 dolnych wnętrze płóciennej torby.
-    rect(d,(96,78,170,102),'ink')
-    rect(d,(98,80,168,101),'wood3')
-    rect(d,(99,82,167,100),'canvas1')
-    line(d,[(98,80),(168,80)],'brass1')
-    for x in (103,161):
-        rect(d,(x,77,x+2,84),'wood0')
-        line(d,[(x,78),(x,81)],'brass2')
-        dot(d,x+1,83,'brass0')
-    rect(d,(4,101,171,140),'wood0')
-    rect(d,(5,102,170,139),'wood2')
-    rect(d,(7,104,168,138),'canvas1')
-    line(d,[(7,104),(168,104)],'canvas2')
-    line(d,[(7,120),(168,120)],'canvas0')
-    line(d,[(7,121),(168,121)],'canvas2')
-    # Oszczędny splot w wolnych 2-pikselowych przerwach między rzędami.
-    for y in (118,136):
-        for x in range(16,163,18):
-            dot(d,x,y,'canvas2')
-    for y in (108,115,124,131):
-        dot(d,5,y,'brass1')
-        dot(d,170,y,'brass1')
 
-def crossed_weapons(d):
-    # Miniaturowy znak dłoni/broni, bez osobnej barwy konturu.
-    line(d,[(8,137),(12,141)],'brass2')
-    line(d,[(12,137),(8,141)],'brass2')
-    dot(d,8,137,'brass3')
-    dot(d,12,137,'brass3')
+def leather_slot(draw, gx, gy):
+    """Wglebienie bez osobnej ramy wokol kazdego slotu."""
+    x, y = gx * S, gy * S
+    box(draw, x, y, x + 31, y + 31, "bag_slot")
+    line(draw, [(x, y + 30), (x, y), (x + 30, y)], "bag_slot_shadow")
+    line(draw, [(x + 1, y + 31), (x + 31, y + 31),
+                (x + 31, y + 1)], "bag_light")
 
-def belt(d):
-    rect(d,(2,139,173,164),'ink')
-    rect(d,(3,140,172,162),'wood1')
-    line(d,[(4,140),(171,140)],'brass0')
-    line(d,[(4,141),(171,141)],'wood4')
-    line(d,[(4,162),(171,162)],'wood0')
-    # Wspólna oprawa dłoni 0–1; mosiężny rygiel wspólnego schowka.
-    rect(d,(6,138,42,160),'brass0')
-    rect(d,(7,139,41,159),'wood2')
-    line(d,[(7,139),(41,139)],'brass2')
-    line(d,[(7,159),(41,159)],'wood0')
-    crossed_weapons(d)
-    # Ładownica mikstur 2–4 z jedną profilowaną klapką i trzema szwami.
-    rect(d,(43,137,96,161),'brass0')
-    rect(d,(44,138,95,160),'wood2')
-    poly(d,[(44,137),(95,137),(95,140),(89,141),(50,141),(44,140)],'wood4')
-    line(d,[(45,137),(94,137)],'brass2')
-    line(d,[(51,141),(88,141)],'wood0')
-    for x in (60,78):
-        line(d,[(x,159),(x,161)],'brass1')
-    for x in (52,87):
-        dot(d,x,139,'brass2')
-    # Trzy zwykłe komory, ostatnia osobno jako futerał dziennika.
-    for x in (98,116,134):
-        line(d,[(x-2,140),(x-2,160)],'brass0')
-        dot(d,x-2,159,'brass1')
-    rect(d,(150,138,169,160),'brass0')
-    rect(d,(151,139,168,159),'wood2')
-    line(d,[(151,139),(168,139)],'brass2')
-    line(d,[(152,159),(167,159)],'wood0')
-    # W pasie nad slotami nie ma miejsca na pełne cyfry 3x5 z odstępem.
 
-def ornament(d):
-    # Zakładka; trzy tony, bez losowej faktury.
-    poly(d,[(80,3),(88,3),(88,15),(84,12),(80,15)],'red')
-    line(d,[(81,3),(87,3)],'brass2')
-    line(d,[(82,5),(82,10)],'wood4')
-    dot(d,84,8,'brass2')
-    # Mała latarnia w prawym górnym polu, nad sakwą.
-    line(d,[(153,5),(160,5)],'brass0')
-    line(d,[(156,6),(156,9)],'brass2')
-    rect(d,(153,10,159,16),'ink')
-    rect(d,(154,11,158,15),'brass1')
-    rect(d,(155,12,157,14),'brass3')
-    line(d,[(153,16),(159,16)],'brass0')
-    dot(d,156,17,'brass2')
-    # Herb na wolnym suknie, pióro i trzy monety. Omija sprite książki
-    # w x=104..123, y=61..78 z dwupikselowym marginesem.
-    poly(d,[(138,63),(146,63),(146,69),(142,73),(138,69)],'brass0')
-    poly(d,[(140,64),(144,64),(144,68),(142,70),(140,68)],'green3')
-    dot(d,142,66,'brass2')
-    line(d,[(158,57),(155,68)],'brass0')
-    line(d,[(158,57),(162,60),(155,65)],'brass2')
-    dot(d,155,68,'brass3')
-    rect(d,(152,70,159,76),'ink')
-    rect(d,(153,71,158,75),'brass0')
-    line(d,[(153,71),(157,71)],'brass1')
-    line(d,[(154,74),(157,74)],'wood0')
-    for x,y in ((162,72),(164,75)):
-        rect(d,(x,y,x+2,y+1),'brass0')
-        line(d,[(x,y),(x+1,y)],'brass2')
+def stitched_frame(draw, gx0, gy0, gx1, gy1):
+    """Cienki rowek i rzadkie, rowne szwy grupy paska."""
+    x0, y0, x1, y1 = gx0 * S, gy0 * S, gx1 * S + 1, gy1 * S + 1
+    draw.rounded_rectangle((x0, y0, x1, y1), radius=4,
+                           outline=C["bag_dark"], width=2)
+    for x in range(x0 + 8, x1 - 6, 16):
+        box(draw, x, y0 + 1, x + 3, y0 + 1, "bag_light")
+        box(draw, x, y1 - 1, x + 3, y1 - 1, "bag_light")
+    for y in range(y0 + 8, y1 - 6, 16):
+        box(draw, x0 + 1, y, x0 + 1, y + 3, "bag_light")
+        box(draw, x1 - 1, y, x1 - 1, y + 3, "bag_light")
 
-def texture():
-    im = Image.new('RGBA',(256,256),(0,0,0,0))
+
+def draw_background(with_frame_texels=False):
+    im = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    frame(d)
-    upper(d)
-    equipment_strip(d)
-    satchel(d)
-    belt(d)
-    ornament(d)
-    for group, positions in (('armor',ARMOR),('jewel',JEWELRY),('equip',EQUIP),
-                             ('bag',BAG),('bar',BAR)):
-        for x,y in positions: slot(d,x,y,group)
+    frame_mask = Image.new("1", im.size)
+    mask_draw = ImageDraw.Draw(frame_mask)
+
+    # Ksiega: lekko sciete rogi, szeroki ciemnobrazowy rant.
+    d.polygon([(8, 0), (343, 0), (348, 3), (351, 8),
+               (351, 323), (348, 328), (343, 331), (8, 331),
+               (3, 328), (0, 323), (0, 8), (3, 3)], fill=C["cover_dark"])
+    d.polygon([(9, 3), (342, 3), (347, 7), (348, 9),
+               (348, 322), (344, 327), (9, 328), (4, 323),
+               (4, 9)], fill=C["cover"])
+    line(d, [(9, 4), (342, 4)], "cover_light", 2)
+    line(d, [(5, 10), (5, 321)], "cover_light", 2)
+    line(d, [(346, 10), (346, 322)], "cover_dark", 2)
+    line(d, [(10, 326), (343, 326)], "cover_dark", 2)
+
+    # Dwie osobne kartki, widoczne warstwy tylko przy dolnych krawedziach.
+    d.rounded_rectangle((8, 8, 193, 202), radius=4, fill=C["paper_edge"])
+    d.rounded_rectangle((10, 10, 191, 198), radius=3, fill=C["left"])
+    d.rounded_rectangle((195, 8, 344, 202), radius=4, fill=C["paper_edge"])
+    d.rounded_rectangle((198, 10, 342, 198), radius=3, fill=C["right"])
+    line(d, [(15, 198), (186, 198)], "paper_light")
+    line(d, [(15, 200), (186, 200)], "paper_edge")
+    line(d, [(202, 198), (337, 198)], "paper_light")
+    line(d, [(202, 200), (337, 200)], "paper_edge")
+
+    # Plaski pionowy grzbiet, konczy sie przed dolna kieszenia.
+    box(d, 187, 8, 200, 161, "spine")
+    box(d, 187, 8, 190, 161, "spine_dark")
+    box(d, 196, 8, 198, 161, "cover_light")
+    line(d, [(191, 10), (191, 160)], "bag_light")
+
+    # Torba zajmuje dol. Jej gorna krawedz przykrywa koniec kartek.
+    d.rounded_rectangle((8, 198, 344, 325), radius=5, fill=C["bag_dark"])
+    d.rounded_rectangle((10, 201, 342, 323), radius=4, fill=C["bag"])
+    line(d, [(13, 202), (338, 202)], "bag_light", 2)
+    line(d, [(12, 204), (12, 318)], "bag_light")
+    line(d, [(17, 323), (337, 323)], "bag_dark", 2)
+
+    # Cztery sloty y=84 sa kieszenia torby wsunieta w prawa strone.
+    d.rounded_rectangle((192, 162, 341, 203), radius=4,
+                        fill=C["bag_dark"])
+    d.rounded_rectangle((194, 165, 339, 201), radius=3,
+                        fill=C["bag"])
+    line(d, [(198, 165), (336, 165)], "bag_light")
+
+    # Okno modelu gracza: jasne, plaskie, z delikatna krawedzia.
+    box(d, 51, 16, 151, 157, "spine_dark")
+    box(d, 53, 18, 149, 155, "right")
+    line(d, [(53, 154), (53, 18), (148, 18)], "paper_light")
+    line(d, [(54, 155), (149, 155), (149, 19)], "paper_shadow")
+
+    for y in (8, 26, 44, 62):
+        paper_slot(d, 8, y)
+    paper_slot(d, 77, 62)
+    for x in (8, 26, 44, 62, 80):
+        paper_slot(d, x, 84)
+    for x in (98, 116):
+        for y in (18, 36):
+            paper_slot(d, x, y)
+    paper_slot(d, 154, 28)
+
+    for x in (98, 116, 134, 152):
+        leather_slot(d, x, 84)
+    for y in (102, 120):
+        for i in range(9):
+            leather_slot(d, 8 + 18 * i, y)
+
+    # Pasek jest czescia tej samej torby; grupy zaznaczaja tylko szwy.
+    line(d, [(17, 278), (335, 278)], "bag_dark", 2)
+    line(d, [(17, 280), (335, 280)], "bag_light")
+    for bounds in ((6, 140, 43, 159), (42, 140, 97, 159),
+                   (150, 140, 169, 159)):
+        stitched_frame(d, *bounds)
+    for i in range(9):
+        leather_slot(d, 8 + 18 * i, 142)
+
+    # Dwa jasne teksele oddzielaja zapasowa lewa reke od aktywnej prawej.
+    box(d, 157, 164, 158, 201, "left")
+    box(d, 157, 202, 158, 202, "bag_dark")
+
+    # Obrysy na koncu: sloty nie wycinaja z nich pojedynczych tekseli.
+    for bounds in (
+        (12, 12, 52, 159),   # zbroja, wspolna lewa linia z oknem postaci
+        (51, 16, 151, 157), # okno postaci
+        (12, 164, 86, 203), # rekawice i pas
+        (85, 164, 156, 203),# zapas, przerwa dwutekselowa przed aktywna para
+        (192, 32, 269, 109),# bizuteria
+        (304, 52, 343, 95),# sakwa
+    ):
+        frame(d, mask_draw, bounds)
+    active_hands_frame(d, mask_draw)
+
+    if with_frame_texels:
+        frame_texels = {(x, y) for y in range(206) for x in range(344)
+                        if frame_mask.getpixel((x, y))}
+        return im, frame_texels
     return im
 
-def avatar(im):
-    d=ImageDraw.Draw(im)
-    o='#24171a'; hair='#3c241b'; hair_hi='#744326'; skin='#a16a4b'
-    red='#992f22'; red_hi='#ce6040'; teal='#075e50'; teal_hi='#269279'
-    shoe='#4a2c1f'; metal='#88999c'
-    d.rectangle((41,18,58,30),fill=o);d.rectangle((43,19,57,22),fill=hair)
-    d.rectangle((43,20,50,20),fill=hair_hi);d.rectangle((44,23,55,29),fill=skin)
-    d.rectangle((44,22,47,25),fill=hair);d.point((47,26),fill=o);d.point((53,26),fill=o)
-    d.rectangle((46,29,53,30),fill=o);d.rectangle((38,29,61,53),fill=o)
-    d.rectangle((39,30,60,49),fill=red);d.rectangle((39,31,42,46),fill=red_hi)
-    d.rectangle((55,30,58,47),fill=red_hi);d.rectangle((43,31,56,48),fill=teal)
-    d.rectangle((45,31,47,46),fill=teal_hi)
-    for x in (34,61):
-        d.rectangle((x,30,x+5,55),fill=o)
-        d.rectangle((x+1,31,x+4,49),fill=red)
-        d.rectangle((x+1,50,x+4,54),fill=skin)
-    d.rectangle((43,49,57,55),fill=o);d.rectangle((44,50,56,54),fill=teal_hi)
-    for x in (42,51):
-        d.rectangle((x,55,x+7,74),fill=o);d.rectangle((x+1,55,x+6,69),fill=teal)
-        d.rectangle((x,70,x+7,74),fill=shoe);d.rectangle((x,74,x+7,75),fill=o)
-    d.rectangle((47,38,53,43),fill=o);d.line(((48,39),(51,42)),fill=metal)
 
-def icon(im,name,x,y):
-    path=ICONS/(name+'.png')
-    if not path.exists(): path=ICONS/'vanilla_slot'/(name+'.png')
-    a=Image.open(path).convert('RGBA')
-    assert a.size==(16,16),path
-    im.alpha_composite(a,(x,y))
+def add_icon(preview, name, gx, gy):
+    source = ICONS / name
+    icon = Image.open(source).convert("RGBA")
+    if icon.size != (16, 16):
+        raise ValueError(f"Niepoprawny rozmiar ikony: {source}")
+    icon = icon.resize((32, 32), Image.Resampling.NEAREST)
+    preview.alpha_composite(icon, (gx * S, gy * S))
 
-def sword(im,x,y):
-    d=ImageDraw.Draw(im);o='#23171b';steel='#a8bdc2';shine='#e3e2cc'
-    d.polygon([(x+12,y+1),(x+14,y+1),(x+14,y+4),(x+6,y+12),(x+3,y+9)],fill=o)
-    d.polygon([(x+12,y+2),(x+13,y+2),(x+13,y+4),(x+6,y+10),(x+5,y+9)],fill=steel)
-    d.line([(x+12,y+2),(x+6,y+8)],fill=shine)
-    d.line([(x+4,y+8),(x+9,y+13)],fill=o)
-    d.line([(x+4,y+9),(x+8,y+13)],fill='#c49a49')
-    d.line([(x+5,y+11),(x+2,y+14)],fill=o)
-    d.line([(x+5,y+11),(x+3,y+13)],fill='#633b24')
 
-def shield(im,x,y):
-    d=ImageDraw.Draw(im);o='#211b1c'
-    d.polygon([(x+3,y+2),(x+12,y+2),(x+13,y+4),(x+12,y+10),
-               (x+8,y+14),(x+3,y+10),(x+2,y+4)],fill=o)
-    d.polygon([(x+4,y+3),(x+11,y+3),(x+11,y+10),(x+8,y+12),(x+4,y+9)],fill='#84969a')
-    d.rectangle((x+5,y+4,x+7,y+9),fill='#1b5e50')
-    d.line([(x+4,y+3),(x+10,y+3)],fill='#d2c9a6')
+def add_item(preview, name, gx, gy):
+    """Przykladowy przedmiot, tylko w podgladzie; atlas pozostaje pusty."""
+    sources = {
+        "sword": ITEMS / "mapa/textures/item/ikona/iron_sword.png",
+        "ingot": ITEMS / "mapa/textures/item/ikona/iron_ingot.png",
+        "stone": ITEMS / "nexo/textures/item/profesje/rough_stone.png",
+        "cut_stone": ITEMS / "nexo/textures/item/profesje/cut_stone.png",
+    }
+    if name in sources:
+        icon = Image.open(sources[name]).convert("RGBA")
+        if icon.size != (16, 16):
+            raise ValueError(f"Niepoprawny rozmiar przedmiotu: {sources[name]}")
+    else:
+        icon = Image.new("RGBA", (16, 16))
+        d = ImageDraw.Draw(icon)
+        if name == "pouch":
+            d.polygon([(5, 2), (10, 2), (11, 4), (10, 6), (13, 9),
+                       (12, 13), (9, 15), (5, 15), (2, 12), (2, 9),
+                       (5, 6), (4, 4)], fill="#674126", outline="#2E1F16")
+            d.rectangle((5, 4, 10, 5), fill="#B88A4C")
+            d.line([(4, 9), (4, 12), (6, 13)], fill="#A9773E")
+            d.point((9, 9), fill="#D7B76C")
+        elif name == "shield":
+            d.polygon([(4, 1), (11, 1), (13, 3), (12, 10), (8, 15),
+                       (3, 11), (2, 3)], fill="#AC8454", outline="#302A25")
+            d.polygon([(5, 3), (10, 3), (11, 9), (8, 12), (5, 9)],
+                      fill="#CDB38A")
+            d.line([(7, 3), (7, 11)], fill="#77746A", width=2)
+            d.point((8, 7), fill="#E4D2AF")
+        elif name == "bread":
+            d.ellipse((2, 5, 13, 13), fill="#9A5C2E", outline="#4A321F")
+            d.ellipse((3, 4, 12, 11), fill="#D6A45B")
+            d.line([(5, 5), (4, 8)], fill="#EEC985")
+            d.line([(8, 4), (7, 8)], fill="#EEC985")
+            d.line([(11, 5), (10, 8)], fill="#EEC985")
+        elif name == "planks":
+            d.rectangle((2, 3, 13, 12), fill="#9A683B", outline="#392719")
+            d.line([(3, 6), (12, 6)], fill="#C18B50")
+            d.line([(3, 9), (12, 9)], fill="#C18B50")
+            d.line([(7, 4), (7, 5)], fill="#52361F")
+            d.line([(10, 7), (10, 8)], fill="#52361F")
+        elif name == "gem":
+            d.polygon([(5, 2), (10, 2), (14, 6), (8, 14), (2, 6)],
+                      fill="#4A9E9B", outline="#234B53")
+            d.polygon([(5, 3), (10, 3), (8, 11)], fill="#9AD8CB")
+            d.line([(3, 6), (13, 6)], fill="#D5E9D6")
+        else:
+            raise ValueError(f"Nieznany przedmiot: {name}")
+    preview.alpha_composite(icon.resize((32, 32), Image.Resampling.NEAREST),
+                            (gx * S, gy * S))
 
-def pouch(im,x,y):
-    d=ImageDraw.Draw(im);o='#24171a'
-    d.rectangle((x+5,y+1,x+10,y+3),fill=o)
-    d.rectangle((x+6,y+1,x+9,y+2),fill='#e2b458')
-    d.polygon([(x+4,y+4),(x+11,y+4),(x+13,y+7),(x+12,y+13),
-               (x+10,y+15),(x+5,y+15),(x+3,y+12),(x+3,y+7)],fill=o)
-    d.polygon([(x+5,y+5),(x+10,y+5),(x+12,y+8),(x+11,y+12),
-               (x+9,y+13),(x+6,y+13),(x+4,y+11),(x+4,y+8)],fill='#a35631')
-    d.line([(x+5,y+6),(x+9,y+6)],fill='#d38045')
-    d.rectangle((x+7,y+7,x+8,y+10),fill='#e2b458')
 
-def journal(im,x,y):
-    d=ImageDraw.Draw(im);o='#23191a'
-    d.polygon([(x+3,y+2),(x+11,y+2),(x+13,y+4),(x+13,y+13),
-               (x+4,y+14),(x+2,y+12),(x+2,y+4)],fill=o)
-    d.polygon([(x+4,y+3),(x+10,y+3),(x+12,y+5),(x+12,y+12),
-               (x+4,y+13),(x+3,y+11),(x+3,y+5)],fill='#644021')
-    d.line([(x+4,y+4),(x+10,y+4)],fill='#b68b4a')
-    d.line([(x+4,y+12),(x+10,y+12)],fill='#d7bc83')
-    d.rectangle((x+6,y+6,x+9,y+7),fill='#b68b4a')
+def make_items_preview(background):
+    preview = background.crop((0, 0, 352, 332)).copy()
+    icons = [
+        ("vanilla_slot/helmet.png", 8, 8),
+        ("vanilla_slot/chestplate.png", 8, 26),
+        ("vanilla_slot/leggings.png", 8, 44),
+        ("vanilla_slot/boots.png", 8, 62),
+        ("left_hand.png", 77, 62),
+        ("gloves.png", 8, 84), ("belt.png", 26, 84),
+        ("spare_right.png", 44, 84), ("spare_left.png", 62, 84),
+        ("right_hand.png", 80, 84),
+        ("necklace.png", 98, 18), ("ring.png", 116, 18),
+        ("ring.png", 98, 36), ("charm.png", 116, 36),
+    ]
+    for name, x, y in icons:
+        add_icon(preview, name, x, y)
+    for name, x, y in (
+        ("pouch", 154, 28),
+        ("ingot", 98, 84), ("stone", 116, 84),
+        ("planks", 134, 84), ("gem", 152, 84),
+        ("cut_stone", 26, 102), ("ingot", 62, 102),
+        ("planks", 98, 102), ("stone", 134, 102),
+        ("sword", 8, 142), ("shield", 26, 142),
+        ("bread", 80, 142),
+    ):
+        add_item(preview, name, x, y)
+    add_icon(preview, "health_potion.png", 44, 142)
+    add_icon(preview, "mana_potion.png", 62, 142)
+    return preview.resize((704, 664), Image.Resampling.NEAREST)
 
-def preview(background):
-    im=background.crop((0,0,PW,PH)).copy()
-    for name,x,y in [
-        ('helmet',8,8),('chestplate',8,26),('leggings',8,44),('boots',8,62),
-        ('necklace',98,18),('ring',116,18),('ring',98,36),('charm',116,36),
-        ('gloves',8,84),('belt',26,84),('spare_right',44,84),
-        ('spare_left',62,84),('right_hand',80,84),('left_hand',77,62),
-        ('health_potion',44,142),('mana_potion',62,142),('utility',80,142),
-    ]: icon(im,name,x,y)
-    avatar(im);sword(im,8,142);shield(im,26,142)
-    pouch(im,154,28);journal(im,152,142)
-    book=Image.open(ICONS/'recipe_book'/'button.png').convert('RGBA')
-    assert book.size==(20,18)
-    im.alpha_composite(book,(104,61))
-    return im.resize((704,664),Image.Resampling.NEAREST)
 
-def comparison(prev):
-    # Równa wysokość ramek; Wynn to kadr z dostarczonej klatki, nie tekstura.
-    hub=Image.open(HUB).convert('RGBA').resize((528,504),Image.Resampling.NEAREST)
-    ours=prev.resize((528,498),Image.Resampling.NEAREST)
-    wynn=Image.open(WYNN).convert('RGB').crop((451,171,823,528))
-    wynn=wynn.resize((525,504),Image.Resampling.LANCZOS)
-    sheet=Image.new('RGB',(1624,550),'#241914')
-    draw=ImageDraw.Draw(sheet)
-    labels=('NASZ EKWIPUNEK  x3','HUB  x3','WYNN  /  ZRZUT')
-    for i,label in enumerate(labels):
-        x=16+i*536
-        draw.rectangle((x-2,28,x+530,536),fill='#0d0704')
-        draw.text((x,8),label,font=ImageFont.load_default(),fill='#d9c277')
-    sheet.paste(ours.convert('RGB'),(16,34))
-    sheet.paste(hub.convert('RGB'),(552,34))
-    sheet.paste(wynn,(1088+(528-wynn.width)//2,34+(504-wynn.height)//2))
-    return sheet
+def orphan_count(im):
+    """Zlicza jednopeskelowe wyspy barwy (sasiedztwo 8-kierunkowe)."""
+    pixels = im.load()
+    found = []
+    for y in range(332):
+        for x in range(352):
+            color = pixels[x, y]
+            if color[3] == 0:
+                continue
+            if all(not (0 <= x + dx < 352 and 0 <= y + dy < 332)
+                   or pixels[x + dx, y + dy] != color
+                   for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+                   if dx or dy):
+                found.append((x, y))
+    return found
 
-def zoom_labels(bg):
-    # Każdy wycinek jest skalowany dokładnie 8x metodą nearest neighbour.
-    crops = [(33,3,65,17), (100,3,143,17), (142,13,169,27),
-             (4,132,172,142)]
-    zooms = [bg.crop(box).resize(((box[2]-box[0])*8,
-                                  (box[3]-box[1])*8), Image.Resampling.NEAREST)
-             for box in crops]
-    sheet = Image.new('RGBA',(1360,260),P['ink'])
-    x = 8
-    for z in zooms[:3]:
-        sheet.alpha_composite(z,(x,8))
-        x += z.width+16
-    sheet.alpha_composite(zooms[3],(8,144))
-    return sheet
 
-def verify_labels(bg):
-    # Sprawdzenie każdego piksela każdej litery po złożeniu całej tekstury.
-    for x,y,s in LABELS:
-        for i,ch in enumerate(s):
-            for yy,row in enumerate(FONT[ch]):
-                for xx,on in enumerate(row):
-                    if on == '1':
-                        assert bg.getpixel((x+4*i+xx,y+yy))[:3] == tuple(
-                            bytes.fromhex(P['brass2'][1:])), (s,i,ch,xx,yy)
-            if ch == 'Ż': accents = ((1,-2),)
-            elif ch == 'Ć': accents = ((2,-2),(1,-1))
-            else: accents = ()
-            for xx,yy in accents:
-                assert bg.getpixel((x+4*i+xx,y+yy))[:3] == tuple(
-                    bytes.fromhex(P['brass2'][1:])), (s,i,ch,xx,yy)
+def remove_orphans(im):
+    """Wyrzuca pojedyncze artefakty z lukow przed zapisem atlasu."""
+    for _ in range(3):
+        singles = orphan_count(im)
+        if not singles:
+            break
+        pixels = im.load()
+        changes = []
+        for x, y in singles:
+            neighbors = [pixels[x + dx, y + dy]
+                         for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+                         if (dx or dy) and 0 <= x + dx < 352
+                         and 0 <= y + dy < 332 and pixels[x + dx, y + dy][3]]
+            if neighbors:
+                changes.append((x, y, Counter(neighbors).most_common(1)[0][0]))
+        for x, y, color in changes:
+            pixels[x, y] = color
+
+
+def validate(im):
+    assert im.size == (512, 512)
+    assert im.crop((352, 0, 512, 512)).getbbox() is None
+    assert im.crop((0, 332, 352, 512)).getbbox() is None
+    colors = {im.getpixel((x, y)) for y in range(332) for x in range(352)
+              if im.getpixel((x, y))[3]}
+    assert len(colors) <= 16, f"Za duzo barw: {len(colors)}"
+    p = im.load()
+    paper_slots = ([(8, y) for y in (8, 26, 44, 62)]
+                   + [(77, 62), (154, 28)]
+                   + [(x, 84) for x in (8, 26, 44, 62, 80)]
+                   + [(x, y) for x in (98, 116) for y in (18, 36)])
+    bag_slots = ([(x, 84) for x in (98, 116, 134, 152)]
+                 + [(8 + 18 * i, y) for y in (102, 120, 142)
+                    for i in range(9)])
+    for x, y in paper_slots:
+        assert p[2*x + 16, 2*y + 16][:3] == tuple(
+            bytes.fromhex(C["paper_slot"][1:]))
+    for x, y in bag_slots:
+        assert p[2*x + 16, 2*y + 16][:3] == tuple(
+            bytes.fromhex(C["bag_slot"][1:]))
+    for y in range(61*S, 79*S):
+        for x in range(104*S, 124*S):
+            assert p[x, y][:3] == tuple(bytes.fromhex(C["right"][1:])), \
+                "Pole sprite'u ksiazki ma dekoracje"
+    singles = orphan_count(im)
+    assert not singles, f"Sieroty: {singles[:20]}"
+    return len(colors), len(singles)
+
 
 def main():
-    verify_original_geometry()
-    bg=texture()
-    verify_labels(bg)
-    bg.save(HERE/'tekstura_A.png')
-    prev=preview(bg)
-    prev.save(HERE/'podglad_A.png')
-    zoom_labels(bg).save(HERE/'zoom_napisy.png')
-    comparison(prev).save(HERE/'porownanie_A.png')
-    colors={p for p in bg.crop((0,0,PW,PH)).get_flattened_data() if p[3]}
-    assert len(colors)<=22,(len(colors),colors)
-    assert bg.getpixel((200,200))[3]==0
-    print(f'Gotowe: 46 slotów, {len(colors)} barw, tekstura 256x256.')
+    background, frame_texels = draw_background(with_frame_texels=True)
+    remove_orphans(background)
+    colors, singles = validate(background)
+    spurs = frame_spurs(background, frame_texels)
+    assert not spurs, f"Zadziory ramek: {spurs[:20]}"
+    background.save(HERE / "inventory.png")
+    background.crop((0, 0, 352, 332)).resize(
+        (704, 664), Image.Resampling.NEAREST).save(HERE / "podglad_x2.png")
+    make_items_preview(background).save(HERE / "podglad_z_przedmiotami_x2.png")
+    (HERE / "sieroty.txt").write_text(
+        f"sieroty: {singles}\nbarwy: {colors}\n"
+        "atlas: 512x512; grafika: 352x332; obszar poza grafika: przezroczysty\n",
+        encoding="utf-8")
+    (HERE / "styki.txt").write_text(
+        f"zadziory ramek: {len(spurs)}\n"
+        f"sprawdzone teksele ramek: {len(frame_texels)}\n"
+        "test: dwa sasiednie teksele tej samej barwy w linii; "
+        "naroza jako pelny blok 2x2\n",
+        encoding="utf-8")
+    print(f"Gotowe: {colors} barw, {singles} sierot, {len(spurs)} zadziorow")
 
-if __name__=='__main__':
+
+if __name__ == "__main__":
     main()
