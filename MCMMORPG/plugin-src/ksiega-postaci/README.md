@@ -8,14 +8,50 @@ Wynik craftingu jest przyciskiem Sakwy (`MISCELLANEOUS/UI_SAKWA`); klik wykonuje
 
 `ukryj-ekwipunek.wlaczone: true` w `config.yml` włącza maskowanie dolnych 36 slotów
 gracza w oknie DeluxeMenus. Plugin rozpoznaje okno po dowolnym znaku z listy
-`ukryj-ekwipunek.znaki-tytulu` w tytule widoku (domyślnie `䅠`). Tytuł menu
-DeluxeMenus musi zawierać ten glif. Dla tego okna ProtocolLib zamienia wyłącznie
-wychodzące `WINDOW_ITEMS` i `SET_SLOT` na puste sloty gracza; nie zmienia
-ekwipunku serwera ani kursora. Kliknięcia dolnej części, przeciąganie do niej,
+`ukryj-ekwipunek.znaki-tytulu` w tytule widoku (domyślnie `䅠`, `䅨`). Tytuł menu
+DeluxeMenus musi zawierać jeden z tych glifów. Dla tego okna ProtocolLib zamienia wyłącznie
+wychodzące `WINDOW_ITEMS` i `SET_SLOT` na puste sloty gracza (lub przyciski panelu Q); nie zmienia
+ekwipunku serwera ani kursora. Kliknięcia dolnej części, przeciąganie,
 shift-klik, cyfry, F i Q są anulowane, żeby niewidocznych przedmiotów nie
 przenosić. Po zamknięciu okna stan maskowania znika; tick później
 `updateInventory()` przywraca klientowi prawdziwą zawartość. Wyjście gracza
 również usuwa stan. Wymagany jest `ProtocolLib.jar` na backendzie `items`.
+
+## Menu Q Księga
+
+`wdrozenie/menu-ksiega/hub_glowne.yml` zastępuje
+`plugins/DeluxeMenus/gui_menus/hub_glowne.yml` na backendzie `items`; wpis
+`hub_glowne` w `plugins/DeluxeMenus/config.yml` już istnieje. Menu ma 54 sloty i
+12 kafli 2×2 według `wdrozenie/menu-ksiega/k12/sloty.txt`.
+Po wymianie JAR dopisz sekcję `panel-dolny` i glif `䅨` z
+`src/main/resources/config.yml` do istniejącego
+`plugins/KsiegaPostaci/config.yml`: `saveDefaultConfig()` nie nadpisze starej konfiguracji.
+Tytuł jest dokładnym ciągiem z `test_ksiega_b.yml`: `kb_1..4` (`䅨`–`䅫`) z
+przesunięciami Nexo. Tekstura `wdrozenie/menu-ksiega/k12/ksiega_2x.png` wymaga
+podziału/wgrania do paczki jako `nexo:gui/kb_1..4` i definicji glifów z
+`plugins/Nexo/glyphs/ksiega_koncepty.yml`; niewidoczny item
+`nexo-mmo_icon_blank` musi być dostępny w Nexo. Skróty Q/MenuKey i komendy
+`menu`, `menuglowne` pozostają wejściami do `hub_glowne`.
+
+`panel-dolny` w `config.yml` działa tylko dla 54-slotowego okna z glifem `䅨`.
+Sloty panelu 0–8 to pierwszy widoczny rząd dolnego ekwipunku (raw 54–62),
+9–17 to drugi, 18–26 trzeci, 27–35 hotbar (raw 81–89). Wiersz A ma Pomoc,
+Ustawienia, Zmień postać i Zamknij; wiersz B ma siedem ikon stanu. Przedmioty
+są tworzone na głównym wątku przy otwarciu i odświeżane co 20 ticków;
+ProtocolLib podmienia tylko pakiety. Lewy/prawy klik w aktywny przycisk jest
+anulowany i uruchamia komendę w następnym ticku. Shift, cyfry, F, Q, przeciąganie,
+podwójny klik i kursor z przedmiotem nie przenoszą wyposażenia.
+
+Do kompilacji potrzeba także `PlaceholderAPI-2.12.2.jar` i `nexo-1.20.jar` z
+`/opt/docker/mc/data/world1/plugins/` (zależności `compileOnly`); runtime ma
+`softdepend` i działa bez nich na materiałach zapasowych. Liczniki bez PAPI
+traktowane są jako zero. W JAR MMOCore 1.13.1 są `%mmocore_experience%` i
+`%mmocore_next_level%`, a `%mmocore_quest%` bez zadania zwraca pusty tekst;
+`%mmocore_quest_progress%` zwraca wtedy `0`. Warto potwierdzić to w grze po
+załadowaniu PlaceholderAPI oraz sprawdzić rzeczywisty wygląd i klikalność
+wszystkich kafli/panelu, odświeżenie punktów, brak zmian w prawdziwym ekwipunku
+oraz powrót hotbara po zamknięciu. Walidacja odbywa się na backendzie `items`
+przez Velocity (`localhost:25565`); przejrzyj `./mc logs items`.
 
 ## Układ slotów gracza w oknie E
 

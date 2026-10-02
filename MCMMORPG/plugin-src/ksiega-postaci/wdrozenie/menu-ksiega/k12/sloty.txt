@@ -1,0 +1,99 @@
+Księga Q — siatka 9 × 6; jeden kafel = dokładnie 2 × 2 sloty.
+Kolumna 4 jest pustym grzbietem księgi.
+Skrzynia (sloty 0–53):
+00 | rząd 0, kol 0 | Mapa świata
+01 | rząd 0, kol 1 | Mapa świata
+02 | rząd 0, kol 2 | Zadania
+03 | rząd 0, kol 3 | Zadania
+04 | rząd 0, kol 4 | pusty grzbiet
+05 | rząd 0, kol 5 | Podróże
+06 | rząd 0, kol 6 | Podróże
+07 | rząd 0, kol 7 | Dziennik przygód
+08 | rząd 0, kol 8 | Dziennik przygód
+09 | rząd 1, kol 0 | Mapa świata
+10 | rząd 1, kol 1 | Mapa świata
+11 | rząd 1, kol 2 | Zadania
+12 | rząd 1, kol 3 | Zadania
+13 | rząd 1, kol 4 | pusty grzbiet
+14 | rząd 1, kol 5 | Podróże
+15 | rząd 1, kol 6 | Podróże
+16 | rząd 1, kol 7 | Dziennik przygód
+17 | rząd 1, kol 8 | Dziennik przygód
+18 | rząd 2, kol 0 | Postać
+19 | rząd 2, kol 1 | Postać
+20 | rząd 2, kol 2 | Umiejętności
+21 | rząd 2, kol 3 | Umiejętności
+22 | rząd 2, kol 4 | pusty grzbiet
+23 | rząd 2, kol 5 | Profesje
+24 | rząd 2, kol 6 | Profesje
+25 | rząd 2, kol 7 | Chowańce
+26 | rząd 2, kol 8 | Chowańce
+27 | rząd 3, kol 0 | Postać
+28 | rząd 3, kol 1 | Postać
+29 | rząd 3, kol 2 | Umiejętności
+30 | rząd 3, kol 3 | Umiejętności
+31 | rząd 3, kol 4 | pusty grzbiet
+32 | rząd 3, kol 5 | Profesje
+33 | rząd 3, kol 6 | Profesje
+34 | rząd 3, kol 7 | Chowańce
+35 | rząd 3, kol 8 | Chowańce
+36 | rząd 4, kol 0 | Handel
+37 | rząd 4, kol 1 | Handel
+38 | rząd 4, kol 2 | Społeczność
+39 | rząd 4, kol 3 | Społeczność
+40 | rząd 4, kol 4 | pusty grzbiet
+41 | rząd 4, kol 5 | Poczta
+42 | rząd 4, kol 6 | Poczta
+43 | rząd 4, kol 7 | Wkrótce
+44 | rząd 4, kol 8 | Wkrótce
+45 | rząd 5, kol 0 | Handel
+46 | rząd 5, kol 1 | Handel
+47 | rząd 5, kol 2 | Społeczność
+48 | rząd 5, kol 3 | Społeczność
+49 | rząd 5, kol 4 | pusty grzbiet
+50 | rząd 5, kol 5 | Poczta
+51 | rząd 5, kol 6 | Poczta
+52 | rząd 5, kol 7 | Wkrótce
+53 | rząd 5, kol 8 | Wkrótce
+
+Ukryty ekwipunek gracza (kolumny 0–8):
+A | y=278
+  A0 | x=14 | Pomoc
+  A1 | x=50 | Ustawienia
+  A2 | x=86 | puste
+  A3 | x=122 | Zmień postać
+  A4 | x=158 | Zmień postać
+  A5 | x=194 | Zmień postać
+  A6 | x=230 | puste
+  A7 | x=266 | puste
+  A8 | x=302 | Zamknij
+B | y=314
+  B0 | x=14 | puste
+  B1 | x=50 | Stan i akcje — gniazdo przedmiotu
+  B2 | x=86 | Stan i akcje — gniazdo przedmiotu
+  B3 | x=122 | Stan i akcje — gniazdo przedmiotu
+  B4 | x=158 | Stan i akcje — gniazdo przedmiotu
+  B5 | x=194 | Stan i akcje — gniazdo przedmiotu
+  B6 | x=230 | Stan i akcje — gniazdo przedmiotu
+  B7 | x=266 | Stan i akcje — gniazdo przedmiotu
+  B8 | x=302 | puste
+C | y=350
+  C0 | x=14 | puste
+  C1 | x=50 | puste
+  C2 | x=86 | puste
+  C3 | x=122 | puste
+  C4 | x=158 | puste
+  C5 | x=194 | puste
+  C6 | x=230 | puste
+  C7 | x=266 | puste
+  C8 | x=302 | puste
+hotbar | y=394
+  hotbar0 | x=14 | puste
+  hotbar1 | x=50 | puste
+  hotbar2 | x=86 | puste
+  hotbar3 | x=122 | puste
+  hotbar4 | x=158 | puste
+  hotbar5 | x=194 | puste
+  hotbar6 | x=230 | puste
+  hotbar7 | x=266 | puste
+  hotbar8 | x=302 | puste

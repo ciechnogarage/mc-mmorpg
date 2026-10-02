@@ -3,4 +3,4 @@ version: ${version}
 main: pl.mcmmorpg.ksiega.KsiegaPostaci
 api-version: '1.21'
 depend: [MMOItems, MythicLib, MMOInventory, ProtocolLib]
-softdepend: [MMOProfiles, CoreTools]
+softdepend: [MMOProfiles, CoreTools, PlaceholderAPI, Nexo]

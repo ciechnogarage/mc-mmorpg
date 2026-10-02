@@ -17,6 +17,8 @@ val pinnedPluginJars = listOf(
   "MythicLib-dist-1.7.1-20260330.110510-95.jar",
   "MMOCore-1.13.1-20260330.110342-58.jar",
   "ProtocolLib.jar",
+  "PlaceholderAPI-2.12.2.jar",
+  "nexo-1.20.jar",
 ).map { serverPluginsDir.resolve(it) }
 val missing = pinnedPluginJars.filterNot { it.isFile }
 if (missing.isNotEmpty()) throw GradleException("Brak jarow: " + missing.joinToString())

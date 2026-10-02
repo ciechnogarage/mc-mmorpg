@@ -1,0 +1,124 @@
+# MENU GLOWNE — klawisz Q przechwytywany przez MenuKey.
+# open_command to furtka dla gracza z pusta reka: Q nie wywoluje wtedy zdarzenia wyrzucenia.
+# CoreTools otwiera menu przez konsolowe `dm open hub_glowne <gracz>`, bo open_command
+# DeluxeMenus nie jest komenda zarejestrowana dla dispatchera konsoli.
+# Kafelki 2x2 i pusty grzbiet: wdrozenie/menu-ksiega/k12/sloty.txt.
+menu_title: '&f䅨䅩䅪䅫'
+open_command:
+  - menu
+  - menuglowne
+size: 54
+
+items:
+  mapa:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 9, 10]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aMapa świata'
+    lore:
+      - '&7Otwórz mapę świata.'
+      - '&7Zobacz dostępne miejsca.'
+    left_click_commands:
+      - '[console] mapa pelna %player_name%'
+  zadania:
+    material: nexo-mmo_icon_blank
+    slots: [2, 3, 11, 12]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eZadania'
+    lore:
+      - '&7Przejrzyj swoje zadania.'
+      - '&7Sprawdź ich postęp.'
+    left_click_commands:
+      - '[player] quests'
+  podroze:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bPodróże'
+    lore:
+      - '&7Wybierz cel podróży.'
+      - '&7Na razie dostępny jest Loch 001.'
+    left_click_commands:
+      - '[openguimenu] stolica_podroze'
+  dziennik:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Dziennik przygód'
+    lore:
+      - '&8W przygotowaniu'
+  postac:
+    material: nexo-mmo_icon_blank
+    slots: [18, 19, 27, 28]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&ePostać'
+    lore:
+      - '&7Klasa: &f%mmocore_class%'
+      - '&7Poziom: &f%mmocore_level%'
+      - '&7Statystyki i atrybuty.'
+    left_click_commands:
+      - '[openguimenu] hub_postac'
+  umiejetnosci:
+    material: nexo-mmo_icon_blank
+    slots: [20, 21, 29, 30]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bUmiejętności'
+    lore:
+      - '&7Sprawdź umiejętności.'
+      - '&7Otwórz ich menu.'
+    left_click_commands:
+      - '[openguimenu] hub_umiejetnosci'
+  profesje:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Profesje'
+    lore:
+      - '&7Przejrzyj profesje.'
+      - '&7Sprawdź swój postęp.'
+    left_click_commands:
+      - '[openguimenu] profession_main'
+  chowance:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aChowańce'
+    lore:
+      - '&7Otwórz menażerię.'
+      - '&7Sprawdź swoje chowańce.'
+    left_click_commands:
+      - '[openguimenu] chowance_menazeria'
+  handel:
+    material: nexo-mmo_icon_blank
+    slots: [36, 37, 45, 46]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Handel'
+    lore:
+      - '&7Otwórz menu handlu.'
+      - '&7Sprawdź sklep i aukcje.'
+    left_click_commands:
+      - '[openguimenu] hub_ekonomia'
+  spolecznosc:
+    material: nexo-mmo_icon_blank
+    slots: [38, 39, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&dSpołeczność'
+    lore:
+      - '&7Drużyna, znajomi i gildia.'
+      - '&7Otwórz menu społeczności.'
+    left_click_commands:
+      - '[openguimenu] hub_spolecznosc'
+  poczta:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&ePoczta'
+    lore:
+      - '&8W przygotowaniu'
+  wkrotce:
+    material: nexo-mmo_icon_blank
+    slots: [43, 44, 52, 53]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&7Wkrótce'
+    lore:
+      - '&8W przygotowaniu'

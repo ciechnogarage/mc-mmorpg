@@ -1,7 +1,95 @@
 karta-komenda: player
 ukryj-ekwipunek:
   wlaczone: true
-  znaki-tytulu: ['䅠']
+  znaki-tytulu: ['䅠', '䅨']
+# Slot 0 = lewy gorny slot dolnego ekwipunku w oknie 54-slotowym (raw 54).
+# 0-8 = rzad A, 9-17 = B, 18-26 = C, 27-35 = hotbar.
+panel-dolny:
+  znak-tytulu: '䅨'
+  przedmioty:
+    - slot: 0
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&ePomoc'
+      lore: ['&7Otwórz informacje o menu.']
+      komendy: ['[menu] hub_pomoc']
+    - slot: 1
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eUstawienia'
+      lore: ['&7Otwórz ustawienia gry.']
+      komendy: ['[menu] hub_ustawienia']
+    - slot: 3
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eZmień postać'
+      lore: ['&7Otwórz listę postaci.']
+      komendy: ['[console] cc wybor %player_name% lista']
+    - slot: 4
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eZmień postać'
+      lore: ['&7Otwórz listę postaci.']
+      komendy: ['[console] cc wybor %player_name% lista']
+    - slot: 5
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eZmień postać'
+      lore: ['&7Otwórz listę postaci.']
+      komendy: ['[console] cc wybor %player_name% lista']
+    - slot: 8
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&cZamknij'
+      lore: ['&7Zamknij księgę.']
+      komendy: ['[close]']
+    - slot: 10
+      material: WRITABLE_BOOK
+      nazwa: '&eAktywne zadanie'
+      lore: ['&f%mmocore_quest%', '&7Postęp: &f%mmocore_quest_progress%%', '&7Otwórz zadania.']
+      warunek-brak-zadania: '%mmocore_quest%'
+      lore-gdy-brak: ['&7Brak aktywnego zadania', '&7Otwórz zadania.']
+      komendy: ['[player] quests']
+    - slot: 11
+      material: MAP
+      nazwa: '&ePunkty atrybutów'
+      lore: ['&7Dostępne: &f%mmocore_attribute_points%', '&7Otwórz atrybuty.']
+      ilosc: '%mmocore_attribute_points%'
+      ukryj-gdy-zero: true
+      komendy: ['[player] attributes']
+    - slot: 12
+      material: EXPERIENCE_BOTTLE
+      nazwa: '&bPunkty umiejętności'
+      lore: ['&7Dostępne: &f%mmocore_skill_points%', '&7Otwórz umiejętności.']
+      ilosc: '%mmocore_skill_points%'
+      ukryj-gdy-zero: true
+      komendy: ['[menu] hub_umiejetnosci']
+    - slot: 13
+      material: ENDER_PEARL
+      nazwa: '&bPodróże'
+      lore: ['&7Otwórz cele podróży.', '&7Na razie Loch 001.']
+      komendy: ['[menu] stolica_podroze']
+    - slot: 14
+      material: NAME_TAG
+      nazwa: '&ePoziom %mmocore_level%'
+      lore: ['&7EXP: &f%mmocore_experience% &7/ &f%mmocore_next_level%', '&7Otwórz statystyki.']
+      komendy: ['[player] player']
+    - slot: 15
+      material: GOLD_NUGGET
+      nazwa: '&6Złoto: &f%coretools_eco_dollar%'
+      lore: ['&7Otwórz menu handlu.']
+      komendy: ['[menu] hub_ekonomia']
+    - slot: 16
+      material: LEAD
+      nazwa: '&aChowaniec'
+      lore: ['&7Aktywny: &f%chowance_aktywny_nazwa%', '&7Otwórz menażerię.']
+      komendy: ['[menu] chowance_menazeria']
 typy-broni:
   - SWORD
   - DAGGER
