@@ -60,13 +60,20 @@ final class HandMapRenderer extends MapRenderer {
     }
 
     MapCursorCollection cursors = new MapCursorCollection();
-    if (state.drawn && world.equals(state.world)) for (MapaData.Marker marker : plugin.data().markers(world)) {
+    if (state.drawn && world.equals(state.world)) for (MapaData.Marker marker : plugin.znacznikiDla(player, world)) {
       if (!MapaMath.cursorInRange(marker.x(), state.centerX, state.zoom)
           || !MapaMath.cursorInRange(marker.z(), state.centerZ, state.zoom)) continue;
       cursors.addCursor(new MapCursor((byte) MapaMath.cursorCoordinate(marker.x(), state.centerX, state.zoom),
           (byte) MapaMath.cursorCoordinate(marker.z(), state.centerZ, state.zoom), (byte) 0,
-          cursorType(marker.type()), true, Component.text(marker.name())));
+          cursorType(marker), true, Component.text(marker.name())));
     }
+    Prowadzenie.Cel target = plugin.navigation().target(player);
+    if (target != null && state.drawn && MapaData.klucz(world).equals(MapaData.klucz(target.world()))
+        && MapaMath.cursorInRange(target.x(), state.centerX, state.zoom)
+        && MapaMath.cursorInRange(target.z(), state.centerZ, state.zoom))
+      cursors.addCursor(new MapCursor((byte) MapaMath.cursorCoordinate(target.x(), state.centerX, state.zoom),
+          (byte) MapaMath.cursorCoordinate(target.z(), state.centerZ, state.zoom), (byte) 0,
+          MapCursor.Type.RED_X, true, Component.text(target.name())));
     // gracz na koncu = rysowany na wierzchu znacznikow
     cursors.addCursor(new MapCursor((byte) 0, (byte) 0,
         (byte) MapaMath.cursorDirection(player.getLocation().getYaw()), MapCursor.Type.PLAYER, true));
@@ -85,8 +92,16 @@ final class HandMapRenderer extends MapRenderer {
     }
   }
 
-  private MapCursor.Type cursorType(String type) {
-    return switch (type) {
+  private MapCursor.Type cursorType(MapaData.Marker marker) {
+    if (marker.type().equals("wlasny")) return switch (marker.icon()) {
+      case "pin_czerwona" -> MapCursor.Type.BANNER_RED;
+      case "pin_niebieska" -> MapCursor.Type.BANNER_BLUE;
+      case "pin_zielona" -> MapCursor.Type.BANNER_LIME;
+      case "pin_zolta" -> MapCursor.Type.BANNER_YELLOW;
+      case "pin_fioletowa" -> MapCursor.Type.BANNER_PURPLE;
+      default -> MapCursor.Type.BANNER_WHITE;
+    };
+    return switch (marker.type()) {
       case "start" -> MapCursor.Type.BANNER_WHITE;
       case "legendarny" -> MapCursor.Type.BANNER_RED;
       case "miasto" -> MapCursor.Type.BANNER_YELLOW;

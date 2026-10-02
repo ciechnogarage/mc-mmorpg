@@ -16,7 +16,7 @@ final class PelnaRysownik {
   record Dane(int width, int height, String world, double x, double z, double zoom,
       MapaData.Terrain terrain, List<MapaData.Marker> markers, List<MapaData.Tab> tabs,
       Map<String, BufferedImage> icons, boolean playerVisible, double playerX, double playerZ,
-      float playerYaw, PelnaMath.Punkt cursor) {}
+      float playerYaw, PelnaMath.Punkt cursor, Prowadzenie.Cel target) {}
 
   private final int[] colors = new int[256];
 
@@ -71,6 +71,16 @@ final class PelnaRysownik {
       g.drawString(marker.name(), x + 1, y + size / 2 + 12);
       g.setColor(Color.WHITE);
       g.drawString(marker.name(), x, y + size / 2 + 11);
+    }
+    if (data.target() != null && MapaData.klucz(data.target().world()).equals(MapaData.klucz(data.world()))) {
+      int x = (int) Math.round(width / 2.0 + (data.target().x() - data.x()) / data.zoom());
+      int y = (int) Math.round(height / 2.0 + (data.target().z() - data.z()) / data.zoom());
+      if (x >= 3 && y >= 3 && x < width - 3 && y < height - 3) {
+        g.setColor(Color.RED);
+        g.setStroke(new BasicStroke(2f));
+        g.drawLine(x - 3, y - 3, x + 3, y + 3);
+        g.drawLine(x - 3, y + 3, x + 3, y - 3);
+      }
     }
     if (data.playerVisible()) {
       int x = (int) Math.round(width / 2.0 + (data.playerX() - data.x()) / data.zoom());

@@ -24,6 +24,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -42,6 +43,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private HandMapRenderer renderer;
   private PelnaMapa fullMap;
   private MinimapaZnaczniki minimapMarkers;
+  private WlasneZnaczniki own;
+  private Prowadzenie navigation;
+  private ZnacznikDialog dialogs;
   private MapView mapView;
   private int mapId;
   private List<Double> zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
@@ -55,6 +59,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   private static final class AtlasState {
     final AtlasHolder holder;
+    final UUID playerId;
     String world;
     int level;
     int left;
@@ -62,8 +67,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     int playerSlot = -1;
     int playerDirection = -1;
 
-    AtlasState(AtlasHolder holder, String world, int level) {
+    AtlasState(AtlasHolder holder, UUID playerId, String world, int level) {
       this.holder = holder;
+      this.playerId = playerId;
       this.world = world;
       this.level = level;
     }
@@ -72,6 +78,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   @Override
   public void onEnable() {
     saveDefaultConfig();
+    own = new WlasneZnaczniki(new java.io.File(getDataFolder(), "gracze"), getLogger());
     loadAll();
     if (Bukkit.getPluginManager().isPluginEnabled("MapEngine")) {
       try { fullMap = new PelnaMapa(this); }
@@ -79,24 +86,52 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
         getLogger().warning("Pelna mapa niedostepna: " + ex.getMessage());
       }
     } else getLogger().warning("MapEngine nie jest aktywny; pelna mapa jest wylaczona.");
+    navigation = new Prowadzenie(this);
     if (Bukkit.getPluginManager().isPluginEnabled("NMinimap")) {
       minimapMarkers = new MinimapaZnaczniki(this);
       Bukkit.getPluginManager().registerEvents(minimapMarkers, this);
     }
     Bukkit.getPluginManager().registerEvents(this, this);
+    dialogs = new ZnacznikDialog(this);
+    for (Player player : Bukkit.getOnlinePlayers()) ownerKey(player);
     Bukkit.getScheduler().runTaskTimer(this, this::refreshPlayerTiles, 20L, 20L);
   }
 
   @Override
   public void onDisable() {
+    if (navigation != null) for (Player player : Bukkit.getOnlinePlayers()) navigation.clear(player);
     if (fullMap != null) fullMap.closeAll();
     if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
     if (renderer != null) renderer.forgetAll();
     atlases.clear();
     handZooms.clear();
+    if (own != null) own.close();
   }
 
   MapaData data() { return data; }
+  WlasneZnaczniki own() { return own; }
+  Prowadzenie navigation() { return navigation; }
+  ZnacznikDialog dialogs() { return dialogs; }
+  boolean waypointsEnabled() { return Bukkit.getPluginManager().isPluginEnabled("packetevents"); }
+  boolean mmoCoreEnabled() { return Bukkit.getPluginManager().isPluginEnabled("MMOCore"); }
+  boolean fullActive(Player player) { return fullMap != null && fullMap.active(player); }
+  void markDirty(Player player) { if (fullMap != null) fullMap.dirty(player); }
+  UUID ownerKey(Player player) {
+    UUID key = own.key(player, Bukkit.getPluginManager().isPluginEnabled("MMOProfiles"));
+    own.publishKeys();
+    return key;
+  }
+  List<MapaData.Marker> znacznikiDla(Player player, String world) {
+    ownerKey(player);
+    List<MapaData.Marker> result = new ArrayList<>(data.markers(world));
+    result.addAll(own.forPlayer(player.getUniqueId(), world));
+    return List.copyOf(result);
+  }
+  List<MapaData.Marker> znacznikiDlaAsync(UUID player, String world) {
+    List<MapaData.Marker> result = new ArrayList<>(data.markers(world));
+    result.addAll(own.asyncForPlayer(player, world));
+    return List.copyOf(result);
+  }
   // domyslny zoom swiata (zoom-reka-swiat, z fallbackiem na szablon lochu), inaczej globalny
   double zoomSwiata(String world) {
     String key = getConfig().contains("zoom-reka-swiat." + world) ? world : MapaData.klucz(world);
@@ -176,11 +211,18 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   }
 
   @EventHandler
+  public void onJoin(PlayerJoinEvent event) { ownerKey(event.getPlayer()); }
+
+  @EventHandler
   public void onQuit(PlayerQuitEvent event) {
     UUID id = event.getPlayer().getUniqueId();
     handZooms.remove(id);
     atlases.remove(id);
     if (renderer != null) renderer.forget(id);
+    own.forget(event.getPlayer());
+    own.publishKeys();
+    dialogs.forget(event.getPlayer());
+    navigation.forget(event.getPlayer());
   }
 
   @EventHandler
@@ -283,6 +325,25 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
           target.getLocation().getZ());
       return true;
     }
+    if (args.length >= 3 && args[0].equalsIgnoreCase("cel")) {
+      Player target = Bukkit.getPlayerExact(args[1]);
+      if (target == null) { sender.sendMessage("Nie znaleziono gracza."); return true; }
+      if (args.length == 3 && args[2].equalsIgnoreCase("wyczysc")) {
+        navigation.clear(target);
+        sender.sendMessage("Prowadzenie wyłączone.");
+        return true;
+      }
+      if (args.length >= 6) {
+        try {
+          int x = Integer.parseInt(args[3]), z = Integer.parseInt(args[4]);
+          String world = args[2], name = String.join(" ", java.util.Arrays.copyOfRange(args, 5, args.length));
+          if (!world.matches("[a-z0-9_.-]+") || name.isBlank()) throw new IllegalArgumentException();
+          navigation.set(target, new Prowadzenie.Cel(world, x, z, name));
+          sender.sendMessage("Prowadzę do: " + name);
+        } catch (IllegalArgumentException ex) { sender.sendMessage("Niepoprawny świat lub współrzędne."); }
+        return true;
+      }
+    }
     if (args.length == 1 && args[0].equalsIgnoreCase("przeladuj")) {
       if (fullMap != null) fullMap.closeAll();
       for (Player player : Bukkit.getOnlinePlayers())
@@ -293,7 +354,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       sender.sendMessage("Mapa przeładowana.");
       return true;
     }
-    sender.sendMessage("Użycie: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa przeladuj");
+    sender.sendMessage("Użycie: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa cel <gracz> <swiat> <x> <z> <nazwa> | /mapa cel <gracz> wyczysc | /mapa przeladuj");
     return true;
   }
 
@@ -338,7 +399,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     Component title = Component.text(getConfig().getString("tytul-okna", "")
         + "Mapa świata · " + worldName(world), NamedTextColor.WHITE);
     holder.inventory = Bukkit.createInventory(holder, 54, title);
-    AtlasState state = new AtlasState(holder, world, level);
+    ownerKey(player);
+    AtlasState state = new AtlasState(holder, player.getUniqueId(), world, level);
     if (x != null && z != null) centerAt(state, x, z);
     else if (initial) centerOnPlayerOrStart(player, state);
     else centerOnWorld(player, state);
@@ -447,7 +509,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     int bpp = level.bpp();
     int x = grid.x0() + tx * 18 * bpp;
     int z = grid.z0() + tz * 18 * bpp;
-    List<MapaData.Marker> onTile = data.markers(state.world).stream().filter(marker ->
+    List<MapaData.Marker> all = new ArrayList<>(data.markers(state.world));
+    all.addAll(own.forPlayer(state.playerId, state.world));
+    List<MapaData.Marker> onTile = all.stream().filter(marker ->
         marker.x() >= x && marker.x() < x + 18 * bpp
             && marker.z() >= z && marker.z() < z + 18 * bpp).toList();
     String name = playerTile ? "Tu jesteś" : onTile.isEmpty()
@@ -455,7 +519,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
         : String.join(", ", onTile.stream().map(MapaData.Marker::name).toList());
     List<Component> lore = new ArrayList<>();
     for (MapaData.Marker marker : onTile)
-      for (String line : marker.description()) lore.add(Component.text(line, NamedTextColor.GRAY));
+      if (marker.type().equals("wlasny"))
+        lore.add(Component.text("Twój znacznik: " + marker.name(), NamedTextColor.GRAY));
+      else for (String line : marker.description()) lore.add(Component.text(line, NamedTextColor.GRAY));
     lore.add(Component.text("x " + (x + 9 * bpp) + ", z " + (z + 9 * bpp), NamedTextColor.GRAY));
     lore.add(Component.text("Klik — wyśrodkuj tutaj", NamedTextColor.GRAY));
     ItemStack item = item(new NamespacedKey("mapa", state.world + "/b" + bpp + "/" + tx + "_" + tz), name, lore);

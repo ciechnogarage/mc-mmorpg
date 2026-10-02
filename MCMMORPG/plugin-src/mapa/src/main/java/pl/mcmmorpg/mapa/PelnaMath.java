@@ -1,5 +1,7 @@
 package pl.mcmmorpg.mapa;
 
+import java.util.List;
+
 final class PelnaMath {
   record Punkt(double u, double v) {}
   static final int PASEK = 28;   // wysokosc gornego paska z zakladkami (px)
@@ -30,6 +32,25 @@ final class PelnaMath {
 
   static Punkt przesun(double centerX, double centerZ, double du, double dv, double zoom) {
     return new Punkt(centerX - du * zoom, centerZ - dv * zoom);
+  }
+
+  static Punkt punktSwiata(double u, double v, int width, int height,
+      double centerX, double centerZ, double zoom) {
+    return new Punkt(centerX + (u - width / 2.0) * zoom,
+        centerZ + (v - height / 2.0) * zoom);
+  }
+
+  static MapaData.Marker najblizszy(List<MapaData.Marker> markers, double u, double v,
+      int width, int height, double centerX, double centerZ, double zoom) {
+    MapaData.Marker found = null;
+    double best = 100.0;
+    for (MapaData.Marker marker : markers) {
+      double x = width / 2.0 + (marker.x() - centerX) / zoom;
+      double y = height / 2.0 + (marker.z() - centerZ) / zoom;
+      double distance = Math.pow(u - x, 2) + Math.pow(v - y, 2);
+      if (distance <= best) { best = distance; found = marker; }
+    }
+    return found;
   }
 
   static int szerokoscZakladki(int width, int tabs) {

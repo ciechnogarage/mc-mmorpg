@@ -65,7 +65,10 @@ final class MapaData {
   }
 
   record Marker(String world, int x, int z, String name, String type, String icon,
-      List<String> description) {}
+      List<String> description, String id) {
+    Marker(String world, int x, int z, String name, String type, String icon,
+        List<String> description) { this(world, x, z, name, type, icon, description, ""); }
+  }
   record Tab(String world, String name, String icon) {}
 
   private final Map<String, Terrain> terrain;

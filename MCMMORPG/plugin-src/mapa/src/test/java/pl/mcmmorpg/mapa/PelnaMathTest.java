@@ -1,6 +1,7 @@
 package pl.mcmmorpg.mapa;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class PelnaMathTest {
@@ -47,5 +48,19 @@ class PelnaMathTest {
     assertEquals(-2, PelnaMath.przycisk(488, 8, 512, 8));
     assertEquals(-1, PelnaMath.przycisk(470, PelnaMath.PASEK, 512, 8));
     assertEquals(-3, PelnaMath.przycisk(470, 24, 512, 8));
+  }
+
+  @Test void pikselPrzeliczaSieNaSwiat() {
+    assertEquals(new PelnaMath.Punkt(100, -50),
+        PelnaMath.punktSwiata(256, 192, 512, 384, 100, -50, 2));
+    assertEquals(new PelnaMath.Punkt(120, -66),
+        PelnaMath.punktSwiata(266, 184, 512, 384, 100, -50, 2));
+  }
+
+  @Test void wybieraNajblizszyZnacznikDoDziesieciuPikseli() {
+    MapaData.Marker a = new MapaData.Marker("world", 10, 0, "A", "strefa", "", List.of());
+    MapaData.Marker b = new MapaData.Marker("world", 15, 0, "B", "wlasny", "pin_biala", List.of());
+    assertEquals(b, PelnaMath.najblizszy(List.of(a, b), 116, 100, 200, 200, 0, 0, 1));
+    assertNull(PelnaMath.najblizszy(List.of(a, b), 130, 100, 200, 200, 0, 0, 1));
   }
 }

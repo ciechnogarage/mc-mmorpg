@@ -11,6 +11,19 @@ pelna:
   odleglosc: 3.0
 minimapa:
   promien: 256
+wlasne:
+  limit: 30
+  ikony:
+    pin_czerwona: "Czerwona pinezka"
+    pin_niebieska: "Niebieska pinezka"
+    pin_zielona: "Zielona pinezka"
+    pin_zolta: "Żółta pinezka"
+    pin_fioletowa: "Fioletowa pinezka"
+    pin_biala: "Biała pinezka"
+    nether_star: "Gwiazda"
+    gold_ingot: "Skarb"
+    oak_door: "Dom"
+    iron_sword: "Walka"
 tytul-okna: "䅐"
 nazwy-swiatow:
   world: "Kraina"

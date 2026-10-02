@@ -56,8 +56,11 @@ final class PelnaMapa implements Listener {
   void reloadIcons() {
     Map<String, BufferedImage> loaded = new HashMap<>();
     File folder = new File(plugin.getDataFolder(), "ikony");
-    for (MapaData.Marker marker : plugin.data().markers()) {
-      String name = marker.icon();
+    java.util.Set<String> names = new java.util.HashSet<>();
+    for (MapaData.Marker marker : plugin.data().markers()) names.add(marker.icon());
+    var ownIcons = plugin.getConfig().getConfigurationSection("wlasne.ikony");
+    if (ownIcons != null) names.addAll(ownIcons.getKeys(false));
+    for (String name : names) {
       if (name.isEmpty() || loaded.containsKey(name)) continue;
       if (!name.matches("[a-zA-Z0-9_-]+")) {
         plugin.getLogger().warning("Niepoprawna nazwa ikony: " + name);
@@ -155,11 +158,16 @@ final class PelnaMapa implements Listener {
   void close(Player player) {
     PelnaSesja session = sessions.remove(player.getUniqueId());
     if (session == null) return;
+    if (plugin.dialogs() != null) plugin.dialogs().forget(player);
     session.display.destroy();
     session.display.despawn(player);
   }
 
   boolean active(Player player) { return sessions.containsKey(player.getUniqueId()); }
+  void dirty(Player player) {
+    PelnaSesja session = sessions.get(player.getUniqueId());
+    if (session != null) session.dirty = true;
+  }
 
   void closeAll() {
     for (UUID id : List.copyOf(sessions.keySet())) {
@@ -199,10 +207,11 @@ final class PelnaMapa implements Listener {
       if (!redraw && java.util.Objects.equals(cursor, session.sentCursor)) continue;
       PelnaRysownik.Dane data = new PelnaRysownik.Dane(session.width, session.height, session.world,
           session.centerX, session.centerZ, session.zoom, plugin.data().terrain(session.world),
-          plugin.data().markers(session.world), plugin.data().tabs().subList(0,
+          plugin.znacznikiDla(player, session.world), plugin.data().tabs().subList(0,
               Math.min(8, plugin.data().tabs().size())), icons,
           MapaData.klucz(player.getWorld().getName()).equals(MapaData.klucz(session.world)),
-          player.getLocation().getX(), player.getLocation().getZ(), player.getLocation().getYaw(), cursor);
+          player.getLocation().getX(), player.getLocation().getZ(), player.getLocation().getYaw(),
+          cursor, plugin.navigation().target(player));
       BufferedImage previous = redraw ? null : session.base;
       session.busy = true;
       session.dirty = false;
@@ -350,14 +359,17 @@ final class PelnaMapa implements Listener {
       session.dirty = true;
       return;
     }
-    for (MapaData.Marker marker : plugin.data().markers(session.world)) {
-      double x = session.width / 2.0 + (marker.x() - session.centerX) / session.zoom;
-      double y = session.height / 2.0 + (marker.z() - session.centerZ) / session.zoom;
-      int half = session.zoom <= 1 ? 16 : 8;
-      if (Math.abs(cursor.u() - x) <= half && Math.abs(cursor.v() - y) <= half) {
-        player.sendActionBar(Component.text(marker.name() + " — " + String.join(" ", marker.description())));
-        return;
-      }
+    if (cursor.v() < PelnaMath.PASEK || cursor.v() >= session.height - 14) return;
+    MapaData.Marker marker = PelnaMath.najblizszy(plugin.znacznikiDla(player, session.world),
+        cursor.u(), cursor.v(), session.width, session.height, session.centerX, session.centerZ, session.zoom);
+    if (marker != null) {
+      if (marker.type().equals("wlasny")) plugin.dialogs().edit(player, marker);
+      else plugin.navigation().toggle(player,
+          new Prowadzenie.Cel(marker.world(), marker.x(), marker.z(), marker.name()));
+      return;
     }
+    PelnaMath.Punkt point = PelnaMath.punktSwiata(cursor.u(), cursor.v(), session.width,
+        session.height, session.centerX, session.centerZ, session.zoom);
+    plugin.dialogs().add(player, session.world, (int) Math.floor(point.u()), (int) Math.floor(point.v()));
   }
 }
