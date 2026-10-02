@@ -46,6 +46,22 @@ final class Bron implements Listener {
     imageKey = new NamespacedKey("ksiega", "obraz");
     reserveKey = new NamespacedKey(plugin, "zapas");
     consumableKey = new NamespacedKey(plugin, "zuzywalny-slot");
+    // Inne pluginy mogą przestawić wybrany slot bez PlayerItemHeldEvent.
+    Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+      for (Player player : Bukkit.getOnlinePlayers()) ensureRightSelected(player);
+    }, 1L, 1L);
+  }
+
+  // Scena kreatora sama wybiera pusty slot (LPM w scenie); widz nie walczy.
+  private boolean freeSelection(Player player) {
+    return player.getWorld().getName().equals("creator_limbo")
+        || player.getGameMode() == org.bukkit.GameMode.SPECTATOR;
+  }
+
+  private void ensureRightSelected(Player player) {
+    if (freeSelection(player)) return;
+    if (player.getInventory().getHeldItemSlot() == LEFT_IMAGE)
+      player.getInventory().setHeldItemSlot(RIGHT);
   }
 
   boolean isClone(ItemStack item) { return Przedmioty.marked(item, cloneKey); }
@@ -183,7 +199,10 @@ final class Bron implements Listener {
       if (sourceMeta.hasDisplayName()) meta.setDisplayName(sourceMeta.getDisplayName());
       else if (sourceMeta.hasItemName()) meta.setDisplayName(sourceMeta.getItemName());
     }
-    meta.setLore(List.of(right ? "§6W ręce (prawa)" : "§6W ręce (lewa)"));
+    if (!right) meta.setDisplayName("§eLewa ręka §8| §f" +
+        (meta.hasDisplayName() ? meta.getDisplayName() : source.getType().name()));
+    meta.setLore(right ? List.of("§6W ręce (prawa)")
+        : List.of("§eObraz broni w lewej ręce", "§8Kliknij, aby zmienić broń"));
     meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
     result.setItemMeta(meta);
     return result;
@@ -217,6 +236,7 @@ final class Bron implements Listener {
   }
 
   void refresh(Player player) {
+    ensureRightSelected(player);
     if (player.getWorld().getName().equals("creator_limbo")) return;
     PlayerInventory inventory = player.getInventory();
     recover(player, LEFT_IMAGE);
@@ -501,10 +521,12 @@ final class Bron implements Listener {
     Player player = event.getPlayer();
     PlayerInventory inventory = player.getInventory();
     if (inventory.getHeldItemSlot() == LEFT_IMAGE || isImage(event.getMainHandItem())
-        || isImage(event.getOffHandItem())) { event.setCancelled(true); return; }
+        || isImage(event.getOffHandItem())) {
+      event.setCancelled(true); return;
+    }
     if (!player.isSneaking()) {
-      if (!validPair(player, inventory.getHeldItemSlot() == RIGHT
-          ? event.getMainHandItem() : inventory.getItem(RIGHT), event.getOffHandItem())) {
+      if (inventory.getHeldItemSlot() != RIGHT
+          || !validPair(player, event.getMainHandItem(), event.getOffHandItem())) {
         event.setCancelled(true); return;
       }
       refreshLater(player);
@@ -668,7 +690,19 @@ final class Bron implements Listener {
     refreshLater(player);
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST) public void held(PlayerItemHeldEvent event) {
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+  public void held(PlayerItemHeldEvent event) {
+    if (event.getNewSlot() == LEFT_IMAGE && !freeSelection(event.getPlayer())) {
+      boolean allowed = !event.isCancelled();
+      event.setCancelled(true);
+      int previous = event.getPreviousSlot();
+      int next = previous == RIGHT ? HEALTH : RIGHT;
+      if (allowed) Bukkit.getScheduler().runTask(plugin, () -> {
+        Player player = event.getPlayer();
+        if (player.isOnline() && player.getInventory().getHeldItemSlot() == previous)
+          player.getInventory().setHeldItemSlot(next);
+      });
+    }
     refreshLater(event.getPlayer());
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
