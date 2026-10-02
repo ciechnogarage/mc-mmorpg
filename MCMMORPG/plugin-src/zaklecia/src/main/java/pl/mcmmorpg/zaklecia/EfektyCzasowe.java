@@ -53,6 +53,10 @@ final class EfektyCzasowe implements Listener {
   private final Map<UUID, Map<Boolean, Bron>> poSmierci = new HashMap<>();
   private final Map<UUID, Deque<Sluga>> sludzy = new HashMap<>();
   private final Map<UUID, Long> spokoj = new HashMap<>();
+  private final Map<UUID, LivingEntity> oczekiwaneCele = new HashMap<>();
+  /** Ostatni cel wskazany przywolancowi przez plugin — AI MM potrafi go zgubic, strzelcy (atronach) strzelaja w niego. */
+  private final Map<UUID, LivingEntity> celSlugi = new HashMap<>();
+  private final Map<UUID, Long> ostatnieCelowanie = new HashMap<>();
   private long tick;
 
   EfektyCzasowe(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik, Skille skille) {
@@ -260,6 +264,9 @@ final class EfektyCzasowe implements Listener {
   }
 
   private void usun(Entity e) {
+    oczekiwaneCele.remove(e.getUniqueId());
+    celSlugi.remove(e.getUniqueId());
+    ostatnieCelowanie.remove(e.getUniqueId());
     if (e.isValid()) {
       e.getWorld().spawnParticle(Particle.SMOKE, e.getLocation().add(0, 0.8, 0), 12, 0.4, 0.5, 0.4, 0.01);
       e.remove();
@@ -286,7 +293,10 @@ final class EfektyCzasowe implements Listener {
         Sluga s = j.next();
         if (p == null || !p.isOnline() || p.isDead() || tick >= s.koniec() || !s.byt().isValid()
             || s.byt().getWorld() != p.getWorld()) { usun(s.byt()); j.remove(); }
-        else if (s.byt() instanceof Mob m && m.getTarget() != null && !dozwolonyCel(s.byt(), m.getTarget())) m.setTarget(null);
+        else if (s.byt() instanceof Mob m) {
+          aktualizujCel(m);
+          strzelec(m, s.zaklecie());
+        }
       }
       if (wpis.getValue().isEmpty()) it.remove();
     }
@@ -299,12 +309,59 @@ final class EfektyCzasowe implements Listener {
     }
   }
 
+  private boolean celWZasiegu(Mob sluga, LivingEntity cel) {
+    return cel.isValid() && !cel.isDead() && sluga.getWorld() == cel.getWorld()
+        && sluga.getLocation().distanceSquared(cel.getLocation()) <= 24 * 24
+        && dozwolonyCel(sluga, cel);
+  }
+
+  private void aktualizujCel(Mob sluga) {
+    UUID id = sluga.getUniqueId();
+    LivingEntity obecny = sluga.getTarget();
+    LivingEntity nowy = oczekiwaneCele.remove(id);
+    if (nowy != null && !celWZasiegu(sluga, nowy)) nowy = null;
+    if (obecny != null && celWZasiegu(sluga, obecny) && nowy != null && obecny != nowy
+        && sluga.getLocation().distanceSquared(obecny.getLocation()) < 6 * 6) nowy = null;
+    if (nowy == null && (obecny == null || celWZasiegu(sluga, obecny))) return;
+    if (tick - ostatnieCelowanie.getOrDefault(id, -10L) < 10) {
+      if (nowy != null) oczekiwaneCele.put(id, nowy);
+      return;
+    }
+    if (nowy != obecny) {
+      sluga.setTarget(nowy);
+      ostatnieCelowanie.put(id, tick);
+    }
+    if (nowy != null) celSlugi.put(id, nowy);
+  }
+
+  /** Przywolancy-strzelcy (config `zaklecia.<id>.strzal`, np. Zak_Atronach_Strzal) strzelaja co 30 tickow w swoj cel. */
+  private void strzelec(Mob m, String zaklecie) {
+    String skill = plugin.getConfig().getString("zaklecia." + zaklecie + ".strzal", "");
+    if (skill.isBlank() || tick % 30 != 0) return;
+    LivingEntity cel = m.getTarget();
+    if (cel == null || !celWZasiegu(m, cel)) cel = celSlugi.get(m.getUniqueId());
+    if (cel == null || !celWZasiegu(m, cel)) { celSlugi.remove(m.getUniqueId()); return; }
+    if (m.getTarget() != cel) m.setTarget(cel);
+    try { MythicBukkit.inst().getAPIHelper().castSkill(m, skill, m, m.getLocation(), List.of(cel), List.of(), 1f); }
+    catch (Throwable t) { plugin.getLogger().warning("strzal " + skill + ": " + t); }
+  }
+
+  private void wskazCel(Player wlasciciel, LivingEntity cel) {
+    Deque<Sluga> lista = sludzy.get(wlasciciel.getUniqueId());
+    if (lista == null) return;
+    for (Sluga s : lista) {
+      if (s.byt() instanceof Mob sluga && sluga.isValid() && !sluga.isDead()
+          && celWZasiegu(sluga, cel)) oczekiwaneCele.put(sluga.getUniqueId(), cel);
+    }
+  }
+
   private boolean dozwolonyCel(Entity sluga, Entity cel) {
     String id = sluga.getPersistentDataContainer().get(kWlasciciel, PersistentDataType.STRING);
     Player wlasciciel;
     try { wlasciciel = id == null ? null : Bukkit.getPlayer(UUID.fromString(id)); }
     catch (IllegalArgumentException ex) { return false; }
-    if (wlasciciel == null || cel == wlasciciel || !(cel instanceof LivingEntity zywy)
+    if (wlasciciel == null || !cel.isValid() || cel.isDead() || cel == wlasciciel
+        || !(cel instanceof LivingEntity zywy)
         || chowance(cel) || cel.getPersistentDataContainer().has(kWlasciciel, PersistentDataType.STRING)) return false;
     if (!(cel instanceof org.bukkit.entity.Enemy) && !(cel instanceof Player)) return false;
     return MythicLib.inst().getEntities().canTarget(wlasciciel, zywy, InteractionType.OFFENSE_ACTION);
@@ -373,6 +430,12 @@ final class EfektyCzasowe implements Listener {
     if (spokoj.getOrDefault(sprawca.getUniqueId(), 0L) > tick) { e.setCancelled(true); return; }
     if (!sprawca.getPersistentDataContainer().has(kWlasciciel, PersistentDataType.STRING)) return;
     if (!dozwolonyCel(sprawca, e.getEntity())) e.setCancelled(true);
+  }
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true) public void pomocSlug(EntityDamageByEntityEvent e) {
+    Entity sprawca = e.getDamager();
+    if (sprawca instanceof org.bukkit.entity.Projectile pocisk && pocisk.getShooter() instanceof Entity byt) sprawca = byt;
+    if (sprawca instanceof Player p && e.getEntity() instanceof LivingEntity cel) wskazCel(p, cel);
+    if (e.getEntity() instanceof Player p && sprawca instanceof LivingEntity cel) wskazCel(p, cel);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void celowanie(EntityTargetLivingEntityEvent e) {
     if (spokoj.getOrDefault(e.getEntity().getUniqueId(), 0L) > tick) e.setCancelled(true);

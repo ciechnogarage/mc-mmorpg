@@ -235,6 +235,9 @@ final class Rzucanie implements Listener {
     if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
     Player p = e.getPlayer();
     if (trybLpm(p)) {
+      // Lewa reka z ZWYKLYM przedmiotem (tarcza, jedzenie, pochodnia...) dziala jak w vanilli — blokujemy tylko
+      // nosnik w prawej (DEBUG_STICK) i zaklecie w lewej.
+      if (e.getHand() == EquipmentSlot.OFF_HAND && ksiega.w(e.getItem()) == null && !nosnik(e.getItem())) return;
       e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
       e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
       if (e.getHand() != EquipmentSlot.HAND) return;
@@ -247,6 +250,10 @@ final class Rzucanie implements Listener {
       ppmLewa.put(p.getUniqueId(), teraz);
       rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
     }
+  }
+
+  private boolean nosnik(org.bukkit.inventory.ItemStack i) {
+    return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(kNosnik);
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
