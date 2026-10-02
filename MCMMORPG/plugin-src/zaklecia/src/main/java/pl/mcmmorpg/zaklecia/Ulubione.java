@@ -36,10 +36,10 @@ final class Ulubione {
     return dodane ? "§e★ §f" + z.nazwa() + " §7w ulubionych." : "§7☆ " + z.nazwa() + " usunięte z ulubionych.";
   }
 
-  /** Kolo wyboru: ulubione (albo wszystkie znane), na koncu „pusta” (null). */
+  /** Kolo wyboru: wszystkie zaklecia Ksiegi — najpierw ulubione (w kolejnosci dodania), potem reszta; na koncu „pusta” (null). */
   List<String> kolo(Player p) {
     List<String> k = lista(p);
-    if (k.isEmpty()) k = new ArrayList<>(ksiega.poId.keySet());
+    for (String id : ksiega.poId.keySet()) if (!k.contains(id)) k.add(id);
     k.add(null);
     return k;
   }

@@ -23,7 +23,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
- * Szybki wybor jak ulubione w Skyrimie: Shift+Q wlacza pasek ulubionych u gory ekranu (BossBar, bez okna — gracz dalej
+ * Szybki wybor jak ulubione w Skyrimie: Shift+Q wlacza pasek wszystkich zaklec Ksiegi (ulubione ★ na poczatku) u gory ekranu (BossBar, bez okna — gracz dalej
  * chodzi i patrzy), Shift+Q albo Q wylacza. Gdy wlaczony: kolko (albo klawisz 1-9) wybiera pozycje, LPM wklada ja do
  * PRAWEJ dloni, PPM do LEWEJ (jak w vanilli). Po 15 s bez ruchu zamyka sie sam.
  * Przy okazji: Q (wyrzucenie) nad slotem w oknie DeluxeMenus zamyka to okno — Q wlacza i wylacza menu.
@@ -81,6 +81,7 @@ final class Wybor implements Listener {
 
   private void odswiez(Player p, Sesja s) {
     List<String> k = ulubione.kolo(p);
+    List<String> ul = ulubione.lista(p);
     s.i = Math.floorMod(s.i, k.size());
     // Trzy pozycje wystarcza nawet przy dlugich nazwach i 15+ zakleciach.
     int od = Math.max(0, Math.min(s.i - 1, k.size() - 3));
@@ -89,7 +90,7 @@ final class Wybor implements Listener {
     for (int j = od; j < doIndeks; j++) {
       if (j > od) okno.append("  §8·  ");
       String id = k.get(j);
-      String n = id == null ? "pusta" : ksiega.poId.get(id).nazwa();
+      String n = id == null ? "pusta" : (ul.contains(id) ? "★ " : "") + ksiega.poId.get(id).nazwa();
       okno.append(j == s.i ? "§f§l[" + n + "]§r" : "§7" + n);
     }
     okno.append(doIndeks < k.size() ? "  §7›" : "  §8 ");
