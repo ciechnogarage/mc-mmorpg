@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.Location;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
@@ -26,6 +27,18 @@ final class HandMapRenderer extends MapRenderer {
     long markersRevision = -1;
     String markersWorld;
     List<MapaData.Marker> markers = List.of();
+    // pamiec podrecznych kursorow: Minecraft wola render() CO TICK dla kazdej mapy w EKWIPUNKU (nie tylko w rece),
+    // wiec tanie wyjscie i ponowne uzycie kursorow decyduja o koszcie przy wielu graczach (zmierzone sparkiem 02.10)
+    MapCursorCollection cursors;
+    int cursorsDir = -1;
+    long cursorsKey = Long.MIN_VALUE;
+    long cursorsBuilt;
+    double zoomCached = -1;
+    long zoomRefresh = -20;
+    byte[] pixels = new byte[128 * 128];
+    boolean pixelsReady;
+    int cursorX;
+    int cursorZ;
   }
 
   private final MapaPlugin plugin;
@@ -37,27 +50,41 @@ final class HandMapRenderer extends MapRenderer {
   }
 
   void forget(UUID player) { states.remove(player); }
+  // po zmianie zoomu/celu przez gracza: przelicz od razu, nie czekaj na odswiezenie co sekunde
+  void invalidate(UUID player) {
+    State s = states.get(player);
+    if (s != null) { s.zoomRefresh = -20; s.cursorsKey = Long.MIN_VALUE; }
+  }
   void forgetAll() { states.clear(); }
 
   @Override
   public void render(MapView view, MapCanvas canvas, Player player) {
+    Integer personal = plugin.personalMapId(player.getUniqueId());
+    if (personal == null || view.getId() != personal) return;
+    // mapa lezy w ekwipunku, ale nie w rece: nic nie licz (klient i tak jej nie pokazuje)
+    if (!plugin.trzymaMape(player)) return;
     State state = states.computeIfAbsent(player.getUniqueId(), id -> new State());
     state.renderCount++;
     String world = player.getWorld().getName();
-    double zoom = plugin.handZoom(player);
-    int x = player.getLocation().getBlockX();
-    int z = player.getLocation().getBlockZ();
+    if (state.zoomCached < 0 || state.renderCount - state.zoomRefresh >= 20 || !world.equals(state.world)) {
+      state.zoomCached = plugin.handZoom(player);
+      state.zoomRefresh = state.renderCount;
+    }
+    double zoom = state.zoomCached;
+    Location location = player.getLocation();
+    int x = location.getBlockX();
+    int z = location.getBlockZ();
     MapaData.Terrain terrain = plugin.data().terrain(world);
     boolean worldChanged = !state.drawn || !world.equals(state.world);
-    boolean changed = worldChanged || (terrain != null && (zoom != state.zoom
-        || Math.abs((long) x - state.centerX) >= Math.max(1, zoom)
-        || Math.abs((long) z - state.centerZ) >= Math.max(1, zoom)));
+    boolean changed = worldChanged || zoom != state.zoom || terrain != null
+        && MapaMath.shouldRecenter(location.getX(), location.getZ(), state.centerX, state.centerZ, zoom);
     long now = System.currentTimeMillis();
     if (changed && (!state.drawn || now - state.lastDraw >= plugin.refreshMillis())) {
       if (terrain == null) {
-        clear(canvas);
+        clear(canvas, state);
         canvas.drawText(39, 64, MinecraftFont.Font, "Brak mapy");
-      } else drawTerrain(canvas, terrain, x, z, zoom);
+        state.pixelsReady = false;
+      } else drawTerrain(canvas, state, terrain, x, z, zoom);
       state.world = world;
       state.centerX = x;
       state.centerZ = z;
@@ -66,8 +93,20 @@ final class HandMapRenderer extends MapRenderer {
       state.drawn = true;
     }
 
-    MapCursorCollection cursors = new MapCursorCollection();
     long revision = plugin.markerRevision();
+    Prowadzenie.Cel target = plugin.navigation().target(player);
+    int dir = MapaMath.cursorDirection(location.getYaw());
+    int cursorX = MapaMath.clamp(MapaMath.cursorCoordinate(location.getX(), state.centerX, state.zoom), -128, 127);
+    int cursorZ = MapaMath.clamp(MapaMath.cursorCoordinate(location.getZ(), state.centerZ, state.zoom), -128, 127);
+    long key = ((long) state.centerX * 31 + state.centerZ) * 31 + Double.hashCode(state.zoom)
+        + revision * 1_000_003L + (target == null ? 0 : target.hashCode()) + world.hashCode() * 7L;
+    if (state.cursors != null && key == state.cursorsKey && dir == state.cursorsDir
+        && cursorX == state.cursorX && cursorZ == state.cursorZ
+        && state.renderCount - state.cursorsBuilt < 20) {
+      canvas.setCursors(state.cursors);
+      return;
+    }
+    MapCursorCollection cursors = new MapCursorCollection();
     if (!world.equals(state.markersWorld) || revision != state.markersRevision
         || state.renderCount - state.markersRefresh >= 20) {
       state.markers = plugin.znacznikiDla(player, world);
@@ -82,7 +121,6 @@ final class HandMapRenderer extends MapRenderer {
           (byte) MapaMath.cursorCoordinate(marker.z(), state.centerZ, state.zoom), (byte) 0,
           cursorType(marker), true, Component.text(marker.name())));
     }
-    Prowadzenie.Cel target = plugin.navigation().target(player);
     if (target != null && state.drawn && MapaData.klucz(world).equals(MapaData.klucz(target.world()))
         && MapaMath.cursorInRange(target.x(), state.centerX, state.zoom)
         && MapaMath.cursorInRange(target.z(), state.centerZ, state.zoom))
@@ -90,21 +128,32 @@ final class HandMapRenderer extends MapRenderer {
           (byte) MapaMath.cursorCoordinate(target.z(), state.centerZ, state.zoom), (byte) 0,
           MapCursor.Type.RED_X, true, Component.text(target.name())));
     // gracz na koncu = rysowany na wierzchu znacznikow
-    cursors.addCursor(new MapCursor((byte) 0, (byte) 0,
-        (byte) MapaMath.cursorDirection(player.getLocation().getYaw()), MapCursor.Type.PLAYER, true));
+    cursors.addCursor(new MapCursor((byte) cursorX, (byte) cursorZ,
+        (byte) dir, MapCursor.Type.PLAYER, true));
     canvas.setCursors(cursors);
+    state.cursors = cursors; state.cursorsKey = key; state.cursorsDir = dir; state.cursorsBuilt = state.renderCount;
+    state.cursorX = cursorX; state.cursorZ = cursorZ;
   }
 
   @SuppressWarnings("deprecation")
-  private void clear(MapCanvas canvas) {
-    for (int py = 0; py < 128; py++) for (int px = 0; px < 128; px++) canvas.setPixel(px, py, (byte) 0);
-  }
-
-  @SuppressWarnings("deprecation")
-  private void drawTerrain(MapCanvas canvas, MapaData.Terrain terrain, int x, int z, double zoom) {
+  private void clear(MapCanvas canvas, State state) {
     for (int py = 0; py < 128; py++) for (int px = 0; px < 128; px++) {
-      canvas.setPixel(px, py, terrain.pixel(x, z, zoom, px, py));
+      int offset = py * 128 + px;
+      if (!state.pixelsReady || state.pixels[offset] != 0) canvas.setPixel(px, py, (byte) 0);
+      state.pixels[offset] = 0;
     }
+    state.pixelsReady = true;
+  }
+
+  @SuppressWarnings("deprecation")
+  private void drawTerrain(MapCanvas canvas, State state, MapaData.Terrain terrain, int x, int z, double zoom) {
+    for (int py = 0; py < 128; py++) for (int px = 0; px < 128; px++) {
+      int offset = py * 128 + px;
+      byte color = terrain.pixel(x, z, zoom, px, py);
+      if (!state.pixelsReady || state.pixels[offset] != color) canvas.setPixel(px, py, color);
+      state.pixels[offset] = color;
+    }
+    state.pixelsReady = true;
   }
 
   private MapCursor.Type cursorType(MapaData.Marker marker) {

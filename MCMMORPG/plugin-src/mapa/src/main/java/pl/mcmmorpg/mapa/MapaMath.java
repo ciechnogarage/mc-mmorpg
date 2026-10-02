@@ -12,7 +12,15 @@ final class MapaMath {
   }
 
   static int cursorCoordinate(int marker, int center, double zoom) {
-    return (int) (((double) marker - center) * 2 / zoom);
+    return cursorCoordinate((double) marker, center, zoom);
+  }
+
+  static int cursorCoordinate(double position, int center, double zoom) {
+    return (int) ((position - center) * 2 / zoom);
+  }
+
+  static boolean shouldRecenter(double x, double z, int centerX, int centerZ, double zoom) {
+    return Math.abs(x - centerX) > 40 * zoom || Math.abs(z - centerZ) > 40 * zoom;
   }
 
   static boolean cursorInRange(int marker, int center, double zoom) {

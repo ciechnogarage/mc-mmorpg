@@ -2,12 +2,20 @@ package pl.mcmmorpg.mapa;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.CustomModelData;
+import io.papermc.paper.datacomponent.item.MapId;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,6 +26,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,15 +34,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,6 +60,11 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private PanelMost panel;
   private final Map<UUID, Boolean> minimapStates = new HashMap<>();
   private MapView mapView;
+  private MapyGraczy playerMaps = new MapyGraczy();
+  private final Map<UUID, Integer> replacedMapIds = new HashMap<>();
+  private final MapRenderer emptyRenderer = new MapRenderer() {
+    @Override public void render(MapView view, org.bukkit.map.MapCanvas canvas, Player player) { }
+  };
   private int mapId;
   private List<Double> zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
   private double defaultZoom = 1;
@@ -110,7 +123,11 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     }
     Bukkit.getPluginManager().registerEvents(this, this);
     dialogs = new ZnacznikDialog(this);
-    for (Player player : Bukkit.getOnlinePlayers()) ownerKey(player);
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      ownerKey(player);
+      personalMap(player);
+      replaceLegacyMaps(player);
+    }
     Bukkit.getScheduler().runTaskTimer(this, this::refreshPlayerTiles, 20L, 20L);
   }
 
@@ -118,7 +135,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   public void onDisable() {
     if (navigation != null) for (Player player : Bukkit.getOnlinePlayers()) navigation.clear(player);
     if (fullMap != null) fullMap.shutdown();
-    if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
+    detachRenderers();
     if (renderer != null) renderer.forgetAll();
     if (panel != null) {
       panel.close();
@@ -207,29 +224,106 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     if (minimapMarkers != null) minimapMarkers.reloadRadius();
     handZooms.clear();
     if (renderer != null) renderer.forgetAll();
-    if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
+    detachRenderers();
+    replacedMapIds.clear();
+    File registryFile = new File(getDataFolder(), "mapy-graczy.yml");
+    playerMaps = MapyGraczy.fromYaml(YamlConfiguration.loadConfiguration(registryFile));
     mapView = Bukkit.getMap(mapId);
-    renderer = null;
-    if (mapView == null) {
-      getLogger().warning("Mapa o ID " + mapId + " nie istnieje; mapa w ręce jest niedostępna.");
-      return;
-    }
-    for (MapRenderer old : List.copyOf(mapView.getRenderers())) mapView.removeRenderer(old);
     renderer = new HandMapRenderer(this);
-    mapView.addRenderer(renderer);
-    mapView.setTrackingPosition(false);
-    mapView.setUnlimitedTracking(false);
-    mapView.setLocked(true);
+    if (mapView == null) getLogger().warning("Mapa o ID " + mapId + " nie istnieje; stare przedmioty czekaja na podmiane.");
+    else configureMap(mapView, emptyRenderer);
+    Set<Integer> used = new HashSet<>();
+    boolean changed = false;
+    for (Map.Entry<UUID, Integer> entry : playerMaps.entries().entrySet()) {
+      int id = entry.getValue();
+      MapView view = id == mapId || !used.add(id) ? null : Bukkit.getMap(id);
+      if (view == null) {
+        replacedMapIds.put(entry.getKey(), id);
+        view = Bukkit.createMap(worldForMap(entry.getKey()));
+        if (view.getId() == mapId) view = Bukkit.createMap(worldForMap(entry.getKey()));
+        playerMaps.put(entry.getKey(), view.getId());
+        used.add(view.getId());
+        changed = true;
+      }
+      configureMap(view, renderer);
+    }
+    if (changed) savePlayerMaps();
   }
 
-  // Stare mapy (opis "Klik — duza mapa") dostaja nowy opis sterowania. Zmieniamy TYLKO lore przez ItemMeta —
+  private org.bukkit.World worldForMap(UUID player) {
+    Player online = Bukkit.getPlayer(player);
+    return online != null ? online.getWorld() : Bukkit.getWorlds().get(0);
+  }
+
+  private void configureMap(MapView view, MapRenderer active) {
+    for (MapRenderer old : List.copyOf(view.getRenderers())) view.removeRenderer(old);
+    view.addRenderer(active);
+    view.setTrackingPosition(false);
+    view.setUnlimitedTracking(false);
+    view.setLocked(true);
+  }
+
+  private void detachRenderers() {
+    if (mapView != null) mapView.removeRenderer(emptyRenderer);
+    if (renderer == null) return;
+    for (int id : playerMaps.entries().values()) {
+      MapView view = Bukkit.getMap(id);
+      if (view != null) view.removeRenderer(renderer);
+    }
+  }
+
+  Integer personalMapId(UUID player) { return playerMaps.id(player); }
+
+  private void personalMap(Player player) {
+    if (playerMaps.id(player.getUniqueId()) != null) return;
+    MapView view = Bukkit.createMap(player.getWorld());
+    if (view.getId() == mapId) {
+      configureMap(view, emptyRenderer);
+      view = Bukkit.createMap(player.getWorld());
+    }
+    playerMaps.put(player.getUniqueId(), view.getId());
+    configureMap(view, renderer);
+    savePlayerMaps();
+  }
+
+  private void savePlayerMaps() {
+    Path folder = getDataFolder().toPath();
+    Path temp = null;
+    try {
+      Files.createDirectories(folder);
+      temp = Files.createTempFile(folder, "mapy-graczy-", ".tmp");
+      Files.writeString(temp, playerMaps.toYaml());
+      Files.move(temp, folder.resolve("mapy-graczy.yml"), StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException ex) {
+      getLogger().warning("Nie mozna zapisac map graczy: " + ex.getMessage());
+    } finally {
+      if (temp != null) try { Files.deleteIfExists(temp); } catch (IOException ignored) { }
+    }
+  }
+
+  private void replaceLegacyMaps(Player player) {
+    personalMap(player);
+    UUID playerId = player.getUniqueId();
+    int id = playerMaps.id(playerId);
+    Integer replaced = replacedMapIds.get(playerId);
+    ItemStack[] items = player.getInventory().getContents();
+    for (int slot = 0; slot < items.length; slot++) {
+      ItemStack item = items[slot];
+      int previousId = mapComponentId(item);
+      if (previousId != mapId && (replaced == null || previousId != replaced)) continue;
+      item.setData(DataComponentTypes.MAP_ID, MapId.mapId(id));
+      player.getInventory().setItem(slot, item);
+    }
+  }
+
+  // Stare mapy (opis "Klik — duza mapa") dostaja nowy opis sterowania. Zmieniamy TYLKO lore —
   // aktualizacja rewizji MMOItems przebudowalaby przedmiot i zgubila map_id.
   private static final String STARY_OPIS = "duża mapa ze znacznikami";
   private void odswiezOpis(Player player) {
     ItemStack[] zawartosc = player.getInventory().getContents();
     for (int i = 0; i < zawartosc.length; i++) {
       ItemStack item = zawartosc[i];
-      if (!ourMap(item) || item.lore() == null) continue;
+      if (!ourMap(item, player) || item.lore() == null) continue;
       List<Component> lore = item.lore();
       boolean stary = lore.stream().anyMatch(l -> net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
           .plainText().serialize(l).contains(STARY_OPIS));
@@ -251,23 +345,50 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   @EventHandler
   public void onJoinOpis(PlayerJoinEvent event) {
-    Bukkit.getScheduler().runTaskLater(this, () -> odswiezOpis(event.getPlayer()), 40L);
+    Bukkit.getScheduler().runTaskLater(this, () -> {
+      if (!event.getPlayer().isOnline()) return;
+      replaceLegacyMaps(event.getPlayer());
+      odswiezOpis(event.getPlayer());
+    }, 40L);
+  }
+
+  @EventHandler
+  public void onRespawn(PlayerRespawnEvent event) {
+    Bukkit.getScheduler().runTask(this, () -> replaceLegacyMaps(event.getPlayer()));
   }
 
   @EventHandler
   public void onHeldOpis(PlayerItemHeldEvent event) {
-    if (ourMap(event.getPlayer().getInventory().getItem(event.getNewSlot()))) odswiezOpis(event.getPlayer());
+    if (ourMap(event.getPlayer().getInventory().getItem(event.getNewSlot()), event.getPlayer())) {
+      Bukkit.getScheduler().runTask(this, () -> replaceLegacyMaps(event.getPlayer()));
+      odswiezOpis(event.getPlayer());
+    }
   }
 
-  private boolean ourMap(ItemStack item) {
-    return item != null && item.getType() == Material.FILLED_MAP
-        && item.getItemMeta() instanceof MapMeta meta && meta.hasMapId() && meta.getMapId() == mapId;
+  // czy gracz trzyma nasza mape w ktorejs rece (tanie: dwa odczyty ekwipunku)
+  boolean trzymaMape(Player player) {
+    return ourMap(player.getInventory().getItemInMainHand(), player)
+        || ourMap(player.getInventory().getItemInOffHand(), player);
+  }
+
+  private int mapComponentId(ItemStack item) {
+    // komponent MAP_ID zamiast getItemMeta(): bez kopiowania metadanych (wolane co tick dla kazdego gracza)
+    if (item == null || item.getType() != Material.FILLED_MAP) return -1;
+    MapId id = item.getData(DataComponentTypes.MAP_ID);
+    return id == null ? -1 : id.id();
+  }
+
+  private boolean ourMap(ItemStack item, Player player) {
+    int id = mapComponentId(item);
+    Integer personal = personalMapId(player.getUniqueId());
+    return id == mapId || personal != null && id == personal;
   }
 
   @EventHandler
   public void onInteract(PlayerInteractEvent event) {
     if (fullMap != null && fullMap.active(event.getPlayer())) return;
-    if (mapView == null || event.getHand() != EquipmentSlot.HAND || !ourMap(event.getItem())) return;
+    if (event.getHand() != EquipmentSlot.HAND || !ourMap(event.getItem(), event.getPlayer())) return;
+    replaceLegacyMaps(event.getPlayer());
     event.setCancelled(true);
     switch (event.getAction()) {
       case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> { }
@@ -279,6 +400,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       int index = zooms.indexOf(current);
       double next = zooms.get((index + 1) % zooms.size());
       handZooms.put(player.getUniqueId(), next);
+      if (renderer != null) renderer.invalidate(player.getUniqueId());
       String label = next < 1 ? (int) (1 / next) + " piksele na blok"
           : "1 piksel = " + (next == Math.rint(next) ? Integer.toString((int) next) : next) + " bl.";
       player.sendActionBar(Component.text("Przybliżenie: " + label));
@@ -307,6 +429,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   @EventHandler
   public void onClick(InventoryClickEvent event) {
+    if (event.getWhoClicked() instanceof Player player
+        && (ourMap(event.getCurrentItem(), player) || ourMap(event.getCursor(), player)))
+      Bukkit.getScheduler().runTask(this, () -> replaceLegacyMaps(player));
     if (!(event.getView().getTopInventory().getHolder() instanceof AtlasHolder holder)) return;
     event.setCancelled(true);
     if (!(event.getWhoClicked() instanceof Player player)) return;
@@ -442,6 +567,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
         if (player.getOpenInventory().getTopInventory().getHolder() instanceof AtlasHolder) player.closeInventory();
       atlases.clear();
       loadAll();
+      for (Player player : Bukkit.getOnlinePlayers()) replaceLegacyMaps(player);
       if (fullMap != null) fullMap.reloadIcons();
       sender.sendMessage("Mapa przeładowana.");
       return true;

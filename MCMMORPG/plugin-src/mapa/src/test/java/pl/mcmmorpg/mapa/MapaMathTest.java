@@ -33,6 +33,25 @@ class MapaMathTest {
   }
 
   @Test
+  void recenterOnlyAfterFortyMapPixels() {
+    for (double zoom : new double[] {0.25, 1, 4}) {
+      assertFalse(MapaMath.shouldRecenter(40 * zoom, 0, 0, 0, zoom));
+      assertFalse(MapaMath.shouldRecenter(0, -40 * zoom, 0, 0, zoom));
+      assertTrue(MapaMath.shouldRecenter(40 * zoom + 0.01, 0, 0, 0, zoom));
+      assertTrue(MapaMath.shouldRecenter(0, -40 * zoom - 0.01, 0, 0, zoom));
+    }
+  }
+
+  @Test
+  void playerCursorMovesAroundFixedCenter() {
+    assertEquals(0, MapaMath.cursorCoordinate(100.0, 100, 1));
+    assertEquals(127, MapaMath.cursorCoordinate(163.5, 100, 1));
+    assertEquals(-128, MapaMath.cursorCoordinate(36.0, 100, 1));
+    assertEquals(-4, MapaMath.cursorCoordinate(-0.5, 0, 0.25));
+    assertEquals(80, MapaMath.cursorCoordinate(10.0, 0, 0.25));
+  }
+
+  @Test
   void slotsAndPanning() {
     assertEquals(5, MapaMath.tileX(0, 5));
     assertEquals(13, MapaMath.tileX(44, 5));
