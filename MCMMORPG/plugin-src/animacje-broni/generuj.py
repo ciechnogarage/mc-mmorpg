@@ -92,7 +92,8 @@ MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20
          'odnowienie': 20, 'zmeczenie': 60, 'bazowy_mnoznik': 0.8,
          'szerokosc_celu': 0.65, 'szerokosc_luku': 1.45,
          'krok_szturchniecia': 0.18, 'dystans_kroku': 1.5, 'krok_wypadu': 0.4, 'krok_biegu': 0.65,
-         'krok_boczny': 0.32, 'odskok': 0.35, 'odrzut_szturchniecia': 0.45}
+         'krok_boczny': 0.32, 'odskok': 0.35, 'odrzut_szturchniecia': 0.45,
+         'brak_staminy': 'Za mało staminy na mocny cios'}
 CIEZKIE_WARIANTY = {
     'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6},
     'znad_glowy': {'mnoznik': 1.4},
@@ -115,6 +116,12 @@ TYPY['GREATHAMMER']['poza_mocnego'] = 'trident'
 TYPY['DAGGER']['ciezkie'].update({'bok': 'zamach_boczny', 'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu'})
 TYPY['SIERP']['ciezkie'].update({'przod': 'znad_glowy', 'tyl': 'odepchniecie'})
 TYPY['KOSA']['ciezkie'].update({'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu'})
+# Bez klawisza kierunku = cios znad glowy, W = wypad do przodu (wczesniej oba dawaly to samo).
+for typ, u in TYPY.items():
+    c = u.get('ciezkie')
+    if c:
+        c['brak'] = 'znad_glowy'
+        c['przod'] = 'wypad'
 # BOW, CROSSBOW, GREATBOW, MUSKET celowo poza tabela (vanillowe naciaganie). Plugin ich nie rusza.
 
 PRZESTRZEN = 'bron'

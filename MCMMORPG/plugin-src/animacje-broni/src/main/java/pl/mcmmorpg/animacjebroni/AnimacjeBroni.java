@@ -93,7 +93,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   record Ukrycie(double plecy, double ukrycie) {}
   record Krwawienie(double procent, int czas, int stosy) {}
   record Riposta(int doTicka, double mnoznik) {}
-  record Ciezkie(String przod, String bok, String tyl, String bieg, String spadanie, double koszt, int pelne) {}
+  record Ciezkie(String przod, String bok, String tyl, String bieg, String spadanie, String brak, double koszt, int pelne) {}
   record AtakPchniecie(Set<String> gdy, SwingAnimation.Animation zamach, Rodzaj rodzaj) {}
   record OstatniAtak(UUID cel, int tick, Rodzaj rodzaj, int ogniwo) {}
   record RytmStan(int trafienia, int ostatniTick, String typ) {}
@@ -126,6 +126,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Integer> odnowienieMocnego = new HashMap<>();
   private final Set<UUID> sygnalMocnego = new HashSet<>();
   private final Set<UUID> programowyZamach = new HashSet<>();
+  private final Map<UUID, Boolean> nowyShift = new HashMap<>(); // stan Shifta z PlayerInputEvent (getCurrentInput jeszcze stary)
   private final Map<UUID, Integer> tickProgramowegoZamachu = new HashMap<>(); // echo zamachu z API przychodzi pozniej
   private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
   private final Map<UUID, RytmStan> serie = new HashMap<>();
@@ -227,7 +228,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
             kr.getInt("czas", 60), kr.getInt("stosy", 1));
         ConfigurationSection ci = t.getConfigurationSection("ciezkie");
         Ciezkie ciezkie = ci == null ? null : new Ciezkie(ci.getString("przod"), ci.getString("bok"),
-            ci.getString("tyl"), ci.getString("bieg"), ci.getString("spadanie"), ci.getDouble("koszt", 12), ci.getInt("pelne", 12));
+            ci.getString("tyl"), ci.getString("bieg"), ci.getString("spadanie"),
+            ci.getString("brak", ci.getString("przod")), ci.getDouble("koszt", 12), ci.getInt("pelne", 12));
         AtakPchniecie atakPchniecie = null;
         ConfigurationSection ap = t.getConfigurationSection("atak_pchniecie");
         if (ap != null) {
@@ -321,7 +323,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     // Podmiana komponentu w trakcie uzywania zrywa animacje po stronie klienta.
     if (gracz != null && gracz.isHandRaised() && gracz.getActiveItem().getType() == item.getType()) return false;
     boolean ppm = lewaPusta && !maUmiejetnoscPpm(item);
-    boolean skradanie = gracz != null && (gracz.isSneaking() || gracz.getCurrentInput().isSneak());
+    Boolean shiftZEventu = gracz == null ? null : nowyShift.get(gracz.getUniqueId());
+    boolean skradanie = gracz != null && (shiftZEventu != null ? shiftZEventu
+        : gracz.isSneaking() || gracz.getCurrentInput().isSneak());
     boolean szarza = ppm && u.wzor() != null && (u.garda() == null || sprint && !skradanie);
     boolean garda = ppm && skradanie && u.garda() != null && !szarza;
     boolean mocny = ppm && !skradanie && u.ciezkie() != null && !szarza;
@@ -441,7 +445,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   public void sprint(PlayerToggleSprintEvent e) { pozniej(e.getPlayer()); }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void wejscieRuchu(PlayerInputEvent e) { dopasujDlonie(e.getPlayer()); }
+  public void wejscieRuchu(PlayerInputEvent e) {
+    nowyShift.put(e.getPlayer().getUniqueId(), e.getInput().isSneak());
+    try { dopasujDlonie(e.getPlayer()); } finally { nowyShift.remove(e.getPlayer().getUniqueId()); }
+  }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void klik(InventoryClickEvent e) { pozniej(e.getWhoClicked()); }
@@ -487,7 +494,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     boolean szturchniecie = ticki < progMocnego;
     String wariant = szturchniecie ? "szturchniecie" : kierunekCiezkiego(p, u.ciezkie());
     if (!szturchniecie && !pobierzStamine(p, u.ciezkie().koszt())) {
-      p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.4f, 0.7f);
+      p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.8f, 0.7f);
+      komunikat(p, "&c" + getConfig().getString("mocny.brak_staminy", "Za malo staminy na mocny cios"));
       dbg("MOCNY typ=" + NBTItem.get(item).getType() + " wariant=brak_staminy ticki=" + ticki + " obrazenia=0 stamina=0");
       return;
     }
@@ -771,6 +779,13 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     p.getWorld().playSound(styk, Sound.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS, 0.8f, 1.5f);
   }
 
+  private void komunikat(Player p, String tekst) {
+    String t = org.bukkit.ChatColor.translateAlternateColorCodes('&', tekst);
+    PlayerData dane = mmocore ? PlayerData.get(p) : null;
+    if (dane != null) dane.displayActionBar(t);   // zwykly pasek akcji MMOCore zamazuje po 0,25 s
+    else p.sendActionBar(net.kyori.adventure.text.Component.text(t));
+  }
+
   private boolean pobierzStamine(Player p, double procent) {
     if (!mmocore || procent <= 0) return true;
     double koszt = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA")) * procent / 100.0;
@@ -824,10 +839,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     Input wejscie = p.getCurrentInput();
     if (!p.isOnGround() && p.getVelocity().getY() < -0.1 && c.spadanie() != null) return c.spadanie();
     if (p.isSprinting() && c.bieg() != null) return c.bieg();
-    if (wejscie.isForward() && c.przod() != null) return c.przod();
-    if ((wejscie.isLeft() || wejscie.isRight()) && c.bok() != null) return c.bok();
     if (wejscie.isBackward() && c.tyl() != null) return c.tyl();
-    return c.przod();
+    if ((wejscie.isLeft() || wejscie.isRight()) && c.bok() != null) return c.bok();
+    if (wejscie.isForward() && c.przod() != null) return c.przod();
+    return c.brak() != null ? c.brak() : c.przod();
   }
 
   private void odrzuc(LivingEntity cel, Player p, double sila) {
