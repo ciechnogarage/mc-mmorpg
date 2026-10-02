@@ -3,6 +3,7 @@
 # id zaklecia -> typ, przedmiot MythicMobs, koszt (mana-za-tik = 0,5 s lub mana jednorazowo), nazwa.
 zaklecia:
   plomienie:
+    szkola: ogien
     typ: koncentracja
     cel: stozek
     oburacz: {efekt: 2.2, mana: 2.8}
@@ -13,6 +14,7 @@ zaklecia:
       obraz: ''
       dlon: ''
   odmrozenie:
+    szkola: mroz
     typ: koncentracja
     cel: stozek
     oburacz: {efekt: 2.2, mana: 2.8}
@@ -24,6 +26,7 @@ zaklecia:
       dlon: ''
 
   ognisty_pocisk:
+    szkola: ogien
     typ: ladowany
     przedmiot: ZAKLECIE_OGNISTY_POCISK
     nazwa: 'Ognisty pocisk'
@@ -31,6 +34,7 @@ zaklecia:
     mana: 3
     oburacz: {efekt: 2.2, mana: 2.8}
   kula_ognia:
+    szkola: ogien
     typ: ladowany
     przedmiot: ZAKLECIE_KULA_OGNIA
     nazwa: 'Kula ognia'
@@ -38,6 +42,7 @@ zaklecia:
     mana: 5
     oburacz: {efekt: 2.2, mana: 2.8}
   leczenie:
+    szkola: leczenie
     typ: koncentracja
     cel: siebie
     przedmiot: ZAKLECIE_LECZENIE
@@ -45,6 +50,7 @@ zaklecia:
     mana-za-tik: 0.5
     oburacz: {efekt: 2.2, mana: 2.8}
   runa_ognia:
+    szkola: ogien
     typ: runa
     przedmiot: ZAKLECIE_RUNA_OGNIA
     nazwa: 'Runa ognia'
@@ -56,6 +62,7 @@ zaklecia:
     czas-zycia-t: 1200
     oburacz: {efekt: 2.2, mana: 2.8}
   oslona:
+    szkola: ochrona
     typ: tarcza
     cel: siebie
     przedmiot: ZAKLECIE_OSLONA
@@ -67,6 +74,7 @@ zaklecia:
     narastanie-t: 10
     oburacz: {efekt: 2.2, mana: 2.8}
   przywolany_miecz:
+    szkola: przywolanie
     typ: bron
     przedmiot: ZAKLECIE_PRZYWOLANY_MIECZ
     bron: ZAK_BRON_PRZYWOLANY_MIECZ
@@ -76,6 +84,7 @@ zaklecia:
     mana: 2
     oburacz: {efekt: 2.0, mana: 2.8}
   duch_wilka:
+    szkola: przywolanie
     typ: przywolanie
     przedmiot: ZAKLECIE_DUCH_WILKA
     mob: ZAK_DUCH_WILKA
@@ -86,6 +95,7 @@ zaklecia:
     mana: 3
     oburacz: {efekt: 2.0, mana: 2.8}
   atronach_ognia:
+    szkola: przywolanie
     typ: przywolanie
     przedmiot: ZAKLECIE_ATRONACH_OGNIA
     mob: ZAK_ATRONACH_OGNIA
@@ -96,6 +106,7 @@ zaklecia:
     mana: 3
     oburacz: {efekt: 2.0, mana: 2.8}
   leczenie_dloni:
+    szkola: leczenie
     typ: koncentracja
     cel: inni
     przedmiot: ZAKLECIE_LECZENIE_DLONI
@@ -104,6 +115,7 @@ zaklecia:
     mana-za-tik: 0.5
     oburacz: {efekt: 2.2, mana: 2.8}
   uspokojenie:
+    szkola: iluzja
     typ: na_cel
     przedmiot: ZAKLECIE_USPOKOJENIE
     nazwa: 'Uspokojenie'
@@ -114,6 +126,7 @@ zaklecia:
     mana: 3
     oburacz: {efekt: 2.2, mana: 2.8}
   uzdrowienie_innego:
+    szkola: leczenie
     typ: ladowany
     cel: inny
     przedmiot: ZAKLECIE_UZDROWIENIE_INNEGO
@@ -123,6 +136,7 @@ zaklecia:
     mana: 2
     oburacz: {efekt: 2.2, mana: 2.8}
   zasklepienie_ran:
+    szkola: leczenie
     typ: ladowany
     cel: siebie
     przedmiot: ZAKLECIE_ZASKLEPIENIE_RAN
@@ -131,6 +145,7 @@ zaklecia:
     mana: 3
     oburacz: {efekt: 2.2, mana: 2.8}
   wielkie_uzdrowienie:
+    szkola: leczenie
     typ: ladowany
     cel: obszar
     przedmiot: ZAKLECIE_WIELKIE_UZDROWIENIE
@@ -165,13 +180,10 @@ stozek-podwojny:
 # Klawisz Q (plugin MenuKey wola "zaklecia q <gracz>"): bez Shiftu hub, z Shiftem szybkie ulubione (jak Q w Skyrimie).
 klawisz-q:
   zwykle: 'dm open hub_glowne %gracz%'
-  z-shiftem: 'dm open ulubione_zaklec %gracz%'
 
-# Wejscie przytrzymanych przyciskow i atrybuty trybu zaklec.
+# Wejscie przytrzymanego PPM i atrybuty trybu zaklec.
 ppm-tolerancja: 7
 rowno: 4
-sterowanie:
-  prawa-sprint: true
 zasieg-blokow: 0
 kotwica:
   wlaczona: false

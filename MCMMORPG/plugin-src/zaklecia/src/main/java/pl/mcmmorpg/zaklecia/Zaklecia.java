@@ -54,10 +54,9 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
     rzucanie = new Rzucanie(this, ksiega, nosnik);
-    ulubione = new Ulubione(this, ksiega, nosnik, rzucanie);
+    ulubione = new Ulubione(this, ksiega);
     getServer().getPluginManager().registerEvents(rzucanie, this);
     getServer().getPluginManager().registerEvents(nosnik, this);
-    getServer().getPluginManager().registerEvents(ulubione, this);
     wybor = new Wybor(this, ksiega, nosnik, ulubione, rzucanie);
     rzucanie.ustawWybor(wybor);
     getServer().getPluginManager().registerEvents(wybor, this);

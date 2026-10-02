@@ -34,7 +34,6 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
@@ -66,7 +65,9 @@ final class Rzucanie implements Listener {
 
   boolean swiezyPpm(Player p) {
     Long t = ostatniPpm.get(p.getUniqueId());
-    return t != null && teraz - t <= plugin.getConfig().getInt("ppm-tolerancja", 6);
+    // Tylko ten sam/nastepny tik: animacja PPM nie moze przypisac prawej,
+    // ale gracz ma moc kliknac LPM zaraz potem, by przypisac obie dlonie.
+    return t != null && teraz - t <= 1;
   }
   private Wybor wybor;   // szybki wybor (Shift+Q) — gdy otwarty, LPM/PPM przypisuja, nie rzucaja
 
@@ -151,19 +152,6 @@ final class Rzucanie implements Listener {
   }
 
   private void trybyLpm() { for (Player p : Bukkit.getOnlinePlayers()) atrybutyLpm(p, trybLpm(p)); }
-
-  private boolean prawaSprint(Player p) {
-    return plugin.getConfig().getBoolean("sterowanie.prawa-sprint", true) && trybLpm(p)
-        && zak(p, true) != null && p.getCurrentInput().isSprint();
-  }
-
-  boolean trzymaSprint(Player p) { return prawaSprint(p); }
-
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void bezSprintu(PlayerToggleSprintEvent e) {
-    if (e.isSprinting() && plugin.getConfig().getBoolean("sterowanie.prawa-sprint", true)
-        && trybLpm(e.getPlayer())) e.setCancelled(true);
-  }
 
   private void atrybutyLpm(Player p, boolean wl) {
     modDo(p, Attribute.BLOCK_INTERACTION_RANGE, kZasieg, plugin.getConfig().getDouble("zasieg-blokow", 0), wl);
@@ -262,7 +250,9 @@ final class Rzucanie implements Listener {
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
-  public void animacja(PlayerAnimationEvent e) { if (trybLpm(e.getPlayer())) e.setCancelled(true); }
+  public void animacja(PlayerAnimationEvent e) {
+    if (trybLpm(e.getPlayer()) || wybor != null && wybor.otwarty(e.getPlayer())) e.setCancelled(true);
+  }
 
   // Uwaga: NIE traktowac EntityDamageByEntityEvent z graczem jako LPM — obrazenia zaklec (mmodamage) tez maja gracza
   // jako sprawce: anulowalo to trafienia i odpalalo kolejny strzal z lewej (petla). Wrecz w trybie zaklec i tak nie ma (zasieg istot 0).
@@ -308,7 +298,7 @@ final class Rzucanie implements Listener {
 
   private boolean prawaTeraz(Player p, Stan s) {
     if (zak(p, true) == null || !zak(p, true).koncentracja()) return false;
-    return trybLpm(p) && (prawaSprint(p) || s.przelacznik);
+    return trybLpm(p) && s.przelacznik;
   }
 
   private boolean lewaTeraz(Player p) {
@@ -387,14 +377,6 @@ final class Rzucanie implements Listener {
         log(p, "LPM: przelacznik prawej=" + s.przelacznik);
       }
       it.remove();
-    }
-    for (Player p : Bukkit.getOnlinePlayers()) {
-      if (plugin.getConfig().getBoolean("sterowanie.prawa-sprint", true) && trybLpm(p) && p.isSprinting())
-        p.setSprinting(false);
-      if (prawaSprint(p) && zak(p, true).odrzutowe() && (wybor == null || !wybor.otwarty(p)))
-        odrzutowe.sprint(p, zak(p, true), rowno());
-      if (prawaSprint(p) && zak(p, true).koncentracja())
-        rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
     }
     odrzutowe.tick(teraz, plugin.getConfig().getInt("ppm-tolerancja", 6));
     for (var it = rzucajacy.entrySet().iterator(); it.hasNext(); ) {

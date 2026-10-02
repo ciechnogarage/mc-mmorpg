@@ -38,8 +38,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Nosnik zaklecia: przedmiot MythicMobs w dloni, zwiazany z postacia. Nie da sie go wyrzucic, przeniesc,
- * wlozyc do pojemnika, ramki, doniczki ani skarbca. Zmienia sie go tylko przez Ksiege zaklec
- * (komenda {@code zaklecia przypisz}, wolana z menu jako konsola).
+ * wlozyc do pojemnika, ramki, doniczki ani skarbca. Zmienia sie go przez Ksiege zaklec
+ * lub pasek Shift+Q.
  *
  * Prawa dlon = slot paska (wybrany, jesli pusty; inaczej pierwszy wolny 1-8), lewa dlon = slot drugiej reki.
  * Nosnik nigdy nie nadpisuje cudzego przedmiotu: bez miejsca przypisanie jest odrzucane z komunikatem.
@@ -50,9 +50,9 @@ final class Nosnik implements Listener {
   private final NamespacedKey klucz;
   private final NamespacedKey kluczPustej;
   private final DataComponentType debugStickState;
-  /** Slot paska prawej dloni z zakleciem — zostaje po odlozeniu kolkiem ("pusta"), zeby kolkiem wrocic. */
+  /** Slot paska prawej dloni z zakleciem, zachowany przy opróżnieniu dloni. */
   private final NamespacedKey kluczSlotu;
-  /** Lewa dlon byla uzywana do zaklec (Shift+kolko dziala tez przy pustej lewej). */
+  /** Lewa dlon byla uzywana do zaklec. */
   private final NamespacedKey kluczLewej;
   /** Bloki, ktore przyjmuja albo zamieniaja przedmiot z reki. */
   private static final Set<Material> BLOKI_BIORACE = Set.of(Material.DECORATED_POT, Material.FLOWER_POT,

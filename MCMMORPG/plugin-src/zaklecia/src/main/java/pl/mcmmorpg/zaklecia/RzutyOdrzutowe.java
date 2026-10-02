@@ -17,13 +17,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 
-/** Jednorazowe rzuty: PPM trzyma lewą, sprint trzyma prawą, LPM ładuje prawą automatycznie. */
+/** Jednorazowe rzuty: PPM trzyma lewą, LPM ładuje prawą automatycznie. */
 final class RzutyOdrzutowe {
   private static final class Ladunek {
     UUID gracz;
     Ksiega.Zaklecie zaklecie;
-    long start, startP, startL, ostatniPpm, ostatniSprint;
-    boolean prawa, lewa, sprint, ppm, gotowe;
+    long start, startP, startL, ostatniPpm;
+    boolean prawa, lewa, ppm, gotowe;
     boolean obie() { return prawa && lewa; }
   }
   private record Runa(ArmorStand znacznik, Ksiega.Zaklecie zaklecie, long wygasa, boolean obie) {}
@@ -44,21 +44,21 @@ final class RzutyOdrzutowe {
     return "Zak_" + Character.toUpperCase(z.id().charAt(0)) + z.id().substring(1) + "_" + faza + "_" + reka;
   }
 
-  private Ladunek zacznij(Player p, Ksiega.Zaklecie z, boolean prawy, boolean trzymany, int rowno) {
+  private Ladunek zacznij(Player p, Ksiega.Zaklecie z, boolean prawy, int rowno) {
     UUID u = p.getUniqueId();
     Ladunek drugi = (prawy ? lewa : prawa).get(u);
     long startDrugiej = drugi == null ? -1 : prawy ? drugi.startL : drugi.startP;
     if (drugi != null && drugi.zaklecie.id().equals(z.id()) && czas - startDrugiej <= rowno) {
-      if (prawy) { drugi.prawa = true; drugi.sprint = trzymany; drugi.startP = czas; drugi.ostatniSprint = czas; prawa.put(u, drugi); }
+      if (prawy) { drugi.prawa = true; drugi.startP = czas; prawa.put(u, drugi); }
       else { drugi.lewa = true; drugi.ppm = true; drugi.startL = czas; drugi.ostatniPpm = czas; lewa.put(u, drugi); }
       drugi.start = czas; drugi.gotowe = false;
       return drugi;
     }
     Ladunek l = new Ladunek();
     l.gracz = u;
-    l.zaklecie = z; l.start = czas; l.ostatniPpm = czas; l.ostatniSprint = czas;
+    l.zaklecie = z; l.start = czas; l.ostatniPpm = czas;
     l.prawa = prawy; l.lewa = !prawy; l.startP = prawy ? czas : -1; l.startL = prawy ? -1 : czas;
-    l.sprint = prawy && trzymany; l.ppm = !prawy;
+    l.ppm = !prawy;
     (prawy ? prawa : lewa).put(u, l);
     return l;
   }
@@ -67,22 +67,14 @@ final class RzutyOdrzutowe {
     if (z == null || !z.odrzutowe()) return;
     UUID u = p.getUniqueId();
     Ladunek l = lewa.get(u);
-    if (l == null || !l.zaklecie.id().equals(z.id())) l = zacznij(p, z, false, true, rowno);
+    if (l == null || !l.zaklecie.id().equals(z.id())) l = zacznij(p, z, false, rowno);
     l.ostatniPpm = czas;
-  }
-
-  void sprint(Player p, Ksiega.Zaklecie z, int rowno) {
-    if (z == null || !z.odrzutowe()) return;
-    Ladunek l = prawa.get(p.getUniqueId());
-    if (l == null || !l.zaklecie.id().equals(z.id())) l = zacznij(p, z, true, true, rowno);
-    l.sprint = true;
-    l.ostatniSprint = czas;
   }
 
   void lpm(Player p, Ksiega.Zaklecie z, int rowno) {
     if (z == null || !z.odrzutowe()) return;
     Ladunek r = prawa.get(p.getUniqueId());
-    if (r == null || !r.zaklecie.id().equals(z.id())) zacznij(p, z, true, false, rowno);
+    if (r == null || !r.zaklecie.id().equals(z.id())) zacznij(p, z, true, rowno);
   }
 
   String stan(Player p, boolean prawaDlon) {
@@ -141,15 +133,13 @@ final class RzutyOdrzutowe {
       usun(u, l); return;
     }
     String reka = l.obie() ? "Obie" : l.prawa ? "P" : "L";
-    boolean trzymaP = l.sprint && wejscie.trzymaSprint(p);
     boolean trzymaL = l.ppm && czas - l.ostatniPpm <= tolerancja;
-    long czasTrzymania = l.sprint || l.ppm
-        ? Math.max(l.sprint ? l.ostatniSprint : l.start, l.ppm ? l.ostatniPpm : l.start) : czas;
+    long czasTrzymania = l.ppm ? l.ostatniPpm : czas;
     if (!l.gotowe && czasTrzymania - l.start >= l.zaklecie.czasLadowania()) {
       l.gotowe = true;
       skille.cast(p, skill(l.zaklecie, "Gotowe", reka));
     }
-    if ((!l.sprint && !l.ppm && l.gotowe) || ((l.sprint || l.ppm) && !trzymaP && !trzymaL)) {
+    if ((!l.ppm && l.gotowe) || (l.ppm && !trzymaL)) {
       if (l.gotowe) wystrzel(p, l, reka);
       usun(u, l); return;
     }

@@ -2,12 +2,12 @@
 
 Plugin prowadzi rzucanie zaklęć koncentracji, a MythicMobs rysuje efekty i zadaje obrażenia.
 
-- **Rzucanie** (`Rzucanie.java`): start z PPM dowolnej ręki (Crucible `~onUse` obsługuje tylko główną),
+- **Rzucanie** (`Rzucanie.java`): PPM trzyma zaklęcie lewej dłoni, LPM włącza lub wyłącza strumień prawej albo ładuje i strzela,
   tiki co 1 tick na wątku głównym, mana co 10 ticków, cele stożka liczone tutaj i podawane skillowi MM
   jako cele. Tryby wynikają z tego, co jest w dłoniach: prawa, podwójne (to samo w obu: mana ×2,5),
   dwa różne (suma), broń w prawej + zaklęcie w lewej.
 - **Nośnik** (`Nosnik.java`): `zaklecia przypisz <gracz> <id|nic> <prawa|lewa>` (Księga zaklęć w DeluxeMenus,
-  jako konsola). Nośnika nie da się wyrzucić, przenieść, włożyć do ramki, doniczki, półki ani skarbca.
+  jako konsola) lub pasek Shift+Q. Nośnika nie da się wyrzucić, przenieść, włożyć do ramki, doniczki, półki ani skarbca.
 - **MM**: warunki `zakDlon{reka;z}`, `zakRece{z;min;max}`, mechanika `zakZasob`, warunek `zakMaZasob`.
 - Konfiguracja: `config.yml` (zaklęcia, koszt many, stożek, nazwy skilli).
 
