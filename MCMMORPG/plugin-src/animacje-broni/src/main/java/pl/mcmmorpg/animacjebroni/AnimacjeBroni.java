@@ -126,6 +126,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Integer> odnowienieMocnego = new HashMap<>();
   private final Set<UUID> sygnalMocnego = new HashSet<>();
   private final Set<UUID> programowyZamach = new HashSet<>();
+  private final Map<UUID, Integer> komboStart = new HashMap<>(); // ile lekkich ciosow serii bylo, gdy zaczelo sie ladowanie PPM
   private final Map<UUID, Boolean> nowyShift = new HashMap<>(); // stan Shifta z PlayerInputEvent (getCurrentInput jeszcze stary)
   private final Map<UUID, Integer> tickProgramowegoZamachu = new HashMap<>(); // echo zamachu z API przychodzi pozniej
   private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
@@ -414,6 +415,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   public void wyjscie(PlayerQuitEvent e) {
     UUID id = e.getPlayer().getUniqueId();
     serie.remove(id);
+    komboStart.remove(id);
     ostatnieOgniwo.remove(id);
     podwojKrwawienie.remove(id);
     celCiosu.remove(id);
@@ -461,6 +463,19 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   /** Puszczenie PPM konczy ladowanie. Komponenty i zamach przestawiamy tick pozniej, po skonczeniu uzywania. */
   @EventHandler(priority = EventPriority.MONITOR)
+  public void startLadowania(org.bukkit.event.player.PlayerInteractEvent e) {
+    if (e.getHand() != org.bukkit.inventory.EquipmentSlot.HAND || !e.getAction().isRightClick()) return;
+    Player p = e.getPlayer();
+    ItemStack bron = p.getInventory().getItemInMainHand();
+    Ustawienie u = ustawienie(bron);
+    RytmStan stan = serie.get(p.getUniqueId());
+    if (u == null || u.ciezkie() == null || stan == null || !bron.hasData(DataComponentTypes.CONSUMABLE)
+        || !java.util.Objects.equals(stan.typ(), NBTItem.get(bron).getType())
+        || getServer().getCurrentTick() > stan.ostatniTick() + u.oknoRytmu()) { komboStart.remove(p.getUniqueId()); return; }
+    komboStart.put(p.getUniqueId(), Math.min(2, stan.trafienia()));
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
   public void sondaPpm(org.bukkit.event.player.PlayerInteractEvent e) {
     if (!debug || e.getHand() != org.bukkit.inventory.EquipmentSlot.HAND || !e.getAction().isRightClick()) return;
     Player p = e.getPlayer();
@@ -500,6 +515,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       return;
     }
     odnowienieMocnego.put(id, teraz + (szturchniecie ? odnowienieSzturchniecia : odnowienieMocnegoTicki));
+    int kombo = szturchniecie ? 0 : komboStart.getOrDefault(id, 0);
+    komboStart.remove(id);
     serie.remove(id);
     ostatnieOgniwo.remove(id);
     String typ = NBTItem.get(item).getType();
@@ -510,7 +527,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       ItemStack bron = p.getInventory().getItemInMainHand();
       if (!java.util.Objects.equals(typ, NBTItem.get(bron).getType())
           || !java.util.Objects.equals(iid, NBTItem.get(bron).getString("MMOITEMS_ITEM_ID"))) return;
-      wykonajMocny(p, bron, u, wariant, ticki, szturchniecie, strona);
+      wykonajMocny(p, bron, u, wariant, ticki, szturchniecie, strona, kombo);
     });
   }
 
@@ -554,6 +571,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     if (ruch.lengthSquared() > 0) p.setVelocity(p.getVelocity().add(ruch.setY(0.08)));
   }
 
+  /** Wykonczenie serii LPM mocnym ciosem: zachwianie, rozblysk, dzwiek i napis na pasku. */
+  private void efektKomba(Player p, LivingEntity cel, int kombo) {
+    zachwiej(cel, p.getLocation());
+    Location l = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
+    p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, l, kombo == 2 ? 3 : 1, 0.3, 0.2, 0.3, 0);
+    p.getWorld().spawnParticle(Particle.CRIT, l, kombo == 2 ? 30 : 15, 0.35, 0.35, 0.35, 0.3);
+    p.getWorld().playSound(l, Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 1f, kombo == 2 ? 0.7f : 0.9f);
+    if (kombo == 2) p.getWorld().playSound(l, Sound.ITEM_MACE_SMASH_AIR, SoundCategory.PLAYERS, 0.7f, 1.2f);
+    komunikat(p, kombo == 2 ? "&6⚔ Kombo: L + L + P" : "&e⚔ Kombo: L + P");
+  }
+
   /** Krok ciosu nie wpycha gracza w istote przed nim: przy celu blizej niz mocny.dystans_kroku zdejmuje skladowa do przodu. */
   private Vector bezWchodzeniaWCel(Player p, Vector ruch) {
     Vector przod = p.getLocation().getDirection().setY(0);
@@ -574,15 +602,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   }
 
   private void wykonajMocny(Player p, ItemStack bron, Ustawienie u, String wariant, int ticki,
-                            boolean szturchniecie, int strona) {
+                            boolean szturchniecie, int strona, int kombo) {
     boolean zmeczony = !szturchniecie && ticki >= zmeczenieMocnego;
     double postep = szturchniecie ? 0 : Math.max(0, Math.min(1,
         (double) (ticki - progMocnego) / Math.max(1, u.ciezkie().pelne() - progMocnego)));
     double maks = getConfig().getDouble("ciezkie_warianty." + wariant + ".mnoznik", 1.3);
     double mnoznik = szturchniecie ? mnoznikSzturchniecia : zmeczony ? 1.0
         : bazowyMnoznikMocnego + (maks - bazowyMnoznikMocnego) * postep;
+    // Kombo: mocny cios zaczety w trakcie serii LPM jest jej wykonczeniem (L+P, L+L+P).
+    if (kombo > 0) mnoznik *= getConfig().getDouble("kombo.mnoznik_" + kombo, kombo == 1 ? 1.2 : 1.4);
     Rodzaj rodzaj = szturchniecie && u.rodzaj() != Rodzaj.KLUTE ? Rodzaj.OBUCHOWE
-        : ("wypad".equals(wariant) && u.atakPchniecie() != null) ? Rodzaj.KLUTE : u.rodzaj();
+        : u.rodzaj();
     SwingAnimation.Animation zamach = rodzaj == Rodzaj.KLUTE && !szturchniecie
         ? SwingAnimation.Animation.STAB : SwingAnimation.Animation.WHACK;
     bron.setData(DataComponentTypes.SWING_ANIMATION,
@@ -615,6 +645,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       try { dodatkowyCios(p, cel, obrazenia); }
       finally { rodzajDodatkowegoCiosu = poprzedni; pancerzDodatkowegoCiosu = poprzedniPancerz; }
       efektMocnegoTrafienia(p, cel, rodzaj, u.ciezka());
+      if (kombo > 0) efektKomba(p, cel, kombo);
       if (u.krwawienie() != null && !szturchniecie) nalozKrwawienie(p, cel, u.krwawienie(), obrazenia, 1);
       if (szturchniecie) {
         zachwiej(cel, p.getLocation());
@@ -636,7 +667,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         : u.ciezka() ? Sound.ITEM_MACE_SMASH_GROUND : Sound.ENTITY_PLAYER_ATTACK_SWEEP,
         SoundCategory.PLAYERS, 0.8f, u.ciezka() ? 0.75f : 1.1f);
     dbg((szturchniecie ? "SZTURCHNIECIE" : "MOCNY") + " typ=" + NBTItem.get(bron).getType()
-        + " ogniwo=0 wariant=" + wariant + " ticki=" + ticki + " obrazenia=" + obrazenia
+        + " ogniwo=0 wariant=" + wariant + " kombo=" + kombo + " ticki=" + ticki + " obrazenia=" + obrazenia
         + " stamina=" + (szturchniecie ? 0 : u.ciezkie().koszt()) + " cel=" + (cel == null ? "pudlo" : cel.getType())
         + " zamach=" + zamach + " zmeczenie=" + zmeczony);
     getServer().getScheduler().runTaskLater(this, () -> {
@@ -693,7 +724,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       p.getWorld().playSound(p.getLocation(), swist, SoundCategory.PLAYERS, 0.35f,
           ogniwo == 3 ? 0.85f : ogniwo == 2 ? 1.15f : 1.0f);
     }
-    if (smuga != null && ogniwo >= 1 && ogniwo <= smuga.kroki().size()) {
+    boolean trafil = ostatni != null && ostatni.tick() >= getServer().getCurrentTick() - 1;
+    if (trafil && smuga != null && ogniwo >= 1 && ogniwo <= smuga.kroki().size()) {
       Vector kierunek = p.getLocation().getDirection().setY(0);
       if (kierunek.lengthSquared() > 1e-4) {
         kierunek.normalize().multiply(smuga.kroki().get(ogniwo - 1));

@@ -102,13 +102,14 @@ CIEZKIE_WARIANTY = {
     'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1},
     'z_powietrza': {'mnoznik': 1.5},
 }
+KOMBO = {'mnoznik_1': 1.2, 'mnoznik_2': 1.4}
 RYTM = {'prog_rytmu': 0.7, 'okno_rytmu': 24, 'koszt_rytmu': 2, 'dlugosc': 3,
         'mnoznik': 1.4, 'luk_mnoznik': 0.5, 'krok_boczny_mnoznik': 0.35}
 for typ, u in TYPY.items():
     if 'ciezkie' in u:
         u['ciezkie']['pelne'] = 24 if u.get('ciezka') else 12
         u['ciezkie']['spadanie'] = 'z_powietrza'
-        u['poza_mocnego'] = 'trident' if typ in ('DAGGER', 'HALBERD', 'THRUSTING_SWORD') else 'bow'
+        u['poza_mocnego'] = 'trident'   # Skyrim: bron uniesiona nad glowe, po puszczeniu ciecie
 TYPY['HALBERD']['ciezkie'] = {'przod': 'wypad', 'bok': 'zamach_boczny', 'tyl': 'odepchniecie',
                               'bieg': 'z_rozbiegu', 'spadanie': 'z_powietrza', 'koszt': 12, 'pelne': 24}
 TYPY['HALBERD']['poza_mocnego'] = 'trident'
@@ -326,7 +327,7 @@ def main():
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
              '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
              'przestrzen-modeli: %s' % PRZESTRZEN, 'debug: false']
-    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM)):
+    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM), ('kombo', KOMBO)):
         linie.append('%s: {%s}' % (nazwa, ', '.join('%s: %s' % kv for kv in dane.items())))
     linie.append('ciezkie_warianty:')
     for nazwa, dane in CIEZKIE_WARIANTY.items():
