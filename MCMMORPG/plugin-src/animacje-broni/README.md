@@ -1,117 +1,46 @@
-# AnimacjeBroni — feeling broni MMOItems (2026-10-01)
+# AnimacjeBroni — walka bronią MMOItems (Paper 1.21.11)
 
-Vanilla 1.21.11 ma komponent przedmiotu `swing_animation` (`whack` = cios, `stab` = pchnięcie, `none`, plus długość
-w tickach). Działa w 1. i 3. osobie, u wszystkich patrzących, bez modów. MMOItems 6.10 go nie ustawia, więc robi to
-ten plugin, wg typu MMOItems przedmiotu. Drugi element to **model trzymania**: własny model w packu Nexo
-(`bron:<skala>/<material>`), który dziedziczy vanillowy model materiału i zmienia tylko rozmiar w dłoni — rękojeść
-zostaje w dłoni (przesunięcie liczone w `generuj.py`). Ikona w ekwipunku i przedmiot na ziemi są bez zmian.
+## Sterowanie
 
-Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko), **kłute** (grot przebija w linii),
-**obuchowe** (tępa broń miażdży) i na wadze broni (długość zamachu, minimalne naładowanie ciosu, dźwięk).
+- **LPM:** lekki, vanillowy cios. Trzy trafienia tworzą łańcuch; kolejny cios od 70% odnowienia ataku, do 1,2 s po poprzednim. Zbyt wczesny cios pozostaje zwykły i nie zrywa łańcucha.
+- **PPM przytrzymaj i puść:** mocny cios. Poniżej 6 ticków jest szybkie szturchnięcie (×0,5, bez staminy). Od 6 ticków obrażenia rosną liniowo do pełnego naładowania broni (12 ticków lekkie, 24 ciężkie). Po 60 tickach działa zmęczenie: ×1,0, a stamina nadal jest pobierana. Pudło kosztuje tyle samo co trafienie. Oba warianty mają około 1 s odnowienia.
+- **Shift + PPM:** garda i parowanie z przodu. Po parowaniu puść PPM i użyj LPM do riposty. Wciśnięcie Shift już podczas ładowania nie zamienia ataku w blok; najpierw trzeba puścić PPM.
+- **Sprint + PPM z halabardą:** vanillowa szarża kinetyczna. Rozpocznij sprint przed wciśnięciem PPM.
 
-| Broń (typ) | Obrażenia | Zamach (t) | Naładowanie | Zasięg | PPM | Trzymanie |
-|---|---|---|---|---|---|---|
-| Miecz (SWORD / LONG_SWORD) | cięte / kłute zależnie od ciosu | cięcie 6 / 7, pchnięcie przy ciężkim z przodu lub wykończeniu | — | 3 | garda −40% | vanilla |
-| Klinga elfów (KATANA) | cięte | cios 5 | — | 3 | garda −30%, lżejsza | vanilla |
-| Topór (AXE) | cięte | cios 8 | 60% | 3 | — | vanilla |
-| Miecz dwuręczny (GREATSWORD) | cięte, ciężka | cios 10 | 80% | 3,3 | **garda oburącz** −55% (ostrze poziomo przed ciałem), wolna | ×1,30 |
-| Broń drzewcowa (HALBERD) | **kłute** (było obuchowe) | pchnięcie 8 | 100% | **2–4,5**, przebija w linii | PPM = blok oburącz (garda −35%); sprint + PPM = szarża (vanilla, obrażenia przy zderzeniu zależne od prędkości); kontra po bloku jak dotąd: garda ≥0,5 s, puść PPM i w 0,5 s LPM = wypad (krok + pchnięcie przez linię 4,5 bl. za 200%, odnowienie 3 s tylko wypadu) | ×1,30 |
-| Włócznia (SPEAR) | kłute | vanilla | vanilla | 2–4,5 | szarża (vanilla) | vanilla |
-| Sztylet (DAGGER) | kłute | pchnięcie 4 | — | **2,6** | — | ×0,80 |
-| Kosa (KOSA) | cięte, ciężka | cios 10 | 80% | **3,5** | — | ×1,40 |
-| Sierp (SIERP) | cięte | cios 5 | — | 2,8 | — | vanilla |
-| Buława (HAMMER) | obuchowe | cios 8 | 60% | 3 | — | vanilla |
-| Młot dwuręczny (GREATHAMMER) | obuchowe, ciężka | cios 12 | **90%** | 3 | uniesienie i uderzenie obszarowe | ×1,30 |
-| Kostur dwuręczny (GREATSTAFF) | obuchowe | cios 9 | 60% | 3,3 | — | ×1,40 |
-| Różdżka / kostur (WAND / STAFF) | magia (LPM pocisk MMOItems) | pchnięcie 5 / 7 | — | 3 | — | ×0,90 / ×1,25 |
-| Grimuar, totem, filakterium | — | pchnięcie 5 | — | 3 | — | vanilla |
-| Tarcza (SHIELD) | obuchowe | cios 7 | — | 3 | blok (vanilla) | vanilla |
-| Łańcuch (WHIP) | cięte | cios 7 | — | LPM bicz MMOItems | — | vanilla |
+PPM przejmuje plugin tylko z pustą lewą ręką i bez umiejętności MMOItems na PPM. Zaklęcie, tarcza lub inny przedmiot w lewej ręce mają pierwszeństwo. Włócznie `SPEAR`, łuki/kusze, różdżki/kostury magiczne, grimuar, totem, filakterium, tarcze i bicze nie mają mocnego ciosu. LPM nie dociera do serwera podczas trzymania PPM na używanym przedmiocie — to cecha klienta vanilla.
 
-Garda oburącz (halabarda, miecz dwuręczny): PPM w pozie ładowania kuszy (obie ręce z przodu), a definicja modelu
-`bron:s130g/<materiał>` podczas PPM (`using_item`) obraca broń poziomo w poprzek ciała, w 1. osobie w poprzek ekranu
-(kąty z `qa/pozy.sh`: 3. osoba [90,0,-45], 1. osoba [-30,0,-45]). Trzymanie oburącz BEZ wciśniętego PPM jest w vanilli
-niemożliwe (poza oburęczną ma tylko naładowana kusza, przypięta do samego przedmiotu kuszy).
-Halabarda podczas sprintu używa zwykłego modelu `bron:s130/<materiał>` i vanillowej animacji szarży włócznią;
-nie blokuje ciosów ani nie przyjmuje pozy ładowania kuszy. Po zwolnieniu sprintu PPM znów uruchamia gardę.
-Zmiana sprintu podczas trzymania PPM podmienia przedmiot i może przerwać jego używanie po stronie klienta;
-szarżę zaczyna się, biegnąc przed wciśnięciem PPM.
-Zablokowany cios: iskry w miejscu styku + dźwięk bloku tarczy i metalu (tylko cios z przodu, w kącie gardy).
+## Charakter broni
 
-Efekt trafienia (plugin, każdy cios): cięte = łuk cięcia + świst; kłute = iskry krytyka w linii ciosu + stuk grotu;
-obuchowe = pył spod celu + głuche uderzenie (ciężka broń: uderzenie buzdyganu w ziemię). Do tego efekty MMOItems
-(rozprysk obrażeń co 3 s: cięte stożek 60°, kłute 30°, obuchowe wokół celu).
-
-## Feeling jak w Skyrimie
-
-Reakcje zwykłego ciosu działają przy naładowaniu co najmniej 90%. Źródłem wartości jest `TYPY` w `generuj.py`.
-
-Szybko zadane ciosy budują rytm/kombinację, a cierpliwie wyczekany cios staje się ciężki. Ciężki cios wymaga
-pełnego naładowania broni (`ceil(20 / attack_speed)` ticków) i jeszcze `ciezkie.czekanie` ticków bez zamachu
-(domyślnie 10). Każdy zamach, także w powietrze, i każde trafienie zaczynają liczenie od nowa. Gotowość jest
-sygnalizowana raz na ładowanie cichym dźwiękiem słyszanym tylko przez gracza i kilkoma iskrami przy dłoni.
-Ciężki cios kosztuje dodatkowo 12% maksymalnej staminy MMOCore: sprint, W, A/D, S są sprawdzane w tej kolejności;
-bez kierunku używany jest wariant przedni. Bez przypisanego wariantu albo przy zbyt małej staminie trafienie pozostaje zwykłe.
-Ciężki cios przerywa kombinację. W konfiguracji `ciezkie_warianty` są mnożniki, siła odrzutu i kąt łuku; halabarda
-i włócznia zachowują własne mechaniki bez ciężkich ciosów. Bez MMOCore dodatkowe koszty są zerowe (jedno ostrzeżenie
-przy uruchomieniu); zwykłe koszty MMOItems nadal działają.
-
-Kombinacja obejmuje trzy zwykłe trafienia bronią w walce wręcz (bez halabardy i włóczni). Pierwszy cios jest zwykły;
-od drugiego każdy cios serii kosztuje dodatkowo 2% maksymalnej staminy. Kolejny cios musi mieć co najmniej 90% naładowania i trafić najpóźniej 8 ticków po pełnym
-odnowieniu broni (`20 / attack_speed` ticków od poprzedniego trafienia). Trzeci cios zadaje ×1,4 obrażeń i efekt rodzaju
-broni. Po drugim trafieniu SWORD / LONG_SWORD szykuje pchnięcie na wykończenie. Znacznik PDC z końcowym tickiem
-chroni ten zamach przed okresowym `dopasuj()`, a po wykończeniu lub przerwaniu serii animacja wraca.
-Pozostałe bronie zachowują swój zwykły zamach również przy wykończeniu.
-
-## Miecz: cięcie i pchnięcie
-
-SWORD i LONG_SWORD tną zwykłym ciosem (`whack`). Gotowy ciężki cios z trzymanym W lub bez kierunku
-zmienia zamach w dłoni na pchnięcie (`stab`) jeszcze przed kliknięciem. Tak samo pchnięciem jest trzecie
-trafienie kombinacji. Ciężki cios z A/D pozostaje bocznym cięciem, z S odpycha, a podczas biegu
-jest cięciem z rozbiegu. Gracz i obserwatorzy widzą zamach przypisany do przedmiotu w chwili kliknięcia.
-Pchnięcie przebija do dwóch kolejnych celów w linii za pierwszym (każdy za ×0,6 obrażeń), ignoruje
-30% redukcji pancerza i ma smugę krytyka oraz stuk grotu. Cięcie zachowuje dotychczasowe efekty.
-Parowanie i riposta działają jak wcześniej. Warianty pochodzą z `atak_pchniecie` w `TYPY`.
-
-Młot dwuręczny ma osobny model `s130u` podczas `using_item`, wstępnie ustawiony pionowo nad głową. Przy naładowanym
-zamachu pojawia się dwutickowa smuga widoczna w świecie; kształt i cząsteczki zależą od rodzaju broni.
-
-| Broń | Rodzaj | Reakcja trafienia | PPM |
+| Grupa (typy MMOItems) | Lekki łańcuch LPM | Mocny PPM: W / A,D / S / sprint / spadanie | Krótki PPM |
 |---|---|---|---|
-| Miecz, długi miecz, katana, miecz dwuręczny, miecz kłujący | cięte / kłute | Krytyki pozostają w MMOItems; parowanie otwiera ripostę x1,5 na 30 ticków | Garda: pełne parowanie przez pierwsze 6 ticków, potem zwykły blok |
-| Topór, topór dwuręczny, kosa | cięte | Krwawienie: 25% obrażeń ciosu przez 3 s, odświeżane | — |
-| Sierp | cięte | Krwawienie do 3 stosów po 25% | — |
-| Buława, młot dwuręczny, kostur dwuręczny | obuchowe | Osłabienie redukcji pancerza o 30% | Młot dwuręczny: uniesienie, po 16 tickach uderzenie wokół gracza x1,6 w promieniu 3,5; odnowienie 120 ticków |
-| Sztylet | kłute | Cios w plecy x2; ze skradania, gdy cel nie ściga gracza, x3 | — |
+| Miecz (`SWORD`, `LONG_SWORD`, `KATANA`) | cięcie z prawej → z lewej → pchnięcie z przebiciem | pchnięcie w linii / szeroki łuk / odrzucenie z odskokiem / cios z rozbiegu / cios z góry | uderzenie głowicą |
+| Miecz dwuręczny (`GREATSWORD`) | dwa szerokie cięcia → mocne wykończenie | rąbnięcie / szeroki łuk / odrzucenie / rozbieg / z góry | pchnięcie jelcem |
+| Topory, kosa, sierp (`AXE`, `GREATAXE`, `KOSA`, `SIERP`) | dwa ukosy → rąbnięcie i krwawienie | z góry / obrót topora 360° lub łuk kosy 180° / odrzucenie (kosa, sierp) / rozbieg / z góry | uderzenie obuchem |
+| Obuchowe (`HAMMER`, `GREATSTAFF`) | dwa ciosy → zachwianie | rąbnięcie / — / odrzucenie / taran / z góry | pchnięcie drzewcem |
+| Młot dwuręczny (`GREATHAMMER`) | dwa ciosy → zachwianie | uderzenie obszarowe przy pełnym ładunku / — / odrzucenie / taran / z góry | odepchnięcie głowicą |
+| Halabarda (`HALBERD`) | dwa pchnięcia → uderzenie drzewcem | wypad w linii / szeroki łuk / odepchnięcie / szarża vanilla / z góry | odepchnięcie drzewcem |
+| Sztylet (`DAGGER`) | szybkie pchnięcia → krwawienie; cios w plecy zachowany | doskok i pchnięcie / krótki łuk / odskok / doskok z biegu / z góry | krótkie pchnięcie |
 
-Parowanie i uderzenie młota zachwieją cel: spowolnienie na 20 ticków, animacja obrażeń i lekki odrzut.
-Uderzenie młota wymaga pustej lewej ręki i braku umiejętności MMOItems na PPM. Krótsze przytrzymanie
-oraz puszczenie PPM podczas odnowienia nie wywołują uderzenia.
+Miecz kłujący `THRUSTING_SWORD` ma pchnięcie również w lekkich ciosach.
 
-**PPM (garda, szarża, uderzenie młota) tylko przy pustej lewej ręce i bez umiejętności MMOItems na PPM** — inaczej PPM należy do
-zaklęcia/tarczy w lewej ręce albo do umiejętności; plugin zdejmuje i przywraca te komponenty sam (przegląd co 10 ticków).
-Zmierzone na klonie 30.09 (`qa/mechanika.sh`): garda miecza 6 → 4,0 HP bez / 2,4 HP z gardą; halabarda nie trafia
-celu na 1 bloku, trafia dwa w linii na 3 i 4 blokach; młot dwuręczny nie wyprowadza ciosu 0,6 s po poprzednim
-(miecz tak); klient nie wysyła LPM, dopóki trzymany jest PPM, więc kontra to „puść prawy, kliknij lewy”; szarża halabardą trafiała w poprzednim układzie komponentów; garda halabardy 6 → 4,0 / 2,5 HP, miecza dwuręcznego 3,9 / 1,7 HP (4 powtórzenia); kontra (qa/mechanika.sh G): samo puszczenie PPM nic nie robi, blok+LPM = wypad, blok działa zaraz po wypadzie, dwie kontry w 2,9 s = jeden wypad; garda gaśnie z pochodnią w lewej ręce i wraca po jej zdjęciu. Nowy podział gardy i szarży wymaga ponownego sprawdzenia w grze.
+Kierunek jest odczytywany **przy puszczeniu** PPM. Bez kierunku wybierany jest wariant W. Spadanie ma pierwszeństwo przed sprintem. Mocny atak wybiera cel przed graczem w zasięgu broni, zadaje obrażenia przez MythicLib i respektuje `canTarget`; pchnięcie może trafić kolejne cele w linii, a łuk cele obok. Przed trafieniem ustawia zamach `whack`/`stab`. Smuga każdego lekkiego i mocnego ciosu biegnie przez cztery ticki: z prawej, z lewej lub prosto. Efekt trafienia i dźwięk zależą od rodzaju broni.
 
-Poza pluginem celowo: zamach i PPM **SPEAR** (materiały `*_SPEAR` mają vanillowe pchnięcie i szarżę; plugin daje im tylko efekt trafienia), **BOW / CROSSBOW /
-GREATBOW / MUSKET** (animacje naciągania). Model trzymania dostaje tylko przedmiot z modelem domyślnym materiału —
-model z Nexo/MMOItems (`model:`) zostaje. Materiały bez modelu „narzędzia” (END_ROD, książki, łańcuch) są pomijane.
+## Konfiguracja i pack
 
+`generuj.py` i tabela `TYPY` są źródłem liczb oraz wariantów. Generator zapisuje `wynik/config.yml` i `wynik/pack/assets/bron/`; skopiuj konfigurację do zasobów pluginu:
 
-## Jak działa
-- `generuj.py` — źródło prawdy (tabela `TYPY`): pisze `wynik/config.yml` i `wynik/pack/assets/bron/` (materiały
-  zbiera z `MMOItems/item/<typ>.yml` serwera, transformacje rąk z client.jar).
-- Plugin poprawia przedmiot, gdy trafia do ręki (wejście, zmiana slotu, zamiana rąk, klik/przeciąganie, podniesienie)
-  i przeglądem obu rąk co 10 ticków. `ItemBuildEvent` MMOItems 6.10 jest martwy (nikt go nie wywołuje).
-- `/animacjebroni sprawdz <gracz>` — typ, zamach i model z głównej ręki, `zamachTeraz`, `nastepnyAtak` oraz `ciezkiGotowy` i `ciezkiZa` (ticki do gotowości, −1 bez wariantu); `/animacjebroni reload`.
+```sh
+python3 generuj.py && cp wynik/config.yml src/main/resources/
+```
 
-## Zmiana / test / wdrożenie
-    python3 generuj.py && cp wynik/config.yml src/main/resources/ && ./build.sh
-    qa/klon.sh <katalog> --fresh        # klon world1 ab-test (+ klient: docker run ... mc-client-test qa/launch.sh)
-    qa/scena.sh GREATSWORD HARDENED_STEEL_CLAYMORE   # dane komponentów + zrzuty 1. osoba / zamach / przód
-    qa/mechanika.sh A|A2|B0|C|D|E|G|P|U|S|K|W|B|T|Z|N|C3|SW1|SW2|SW3   # pomiary mechanik, w tym miecza i kombinacji
-    qa/efekty.sh SWORD PRZ_WOJ_MIECZ_1 miecz   # zrzuty trafienia i pozy PPM
-    ./wdroz.sh                          # world1: kopia + cofnij.sh, tylko przy 0 graczy, RESTART
+`blocks_attacks` jest ustawiane dla gardy podczas skradania. Przy zwykłym PPM plugin ustawia `consumable` na godzinę, bez dźwięku i cząstek konsumpcji, z pozą `BOW` albo `TRIDENT`; puszczenie PPM daje serwerowi dokładny czas przez `PlayerStopUsingItemEvent#getTicksHeldFor`. W trakcie używania przedmiot nie jest podmieniany, nawet po zmianie Shift lub sprintu. Vanillowe spowolnienie podczas ładowania jest zamierzone.
 
-26.3: `swing_animation` zastąpią `attack_animation` + `interact_animation` — przy aktualizacji wersji zmienić plugin.
+Modele `s100c`/`s130c` pokazują odciągniętą broń przy `using_item`. `use_duration` i `range_dispatch`, według definicji vanillowego łuku 1.21.11, przełączają cztery stopnie po 0, ⅓, ⅔ i pełnym czasie ładowania. `s130g` pokazuje dwuręczną gardę, a `s130u` pozostaje modelem młota nad głową. Model MMOItems/Nexo z własnym `item_model` pozostaje bez zmian. Materiały bez vanillowego modelu narzędzia nie dostają modelu trzymania. Stopnie trzeba obejrzeć na kliencie z packiem, bo ich wygląd jest oceną wizualną.
+
+`/animacjebroni sprawdz <gracz>` pokazuje typ, komponenty, ładowanie, ticki do pełnego ładunku, następne ogniwo LPM, zamach, odnowienie i staminę. `debug: true` w konfiguracji włącza linie `DBG` dla lekkiego, mocnego, szturchnięcia i bloku: typ, ogniwo, wariant, ticki, obrażenia oraz stamina. Bez MMOCore dodatkowe koszty staminy są zerowe; standardowe koszty MMOItems nadal działają.
+
+## QA i wdrożenie
+
+`qa/mechanika.sh M3|M12|M24|BG|L3|MW|MA|MS` mierzy nowy PPM, gardę, łańcuch i kierunki na klonie z klientem BronQA. Scenariusze `F/G/W/B/T/Z/N/SW1/SW2` opisują poprzedni układ sterowania i wymagają aktualizacji przed użyciem. Nie uruchamiać Paper natywnie; środowisko testowe i wdrożenie opisują skrypty `qa/klon.sh` i `wdroz.sh`.
+
+Przy aktualizacji z 1.21.11 trzeba ponownie sprawdzić komponenty animacji przedmiotu oraz działanie modeli `using_item` w kliencie.

@@ -1,0 +1,42 @@
+{
+ "model": {
+  "type": "minecraft:condition",
+  "property": "minecraft:using_item",
+  "on_true": {
+   "type": "minecraft:range_dispatch",
+   "property": "minecraft:use_duration",
+   "scale": 0.05,
+   "entries": [
+    {
+     "threshold": 0.4,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130c1/wooden_sword"
+     }
+    },
+    {
+     "threshold": 0.8,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130c2/wooden_sword"
+     }
+    },
+    {
+     "threshold": 1.2,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130c3/wooden_sword"
+     }
+    }
+   ],
+   "fallback": {
+    "type": "minecraft:model",
+    "model": "bron:item/s130c/wooden_sword"
+   }
+  },
+  "on_false": {
+   "type": "minecraft:model",
+   "model": "bron:item/s130/wooden_sword"
+  }
+ }
+}

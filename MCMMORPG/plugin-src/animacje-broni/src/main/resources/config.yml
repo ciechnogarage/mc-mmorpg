@@ -1,53 +1,68 @@
 # WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient 1.21.11) - nie edytowac recznie.
 # typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>
 przestrzen-modeli: bron
-ciezkie: {czekanie: 10}
-rytm: {prog_rytmu: 0.9, okno_rytmu: 8, koszt_rytmu: 2, dlugosc: 3, mnoznik: 1.4, luk_mnoznik: 0.5}
+debug: false
+mocny: {prog: 6, szturchniecie_mnoznik: 0.5, szturchniecie_odnowienie: 20, odnowienie: 20, zmeczenie: 60, bazowy_mnoznik: 0.8, szerokosc_celu: 0.65, szerokosc_luku: 1.45, krok_szturchniecia: 0.18, dystans_kroku: 1.5, krok_wypadu: 0.4, krok_biegu: 0.65, krok_boczny: 0.32, odskok: 0.35, odrzut_szturchniecia: 0.45}
+rytm: {prog_rytmu: 0.7, okno_rytmu: 24, koszt_rytmu: 2, dlugosc: 3, mnoznik: 1.4, luk_mnoznik: 0.5, krok_boczny_mnoznik: 0.35}
 ciezkie_warianty:
   wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6}
   znad_glowy: {mnoznik: 1.4}
-  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180}
+  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360}
   odepchniecie: {mnoznik: 1.0, sila: 1.1}
   z_rozbiegu: {mnoznik: 1.5, sila: 1.1}
+  z_powietrza: {mnoznik: 1.5}
 typy:
   SWORD:
     zamach: whack
     czas: 6
     rodzaj: ciete
     reakcja: krytyk
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.08, 0.08, 0.12]
+    skala: s100
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
-    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
-    atak_pchniecie: {gdy: [ciezki_przod, wykonczenie], zamach: stab, rodzaj: klute}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
+    atak_pchniecie: {gdy: [wykonczenie], zamach: stab, rodzaj: klute}
   LONG_SWORD:
     zamach: whack
     czas: 7
     rodzaj: ciete
     reakcja: krytyk
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.08, 0.08, 0.12]
+    skala: s100
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
-    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
-    atak_pchniecie: {gdy: [ciezki_przod, wykonczenie], zamach: stab, rodzaj: klute}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
+    atak_pchniecie: {gdy: [wykonczenie], zamach: stab, rodzaj: klute}
   KATANA:
     zamach: whack
     czas: 5
     rodzaj: ciete
     reakcja: krytyk
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.08, 0.08, 0.12]
+    skala: s100
     garda: {redukcja: 0.3, kat: 90, opoznienie: 0.1, spowolnienie: 0.6}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
-    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
+    atak_pchniecie: {gdy: [wykonczenie], zamach: stab, rodzaj: klute}
   AXE:
     zamach: whack
     czas: 8
     rodzaj: ciete
     reakcja: krwawienie
     ladowanie: 0.6
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.04, 0.04, 0.1]
+    skala: s100
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: znad_glowy, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
   GREATSWORD:
     zamach: whack
     czas: 10
@@ -56,33 +71,42 @@ typy:
     ladowanie: 0.8
     zasieg: 3.3
     poza: crossbow
+    poza_mocnego: bow
     ciezka: true
     rytm: true
-    skala: s130g
+    kroki: [0.08, 0.08, 0.12]
+    skala: s130
     garda: {redukcja: 0.55, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
-    ciezkie: {przod: znad_glowy, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza}
   GREATAXE:
     zamach: whack
     czas: 10
     rodzaj: ciete
     reakcja: krwawienie
     ladowanie: 0.8
+    poza_mocnego: bow
     ciezka: true
     rytm: true
+    kroki: [0.04, 0.04, 0.1]
     skala: s130
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: znad_glowy, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza}
   HALBERD:
     zamach: stab
     czas: 8
     rodzaj: klute
+    zasieg: 4.5
     wzor: IRON_SPEAR
     poza: crossbow
+    poza_mocnego: trident
     ciezka: true
-    skala: s130g
+    rytm: true
+    kroki: [0.14, 0.14, -0.1]
+    drzewce: true
+    skala: s130
     garda: {redukcja: 0.35, kat: 90, opoznienie: 0.2, spowolnienie: 0.5}
-    wypad: {min: 10, mnoznik: 2.0, zasieg: 4.5, szerokosc: 0.9, sila: 0.8, odnowienie: 60, okno: 10}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, spadanie: z_powietrza, koszt: 12, pelne: 24}
   LANCE:
     zamach: stab
     czas: 8
@@ -97,24 +121,33 @@ typy:
     rodzaj: klute
     reakcja: z_ukrycia
     zasieg: 2.6
+    poza_mocnego: trident
     rytm: true
+    kroki: [0.18, 0.18, 0.24]
     skala: s080
     z_ukrycia: {plecy: 2.0, ukrycie: 3.0}
-    ciezkie: {przod: wypad, koszt: 12}
+    krwawienie: {procent: 0.15, czas: 60, stosy: 1}
+    ciezkie: {przod: wypad, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu}
   THRUSTING_SWORD:
     zamach: stab
     czas: 5
     rodzaj: klute
     reakcja: krytyk
+    poza_mocnego: trident
     rytm: true
+    kroki: [0.08, 0.08, 0.12]
+    skala: s100
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
-    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
   WHIP:
     zamach: whack
     czas: 7
     rodzaj: ciete
     rytm: true
+    kroki: [0, 0, 0]
+    prog_rytmu: 0.9
+    okno_rytmu: 8
   WAND:
     zamach: stab
     czas: 5
@@ -130,10 +163,12 @@ typy:
     reakcja: pancerz
     ladowanie: 0.6
     zasieg: 3.3
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.06, 0.06, 0.1]
     skala: s140
     pancerz: {procent: 0.3}
-    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
   TOME:
     zamach: stab
     czas: 5
@@ -149,9 +184,12 @@ typy:
     rodzaj: obuchowe
     reakcja: pancerz
     ladowanie: 0.6
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.06, 0.06, 0.1]
+    skala: s100
     pancerz: {procent: 0.3}
-    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza}
   GREATHAMMER:
     zamach: whack
     czas: 12
@@ -159,21 +197,26 @@ typy:
     reakcja: pancerz
     ladowanie: 0.9
     poza: trident
+    poza_mocnego: trident
     ciezka: true
     rytm: true
-    skala: s130u
-    uderzenie: {min: 16, promien: 3.5, mnoznik: 1.6, odnowienie: 120}
+    kroki: [0.06, 0.06, 0.1]
+    skala: s130
+    uderzenie: {promien: 3.5, mnoznik: 1.6}
     pancerz: {procent: 0.3}
-    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza}
   SIERP:
     zamach: whack
     czas: 5
     rodzaj: ciete
     reakcja: krwawienie
     zasieg: 2.8
+    poza_mocnego: bow
     rytm: true
+    kroki: [0.04, 0.04, 0.1]
+    skala: s100
     krwawienie: {procent: 0.25, czas: 60, stosy: 3}
-    ciezkie: {bok: zamach_boczny, koszt: 12}
+    ciezkie: {bok: zamach_boczny, koszt: 12, pelne: 12, spadanie: z_powietrza, przod: znad_glowy, tyl: odepchniecie}
   KOSA:
     zamach: whack
     czas: 10
@@ -181,21 +224,29 @@ typy:
     reakcja: krwawienie
     ladowanie: 0.8
     zasieg: 3.5
+    poza_mocnego: bow
     ciezka: true
     rytm: true
+    kroki: [0.04, 0.04, 0.1]
     skala: s140
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: znad_glowy, bok: zamach_boczny, koszt: 12}
+    ciezkie: {przod: znad_glowy, bok: zamach_boczny, koszt: 12, pelne: 24, spadanie: z_powietrza, tyl: odepchniecie, bieg: z_rozbiegu}
   SHIELD:
     zamach: whack
     czas: 7
     rodzaj: obuchowe
     rytm: true
+    kroki: [0, 0, 0]
+    prog_rytmu: 0.9
+    okno_rytmu: 8
   GAUNTLET:
     zamach: stab
     czas: 4
     rodzaj: obuchowe
     rytm: true
+    kroki: [0, 0, 0]
+    prog_rytmu: 0.9
+    okno_rytmu: 8
 materialy-z-modelami:
   - BAMBOO
   - BLAZE_ROD
@@ -203,10 +254,13 @@ materialy-z-modelami:
   - BREEZE_ROD
   - DIAMOND_AXE
   - DIAMOND_HOE
+  - DIAMOND_SHOVEL
   - DIAMOND_SWORD
+  - GOLDEN_HOE
   - GOLDEN_SWORD
   - IRON_AXE
   - IRON_HOE
+  - IRON_SHOVEL
   - IRON_SWORD
   - MACE
   - NETHERITE_AXE
@@ -214,5 +268,6 @@ materialy-z-modelami:
   - NETHERITE_SWORD
   - STICK
   - STONE_AXE
+  - STONE_SHOVEL
   - STONE_SWORD
   - WOODEN_SWORD

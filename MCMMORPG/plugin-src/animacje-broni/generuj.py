@@ -12,11 +12,10 @@ import argparse, json, math, os, re, sys, zipfile
 # FEELING BRONI: typ MMOItems -> ustawienia. Rodzaj obrazen: ciete (ostrze tnie), klute (grot/szpic kluje),
 # obuchowe (tepa bron miazdzy). Waga: czas zamachu (vanilla 6 tickow), ladowanie = minimalne naladowanie ciosu (ciezka
 # bron nie da sie "klikac"), ciezka = nizszy, glebszy dzwiek trafienia. zasieg = max zasieg ciosu (vanilla 3 bloki).
-# garda = PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat, opoznienie w s, spowolnienie ruchu przy gardzie).
+# garda = Shift+PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat, opoznienie w s, spowolnienie ruchu przy gardzie).
 # wzor = kopia zestawu vanillowej broni (IRON_SPEAR: pchniecie trafiajace wszystko w linii, zasieg 2-4,5, szarza PPM).
-# wypad = kontra: garda >= min tickow, pusc PPM i LPM w ciagu okno tickow: krok do przodu (sila) i pchniecie przez linie
-# (zasieg, szerokosc) za mnoznik x obrazenia broni; odnowienie w tickach tylko wypadu (blok zawsze dostepny).
-# garda_oburacz = bron dwureczna: PPM w pozie kuszy (obie rece z przodu), a model w trakcie PPM (using_item) obraca
+# drzewce = halabarda: trzecie ogniwo lekkiego lancucha uderza trzonkiem.
+# garda_oburacz = bron dwureczna: Shift+PPM w pozie kuszy (obie rece z przodu), a model w trakcie PPM (using_item) obraca
 # bron poziomo w poprzek ciala - zaslona trzymana oburacz. Katy dobrane na zrzutach (qa/pozy.sh, warianty b i s).
 GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 0, -45], 'fp_trans': [-3, 4, -3]}
 # katy 3. osoby dobrane na zrzutach 2.10 (qa: warianty a-f, wybrany e - glowica wyraznie nad glowa)
@@ -26,23 +25,25 @@ G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 PAROWANIE = {'okno': 6, 'riposta_ticki': 30, 'riposta_mnoznik': 1.5}
 KRWAWIENIE = {'procent': 0.25, 'czas': 60, 'stosy': 1}
 PANCERZ = {'procent': 0.30}
-PCHNIECIE_MIECZA = {'gdy': ['ciezki_przod', 'wykonczenie'], 'zamach': 'stab', 'rodzaj': 'klute'}
+PCHNIECIE_MIECZA = {'gdy': ['wykonczenie'], 'zamach': 'stab', 'rodzaj': 'klute'}
 TYPY = {
     'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
-    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
                         'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
+                        'zasieg': 4.5,
                         'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.2, 'spowolnienie': 0.5},
-                        'wypad': {'min': 10, 'mnoznik': 2.0, 'zasieg': 4.5, 'szerokosc': 0.9, 'sila': 0.8, 'odnowienie': 60, 'okno': 10}},
+                        'drzewce': True},
     'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
     'SPEAR':           {'rodzaj': 'klute'},   # materialy *_SPEAR maja juz caly vanillowy zestaw wloczni
-    'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6, 'reakcja': 'z_ukrycia', 'z_ukrycia': {'plecy': 2.0, 'ukrycie': 3.0}},
+    'DAGGER':          {'zamach': 'stab',  'czas': 4,  'skala': 0.80, 'rodzaj': 'klute', 'zasieg': 2.6, 'reakcja': 'z_ukrycia',
+                        'z_ukrycia': {'plecy': 2.0, 'ukrycie': 3.0}, 'krwawienie': {'procent': 0.15, 'czas': 60, 'stosy': 1}},
     'THRUSTING_SWORD': {'zamach': 'stab',  'czas': 5,  'rodzaj': 'klute', 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'WHIP':            {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete'},
     'WAND':            {'zamach': 'stab',  'czas': 5,  'skala': 0.90},
@@ -53,7 +54,7 @@ TYPY = {
     'FILAKTERIUM':     {'zamach': 'stab',  'czas': 5},
     'HAMMER':          {'zamach': 'whack', 'czas': 8,  'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'reakcja': 'pancerz', 'pancerz': PANCERZ},
     'GREATHAMMER':     {'zamach': 'whack', 'czas': 12, 'skala': 1.30, 'rodzaj': 'obuchowe', 'ciezka': True, 'ladowanie': 0.9,
-                        'reakcja': 'pancerz', 'pancerz': PANCERZ, 'poza': 'trident', 'uderzenie': {'min': 16, 'promien': 3.5, 'mnoznik': 1.6, 'odnowienie': 120}},
+                        'reakcja': 'pancerz', 'pancerz': PANCERZ, 'poza': 'trident', 'uderzenie': {'promien': 3.5, 'mnoznik': 1.6}},
     'SIERP':           {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'zasieg': 2.8, 'reakcja': 'krwawienie', 'krwawienie': {'procent': 0.25, 'czas': 60, 'stosy': 3}},
     'KOSA':            {'zamach': 'whack', 'czas': 10, 'skala': 1.40, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.5, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'SHIELD':          {'zamach': 'whack', 'czas': 7,  'rodzaj': 'obuchowe'},
@@ -71,20 +72,49 @@ for typ in ('HAMMER', 'GREATHAMMER', 'GREATSTAFF'):
 TYPY['DAGGER']['ciezkie'] = {'przod': 'wypad', 'koszt': 12}
 TYPY['SIERP']['ciezkie'] = {'bok': 'zamach_boczny', 'koszt': 12}
 TYPY['KOSA']['ciezkie'] = {'przod': 'znad_glowy', 'bok': 'zamach_boczny', 'koszt': 12}
-for typ in (*MIECZE, 'GREATSWORD', 'AXE', 'GREATAXE', 'HAMMER', 'GREATHAMMER', 'GREATSTAFF',
+for typ in (*MIECZE, 'GREATSWORD', 'AXE', 'GREATAXE', 'HAMMER', 'GREATHAMMER', 'GREATSTAFF', 'HALBERD',
             'DAGGER', 'SIERP', 'KOSA', 'SHIELD', 'GAUNTLET', 'WHIP'):
     TYPY[typ]['rytm'] = True
+    TYPY[typ]['kroki'] = [0.08, 0.08, 0.12]
+for typ in ('DAGGER',):
+    TYPY[typ]['kroki'] = [0.18, 0.18, 0.24]
+for typ in ('AXE', 'GREATAXE', 'KOSA', 'SIERP'):
+    TYPY[typ]['kroki'] = [0.04, 0.04, 0.10]
+for typ in ('HAMMER', 'GREATHAMMER', 'GREATSTAFF'):
+    TYPY[typ]['kroki'] = [0.06, 0.06, 0.10]
+TYPY['HALBERD']['kroki'] = [0.14, 0.14, -0.10]
+for typ in ('SHIELD', 'GAUNTLET', 'WHIP'):
+    TYPY[typ]['kroki'] = [0, 0, 0]
+    TYPY[typ]['prog_rytmu'] = 0.9
+    TYPY[typ]['okno_rytmu'] = 8
 
-CIEZKIE = {'czekanie': 10}
+MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20,
+         'odnowienie': 20, 'zmeczenie': 60, 'bazowy_mnoznik': 0.8,
+         'szerokosc_celu': 0.65, 'szerokosc_luku': 1.45,
+         'krok_szturchniecia': 0.18, 'dystans_kroku': 1.5, 'krok_wypadu': 0.4, 'krok_biegu': 0.65,
+         'krok_boczny': 0.32, 'odskok': 0.35, 'odrzut_szturchniecia': 0.45}
 CIEZKIE_WARIANTY = {
     'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6},
     'znad_glowy': {'mnoznik': 1.4},
-    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180},
+    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360},
     'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1},
     'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1},
+    'z_powietrza': {'mnoznik': 1.5},
 }
-RYTM = {'prog_rytmu': 0.9, 'okno_rytmu': 8, 'koszt_rytmu': 2, 'dlugosc': 3,
-        'mnoznik': 1.4, 'luk_mnoznik': 0.5}
+RYTM = {'prog_rytmu': 0.7, 'okno_rytmu': 24, 'koszt_rytmu': 2, 'dlugosc': 3,
+        'mnoznik': 1.4, 'luk_mnoznik': 0.5, 'krok_boczny_mnoznik': 0.35}
+for typ, u in TYPY.items():
+    if 'ciezkie' in u:
+        u['ciezkie']['pelne'] = 24 if u.get('ciezka') else 12
+        u['ciezkie']['spadanie'] = 'z_powietrza'
+        u['poza_mocnego'] = 'trident' if typ in ('DAGGER', 'HALBERD', 'THRUSTING_SWORD') else 'bow'
+TYPY['HALBERD']['ciezkie'] = {'przod': 'wypad', 'bok': 'zamach_boczny', 'tyl': 'odepchniecie',
+                              'bieg': 'z_rozbiegu', 'spadanie': 'z_powietrza', 'koszt': 12, 'pelne': 24}
+TYPY['HALBERD']['poza_mocnego'] = 'trident'
+TYPY['GREATHAMMER']['poza_mocnego'] = 'trident'
+TYPY['DAGGER']['ciezkie'].update({'bok': 'zamach_boczny', 'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu'})
+TYPY['SIERP']['ciezkie'].update({'przod': 'znad_glowy', 'tyl': 'odepchniecie'})
+TYPY['KOSA']['ciezkie'].update({'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu'})
 # BOW, CROSSBOW, GREATBOW, MUSKET celowo poza tabela (vanillowe naciaganie). Plugin ich nie rusza.
 
 PRZESTRZEN = 'bron'
@@ -167,8 +197,10 @@ def main():
     modele_skal = {}  # skala -> set materialow
     garda_skal = {}   # skala -> materialy broni z garda oburacz (model w trakcie PPM)
     mlot_skal = {}    # skala -> mlot dwureczny uniesiony podczas using_item
+    mocny_skal = {}   # skala -> odciagniecie broni przy ladowaniu
+    pelne_skal = {}   # skala -> czas pelnego ladowania; progi use_duration jak u vanillowego luku
     for typ, u in TYPY.items():
-        s = u.get('skala')
+        s = u.get('skala', 1.0) if 'ciezkie' in u else u.get('skala')
         if s is None:
             continue
         for m in sorted(materialy_typu(a.plugins, typ)):
@@ -187,6 +219,9 @@ def main():
                 garda_skal.setdefault(s, set()).add(m)
             if typ == 'GREATHAMMER':
                 mlot_skal.setdefault(s, set()).add(m)
+            elif 'ciezkie' in u:
+                mocny_skal.setdefault(s, set()).add(m)
+                pelne_skal[s] = max(pelne_skal.get(s, 0), u['ciezkie']['pelne'])
 
     baza = os.path.join(a.out, 'pack', 'assets', PRZESTRZEN)
     n = 0
@@ -248,10 +283,43 @@ def main():
                       open(p, 'w'), indent=1)
             n += 1
 
+    for s, zb in sorted(mocny_skal.items()):
+        for m in sorted(zb):
+            nazwa = m.lower(); sc = skala_nazwa(s); scc = sc + 'c'
+            for stopien in range(4):
+                disp = {}
+                for k in KONTEKSTY:
+                    fp = k.startswith('firstperson')
+                    rot = ([-8 - 10 * stopien, 8 + 9 * stopien, 5 + 5 * stopien] if fp
+                           else [-12 - 10 * stopien, 8 + 8 * stopien, 10 + 7 * stopien])
+                    if 'lefthand' in k:
+                        rot = [rot[0], -rot[1], -rot[2]]
+                    disp[k] = {'rotation': rot,
+                               'translation': [-0.7 * stopien, 1.5 + stopien, -1.5 - 1.3 * stopien] if fp
+                                              else [0, 1.5 + stopien, -1 - 1.1 * stopien],
+                               'scale': [round(s * (0.8 if fp else 0.95), 4)] * 3}
+                nazwa_stopnia = scc + (str(stopien) if stopien else '')
+                p = os.path.join(baza, 'models', 'item', nazwa_stopnia, nazwa + '.json')
+                os.makedirs(os.path.dirname(p), exist_ok=True)
+                json.dump({'parent': 'minecraft:item/' + nazwa, 'display': disp}, open(p, 'w'), indent=1)
+            p = os.path.join(baza, 'items', scc, nazwa + '.json')
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            stopnie = [{'threshold': round(pelne_skal[s] * i / 3 * 0.05, 4),
+                        'model': {'type': 'minecraft:model', 'model': '%s:item/%s%d/%s' % (PRZESTRZEN, scc, i, nazwa)}}
+                       for i in range(1, 4)]
+            json.dump({'model': {'type': 'minecraft:condition', 'property': 'minecraft:using_item',
+                                 'on_true': {'type': 'minecraft:range_dispatch', 'property': 'minecraft:use_duration',
+                                             'scale': 0.05, 'entries': stopnie,
+                                             'fallback': {'type': 'minecraft:model',
+                                                          'model': '%s:item/%s/%s' % (PRZESTRZEN, scc, nazwa)}},
+                                 'on_false': {'type': 'minecraft:model', 'model': '%s:item/%s/%s' % (PRZESTRZEN, sc, nazwa)}}},
+                      open(p, 'w'), indent=1)
+            n += 1
+
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
              '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
-             'przestrzen-modeli: %s' % PRZESTRZEN]
-    for nazwa, dane in (('ciezkie', CIEZKIE), ('rytm', RYTM)):
+             'przestrzen-modeli: %s' % PRZESTRZEN, 'debug: false']
+    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM)):
         linie.append('%s: {%s}' % (nazwa, ', '.join('%s: %s' % kv for kv in dane.items())))
     linie.append('ciezkie_warianty:')
     for nazwa, dane in CIEZKIE_WARIANTY.items():
@@ -259,17 +327,24 @@ def main():
     linie.append('typy:')
     for typ, u in TYPY.items():
         linie.append('  %s:' % typ)
-        for k in ('zamach', 'czas', 'rodzaj', 'reakcja', 'ladowanie', 'zasieg', 'wzor', 'poza'):
+        for k in ('zamach', 'czas', 'rodzaj', 'reakcja', 'ladowanie', 'zasieg', 'wzor', 'poza', 'poza_mocnego'):
             if k in u:
                 linie.append('    %s: %s' % (k, u[k]))
         if u.get('ciezka'):
             linie.append('    ciezka: true')
         if u.get('rytm'):
             linie.append('    rytm: true')
+            linie.append('    kroki: [%s]' % ', '.join(str(x) for x in u['kroki']))
+            for k in ('prog_rytmu', 'okno_rytmu'):
+                if k in u:
+                    linie.append('    %s: %s' % (k, u[k]))
+        if u.get('drzewce'):
+            linie.append('    drzewce: true')
         if 'skala' in u:
-            sufiks = 'g' if u.get('garda_oburacz') else 'u' if typ == 'GREATHAMMER' else ''
-            linie.append('    skala: %s%s' % (skala_nazwa(u['skala']), sufiks))
-        for k in ('garda', 'wypad', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie'):
+            linie.append('    skala: %s' % skala_nazwa(u['skala']))
+        elif 'ciezkie' in u:
+            linie.append('    skala: s100')
+        for k in ('garda', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
         if 'atak_pchniecie' in u:

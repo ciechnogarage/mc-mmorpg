@@ -6,7 +6,8 @@
 # (bez dodatkowego zwyklego pchniecia), 3 blok od razu po wypadzie, 4 w odnowieniu LPM = zwykle pchniecie.
 # P = parowanie, U = uderzenie mlota, S = sztylet od tylu/przodu, K = krwawienie, A2 = pancerz.
 # W/B/T/Z = ciezkie kierunkowe; N = W zaraz po pelnym naladowaniu; C3 = kombinacja i pozne trafienia.
-# SW1/SW2 = zamach miecza przed ciezkim ciosem W/A; SW3 = topor bez pchniecia przy wykonczeniu.
+# M3/M12/M24 = PPM na mobie 3/12/24 ticki; BG = Shift+PPM; L3 = lekki lancuch;
+# MW/MA/MS = kierunek mocnego przy puszczeniu PPM. Stare W/B/T/Z/N/SW1/SW2 badaja dawny uklad LPM.
 X="docker exec -e DISPLAY=:99 mc-client-ab"; R="docker exec ab-test rcon-cli"
 r(){ $R "$1" | sed 's/\x1b\[[0-9;]*m//g'; }
 hp(){ r "data get entity @e[tag=$1,limit=1] Health" | grep -oE '[0-9.]+f' | tr -d f; }
@@ -22,6 +23,40 @@ zamroz(){ r "minecraft:attribute BronQA minecraft:movement_speed base set 0" >/d
 odmroz(){ r "minecraft:attribute BronQA minecraft:movement_speed base set 0.1" >/dev/null; }
 czekaj_ciezki(){ local pelne; pelne=$(pelne_s); sleep "$(python3 -c "print($pelne+10/20+0.25)")"; }
 case $1 in
+M3|M12|M24) czysc
+   if [ "$1" = M24 ]; then bron GREATHAMMER PRZ_AKO_MLOT_DWURECZNY_1; else bron SWORD PRZ_WOJ_MIECZ_1; fi
+   zombi 0.5 -59 2.3 1 mocny 1000; stoj 0 10; sleep 1.2
+   case $1 in M3) czas=0.15;; M12) czas=0.65;; M24) czas=1.25;; esac
+   s0=$(stamina); $X xdotool mousedown 3; sleep "$czas"
+   echo "$1 w trakcie: $(r 'animacjebroni sprawdz BronQA' | grep -oE 'laduje=[a-z]+|tickiLadowania=[0-9]+|pelneZa=[0-9]+')"
+   $X xdotool mouseup 3; sleep 0.5
+   echo "$1 HP $(hp mocny) stamina $s0 -> $(stamina) (DBG: SZTURCHNIECIE/MOCNY, ticki, obrazenia)"
+   docker logs ab-test --since 10s 2>&1 | grep 'DBG.*\(SZTURCHNIECIE\|MOCNY\)' | tail -2
+   czysc ;;
+BG) czysc; bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.5 1 blok; stoj 0 10
+    for tryb in bez blok; do
+      r 'minecraft:effect give BronQA minecraft:instant_health 1 5 true' >/dev/null; sleep 1.2
+      h0=$(r 'data get entity BronQA Health' | grep -oE '[0-9.]+f' | tr -d f)
+      if [ "$tryb" = blok ]; then $X xdotool keydown Shift_L; sleep 0.2; $X xdotool mousedown 3; sleep 0.4; fi
+      r 'minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=blok,limit=1]' >/dev/null; sleep 0.2
+      h1=$(r 'data get entity BronQA Health' | grep -oE '[0-9.]+f' | tr -d f)
+      if [ "$tryb" = blok ]; then $X xdotool mouseup 3; $X xdotool keyup Shift_L; fi
+      echo "BG $tryb stracone $(python3 -c "print(round($h0-$h1,2))") HP"
+    done
+    docker logs ab-test --since 10s 2>&1 | grep 'DBG.*BLOK' | tail -2; czysc ;;
+L3) czysc; bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.3 1 lancuch 2000; stoj 0 10; zamroz; sleep 1.2
+    odstep=$(python3 -c "print($(pelne_s)*0.8+0.03)")
+    for i in 1 2 3; do $X xdotool click 1; sleep "$odstep"; done
+    echo "L3 HP $(hp lancuch) (DBG: ogniwo=1,2,3 i zamach WHACK,WHACK,STAB)"
+    docker logs ab-test --since 15s 2>&1 | grep 'DBG.*LEKKI' | tail -9
+    odmroz; czysc ;;
+MW|MA|MS) czysc; bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.3 1 kierunek 1000; stoj 0 10; zamroz; sleep 1.2
+    case $1 in MW) klawisz=w;; MA) klawisz=a;; MS) klawisz=s;; esac
+    $X xdotool mousedown 3; sleep 0.7; $X xdotool keydown "$klawisz"; sleep 0.08
+    $X xdotool mouseup 3; sleep 0.4; $X xdotool keyup "$klawisz"
+    echo "$1 HP $(hp kierunek) (DBG wariant: W=wypad, A=zamach_boczny, S=odepchniecie)"
+    docker logs ab-test --since 10s 2>&1 | grep 'DBG.*MOCNY' | tail -2
+    odmroz; czysc ;;
 SW1) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz
      $X xdotool click 1; sleep 0.2  # zeruj gotowosc w powietrzu; husk ma HP 1000 przed badanym ciosem
      zombi 0.5 -59 2.3 1 sw1pierwszy 1000; zombi 0.5 -59 3.6 1 sw1drugi 1000
@@ -93,9 +128,9 @@ C3) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz; zombi 0.5 -59 2.3 1 c3
 C|E) czysc; [ $1 = E ] && bron HALBERD PRZ_WOJ_DRZEWCOWA_1 || bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.5 1 atak; stoj 0 10
    for tryb in bez garda bez garda; do r "minecraft:effect give BronQA minecraft:instant_health 1 5 true" >/dev/null; sleep 1.2
    h0=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f)
-   [ $tryb = garda ] && { $X xdotool mousedown 3; sleep 0.6; }
+   [ $tryb = garda ] && { $X xdotool keydown Shift_L; sleep 0.2; $X xdotool mousedown 3; sleep 0.6; }
    r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=atak,limit=1]" >/dev/null; sleep 0.3
-   h1=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f); [ $tryb = garda ] && $X xdotool mouseup 3
+   h1=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f); [ $tryb = garda ] && { $X xdotool mouseup 3; $X xdotool keyup Shift_L; }
    echo "$1 $tryb: cios 6 od huska z przodu -> stracone HP $(python3 -c "print(round($h0-$h1,2))")"; sleep 0.8; done; czysc ;;
 D) czysc; bron SWORD PRZ_WOJ_MIECZ_1; echo "D pusta lewa: $(r 'animacjebroni sprawdz BronQA' | grep -oE 'garda=[a-z]+|lewa=[A-Z_]+' | tr '\n' ' ')"
    r "minecraft:item replace entity BronQA weapon.offhand with minecraft:torch" >/dev/null; sleep 1.2
@@ -120,15 +155,15 @@ P) czysc; bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.5 1 parry 1000; stoj 0 10
    # okno parowania miecza: tick gardy 3..9; RCON ~0,1-0,2 s -> cios wysylany zaraz po wcisnieciu PPM trafia w okno
    for d in 0.0 0.1 1.0; do r "minecraft:effect give BronQA minecraft:instant_health 1 5 true" >/dev/null; sleep 1.0
    h0=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f)
-   $X xdotool mousedown 3; sleep $d; r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=parry,limit=1]" >/dev/null; sleep 0.2
-   h1=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f); $X xdotool mouseup 3; sleep 0.5
+   $X xdotool keydown Shift_L; sleep 0.2; $X xdotool mousedown 3; sleep $d; r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=parry,limit=1]" >/dev/null; sleep 0.2
+   h1=$(r "data get entity BronQA Health" | grep -oE '[0-9.]+f' | tr -d f); $X xdotool mouseup 3; $X xdotool keyup Shift_L; sleep 0.5
    echo "P cios ${d}s po PPM: stracone $(python3 -c "print(round($h0-$h1,2))") (0 = parowanie, ok. 2,4 = zwykly blok)"; done; czysc ;;
 U) czysc; bron GREATHAMMER PRZ_AKO_MLOT_DWURECZNY_1
    zombi 2.0 -59 1.5 1 u1 1000; zombi -1.0 -59 1.5 1 u2 1000; stoj 0 10; sleep 1.2
-   $X xdotool mousedown 3; sleep 1; $X xdotool mouseup 3; sleep 0.5
+   $X xdotool mousedown 3; sleep 1.25; $X xdotool mouseup 3; sleep 0.1
    a=$(hp u1); b=$(hp u2); echo "U uderzenie: HP $a / $b (oba <1000)"
-   $X xdotool mousedown 3; sleep 1; $X xdotool mouseup 3; sleep 0.5
-   echo "U w odnowieniu: HP $a -> $(hp u1), $b -> $(hp u2) (bez zmiany)"; czysc ;;
+   $X xdotool mousedown 3; sleep 0.2; $X xdotool mouseup 3; sleep 0.4
+   echo "U podczas 1 s odnowienia: HP $a -> $(hp u1), $b -> $(hp u2) (bez zmiany)"; czysc ;;
 S) czysc; bron DAGGER PRZ_NIN_SZTYLET_1; zombi 0.5 -59 2.3 1 tyl 1000; stoj 0 10
    r "minecraft:tp @e[tag=tyl,limit=1] 0.5 -59 2.3 0 0" >/dev/null; sleep 1.2; $X xdotool click 1; sleep 0.5; t=$(hp tyl)
    czysc; zombi 0.5 -59 2.3 1 przod 1000; r "minecraft:tp @e[tag=przod,limit=1] 0.5 -59 2.3 180 0" >/dev/null
@@ -139,7 +174,7 @@ K) czysc; bron AXE PRZ_WOJ_TOPOR_1; zombi 0.5 -59 2.3 1 krew 1000; stoj 0 10; sl
    echo "K krwawienie: HP zaraz $a, po 1 s $b, po 2-3 s $c (kolejne spadki)"; czysc ;;
 R) czysc; bron SWORD PRZ_WOJ_MIECZ_1; zombi 0.5 -59 2.3 1 rip 1000; stoj 0 10; sleep 1.5
    $X xdotool click 1; sleep 1.2; a=$(hp rip)   # zwykly pelny cios
-   $X xdotool mousedown 3; sleep 0.1; r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=rip,limit=1]" >/dev/null; sleep 0.15
-   $X xdotool mouseup 3; sleep 0.05; $X xdotool click 1; sleep 0.5; b=$(hp rip)
+   $X xdotool keydown Shift_L; sleep 0.2; $X xdotool mousedown 3; sleep 0.1; r "minecraft:damage BronQA 6 minecraft:mob_attack by @e[tag=rip,limit=1]" >/dev/null; sleep 0.15
+   $X xdotool mouseup 3; $X xdotool keyup Shift_L; sleep 0.05; $X xdotool click 1; sleep 0.5; b=$(hp rip)
    echo "R riposta: zwykly cios $(python3 -c "print(round(1000-$a,1))"), cios po parowaniu $(python3 -c "print(round($a-$b,1))") (ok. x1,5)"; czysc ;;
 esac

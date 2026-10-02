@@ -21,6 +21,7 @@ fi
 P=$D/data/plugins
 rm -f "$P"/animacje-broni-*.jar; cp "$(ls -t "$H"/build/libs/animacje-broni-*.jar | head -1)" "$P/"
 mkdir -p "$P/AnimacjeBroni"; cp "$H/wynik/config.yml" "$P/AnimacjeBroni/config.yml"
+sed -i 's/^debug: false/debug: true/' "$P/AnimacjeBroni/config.yml"   # testy czytaja linie DBG
 rm -rf "$P/Nexo/pack/assets/bron"; cp -a "$H/wynik/pack/assets/bron" "$P/Nexo/pack/assets/bron"
 docker network inspect ab-net >/dev/null 2>&1 || docker network create --subnet ${AB_SUBNET:-10.99.40.0/24} ab-net >/dev/null   # nie 192.168.64/20 (LAN wlasciciela); po testach: docker network rm ab-net
 docker rm -f ab-test >/dev/null 2>&1 || true
