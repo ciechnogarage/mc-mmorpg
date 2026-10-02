@@ -34,7 +34,6 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +44,10 @@ import org.bukkit.util.Vector;
 final class Rzucanie implements Listener {
   static final class Stan {
     int n;
-    boolean prawa, lewa, przelacznik;
+    boolean prawa, lewa, przelacznik, razem;
+    long oczekujeLpm = -1;
+    boolean cofnijPrzelacznik, cofnijRazem;
+    long cofnijOd = -99;
     double oslonaP, oslonaL;
     boolean oplaconeP, oplaconeL;
   }
@@ -58,8 +60,8 @@ final class Rzucanie implements Listener {
   private final EfektyCzasowe efekty;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
   private final Map<EntityDamageEvent, Boolean> typyMythicLib = new WeakHashMap<>();
-  private final Map<UUID, Long> ppmLewa = new HashMap<>();
-  private final Map<UUID, Long> czekaLpm = new HashMap<>();
+  private final Map<UUID, Integer> generacja = new HashMap<>();
+  private final Map<UUID, Long> ppmPrawa = new HashMap<>(), ppmLewa = new HashMap<>();
   private long teraz;
   /** Zachowane dla paska Wybor, ktory ma wlasny odsiew LPM po PPM. */
   private final Map<UUID, Long> ostatniPpm = new HashMap<>();
@@ -93,6 +95,7 @@ final class Rzucanie implements Listener {
   void ustawWybor(Wybor w) { this.wybor = w; }
   void zdejmijBronie(Player p) { efekty.zdejmijBronie(p); }
   void uspokoj(LivingEntity cel, int ticki) { efekty.uspokoj(cel, ticki); }
+  boolean prawaBron(Player p) { return efekty.prawaBron(p); }
 
   private void log(Player p, String co) {
     if (plugin.getConfig().getBoolean("debug-wejscie", false)) plugin.getLogger().info("[wejscie] t=" + teraz + " " + p.getName() + " " + co);
@@ -101,13 +104,12 @@ final class Rzucanie implements Listener {
   /** Wylaczenie pluginu: zdejmij strumienie i przejsciowe atrybuty. */
   void wylacz() {
     efekty.wylacz(); odrzutowe.wylacz(); strumien.stopWszystkie(); rzucajacy.clear();
-    czekaLpm.clear(); ppmLewa.clear(); ostatniPpm.clear(); ostatnieQ.clear();
     for (Player p : Bukkit.getOnlinePlayers()) { atrybutyLpm(p, false); ruch(p, false); }
   }
 
   boolean rzuca(Player p) { return rzucajacy.containsKey(p.getUniqueId()) || odrzutowe.rzuca(p); }
 
-  boolean przelacznikPrawej(Player p) {
+  boolean przelacznikLewej(Player p) {
     Stan s = rzucajacy.get(p.getUniqueId());
     return s != null && s.przelacznik && trybLpm(p);
   }
@@ -152,19 +154,6 @@ final class Rzucanie implements Listener {
 
   private void trybyLpm() { for (Player p : Bukkit.getOnlinePlayers()) atrybutyLpm(p, trybLpm(p)); }
 
-  private boolean prawaSprint(Player p) {
-    return plugin.getConfig().getBoolean("sterowanie.prawa-sprint", true) && trybLpm(p)
-        && zak(p, true) != null && p.getCurrentInput().isSprint();
-  }
-
-  boolean trzymaSprint(Player p) { return prawaSprint(p); }
-
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void bezSprintu(PlayerToggleSprintEvent e) {
-    if (e.isSprinting() && plugin.getConfig().getBoolean("sterowanie.prawa-sprint", true)
-        && trybLpm(e.getPlayer())) e.setCancelled(true);
-  }
-
   private void atrybutyLpm(Player p, boolean wl) {
     modDo(p, Attribute.BLOCK_INTERACTION_RANGE, kZasieg, plugin.getConfig().getDouble("zasieg-blokow", 0), wl);
     modDo(p, Attribute.ENTITY_INTERACTION_RANGE, kIstoty, 0, wl);
@@ -196,21 +185,23 @@ final class Rzucanie implements Listener {
     if (e.getHand() != EquipmentSlot.HAND || !trybLpm(e.getPlayer())) return;
     if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
       e.setCancelled(true);
+      Ksiega.Zaklecie lewa = zak(e.getPlayer(), false);
+      if (lewa != null && lewa.odrzutowe() && (wybor == null || !wybor.otwarty(e.getPlayer())))
+        odrzutowe.lpm(e.getPlayer(), lewa, rowno());
     } else if (e.getAction() == Action.LEFT_CLICK_AIR && (wybor == null || !wybor.otwarty(e.getPlayer()))) {
-      // Q tez macha reka = LEFT_CLICK_AIR. Przelacznik czeka na odsiew Q;
-      // ladunek startuje od razu, a oznaczQ go przerywa przed gotowoscia.
+      // LPM dziala od razu (naraz z PPM = obie w tym samym ticku). Klawisz Q tez macha reka = LEFT_CLICK_AIR, a MenuKey
+      // woła "zaklecia q" chwile pozniej — wtedy oznaczQ cofa skutek tego klikniecia (stan sprzed klikniecia).
       Player p = e.getPlayer();
       if (swiezeQ(p)) return;
-      Ksiega.Zaklecie prawa = zak(p, true);
-      if (prawa != null && prawa.odrzutowe()) {
-        odrzutowe.lpm(p, prawa, rowno());
+      Ksiega.Zaklecie lewa = zak(p, false);
+      if (lewa != null && lewa.odrzutowe()) {
+        odrzutowe.lpm(p, lewa, rowno());
         return;
       }
-      if (prawa == null || !prawa.koncentracja()) return;
-      UUID u = p.getUniqueId();
-      if (czekaLpm.containsKey(u)) czekaLpm.remove(u);
-      else czekaLpm.put(u, teraz);
-      log(p, "LPM: oczekuje na odsiew Q");
+      Stan s = rzucajacy.computeIfAbsent(p.getUniqueId(), k -> new Stan());
+      s.cofnijPrzelacznik = s.przelacznik; s.cofnijRazem = s.razem; s.cofnijOd = teraz;
+      boolean bylaPrawa = prawaTeraz(p);
+      klikLpm(p, teraz, bylaPrawa, (s.razem || s.przelacznik) && bylaPrawa);
     }
   }
 
@@ -220,8 +211,9 @@ final class Rzucanie implements Listener {
   void oznaczQ(Player p) {
     odrzutowe.przerwij(p);
     ostatnieQ.put(p.getUniqueId(), teraz);
-    Long klik = czekaLpm.remove(p.getUniqueId());
-    if (klik != null && teraz - klik <= Q_OKNO + 1) {
+    Stan s = rzucajacy.get(p.getUniqueId());
+    if (s != null && teraz - s.cofnijOd <= Q_OKNO + 1) {   // machniecie bylo od Q, nie od LPM: cofnij jego skutek
+      s.oczekujeLpm = -1; s.przelacznik = s.cofnijPrzelacznik; s.razem = s.cofnijRazem; s.cofnijOd = -99;
       log(p, "Q: cofniete LPM");
     }
   }
@@ -229,14 +221,53 @@ final class Rzucanie implements Listener {
 
   private int rowno() { return Math.max(0, plugin.getConfig().getInt("rowno", 4)); }
 
+  private void klikLpm(Player p, long czasLpm, boolean bylaPrawa, boolean byloObie) {
+    if (ksiega.w(p.getInventory().getItemInOffHand()) == null) return;
+    UUID u = p.getUniqueId();
+    Stan s = rzucajacy.computeIfAbsent(u, k -> new Stan());
+    Long ostatniePpm = ppmPrawa.get(u);
+    boolean prawaTrzymana = bylaPrawa || (ostatniePpm != null && ostatniePpm >= czasLpm
+        && ostatniePpm - czasLpm <= rowno() && prawaTeraz(p));
+    if (byloObie || s.razem || (s.przelacznik && prawaTrzymana)) {
+      s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
+      log(p, "LPM: koniec lewej przy obu");
+    } else if (prawaTrzymana) {
+      s.razem = true; s.oczekujeLpm = -1;
+      log(p, "LPM: razem");
+    } else {
+      s.oczekujeLpm = czasLpm;
+      log(p, "LPM: czeka na PPM");
+    }
+  }
+
   void wcisnietoPpm(Player p) {
     if (!trybLpm(p)) return;
     ostatniPpm.put(p.getUniqueId(), teraz);
-    Ksiega.Zaklecie lewa = zak(p, false);
-    if (lewa == null) return;
-    if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, rowno()); return; }
-    ppmLewa.put(p.getUniqueId(), teraz);
-    rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
+    if (wybor != null && wybor.otwarty(p)) { wybor.wcisnietoPpm(p); return; }
+    Ksiega.Zaklecie prawa = zak(p, true);
+    if (prawa != null && prawa.odrzutowe()) {
+      odrzutowe.ppm(p, prawa, true, rowno());
+      return;
+    }
+    if (ksiega.w(p.getInventory().getItemInMainHand()) == null) {
+      // Prawa pusta, zaklecie tylko w lewej: trzymany PPM prowadzi LEWA (puszczenie PPM serwer widzi zawsze).
+      if (ksiega.w(p.getInventory().getItemInOffHand()) != null) {
+        Ksiega.Zaklecie lewa = zak(p, false);
+        if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, false, rowno()); return; }
+        ppmLewa.put(p.getUniqueId(), teraz);
+        rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
+      }
+      return;
+    }
+    {
+      ppmPrawa.put(p.getUniqueId(), teraz);
+      Stan s = rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
+      if (s.oczekujeLpm >= 0 && teraz - s.oczekujeLpm <= rowno() && !swiezeQ(p)) {
+        s.razem = !s.przelacznik;
+        s.oczekujeLpm = -1;
+        log(p, "PPM po LPM: razem");
+      }
+    }
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
@@ -255,7 +286,7 @@ final class Rzucanie implements Listener {
     } else if (e.getHand() == EquipmentSlot.OFF_HAND
         && ksiega.w(e.getItem()) != null && (wybor == null || !wybor.otwarty(p))) {
       Ksiega.Zaklecie lewa = ksiega.w(e.getItem());
-      if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, rowno()); return; }
+      if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, false, rowno()); return; }
       ppmLewa.put(p.getUniqueId(), teraz);
       rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
     }
@@ -279,7 +310,7 @@ final class Rzucanie implements Listener {
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) {
     UUID u = e.getPlayer().getUniqueId();
-    rzucajacy.remove(u); czekaLpm.remove(u); ppmLewa.remove(u); ostatniPpm.remove(u); ostatnieQ.remove(u);
+    rzucajacy.remove(u); generacja.remove(u); ppmPrawa.remove(u); ppmLewa.remove(u); ostatniPpm.remove(u); ostatnieQ.remove(u);
     strumien.stop(e.getPlayer()); atrybutyLpm(e.getPlayer(), false); ruch(e.getPlayer(), false);
     odrzutowe.wyjscie(e.getPlayer());
   }
@@ -287,13 +318,13 @@ final class Rzucanie implements Listener {
   void stop(Player p, boolean dzwiek) {
     odrzutowe.przerwij(p);
     UUID u = p.getUniqueId();
-    czekaLpm.remove(u);
+    generacja.merge(u, 1, Integer::sum); // uniewaznij LPM oczekujacy na odsiew Q
     Stan s = rzucajacy.get(u);
-    ppmLewa.remove(u);
+    ppmPrawa.remove(u); ppmLewa.remove(u);
     if (s == null) return;
     if (dzwiek && p.isOnline()) przejscie(p, s.prawa ? zak(p, true) : null,
         s.lewa ? zak(p, false) : null, null, null);
-    if (s.przelacznik || s.prawa || s.lewa) log(p, "stop: prawa=false lewa=false przelacznik=false");
+    if (s.przelacznik || s.razem || s.prawa || s.lewa) log(p, "stop: prawa=false lewa=false razem=false przelacznik=false");
     rzucajacy.remove(u);
     strumien.stop(p);
     ruch(p, false);
@@ -306,14 +337,17 @@ final class Rzucanie implements Listener {
     return t != null && teraz - t <= tolerancja;
   }
 
-  private boolean prawaTeraz(Player p, Stan s) {
+  private boolean prawaTeraz(Player p) {
     if (zak(p, true) == null || !zak(p, true).koncentracja()) return false;
-    return trybLpm(p) && (prawaSprint(p) || s.przelacznik);
+    return trybLpm(p) && swiezy(ppmPrawa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
   }
 
-  private boolean lewaTeraz(Player p) {
+  private boolean lewaTeraz(Player p, Stan s, boolean pr) {
     if (zak(p, false) == null || !zak(p, false).koncentracja()) return false;
-    return swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
+    if (!trybLpm(p)) return swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
+    boolean ppmTrzymaLewa = ksiega.w(p.getInventory().getItemInMainHand()) == null
+        && swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
+    return s.przelacznik || (s.razem && pr) || ppmTrzymaLewa;
   }
 
   /** Koszt many za tik z aktywnych dloni; to samo zaklecie w obu = jedna reka x mnoznik podwojnego. */
@@ -375,28 +409,7 @@ final class Rzucanie implements Listener {
 
   private void tick() {
     teraz++;
-    odrzutowe.ustawCzas(teraz);
-    for (var it = czekaLpm.entrySet().iterator(); it.hasNext();) {
-      var e = it.next();
-      if (teraz - e.getValue() <= Q_OKNO + 1) continue;
-      Player p = Bukkit.getPlayer(e.getKey());
-      if (p != null && p.isOnline() && !p.isDead() && trybLpm(p) && zak(p, true) != null
-          && zak(p, true).koncentracja()) {
-        Stan s = rzucajacy.computeIfAbsent(e.getKey(), u -> new Stan());
-        s.przelacznik = !s.przelacznik;
-        log(p, "LPM: przelacznik prawej=" + s.przelacznik);
-      }
-      it.remove();
-    }
-    for (Player p : Bukkit.getOnlinePlayers()) {
-      if (plugin.getConfig().getBoolean("sterowanie.prawa-sprint", true) && trybLpm(p) && p.isSprinting())
-        p.setSprinting(false);
-      if (prawaSprint(p) && zak(p, true).odrzutowe() && (wybor == null || !wybor.otwarty(p)))
-        odrzutowe.sprint(p, zak(p, true), rowno());
-      if (prawaSprint(p) && zak(p, true).koncentracja())
-        rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
-    }
-    odrzutowe.tick(teraz, plugin.getConfig().getInt("ppm-tolerancja", 6));
+    odrzutowe.tick(teraz, plugin.getConfig().getInt("ppm-tolerancja", 6), rowno());
     for (var it = rzucajacy.entrySet().iterator(); it.hasNext(); ) {
       var wpis = it.next();
       Stan s = wpis.getValue();
@@ -404,10 +417,22 @@ final class Rzucanie implements Listener {
       if (p == null || !p.isOnline() || p.isDead()) { it.remove(); if (p != null) { strumien.stop(p); ruch(p, false); } continue; }
       try {
         boolean tryb = trybLpm(p);
-        if (!tryb || zak(p, true) == null || !zak(p, true).koncentracja()) s.przelacznik = false;
-        boolean pr = prawaTeraz(p, s);
-        boolean lw = lewaTeraz(p);
+        boolean pr = prawaTeraz(p);
+        if (!tryb || zak(p, false) == null || !zak(p, false).koncentracja()) {
+          s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
+        }
+        if (!pr && s.razem) {
+          s.razem = false; // puszczenie PPM konczy "razem", ale nie przelacznik lewej
+          log(p, "razem=false (PPM puszczony)");
+        }
+        if (s.oczekujeLpm >= 0 && teraz - s.oczekujeLpm > rowno()) {
+          s.oczekujeLpm = -1;
+          s.przelacznik = !s.przelacznik;
+          log(p, "przelacznik lewej=" + s.przelacznik);
+        }
+        boolean lw = lewaTeraz(p, s, pr);
         if (!pr && !lw) {                                        // obie dlonie puszczone — koniec
+          if (s.oczekujeLpm >= 0) continue;
           if (s.prawa || s.lewa) przejscie(p, s.prawa ? zak(p, true) : null,
               s.lewa ? zak(p, false) : null, null, null);
           if (s.prawa || s.lewa) log(p, "dlonie: prawa=false lewa=false");
@@ -445,7 +470,7 @@ final class Rzucanie implements Listener {
           PlayerData d = PlayerData.get(p);
           if (d.getMana() < koszt) {
             skill(p, ksiega.skBrakMany);
-            s.przelacznik = false;
+            s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
             it.remove(); strumien.stop(p); ruch(p, false);
             continue;
           }
@@ -479,7 +504,7 @@ final class Rzucanie implements Listener {
         if (lewa != null && lewa.typ().equals("tarcza") && !toSamo(prawa, lewa) && s.oplaconeL)
           s.oslonaL = Math.min(lewa.sila(), s.oslonaL + lewa.sila() / lewa.narastanie());
       } catch (Throwable t) {   // np. nieaktualne dane MMOCore po szybkim przelogowaniu: gasimy tylko tego gracza
-        s.przelacznik = false;
+        s.przelacznik = false; s.razem = false; s.oczekujeLpm = -1;
         it.remove(); strumien.stop(p); ruch(p, false);
         plugin.getLogger().warning("rzucanie przerwane (" + p.getName() + "): " + t);
       }
@@ -565,9 +590,9 @@ final class Rzucanie implements Listener {
     skill(p, "Zak_" + Character.toUpperCase(z.id().charAt(0)) + z.id().substring(1) + "_Peka");
     Ksiega.Zaklecie staraP = s.prawa ? zak(p, true) : null;
     Ksiega.Zaklecie staraL = s.lewa ? zak(p, false) : null;
-    if (prawa) { s.prawa = false; s.oslonaP = 0; s.przelacznik = false; }
-    else { s.lewa = false; s.oslonaL = 0; ppmLewa.remove(p.getUniqueId()); }
-    if (obie) { s.lewa = false; s.oslonaL = 0; ppmLewa.remove(p.getUniqueId()); }
+    if (prawa) { s.prawa = false; s.oslonaP = 0; ppmPrawa.remove(p.getUniqueId()); }
+    else { s.lewa = false; s.oslonaL = 0; s.przelacznik = false; ppmLewa.remove(p.getUniqueId()); }
+    if (obie) { s.lewa = false; s.oslonaL = 0; s.razem = false; ppmLewa.remove(p.getUniqueId()); }
     przejscie(p, staraP, staraL, s.prawa ? zak(p, true) : null, s.lewa ? zak(p, false) : null);
   }
 

@@ -234,6 +234,8 @@ final class EfektyCzasowe implements Listener {
     return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(kBron, PersistentDataType.BYTE);
   }
 
+  boolean prawaBron(Player p) { return oznaczona(p.getInventory().getItemInMainHand()); }
+
   private void zdejmij(Player p, boolean prawa) {
     Map<Boolean, Bron> mapa = bronie.get(p.getUniqueId());
     if (mapa == null) return;

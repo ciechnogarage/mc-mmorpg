@@ -17,7 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
  * Ulubione zaklecia jak w Skyrimie. Oznaczane w Ksiedze (Shift+LPM → {@code zaklecia ulubione <gracz> <id>}).
  * W grze (tylko KOLKO myszy, krok ±1 — klawisze 1-9 dzialaja zwyczajnie, tez z Shiftem):
  * <ul>
- *   <li>Shift+Ctrl + kolko w slocie zaklecia prawej dloni → nastepne z kola: ulubione (bez ulubionych — wszystkie) + „pusta”.
+ *   <li>(v2.4: Shift = LEWA, Ctrl = PRAWA) Ctrl + kolko w slocie zaklecia prawej dloni → nastepne z kola: ulubione (bez ulubionych — wszystkie) + „pusta”.
  *       „Pusta” odklada zaklecie; slot jest zapamietany, wiec kolkiem na tym samym slocie wraca sie do zaklec.</li>
  *   <li>Shift + kolko → to samo dla lewej dloni, niezaleznie od prawej (takze pusta lewa, jesli juz miala zaklecie).</li>
  * </ul>
@@ -68,13 +68,13 @@ final class Ulubione implements Listener {
   public void kolko(PlayerItemHeldEvent e) {
     Player p = e.getPlayer();
     boolean shift = p.isSneaking(), ctrl = p.getCurrentInput().isSprint();
-    if (!shift) return;                                      // sam Ctrl rzuca prawa dlonia
+    if (shift == ctrl) return;                                // ani jedno, albo oba naraz — zwykla zmiana slotu
     int roznica = (e.getNewSlot() - e.getPreviousSlot() + 9) % 9;
     if (roznica != 1 && roznica != 8) return;               // D: klawisz 1-9 (skok) — zwykla zmiana slotu
     int krok = roznica == 1 ? 1 : -1;                        // kolko w dol = dalej
     PlayerInventory inv = p.getInventory();
     int slot = e.getPreviousSlot();
-    boolean naLewej = !ctrl;                                 // Shift = lewa, Shift+Ctrl = prawa
+    boolean naLewej = shift;                                 // Shift + kolko = LEWA dlon, Ctrl + kolko = PRAWA
     if (naLewej) {
       ItemStack lewa = inv.getItemInOffHand();
       boolean zaklecie = ksiega.w(lewa) != null;
