@@ -87,20 +87,23 @@ final class PelnaRysownik {
       g.setTransform(old);
     }
     g.setColor(new Color(0, 0, 0, 180));
-    g.fillRect(0, 0, width, 20);
+    g.fillRect(0, 0, width, PelnaMath.PASEK);   // pasek 28 px: latwiej trafic wzrokiem
     g.fillRect(0, height - 14, width, 14);
-    for (int i = 0; i < data.tabs().size() && i * 64 < width - 24; i++) {
+    int tabWidth = PelnaMath.szerokoscZakladki(width, data.tabs().size());
+    for (int i = 0; i < data.tabs().size() && i * tabWidth < width - 64; i++) {
       MapaData.Tab tab = data.tabs().get(i);
-      String label = tab.name().length() > 9 ? tab.name().substring(0, 9) : tab.name();
+      int maxLetters = Math.max(1, (tabWidth - 6) / 7);
+      String label = tab.name().length() > maxLetters ? tab.name().substring(0, maxLetters) : tab.name();
       g.setColor(Color.WHITE);
-      g.drawString(label, i * 64 + 3, 13);
+      g.drawString(label, i * tabWidth + 3, 18);
       if (tab.world().equals(data.world())) {
         g.setColor(new Color(0xe0c38c));
-        g.fillRect(i * 64 + 2, 17, 60, 2);
+        g.fillRect(i * tabWidth + 2, 24, tabWidth - 4, 2);
       }
     }
     g.setColor(Color.WHITE);
-    g.drawString("✕", width - 17, 14);
+    g.drawString("Atlas", width - 60, 18);
+    g.drawString("✕", width - 17, 18);
     g.drawString("Przybliżenie: " + data.zoom() + "  ·  PPM — przeciągnij · kółko — zoom · Shift — wyjście",
         4, height - 3);
     g.dispose();

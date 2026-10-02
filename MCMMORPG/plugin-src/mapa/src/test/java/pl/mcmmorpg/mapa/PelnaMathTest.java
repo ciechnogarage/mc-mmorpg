@@ -39,4 +39,13 @@ class PelnaMathTest {
     assertEquals(-2, PelnaMath.przycisk(500, 8, 512, 3));
     assertEquals(-1, PelnaMath.przycisk(250, 30, 512, 3));
   }
+
+  @Test void pasekRozpoznajeAtlasPrzedZamknieciem() {
+    assertEquals(7, PelnaMath.przycisk(447, 8, 512, 8));
+    assertEquals(-3, PelnaMath.przycisk(448, 8, 512, 8));
+    assertEquals(-3, PelnaMath.przycisk(487, 19, 512, 8));
+    assertEquals(-2, PelnaMath.przycisk(488, 8, 512, 8));
+    assertEquals(-1, PelnaMath.przycisk(470, PelnaMath.PASEK, 512, 8));
+    assertEquals(-3, PelnaMath.przycisk(470, 24, 512, 8));
+  }
 }

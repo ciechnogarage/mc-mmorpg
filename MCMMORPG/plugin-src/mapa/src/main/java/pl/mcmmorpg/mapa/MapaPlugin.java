@@ -38,9 +38,10 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private static final NamespacedKey EMPTY_MODEL = new NamespacedKey("mapa", "pusty");
   private final Map<UUID, Double> handZooms = new HashMap<>();
   private final Map<UUID, AtlasState> atlases = new HashMap<>();
-  private MapaData data;
+  private volatile MapaData data;
   private HandMapRenderer renderer;
   private PelnaMapa fullMap;
+  private MinimapaZnaczniki minimapMarkers;
   private MapView mapView;
   private int mapId;
   private List<Double> zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
@@ -78,6 +79,10 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
         getLogger().warning("Pelna mapa niedostepna: " + ex.getMessage());
       }
     } else getLogger().warning("MapEngine nie jest aktywny; pelna mapa jest wylaczona.");
+    if (Bukkit.getPluginManager().isPluginEnabled("NMinimap")) {
+      minimapMarkers = new MinimapaZnaczniki(this);
+      Bukkit.getPluginManager().registerEvents(minimapMarkers, this);
+    }
     Bukkit.getPluginManager().registerEvents(this, this);
     Bukkit.getScheduler().runTaskTimer(this, this::refreshPlayerTiles, 20L, 20L);
   }
@@ -123,6 +128,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     if (!zooms.contains(defaultZoom)) defaultZoom = zooms.get(0);
     refreshMillis = Math.max(0, config.getLong("odswiezanie-ms", 250));
     data = MapaData.load(getDataFolder(), config, getLogger());
+    if (minimapMarkers != null) minimapMarkers.reloadRadius();
     handZooms.clear();
     if (renderer != null) renderer.forgetAll();
     if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
@@ -150,6 +156,10 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     if (fullMap != null && fullMap.active(event.getPlayer())) return;
     if (mapView == null || event.getHand() != EquipmentSlot.HAND || !ourMap(event.getItem())) return;
     event.setCancelled(true);
+    switch (event.getAction()) {
+      case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> { }
+      default -> { return; }
+    }
     Player player = event.getPlayer();
     if (player.isSneaking()) {
       double current = handZoom(player);
@@ -159,6 +169,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       String label = next < 1 ? (int) (1 / next) + " piksele na blok"
           : "1 piksel = " + (next == Math.rint(next) ? Integer.toString((int) next) : next) + " bl.";
       player.sendActionBar(Component.text("Przybliżenie: " + label));
+    } else if (fullMap != null) {
+      openFull(player, player.getWorld().getName(), player.getLocation().getX(),
+          player.getLocation().getZ());
     } else openAtlas(player);
   }
 
@@ -305,11 +318,20 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   }
 
   private void openAtlas(Player player, String world, boolean initial) {
+    openAtlas(player, world, initial, null, null);
+  }
+
+  void openAtlas(Player player, String world, double x, double z) {
+    openAtlas(player, world, false, x, z);
+  }
+
+  private void openAtlas(Player player, String world, boolean initial, Double x, Double z) {
     MapaData.Grid grid = data.grid(world);
     if (grid == null) {
       player.sendMessage("Mapa świata jest niedostępna.");
       return;
     }
+    if (fullMap != null && fullMap.active(player)) fullMap.close(player);
     world = grid.world();
     int level = Math.min(1, grid.levels().size() - 1);
     AtlasHolder holder = new AtlasHolder();
@@ -317,7 +339,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
         + "Mapa świata · " + worldName(world), NamedTextColor.WHITE);
     holder.inventory = Bukkit.createInventory(holder, 54, title);
     AtlasState state = new AtlasState(holder, world, level);
-    if (initial) centerOnPlayerOrStart(player, state);
+    if (x != null && z != null) centerAt(state, x, z);
+    else if (initial) centerOnPlayerOrStart(player, state);
     else centerOnWorld(player, state);
     paintAll(player, state);
     atlases.put(player.getUniqueId(), state);

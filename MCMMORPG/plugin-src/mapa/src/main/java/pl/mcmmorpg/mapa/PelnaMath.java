@@ -2,6 +2,7 @@ package pl.mcmmorpg.mapa;
 
 final class PelnaMath {
   record Punkt(double u, double v) {}
+  static final int PASEK = 28;   // wysokosc gornego paska z zakladkami (px)
   private PelnaMath() {}
 
   static float kierunek(float yaw) {
@@ -31,11 +32,16 @@ final class PelnaMath {
     return new Punkt(centerX - du * zoom, centerZ - dv * zoom);
   }
 
-  // -1 oznacza tlo, -2 przycisk zamkniecia, pozostale wartosci to indeksy zakladek.
+  static int szerokoscZakladki(int width, int tabs) {
+    return Math.max(1, Math.min(64, (width - 64) / Math.max(1, tabs)));
+  }
+
+  // -1 oznacza tlo, -2 zamkniecie, -3 atlas, pozostale wartosci to indeksy zakladek.
   static int przycisk(double u, double v, int width, int tabs) {
-    if (v < 0 || v >= 20 || u < 0 || u >= width) return -1;
+    if (v < 0 || v >= PASEK || u < 0 || u >= width) return -1;
     if (u >= width - 24) return -2;
-    int tab = (int) u / 64;
-    return tab < tabs && u < width - 24 ? tab : -1;
+    if (u >= width - 64) return -3;
+    int tab = (int) u / szerokoscZakladki(width, tabs);
+    return tab < tabs ? tab : -1;
   }
 }

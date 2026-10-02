@@ -123,6 +123,12 @@ final class PelnaMapa implements Listener {
       case 2 -> BlockFace.SOUTH;
       default -> BlockFace.WEST;
     };
+    // dokladna odleglosc: plaszczyzna stoi w pelnym bloku, wiec przesuwamy gracza wzdluz wzroku (max pol bloku),
+    // inaczej ekran wychodzi raz wiekszy, raz mniejszy (2,5-3,5 bloku)
+    double planeFwd = osX ? (forwardZ + 0.5 + forward.getZ() * 0.5) : (forwardX + 0.5 + forward.getX() * 0.5);
+    Location dokladna = player.getLocation().clone();
+    if (osX) dokladna.setZ(planeFwd - forward.getZ() * distance); else dokladna.setX(planeFwd - forward.getX() * distance);
+    if (dokladna.distanceSquared(player.getLocation()) > 1e-6 && !player.teleport(dokladna)) return false;
     IMapDisplay display = api.displayProvider().createBasic(
         new BlockVector(leftX, topY, leftZ), new BlockVector(rightX, bottomY, rightZ), facing);
     try {
@@ -315,6 +321,13 @@ final class PelnaMapa implements Listener {
     int button = PelnaMath.przycisk(cursor.u(), cursor.v(), session.width,
         Math.min(8, plugin.data().tabs().size()));
     if (button == -2) { close(player); return; }
+    if (button == -3) {
+      String world = session.world;
+      double x = session.centerX, z = session.centerZ;
+      close(player);
+      plugin.openAtlas(player, world, x, z);
+      return;
+    }
     if (button >= 0) {
       MapaData.Tab tab = plugin.data().tabs().get(button);
       session.world = tab.world();

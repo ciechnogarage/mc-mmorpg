@@ -14,6 +14,7 @@ val paperApi = "io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT"
 dependencies {
   compileOnly(paperApi)
   compileOnly("de.pianoman911:mapengine-api:1.8.12")
+  compileOnly(files("libs/NMinimap-1.0.9.jar", "libs/AnvilORM-1.0.2.jar"))
   testImplementation(paperApi)
   testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")

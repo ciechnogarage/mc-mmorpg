@@ -9,6 +9,8 @@ pelna:
   szerokosc: 4
   wysokosc: 3
   odleglosc: 3.0
+minimapa:
+  promien: 256
 tytul-okna: "䅐"
 nazwy-swiatow:
   world: "Kraina"
