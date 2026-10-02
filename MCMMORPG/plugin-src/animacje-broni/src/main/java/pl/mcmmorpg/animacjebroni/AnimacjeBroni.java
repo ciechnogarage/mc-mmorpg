@@ -703,6 +703,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.MONITOR)
   public void lpm(PlayerAnimationEvent e) {
     if (e.getAnimationType() != PlayerAnimationType.ARM_SWING) return;
+    // anulowane machniecie nie jest ciosem (klik w pelna mape, tryb zaklec) - bez smugi i swistu
+    if (e.isCancelled()) return;
     Player p = e.getPlayer();
     if (programowyZamach.contains(p.getUniqueId())
         || getServer().getCurrentTick() - tickProgramowegoZamachu.getOrDefault(p.getUniqueId(), -100) <= 1) return;
