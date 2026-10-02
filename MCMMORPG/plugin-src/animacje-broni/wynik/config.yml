@@ -19,6 +19,7 @@ typy:
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
     ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    atak_pchniecie: {gdy: [ciezki_przod, wykonczenie], zamach: stab, rodzaj: klute}
   LONG_SWORD:
     zamach: whack
     czas: 7
@@ -28,6 +29,7 @@ typy:
     garda: {redukcja: 0.4, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     parowanie: {okno: 6, riposta_ticki: 30, riposta_mnoznik: 1.5}
     ciezkie: {przod: wypad, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12}
+    atak_pchniecie: {gdy: [ciezki_przod, wykonczenie], zamach: stab, rodzaj: klute}
   KATANA:
     zamach: whack
     czas: 5

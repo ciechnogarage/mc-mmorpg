@@ -11,7 +11,7 @@ Feeling broni opiera się na rodzaju obrażeń: **cięte** (ostrze tnie szeroko)
 
 | Broń (typ) | Obrażenia | Zamach (t) | Naładowanie | Zasięg | PPM | Trzymanie |
 |---|---|---|---|---|---|---|
-| Miecz (SWORD) | cięte | cios 6 | — | 3 | garda −40% | vanilla |
+| Miecz (SWORD / LONG_SWORD) | cięte / kłute zależnie od ciosu | cięcie 6 / 7, pchnięcie przy ciężkim z przodu lub wykończeniu | — | 3 | garda −40% | vanilla |
 | Klinga elfów (KATANA) | cięte | cios 5 | — | 3 | garda −30%, lżejsza | vanilla |
 | Topór (AXE) | cięte | cios 8 | 60% | 3 | — | vanilla |
 | Miecz dwuręczny (GREATSWORD) | cięte, ciężka | cios 10 | 80% | 3,3 | **garda oburącz** −55% (ostrze poziomo przed ciałem), wolna | ×1,30 |
@@ -59,8 +59,19 @@ przy uruchomieniu); zwykłe koszty MMOItems nadal działają.
 Kombinacja obejmuje trzy zwykłe trafienia bronią w walce wręcz (bez halabardy i włóczni). Pierwszy cios jest zwykły;
 od drugiego każdy cios serii kosztuje dodatkowo 2% maksymalnej staminy. Kolejny cios musi mieć co najmniej 90% naładowania i trafić najpóźniej 8 ticków po pełnym
 odnowieniu broni (`20 / attack_speed` ticków od poprzedniego trafienia). Trzeci cios zadaje ×1,4 obrażeń i efekt rodzaju
-broni. Po drugim trafieniu następny zamach dostaje odwrotną animację `whack`/`stab`; znacznik PDC z końcowym tickiem
-chroni ją przed okresowym `dopasuj()`, a po wykończeniu lub przerwaniu serii animacja wraca.
+broni. Po drugim trafieniu SWORD / LONG_SWORD szykuje pchnięcie na wykończenie. Znacznik PDC z końcowym tickiem
+chroni ten zamach przed okresowym `dopasuj()`, a po wykończeniu lub przerwaniu serii animacja wraca.
+Pozostałe bronie zachowują swój zwykły zamach również przy wykończeniu.
+
+## Miecz: cięcie i pchnięcie
+
+SWORD i LONG_SWORD tną zwykłym ciosem (`whack`). Gotowy ciężki cios z trzymanym W lub bez kierunku
+zmienia zamach w dłoni na pchnięcie (`stab`) jeszcze przed kliknięciem. Tak samo pchnięciem jest trzecie
+trafienie kombinacji. Ciężki cios z A/D pozostaje bocznym cięciem, z S odpycha, a podczas biegu
+jest cięciem z rozbiegu. Gracz i obserwatorzy widzą zamach przypisany do przedmiotu w chwili kliknięcia.
+Pchnięcie przebija do dwóch kolejnych celów w linii za pierwszym (każdy za ×0,6 obrażeń), ignoruje
+30% redukcji pancerza i ma smugę krytyka oraz stuk grotu. Cięcie zachowuje dotychczasowe efekty.
+Parowanie i riposta działają jak wcześniej. Warianty pochodzą z `atak_pchniecie` w `TYPY`.
 
 Młot dwuręczny ma osobny model `s130u` podczas `using_item`, wstępnie ustawiony pionowo nad głową. Przy naładowanym
 zamachu pojawia się dwutickowa smuga widoczna w świecie; kształt i cząsteczki zależą od rodzaju broni.
@@ -93,13 +104,13 @@ model z Nexo/MMOItems (`model:`) zostaje. Materiały bez modelu „narzędzia”
   zbiera z `MMOItems/item/<typ>.yml` serwera, transformacje rąk z client.jar).
 - Plugin poprawia przedmiot, gdy trafia do ręki (wejście, zmiana slotu, zamiana rąk, klik/przeciąganie, podniesienie)
   i przeglądem obu rąk co 10 ticków. `ItemBuildEvent` MMOItems 6.10 jest martwy (nikt go nie wywołuje).
-- `/animacjebroni sprawdz <gracz>` — typ, zamach i model z głównej ręki oraz `ciezkiGotowy` i `ciezkiZa` (ticki do gotowości, −1 bez wariantu); `/animacjebroni reload`.
+- `/animacjebroni sprawdz <gracz>` — typ, zamach i model z głównej ręki, `zamachTeraz`, `nastepnyAtak` oraz `ciezkiGotowy` i `ciezkiZa` (ticki do gotowości, −1 bez wariantu); `/animacjebroni reload`.
 
 ## Zmiana / test / wdrożenie
     python3 generuj.py && cp wynik/config.yml src/main/resources/ && ./build.sh
     qa/klon.sh <katalog> --fresh        # klon world1 ab-test (+ klient: docker run ... mc-client-test qa/launch.sh)
     qa/scena.sh GREATSWORD HARDENED_STEEL_CLAYMORE   # dane komponentów + zrzuty 1. osoba / zamach / przód
-    qa/mechanika.sh A|A2|B0|C|D|E|G|P|U|S|K|W|B|T|Z|N|C3   # pomiary mechanik, w tym ciezkich i kombinacji
+    qa/mechanika.sh A|A2|B0|C|D|E|G|P|U|S|K|W|B|T|Z|N|C3|SW1|SW2|SW3   # pomiary mechanik, w tym miecza i kombinacji
     qa/efekty.sh SWORD PRZ_WOJ_MIECZ_1 miecz   # zrzuty trafienia i pozy PPM
     ./wdroz.sh                          # world1: kopia + cofnij.sh, tylko przy 0 graczy, RESTART
 

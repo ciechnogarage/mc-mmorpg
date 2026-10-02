@@ -6,6 +6,7 @@
 # (bez dodatkowego zwyklego pchniecia), 3 blok od razu po wypadzie, 4 w odnowieniu LPM = zwykle pchniecie.
 # P = parowanie, U = uderzenie mlota, S = sztylet od tylu/przodu, K = krwawienie, A2 = pancerz.
 # W/B/T/Z = ciezkie kierunkowe; N = W zaraz po pelnym naladowaniu; C3 = kombinacja i pozne trafienia.
+# SW1/SW2 = zamach miecza przed ciezkim ciosem W/A; SW3 = topor bez pchniecia przy wykonczeniu.
 X="docker exec -e DISPLAY=:99 mc-client-ab"; R="docker exec ab-test rcon-cli"
 r(){ $R "$1" | sed 's/\x1b\[[0-9;]*m//g'; }
 hp(){ r "data get entity @e[tag=$1,limit=1] Health" | grep -oE '[0-9.]+f' | tr -d f; }
@@ -21,6 +22,30 @@ zamroz(){ r "minecraft:attribute BronQA minecraft:movement_speed base set 0" >/d
 odmroz(){ r "minecraft:attribute BronQA minecraft:movement_speed base set 0.1" >/dev/null; }
 czekaj_ciezki(){ local pelne; pelne=$(pelne_s); sleep "$(python3 -c "print($pelne+10/20+0.25)")"; }
 case $1 in
+SW1) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz
+     $X xdotool click 1; sleep 0.2  # zeruj gotowosc w powietrzu; husk ma HP 1000 przed badanym ciosem
+     zombi 0.5 -59 2.3 1 sw1pierwszy 1000; zombi 0.5 -59 3.6 1 sw1drugi 1000
+     r "minecraft:attribute @e[tag=sw1pierwszy,limit=1] minecraft:armor base set 10" >/dev/null
+     czekaj_ciezki; $X xdotool keydown w; sleep 0.15
+     echo "SW1 przed kliknieciem: $(r 'animacjebroni sprawdz BronQA' | grep -oE 'ciezkiGotowy=[a-z]+|zamachTeraz=[A-Z]+|nastepnyAtak=[a-z]+')"
+     $X xdotool click 1; sleep 0.15; $X xdotool keyup w; sleep 0.4
+     echo "SW1 pchniecie: HP armor 10 $(hp sw1pierwszy), drugi w linii $(hp sw1drugi) (oba <1000)"
+     odmroz; czysc ;;
+SW2) czysc; bron SWORD PRZ_WOJ_MIECZ_1; stoj 0 10; zamroz
+     $X xdotool click 1; czekaj_ciezki; $X xdotool keydown a; sleep 0.15
+     echo "SW2 przed kliknieciem: $(r 'animacjebroni sprawdz BronQA' | grep -oE 'ciezkiGotowy=[a-z]+|zamachTeraz=[A-Z]+|nastepnyAtak=[a-z]+')"
+     $X xdotool keyup a; odmroz ;;
+SW3) czysc; bron AXE PRZ_WOJ_TOPOR_1; stoj 0 10; zamroz
+     odstep=$(python3 -c "print($(pelne_s)+0.1)")
+     sw3_start_ns=$(date +%s%N)
+     $X xdotool click 1; sleep 0.2  # cios w powietrzu zeruje ciezki, nie liczy sie do kombinacji
+     zombi 0.5 -59 2.3 1 sw3 2000
+     sleep "$(python3 -c "print(max(0, $odstep - ($(date +%s%N) - $sw3_start_ns) / 1e9))")"
+     $X xdotool click 1; sleep "$odstep"; sw3_drugi_ns=$(date +%s%N); $X xdotool click 1; sleep 0.15
+     echo "SW3 miedzy 2. a 3. ciosem: $(r 'animacjebroni sprawdz BronQA' | grep -oE 'zamachTeraz=[A-Z]+|nastepnyAtak=[a-z]+')"
+     sleep "$(python3 -c "print(max(0, $odstep - ($(date +%s%N) - $sw3_drugi_ns) / 1e9))")"; $X xdotool click 1; sleep 0.4
+     echo "SW3 topor: HP $(hp sw3) (oczekiwany zamach WHACK przed 3. ciosem)"
+     odmroz; czysc ;;
 A) czysc; bron HALBERD PRZ_WOJ_DRZEWCOWA_1; echo "sprawdz: $(r 'animacjebroni sprawdz BronQA')"
    zombi 0.5 -59 1.6 1 blisko; stoj 0 25; sleep 1.2; $X xdotool click 1; sleep 0.6; echo "A1 cel 1 blok: HP $(hp blisko) (100 = nie trafil)"
    czysc; zombi 0.5 -59 3.5 1 z3; zombi 0.5 -59 4.4 1 z4; stoj 0 8; sleep 1.2; $X xdotool click 1; sleep 0.6

@@ -26,9 +26,10 @@ G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 PAROWANIE = {'okno': 6, 'riposta_ticki': 30, 'riposta_mnoznik': 1.5}
 KRWAWIENIE = {'procent': 0.25, 'czas': 60, 'stosy': 1}
 PANCERZ = {'procent': 0.30}
+PCHNIECIE_MIECZA = {'gdy': ['ciezki_przod', 'wykonczenie'], 'zamach': 'stab', 'rodzaj': 'klute'}
 TYPY = {
-    'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
-    'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
@@ -271,6 +272,10 @@ def main():
         for k in ('garda', 'wypad', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
+        if 'atak_pchniecie' in u:
+            atak = u['atak_pchniecie']
+            linie.append('    atak_pchniecie: {gdy: [%s], zamach: %s, rodzaj: %s}' %
+                         (', '.join(atak['gdy']), atak['zamach'], atak['rodzaj']))
     linie.append('materialy-z-modelami:')
     linie += ['  - %s' % m for m in sorted(materialy)]
     os.makedirs(a.out, exist_ok=True)
