@@ -28,7 +28,7 @@ final class Placeholdery extends PlaceholderExpansion {
     if (param.equals("tryb")) return rzucanie.trybHud(p) ? "tak" : "nie";
     if (param.equals("lewa_stan")) return rzucanie.stanDloni(p, false);
     if (param.equals("prawa_stan")) return rzucanie.stanDloni(p, true);
-    if (param.equals("lewa_przelacznik")) return rzucanie.przelacznikLewej(p) ? "tak" : "nie";
+    if (param.equals("prawa_przelacznik")) return rzucanie.przelacznikPrawej(p) ? "tak" : "nie";
     if (param.startsWith("ulubione_")) return ulubione.jest(p, param.substring(9)) ? "★" : "☆";
     if (param.equals("prawa") || param.equals("lewa")) {
       Ksiega.Zaklecie z = ksiega.w(param.equals("prawa") ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand());

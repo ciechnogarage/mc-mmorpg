@@ -170,6 +170,8 @@ klawisz-q:
 # Wejscie przytrzymanych przyciskow i atrybuty trybu zaklec.
 ppm-tolerancja: 7
 rowno: 4
+sterowanie:
+  prawa-sprint: true
 zasieg-blokow: 0
 kotwica:
   wlaczona: false

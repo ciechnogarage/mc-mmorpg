@@ -25,7 +25,7 @@ import org.bukkit.inventory.EquipmentSlot;
 /**
  * Szybki wybor jak ulubione w Skyrimie: Shift+Q wlacza pasek ulubionych u gory ekranu (BossBar, bez okna — gracz dalej
  * chodzi i patrzy), Shift+Q albo Q wylacza. Gdy wlaczony: kolko (albo klawisz 1-9) wybiera pozycje, LPM wklada ja do
- * LEWEJ dloni, PPM do PRAWEJ (jak w Skyrimie). Po 15 s bez ruchu zamyka sie sam.
+ * PRAWEJ dloni, PPM do LEWEJ (jak w vanilli). Po 15 s bez ruchu zamyka sie sam.
  * Przy okazji: Q (wyrzucenie) nad slotem w oknie DeluxeMenus zamyka to okno — Q wlacza i wylacza menu.
  */
 final class Wybor implements Listener {
@@ -78,7 +78,7 @@ final class Wybor implements Listener {
     s.i = Math.floorMod(s.i, k.size());
     String dlonie = "§7L: §f" + nazwa(ksiega.w(p.getInventory().getItemInOffHand())) + "  §7P: §f" + nazwa(ksiega.w(p.getInventory().getItemInMainHand()));
     s.bar.name(L.deserialize("§5✦ §f" + ulubione.pasek(p, k, k.get(s.i)) + "   §8│ " + dlonie
-        + "   §8│ §7kółko: wybór · §eLPM§7: lewa · §ePPM§7: prawa · §eQ§7: zamknij"));
+        + "   §8│ §7kółko: wybór · §eLPM§7: prawa · §ePPM§7: lewa · §eQ§7: zamknij"));
   }
 
   private static String nazwa(Ksiega.Zaklecie z) { return z == null ? "pusta" : z.nazwa(); }
@@ -94,8 +94,8 @@ final class Wybor implements Listener {
     odswiez(p, s);
   }
 
-  void wcisnietoLpm(Player p) { przypisz(p, false); }
-  void wcisnietoPpm(Player p) { przypisz(p, true); }
+  void wcisnietoLpm(Player p) { przypisz(p, true); }
+  void wcisnietoPpm(Player p) { przypisz(p, false); }
 
   // ------------------------------------------------------------------ wejscie gracza przy otwartym pasku
 
