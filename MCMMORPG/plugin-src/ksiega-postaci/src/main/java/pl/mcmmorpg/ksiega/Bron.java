@@ -528,6 +528,7 @@ final class Bron implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void click(InventoryClickEvent event) {
     if (!(event.getWhoClicked() instanceof Player player)) return;
+    if (plugin.ukrywanie.isBookView(event.getView())) return;
     ItemStack cursor = event.getCursor(), current = event.getCurrentItem();
     if (virtual(cursor)) {
       event.setCancelled(true);
@@ -655,6 +656,7 @@ final class Bron implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void drag(InventoryDragEvent event) {
     if (!(event.getWhoClicked() instanceof Player player)) return;
+    if (plugin.ukrywanie.isBookView(event.getView())) return;
     int top = event.getView().getTopInventory().getSize();
     if (virtual(event.getOldCursor()) || event.getRawSlots().stream().anyMatch(raw -> {
       if (raw < top) return false;

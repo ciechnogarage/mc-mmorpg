@@ -1,0 +1,12 @@
+Sloty skrzyni 0–53; kolumny 0–8, wiersze 0–5.
+PRZYGODA: 0, 1, 9, 10 (kolumny 0–1, wiersze 0–1)
+POSTAĆ: 2, 3, 11, 12 (kolumny 2–3, wiersze 0–1)
+EKWIPUNEK: 18, 19, 27, 28 (kolumny 0–1, wiersze 2–3)
+ZDOLNOŚCI: 20, 21, 29, 30 (kolumny 2–3, wiersze 2–3)
+PROFESJE: 5, 6, 14, 15 (kolumny 5–6, wiersze 0–1)
+HANDEL: 7, 8, 16, 17 (kolumny 7–8, wiersze 0–1)
+CHOWAŃCE: 23, 24, 32, 33 (kolumny 5–6, wiersze 2–3)
+KOMPANIA: 25, 26, 34, 35 (kolumny 7–8, wiersze 2–3)
+POMOC: 37 (kolumna 1, wiersz 4; x=25..43, y=89..107 GUI; górne granice wyłączne)
+USTAWIENIA: 40 (kolumna 4, wiersz 4; x=79..97, y=89..107 GUI; górne granice wyłączne)
+ZAMKNIJ: 43 (kolumna 7, wiersz 4; x=133..151, y=89..107 GUI; górne granice wyłączne)

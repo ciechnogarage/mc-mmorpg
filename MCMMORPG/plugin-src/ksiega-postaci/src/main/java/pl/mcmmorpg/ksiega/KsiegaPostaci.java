@@ -18,6 +18,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   Ksiazka ksiazka;
   Bron bron;
   Migracja migracja;
+  UkrywanieEkwipunku ukrywanie;
 
   @Override public void onEnable() {
     saveDefaultConfig();
@@ -27,8 +28,9 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
     ksiazka = new Ksiazka(this);
     bron = new Bron(this);
     migracja = new Migracja(this);
+    ukrywanie = new UkrywanieEkwipunku(this);
     MMOItems.plugin.getInventory().register(bizuteria.supplier());
-    for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron}) {
+    for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie}) {
       Bukkit.getPluginManager().registerEvents(listener, this);
     }
     if (Bukkit.getPluginManager().isPluginEnabled("MMOProfiles"))
@@ -37,6 +39,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   }
 
   @Override public void onDisable() {
+    if (ukrywanie != null) ukrywanie.stop();
     for (Player player : Bukkit.getOnlinePlayers()) {
       bizuteria.clearView(player);
       bron.clearClone(player);
@@ -66,6 +69,9 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   @EventHandler public void join(PlayerJoinEvent e) { refreshLater(e.getPlayer()); }
   @EventHandler public void respawn(PlayerRespawnEvent e) { refreshLater(e.getPlayer()); }
   @EventHandler public void world(PlayerChangedWorldEvent e) { refreshLater(e.getPlayer()); }
-  @EventHandler public void quit(PlayerQuitEvent e) { dane.unload(e.getPlayer()); }
+  @EventHandler public void quit(PlayerQuitEvent e) {
+    if (ukrywanie != null) ukrywanie.quit(e.getPlayer());
+    dane.unload(e.getPlayer());
+  }
 
 }

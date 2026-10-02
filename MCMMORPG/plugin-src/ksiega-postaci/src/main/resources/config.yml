@@ -1,4 +1,7 @@
 karta-komenda: player
+ukryj-ekwipunek:
+  wlaczone: true
+  znaki-tytulu: ['䅠']
 typy-broni:
   - SWORD
   - DAGGER

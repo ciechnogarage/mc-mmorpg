@@ -4,6 +4,19 @@ Plugin utrzymuje cztery sloty biżuterii w siatce craftingu okna E: naszyjnik, d
 
 Wynik craftingu jest przyciskiem Sakwy (`MISCELLANEOUS/UI_SAKWA`); klik wykonuje z konsoli `core-playervault sakwa <gracz>` po jednym ticku. Przycisk książki receptur resetuje stan receptur i uruchamia u gracza `/player`.
 
+## Ukrywanie ekwipunku w menu Księgi
+
+`ukryj-ekwipunek.wlaczone: true` w `config.yml` włącza maskowanie dolnych 36 slotów
+gracza w oknie DeluxeMenus. Plugin rozpoznaje okno po dowolnym znaku z listy
+`ukryj-ekwipunek.znaki-tytulu` w tytule widoku (domyślnie `䅠`). Tytuł menu
+DeluxeMenus musi zawierać ten glif. Dla tego okna ProtocolLib zamienia wyłącznie
+wychodzące `WINDOW_ITEMS` i `SET_SLOT` na puste sloty gracza; nie zmienia
+ekwipunku serwera ani kursora. Kliknięcia dolnej części, przeciąganie do niej,
+shift-klik, cyfry, F i Q są anulowane, żeby niewidocznych przedmiotów nie
+przenosić. Po zamknięciu okna stan maskowania znika; tick później
+`updateInventory()` przywraca klientowi prawdziwą zawartość. Wyjście gracza
+również usuwa stan. Wymagany jest `ProtocolLib.jar` na backendzie `items`.
+
 ## Układ slotów gracza w oknie E
 
 | Slot | Rola |
@@ -37,8 +50,8 @@ Sloty 2–4 przyjmują typy i statystyki z `typy-mikstur-i-uzytkowych` oraz `sta
 
 1. Zrób kopię konfiguracji, profili i ekwipunków staging. Zatrzymaj backend `items`.
 2. Wgraj nową konfigurację MMOInventory i skrypt CoreTools, dodaj tłumaczenia do paczki. Nie nadpisuj całych plików lang, jeśli mają inne klucze.
-3. Nadzorca buduje `./build.sh` i instaluje JAR. Uruchamia tylko backend `items` za Velocity.
-4. Na testowym profilu sprawdź migrację 9–14 oraz 2–4, obrazy w 1 i 13, klik/shift-klik/cyfry/drag/Q/double-click, PPM konsumpcji z 2–4, zapisy po relogu/przełączeniu profilu, staty MMOItems, F i Shift+F, osobne zmiany P/L, broń dwuręczną, śmierć i Sakwe. Przejrzyj `./mc logs items` oraz `MCMMORPG/logs/latest.log`.
+3. Nadzorca buduje `./build.sh` i instaluje JAR. Uruchamia tylko backend `items` za Velocity; sprawdza obecność ProtocolLib.
+4. Na testowym profilu sprawdź migrację 9–14 oraz 2–4, obrazy w 1 i 13, klik/shift-klik/cyfry/drag/Q/double-click, PPM konsumpcji z 2–4, zapisy po relogu/przełączeniu profilu, staty MMOItems, F i Shift+F, osobne zmiany P/L, broń dwuręczną, śmierć i Sakwe. Otwórz menu z glifem `䅠`: 36 dolnych slotów ma wyglądać na puste, po zamknięciu zawartość i hotbar mają wrócić, a przedmioty po relogu pozostać nietknięte. Przejrzyj `./mc logs items` oraz `MCMMORPG/logs/latest.log`.
 5. Po potwierdzeniu działania można usunąć stary EqMigracja. Nie uruchamiaj go równocześnie z tą migracją.
 
 ## Cofnięcie

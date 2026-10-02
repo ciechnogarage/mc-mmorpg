@@ -1,0 +1,25 @@
+# TEST: Ksiega Wedrowca w 2x gestosci, 4 cwiartki 176x222 wyswietlane w polowie (88x111 GUI)
+kw_1:
+  font: minecraft:default
+  texture: nexo:gui/kw_1
+  ascent: 13
+  height: 111
+  char: 䅠
+kw_2:
+  font: minecraft:default
+  texture: nexo:gui/kw_2
+  ascent: 13
+  height: 111
+  char: 䅡
+kw_3:
+  font: minecraft:default
+  texture: nexo:gui/kw_3
+  ascent: -98
+  height: 111
+  char: 䅢
+kw_4:
+  font: minecraft:default
+  texture: nexo:gui/kw_4
+  ascent: -98
+  height: 111
+  char: 䅣
