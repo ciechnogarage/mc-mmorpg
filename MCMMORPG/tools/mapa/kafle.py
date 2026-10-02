@@ -82,6 +82,7 @@ def ikony(pack):
     rysuj("plus",  lambda d: (d.rectangle([7,3,9,13], fill=zl), d.rectangle([3,7,13,9], fill=zl)))
     rysuj("minus", lambda d: d.rectangle([3,7,13,9], fill=zl))
     rysuj("srodek",lambda d: (d.ellipse([3,3,13,13], outline=zl, width=2), d.rectangle([7,7,9,9], fill=zl)))
+    rysuj("pelny", lambda d: [d.rectangle(r, fill=zl) for r in ([2,2,6,3],[2,2,3,6],[10,2,14,3],[13,2,14,6],[2,13,6,14],[2,10,3,14],[10,13,14,14],[13,10,14,14])])
 
 JAR = "/home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client/client.jar"
 NEXO_TEX = "/opt/docker/mc/data/world1/plugins/Nexo/pack/assets/nexo/textures/item/chowance"

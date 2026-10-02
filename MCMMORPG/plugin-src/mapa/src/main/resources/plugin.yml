@@ -3,10 +3,11 @@ main: pl.mcmmorpg.mapa.MapaPlugin
 version: ${version}
 api-version: '1.21'
 description: Mapa świata i atlas kafelków
+softdepend: [MapEngine]
 commands:
   mapa:
     description: Otwiera lub przeładowuje mapę
-    usage: /mapa otworz <gracz> | /mapa przeladuj
+    usage: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa przeladuj
     permission: mapa.admin
 permissions:
   mapa.admin:

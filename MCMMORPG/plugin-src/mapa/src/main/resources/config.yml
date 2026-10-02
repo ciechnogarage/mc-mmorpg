@@ -5,6 +5,10 @@ zoom-reka-swiat:          # domyslny zoom w danym swiecie (Stolica jest mala i g
   stolica_odnowa: 0.5
   loch_001: 0.5
 odswiezanie-ms: 250
+pelna:
+  szerokosc: 4
+  wysokosc: 3
+  odleglosc: 3.0
 tytul-okna: "䅐"
 nazwy-swiatow:
   world: "Kraina"
@@ -15,24 +19,24 @@ zakladki:
   - {swiat: stolica_odnowa, nazwa: "Stolica", ikona: "minecraft:bell"}
   - {swiat: loch_001, nazwa: "Loch 001 · Kwietna Polana", ikona: "minecraft:flowering_azalea"}
 znaczniki:   # WYGENEROWANE z tools/mapa/znaczniki.json
-  - {swiat: world, x: 149, z: 197, nazwa: "Start", typ: start, opis: ["Tu zaczyna każda nowa postać."]}
-  - {swiat: world, x: 28, z: -188, nazwa: "Gromowładca", typ: legendarny, opis: ["Legendarny Chowaniec.", "Walka dla zaprawionych drużyn."]}
-  - {swiat: world, x: 580, z: 364, nazwa: "Żelaznoróg", typ: legendarny, opis: ["Legendarny Chowaniec.", "Walka dla zaprawionych drużyn."]}
-  - {swiat: world, x: -236, z: -284, nazwa: "Szepczący Gaj", typ: strefa, opis: ["Tu żyje: Pędzik."]}
-  - {swiat: world, x: -188, z: 28, nazwa: "Wilcze Ostępy", typ: strefa, opis: ["Tu żyje: Wilkor."]}
-  - {swiat: world, x: -188, z: 196, nazwa: "Świetlisty Gąszcz", typ: strefa, opis: ["Tu żyje: Promiennik."]}
-  - {swiat: world, x: 28, z: 28, nazwa: "Wietrzne Turnie", typ: strefa, opis: ["Tu żyje: Wichrzan."]}
-  - {swiat: world, x: 196, z: 364, nazwa: "Perłowa Zatoka", typ: strefa, opis: ["Tu żyje: Muszlik."]}
-  - {swiat: world, x: 412, z: 460, nazwa: "Rdzawe Wąwozy", typ: strefa, opis: ["Tu żyje: Głazogrzbiet."]}
-  - {swiat: world, x: 292, z: 580, nazwa: "Wygasłe Palenisko", typ: strefa, opis: ["Tu żyje: Iskrzyk."]}
-  - {swiat: stolica_odnowa, x: 0, z: 19, nazwa: "Nexus", typ: miasto, opis: ["Wejście do lochów."]}
-  - {swiat: stolica_odnowa, x: 0, z: 51, nazwa: "Przewodnik", typ: miasto, opis: ["Przystań i pierwsze kroki."]}
-  - {swiat: stolica_odnowa, x: -22, z: 19, nazwa: "Rynek", typ: miasto, opis: ["Sklep, skup i aukcje."]}
-  - {swiat: stolica_odnowa, x: -37, z: 30, nazwa: "Kuźnia", typ: miasto, opis: ["Naprawa i rozbiórka przedmiotów."]}
-  - {swiat: stolica_odnowa, x: 36, z: 20, nazwa: "Dziedziniec rzemiosła", typ: miasto, opis: ["13 warsztatów profesji."]}
-  - {swiat: stolica_odnowa, x: -27, z: -29, nazwa: "Hala postaci", typ: miasto, opis: ["Postać i umiejętności."]}
-  - {swiat: stolica_odnowa, x: 29, z: -35, nazwa: "Menażeria", typ: miasto, opis: ["Chowańce."]}
-  - {swiat: stolica_odnowa, x: 0, z: -35, nazwa: "Świątynia", typ: miasto, opis: ["Wybór patrona i łaski."]}
-  - {swiat: stolica_odnowa, x: 25, z: 48, nazwa: "Dom drużyn", typ: miasto, opis: ["Drużyna, znajomi i gildie."]}
-  - {swiat: stolica_odnowa, x: -22, z: 52, nazwa: "Plac ćwiczeń", typ: miasto, opis: ["Trening walki."]}
-  - {swiat: stolica_odnowa, x: 9, z: 42, nazwa: "Tablica", typ: miasto, opis: ["Zadania i drogowskazy."]}
+  - {swiat: world, x: 149, z: 197, nazwa: "Start", typ: start, ikona: campfire, opis: ["Tu zaczyna każda nowa postać."]}
+  - {swiat: world, x: 28, z: -188, nazwa: "Gromowładca", typ: legendarny, ikona: chw_gromowladca, opis: ["Legendarny Chowaniec.", "Walka dla zaprawionych drużyn."]}
+  - {swiat: world, x: 580, z: 364, nazwa: "Żelaznoróg", typ: legendarny, ikona: chw_zelaznorog, opis: ["Legendarny Chowaniec.", "Walka dla zaprawionych drużyn."]}
+  - {swiat: world, x: -236, z: -284, nazwa: "Szepczący Gaj", typ: strefa, ikona: chw_pedzik, opis: ["Tu żyje: Pędzik."]}
+  - {swiat: world, x: -188, z: 28, nazwa: "Wilcze Ostępy", typ: strefa, ikona: chw_wilkor, opis: ["Tu żyje: Wilkor."]}
+  - {swiat: world, x: -188, z: 196, nazwa: "Świetlisty Gąszcz", typ: strefa, ikona: chw_promiennik, opis: ["Tu żyje: Promiennik."]}
+  - {swiat: world, x: 28, z: 28, nazwa: "Wietrzne Turnie", typ: strefa, ikona: chw_wichrzan, opis: ["Tu żyje: Wichrzan."]}
+  - {swiat: world, x: 196, z: 364, nazwa: "Perłowa Zatoka", typ: strefa, ikona: chw_muszlik, opis: ["Tu żyje: Muszlik."]}
+  - {swiat: world, x: 412, z: 460, nazwa: "Rdzawe Wąwozy", typ: strefa, ikona: chw_glazogrzbiet, opis: ["Tu żyje: Głazogrzbiet."]}
+  - {swiat: world, x: 292, z: 580, nazwa: "Wygasłe Palenisko", typ: strefa, ikona: chw_iskrzyk, opis: ["Tu żyje: Iskrzyk."]}
+  - {swiat: stolica_odnowa, x: 0, z: 19, nazwa: "Nexus", typ: miasto, ikona: ender_eye, opis: ["Wejście do lochów."]}
+  - {swiat: stolica_odnowa, x: 0, z: 51, nazwa: "Przewodnik", typ: miasto, ikona: book, opis: ["Przystań i pierwsze kroki."]}
+  - {swiat: stolica_odnowa, x: -22, z: 19, nazwa: "Rynek", typ: miasto, ikona: emerald, opis: ["Sklep, skup i aukcje."]}
+  - {swiat: stolica_odnowa, x: -37, z: 30, nazwa: "Kuźnia", typ: miasto, ikona: iron_ingot, opis: ["Naprawa i rozbiórka przedmiotów."]}
+  - {swiat: stolica_odnowa, x: 36, z: 20, nazwa: "Dziedziniec rzemiosła", typ: miasto, ikona: iron_pickaxe, opis: ["13 warsztatów profesji."]}
+  - {swiat: stolica_odnowa, x: -27, z: -29, nazwa: "Hala postaci", typ: miasto, ikona: armor_stand, opis: ["Postać i umiejętności."]}
+  - {swiat: stolica_odnowa, x: 29, z: -35, nazwa: "Menażeria", typ: miasto, ikona: lead, opis: ["Chowańce."]}
+  - {swiat: stolica_odnowa, x: 0, z: -35, nazwa: "Świątynia", typ: miasto, ikona: totem_of_undying, opis: ["Wybór patrona i łaski."]}
+  - {swiat: stolica_odnowa, x: 25, z: 48, nazwa: "Dom drużyn", typ: miasto, ikona: name_tag, opis: ["Drużyna, znajomi i gildie."]}
+  - {swiat: stolica_odnowa, x: -22, z: 52, nazwa: "Plac ćwiczeń", typ: miasto, ikona: iron_sword, opis: ["Trening walki."]}
+  - {swiat: stolica_odnowa, x: 9, z: 42, nazwa: "Tablica", typ: miasto, ikona: writable_book, opis: ["Zadania i drogowskazy."]}

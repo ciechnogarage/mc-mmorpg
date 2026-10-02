@@ -40,6 +40,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private final Map<UUID, AtlasState> atlases = new HashMap<>();
   private MapaData data;
   private HandMapRenderer renderer;
+  private PelnaMapa fullMap;
   private MapView mapView;
   private int mapId;
   private List<Double> zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
@@ -71,12 +72,19 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   public void onEnable() {
     saveDefaultConfig();
     loadAll();
+    if (Bukkit.getPluginManager().isPluginEnabled("MapEngine")) {
+      try { fullMap = new PelnaMapa(this); }
+      catch (LinkageError | IllegalStateException ex) {
+        getLogger().warning("Pelna mapa niedostepna: " + ex.getMessage());
+      }
+    } else getLogger().warning("MapEngine nie jest aktywny; pelna mapa jest wylaczona.");
     Bukkit.getPluginManager().registerEvents(this, this);
     Bukkit.getScheduler().runTaskTimer(this, this::refreshPlayerTiles, 20L, 20L);
   }
 
   @Override
   public void onDisable() {
+    if (fullMap != null) fullMap.closeAll();
     if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
     if (renderer != null) renderer.forgetAll();
     atlases.clear();
@@ -84,6 +92,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   }
 
   MapaData data() { return data; }
+  // domyslny zoom swiata (zoom-reka-swiat, z fallbackiem na szablon lochu), inaczej globalny
+  double zoomSwiata(String world) {
+    String key = getConfig().contains("zoom-reka-swiat." + world) ? world : MapaData.klucz(world);
+    double z = getConfig().getDouble("zoom-reka-swiat." + key, defaultZoom);
+    return zooms.contains(z) ? z : defaultZoom;
+  }
   // zoom wybrany przez gracza, inaczej domyslny dla swiata (zoom-reka-swiat), inaczej globalny
   double handZoom(Player player) {
     Double own = handZooms.get(player.getUniqueId());
@@ -94,6 +108,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     return zooms.contains(perWorld) ? perWorld : defaultZoom;
   }
   long refreshMillis() { return refreshMillis; }
+  List<Double> zooms() { return zooms; }
 
   private void loadAll() {
     reloadConfig();
@@ -132,6 +147,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   @EventHandler
   public void onInteract(PlayerInteractEvent event) {
+    if (fullMap != null && fullMap.active(event.getPlayer())) return;
     if (mapView == null || event.getHand() != EquipmentSlot.HAND || !ourMap(event.getItem())) return;
     event.setCancelled(true);
     Player player = event.getPlayer();
@@ -164,6 +180,20 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     int slot = event.getRawSlot();
     if (slot < 0 || slot >= 54) return;
     if (slot < 9) {
+      if (slot == 8) {
+        String world = state.world;
+        MapaData.Grid grid = data.grid(world);
+        if (grid != null) {
+          MapaData.Level level = grid.level(state.level);
+          double x = MapaMath.centerX(state.left, grid.x0(), level.bpp());
+          double z = MapaMath.centerZ(state.top, grid.z0(), level.bpp());
+          Bukkit.getScheduler().runTask(this, () -> {
+            player.closeInventory();
+            openFull(player, world, x, z);
+          });
+        }
+        return;
+      }
       MapaData.Tab tab = MapaData.tab(data.tabs(), slot);
       if (tab != null && data.grid(tab.world()) != null)
         Bukkit.getScheduler().runTask(this, () -> openAtlas(player, tab.world(), false));
@@ -233,16 +263,39 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       else openAtlas(target);
       return true;
     }
+    if (args.length == 2 && args[0].equalsIgnoreCase("pelna")) {
+      Player target = Bukkit.getPlayerExact(args[1]);
+      if (target == null) sender.sendMessage("Nie znaleziono gracza.");
+      else openFull(target, target.getWorld().getName(), target.getLocation().getX(),
+          target.getLocation().getZ());
+      return true;
+    }
     if (args.length == 1 && args[0].equalsIgnoreCase("przeladuj")) {
+      if (fullMap != null) fullMap.closeAll();
       for (Player player : Bukkit.getOnlinePlayers())
         if (player.getOpenInventory().getTopInventory().getHolder() instanceof AtlasHolder) player.closeInventory();
       atlases.clear();
       loadAll();
+      if (fullMap != null) fullMap.reloadIcons();
       sender.sendMessage("Mapa przeładowana.");
       return true;
     }
-    sender.sendMessage("Użycie: /mapa otworz <gracz> | /mapa przeladuj");
+    sender.sendMessage("Użycie: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa przeladuj");
     return true;
+  }
+
+  private void openFull(Player player, String world, double x, double z) {
+    if (fullMap == null) {
+      player.sendMessage("Pełna mapa jest niedostępna (brak MapEngine).");
+      return;
+    }
+    player.closeInventory();
+    try {
+      if (!fullMap.open(player, world, x, z)) player.sendMessage("Nie można otworzyć pełnej mapy.");
+    } catch (RuntimeException ex) {
+      getLogger().warning("Nie mozna otworzyc pelnej mapy: " + ex.getMessage());
+      player.sendMessage("Nie można otworzyć pełnej mapy.");
+    }
   }
 
   private void openAtlas(Player player) {
@@ -347,6 +400,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   }
 
   private ItemStack tabItem(AtlasState state, int slot) {
+    if (slot == 8) return item("mapa:ui/pelny", "Pełny ekran", List.of(
+        Component.text("Klik — otwórz pełną mapę", NamedTextColor.GRAY)));
     MapaData.Tab tab = MapaData.tab(data.tabs(), slot);
     if (tab == null) {
       ItemStack empty = item(EMPTY_MODEL, " ", List.of());

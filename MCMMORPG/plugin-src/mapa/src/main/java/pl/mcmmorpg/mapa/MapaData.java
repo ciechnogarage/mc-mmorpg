@@ -39,6 +39,24 @@ final class MapaData {
       int sy = Math.floorMod(py - 64, k) * (4 / k);
       return textures[(int) texture + sy * 4 + sx];
     }
+
+    byte fullPixel(double centerX, double centerZ, double zoom, int px, int py,
+        int halfWidth, int halfHeight) {
+      double wx = centerX + (px - halfWidth) * zoom;
+      double wz = centerZ + (py - halfHeight) * zoom;
+      int x = (int) Math.floor(wx), z = (int) Math.floor(wz);
+      if (zoom >= 1 || blocks == null || textures == null) return color(x, z);
+      long ix = (long) x - x0, iz = (long) z - z0;
+      if (ix < 0 || iz < 0 || ix >= width || iz >= height) return 0;
+      int offset = (int) (iz * width + ix) * 2;
+      int value = (blocks[offset] & 255) | ((blocks[offset + 1] & 255) << 8);
+      int index = value & 0x3fff, shade = value >>> 14;
+      long texture = (long) index * 48 + shade * 16L;
+      if (index == 0 || shade > 2 || texture + 16 > textures.length) return color(x, z);
+      int sx = Math.min(3, (int) Math.floor((wx - x) * 4));
+      int sy = Math.min(3, (int) Math.floor((wz - z) * 4));
+      return textures[(int) texture + sy * 4 + sx];
+    }
   }
 
   record Level(int bpp, int columns, int rows) {}
@@ -46,7 +64,8 @@ final class MapaData {
     Level level(int index) { return levels.get(index); }
   }
 
-  record Marker(String world, int x, int z, String name, String type, List<String> description) {}
+  record Marker(String world, int x, int z, String name, String type, String icon,
+      List<String> description) {}
   record Tab(String world, String name, String icon) {}
 
   private final Map<String, Terrain> terrain;
@@ -100,7 +119,8 @@ final class MapaData {
       List<String> description = new ArrayList<>();
       Object lines = raw.get("opis");
       if (lines instanceof List<?> list) for (Object line : list) description.add(String.valueOf(line));
-      markers.add(new Marker(world, x, z, name, type, List.copyOf(description)));
+      String icon = String.valueOf(raw.containsKey("ikona") ? raw.get("ikona") : "");
+      markers.add(new Marker(world, x, z, name, type, icon, List.copyOf(description)));
     }
 
     File tilesFile = new File(folder, "kafle.json");

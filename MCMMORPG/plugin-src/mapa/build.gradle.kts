@@ -6,12 +6,14 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 repositories {
   mavenCentral()
   maven("https://repo.papermc.io/repository/maven-public/")
+  maven("https://repo.minceraft.dev/releases/") { name = "minceraft" }
 }
 
 val paperApi = "io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT"
 
 dependencies {
   compileOnly(paperApi)
+  compileOnly("de.pianoman911:mapengine-api:1.8.12")
   testImplementation(paperApi)
   testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
