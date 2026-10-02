@@ -30,13 +30,14 @@ final class RzutyOdrzutowe {
   private final Rzucanie wejscie;
   private final Skille skille;
   private final Ksiega ksiega;
+  private final EfektyCzasowe efekty;
   private final Map<UUID, Ladunek> prawa = new HashMap<>(), lewa = new HashMap<>();
   private final Map<UUID, Long> czekaLpm = new HashMap<>();
   private final Map<UUID, Deque<Runa>> runy = new HashMap<>();
   private long czas;
 
-  RzutyOdrzutowe(Rzucanie wejscie, Ksiega ksiega, Skille skille) {
-    this.wejscie = wejscie; this.ksiega = ksiega; this.skille = skille;
+  RzutyOdrzutowe(Rzucanie wejscie, Ksiega ksiega, Skille skille, EfektyCzasowe efekty) {
+    this.wejscie = wejscie; this.ksiega = ksiega; this.skille = skille; this.efekty = efekty;
   }
 
   private static String skill(Ksiega.Zaklecie z, String faza, String reka) {
@@ -131,7 +132,8 @@ final class RzutyOdrzutowe {
     for (Iterator<Map.Entry<UUID, Ladunek>> it = mapa.entrySet().iterator(); it.hasNext();) {
       var e = it.next(); Ladunek l = e.getValue();
       Player p = Bukkit.getPlayer(e.getKey());
-      if (p == null || !p.isOnline() || p.isDead() || !wejscie.trybLpm(p) ||
+      if (p == null || !p.isOnline() || p.isDead() ||
+          (!wejscie.trybLpm(p) && !(wejscie.prawaBron(p) && !l.prawa && l.ppm)) ||
           !l.zaklecie.equals(ksiega.w(l.prawa ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand())) ||
           (l.obie && !l.zaklecie.equals(ksiega.w(p.getInventory().getItemInOffHand())))) { it.remove(); continue; }
       String reka = l.obie ? "Obie" : l.prawa ? "P" : "L";
@@ -162,12 +164,15 @@ final class RzutyOdrzutowe {
       if (!r.getHitBlock().getRelative(BlockFace.UP).isPassable() ||
           !r.getHitBlock().getRelative(BlockFace.UP, 2).isPassable()) return;
     }
+    if (!efekty.przygotuj(p, z)) { p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.6f); return; }   // brak celu/miejsca: bez kosztu
     double koszt = z.mana() * (l.obie ? z.manaOburacz() : 1);
     org.bukkit.Bukkit.getLogger().info("[Zaklecia] [wystrzal] t=" + czas + " " + p.getName() + " " + z.id() + " " + reka + " koszt=" + koszt);
     PlayerData dane = PlayerData.get(p);
     if (dane.getMana() < koszt) { skille.cast(p, ksiega.skBrakMany); return; }
     dane.giveMana(-koszt, ResourceUpdateReason.SKILL);
-    if (miejsce == null) skille.cast(p, skill(z, "Wystrzal", reka));
+    if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel"))
+      efekty.wystrzel(p, z, l.prawa, l.obie, reka);
+    else if (miejsce == null) skille.cast(p, skill(z, "Wystrzal", reka));
     else {
       skille.punkt(p, skill(z, "Wystrzal", reka), miejsce);
       postaw(p, z, miejsce, l.obie);

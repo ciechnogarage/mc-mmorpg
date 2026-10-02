@@ -7,7 +7,7 @@ zaklecia:
     cel: stozek
     oburacz: {efekt: 2.2, mana: 2.8}
     przedmiot: ZAKLECIE_PLOMIENIE
-    mana-za-tik: 0.5   # TEST
+    mana-za-tik: 0.5   # TEST (30.09, wlasciciel: "niski koszt zeby testowac"); docelowo 2.0
     nazwa: 'Płomienie'
     skille:
       obraz: ''
@@ -17,7 +17,7 @@ zaklecia:
     cel: stozek
     oburacz: {efekt: 2.2, mana: 2.8}
     przedmiot: ZAKLECIE_ODMROZENIE
-    mana-za-tik: 0.5   # TEST
+    mana-za-tik: 0.5   # TEST; docelowo 2.5
     nazwa: 'Odmrożenie'
     skille:
       obraz: ''
@@ -65,6 +65,55 @@ zaklecia:
     redukcja: 0.6
     narastanie-t: 10
     oburacz: {efekt: 2.2, mana: 2.8}
+  przywolany_miecz:
+    typ: bron
+    przedmiot: ZAKLECIE_PRZYWOLANY_MIECZ
+    bron: ZAK_BRON_PRZYWOLANY_MIECZ
+    nazwa: 'Przywołany miecz'
+    czas-ladowania-t: 12
+    czas-trwania-t: 2400
+    mana: 2
+    oburacz: {efekt: 2.0, mana: 2.8}
+  duch_wilka:
+    typ: przywolanie
+    przedmiot: ZAKLECIE_DUCH_WILKA
+    mob: ZAK_DUCH_WILKA
+    nazwa: 'Duch wilka'
+    czas-ladowania-t: 12
+    czas-trwania-t: 1200
+    limit-aktywnych: 1
+    zasieg: 8
+    mana: 3
+    oburacz: {efekt: 2.0, mana: 2.8}
+  atronach_ognia:
+    typ: przywolanie
+    przedmiot: ZAKLECIE_ATRONACH_OGNIA
+    mob: ZAK_ATRONACH_OGNIA
+    nazwa: 'Atronach ognia'
+    czas-ladowania-t: 12
+    czas-trwania-t: 1200
+    limit-aktywnych: 1
+    zasieg: 8
+    mana: 3
+    oburacz: {efekt: 2.0, mana: 2.8}
+  leczenie_dloni:
+    typ: koncentracja
+    cel: inni
+    przedmiot: ZAKLECIE_LECZENIE_DLONI
+    nazwa: 'Leczenie dłoni'
+    zasieg: 6
+    mana-za-tik: 0.5
+    oburacz: {efekt: 2.2, mana: 2.8}
+  uspokojenie:
+    typ: na_cel
+    przedmiot: ZAKLECIE_USPOKOJENIE
+    nazwa: 'Uspokojenie'
+    czas-ladowania-t: 12
+    czas-trwania-t: 300
+    maks-poziom: 10
+    zasieg: 8
+    mana: 3
+    oburacz: {efekt: 2.0, mana: 2.8}
 
 # Podwojne rzucanie (to samo zaklecie w obu dloniach): mnozniki w oburacz wpisu.
 # Ponizsza wartosc jest zgodnoscia wsteczna dla starszych wpisow bez oburacz.mana.

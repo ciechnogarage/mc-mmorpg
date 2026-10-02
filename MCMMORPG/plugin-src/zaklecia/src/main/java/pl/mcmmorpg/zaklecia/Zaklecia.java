@@ -53,7 +53,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     ksiega = new Ksiega(getConfig());
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
-    rzucanie = new Rzucanie(this, ksiega);
+    rzucanie = new Rzucanie(this, ksiega, nosnik);
     ulubione = new Ulubione(this, ksiega, nosnik, rzucanie);
     getServer().getPluginManager().registerEvents(rzucanie, this);
     getServer().getPluginManager().registerEvents(nosnik, this);
@@ -103,6 +103,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     if (!reka.equals("prawa") && !reka.equals("lewa")) { s.sendMessage("Reka: prawa albo lewa"); return true; }
     boolean prawa = reka.equals("prawa");
     rzucanie.stop(p, false);
+    rzucanie.zdejmijBronie(p);
     nosnik.komunikat(p, nosnik.przypisz(p, id, prawa));
     return true;
   }
@@ -149,6 +150,20 @@ public final class Zaklecia extends JavaPlugin implements Listener {
           getLogger().log(Level.WARNING, "zakZasob: " + t, t);
           return SkillResult.ERROR;
         }
+      }
+    });
+  }
+
+  @EventHandler
+  public void mechanikaUspokojenia(MythicMechanicLoadEvent e) {
+    if (!e.getMechanicName().equalsIgnoreCase("zakUspokoj")) return;
+    int ticki = Math.max(1, e.getConfig().getInteger("t", 300));
+    e.register(new ITargetedEntitySkill() {
+      @Override public ThreadSafetyLevel getThreadSafetyLevel() { return ThreadSafetyLevel.SYNC_ONLY; }
+      @Override public SkillResult castAtEntity(SkillMetadata data, AbstractEntity cel) {
+        if (!(cel.getBukkitEntity() instanceof org.bukkit.entity.Mob m)) return SkillResult.INVALID_TARGET;
+        rzucanie.uspokoj(m, ticki);
+        return SkillResult.SUCCESS;
       }
     });
   }

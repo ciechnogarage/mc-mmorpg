@@ -52,6 +52,7 @@ final class Rzucanie implements Listener {
   private final Strumien strumien;
   private final Skille skille;
   private final RzutyOdrzutowe odrzutowe;
+  private final EfektyCzasowe efekty;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
   private final Map<UUID, Integer> generacja = new HashMap<>();
   private final Map<UUID, Long> ppmPrawa = new HashMap<>(), ppmLewa = new HashMap<>();
@@ -67,11 +68,12 @@ final class Rzucanie implements Listener {
 
   private final NamespacedKey kZasieg, kIstoty, kSzybkosc, kRuch, kNosnik, kStareKopanie;
 
-  Rzucanie(Zaklecia plugin, Ksiega ksiega) {
+  Rzucanie(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik) {
     this.plugin = plugin;
     this.ksiega = ksiega;
     this.skille = new Skille(plugin);
-    this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille);
+    this.efekty = new EfektyCzasowe(plugin, ksiega, nosnik, skille);
+    this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille, efekty);
     this.strumien = new Strumien(skille);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
@@ -85,6 +87,9 @@ final class Rzucanie implements Listener {
   }
 
   void ustawWybor(Wybor w) { this.wybor = w; }
+  void zdejmijBronie(Player p) { efekty.zdejmijBronie(p); }
+  void uspokoj(LivingEntity cel, int ticki) { efekty.uspokoj(cel, ticki); }
+  boolean prawaBron(Player p) { return efekty.prawaBron(p); }
 
   private void log(Player p, String co) {
     if (plugin.getConfig().getBoolean("debug-wejscie", false)) plugin.getLogger().info("[wejscie] t=" + teraz + " " + p.getName() + " " + co);
@@ -92,7 +97,7 @@ final class Rzucanie implements Listener {
 
   /** Wylaczenie pluginu: zdejmij strumienie i przejsciowe atrybuty. */
   void wylacz() {
-    odrzutowe.wylacz(); strumien.stopWszystkie(); rzucajacy.clear();
+    efekty.wylacz(); odrzutowe.wylacz(); strumien.stopWszystkie(); rzucajacy.clear();
     for (Player p : Bukkit.getOnlinePlayers()) { atrybutyLpm(p, false); ruch(p, false); }
   }
 
@@ -442,9 +447,9 @@ final class Rzucanie implements Listener {
           ruch(p, true);
           double z = zasieg(p, s);
           strumien.ustaw(p, true, pr && zak(p, true).typ().equals("koncentracja")
-              && !zak(p, true).cel().equals("siebie") ? zak(p, true) : null, z);
+              && zak(p, true).cel().equals("stozek") ? zak(p, true) : null, z);
           strumien.ustaw(p, false, lw && zak(p, false).typ().equals("koncentracja")
-              && !zak(p, false).cel().equals("siebie") ? zak(p, false) : null, z);
+              && zak(p, false).cel().equals("stozek") ? zak(p, false) : null, z);
           przejscie(p, staraP, staraL, nowaP, nowaL);
         }
         int n = s.n++;
@@ -452,8 +457,31 @@ final class Rzucanie implements Listener {
         Ksiega.Zaklecie prawa = s.prawa ? zak(p, true) : null;
         Ksiega.Zaklecie lewa = s.lewa ? zak(p, false) : null;
         if (n % 2 == 0) obraz(p, prawa, lewa);
+        boolean prawaInni = prawa != null && prawa.cel().equals("inni");
+        boolean lewaInni = lewa != null && lewa.cel().equals("inni");
+        if (prawaInni || lewaInni) {
+          LivingEntity sojusznik = EfektyCzasowe.cel(p,
+              Math.max(prawaInni ? prawa.zasieg() : 0, lewaInni ? lewa.zasieg() : 0),
+              e -> efekty.sojusznik(p, e));
+          if (sojusznik != null) {
+            double kosztInni = (toSamo(prawa, lewa) ? prawa.manaZaTik() * prawa.manaOburacz()
+                : (prawaInni ? prawa.manaZaTik() : 0) + (lewaInni ? lewa.manaZaTik() : 0)) / 10.0;
+            PlayerData d = PlayerData.get(p);
+            if (d.getMana() >= kosztInni) {
+              d.giveMana(-kosztInni, ResourceUpdateReason.SKILL);
+              if (toSamo(prawa, lewa)) skille.cele(p, prawa.skille().obie(prawa.skille().traf()), List.of(sojusznik));
+              else {
+                if (prawaInni) skille.cele(p, prawa.skille().reka(prawa.skille().traf(), true), List.of(sojusznik));
+                if (lewaInni) skille.cele(p, lewa.skille().reka(lewa.skille().traf(), false), List.of(sojusznik));
+              }
+            } else skill(p, ksiega.skBrakMany);
+          }
+        }
         if (n % 10 == 0) {
           double koszt = koszt(p, s);
+          if (prawaInni && lewaInni) koszt = 0;
+          else if (prawaInni) koszt = lewa == null ? 0 : lewa.manaZaTik();
+          else if (lewaInni) koszt = prawa == null ? 0 : prawa.manaZaTik();
           PlayerData d = PlayerData.get(p);
           if (d.getMana() < koszt) {
             skill(p, ksiega.skBrakMany);
@@ -461,10 +489,10 @@ final class Rzucanie implements Listener {
             it.remove(); strumien.stop(p); ruch(p, false);
             continue;
           }
-          d.giveMana(-koszt, ResourceUpdateReason.SKILL);
+          if (koszt > 0) d.giveMana(-koszt, ResourceUpdateReason.SKILL);
           if (prawa != null) s.oplaconeP = true;
           if (lewa != null) s.oplaconeL = true;
-          tikZaklec(p, prawa, lewa);
+          tikZaklec(p, prawaInni ? null : prawa, lewaInni ? null : lewa);
           if ((prawa != null && prawa.cel().equals("stozek")) || (lewa != null && lewa.cel().equals("stozek"))) {
             List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
             if (!cele.isEmpty()) trafienia(p, cele,
