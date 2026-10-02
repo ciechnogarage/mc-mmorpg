@@ -28,7 +28,7 @@ python3 "$NARZ/render.py" "$ST/t_loch.json.gz" "$ST/r_loch" >/dev/null
 "$WT/plugin-src/mapa/build.sh" >/dev/null 2>&1; JAR="$(ls "$WT"/plugin-src/mapa/build/libs/mapa-*.jar)"; echo "== jar: $(basename "$JAR")"
 
 # 2. kopia
-KOPIA="$DANE/backups/mapa8-$(date +%Y%m%d-%H%M%S)"; mkdir -p "$KOPIA/plugins/CoreTools/Scripts" "$KOPIA/plugins/DeluxeMenus/gui_menus"
+KOPIA="$DANE/backups/mapa9-$(date +%Y%m%d-%H%M%S)"; mkdir -p "$KOPIA/plugins/CoreTools/Scripts" "$KOPIA/plugins/DeluxeMenus/gui_menus"
 cp -a "$P/CoreTools/Scripts/stale-sloty.yml" "$KOPIA/plugins/CoreTools/Scripts/"
 cp -a "$P/DeluxeMenus/gui_menus/hub_przygoda.yml" "$KOPIA/plugins/DeluxeMenus/gui_menus/"
 mkdir -p "$KOPIA/nminimap" "$KOPIA/plugins/MMOItems/item"; cp -a "$P/NMinimap/config.yml" "$KOPIA/nminimap/"; cp -a "$P/MMOItems/item/miscellaneous.yml" "$KOPIA/plugins/MMOItems/item/"; cp -a "$P/NMinimap/markers" "$P/NMinimap/markers-font-cache.json" "$P/Nexo/pack/external_packs/NMinimap-zasoby.zip" "$KOPIA/nminimap/" 2>/dev/null || true
