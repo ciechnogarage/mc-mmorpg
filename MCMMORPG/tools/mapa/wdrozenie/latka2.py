@@ -17,5 +17,6 @@ f = os.path.join(P, "CoreTools/Scripts/stale-sloty.yml")
 zamien(f, '    - Comparator{v1="{item_first_id}";v2="UI_MAPA";op="=="} trueElse stale_sloty_reka_mapa\n', "", "reka: mapa -> plugin")
 zamien(f, 'command{c="dm open mapa_swiata %player_name%";runas=console;delay=1}', 'command{c="mapa otworz %player_name%";runas=console;delay=1}', "klik slot 7 -> mapa otworz")
 f = os.path.join(P, "DeluxeMenus/gui_menus/hub_przygoda.yml")
-zamien(f, "      - '[openguimenu] mapa_swiata'", "      - '[console] mapa otworz %player_name%'", "przygoda -> mapa otworz")
+if "'[console] mapa pelna %player_name%'" not in open(f, encoding="utf8").read():   # po latce v3 juz zmienione
+    zamien(f, "      - '[openguimenu] mapa_swiata'", "      - '[console] mapa otworz %player_name%'", "przygoda -> mapa otworz")
 print("zmiany v2:", zm or "brak")
