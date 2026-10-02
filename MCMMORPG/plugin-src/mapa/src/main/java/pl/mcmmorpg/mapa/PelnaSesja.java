@@ -16,6 +16,7 @@ final class PelnaSesja {
   final int width, height;
   String world;
   double centerX, centerZ, zoom;
+  double zasieg;
   PelnaMath.Punkt cursor, previousCursor;
   long lastRightTick = -100;
   long lastAttackTick = -100;

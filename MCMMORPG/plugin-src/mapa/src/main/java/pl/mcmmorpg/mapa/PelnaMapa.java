@@ -16,6 +16,10 @@ import javax.imageio.ImageIO;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,12 +39,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 
 final class PelnaMapa implements Listener {
   private final MapaPlugin plugin;
   private final MapEngineApi api;
+  private final NamespacedKey kZasieg;
   private final PelnaRysownik renderer = new PelnaRysownik();
   private final Map<UUID, PelnaSesja> sessions = new HashMap<>();
   private volatile Set<UUID> activeIds = Set.of();
@@ -52,6 +58,7 @@ final class PelnaMapa implements Listener {
 
   PelnaMapa(MapaPlugin plugin) {
     this.plugin = plugin;
+    this.kZasieg = new NamespacedKey(plugin, "pelna_zasieg");
     this.api = Bukkit.getServicesManager().load(MapEngineApi.class);
     if (api == null) throw new IllegalStateException("MapEngine nie udostępnia MapEngineApi");
     reloadIcons();
@@ -146,6 +153,7 @@ final class PelnaMapa implements Listener {
       drawing.ctx().receivers().add(player);
       drawing.ctx().buffering(true);
       // Dithering jest opcjonalny i domyslnie wylaczony; nie wybieramy FLOYD_STEINBERG.
+      if (packets != null) packets.bezMachniecia(display);
       display.spawn(player);
       // plaszczyzna: srodek bloku + pol bloku w strone od gracza (ramka wisi na tylnej scianie bloku)
       double planeX = (leftX + rightX) / 2.0 + 0.5 + forward.getX() * 0.5;
@@ -155,7 +163,13 @@ final class PelnaMapa implements Listener {
           planeX, planeY, planeZ, yaw, mapsWide * 128, mapsHigh * 128,
           world, x, z, plugin.handZoom(player)));
       activeIds = Set.copyOf(sessions.keySet());
+      // PPM musi siegac rogow ekranu (ok. 3,9 bl. przy 4x3 z 3 bl.), inaczej klient "uzywa" przedmiotu z reki
+      // (ladowany cios broni, zaklecie). Tryb zaklec ustawia zasieg istot na 0 - dodatek liczony co tick.
+      sessions.get(player.getUniqueId()).zasieg =
+          Math.sqrt(distance * distance + mapsWide * mapsWide / 4.0 + mapsHigh * mapsHigh / 4.0) + 0.5;
+      zasieg(player, sessions.get(player.getUniqueId()).zasieg);
     } catch (RuntimeException ex) {
+      if (packets != null) packets.zapomnij(display);
       display.destroy();
       display.despawn(player);
       throw ex;
@@ -170,10 +184,25 @@ final class PelnaMapa implements Listener {
     pendingRight.remove(session.id);
     pendingAttack.remove(session.id);
     if (plugin.dialogs() != null) plugin.dialogs().forget(player);
+    zasieg(player, 0);
     if (!session.busy) destroy(session, player);
   }
 
+  /** Dodatek do zasiegu istot tak, by laczny wynosil co najmniej {@code min}; 0 = zdejmij. */
+  private void zasieg(Player player, double min) {
+    AttributeInstance ai = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
+    if (ai == null) return;
+    AttributeModifier stary = ai.getModifier(kZasieg);
+    double bez = ai.getValue() - (stary == null ? 0 : stary.getAmount());
+    double dodatek = min > 0 ? Math.max(0, min - bez) : 0;
+    if (stary != null && Math.abs(stary.getAmount() - dodatek) < 1e-6) return;
+    if (stary != null) ai.removeModifier(kZasieg);
+    if (dodatek > 0) ai.addTransientModifier(new AttributeModifier(kZasieg, dodatek,
+        AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.ANY));
+  }
+
   private void destroy(PelnaSesja session, Player player) {
+    if (packets != null) packets.zapomnij(session.display);
     session.display.destroy();
     if (player != null) session.display.despawn(player);
   }
@@ -227,6 +256,7 @@ final class PelnaMapa implements Listener {
     for (PelnaSesja session : List.copyOf(sessions.values())) {
       Player player = Bukkit.getPlayer(session.id);
       if (player == null || !player.isOnline()) continue;
+      zasieg(player, session.zasieg);
       Location eye = player.getEyeLocation();
       Location position = player.getLocation();
       Vector ray = eye.getDirection();
