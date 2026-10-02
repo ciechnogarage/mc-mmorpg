@@ -42,6 +42,18 @@ def cel(rozmiar):
         d.line([(1, 1), (n - 1, n - 1)], fill=k, width=w); d.line([(1, n - 1), (n - 1, 1)], fill=k, width=w)
     return im
 
+def modele(ikony_dir, pack):
+    """Przedmioty mapa:ikona/<nazwa> (panel atlasu, SPEC-v7) z ikon 16x16; uruchamiac PO kafle.py (czysci assets/mapa)."""
+    for f in sorted(os.listdir(ikony_dir)):
+        if not f.endswith(".png"): continue
+        n = f[:-4]
+        t = os.path.join(pack, "assets/mapa/textures/item/ikona", f); os.makedirs(os.path.dirname(t), exist_ok=True)
+        Image.open(os.path.join(ikony_dir, f)).save(t)
+        kafle.zapisz_json(os.path.join(pack, "assets/mapa/models/item/ikona", n + ".json"),
+                          {"parent": "minecraft:item/generated", "textures": {"layer0": "mapa:item/ikona/" + n}})
+        kafle.zapisz_json(os.path.join(pack, "assets/mapa/items/ikona", n + ".json"),
+                          {"model": {"type": "minecraft:model", "model": "mapa:item/ikona/" + n}})
+
 def ikony_gracza(wyj, podkatalog, rozmiar):
     d = os.path.join(wyj, podkatalog); os.makedirs(d, exist_ok=True)
     for n, k in PINEZKI.items(): pinezka(k, rozmiar).save(os.path.join(d, n + ".png"))
@@ -49,4 +61,7 @@ def ikony_gracza(wyj, podkatalog, rozmiar):
     cel(rozmiar).save(os.path.join(d, "cel.png"))
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], *(sys.argv[3:4]), *([int(sys.argv[4])] if len(sys.argv) > 4 else []))
+    if len(sys.argv) > 1 and sys.argv[1] == "--modele":     # ikony.py --modele <ikony dir> <pack dir>
+        modele(sys.argv[2], sys.argv[3])
+    else:
+        main(sys.argv[1], sys.argv[2], *(sys.argv[3:4]), *([int(sys.argv[4])] if len(sys.argv) > 4 else []))

@@ -4,6 +4,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.CustomModelData;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private WlasneZnaczniki own;
   private Prowadzenie navigation;
   private ZnacznikDialog dialogs;
+  private PanelMost panel;
+  private final Map<UUID, Boolean> minimapStates = new HashMap<>();
   private MapView mapView;
   private int mapId;
   private List<Double> zooms = List.of(0.25, 0.5, 1.0, 2.0, 4.0, 8.0);
@@ -66,6 +69,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     int top;
     int playerSlot = -1;
     int playerDirection = -1;
+    PanelMath.Filter filter = PanelMath.Filter.ALL;
+    int page;
+    PanelMath.Page<MapaData.Marker> visible = PanelMath.page(List.of(), 0);
+    Component title;
+    int panelX = Integer.MIN_VALUE;
+    int panelZ = Integer.MIN_VALUE;
 
     AtlasState(AtlasHolder holder, UUID playerId, String world, int level) {
       this.holder = holder;
@@ -87,6 +96,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       }
     } else getLogger().warning("MapEngine nie jest aktywny; pelna mapa jest wylaczona.");
     navigation = new Prowadzenie(this);
+    if (Bukkit.getPluginManager().isPluginEnabled("packetevents")) {
+      try { panel = new PanelPakiety(); }
+      catch (LinkageError | IllegalStateException ex) {
+        getLogger().warning("Panel atlasu niedostepny: " + ex.getMessage());
+      }
+    }
     if (Bukkit.getPluginManager().isPluginEnabled("NMinimap")) {
       minimapMarkers = new MinimapaZnaczniki(this);
       Bukkit.getPluginManager().registerEvents(minimapMarkers, this);
@@ -103,6 +118,14 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     if (fullMap != null) fullMap.closeAll();
     if (mapView != null && renderer != null) mapView.removeRenderer(renderer);
     if (renderer != null) renderer.forgetAll();
+    if (panel != null) {
+      panel.close();
+      panel = null;
+      for (Player player : Bukkit.getOnlinePlayers()) if (atlasActive(player)) {
+        player.closeInventory();
+        player.updateInventory();
+      }
+    }
     atlases.clear();
     handZooms.clear();
     if (own != null) own.close();
@@ -115,7 +138,22 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   boolean waypointsEnabled() { return Bukkit.getPluginManager().isPluginEnabled("packetevents"); }
   boolean mmoCoreEnabled() { return Bukkit.getPluginManager().isPluginEnabled("MMOCore"); }
   boolean fullActive(Player player) { return fullMap != null && fullMap.active(player); }
-  void markDirty(Player player) { if (fullMap != null) fullMap.dirty(player); }
+  void markDirty(Player player) {
+    if (fullMap != null) fullMap.dirty(player);
+    refreshPanel(player);
+  }
+  boolean atlasActive(Player player) {
+    AtlasState state = atlases.get(player.getUniqueId());
+    return state != null && player.getOpenInventory().getTopInventory() == state.holder.inventory;
+  }
+  void refreshAtlas(Player player) {
+    AtlasState state = atlases.get(player.getUniqueId());
+    if (state != null && atlasActive(player)) paintAll(player, state);
+  }
+  void restoreAtlas(Player player, String world, double x, double z) {
+    if (atlasActive(player)) refreshAtlas(player);
+    else Bukkit.getScheduler().runTask(this, () -> openAtlas(player, world, x, z));
+  }
   UUID ownerKey(Player player) {
     UUID key = own.key(player, Bukkit.getPluginManager().isPluginEnabled("MMOProfiles"));
     own.publishKeys();
@@ -218,6 +256,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     UUID id = event.getPlayer().getUniqueId();
     handZooms.remove(id);
     atlases.remove(id);
+    minimapStates.remove(id);
+    if (panel != null) panel.hide(event.getPlayer());
     if (renderer != null) renderer.forget(id);
     own.forget(event.getPlayer());
     own.publishKeys();
@@ -233,6 +273,10 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     AtlasState state = atlases.get(player.getUniqueId());
     if (state == null || state.holder != holder) return;
     int slot = event.getRawSlot();
+    if (slot >= 54 && slot < 90 && panel != null) {
+      panelClick(player, state, slot, event.isShiftClick(), event.isRightClick());
+      return;
+    }
     if (slot < 0 || slot >= 54) return;
     if (slot < 9) {
       if (slot == 8) {
@@ -302,8 +346,16 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
 
   @EventHandler
   public void onClose(InventoryCloseEvent event) {
-    if (event.getInventory().getHolder() instanceof AtlasHolder holder)
-      atlases.computeIfPresent(event.getPlayer().getUniqueId(), (id, state) -> state.holder == holder ? null : state);
+    if (!(event.getInventory().getHolder() instanceof AtlasHolder holder)) return;
+    AtlasState state = atlases.get(event.getPlayer().getUniqueId());
+    if (state == null || state.holder != holder) return;
+    atlases.remove(event.getPlayer().getUniqueId());
+    if (panel != null && event.getPlayer() instanceof Player player) {
+      panel.hide(player);
+      Bukkit.getScheduler().runTask(this, () -> {
+        if (player.isOnline()) player.updateInventory();
+      });
+    }
   }
 
   @Override
@@ -401,11 +453,13 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     holder.inventory = Bukkit.createInventory(holder, 54, title);
     ownerKey(player);
     AtlasState state = new AtlasState(holder, player.getUniqueId(), world, level);
+    state.title = title;
     if (x != null && z != null) centerAt(state, x, z);
     else if (initial) centerOnPlayerOrStart(player, state);
     else centerOnWorld(player, state);
     paintAll(player, state);
     atlases.put(player.getUniqueId(), state);
+    if (panel != null) panel.show(player, title, panelItems(player, state));
     player.openInventory(holder.inventory);
   }
 
@@ -482,6 +536,144 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     state.playerSlot = -1;
     state.playerDirection = -1;
     updatePlayerTile(player, state);
+    refreshPanel(player);
+  }
+
+  private void panelClick(Player player, AtlasState state, int rawSlot, boolean shift, boolean right) {
+    int slot = rawSlot - 54;
+    if (slot < 27) {
+      if (slot == 0 && state.visible.previous()) { state.page--; refreshPanel(player); return; }
+      if (slot == 26 && state.visible.next()) { state.page++; refreshPanel(player); return; }
+      MapaData.Marker marker = state.visible.marker(slot);
+      if (marker == null) return;
+      if (shift) {
+        navigation.toggle(player, new Prowadzenie.Cel(marker.world(), marker.x(),
+            marker.z(), marker.name()));
+      } else if (right && marker.type().equals("wlasny")) {
+        dialogs.editAtlas(player, marker, state.world, viewX(state), viewZ(state));
+      } else {
+        centerAt(state, marker.x(), marker.z());
+        paintAll(player, state);
+      }
+      return;
+    }
+    switch (PanelMath.action(rawSlot)) {
+      case ADD -> {
+        boolean here = sameWorld(player.getWorld().getName(), state.world);
+        int x = (int) Math.floor(here ? player.getLocation().getX() : viewX(state));
+        int z = (int) Math.floor(here ? player.getLocation().getZ() : viewZ(state));
+        dialogs.addAtlas(player, state.world, x, z, viewX(state), viewZ(state));
+      }
+      case FILTER -> {
+        state.filter = state.filter.next();
+        state.page = 0;
+        refreshPanel(player);
+      }
+      case NAVIGATION -> {
+        if (navigation.target(player) != null) navigation.clear(player);
+      }
+      case MINIMAP -> {
+        boolean enabled = minimapEnabled(player);
+        if (player.performCommand("minimap " + (enabled ? "disable" : "enable"))) {
+          minimapStates.put(player.getUniqueId(), !enabled);
+          refreshPanel(player);
+        }
+      }
+      case FULL -> {
+        String world = state.world;
+        double x = viewX(state), z = viewZ(state);
+        Bukkit.getScheduler().runTask(this, () -> {
+          player.closeInventory();
+          openFull(player, world, x, z);
+        });
+      }
+      case CLOSE -> Bukkit.getScheduler().runTask(this, () -> player.closeInventory());
+      default -> { }
+    }
+  }
+
+  private double viewX(AtlasState state) {
+    MapaData.Grid grid = data.grid(state.world);
+    return MapaMath.centerX(state.left, grid.x0(), grid.level(state.level).bpp());
+  }
+
+  private double viewZ(AtlasState state) {
+    MapaData.Grid grid = data.grid(state.world);
+    return MapaMath.centerZ(state.top, grid.z0(), grid.level(state.level).bpp());
+  }
+
+  private void refreshPanel(Player player) {
+    if (panel == null) return;
+    AtlasState state = atlases.get(player.getUniqueId());
+    if (state == null || !atlasActive(player)) return;
+    panel.refresh(player, state.title, panelItems(player, state));
+    Bukkit.getScheduler().runTask(this, () -> {
+      if (player.isOnline() && atlasActive(player)) player.updateInventory();
+    });
+  }
+
+  private List<ItemStack> panelItems(Player player, AtlasState state) {
+    state.panelX = player.getLocation().getBlockX();
+    state.panelZ = player.getLocation().getBlockZ();
+    List<MapaData.Marker> markers = new ArrayList<>(znacznikiDla(player, state.world));
+    markers.removeIf(marker -> !state.filter.accepts(marker.type()));
+    boolean local = sameWorld(player.getWorld().getName(), state.world);
+    if (local) markers.sort(Comparator.comparingDouble(marker ->
+        Math.hypot(marker.x() + 0.5 - player.getLocation().getX(),
+            marker.z() + 0.5 - player.getLocation().getZ())));
+    else markers.sort(Comparator.comparing(MapaData.Marker::name, String.CASE_INSENSITIVE_ORDER));
+    state.visible = PanelMath.page(markers, state.page);
+    state.page = state.visible.index();
+    List<ItemStack> items = new ArrayList<>(java.util.Collections.nCopies(36, new ItemStack(Material.AIR)));
+    int offset = state.visible.previous() ? 1 : 0;
+    for (int i = 0; i < state.visible.items().size(); i++) {
+      MapaData.Marker marker = state.visible.items().get(i);
+      List<Component> lore = new ArrayList<>();
+      if (marker.type().equals("wlasny")) lore.add(Component.text("Twój znacznik", NamedTextColor.GRAY));
+      else for (String line : marker.description()) lore.add(Component.text(line, NamedTextColor.GRAY));
+      if (local) lore.add(Component.text("Odległość: " + Math.round(Math.hypot(
+          marker.x() + 0.5 - player.getLocation().getX(),
+          marker.z() + 0.5 - player.getLocation().getZ())) + " m", NamedTextColor.GRAY));
+      lore.add(Component.text("Klik — pokaż na mapie", NamedTextColor.GRAY));
+      lore.add(Component.text("Shift+klik — prowadź", NamedTextColor.GRAY));
+      if (marker.type().equals("wlasny")) lore.add(Component.text("PPM — edytuj", NamedTextColor.GRAY));
+      ItemStack icon = item("mapa:ikona/" + marker.icon(), marker.name(), lore);
+      if (marker.type().equals("wlasny")) icon.setData(DataComponentTypes.ITEM_NAME,
+          Component.text(marker.name(), NamedTextColor.GOLD));
+      items.set(offset + i, icon);
+    }
+    if (state.visible.previous()) items.set(0, item("mapa:ui/lewo",
+        "Poprzednia strona (" + (state.page + 1) + "/" + state.visible.total() + ")", List.of()));
+    if (state.visible.next()) items.set(26, item("mapa:ui/prawo",
+        "Następna strona (" + (state.page + 1) + "/" + state.visible.total() + ")", List.of()));
+    items.set(27, item("mapa:ui/plus", "Dodaj znacznik tutaj", List.of()));
+    items.set(28, item(state.filter.model, "Pokaż: " + state.filter.label,
+        List.of(Component.text("Klik — następny filtr", NamedTextColor.GRAY))));
+    Prowadzenie.Cel target = navigation.target(player);
+    if (target != null) items.set(29, item("mapa:ikona/cel", "Prowadzę do: " + target.name(),
+        List.of(Component.text("Klik — wyłącz prowadzenie", NamedTextColor.GRAY))));
+    ItemStack compass = item("minecraft:compass", "Minimapa: "
+        + (minimapEnabled(player) ? "włączona" : "wyłączona"), List.of());
+    compass.setType(Material.COMPASS);
+    items.set(30, compass);
+    items.set(34, item("mapa:ui/pelny", "Pełny ekran", List.of()));
+    items.set(35, item("nexo:hub_zamknij", "Zamknij", List.of()));
+    return items;
+  }
+
+  private boolean minimapEnabled(Player player) {
+    boolean remembered = minimapStates.getOrDefault(player.getUniqueId(), true);
+    if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) return remembered;
+    try {
+      Class<?> api = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+      Object value = api.getMethod("setPlaceholders", Player.class, String.class)
+          .invoke(null, player, "%nminimap_enabled%");
+      if ("true".equalsIgnoreCase(String.valueOf(value))) return true;
+      if ("false".equalsIgnoreCase(String.valueOf(value))) return false;
+    } catch (ReflectiveOperationException | LinkageError ex) {
+      return remembered;
+    }
+    return remembered;
   }
 
   private ItemStack tabItem(AtlasState state, int slot) {
@@ -549,8 +741,13 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
   private void refreshPlayerTiles() {
     for (Map.Entry<UUID, AtlasState> entry : List.copyOf(atlases.entrySet())) {
       Player player = Bukkit.getPlayer(entry.getKey());
-      if (player != null && player.getOpenInventory().getTopInventory() == entry.getValue().holder.inventory)
+      if (player != null && player.getOpenInventory().getTopInventory() == entry.getValue().holder.inventory) {
         updatePlayerTile(player, entry.getValue());
+        AtlasState state = entry.getValue();
+        if (panel != null && sameWorld(player.getWorld().getName(), state.world)
+            && (state.panelX != player.getLocation().getBlockX()
+                || state.panelZ != player.getLocation().getBlockZ())) refreshPanel(player);
+      }
     }
   }
 

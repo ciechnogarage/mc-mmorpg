@@ -24,7 +24,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 final class ZnacznikDialog implements Listener {
-  private record Pending(String world, int x, int z, String id) {}
+  private record Pending(String world, int x, int z, String id, boolean atlas,
+      String viewWorld, double viewX, double viewZ) {}
   private final MapaPlugin plugin;
   private final Map<UUID, Pending> pending = new HashMap<>();
 
@@ -36,12 +37,24 @@ final class ZnacznikDialog implements Listener {
   void forget(Player player) { pending.remove(player.getUniqueId()); }
 
   void add(Player player, String world, int x, int z) {
-    pending.put(player.getUniqueId(), new Pending(world, x, z, ""));
+    pending.put(player.getUniqueId(), new Pending(world, x, z, "", false, "", 0, 0));
+    show(player, "Nowy znacznik", "Mój znacznik", firstIcon(), "");
+  }
+
+  void addAtlas(Player player, String world, int x, int z, double viewX, double viewZ) {
+    pending.put(player.getUniqueId(), new Pending(world, x, z, "", true, world, viewX, viewZ));
     show(player, "Nowy znacznik", "Mój znacznik", firstIcon(), "");
   }
 
   void edit(Player player, MapaData.Marker marker) {
-    pending.put(player.getUniqueId(), new Pending(marker.world(), marker.x(), marker.z(), marker.id()));
+    pending.put(player.getUniqueId(), new Pending(marker.world(), marker.x(), marker.z(), marker.id(),
+        false, "", 0, 0));
+    show(player, "Znacznik: " + marker.name(), marker.name(), marker.icon(), marker.id());
+  }
+
+  void editAtlas(Player player, MapaData.Marker marker, String viewWorld, double viewX, double viewZ) {
+    pending.put(player.getUniqueId(), new Pending(marker.world(), marker.x(), marker.z(), marker.id(),
+        true, viewWorld, viewX, viewZ));
     show(player, "Znacznik: " + marker.name(), marker.name(), marker.icon(), marker.id());
   }
 
@@ -97,7 +110,7 @@ final class ZnacznikDialog implements Listener {
     if (!(event.getCommonConnection() instanceof PlayerGameConnection connection)) return;
     Player player = connection.getPlayer();
     Pending state = pending.remove(player.getUniqueId());
-    if (state == null || !plugin.fullActive(player)) return;
+    if (state == null || (!state.atlas() && !plugin.fullActive(player))) return;
     String id = action.contains("/") ? action.substring(action.indexOf('/') + 1) : "";
     if (!id.equals(state.id())) return;
     UUID owner = plugin.ownerKey(player);
@@ -129,6 +142,7 @@ final class ZnacznikDialog implements Listener {
           previous.z(), previous.name()));
     }
     plugin.markDirty(player);
+    if (state.atlas()) plugin.restoreAtlas(player, state.viewWorld(), state.viewX(), state.viewZ());
   }
 
   private String newId(UUID owner) {
