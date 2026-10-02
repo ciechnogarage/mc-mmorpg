@@ -132,6 +132,14 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       replaceLegacyMaps(player);
     }
     Bukkit.getScheduler().runTaskTimer(this, this::refreshPlayerTiles, 20L, 20L);
+    // klucz postaci MMOProfiles zmienia sie po wyborze postaci bez zdarzenia, ktore lapiemy; minimapa (async) czyta
+    // tylko migawke kluczy, wiec odswiezamy ja co sekunde (recenzja 02.10: znaczniki poprzedniej postaci na minimapie)
+    Bukkit.getScheduler().runTaskTimer(this, this::refreshOwnerKeys, 40L, 20L);
+  }
+
+  private void refreshOwnerKeys() {
+    boolean profiles = Bukkit.getPluginManager().isPluginEnabled("MMOProfiles");
+    for (Player player : Bukkit.getOnlinePlayers()) own.key(player, profiles);
   }
 
   @Override

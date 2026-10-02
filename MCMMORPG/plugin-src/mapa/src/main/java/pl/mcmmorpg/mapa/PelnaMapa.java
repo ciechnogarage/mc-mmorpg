@@ -248,7 +248,10 @@ final class PelnaMapa implements Listener {
       if (session.busy || tick - session.lastSendTick < 2) continue;
       boolean visible = MapaData.klucz(player.getWorld().getName()).equals(MapaData.klucz(session.world));
       double playerX = position.getX(), playerZ = position.getZ();
-      float playerYaw = position.getYaw();
+      // kursor sterowany wzrokiem = ciagly obrot glowy; obracanie strzalki gracza wymuszalo pelne przerysowanie
+      // 512x384 co 15 st. (pomiar 02.10: 4-5x wiecej GC). Na pelnym ekranie gracz stoi, wiec strzalka zostaje
+      // w kierunku z chwili otwarcia, a ruch glowa przesuwa tylko kursor (wycinek 9x9).
+      float playerYaw = session.base == null ? position.getYaw() : session.sentPlayerYaw;
       boolean redraw = PelnaMath.pelnePrzerysowanie(session.dirty, session.base != null,
           session.sentPlayerVisible, visible, session.sentPlayerX, session.sentPlayerZ,
           session.sentPlayerYaw, playerX, playerZ, playerYaw, session.zoom);
