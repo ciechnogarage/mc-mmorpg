@@ -1,0 +1,6 @@
+name: KlasyBron
+version: '${version}'
+main: pl.mcmmorpg.klasybron.KlasyBron
+api-version: '1.21'
+depend: [MythicMobs, MythicLib]
+description: Warunek MythicMobs bronRasowa{typ=..} - czy gracz trzyma bron MMOItems danego typu (premia sygnatur klas).
