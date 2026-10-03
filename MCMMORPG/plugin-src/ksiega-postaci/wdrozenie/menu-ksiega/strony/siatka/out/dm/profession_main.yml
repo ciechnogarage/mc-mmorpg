@@ -7,7 +7,7 @@ items:
 
   'mining':
     material: IRON_PICKAXE
-    slot: 14
+    slot: 23
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lGórnictwo'
     lore:
@@ -24,7 +24,7 @@ items:
 
   'woodworking':
     material: IRON_AXE
-    slot: 15
+    slot: 24
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lDrwalstwo i stolarstwo'
     lore:
@@ -41,7 +41,7 @@ items:
 
   'herbalism':
     material: FERN
-    slot: 16
+    slot: 25
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lZielarstwo'
     lore:
@@ -58,7 +58,7 @@ items:
 
   'farming':
     material: WHEAT
-    slot: 17
+    slot: 32
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lFarmerstwo'
     lore:
@@ -75,7 +75,7 @@ items:
 
   'fishing':
     material: FISHING_ROD
-    slot: 23
+    slot: 33
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lRybactwo'
     lore:
@@ -92,7 +92,7 @@ items:
 
   'hunting':
     material: BOW
-    slot: 24
+    slot: 34
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lMyślistwo'
     lore:
@@ -109,7 +109,7 @@ items:
 
   'jewelcrafting':
     material: AMETHYST_SHARD
-    slot: 25
+    slot: 41
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lJubilerstwo'
     lore:
@@ -126,7 +126,7 @@ items:
 
   'smithing':
     material: ANVIL
-    slot: 26
+    slot: 37
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lKowalstwo'
     lore:
@@ -142,7 +142,7 @@ items:
 
   'tailoring':
     material: LEATHER_CHESTPLATE
-    slot: 32
+    slot: 38
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lKrawiectwo'
     lore:
@@ -159,7 +159,7 @@ items:
 
   'alchemy':
     material: BREWING_STAND
-    slot: 33
+    slot: 46
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lAlchemia'
     lore:
@@ -175,7 +175,7 @@ items:
 
   'enchanting':
     material: ENCHANTING_TABLE
-    slot: 34
+    slot: 47
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lZaklinanie'
     lore:
@@ -191,7 +191,7 @@ items:
 
   'cooking':
     material: SMOKER
-    slot: 35
+    slot: 42
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lGotowanie'
     lore:
@@ -208,7 +208,7 @@ items:
 
   'building':
     material: BRICKS
-    slot: 41
+    slot: 43
     item_flags: [HIDE_ATTRIBUTES]
     display_name: '&6&lBudownictwo'
     lore:
@@ -224,8 +224,8 @@ items:
       - '[console] mi stations open profession-building %player_name%'
 
   'zasady':
-    material: BOOK
-    slot: 10
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
     display_name: '&e&lJak działają profesje'
     lore:
       - ''
@@ -239,10 +239,3 @@ items:
       - ''
       - '&7Nowe receptury: poziom &f15&7, &f30&7 i &f45&7.'
       - '&7Najwyższy poziom: &f50&7.'
-
-  'powrot_ksiega':
-    material: nexo-hub_wstecz
-    slot: 45
-    display_name: '&e&lWróć do Księgi'
-    left_click_commands:
-      - '[openguimenu] hub_glowne'

@@ -5,8 +5,8 @@ update_interval: 20
 items:
 
   'stan':
-    material: nexo-hub_wiara
-    slot: 10
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
     update: true
     display_name: '&6&lTwoja wiara'
     lore:
@@ -22,7 +22,7 @@ items:
 
   'b_ordhun':
     material: ROOTED_DIRT
-    slot: 15
+    slot: 23
     priority: 1
     update: true
     item_flags:
@@ -48,7 +48,7 @@ items:
 
   'b_nysara':
     material: STRING
-    slot: 16
+    slot: 24
     priority: 1
     update: true
     item_flags:
@@ -74,7 +74,7 @@ items:
 
   'b_vharun':
     material: WITHER_ROSE
-    slot: 17
+    slot: 25
     priority: 1
     update: true
     item_flags:
@@ -100,7 +100,7 @@ items:
 
   'b_solenna':
     material: LANTERN
-    slot: 33
+    slot: 32
     priority: 1
     update: true
     item_flags:
@@ -126,7 +126,7 @@ items:
 
   'b_valdris':
     material: SHIELD
-    slot: 34
+    slot: 33
     priority: 1
     update: true
     item_flags:
@@ -152,7 +152,7 @@ items:
 
   'b_heldra':
     material: WHEAT
-    slot: 35
+    slot: 34
     priority: 1
     update: true
     item_flags:
@@ -178,7 +178,7 @@ items:
 
   'b_aelyra':
     material: SEA_LANTERN
-    slot: 33
+    slot: 32
     priority: 2
     update: true
     item_flags:
@@ -204,7 +204,7 @@ items:
 
   'b_sylvaen':
     material: FEATHER
-    slot: 34
+    slot: 33
     priority: 2
     update: true
     item_flags:
@@ -230,7 +230,7 @@ items:
 
   'b_iridel':
     material: ENCHANTED_BOOK
-    slot: 35
+    slot: 34
     priority: 2
     update: true
     item_flags:
@@ -256,7 +256,7 @@ items:
 
   'b_gorrath':
     material: IRON_AXE
-    slot: 33
+    slot: 32
     priority: 3
     update: true
     item_flags:
@@ -282,7 +282,7 @@ items:
 
   'b_kharzuk':
     material: LIGHTNING_ROD
-    slot: 34
+    slot: 33
     priority: 3
     update: true
     item_flags:
@@ -308,7 +308,7 @@ items:
 
   'b_mogra':
     material: BONE
-    slot: 35
+    slot: 34
     priority: 3
     update: true
     item_flags:
@@ -334,7 +334,7 @@ items:
 
   'b_morvhena':
     material: SKELETON_SKULL
-    slot: 33
+    slot: 32
     priority: 4
     update: true
     item_flags:
@@ -360,7 +360,7 @@ items:
 
   'b_vhorax':
     material: ECHO_SHARD
-    slot: 34
+    slot: 33
     priority: 4
     update: true
     item_flags:
@@ -386,7 +386,7 @@ items:
 
   'b_ossyra':
     material: WHITE_CANDLE
-    slot: 35
+    slot: 34
     priority: 4
     update: true
     item_flags:
@@ -412,7 +412,7 @@ items:
 
   'modlitwa':
     material: nexo-hub_wiara
-    slot: 37
+    slot: 38
     priority: 0
     update: true
     display_name: '&6&lMódl się'
@@ -434,7 +434,7 @@ items:
 
   'modlitwa_trwa':
     material: nexo-hub_wiara
-    slot: 37
+    slot: 38
     priority: 1
     update: true
     display_name: '&7Łaska trwa'
@@ -453,17 +453,10 @@ items:
 
   'modlitwa_brak_patrona':
     material: GRAY_DYE
-    slot: 37
+    slot: 38
     priority: 2
     display_name: '&7Módl się'
     lore:
       - ''
       - '&7Najpierw obierz patrona:'
       - '&7kliknij jedno z bóstw powyżej.'
-
-  'powrot_ksiega':
-    material: nexo-hub_wstecz
-    slot: 45
-    display_name: '&e&lWróć do Księgi'
-    left_click_commands:
-      - '[openguimenu] hub_glowne'

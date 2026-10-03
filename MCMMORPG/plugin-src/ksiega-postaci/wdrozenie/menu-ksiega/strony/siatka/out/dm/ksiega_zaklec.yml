@@ -83,7 +83,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:plomienie'
     update: true
-    slot: 17
+    slot: 23
     display_name: '&6&lPłomienie'
     lore:
       - '&8Zniszczenie · Nowicjusz'
@@ -108,7 +108,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:odmrozenie'
     update: true
-    slot: 23
+    slot: 24
     display_name: '&b&lOdmrożenie'
     lore:
       - '&8Zniszczenie · Nowicjusz'
@@ -133,7 +133,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:ognisty_pocisk'
     update: true
-    slot: 24
+    slot: 25
     display_name: '&6&lOgnisty pocisk'
     lore:
       - '&8Ładowane / runa · Nowicjusz'
@@ -158,7 +158,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:kula_ognia'
     update: true
-    slot: 25
+    slot: 32
     display_name: '&6&lKula ognia'
     lore:
       - '&8Ładowane / runa · Nowicjusz'
@@ -183,7 +183,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:leczenie'
     update: true
-    slot: 26
+    slot: 33
     display_name: '&a&lLeczenie'
     lore:
       - '&8Koncentracja · Nowicjusz'
@@ -207,7 +207,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:runa_ognia'
     update: true
-    slot: 32
+    slot: 34
     display_name: '&6&lRuna ognia'
     lore:
       - '&8Ładowane / runa · Nowicjusz'
@@ -232,7 +232,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:oslona'
     update: true
-    slot: 33
+    slot: 41
     display_name: '&b&lOsłona'
     lore:
       - '&8Koncentracja · Nowicjusz'
@@ -258,7 +258,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:przywolany_miecz'
     update: true
-    slot: 34
+    slot: 42
     display_name: '&d&lPrzywołany miecz'
     lore:
       - '&8Przywoływanie · Nowicjusz'
@@ -285,7 +285,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:duch_wilka'
     update: true
-    slot: 35
+    slot: 43
     display_name: '&d&lDuch wilka'
     lore:
       - '&8Przywoływanie · Nowicjusz'
@@ -310,7 +310,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:atronach_ognia'
     update: true
-    slot: 41
+    slot: 50
     display_name: '&d&lAtronach ognia'
     lore:
       - '&8Przywoływanie · Nowicjusz'
@@ -335,7 +335,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:leczenie_dloni'
     update: true
-    slot: 42
+    slot: 51
     display_name: '&d&lLeczenie dłoni'
     lore:
       - '&8Przywracanie · Nowicjusz'
@@ -360,7 +360,7 @@ items:
     material: TRIAL_KEY
     item_model: 'zaklecia:uspokojenie'
     update: true
-    slot: 43
+    slot: 52
     display_name: '&d&lUspokojenie'
     lore:
       - '&8Iluzja · Nowicjusz'
@@ -383,7 +383,7 @@ items:
   'puste':
     material: GLASS_PANE
     update: true
-    slot: 10
+    slot: 38
     display_name: '&f&lTwoje dłonie'
     lore:
       - '&7Prawa: &f%zaklecia_prawa%'
@@ -400,10 +400,3 @@ items:
       - '[console] zaklecia przypisz %player_name% nic prawa'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% nic lewa'
-
-  'powrot_ksiega':
-    material: nexo-hub_wstecz
-    slot: 45
-    display_name: '&e&lWróć do Księgi'
-    left_click_commands:
-      - '[openguimenu] hub_glowne'

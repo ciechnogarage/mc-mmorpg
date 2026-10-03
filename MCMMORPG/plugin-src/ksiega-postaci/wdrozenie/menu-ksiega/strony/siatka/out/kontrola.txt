@@ -1,3 +1,3 @@
-wiara: pozycje 21→19+powrót=20; komendy 32→32; sloty OK; piksele osierocone 0; glify U+4A40–U+4A43; title &f䩀䩁䩂䩃
-ksiega_zaklec: pozycje 18→16+powrót=17; komendy 47→47; sloty OK; piksele osierocone 0; glify U+4A44–U+4A47; title &f䩄䩅䩆䩇
-profession_main: pozycje 16→14+powrót=15; komendy 13→13; sloty OK; piksele osierocone 0; glify U+4A48–U+4A4B; title &f䩈䩉䩊䩋
+wiara: pozycje 21→19 (bez Wstecz/Zamknij); komendy 32→32; sloty OK; piksele osierocone 0; glify U+4A40–U+4A43; title &f䩀䩁䩂䩃
+ksiega_zaklec: pozycje 18→16 (bez Wstecz/Zamknij); komendy 47→47; sloty OK; piksele osierocone 0; glify U+4A44–U+4A47; title &f䩄䩅䩆䩇
+profession_main: pozycje 16→14 (bez Wstecz/Zamknij); komendy 13→13; sloty OK; piksele osierocone 0; glify U+4A48–U+4A4B; title &f䩈䩉䩊䩋
