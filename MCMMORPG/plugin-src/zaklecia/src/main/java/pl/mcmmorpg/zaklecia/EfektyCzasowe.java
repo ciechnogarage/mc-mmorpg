@@ -8,6 +8,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
@@ -42,6 +44,7 @@ import org.bukkit.util.RayTraceResult;
 
 /** Cykl zycia rzeczy przywolanych. Kazdy byt ma znacznik do sprzatania po awarii/restartcie. */
 final class EfektyCzasowe implements Listener {
+  enum Odmowa { BRAK, CEL, SOJUSZNIK, MIEJSCE_PRZYWOLANIA, KONFIGURACJA }
   private record Bron(int slot, boolean prawa, ItemStack nosnik, long koniec) {}
   private record Sluga(Entity byt, String zaklecie, long koniec) {}
   private final Zaklecia plugin;
@@ -57,6 +60,7 @@ final class EfektyCzasowe implements Listener {
   /** Ostatni cel wskazany przywolancowi przez plugin — AI MM potrafi go zgubic, strzelcy (atronach) strzelaja w niego. */
   private final Map<UUID, LivingEntity> celSlugi = new HashMap<>();
   private final Map<UUID, Long> ostatnieCelowanie = new HashMap<>();
+  private final Set<String> bledneKonfiguracje = new HashSet<>();
   private long tick;
 
   EfektyCzasowe(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik, Skille skille) {
@@ -120,26 +124,33 @@ final class EfektyCzasowe implements Listener {
         && MythicLib.inst().getEntities().canTarget(p, cel, InteractionType.OFFENSE_ACTION);
   }
 
-  boolean przygotuj(Player p, Ksiega.Zaklecie z, boolean obie) {
+  Odmowa przygotuj(Player p, Ksiega.Zaklecie z, boolean obie) {
     if (z.typ().equals("bron")) {
-      return MythicBukkit.inst().getItemManager().getItemStack(bronId(z)) != null;
+      if (MythicBukkit.inst().getItemManager().getItemStack(bronId(z)) == null) return konfiguracja(z);
+      return Odmowa.BRAK;
     }
     if (z.typ().equals("przywolanie")) {
       String mob = plugin.getConfig().getString("zaklecia." + z.id() + ".mob", "");
-      if (mob.isBlank() || MythicBukkit.inst().getAPIHelper().getMythicMob(mob) == null) return false;
+      if (mob.isBlank() || MythicBukkit.inst().getAPIHelper().getMythicMob(mob) == null) return konfiguracja(z);
       Location oko = p.getEyeLocation();
       RayTraceResult r = p.getWorld().rayTraceBlocks(oko, oko.getDirection(), z.zasieg(), FluidCollisionMode.NEVER, true);
       org.bukkit.util.Vector przod = p.getLocation().getDirection().setY(0);
       if (przod.lengthSquared() < 0.01) przod.setX(1);
       Location at = r == null ? p.getLocation().add(przod.normalize().multiply(2))
           : r.getHitPosition().toLocation(p.getWorld()).add(0, 1, 0);
-      return at.getBlock().isPassable() && at.clone().add(0, 1, 0).getBlock().isPassable();
+      return at.getBlock().isPassable() && at.clone().add(0, 1, 0).getBlock().isPassable()
+          ? Odmowa.BRAK : Odmowa.MIEJSCE_PRZYWOLANIA;
     }
     if (z.typ().equals("na_cel")) return cel(p, z.zasieg(), e -> wrog(p, e) && poziom(e) <=
-        maksPoziom(z, obie)) != null;
+        maksPoziom(z, obie)) != null ? Odmowa.BRAK : Odmowa.CEL;
     if (z.typ().equals("ladowany") && z.cel().equals("inny"))
-      return cel(p, z.zasieg(), e -> sojusznik(p, e)) != null;
-    return true;
+      return cel(p, z.zasieg(), e -> sojusznik(p, e)) != null ? Odmowa.BRAK : Odmowa.SOJUSZNIK;
+    return Odmowa.BRAK;
+  }
+
+  private Odmowa konfiguracja(Ksiega.Zaklecie z) {
+    if (bledneKonfiguracje.add(z.id())) plugin.getLogger().warning("Brak zasobu zaklecia " + z.id());
+    return Odmowa.KONFIGURACJA;
   }
 
   private int maksPoziom(Ksiega.Zaklecie z, boolean obie) {

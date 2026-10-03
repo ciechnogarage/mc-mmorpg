@@ -53,11 +53,13 @@ final class Rzucanie implements Listener {
   private final Ksiega ksiega;
   private final Strumien strumien;
   private final Skille skille;
+  private final Komunikat komunikat;
   private final RzutyOdrzutowe odrzutowe;
   private final EfektyCzasowe efekty;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
   private final Map<EntityDamageEvent, Boolean> typyMythicLib = new WeakHashMap<>();
   private final Map<UUID, Long> ppmLewa = new HashMap<>();
+  private final Map<UUID, Long> blokadaPpm = new HashMap<>();
   private final Map<UUID, Long> czekaLpm = new HashMap<>();
   private long teraz;
   /** Zachowane dla paska Wybor, ktory ma wlasny odsiew LPM po PPM. */
@@ -76,9 +78,10 @@ final class Rzucanie implements Listener {
   Rzucanie(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik) {
     this.plugin = plugin;
     this.ksiega = ksiega;
-    this.skille = new Skille(plugin);
+    this.skille = new Skille(plugin, ksiega.skBrakMany);
+    this.komunikat = new Komunikat(skille, ksiega.skBrakMany);
     this.efekty = new EfektyCzasowe(plugin, ksiega, nosnik, skille);
-    this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille, efekty);
+    this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille, efekty, komunikat);
     this.strumien = new Strumien(skille);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
@@ -102,7 +105,7 @@ final class Rzucanie implements Listener {
   /** Wylaczenie pluginu: zdejmij strumienie i przejsciowe atrybuty. */
   void wylacz() {
     efekty.wylacz(); odrzutowe.wylacz(); strumien.stopWszystkie(); rzucajacy.clear();
-    czekaLpm.clear(); ppmLewa.clear(); ostatniPpm.clear(); ostatnieQ.clear();
+    czekaLpm.clear(); ppmLewa.clear(); blokadaPpm.clear(); ostatniPpm.clear(); ostatnieQ.clear();
     for (Player p : Bukkit.getOnlinePlayers()) { atrybutyLpm(p, false); ruch(p, false); }
   }
 
@@ -223,6 +226,7 @@ final class Rzucanie implements Listener {
     Ksiega.Zaklecie lewa = zak(p, false);
     if (lewa == null) return;
     if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, rowno()); return; }
+    if (zablokowanePpm(p)) return;
     ppmLewa.put(p.getUniqueId(), teraz);
     rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
   }
@@ -247,6 +251,7 @@ final class Rzucanie implements Listener {
         && ksiega.w(e.getItem()) != null && (wybor == null || !wybor.otwarty(p))) {
       Ksiega.Zaklecie lewa = ksiega.w(e.getItem());
       if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, rowno()); return; }
+      if (zablokowanePpm(p)) return;
       ppmLewa.put(p.getUniqueId(), teraz);
       rzucajacy.computeIfAbsent(p.getUniqueId(), u -> new Stan());
     }
@@ -276,7 +281,8 @@ final class Rzucanie implements Listener {
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) {
     UUID u = e.getPlayer().getUniqueId();
-    rzucajacy.remove(u); czekaLpm.remove(u); ppmLewa.remove(u); ostatniPpm.remove(u); ostatnieQ.remove(u);
+    rzucajacy.remove(u); czekaLpm.remove(u); ppmLewa.remove(u); blokadaPpm.remove(u);
+    komunikat.wyjscie(e.getPlayer()); ostatniPpm.remove(u); ostatnieQ.remove(u);
     strumien.stop(e.getPlayer()); atrybutyLpm(e.getPlayer(), false); ruch(e.getPlayer(), false);
     odrzutowe.wyjscie(e.getPlayer());
   }
@@ -303,6 +309,18 @@ final class Rzucanie implements Listener {
     return t != null && teraz - t <= tolerancja;
   }
 
+  private boolean zablokowanePpm(Player p) {
+    UUID u = p.getUniqueId();
+    Long ostatni = blokadaPpm.get(u);
+    if (ostatni == null) return false;
+    if (teraz - ostatni > plugin.getConfig().getInt("ppm-tolerancja", 6)) {
+      blokadaPpm.remove(u);
+      return false;
+    }
+    blokadaPpm.put(u, teraz);
+    return true;
+  }
+
   private boolean prawaTeraz(Player p, Stan s) {
     if (zak(p, true) == null || !zak(p, true).koncentracja()) return false;
     return trybLpm(p) && s.przelacznik;
@@ -310,13 +328,14 @@ final class Rzucanie implements Listener {
 
   private boolean lewaTeraz(Player p) {
     if (zak(p, false) == null || !zak(p, false).koncentracja()) return false;
-    return swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
+    return !blokadaPpm.containsKey(p.getUniqueId())
+        && swiezy(ppmLewa, p, plugin.getConfig().getInt("ppm-tolerancja", 6));
   }
 
   /** Koszt many za tik z aktywnych dloni; to samo zaklecie w obu = jedna reka x mnoznik podwojnego. */
-  double koszt(Player p, Stan s) {
-    Ksiega.Zaklecie a = s.prawa ? ksiega.w(p.getInventory().getItemInMainHand()) : null;
-    Ksiega.Zaklecie b = s.lewa ? ksiega.w(p.getInventory().getItemInOffHand()) : null;
+  double koszt(Player p, boolean prawa, boolean lewa) {
+    Ksiega.Zaklecie a = prawa ? ksiega.w(p.getInventory().getItemInMainHand()) : null;
+    Ksiega.Zaklecie b = lewa ? ksiega.w(p.getInventory().getItemInOffHand()) : null;
     if (a != null && b != null && a.id().equals(b.id()))
       return a.manaZaTik() * (a.typ().equals("koncentracja") && !a.cel().equals("siebie")
           && !plugin.getConfig().contains("zaklecia." + a.id() + ".oburacz.mana")
@@ -403,7 +422,8 @@ final class Rzucanie implements Listener {
           it.remove(); strumien.stop(p); ruch(p, false);
           continue;
         }
-        if (pr != s.prawa || lw != s.lewa) {                     // zmiana aktywnych dloni
+        boolean zmianaDloni = pr != s.prawa || lw != s.lewa;
+        if (zmianaDloni) {                                      // zmiana aktywnych dloni
           Ksiega.Zaklecie staraP = s.prawa ? zak(p, true) : null;
           Ksiega.Zaklecie staraL = s.lewa ? zak(p, false) : null;
           Ksiega.Zaklecie nowaP = pr ? zak(p, true) : null;
@@ -429,30 +449,39 @@ final class Rzucanie implements Listener {
         if (n % 2 == 0) obraz(p, prawa, lewa);
         boolean prawaInni = prawa != null && prawa.cel().equals("inni");
         boolean lewaInni = lewa != null && lewa.cel().equals("inni");
-        if (n % 10 == 0) {
-          double koszt = koszt(p, s);
+        LivingEntity sojusznik = null;
+        if (prawaInni || lewaInni) {
+          sojusznik = EfektyCzasowe.cel(p,
+              Math.max(prawaInni ? prawa.zasieg() : 0, lewaInni ? lewa.zasieg() : 0),
+              e -> efekty.sojusznik(p, e));
+        }
+        if (n % 10 == 0 || zmianaDloni) {
+          if (sojusznik == null && (prawaInni || lewaInni))
+            komunikat.odmowa(p, "NO_ALLY", "Wskaż sojusznika");
+          double koszt = koszt(p, s.prawa && (!prawaInni || sojusznik != null),
+              s.lewa && (!lewaInni || sojusznik != null));
           PlayerData d = PlayerData.get(p);
           if (d.getMana() < koszt) {
-            skill(p, ksiega.skBrakMany);
+            komunikat.mana(p);
+            if (lw) blokadaPpm.put(p.getUniqueId(), teraz);
             s.przelacznik = false;
             it.remove(); strumien.stop(p); ruch(p, false);
             continue;
           }
-          if (koszt > 0) d.giveMana(-koszt, ResourceUpdateReason.SKILL);
-          if (prawa != null) s.oplaconeP = true;
-          if (lewa != null) s.oplaconeL = true;
-          tikZaklec(p, prawaInni ? null : prawa, lewaInni ? null : lewa);
-          if ((prawa != null && prawa.cel().equals("stozek")) || (lewa != null && lewa.cel().equals("stozek"))) {
-            List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
-            if (!cele.isEmpty()) trafienia(p, cele,
-                prawa != null && prawa.cel().equals("stozek") ? prawa : null,
-                lewa != null && lewa.cel().equals("stozek") ? lewa : null);
+          if (n % 10 == 0) {
+            if (koszt > 0) d.giveMana(-koszt, ResourceUpdateReason.SKILL);
+            s.oplaconeP = prawa != null && (!prawaInni || sojusznik != null);
+            s.oplaconeL = lewa != null && (!lewaInni || sojusznik != null);
+            tikZaklec(p, prawaInni ? null : prawa, lewaInni ? null : lewa);
+            if ((prawa != null && prawa.cel().equals("stozek")) || (lewa != null && lewa.cel().equals("stozek"))) {
+              List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
+              if (!cele.isEmpty()) trafienia(p, cele,
+                  prawa != null && prawa.cel().equals("stozek") ? prawa : null,
+                  lewa != null && lewa.cel().equals("stozek") ? lewa : null);
+            }
           }
         }
         if (prawaInni && s.oplaconeP || lewaInni && s.oplaconeL) {
-          LivingEntity sojusznik = EfektyCzasowe.cel(p,
-              Math.max(prawaInni ? prawa.zasieg() : 0, lewaInni ? lewa.zasieg() : 0),
-              e -> efekty.sojusznik(p, e));
           if (sojusznik != null) {
             if (toSamo(prawa, lewa) && s.oplaconeP && s.oplaconeL)
               skille.cele(p, prawa.skille().obie(prawa.skille().traf()), List.of(sojusznik));

@@ -32,12 +32,14 @@ final class RzutyOdrzutowe {
   private final Skille skille;
   private final Ksiega ksiega;
   private final EfektyCzasowe efekty;
+  private final Komunikat komunikat;
   private final Map<UUID, Ladunek> prawa = new HashMap<>(), lewa = new HashMap<>();
   private final Map<UUID, Deque<Runa>> runy = new HashMap<>();
   private long czas;
 
-  RzutyOdrzutowe(Rzucanie wejscie, Ksiega ksiega, Skille skille, EfektyCzasowe efekty) {
+  RzutyOdrzutowe(Rzucanie wejscie, Ksiega ksiega, Skille skille, EfektyCzasowe efekty, Komunikat komunikat) {
     this.wejscie = wejscie; this.ksiega = ksiega; this.skille = skille; this.efekty = efekty;
+    this.komunikat = komunikat;
   }
 
   private static String skill(Ksiega.Zaklecie z, String faza, String reka) {
@@ -52,6 +54,7 @@ final class RzutyOdrzutowe {
       if (prawy) { drugi.prawa = true; drugi.startP = czas; prawa.put(u, drugi); }
       else { drugi.lewa = true; drugi.ppm = true; drugi.startL = czas; drugi.ostatniPpm = czas; lewa.put(u, drugi); }
       drugi.start = czas; drugi.gotowe = false;
+      sprawdzMane(p, drugi);
       return drugi;
     }
     Ladunek l = new Ladunek();
@@ -60,7 +63,13 @@ final class RzutyOdrzutowe {
     l.prawa = prawy; l.lewa = !prawy; l.startP = prawy ? czas : -1; l.startL = prawy ? -1 : czas;
     l.ppm = !prawy;
     (prawy ? prawa : lewa).put(u, l);
+    sprawdzMane(p, l);
     return l;
+  }
+
+  private void sprawdzMane(Player p, Ladunek l) {
+    double koszt = l.zaklecie.mana() * (l.obie() ? l.zaklecie.manaOburacz() : 1);
+    if (PlayerData.get(p).getMana() < koszt) komunikat.mana(p);
   }
 
   void ppm(Player p, Ksiega.Zaklecie z, int rowno) {
@@ -152,16 +161,30 @@ final class RzutyOdrzutowe {
     if (z.typ().equals("runa")) {
       RayTraceResult r = p.getWorld().rayTraceBlocks(p.getEyeLocation(), p.getEyeLocation().getDirection(),
           z.zasieg(), FluidCollisionMode.NEVER, true);
-      if (r == null || r.getHitBlock() == null || r.getHitBlockFace() != BlockFace.UP) return;
+      if (r == null || r.getHitBlock() == null || r.getHitBlockFace() != BlockFace.UP) {
+        komunikat.odmowa(p, "RUNE_TARGET", "Wskaż cel"); return;
+      }
       miejsce = r.getHitPosition().toLocation(p.getWorld()).add(0, 0.02, 0);
       if (!r.getHitBlock().getRelative(BlockFace.UP).isPassable() ||
-          !r.getHitBlock().getRelative(BlockFace.UP, 2).isPassable()) return;
+          !r.getHitBlock().getRelative(BlockFace.UP, 2).isPassable()) {
+        komunikat.odmowa(p, "RUNE_SPACE", "Brak miejsca na runę"); return;
+      }
     }
-    if (!efekty.przygotuj(p, z, l.obie())) { p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 1.6f); return; }   // brak celu/miejsca: bez kosztu
+    EfektyCzasowe.Odmowa odmowa = efekty.przygotuj(p, z, l.obie());
+    if (odmowa != EfektyCzasowe.Odmowa.BRAK) {
+      String tekst = switch (odmowa) {
+        case CEL -> "Wskaż cel";
+        case SOJUSZNIK -> "Wskaż sojusznika";
+        case MIEJSCE_PRZYWOLANIA -> "Brak miejsca na przywołańca";
+        case KONFIGURACJA -> "Zaklęcie niedostępne";
+        default -> "Wskaż cel";
+      };
+      komunikat.odmowa(p, odmowa.name(), tekst);
+      return;
+    }
     double koszt = z.mana() * (l.obie() ? z.manaOburacz() : 1);
-    org.bukkit.Bukkit.getLogger().info("[Zaklecia] [wystrzal] t=" + czas + " " + p.getName() + " " + z.id() + " " + reka + " koszt=" + koszt);
     PlayerData dane = PlayerData.get(p);
-    if (dane.getMana() < koszt) { skille.cast(p, ksiega.skBrakMany); return; }
+    if (dane.getMana() < koszt) { komunikat.mana(p); return; }
     dane.giveMana(-koszt, ResourceUpdateReason.SKILL);
     if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel")
         || z.typ().equals("ladowany") && !z.cel().equals("stozek"))
