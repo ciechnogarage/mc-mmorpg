@@ -1,7 +1,9 @@
 package pl.mcmmorpg.ksiega;
 
 import io.lumine.mythic.lib.api.item.NBTItem;
-import java.util.List;
+import io.papermc.paper.datacomponent.DataComponentType;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -23,6 +25,9 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,11 +39,27 @@ final class Bron implements Listener {
   private static final int RIGHT = 0, LEFT_IMAGE = 1, RIGHT_SPARE = 11;
   private static final int LEFT_SPARE = 12, RIGHT_IMAGE = 13, LEFT = 40;
   private static final int HEALTH = 2, MANA = 3, UTILITY = 4;
+  // Tylko komponenty widoczne dla klienta. CUSTOM_DATA, enchanty i atrybuty
+  // pozostają wyłącznie na prawdziwym przedmiocie MMOItems.
+  private static final Set<DataComponentType> IMAGE_COMPONENTS = Set.of(
+      DataComponentTypes.ITEM_MODEL, DataComponentTypes.CUSTOM_MODEL_DATA,
+      DataComponentTypes.CUSTOM_NAME, DataComponentTypes.ITEM_NAME,
+      DataComponentTypes.LORE, DataComponentTypes.TOOLTIP_DISPLAY,
+      DataComponentTypes.TOOLTIP_STYLE, DataComponentTypes.RARITY,
+      DataComponentTypes.DYED_COLOR, DataComponentTypes.DAMAGE,
+      DataComponentTypes.MAX_DAMAGE, DataComponentTypes.TRIM,
+      DataComponentTypes.PROFILE, DataComponentTypes.BANNER_PATTERNS,
+      DataComponentTypes.BASE_COLOR, DataComponentTypes.POTION_CONTENTS,
+      DataComponentTypes.MAP_COLOR, DataComponentTypes.MAP_ID,
+      DataComponentTypes.FIREWORKS, DataComponentTypes.FIREWORK_EXPLOSION,
+      DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE);
   private final KsiegaPostaci plugin;
   private final NamespacedKey cloneKey;
   private final NamespacedKey imageKey;
   private final NamespacedKey reserveKey;
   private final NamespacedKey consumableKey;
+  // Nośnik zaklęcia (i pusta dłoń) z pluginu Zaklecia - nie broń, ale ma zostać w ręce.
+  private final NamespacedKey spellKey = new NamespacedKey("zaklecia", "nosnik");
 
   Bron(KsiegaPostaci plugin) {
     this.plugin = plugin;
@@ -55,6 +76,8 @@ final class Bron implements Listener {
   private boolean virtual(ItemStack item) {
     return isImage(item) || isReserveIcon(item) || isConsumableIcon(item);
   }
+
+  private boolean spell(ItemStack item) { return Przedmioty.marked(item, spellKey); }
 
   private boolean consumableSlot(int slot) { return slot >= HEALTH && slot <= UTILITY; }
 
@@ -143,6 +166,7 @@ final class Bron implements Listener {
   }
 
   void clearClone(Player player) {
+    canonical(player);
     PlayerInventory inventory = player.getInventory();
     if (isImage(inventory.getItem(LEFT_IMAGE))) inventory.setItem(LEFT_IMAGE, null);
     if (isImage(inventory.getItem(RIGHT_IMAGE))) inventory.setItem(RIGHT_IMAGE, null);
@@ -174,16 +198,12 @@ final class Bron implements Listener {
               "nexo:mmo_icon_gloves"),
           iconName(side), "§8Puste", key);
     }
-    // Nowy stos kopiuje tylko wygląd, nigdy NBT/PDC MMOItems.
+    // Nowy stos kopiuje wyłącznie komponenty wizualne, nigdy CUSTOM_DATA/NBT/PDC MMOItems.
     ItemStack result = new ItemStack(source.getType(), 1);
-    ItemMeta sourceMeta = source.getItemMeta();
+    result.copyDataFrom(source, IMAGE_COMPONENTS::contains);
+    if (source.getEnchantments().size() > 0 && !source.hasData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE))
+      result.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
     ItemMeta meta = result.getItemMeta();
-    if (sourceMeta != null) {
-      if (sourceMeta.hasItemModel()) meta.setItemModel(sourceMeta.getItemModel());
-      if (sourceMeta.hasDisplayName()) meta.setDisplayName(sourceMeta.getDisplayName());
-      else if (sourceMeta.hasItemName()) meta.setDisplayName(sourceMeta.getItemName());
-    }
-    meta.setLore(List.of(right ? "§6W ręce (prawa)" : "§6W ręce (lewa)"));
     meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
     result.setItemMeta(meta);
     return result;
@@ -216,7 +236,33 @@ final class Bron implements Listener {
     Migracja.give(player, item);
   }
 
+  // Jedyny zapis właściwej lewej broni podczas operacji na ekwipunku.
+  // Przeniesienie odbywa się przez usunięcie źródła, nigdy przez clone().
+  void canonical(Player player) {
+    PlayerInventory inventory = player.getInventory();
+    if (!isClone(inventory.getItemInOffHand())) return;
+    ItemStack active = inventory.getItem(LEFT_IMAGE);
+    if (!Przedmioty.empty(active) && !virtual(active) && weapon(active)) {
+      inventory.setItem(LEFT_IMAGE, null);
+      inventory.setItemInOffHand(active);
+    } else inventory.setItemInOffHand(null);
+  }
+
+  private void selected(Player player) {
+    PlayerInventory inventory = player.getInventory();
+    if (inventory.getHeldItemSlot() != LEFT_IMAGE) return;
+    ItemStack left = inventory.getItemInOffHand();
+    if (Przedmioty.empty(left) || virtual(left) || !weapon(left)) return;
+    ItemStack clone = image(left, false);
+    inventory.setItemInOffHand(null);
+    inventory.setItem(LEFT_IMAGE, left);
+    inventory.setItemInOffHand(clone);
+  }
+
   void refresh(Player player) {
+    // Odświeżenie po zamknięciu Księgi (UkrywanieEkwipunku.close).
+    if (plugin.ukrywanie.isBookView(player.getOpenInventory())) return;
+    canonical(player);
     if (player.getWorld().getName().equals("creator_limbo")) return;
     PlayerInventory inventory = player.getInventory();
     recover(player, LEFT_IMAGE);
@@ -244,12 +290,13 @@ final class Bron implements Listener {
       if ((slot == RIGHT_SPARE || slot == LEFT_SPARE) && isReserveIcon(item)) {
         inventory.setItem(slot, null); item = null;
       }
-      if (!Przedmioty.empty(item) && !weapon(item)) {
+      if (!Przedmioty.empty(item) && !weapon(item) && !spell(item)) {
         inventory.setItem(slot, null);
         if (!virtual(item)) Migracja.give(player, item);
       }
     }
-    if (twoHanded(inventory.getItem(RIGHT)) && !Przedmioty.empty(inventory.getItemInOffHand())) {
+    if (twoHanded(inventory.getItem(RIGHT)) && !Przedmioty.empty(inventory.getItemInOffHand())
+        && !spell(inventory.getItemInOffHand())) {
       ItemStack left = inventory.getItemInOffHand();
       inventory.setItemInOffHand(null);
       Migracja.give(player, left);
@@ -274,6 +321,7 @@ final class Bron implements Listener {
     }
     for (int slot = HEALTH; slot <= UTILITY; slot++)
       if (Przedmioty.empty(inventory.getItem(slot))) inventory.setItem(slot, consumableIcon(slot));
+    selected(player);
   }
 
   private void refreshLater(Player player) {
@@ -496,15 +544,36 @@ final class Bron implements Listener {
     refreshLater(player);
   }
 
+  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+  public void beforeClick(InventoryClickEvent event) {
+    // Księga (menu Q) ukrywa ekwipunek; każdy setItem poszedłby do klienta jako okno 0 i odsłonił EQ.
+    if (event.getWhoClicked() instanceof Player player && !plugin.ukrywanie.isBookView(event.getView())) {
+      canonical(player);
+      refreshLater(player);
+    }
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+  public void beforeDrag(InventoryDragEvent event) {
+    // Księga (menu Q) ukrywa ekwipunek; każdy setItem poszedłby do klienta jako okno 0 i odsłonił EQ.
+    if (event.getWhoClicked() instanceof Player player && !plugin.ukrywanie.isBookView(event.getView())) {
+      canonical(player);
+      refreshLater(player);
+    }
+  }
+
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void swap(PlayerSwapHandItemsEvent event) {
     Player player = event.getPlayer();
+    canonical(player);
     PlayerInventory inventory = player.getInventory();
     if (inventory.getHeldItemSlot() == LEFT_IMAGE || isImage(event.getMainHandItem())
-        || isImage(event.getOffHandItem())) { event.setCancelled(true); return; }
+        || isImage(event.getOffHandItem())) {
+      event.setCancelled(true); refreshLater(player); return;
+    }
     if (!player.isSneaking()) {
-      if (!validPair(player, inventory.getHeldItemSlot() == RIGHT
-          ? event.getMainHandItem() : inventory.getItem(RIGHT), event.getOffHandItem())) {
+      if (inventory.getHeldItemSlot() != RIGHT
+          || !validPair(player, event.getMainHandItem(), event.getOffHandItem())) {
         event.setCancelled(true); return;
       }
       refreshLater(player);
@@ -668,40 +737,53 @@ final class Bron implements Listener {
     refreshLater(player);
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST) public void held(PlayerItemHeldEvent event) {
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+  public void held(PlayerItemHeldEvent event) {
+    canonical(event.getPlayer());
     refreshLater(event.getPlayer());
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void interact(PlayerInteractEvent event) {
+    if (event.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND) {
+      if (virtual(event.getPlayer().getInventory().getItemInOffHand())) event.setCancelled(true);
+      return;
+    }
     if (event.getHand() != org.bukkit.inventory.EquipmentSlot.HAND) return;
     PlayerInventory inventory = event.getPlayer().getInventory();
     ItemStack main = inventory.getItemInMainHand();
-    if (isImage(main) || isConsumableIcon(main) || inventory.getHeldItemSlot() != RIGHT
+    if (virtual(main) || inventory.getHeldItemSlot() != RIGHT
+        && inventory.getHeldItemSlot() != LEFT_IMAGE
         && !Przedmioty.empty(main) && weapon(main)) event.setCancelled(true);
     if (consumableSlot(inventory.getHeldItemSlot())) refreshLater(event.getPlayer());
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void entity(PlayerInteractEntityEvent event) {
-    ItemStack main = event.getPlayer().getInventory().getItemInMainHand();
-    if (isImage(main) || isConsumableIcon(main)) event.setCancelled(true);
+    ItemStack item = event.getPlayer().getInventory().getItem(
+        event.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND ? LEFT
+            : event.getPlayer().getInventory().getHeldItemSlot());
+    if (virtual(item)) event.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void damage(EntityDamageByEntityEvent event) {
     if (event.getDamager() instanceof Player player
         && (player.getInventory().getHeldItemSlot() != RIGHT
-            || isImage(player.getInventory().getItemInMainHand()))) event.setCancelled(true);
+            && player.getInventory().getHeldItemSlot() != LEFT_IMAGE
+            || virtual(player.getInventory().getItemInMainHand()))) event.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void shoot(EntityShootBowEvent event) {
     if (event.getEntity() instanceof Player player
-        && player.getInventory().getHeldItemSlot() != RIGHT
+        && (virtual(event.getBow()) || player.getInventory().getHeldItemSlot() != RIGHT
+        && player.getInventory().getHeldItemSlot() != LEFT_IMAGE
         && event.getBow() != null
-        && event.getBow().isSimilar(player.getInventory().getItemInMainHand()))
+        && event.getBow().isSimilar(player.getInventory().getItemInMainHand())))
       event.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void drop(PlayerDropItemEvent event) {
-    if (virtual(event.getItemDrop().getItemStack())) event.setCancelled(true);
+    if (virtual(event.getItemDrop().getItemStack())
+        || event.getPlayer().getInventory().getHeldItemSlot() == LEFT_IMAGE)
+      event.setCancelled(true);
     refreshLater(event.getPlayer());
   }
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -715,6 +797,19 @@ final class Bron implements Listener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void damageItem(PlayerItemDamageEvent event) { refreshLater(event.getPlayer()); }
   @EventHandler public void death(PlayerDeathEvent event) {
+    canonical(event.getEntity());
     event.getDrops().removeIf(this::virtual);
   }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void teleport(PlayerTeleportEvent event) {
+    canonical(event.getPlayer());
+    refreshLater(event.getPlayer());
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void quit(PlayerQuitEvent event) { canonical(event.getPlayer()); }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void kick(PlayerKickEvent event) { canonical(event.getPlayer()); }
 }

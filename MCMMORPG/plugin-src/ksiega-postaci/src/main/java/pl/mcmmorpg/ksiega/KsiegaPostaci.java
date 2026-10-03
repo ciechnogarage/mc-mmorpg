@@ -62,6 +62,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
       if (!player.isOnline() || player.getWorld().getName().equals("creator_limbo")) return;
       Dane.Record record = dane.current(player);
       if (record == null) return;
+      bron.canonical(player);
       migracja.migrate(player, record);
       bizuteria.show(player);
       sakwa.show(player);
@@ -70,9 +71,15 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
     }, 2L);
   }
 
-  @EventHandler public void join(PlayerJoinEvent e) { refreshLater(e.getPlayer()); }
+  @EventHandler public void join(PlayerJoinEvent e) {
+    bron.canonical(e.getPlayer());
+    refreshLater(e.getPlayer());
+  }
   @EventHandler public void respawn(PlayerRespawnEvent e) { refreshLater(e.getPlayer()); }
-  @EventHandler public void world(PlayerChangedWorldEvent e) { refreshLater(e.getPlayer()); }
+  @EventHandler public void world(PlayerChangedWorldEvent e) {
+    bron.canonical(e.getPlayer());
+    refreshLater(e.getPlayer());
+  }
   @EventHandler public void quit(PlayerQuitEvent e) {
     if (ukrywanie != null) ukrywanie.quit(e.getPlayer());
     dane.unload(e.getPlayer());
