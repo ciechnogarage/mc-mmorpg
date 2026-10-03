@@ -3,7 +3,7 @@ package pl.mcmmorpg.zaklecia;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.Indyuce.mmocore.api.player.PlayerData;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -35,9 +35,9 @@ final class Komunikat {
     Map<String, Long> gracz = ostatnie.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>());
     if (teraz - gracz.getOrDefault(kod, 0L) < 2000) return false;
     gracz.put(kod, teraz);
-    PlayerData dane = PlayerData.get(p);
-    if (dane != null) dane.displayActionBar(tekst);
-    else p.sendActionBar(LegacyComponentSerializer.legacySection().deserialize(tekst));
+    // priorytet 40 MythicLib: odmowy przykrywaja pasek MMOCore (10), nawigacje Mapy (20) i informacje (30)
+    try { MMOPlayerData.get(p).getActionBar().show(40, 40L, tekst); }
+    catch (Throwable t) { p.sendActionBar(LegacyComponentSerializer.legacySection().deserialize(tekst)); }
     return true;
   }
 }
