@@ -70,6 +70,12 @@ final class Nosnik implements Listener {
     org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, this::odswiezPuste, 1, 1);
   }
 
+  /**
+   * Pusta dlon takze bez czaru w lewej — ustawia pasek Shift+Q. Klient przy PPM w powietrze z pusta reka nie wysyla
+   * zadnego pakietu, wiec bez nosnika w dloni pasek nie widzial PPM (nie dalo sie wziac zaklecia najpierw do lewej).
+   */
+  java.util.function.Predicate<Player> wymusPusta = p -> false;
+
   private static final NamespacedKey KLON_KSIEGI = new NamespacedKey("ksiega", "klon");
 
   boolean jest(ItemStack i) {
@@ -110,7 +116,7 @@ final class Nosnik implements Listener {
       Ksiega.Zaklecie stare = ksiega.w(lewa);
       if (stare != null) inv.setItemInOffHand(zrob(stare));
     }
-    if (ksiega.w(inv.getItemInOffHand()) != null) {
+    if (ksiega.w(inv.getItemInOffHand()) != null || wymusPusta.test(p)) {
       if (w == null || w.getType().isAir()) inv.setItem(wybrany, zrobPusta());
     } else if (pusta(w)) inv.setItem(wybrany, null);
   }

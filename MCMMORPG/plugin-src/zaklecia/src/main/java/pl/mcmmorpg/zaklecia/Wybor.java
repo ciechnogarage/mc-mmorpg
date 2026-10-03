@@ -41,6 +41,7 @@ final class Wybor implements Listener {
 
   Wybor(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik, Ulubione ulubione, Rzucanie rzucanie) {
     this.plugin = plugin; this.ksiega = ksiega; this.nosnik = nosnik; this.ulubione = ulubione; this.rzucanie = rzucanie;
+    nosnik.wymusPusta = this::otwarty;
     Bukkit.getScheduler().runTaskTimer(plugin, () -> {
       long t = System.currentTimeMillis();
       for (UUID u : List.copyOf(otwarte.keySet())) {
@@ -66,6 +67,7 @@ final class Wybor implements Listener {
     otwarte.put(p.getUniqueId(), s);
     p.showBossBar(s.bar);
     p.showBossBar(s.opis);
+    nosnik.odswiezPusta(p);   // PPM z pusta reka nie dociera do serwera — od razu nosnik w dloni
     odswiez(p, s);
     podpowiedz(p);
     p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.8f, 1.2f);
