@@ -103,6 +103,7 @@ final class PanelDolny {
   boolean hasAction(int slot, ItemStack visible, Page page) {
     if (page != null && page.backMenu() != null && slot >= 3 && slot <= 5)
       return visible != null && !visible.getType().isAir();
+    if (slot >= 18 && slot <= 26) return plugin.portal.quickAction(slot, visible);
     Entry entry = entries.get(slot);
     return entry != null && visible != null && !visible.getType().isAir()
         && !entry.commands.isEmpty();
@@ -111,6 +112,10 @@ final class PanelDolny {
   void run(Player player, int slot, Page page) {
     if (page != null && page.backMenu() != null && slot >= 3 && slot <= 5) {
       Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dm open " + page.backMenu() + " " + player.getName());
+      return;
+    }
+    if (slot >= 18 && slot <= 26) {
+      plugin.portal.quickClick(player, slot);
       return;
     }
     Entry entry = entries.get(slot);
@@ -155,6 +160,8 @@ final class PanelDolny {
       item.setItemMeta(meta);
       result[entry.slot] = item;
     }
+    ItemStack[] quick = plugin.portal.quickItems(player);
+    System.arraycopy(quick, 0, result, 18, quick.length);
     if (page != null && page.backMenu() != null) {
       for (int slot = 3; slot <= 5; slot++) {
         Entry entry = entries.get(slot);

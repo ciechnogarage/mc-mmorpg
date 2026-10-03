@@ -2,10 +2,13 @@
 """Finalne menu Q: dwanaście kafli 2×2 na jednej stronie księgi."""
 from pathlib import Path
 import json
+import sys
 from collections import Counter
 from PIL import Image, ImageDraw
 
 OUT = Path(__file__).resolve().parent
+VARIANT = sys.argv[1] if len(sys.argv) > 1 else 'a'
+assert VARIANT in ('old', 'a', 'b', 'c')
 S = (352, 444)
 P = {
     'ink': '#251c2b', 'leather0': '#39232e', 'leather1': '#61323a',
@@ -41,7 +44,7 @@ def E(box, c, outline=None, width=1):
 
 def load_minecraft_glyphs():
     """Read the actual Minecraft bitmap providers, including Polish letters."""
-    root = OUT.parent.parent / 'mcfont' / 'assets' / 'minecraft'
+    root = Path('/home/dev/.claude/jobs/7bc77651/tmp/mcfont/assets/minecraft')
     providers = json.loads((root / 'font' / 'include' / 'default.json').read_text())['providers']
     glyphs = {}
     for provider in providers:
@@ -67,18 +70,20 @@ def load_minecraft_glyphs():
 
 GLYPHS = load_minecraft_glyphs()
 
-def text_width(s, sx=1, bold=False):
+def text_width(s, sx=1, bold=False, spacing=1):
     missing = [char for char in s if char not in GLYPHS]
     if missing:
         raise ValueError(f'Brak glifów Minecrafta: {missing}')
-    return (sum(GLYPHS[c][1]+1 for c in s)-1)*sx + int(bold)
+    return (sum(GLYPHS[c][1]+spacing for c in s)-spacing)*sx + int(bold)
 
 def bitmap_text(s, cx, baseline, color='blue0', sx=1, sy=1, bold=False,
-                max_width=None):
-    width = text_width(s,sx,bold)
+                max_width=None, spacing=1):
+    width = text_width(s,sx,bold,spacing)
     if max_width is not None and width > max_width:
         raise ValueError(f'Tekst za szeroki: {s}: {width}>{max_width}')
     x = int(cx-width//2)
+    if sx == sy == 2 and VARIANT != 'old':
+        x -= x % 2  # piksel litery zaczyna się na pełnym pikselu GUI
     for char in s:
         mask, advance, ascent = GLYPHS[char]
         if sx != 1 or sy != 1:
@@ -89,7 +94,90 @@ def bitmap_text(s, cx, baseline, color='blue0', sx=1, sy=1, bold=False,
             thick.paste(mask,(1,0),mask)
             mask = thick
         im.paste(C[color],(x,baseline-ascent*sy),mask)
-        x += (advance+1)*sx
+        x += (advance+spacing)*sx
+    return width
+
+TOM_THUMB_HEX = dict(zip('ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    '57DA D75C 7246 D6DC F3CE F3C8 73D6 B7DA E92E 24D4 B75A 924E '
+    'BFDA BFFA 56D4 D748 56F6 D7EA 711C E924 B6D6 B6A4 B7FA B55A '
+    'B524 E54E'.split()))
+
+def unpack_tom_thumb(value):
+    bits = f'{int(value, 16):016b}'[:15]
+    return tuple(bits[i:i+3] for i in range(0, 15, 3))
+
+CAPITALS = {char: unpack_tom_thumb(value)
+            for char, value in TOM_THUMB_HEX.items()}
+CAPITALS.update({
+    'I': ('1','1','1','1','1'),
+    'M': ('10001','11011','10101','10001','10001'),
+    'N': ('101','111','111','101','101'),
+    'W': ('10001','10001','10101','10101','01010'),
+    'Ł': ('100','101','110','100','111'),
+})
+
+def marked_capital(base, mark):
+    body = CAPITALS[base]
+    width = len(body[0])
+    rows = [list('0'*width) for _ in range(9)]
+    for y, line in enumerate(body, start=3):
+        rows[y] = list(line)
+    if mark == 'acute':
+        rows[0][width-1] = '1'
+        rows[1][width-2] = '1'
+    elif mark == 'dot':
+        rows[1][width//2] = '1'
+    elif mark == 'ogonek':
+        rows[8][width-1] = '1'
+    else:
+        raise ValueError(mark)
+    return tuple(''.join(row) for row in rows)
+
+NARROW = {char: tuple('0'*len(body[0]) for _ in range(3)) + body +
+          ('0'*len(body[0]),) for char, body in CAPITALS.items()}
+NARROW[' '] = ('00',)*9
+for char, base, mark in (
+    ('Ą','A','ogonek'), ('Ć','C','acute'), ('Ę','E','ogonek'),
+    ('Ń','N','acute'), ('Ó','O','acute'), ('Ś','S','acute'),
+    ('Ź','Z','acute'), ('Ż','Z','dot'),
+):
+    NARROW[char] = marked_capital(base, mark)
+
+def narrow_width(s):
+    return sum(len(NARROW[ch][0]) for ch in s) + len(s)-1 - int(s in ('ZDOLNOŚCI', 'CHOWAŃCE'))
+
+def narrow_text(s,cx,top,color='blue0',max_gui=34):
+    """Draw compact glyphs on whole GUI pixels (even texture coordinates)."""
+    if s != s.upper() or any(ch not in NARROW for ch in s):
+        raise ValueError(f'Podpis musi używać samych wersalików: {s}')
+    width = narrow_width(s)
+    if width > max_gui:
+        raise ValueError(f'Podpis {s}: {width}>{max_gui} px GUI')
+    assert cx % 2 == 0 and top % 2 == 0
+    x = 2*((cx//2) - (width//2))
+    assert x % 2 == 0
+    for index,ch in enumerate(s):
+        rows = NARROW[ch]
+        assert all(len(row)==len(rows[0]) for row in rows), ch
+        for yy,row in enumerate(rows):
+            for xx,bit in enumerate(row):
+                if bit == '1':
+                    R((x+xx*2,top+yy*2,
+                       x+xx*2+1,top+yy*2+1),color)
+        x += (len(rows[0])+1)*2 - (2 if s in ('ZDOLNOŚCI', 'CHOWAŃCE') and index == 3 else 0)
+    return width
+
+
+def compact_text(s,cx,top,color="blue0",max_gui=34):
+    width = narrow_width(s)
+    if width > max_gui: raise ValueError(f"Tekst za szeroki: {s}: {width}>{max_gui}")
+    x = 2*((cx//2)-(width//2))
+    for ch in s:
+        rows = NARROW[ch][:8]
+        for yy,row in enumerate(rows):
+            for xx,bit in enumerate(row):
+                if bit == "1": R((x+2*xx,top+2*yy,x+2*xx+1,top+2*yy+1),color)
+        x += 2*(len(rows[0])+1)
     return width
 
 def star(x,y,c='gold2'):
@@ -171,7 +259,7 @@ for xa,xb in ((55,87),(265,297)):
 for x in (58,294):
     E((x-5,11,x+5,21),'gold1','gold0')
     R((x-1,14,x+1,18),'paper4')
-bitmap_text('Księga',176,22,'gold2',sx=2,sy=2,max_width=235)
+bitmap_text('Księga' if VARIANT == 'old' else 'MENU',176,22,'gold2',sx=2,sy=2,max_width=235)
 
 def miniature_frame(x,y):
     # Exactly one two-by-two-slot tile, with no click target slivers.
@@ -427,11 +515,28 @@ def scene_soon(x,y):
     E((x+23,y+17,x+29,y+23),'gold1','red0')
     R((x+25,y+18,x+27,y+22),'gold2')
 
+def scene_portal(x,y):
+    R((x,y,x+51,y+38),'blue0')
+    G([(x,y+31),(x+11,y+20),(x+22,y+31)],'green0')
+    G([(x+25,y+31),(x+41,y+15),(x+51,y+28),(x+51,y+38),(x,y+38)],'green1')
+    # Dwuczęściowy kamienny łuk, światło i ścieżka prowadząca w głąb.
+    G([(x+9,y+38),(x+20,y+27),(x+26,y+24),(x+34,y+38)],'gold1')
+    G([(x+17,y+38),(x+23,y+27),(x+27,y+26),(x+29,y+38)],'paper2')
+    R((x+10,y+7,x+18,y+32),'stone0','ink')
+    R((x+33,y+7,x+41,y+32),'stone0','ink')
+    R((x+9,y+5,x+42,y+13),'stone0','ink')
+    R((x+13,y+8,x+38,y+11),'stone2')
+    R((x+18,y+14,x+33,y+28),'blue2','gold2')
+    R((x+21,y+17,x+30,y+28),'sky')
+    star(x+26,y+19,'paper4')
+    for xx in (12,37):
+        R((x+xx,y+16,x+xx+3,y+19),'gold2','gold0')
+
 tiles = [
     (14,34,'Mapa świata',scene_map),
     (86,34,'Zadania',scene_quests),
     (194,34,'Podróże',scene_travel),
-    (266,34,'Dziennik przygód',scene_journal),
+    (266,34,'Dziennik',scene_journal),
     (14,106,'Postać',scene_character),
     (86,106,'Umiejętności',scene_skills),
     (194,106,'Profesje',scene_professions),
@@ -439,7 +544,7 @@ tiles = [
     (14,178,'Handel',scene_trade),
     (86,178,'Społeczność',scene_community),
     (194,178,'Poczta',scene_mail),
-    (266,178,'Wkrótce',scene_soon),
+    (266,178,'Wkrótce' if VARIANT == 'old' else 'Portal',scene_soon if VARIANT == 'old' else scene_portal),
 ]
 assert len(tiles) == 12
 for tx,ty,label,painter in tiles:
@@ -451,15 +556,40 @@ for tx,ty,label,painter in tiles:
 
 # The caption plate spans almost the full tile; ink stays >=3 texels inboard.
 tile_caption_boxes = []
+short = {'Mapa świata':'MAPA', 'Zadania':'ZADANIA', 'Podróże':'PODRÓŻE',
+         'Dziennik':'DZIENNIK', 'Postać':'POSTAĆ',
+         'Umiejętności':'ZDOLNOŚCI', 'Profesje':'PROFESJE', 'Chowańce':'CHOWAŃCE',
+         'Handel':'HANDEL', 'Społeczność':'DRUŻYNA', 'Poczta':'POCZTA', 'Portal':'PORTAL'}
+two = {'Mapa świata':('MAPA','ŚWIATA'), 'Zadania':('ZADA','NIA'),
+       'Podróże':('PODRÓ','ŻE'), 'Dziennik':('DZIENNIK',),
+       'Postać':('POSTAĆ',), 'Umiejętności':('UMIEJĘT','NOŚCI'),
+       'Profesje':('PROFE','SJE'), 'Chowańce':('CHOWAŃ','CE'),
+       'Handel':('HANDEL',), 'Społeczność':('SPOŁECZ','NOŚĆ'),
+       'Poczta':('POCZTA',), 'Portal':('PORTAL',)}
 for tx,ty,label,_ in tiles:
-    R((tx+1,ty+51,tx+70,ty+70),'paper2','gold0')
-    R((tx+2,ty+52,tx+69,ty+69),'paper4')
-    lines = ('Dziennik',) if label == 'Dziennik przygód' else (label,)
-    for line,baseline in zip(lines, (ty+65,)):
-        width = bitmap_text(line,tx+36,baseline,'blue0',bold=True,max_width=66)
+    cap_top = ty+38 if VARIANT == 'c' else ty+44
+    R((tx,cap_top,tx+71,ty+70),'paper2','gold0')
+    R((tx+1,cap_top+1,tx+70,ty+69),'paper4')
+    if VARIANT == 'old':
+        lines = ('Dziennik',) if label == 'Dziennik przygód' else (label,)
+    elif VARIANT == 'a':
+        lines = (short[label],)
+    elif VARIANT == 'b':
+        lines = (short[label].upper(),)
+    else:
+        lines = two[label]
+    for index,line in enumerate(lines):
+        if VARIANT == 'old':
+            width = bitmap_text(line,tx+36,ty+65,'blue0',bold=True,max_width=66)
+        elif VARIANT == 'a':
+            width = narrow_text(line,tx+36,ty+48,'blue0',max_gui=32)*2
+        elif VARIANT == 'b':
+            width = narrow_text(line,tx+36,ty+52,'blue0',max_gui=34)*2
+        else:
+            width = compact_text(line,tx+36,ty+38+16*index,'blue0',max_gui=34)*2
         left = tx+36-width//2
         assert left-tx >= 3 and tx+71-(left+width-1) >= 3, (label,width)
-    tile_caption_boxes.append((tx+1,ty+51,tx+71,ty+71))
+    tile_caption_boxes.append((tx,cap_top,tx+72,ty+71))
 
 # A narrow footer makes the final row feel bound into the leather cover.
 for xa,xb in ((23,158),(194,329)):
@@ -490,10 +620,13 @@ def seal(cx,cy,color,icon):
 for args in ((32,296,'red1','?'),(68,296,'blue1','gear'),
              (320,296,'red0','x')):
     seal(*args)
-R((122,278,229,313),'ink','gold0')
-R((125,281,226,310),'paper1','gold2')
-R((128,284,223,307),'paper3','gold0')
-bitmap_text('Zmień postać',176,299,'blue0',bold=True,max_width=90)
+R((116,278,235,313),'ink','gold0')
+R((119,281,232,310),'paper1','gold2')
+R((122,284,229,307),'paper3','gold0')
+if VARIANT == 'old':
+    bitmap_text('Zmień postać',176,299,'blue0',bold=True,max_width=90)
+else:
+    narrow_text('ZMIEŃ POSTAĆ',176,286,'blue0',max_gui=48)
 
 # Inventory row B, columns 1..7: empty item sockets for plugin sprites.
 R((50,314,301,349),'ink','gold0')
@@ -505,15 +638,21 @@ for col in range(1,8):
     L([(x+6,322),(x+29,322)],'blue1')
     L([(x+6,341),(x+29,341)],'gold0')
 
-# Row C is calm; the identity ribbon sits below the item sockets.
-L([(38,373),(103,373)],'gold0')
-L([(249,373),(314,373)],'gold0')
-R((106,358,246,388),'leather0','gold0')
-R((110,361,242,385),'blue0','gold1')
-bitmap_text('Wędrowca',176,379,'gold2',sx=2,sy=2,max_width=126)
-for x in (36,316):
-    G([(x-4,373),(x,369),(x+4,373),(x,377)],'gold1','gold0')
-# The hotbar region remains an unobtrusive continuation of the desk.
+# Row C: nine waypoint medallions, corresponding to nine hidden inventory slots.
+for col in range(9):
+    x=32+36*col
+    E((x-17,351,x+17,385),'ink','gold0')
+    E((x-14,354,x+14,382),'blue0','gold2')
+    E((x-11,357,x+11,379),'blue1','gold0')
+if VARIANT == 'old':
+    R((106,358,246,388),'leather0','gold0')
+    R((110,361,242,385),'blue0','gold1')
+    bitmap_text('Wędrowca',176,379,'gold2',sx=2,sy=2,max_width=126)
+else:
+    R((85,395,267,423),'leather0','gold0')
+    R((89,399,263,419),'blue0','gold1')
+    narrow_text('SZYBKA PODRÓŻ',176,400,'gold2',max_gui=82)
+# The hotbar region frames the quick-travel row.
 L([(19,392),(333,392)],'wood2')
 L([(19,430),(333,430)],'wood2')
 
@@ -547,8 +686,14 @@ for _ in range(8):
 remaining = find_orphans(im)
 assert not remaining, remaining[:8]
 
-im.save(OUT/'ksiega.png')
-im.resize((704,888),Image.Resampling.NEAREST).save(OUT/'podglad_x2.png')
+if VARIANT != 'old':
+    im.save(OUT/f'ksiega_{VARIANT}.png')
+    if VARIANT == 'a':
+        im.save(OUT/'ksiega_2x.png')
+        for i,(x,y) in enumerate(((0,0),(176,0),(0,222),(176,222)),1):
+            im.crop((x,y,x+176,y+222)).save(OUT/f'kb_{i}.png')
+else:
+    im.save(OUT/'ksiega_obecna.png')
 
 # Every chest and hidden inventory slot is documented, including empty slots.
 slot_map = {}
@@ -560,7 +705,7 @@ for tx,ty,label,_ in tiles:
             assert slot not in slot_map
             slot_map[slot]=label
 assert len(slot_map)==48
-slot_lines=['Księga Q — siatka 9 × 6; jeden kafel = dokładnie 2 × 2 sloty.',
+slot_lines=['MENU Q — siatka 9 × 6; jeden kafel = dokładnie 2 × 2 sloty.',
             'Kolumna 4 jest pustym grzbietem księgi.',
             'Skrzynia (sloty 0–53):']
 for slot in range(54):
@@ -573,7 +718,8 @@ for name,y in (('A',278),('B',314),('C',350),('hotbar',394)):
         action = ('Pomoc' if col==0 else 'Ustawienia' if col==1 else
                   'Zmień postać' if col in (3,4,5) else
                   'Zamknij' if col==8 else 'puste') if name=='A' else (
-                  'Stan i akcje — gniazdo przedmiotu' if 1 <= col <= 7 else 'puste') if name=='B' else 'puste'
+                  'Stan i akcje — gniazdo przedmiotu' if 1 <= col <= 7 else 'puste') if name=='B' else (
+                  'Szybka podróż — punkt ' + str(col+1)) if name=='C' else 'puste'
         slot_lines.append(f'  {name}{col} | x={14+36*col} | {action}')
 (OUT/'sloty.txt').write_text('\n'.join(slot_lines)+'\n',encoding='utf-8')
 

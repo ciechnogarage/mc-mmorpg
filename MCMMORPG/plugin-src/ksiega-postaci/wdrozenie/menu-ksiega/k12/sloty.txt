@@ -1,4 +1,4 @@
-Księga Q — siatka 9 × 6; jeden kafel = dokładnie 2 × 2 sloty.
+MENU Q — siatka 9 × 6; jeden kafel = dokładnie 2 × 2 sloty.
 Kolumna 4 jest pustym grzbietem księgi.
 Skrzynia (sloty 0–53):
 00 | rząd 0, kol 0 | Mapa świata
@@ -8,8 +8,8 @@ Skrzynia (sloty 0–53):
 04 | rząd 0, kol 4 | pusty grzbiet
 05 | rząd 0, kol 5 | Podróże
 06 | rząd 0, kol 6 | Podróże
-07 | rząd 0, kol 7 | Dziennik przygód
-08 | rząd 0, kol 8 | Dziennik przygód
+07 | rząd 0, kol 7 | Dziennik
+08 | rząd 0, kol 8 | Dziennik
 09 | rząd 1, kol 0 | Mapa świata
 10 | rząd 1, kol 1 | Mapa świata
 11 | rząd 1, kol 2 | Zadania
@@ -17,8 +17,8 @@ Skrzynia (sloty 0–53):
 13 | rząd 1, kol 4 | pusty grzbiet
 14 | rząd 1, kol 5 | Podróże
 15 | rząd 1, kol 6 | Podróże
-16 | rząd 1, kol 7 | Dziennik przygód
-17 | rząd 1, kol 8 | Dziennik przygód
+16 | rząd 1, kol 7 | Dziennik
+17 | rząd 1, kol 8 | Dziennik
 18 | rząd 2, kol 0 | Postać
 19 | rząd 2, kol 1 | Postać
 20 | rząd 2, kol 2 | Umiejętności
@@ -44,8 +44,8 @@ Skrzynia (sloty 0–53):
 40 | rząd 4, kol 4 | pusty grzbiet
 41 | rząd 4, kol 5 | Poczta
 42 | rząd 4, kol 6 | Poczta
-43 | rząd 4, kol 7 | Wkrótce
-44 | rząd 4, kol 8 | Wkrótce
+43 | rząd 4, kol 7 | Portal
+44 | rząd 4, kol 8 | Portal
 45 | rząd 5, kol 0 | Handel
 46 | rząd 5, kol 1 | Handel
 47 | rząd 5, kol 2 | Społeczność
@@ -53,8 +53,8 @@ Skrzynia (sloty 0–53):
 49 | rząd 5, kol 4 | pusty grzbiet
 50 | rząd 5, kol 5 | Poczta
 51 | rząd 5, kol 6 | Poczta
-52 | rząd 5, kol 7 | Wkrótce
-53 | rząd 5, kol 8 | Wkrótce
+52 | rząd 5, kol 7 | Portal
+53 | rząd 5, kol 8 | Portal
 
 Ukryty ekwipunek gracza (kolumny 0–8):
 A | y=278
@@ -78,15 +78,15 @@ B | y=314
   B7 | x=266 | Stan i akcje — gniazdo przedmiotu
   B8 | x=302 | puste
 C | y=350
-  C0 | x=14 | puste
-  C1 | x=50 | puste
-  C2 | x=86 | puste
-  C3 | x=122 | puste
-  C4 | x=158 | puste
-  C5 | x=194 | puste
-  C6 | x=230 | puste
-  C7 | x=266 | puste
-  C8 | x=302 | puste
+  C0 | x=14 | Szybka podróż — punkt 1
+  C1 | x=50 | Szybka podróż — punkt 2
+  C2 | x=86 | Szybka podróż — punkt 3
+  C3 | x=122 | Szybka podróż — punkt 4
+  C4 | x=158 | Szybka podróż — punkt 5
+  C5 | x=194 | Szybka podróż — punkt 6
+  C6 | x=230 | Szybka podróż — punkt 7
+  C7 | x=266 | Szybka podróż — punkt 8
+  C8 | x=302 | Szybka podróż — punkt 9
 hotbar | y=394
   hotbar0 | x=14 | puste
   hotbar1 | x=50 | puste

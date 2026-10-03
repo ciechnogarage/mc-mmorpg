@@ -44,7 +44,7 @@ items:
     material: nexo-mmo_icon_blank
     slots: [7, 8, 16, 17]
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
-    display_name: '&6Dziennik przygód'
+    display_name: '&6Dziennik'
     lore:
       - '&7Sprawdź zadanie i chowańca.'
       - '&7Zobacz postęp przygody.'
@@ -121,10 +121,13 @@ items:
       - '&7Odczytaj listy na czacie.'
     left_click_commands:
       - '[openguimenu] poczta'
-  wkrotce:
+  portal:
     material: nexo-mmo_icon_blank
     slots: [43, 44, 52, 53]
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
-    display_name: '&7Wkrótce'
+    display_name: '&bPortal'
     lore:
-      - '&8W przygotowaniu'
+      - '&7Odkryte punkty szybkiej podróży.'
+      - '&7Wybierz miejsce i wyrusz.'
+    left_click_commands:
+      - '[console] ksiegaportal %player_name%'

@@ -158,32 +158,28 @@ leave-combat: '%&aYou left combat.'
 
 waypoint:
   unlock:
-    message: '&eYou unlocked the &6{waypoint} &ewaypoint!'
-    # Runs a script on waypoint unlock. This script is implemented
-    # inside file MythicLib/scripts/mmocore_scripts.yml
-    script: mmocore_waypoint_unlock_effect
-    sound: UI_TOAST_CHALLENGE_COMPLETE,1,1.2
+    # KsięgaPostaci pokazuje własny polski tytuł i odtwarza dźwięk.
+    message: ''
   unlock-book:
-    message: '&eYou unlocked the &6{waypoint} &ewaypoint!'
-    sound: UI_TOAST_CHALLENGE_COMPLETE,1,1.2
+    message: ''
   teleport:
     charge:
-      message: '&cDO NOT MOVE!&e You will be teleported in {left}s'
+      message: '&ePodróż za {left} s — nie ruszaj się.'
       action-bar: true
       sound: ENTITY_EXPERIENCE_ORB_PICKUP
     done:
-      #message: '&aYou have been teleported to the &6{waypoint}&a waypoint!'
+      message: '&aDotarłeś do punktu &6{waypoint}&a.'
       action-bar: true
       sound: ENTITY_ENDERMAN_TELEPORT,1,0.5
     cancel:
-      message: '&cWaypoint warping canceled.'
+      message: '&cPodróż przerwana: poruszyłeś się.'
       action-bar: true
       sound: ENTITY_VILLAGER_NO,1,0.5
-  missing-stellium: '&cYou are missing {more} Stellium to use this waypoint.'
-  missing-access: '&cYou do not have access to this waypoint.'
-  on-cooldown: '&cPlease wait {cooldown} before using a waypoint again.'
-  locked: '&cYou have not unlocked that waypoint yet.'
-  standing-on: '&cYou are already standing on this waypoint.'
+  missing-stellium: '&cTen punkt podróży wymaga {more} Stellium.'
+  missing-access: '&cNie masz dostępu do tego punktu podróży.'
+  on-cooldown: '&cPoczekaj {cooldown} przed kolejną podróżą.'
+  locked: '&cTen punkt podróży nie został jeszcze odkryty.'
+  standing-on: '&cStoisz już przy tym punkcie podróży.'
 
 ###################################################
 # Economy features
