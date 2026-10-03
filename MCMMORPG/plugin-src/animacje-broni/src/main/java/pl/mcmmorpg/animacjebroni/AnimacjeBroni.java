@@ -125,6 +125,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Riposta> riposty = new HashMap<>();
   private final Map<UUID, Integer> odnowienieMocnego = new HashMap<>();
   private final Set<UUID> sygnalMocnego = new HashSet<>();
+  private final Map<UUID, Integer> ostatniBrakStaminy = new HashMap<>();
   private final Set<UUID> programowyZamach = new HashSet<>();
   private final Map<UUID, Integer> komboStart = new HashMap<>(); // ile lekkich ciosow serii bylo, gdy zaczelo sie ladowanie PPM
   private final Map<UUID, Boolean> nowyShift = new HashMap<>(); // stan Shifta z PlayerInputEvent (getCurrentInput jeszcze stary)
@@ -285,6 +286,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     oczekujacyZamach.clear();
     odnowienieMocnego.clear();
     sygnalMocnego.clear();
+    ostatniBrakStaminy.clear();
     programowyZamach.clear();
     getLogger().info("Typy broni: " + typy.size() + ", materialy z modelami trzymania: " + modele.size());
   }
@@ -425,6 +427,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     oczekujacyZamach.remove(id);
     odnowienieMocnego.remove(id);
     sygnalMocnego.remove(id);
+    ostatniBrakStaminy.remove(id);
     programowyZamach.remove(id);
     tickProgramowegoZamachu.remove(id);
   }
@@ -509,8 +512,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     boolean szturchniecie = ticki < progMocnego;
     String wariant = szturchniecie ? "szturchniecie" : kierunekCiezkiego(p, u.ciezkie());
     if (!szturchniecie && !pobierzStamine(p, u.ciezkie().koszt())) {
-      p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.8f, 0.7f);
-      komunikat(p, "&c" + getConfig().getString("mocny.brak_staminy", "Za malo staminy na mocny cios"));
+      if (teraz - ostatniBrakStaminy.getOrDefault(id, -1000) >= 40) {
+        ostatniBrakStaminy.put(id, teraz);
+        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.8f, 0.7f);
+        komunikat(p, "&x&F&2&F&2&E&DBrakuje &x&E&8&7&9&7&3staminy");
+      }
       dbg("MOCNY typ=" + NBTItem.get(item).getType() + " wariant=brak_staminy ticki=" + ticki + " obrazenia=0 stamina=0");
       return;
     }
@@ -579,7 +585,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     p.getWorld().spawnParticle(Particle.CRIT, l, kombo == 2 ? 30 : 15, 0.35, 0.35, 0.35, 0.3);
     p.getWorld().playSound(l, Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 1f, kombo == 2 ? 0.7f : 0.9f);
     if (kombo == 2) p.getWorld().playSound(l, Sound.ITEM_MACE_SMASH_AIR, SoundCategory.PLAYERS, 0.7f, 1.2f);
-    komunikat(p, kombo == 2 ? "&6⚔ Kombo: L + L + P" : "&e⚔ Kombo: L + P");
+    if (getServer().getCurrentTick() - ostatniBrakStaminy.getOrDefault(p.getUniqueId(), -1000) >= 40)
+      komunikat(p, kombo == 2 ? "&6⚔ Kombo: L + L + P" : "&e⚔ Kombo: L + P");
   }
 
   /** Krok ciosu nie wpycha gracza w istote przed nim: przy celu blizej niz mocny.dystans_kroku zdejmuje skladowa do przodu. */
