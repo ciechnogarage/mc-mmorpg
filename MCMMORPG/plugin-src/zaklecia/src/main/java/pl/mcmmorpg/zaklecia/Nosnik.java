@@ -70,6 +70,8 @@ final class Nosnik implements Listener {
     org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, this::odswiezPuste, 1, 1);
   }
 
+  private static final NamespacedKey KLON_KSIEGI = new NamespacedKey("ksiega", "klon");
+
   boolean jest(ItemStack i) {
     return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(klucz, PersistentDataType.BYTE);
   }
@@ -146,7 +148,9 @@ final class Nosnik implements Listener {
     PlayerInventory inv = p.getInventory();
     if (!prawa) {
       ItemStack teraz = inv.getItemInOffHand();
-      if (!teraz.getType().isAir() && !jest(teraz)) {
+      // Klon wizualny okna E (ksiega:klon) to tylko obraz broni ze slotu 1 — prawdziwa bron oddaje sama ksiega-postaci.
+      if (teraz.hasItemMeta() && teraz.getItemMeta().getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
+      else if (!teraz.getType().isAir() && !jest(teraz)) {
         if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
         inv.setItemInOffHand(null);
       }
