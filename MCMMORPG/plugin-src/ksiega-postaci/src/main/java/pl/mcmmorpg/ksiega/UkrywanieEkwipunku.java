@@ -181,7 +181,7 @@ final class UkrywanieEkwipunku implements Listener {
     if (state == null || state.view != event.getView()
         || !views.remove(player.getUniqueId(), state)) return;
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-      if (player.isOnline()) player.updateInventory();
+      if (player.isOnline()) { player.updateInventory(); plugin.refreshLater(player); }
     }, 1L);
   }
 

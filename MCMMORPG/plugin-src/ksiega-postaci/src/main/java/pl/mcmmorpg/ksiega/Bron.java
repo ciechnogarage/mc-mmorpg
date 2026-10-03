@@ -260,6 +260,8 @@ final class Bron implements Listener {
   }
 
   void refresh(Player player) {
+    // Odświeżenie po zamknięciu Księgi (UkrywanieEkwipunku.close).
+    if (plugin.ukrywanie.isBookView(player.getOpenInventory())) return;
     canonical(player);
     if (player.getWorld().getName().equals("creator_limbo")) return;
     PlayerInventory inventory = player.getInventory();
@@ -544,7 +546,8 @@ final class Bron implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
   public void beforeClick(InventoryClickEvent event) {
-    if (event.getWhoClicked() instanceof Player player) {
+    // Księga (menu Q) ukrywa ekwipunek; każdy setItem poszedłby do klienta jako okno 0 i odsłonił EQ.
+    if (event.getWhoClicked() instanceof Player player && !plugin.ukrywanie.isBookView(event.getView())) {
       canonical(player);
       refreshLater(player);
     }
@@ -552,7 +555,8 @@ final class Bron implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
   public void beforeDrag(InventoryDragEvent event) {
-    if (event.getWhoClicked() instanceof Player player) {
+    // Księga (menu Q) ukrywa ekwipunek; każdy setItem poszedłby do klienta jako okno 0 i odsłonił EQ.
+    if (event.getWhoClicked() instanceof Player player && !plugin.ukrywanie.isBookView(event.getView())) {
       canonical(player);
       refreshLater(player);
     }
@@ -593,7 +597,7 @@ final class Bron implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void click(InventoryClickEvent event) {
     if (!(event.getWhoClicked() instanceof Player player)) return;
-    if (plugin.ukrywanie.isBookView(event.getView())) { refreshLater(player); return; }
+    if (plugin.ukrywanie.isBookView(event.getView())) return;
     ItemStack cursor = event.getCursor(), current = event.getCurrentItem();
     if (virtual(cursor)) {
       event.setCancelled(true);
@@ -721,7 +725,7 @@ final class Bron implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void drag(InventoryDragEvent event) {
     if (!(event.getWhoClicked() instanceof Player player)) return;
-    if (plugin.ukrywanie.isBookView(event.getView())) { refreshLater(player); return; }
+    if (plugin.ukrywanie.isBookView(event.getView())) return;
     int top = event.getView().getTopInventory().getSize();
     if (virtual(event.getOldCursor()) || event.getRawSlots().stream().anyMatch(raw -> {
       if (raw < top) return false;
