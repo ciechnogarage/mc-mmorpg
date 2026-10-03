@@ -1,0 +1,149 @@
+Źródło tylko do odczytu: /opt/docker/mc/data/world1/plugins/MMOCore/messages.yml
+Angielskie komunikaty i monity dotyczące okien znajomych, drużyny i gildii:
+
+119: player-input:
+120:   anvil:
+121:     friend-request: 'Friend name..'
+122:     party-invite: 'Player name..'
+123:     guild-invite: 'Player name..'
+124:     guild-creation-tag: 'Guild tag..'
+125:     guild-creation-name: 'Guild name..'
+126:   chat:
+127:     friend-request:
+128:       - '&eWrite in the chat the player name.'
+129:       - '&eWrite &c''cancel'' &eto cancel.'
+130:     friend-request-cancel: ''
+131:     party-invite:
+132:       - '&eWrite in the chat the player you want to invite.'
+133:       - '&eWrite &c''cancel'' &eto cancel.'
+134:     party-invite-cancel: ''
+135:     guild-invite:
+136:       - '&eWrite in the chat the player you want to invite.'
+137:       - '&eWrite &c''cancel'' &eto cancel.'
+138:     guild-invite-cancel: ''
+139:     guild-creation-tag:
+140:       - '&eWrite in the chat the TAG of the Guild you want to create.'
+141:       - '&eWrite &c''cancel'' &eto cancel.'
+142:     guild-creation-tag-cancel: ''
+143:     guild-creation-name:
+144:       - '&eWrite in the chat the name of the Guild you want to create.'
+145:       - '&eWrite &c''cancel'' &eto cancel.'
+146:     guild-creation-name-cancel: ''
+147: 
+
+207: # Friends
+208: ###################################################
+209: 
+210: friend-not-online-player:
+211:   message: '&c{player} is not online.'
+212:   sound: ENTITY_VILLAGER_NO
+213: friend-request-cooldown:
+214:   message: '&cPlease wait {cooldown}.'
+215:   sound: ENTITY_VILLAGER_NO
+216: friend-cant-friend-yourself:
+217:   message: '&cYou can''t send a request to yourself.'
+218:   sound: ENTITY_VILLAGER_NO
+219: friend-already:
+220:   message: '&cYou are already friends with {player}.'
+221:   sound: ENTITY_VILLAGER_NO
+222: friend-no-pending-invite:
+223:   message: '&cYou do not have any pending friend request.'
+224:   sound: ENTITY_VILLAGER_NO
+225: 
+226: friend-request-denied:
+227:   message: '&cYou denied the friend request from &6{player}&c.'
+228:   sound: ENTITY_VILLAGER_NO
+229: friend-request-denied-creator:
+230:   message: '&6{player}&c denied your friend request.'
+231:   sound: ENTITY_VILLAGER_NO
+232: friend-removed:
+233:   message: '&cYou and {unfriend} are no longer friends.'
+234:   sound: ENTITY_VILLAGER_NO
+235: 
+236: friend-sent-request:
+237:   message: '&eYou sent a friend request to &6{player}&e.'
+238:   sound: ENTITY_EXPERIENCE_ORB_PICKUP
+239: friend-now: '&eYou are now friends with &6{player}&e.'
+240: friend-request:
+241:   json: true
+
+251: 
+252: party-chat: '&5[Party] {player}: {message}'
+253: party-send-invite:
+254:   message: '&eYou sent a party invite to &6{player}&e.'
+255:   sound: ENTITY_EXPERIENCE_ORB_PICKUP
+256: party-invite:
+257:   json: true
+258:   format:
+259:     - '{"text":""}'
+260:     - '{"text":"&6{player} &ehas invited you to their party!"}'
+261:     - '[{"text":"        "},{"text":"&8[&a&lACCEPT&8]","clickEvent":{"action":"run_command","value":"/party accept {uuid}"},"hoverEvent":{"action":"show_text","value":"&eClick to accept!"}},{"text":"&r             "},{"text":"&8[&c&lDENY&8]","clickEvent":{"action":"run_command","value":"/party deny {uuid}"},"hoverEvent":{"action":"show_text","value":"&eClick to deny."}}]'
+262:     - '{"text":""}'
+263: party-joined: '&eYou successfully joined &6{owner}&e''s party.'
+264: party-joined-other: '&6{player}&e joined your party!'
+265: party-created:
+266:   message: '&eYou successfully created a party.'
+267:   sound: ENTITY_EXPERIENCE_ORB_PICKUP
+268: 
+269: party-no-pending-invite:
+270:   message: '&cYou do not have any pending party invite.'
+271:   sound: ENTITY_VILLAGER_NO
+272: party-is-full:
+273:   message: '&cSorry, your party is full.'
+274:   sound: ENTITY_VILLAGER_NO
+275: party-not-online-player:
+276:   message: '&c{player} is not online.'
+277:   sound: ENTITY_VILLAGER_NO
+278: party-already-in:
+279:   message: '&c{player} is already in your party.'
+280:   sound: ENTITY_VILLAGER_NO
+281: party-invite-cooldown:
+282:   message: '&cPlease wait {cooldown} before inviting another player.' # {player}
+283:   sound: ENTITY_VILLAGER_NO
+284: party-high-level-difference:
+285:   message: '&cYou cannot invite {player} as the level difference ({diff}) is too high.'
+286:   sound: ENTITY_VILLAGER_NO
+287: 
+288: party-leave:
+289:   message: '&eYou successfully left the party.'
+290:   sound: ENTITY_EXPERIENCE_ORB_PICKUP
+291: party-transfer-ownership: '&eYou were transferred the party ownership.'
+292: party-kick-player: '&eYou successfully kicked &6{player}&e.'
+293: party-kicked-from: '&cYou were kicked from the party by &6{player}&c.'
+294: 
+
+296: # Guilds
+297: ###################################################
+298: 
+299: guild-chat: '&a[{tag}] {player}: {message}'
+300: sent-guild-invite:
+301:   message: '&eYou sent a guild invite to &6{player}&e.'
+302:   sound: ENTITY_EXPERIENCE_ORB_PICKUP
+303: guild-not-online-player:
+304:   message: '&c{player} is not online.'
+305:   sound: ENTITY_VILLAGER_NO
+306: guild-no-pending-invite:
+307:   message: '&cYou do not have any pending guild invite.'
+308:   sound: ENTITY_VILLAGER_NO
+309: already-in-guild: '&c{player} is already in your guild.'
+310: guild-invite:
+311:   json: true
+312:   format:
+313:     - '{"text":""}'
+314:     - '{"text":"&6{player} &ehas invited you to their guild!"}'
+315:     - '[{"text":"        "},{"text":"&8[&a&lACCEPT&8]","clickEvent":{"action":"run_command","value":"/guild accept {uuid}"},"hoverEvent":{"action":"show_text","value":"&eClick to accept!"}},{"text":"&r             "},{"text":"&8[&c&lDENY&8]","clickEvent":{"action":"run_command","value":"/guild deny {uuid}"},"hoverEvent":{"action":"show_text","value":"&eClick to deny."}}]'
+316:     - '{"text":""}'
+317: guild-is-full: '&cSorry, your guild is full.'
+318: guild-joined: '&eYou successfully joined &6{owner}&e''s guild.'
+319: guild-joined-other: '&6{player}&e joined your guild!'
+320: transfer-guild-ownership: '&eYou were transferred the guild ownership.'
+321: guild-kick-player:
+322:   message: '&eYou successfully kicked &6{player}&e from the guild.'
+323:   sound: ENTITY_EXPERIENCE_ORB_PICKUP
+324: guild-invite-cooldown: '&cPlease wait {cooldown} before inviting {player}.'
+325: fail-guild-creation:
+326:   invalid-characters: "&eInvalid character(s)!"
+327:   invalid-length: "&eThe length must be between {min} and {max}!"
+328:   already-exists: "&eThat guild tag already exists!"
+329: 
+330: ###################################################

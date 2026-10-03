@@ -46,7 +46,10 @@ items:
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     display_name: '&6Dziennik przygód'
     lore:
-      - '&8W przygotowaniu'
+      - '&7Sprawdź zadanie i chowańca.'
+      - '&7Zobacz postęp przygody.'
+    left_click_commands:
+      - '[openguimenu] dziennik_przygod'
   postac:
     material: nexo-mmo_icon_blank
     slots: [18, 19, 27, 28]
@@ -114,7 +117,10 @@ items:
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     display_name: '&ePoczta'
     lore:
-      - '&8W przygotowaniu'
+      - '&7Napisz list do gracza.'
+      - '&7Odczytaj listy na czacie.'
+    left_click_commands:
+      - '[openguimenu] poczta'
   wkrotce:
     material: nexo-mmo_icon_blank
     slots: [43, 44, 52, 53]

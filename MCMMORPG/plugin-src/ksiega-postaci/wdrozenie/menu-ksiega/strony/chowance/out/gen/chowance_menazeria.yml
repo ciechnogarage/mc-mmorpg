@@ -1,0 +1,406 @@
+# Wygenerowane przez strony/chowance/generuj_menu.py.
+menu_title: '&f䫀䫁䫂䫃&fChowańce'
+size: 54
+update_interval: 2
+items:
+  'druzyna_1':
+    material: 'nexo-%chowance_druzyna_1_ikona%'
+    slot: 36
+    priority: 1
+    update: true
+    display_name: '&f%chowance_druzyna_1_nazwa%'
+    lore:
+      - '&7%chowance_druzyna_1_gatunek_nazwa% &8| &7poz. &f%chowance_druzyna_1_poziom%'
+      - '&7Typ: &f%chowance_druzyna_1_typ%'
+      - '&7Zdrowie: &f%chowance_druzyna_1_hp%&7/&f%chowance_druzyna_1_hpmax% &8(%chowance_druzyna_1_hp_procent%%)'
+      - '&7Doświadczenie: &f%chowance_druzyna_1_exp_procent%%'
+      - '&7Więź: &f%chowance_druzyna_1_wiez% &8| &7Cecha: &f%chowance_druzyna_1_cecha%'
+      - '&7Charakter: &f%chowance_druzyna_1_charakter%'
+      - '&8%chowance_druzyna_1_staty%'
+      - ''
+      - '&7Ruchy:'
+      - '&f %chowance_druzyna_1_ruch_1% &8· &f%chowance_druzyna_1_ruch_2%'
+      - '&f %chowance_druzyna_1_ruch_3% &8· &f%chowance_druzyna_1_ruch_4%'
+      - ''
+      - '&eLPM &7— przywołaj / odwołaj'
+      - '&ePPM &7— karta: imię, ruchy, przemiana,'
+      - '&7        magazyn, zagroda, wypuszczenie'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_1_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw przywolaj 1'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw info 1'
+    shift_left_click_commands:
+      - '[player] chw odwolaj'
+      - '[refresh]'
+  'druzyna_1_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 36
+    priority: 2
+    display_name: '&8Wolne miejsce 1'
+    lore:
+      - '&7Złap chowańca Pieczęcią Więzi'
+      - '&7albo oswój go karmą.'
+      - ''
+      - '&8Limit drużyny: &7%chowance_druzyna_limit%'
+  'druzyna_2':
+    material: 'nexo-%chowance_druzyna_2_ikona%'
+    slot: 37
+    priority: 1
+    update: true
+    display_name: '&f%chowance_druzyna_2_nazwa%'
+    lore:
+      - '&7%chowance_druzyna_2_gatunek_nazwa% &8| &7poz. &f%chowance_druzyna_2_poziom%'
+      - '&7Typ: &f%chowance_druzyna_2_typ%'
+      - '&7Zdrowie: &f%chowance_druzyna_2_hp%&7/&f%chowance_druzyna_2_hpmax% &8(%chowance_druzyna_2_hp_procent%%)'
+      - '&7Doświadczenie: &f%chowance_druzyna_2_exp_procent%%'
+      - '&7Więź: &f%chowance_druzyna_2_wiez% &8| &7Cecha: &f%chowance_druzyna_2_cecha%'
+      - '&7Charakter: &f%chowance_druzyna_2_charakter%'
+      - '&8%chowance_druzyna_2_staty%'
+      - ''
+      - '&7Ruchy:'
+      - '&f %chowance_druzyna_2_ruch_1% &8· &f%chowance_druzyna_2_ruch_2%'
+      - '&f %chowance_druzyna_2_ruch_3% &8· &f%chowance_druzyna_2_ruch_4%'
+      - ''
+      - '&eLPM &7— przywołaj / odwołaj'
+      - '&ePPM &7— karta: imię, ruchy, przemiana,'
+      - '&7        magazyn, zagroda, wypuszczenie'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_2_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw przywolaj 2'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw info 2'
+    shift_left_click_commands:
+      - '[player] chw odwolaj'
+      - '[refresh]'
+  'druzyna_2_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 37
+    priority: 2
+    display_name: '&8Wolne miejsce 2'
+    lore:
+      - '&7Złap chowańca Pieczęcią Więzi'
+      - '&7albo oswój go karmą.'
+      - ''
+      - '&8Limit drużyny: &7%chowance_druzyna_limit%'
+  'druzyna_3':
+    material: 'nexo-%chowance_druzyna_3_ikona%'
+    slot: 38
+    priority: 1
+    update: true
+    display_name: '&f%chowance_druzyna_3_nazwa%'
+    lore:
+      - '&7%chowance_druzyna_3_gatunek_nazwa% &8| &7poz. &f%chowance_druzyna_3_poziom%'
+      - '&7Typ: &f%chowance_druzyna_3_typ%'
+      - '&7Zdrowie: &f%chowance_druzyna_3_hp%&7/&f%chowance_druzyna_3_hpmax% &8(%chowance_druzyna_3_hp_procent%%)'
+      - '&7Doświadczenie: &f%chowance_druzyna_3_exp_procent%%'
+      - '&7Więź: &f%chowance_druzyna_3_wiez% &8| &7Cecha: &f%chowance_druzyna_3_cecha%'
+      - '&7Charakter: &f%chowance_druzyna_3_charakter%'
+      - '&8%chowance_druzyna_3_staty%'
+      - ''
+      - '&7Ruchy:'
+      - '&f %chowance_druzyna_3_ruch_1% &8· &f%chowance_druzyna_3_ruch_2%'
+      - '&f %chowance_druzyna_3_ruch_3% &8· &f%chowance_druzyna_3_ruch_4%'
+      - ''
+      - '&eLPM &7— przywołaj / odwołaj'
+      - '&ePPM &7— karta: imię, ruchy, przemiana,'
+      - '&7        magazyn, zagroda, wypuszczenie'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_3_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw przywolaj 3'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw info 3'
+    shift_left_click_commands:
+      - '[player] chw odwolaj'
+      - '[refresh]'
+  'druzyna_3_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 38
+    priority: 2
+    display_name: '&8Wolne miejsce 3'
+    lore:
+      - '&7Złap chowańca Pieczęcią Więzi'
+      - '&7albo oswój go karmą.'
+      - ''
+      - '&8Limit drużyny: &7%chowance_druzyna_limit%'
+  'druzyna_4':
+    material: 'nexo-%chowance_druzyna_4_ikona%'
+    slot: 39
+    priority: 1
+    update: true
+    display_name: '&f%chowance_druzyna_4_nazwa%'
+    lore:
+      - '&7%chowance_druzyna_4_gatunek_nazwa% &8| &7poz. &f%chowance_druzyna_4_poziom%'
+      - '&7Typ: &f%chowance_druzyna_4_typ%'
+      - '&7Zdrowie: &f%chowance_druzyna_4_hp%&7/&f%chowance_druzyna_4_hpmax% &8(%chowance_druzyna_4_hp_procent%%)'
+      - '&7Doświadczenie: &f%chowance_druzyna_4_exp_procent%%'
+      - '&7Więź: &f%chowance_druzyna_4_wiez% &8| &7Cecha: &f%chowance_druzyna_4_cecha%'
+      - '&7Charakter: &f%chowance_druzyna_4_charakter%'
+      - '&8%chowance_druzyna_4_staty%'
+      - ''
+      - '&7Ruchy:'
+      - '&f %chowance_druzyna_4_ruch_1% &8· &f%chowance_druzyna_4_ruch_2%'
+      - '&f %chowance_druzyna_4_ruch_3% &8· &f%chowance_druzyna_4_ruch_4%'
+      - ''
+      - '&eLPM &7— przywołaj / odwołaj'
+      - '&ePPM &7— karta: imię, ruchy, przemiana,'
+      - '&7        magazyn, zagroda, wypuszczenie'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_4_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw przywolaj 4'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw info 4'
+    shift_left_click_commands:
+      - '[player] chw odwolaj'
+      - '[refresh]'
+  'druzyna_4_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 39
+    priority: 2
+    display_name: '&8Wolne miejsce 4'
+    lore:
+      - '&7Złap chowańca Pieczęcią Więzi'
+      - '&7albo oswój go karmą.'
+      - ''
+      - '&8Limit drużyny: &7%chowance_druzyna_limit%'
+  'druzyna_5':
+    material: 'nexo-%chowance_druzyna_5_ikona%'
+    slot: 46
+    priority: 1
+    update: true
+    display_name: '&f%chowance_druzyna_5_nazwa%'
+    lore:
+      - '&7%chowance_druzyna_5_gatunek_nazwa% &8| &7poz. &f%chowance_druzyna_5_poziom%'
+      - '&7Typ: &f%chowance_druzyna_5_typ%'
+      - '&7Zdrowie: &f%chowance_druzyna_5_hp%&7/&f%chowance_druzyna_5_hpmax% &8(%chowance_druzyna_5_hp_procent%%)'
+      - '&7Doświadczenie: &f%chowance_druzyna_5_exp_procent%%'
+      - '&7Więź: &f%chowance_druzyna_5_wiez% &8| &7Cecha: &f%chowance_druzyna_5_cecha%'
+      - '&7Charakter: &f%chowance_druzyna_5_charakter%'
+      - '&8%chowance_druzyna_5_staty%'
+      - ''
+      - '&7Ruchy:'
+      - '&f %chowance_druzyna_5_ruch_1% &8· &f%chowance_druzyna_5_ruch_2%'
+      - '&f %chowance_druzyna_5_ruch_3% &8· &f%chowance_druzyna_5_ruch_4%'
+      - ''
+      - '&eLPM &7— przywołaj / odwołaj'
+      - '&ePPM &7— karta: imię, ruchy, przemiana,'
+      - '&7        magazyn, zagroda, wypuszczenie'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_5_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw przywolaj 5'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw info 5'
+    shift_left_click_commands:
+      - '[player] chw odwolaj'
+      - '[refresh]'
+  'druzyna_5_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 46
+    priority: 2
+    display_name: '&8Wolne miejsce 5'
+    lore:
+      - '&7Złap chowańca Pieczęcią Więzi'
+      - '&7albo oswój go karmą.'
+      - ''
+      - '&8Limit drużyny: &7%chowance_druzyna_limit%'
+  'druzyna_6':
+    material: 'nexo-%chowance_druzyna_6_ikona%'
+    slot: 47
+    priority: 1
+    update: true
+    display_name: '&f%chowance_druzyna_6_nazwa%'
+    lore:
+      - '&7%chowance_druzyna_6_gatunek_nazwa% &8| &7poz. &f%chowance_druzyna_6_poziom%'
+      - '&7Typ: &f%chowance_druzyna_6_typ%'
+      - '&7Zdrowie: &f%chowance_druzyna_6_hp%&7/&f%chowance_druzyna_6_hpmax% &8(%chowance_druzyna_6_hp_procent%%)'
+      - '&7Doświadczenie: &f%chowance_druzyna_6_exp_procent%%'
+      - '&7Więź: &f%chowance_druzyna_6_wiez% &8| &7Cecha: &f%chowance_druzyna_6_cecha%'
+      - '&7Charakter: &f%chowance_druzyna_6_charakter%'
+      - '&8%chowance_druzyna_6_staty%'
+      - ''
+      - '&7Ruchy:'
+      - '&f %chowance_druzyna_6_ruch_1% &8· &f%chowance_druzyna_6_ruch_2%'
+      - '&f %chowance_druzyna_6_ruch_3% &8· &f%chowance_druzyna_6_ruch_4%'
+      - ''
+      - '&eLPM &7— przywołaj / odwołaj'
+      - '&ePPM &7— karta: imię, ruchy, przemiana,'
+      - '&7        magazyn, zagroda, wypuszczenie'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_6_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw przywolaj 6'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw info 6'
+    shift_left_click_commands:
+      - '[player] chw odwolaj'
+      - '[refresh]'
+  'druzyna_6_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 47
+    priority: 2
+    display_name: '&8Wolne miejsce 6'
+    lore:
+      - '&7Złap chowańca Pieczęcią Więzi'
+      - '&7albo oswój go karmą.'
+      - ''
+      - '&8Limit drużyny: &7%chowance_druzyna_limit%'
+  'info':
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    update: true
+    display_name: '&6&lChowańce'
+    lore:
+      - '&7Drużyna: &f%chowance_druzyna_liczba%&7/&f%chowance_druzyna_limit%'
+      - '&7Aktywny: &f%chowance_aktywny_nazwa% &8(poz. %chowance_aktywny_poziom%)'
+      - '&7Odznaki: &f%chowance_odznaki_liczba%&7/4 &8| &7Limit poziomu: &f%chowance_limit_poziomu%'
+      - '&7Bestiariusz: &f%chowance_bestiariusz_procent%%'
+      - '&7Poskramiacz: &fpoz. %mmocore_profession_poskramiacz%'
+  'walka_dziki':
+    material: nexo-mmo_icon_blank
+    slots: [14, 23]
+    display_name: '&cWalcz z dzikim'
+    lore:
+      - '&7Walka turowa z najbliższym'
+      - '&7dzikim chowańcem (do 16 bloków).'
+      - '&7Osłab go i rzuć Pieczęcią!'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[player] chw walka'
+  'gracze':
+    material: nexo-mmo_icon_blank
+    slot: 15
+    display_name: '&6Wyzwania i handel'
+    lore:
+      - '&7Gracze w pobliżu:'
+      - '&7pojedynek, walka turowa, handel.'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[player] chw gracze'
+  'starter':
+    material: nexo-mmo_icon_blank
+    slot: 24
+    priority: 0
+    display_name: '&a&lWybierz startera!'
+    lore:
+      - '&7Nie masz jeszcze chowańca.'
+      - '&7Wybierz jednego z trzech.'
+      - ''
+      - '&eKliknij.'
+    view_requirement:
+      requirements:
+        brak:
+          type: string equals
+          input: '%chowance_starter_wybrany%'
+          output: 'nie'
+    left_click_commands:
+      - '[player] chw starter'
+  'magazyn':
+    material: nexo-mmo_icon_blank
+    slots: [16, 25]
+    update: true
+    display_name: '&6Magazyn'
+    lore:
+      - '&7Stwory poza drużyną.'
+      - '&7Zajęte: &f%chowance_magazyn_liczba%&7/&f%chowance_magazyn_limit%'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[player] chw magazyn strona 1'
+      - '[openguimenu] chowance_magazyn'
+  'bestiariusz':
+    material: nexo-mmo_icon_blank
+    slots: [17, 26]
+    update: true
+    display_name: '&2Bestiariusz'
+    lore:
+      - '&7Widziane: &f%chowance_bestiariusz_widziane%'
+      - '&7Złapane: &f%chowance_bestiariusz_zlapane%&7/&f%chowance_bestiariusz_wszystkie%'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[openguimenu] chowance_bestiariusz'
+  'hodowla':
+    material: nexo-mmo_icon_blank
+    slots: [32, 41]
+    update: true
+    display_name: '&eHodowla'
+    lore:
+      - '&7Para rodziców i Wylęgarnia.'
+      - '&7Jajo 1: &f%chowance_jajo_1_postep_procent%%'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[openguimenu] chowance_hodowla'
+  'lochy':
+    material: nexo-mmo_icon_blank
+    slots: [34, 43]
+    update: true
+    display_name: '&7Lochy i Mistrzowie'
+    lore:
+      - '&7Gniazdo Żmijów, Krypta Upiorów,'
+      - '&7Sala Mistrzów Więzi, Wieża Chowańców.'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[openguimenu] chowance_lochy'
+  'ranking':
+    material: nexo-mmo_icon_blank
+    slots: [35, 44]
+    update: true
+    display_name: '&6Ranking'
+    lore:
+      - '&7Twoje ELO: &f%chowance_ranking_elo% &8(#%chowance_ranking_pozycja%)'
+      - '&7Turniej: &f%chowance_turniej_stan%'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[openguimenu] chowance_ranking'
+  'warsztat':
+    material: nexo-mmo_icon_blank
+    slots: [33, 42]
+    update: true
+    display_name: '&6Warsztat Poskramiacza'
+    lore:
+      - '&7Pieczęcie, kamienie przemiany,'
+      - '&7karma, eliksiry, siodła.'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[console] mi stations open chowance %player_name%'

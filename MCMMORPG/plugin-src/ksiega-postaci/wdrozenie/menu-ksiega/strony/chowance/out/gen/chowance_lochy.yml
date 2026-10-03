@@ -1,0 +1,59 @@
+# Wygenerowane przez strony/chowance/generuj_menu.py.
+menu_title: '&f䫈䫉䫊䫋&fLochy i Mistrzowie'
+size: 54
+items:
+  'gniazdo':
+    material: nexo-mmo_icon_blank
+    slots: [14, 15, 23, 24]
+    update: true
+    display_name: '&2Gniazdo Żmijów'
+    lore:
+      - '&7Żmijki i Żmije — tylko tutaj.'
+      - '&7Pieczęcie Lochowe działają najlepiej.'
+      - '&7Drużyna 1-4 graczy.'
+      - ''
+      - '&eKliknij, aby wejść.'
+    left_click_commands:
+      - '[console] md play gniazdo_zmijow %player_name%'
+      - '[close]'
+  'krypta':
+    material: nexo-mmo_icon_blank
+    slots: [16, 17, 25, 26]
+    update: true
+    display_name: '&7Krypta Upiorów'
+    lore:
+      - '&7Upiorki i Zmory — tylko tutaj.'
+      - '&7Pieczęcie Lochowe działają najlepiej.'
+      - '&7Drużyna 1-4 graczy.'
+      - ''
+      - '&eKliknij, aby wejść.'
+    left_click_commands:
+      - '[console] md play krypta_upiorow %player_name%'
+      - '[close]'
+  'mistrzowie':
+    material: nexo-mmo_icon_blank
+    slots: [32, 33, 41, 42]
+    update: true
+    display_name: '&6Sala Mistrzów Więzi'
+    lore:
+      - '&7Czterech Mistrzów, cztery odznaki.'
+      - '&7Masz: &f%chowance_odznaki_liczba%&7/4'
+      - '&7Każda odznaka: limit poziomu +20.'
+      - ''
+      - '&eKliknij, aby wejść.'
+    left_click_commands:
+      - '[console] md play sala_mistrzow %player_name%'
+      - '[close]'
+  'wieza':
+    material: nexo-mmo_icon_blank
+    slots: [34, 35, 43, 44]
+    update: true
+    display_name: '&dWieża Chowańców'
+    lore:
+      - '&7Dziesięć fal trenerów.'
+      - '&7Rekord: &f%chowance_wieza_WIEZA_CHOWANCOW_rekord%'
+      - ''
+      - '&eKliknij, aby wejść.'
+    left_click_commands:
+      - '[console] md play wieza_chowancow %player_name%'
+      - '[close]'

@@ -1,0 +1,51 @@
+# Wygenerowane przez strony/chowance/generuj_menu.py.
+menu_title: '&f䫌䫍䫎䫏&fRanking'
+size: 54
+update_interval: 5
+items:
+  'top':
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    update: true
+    display_name: '&6&lNajlepsi Poskramiacze'
+    lore:
+      - '&61. &f%chowance_ranking_top_1_nazwa% &8— &e%chowance_ranking_top_1_elo%'
+      - '&62. &f%chowance_ranking_top_2_nazwa% &8— &e%chowance_ranking_top_2_elo%'
+      - '&63. &f%chowance_ranking_top_3_nazwa% &8— &e%chowance_ranking_top_3_elo%'
+      - '&64. &f%chowance_ranking_top_4_nazwa% &8— &e%chowance_ranking_top_4_elo%'
+      - '&65. &f%chowance_ranking_top_5_nazwa% &8— &e%chowance_ranking_top_5_elo%'
+      - '&66. &f%chowance_ranking_top_6_nazwa% &8— &e%chowance_ranking_top_6_elo%'
+      - '&67. &f%chowance_ranking_top_7_nazwa% &8— &e%chowance_ranking_top_7_elo%'
+      - '&68. &f%chowance_ranking_top_8_nazwa% &8— &e%chowance_ranking_top_8_elo%'
+      - '&69. &f%chowance_ranking_top_9_nazwa% &8— &e%chowance_ranking_top_9_elo%'
+      - '&610. &f%chowance_ranking_top_10_nazwa% &8— &e%chowance_ranking_top_10_elo%'
+      - ''
+      - '&7Twoje ELO: &f%chowance_ranking_elo% &8(#%chowance_ranking_pozycja%)'
+  'turniej':
+    material: nexo-mmo_icon_blank
+    slots: [14, 15, 23, 24]
+    update: true
+    display_name: '&eTurniej sezonowy'
+    lore:
+      - '&7Stan: &f%chowance_turniej_stan%'
+      - ''
+      - '&eLPM &7— zapisz'
+      - '&ePPM &7— wypisz'
+    left_click_commands:
+      - '[player] chw turniej zapisz'
+      - '[refresh]'
+    right_click_commands:
+      - '[player] chw turniej wypisz'
+      - '[refresh]'
+  'pojedynek':
+    material: nexo-mmo_icon_blank
+    slots: [16, 17, 25, 26]
+    display_name: '&cWyzwij gracza'
+    lore:
+      - '&7Gracze w pobliżu:'
+      - '&7walka real-time (stwory same),'
+      - '&7walka turowa albo handel.'
+      - ''
+      - '&eKliknij.'
+    left_click_commands:
+      - '[player] chw gracze'

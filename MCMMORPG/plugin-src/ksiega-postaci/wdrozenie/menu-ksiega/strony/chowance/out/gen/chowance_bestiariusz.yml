@@ -1,0 +1,1405 @@
+# Wygenerowane przez strony/chowance/generuj_menu.py.
+menu_title: '&f䫔䫕䫖䫗&fBestiariusz &8%chowance_bestiariusz_procent%%'
+size: 54
+update_interval: 5
+items:
+  'b_1_z':
+    material: 'nexo-%chowance_bestiariusz_1_ikona%'
+    slot: 14
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_1_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_1_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_1_id%'
+  'b_1_w':
+    material: 'nexo-%chowance_bestiariusz_1_ikona%'
+    slot: 14
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_1_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_1_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_1_id%'
+  'b_1_n':
+    material: 'GRAY_DYE'
+    slot: 14
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_1_stan%'
+          output: 'NIEZNANY'
+  'b_2_z':
+    material: 'nexo-%chowance_bestiariusz_2_ikona%'
+    slot: 15
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_2_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_2_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_2_id%'
+  'b_2_w':
+    material: 'nexo-%chowance_bestiariusz_2_ikona%'
+    slot: 15
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_2_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_2_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_2_id%'
+  'b_2_n':
+    material: 'GRAY_DYE'
+    slot: 15
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_2_stan%'
+          output: 'NIEZNANY'
+  'b_3_z':
+    material: 'nexo-%chowance_bestiariusz_3_ikona%'
+    slot: 16
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_3_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_3_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_3_id%'
+  'b_3_w':
+    material: 'nexo-%chowance_bestiariusz_3_ikona%'
+    slot: 16
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_3_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_3_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_3_id%'
+  'b_3_n':
+    material: 'GRAY_DYE'
+    slot: 16
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_3_stan%'
+          output: 'NIEZNANY'
+  'b_4_z':
+    material: 'nexo-%chowance_bestiariusz_4_ikona%'
+    slot: 17
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_4_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_4_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_4_id%'
+  'b_4_w':
+    material: 'nexo-%chowance_bestiariusz_4_ikona%'
+    slot: 17
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_4_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_4_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_4_id%'
+  'b_4_n':
+    material: 'GRAY_DYE'
+    slot: 17
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_4_stan%'
+          output: 'NIEZNANY'
+  'b_5_z':
+    material: 'nexo-%chowance_bestiariusz_5_ikona%'
+    slot: 23
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_5_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_5_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_5_id%'
+  'b_5_w':
+    material: 'nexo-%chowance_bestiariusz_5_ikona%'
+    slot: 23
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_5_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_5_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_5_id%'
+  'b_5_n':
+    material: 'GRAY_DYE'
+    slot: 23
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_5_stan%'
+          output: 'NIEZNANY'
+  'b_6_z':
+    material: 'nexo-%chowance_bestiariusz_6_ikona%'
+    slot: 24
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_6_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_6_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_6_id%'
+  'b_6_w':
+    material: 'nexo-%chowance_bestiariusz_6_ikona%'
+    slot: 24
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_6_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_6_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_6_id%'
+  'b_6_n':
+    material: 'GRAY_DYE'
+    slot: 24
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_6_stan%'
+          output: 'NIEZNANY'
+  'b_7_z':
+    material: 'nexo-%chowance_bestiariusz_7_ikona%'
+    slot: 25
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_7_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_7_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_7_id%'
+  'b_7_w':
+    material: 'nexo-%chowance_bestiariusz_7_ikona%'
+    slot: 25
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_7_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_7_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_7_id%'
+  'b_7_n':
+    material: 'GRAY_DYE'
+    slot: 25
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_7_stan%'
+          output: 'NIEZNANY'
+  'b_8_z':
+    material: 'nexo-%chowance_bestiariusz_8_ikona%'
+    slot: 26
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_8_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_8_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_8_id%'
+  'b_8_w':
+    material: 'nexo-%chowance_bestiariusz_8_ikona%'
+    slot: 26
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_8_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_8_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_8_id%'
+  'b_8_n':
+    material: 'GRAY_DYE'
+    slot: 26
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_8_stan%'
+          output: 'NIEZNANY'
+  'b_9_z':
+    material: 'nexo-%chowance_bestiariusz_9_ikona%'
+    slot: 32
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_9_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_9_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_9_id%'
+  'b_9_w':
+    material: 'nexo-%chowance_bestiariusz_9_ikona%'
+    slot: 32
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_9_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_9_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_9_id%'
+  'b_9_n':
+    material: 'GRAY_DYE'
+    slot: 32
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_9_stan%'
+          output: 'NIEZNANY'
+  'b_10_z':
+    material: 'nexo-%chowance_bestiariusz_10_ikona%'
+    slot: 33
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_10_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_10_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_10_id%'
+  'b_10_w':
+    material: 'nexo-%chowance_bestiariusz_10_ikona%'
+    slot: 33
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_10_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_10_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_10_id%'
+  'b_10_n':
+    material: 'GRAY_DYE'
+    slot: 33
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_10_stan%'
+          output: 'NIEZNANY'
+  'b_11_z':
+    material: 'nexo-%chowance_bestiariusz_11_ikona%'
+    slot: 34
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_11_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_11_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_11_id%'
+  'b_11_w':
+    material: 'nexo-%chowance_bestiariusz_11_ikona%'
+    slot: 34
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_11_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_11_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_11_id%'
+  'b_11_n':
+    material: 'GRAY_DYE'
+    slot: 34
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_11_stan%'
+          output: 'NIEZNANY'
+  'b_12_z':
+    material: 'nexo-%chowance_bestiariusz_12_ikona%'
+    slot: 35
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_12_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_12_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_12_id%'
+  'b_12_w':
+    material: 'nexo-%chowance_bestiariusz_12_ikona%'
+    slot: 35
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_12_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_12_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_12_id%'
+  'b_12_n':
+    material: 'GRAY_DYE'
+    slot: 35
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_12_stan%'
+          output: 'NIEZNANY'
+  'b_13_z':
+    material: 'nexo-%chowance_bestiariusz_13_ikona%'
+    slot: 41
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_13_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_13_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_13_id%'
+  'b_13_w':
+    material: 'nexo-%chowance_bestiariusz_13_ikona%'
+    slot: 41
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_13_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_13_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_13_id%'
+  'b_13_n':
+    material: 'GRAY_DYE'
+    slot: 41
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_13_stan%'
+          output: 'NIEZNANY'
+  'b_14_z':
+    material: 'nexo-%chowance_bestiariusz_14_ikona%'
+    slot: 42
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_14_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_14_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_14_id%'
+  'b_14_w':
+    material: 'nexo-%chowance_bestiariusz_14_ikona%'
+    slot: 42
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_14_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_14_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_14_id%'
+  'b_14_n':
+    material: 'GRAY_DYE'
+    slot: 42
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_14_stan%'
+          output: 'NIEZNANY'
+  'b_15_z':
+    material: 'nexo-%chowance_bestiariusz_15_ikona%'
+    slot: 43
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_15_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_15_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_15_id%'
+  'b_15_w':
+    material: 'nexo-%chowance_bestiariusz_15_ikona%'
+    slot: 43
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_15_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_15_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_15_id%'
+  'b_15_n':
+    material: 'GRAY_DYE'
+    slot: 43
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_15_stan%'
+          output: 'NIEZNANY'
+  'b_16_z':
+    material: 'nexo-%chowance_bestiariusz_16_ikona%'
+    slot: 44
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_16_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_16_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_16_id%'
+  'b_16_w':
+    material: 'nexo-%chowance_bestiariusz_16_ikona%'
+    slot: 44
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_16_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_16_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_16_id%'
+  'b_16_n':
+    material: 'GRAY_DYE'
+    slot: 44
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_16_stan%'
+          output: 'NIEZNANY'
+  'b_17_z':
+    material: 'nexo-%chowance_bestiariusz_17_ikona%'
+    slot: 50
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_17_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_17_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_17_id%'
+  'b_17_w':
+    material: 'nexo-%chowance_bestiariusz_17_ikona%'
+    slot: 50
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_17_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_17_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_17_id%'
+  'b_17_n':
+    material: 'GRAY_DYE'
+    slot: 50
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_17_stan%'
+          output: 'NIEZNANY'
+  'b_18_z':
+    material: 'nexo-%chowance_bestiariusz_18_ikona%'
+    slot: 51
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_18_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_18_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_18_id%'
+  'b_18_w':
+    material: 'nexo-%chowance_bestiariusz_18_ikona%'
+    slot: 51
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_18_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_18_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_18_id%'
+  'b_18_n':
+    material: 'GRAY_DYE'
+    slot: 51
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_18_stan%'
+          output: 'NIEZNANY'
+  'b_19_z':
+    material: 'nexo-%chowance_bestiariusz_19_ikona%'
+    slot: 52
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_19_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_19_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_19_id%'
+  'b_19_w':
+    material: 'nexo-%chowance_bestiariusz_19_ikona%'
+    slot: 52
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_19_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_19_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_19_id%'
+  'b_19_n':
+    material: 'GRAY_DYE'
+    slot: 52
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_19_stan%'
+          output: 'NIEZNANY'
+  'b_20_z':
+    material: 'nexo-%chowance_bestiariusz_20_ikona%'
+    slot: 53
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_20_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_20_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_20_id%'
+  'b_20_w':
+    material: 'nexo-%chowance_bestiariusz_20_ikona%'
+    slot: 53
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_20_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_20_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_20_id%'
+  'b_20_n':
+    material: 'GRAY_DYE'
+    slot: 53
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_20_stan%'
+          output: 'NIEZNANY'
+  'b_21_z':
+    material: 'nexo-%chowance_bestiariusz_21_ikona%'
+    slot: 36
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_21_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_21_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_21_id%'
+  'b_21_w':
+    material: 'nexo-%chowance_bestiariusz_21_ikona%'
+    slot: 36
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_21_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_21_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_21_id%'
+  'b_21_n':
+    material: 'GRAY_DYE'
+    slot: 36
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_21_stan%'
+          output: 'NIEZNANY'
+  'b_22_z':
+    material: 'nexo-%chowance_bestiariusz_22_ikona%'
+    slot: 37
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_22_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_22_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_22_id%'
+  'b_22_w':
+    material: 'nexo-%chowance_bestiariusz_22_ikona%'
+    slot: 37
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_22_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_22_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_22_id%'
+  'b_22_n':
+    material: 'GRAY_DYE'
+    slot: 37
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_22_stan%'
+          output: 'NIEZNANY'
+  'b_23_z':
+    material: 'nexo-%chowance_bestiariusz_23_ikona%'
+    slot: 38
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_23_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_23_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_23_id%'
+  'b_23_w':
+    material: 'nexo-%chowance_bestiariusz_23_ikona%'
+    slot: 38
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_23_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_23_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_23_id%'
+  'b_23_n':
+    material: 'GRAY_DYE'
+    slot: 38
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_23_stan%'
+          output: 'NIEZNANY'
+  'b_24_z':
+    material: 'nexo-%chowance_bestiariusz_24_ikona%'
+    slot: 39
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_24_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_24_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_24_id%'
+  'b_24_w':
+    material: 'nexo-%chowance_bestiariusz_24_ikona%'
+    slot: 39
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_24_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_24_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_24_id%'
+  'b_24_n':
+    material: 'GRAY_DYE'
+    slot: 39
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_24_stan%'
+          output: 'NIEZNANY'
+  'b_25_z':
+    material: 'nexo-%chowance_bestiariusz_25_ikona%'
+    slot: 45
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_25_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_25_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_25_id%'
+  'b_25_w':
+    material: 'nexo-%chowance_bestiariusz_25_ikona%'
+    slot: 45
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_25_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_25_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_25_id%'
+  'b_25_n':
+    material: 'GRAY_DYE'
+    slot: 45
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_25_stan%'
+          output: 'NIEZNANY'
+  'b_26_z':
+    material: 'nexo-%chowance_bestiariusz_26_ikona%'
+    slot: 46
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_26_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_26_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_26_id%'
+  'b_26_w':
+    material: 'nexo-%chowance_bestiariusz_26_ikona%'
+    slot: 46
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_26_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_26_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_26_id%'
+  'b_26_n':
+    material: 'GRAY_DYE'
+    slot: 46
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_26_stan%'
+          output: 'NIEZNANY'
+  'b_27_z':
+    material: 'nexo-%chowance_bestiariusz_27_ikona%'
+    slot: 47
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_27_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_27_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_27_id%'
+  'b_27_w':
+    material: 'nexo-%chowance_bestiariusz_27_ikona%'
+    slot: 47
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_27_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_27_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_27_id%'
+  'b_27_n':
+    material: 'GRAY_DYE'
+    slot: 47
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_27_stan%'
+          output: 'NIEZNANY'
+  'b_28_z':
+    material: 'nexo-%chowance_bestiariusz_28_ikona%'
+    slot: 48
+    priority: 1
+    update: true
+    display_name: '&a%chowance_bestiariusz_28_nazwa%'
+    lore:
+      - '&aZłapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_28_stan%'
+          output: 'ZLAPANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_28_id%'
+  'b_28_w':
+    material: 'nexo-%chowance_bestiariusz_28_ikona%'
+    slot: 48
+    priority: 2
+    update: true
+    display_name: '&7%chowance_bestiariusz_28_nazwa%'
+    lore:
+      - '&7Widziany — jeszcze nie złapany'
+      - ''
+      - '&eKliknij &7— opis i występowanie'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_28_stan%'
+          output: 'WIDZIANY'
+    left_click_commands:
+      - '[player] chw bestiariusz gatunek %chowance_bestiariusz_28_id%'
+  'b_28_n':
+    material: 'GRAY_DYE'
+    slot: 48
+    priority: 3
+    display_name: '&8???'
+    lore:
+      - '&8Nieznany stwór.'
+    view_requirement:
+      requirements:
+        st:
+          type: string equals
+          input: '%chowance_bestiariusz_28_stan%'
+          output: 'NIEZNANY'
+  'postep':
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    update: true
+    display_name: '&2&lBestiariusz'
+    lore:
+      - '&7Widziane: &f%chowance_bestiariusz_widziane%'
+      - '&7Złapane: &f%chowance_bestiariusz_zlapane%&7/&f%chowance_bestiariusz_wszystkie%'
+      - '&7Postęp: &f%chowance_bestiariusz_procent%%'
+      - ''
+      - '&7Nagrody: 10%, 25%, 50%, 100%,'
+      - '&7komplet każdego typu, wszystkie lśniące.'
+  'poprzednia':
+    material: nexo-mmo_icon_blank
+    slot: 5
+    display_name: '&ePoprzednia strona'
+    lore:
+    left_click_commands:
+      - '[player] chw bestiariusz strona poprzednia'
+      - '[refresh]'
+  'nastepna':
+    material: nexo-mmo_icon_blank
+    slot: 8
+    display_name: '&eNastępna strona'
+    lore:
+    left_click_commands:
+      - '[player] chw bestiariusz strona nastepna'
+      - '[refresh]'

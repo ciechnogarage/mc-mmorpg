@@ -1,0 +1,12 @@
+sklep: stare funkcjonalne 3, nowe 6; lista 20; rezerwa 28; kol4 aktywne 0; duplikaty brak
+sklep_ilosc: stare funkcjonalne 4, nowe 13; lista 0; rezerwa 45; kol4 aktywne 0; duplikaty {27: ['missing_purchase', 'sell_dollar'], 28: ['missing_purchase', 'sell_dollar'], 36: ['missing_purchase', 'sell_dollar'], 37: ['missing_purchase', 'sell_dollar']}
+skup: stare funkcjonalne 12, nowe 12; lista 20; rezerwa 22; kol4 aktywne 0; duplikaty brak
+skup_ilosc: stare funkcjonalne 10, nowe 19; lista 0; rezerwa 39; kol4 aktywne 0; duplikaty {32: ['missing_purchase', 'buy_dollar'], 33: ['missing_purchase', 'buy_dollar'], 41: ['missing_purchase', 'buy_dollar'], 42: ['missing_purchase', 'buy_dollar']}
+rynek: stare funkcjonalne 13, nowe 13; lista 19; rezerwa 22; kol4 aktywne 0; duplikaty brak
+moje_oferty: stare funkcjonalne 8, nowe 8; lista 20; rezerwa 26; kol4 aktywne 0; duplikaty brak
+kupno: stare funkcjonalne 5, nowe 14; lista 0; rezerwa 40; kol4 aktywne 0; duplikaty brak
+wystawienie: stare funkcjonalne 20, nowe 29; lista 0; rezerwa 25; kol4 aktywne 0; duplikaty brak
+Usunięte: wstecz (sklep, skup, rynek); zamknij (sklep, skup, skup_ilosc, rynek, moje_oferty, kupno).
+Zachowane: zamknij i home w wystawieniu, prawdziwy plecak; wystawienie poza podstrony.txt.
+Komendy usunięte tylko z tych przycisków: handel_do_menu ×3; handel_zamknij ×6.
+Rezerwa techniczna CoreTools: niewidoczny przycisk na grzbiecie blokuje automatyczne listy.

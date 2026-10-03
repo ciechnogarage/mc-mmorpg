@@ -1,0 +1,29 @@
+Integracja po zatwierdzeniu grafiki (bez zmian w plikach serwera w tym zadaniu)
+
+1. DeluxeMenus/config.yml, pod gui_menus:
+  dziennik_przygod:
+    file: dziennik_przygod.yml
+  poczta:
+    file: poczta.yml
+
+2. DeluxeMenus/gui_menus/: skopiuj zawartość out/dm/.
+   W hub_glowne.yml podmień tylko itemy dziennik i poczta blokami z out/hub_glowne_zmiany.txt.
+
+3. Nexo: scal out/glify_poczta_dziennik.yml z definicjami glifów paczki.
+   Przenieś osiem ćwiartek z out/dziennik_przygod/ i out/poczta/ jako
+   gui/dziennik_przygod_1..4.png oraz gui/poczta_1..4.png.
+   Pliki *_2x.png i arkusz_x2.png są podglądem; nie są osobnymi glifami.
+
+4. KsiegaPostaci/config.yml, pod podstrony.strony:
+    "䬀": hub_glowne  # dziennik_przygod, U+4B00
+    "䬄": hub_glowne  # poczta, U+4B04
+   Pełne zestawienie jest też w out/podstrony.txt.
+   Zgodnie z README pluginu nie dopisuj tych znaków do ukryj-ekwipunek.znaki-tytulu.
+
+5. Generator zbiorczego wdrożenia powinien włączyć generuj.py/kontroluj.py,
+   obie definicje menu, osiem PNG i blok hub_glowne_zmiany.txt. Rodzic obu kart
+   musi pozostać hub_glowne, aby plakietka panelu działała.
+
+6. CMI: zachowaj istniejący sprawdzony cmi_dialogs/Poczta.yml. Dostęp gracza
+   wymaga uprawnień opisanych w POCZTA.md. Na staging potwierdź klik wysyłki,
+   listę na czacie, licznik, plakietkę powrotu i zamknięcie po odczycie.

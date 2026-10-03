@@ -1,0 +1,184 @@
+# Karta postaci. Glif Nexo rysuje panel pod ikonami standardowego GUI 6-rzedowego.
+# &f przed glifem zapobiega tintowi 0x404040. Przesuniecia: -8 i -169.
+name: '&f䪀䪁䪂䪃&f'
+slots: 54
+
+items:
+  naglowek_postac:
+    slots: [ 14 ]
+    item: NAME_TAG
+    name: '&6&lPOSTAĆ'
+    lore: ['&7Klasa, poziom, pochodzenie i wiara.']
+  naglowek_walka:
+    slots: [ 15 ]
+    item: IRON_SWORD
+    name: '&c&lWALKA'
+    lore: ['&7Atak, obrona i magia.']
+    item-flags: [HIDE_ATTRIBUTES]
+  naglowek_profesje:
+    slots: [ 16 ]
+    item: CRAFTING_TABLE
+    name: '&e&lPROFESJE'
+    lore: ['&7Skrót poziomów wszystkich profesji.']
+  profil:
+    slots: [ 45 ]
+    function: profile
+    item: PLAYER_HEAD
+    name: '&e{player}'
+    lore:
+      - '&7Klasa: &f{class}'
+      - '&7Poziom: &e{level}'
+      - '&7Doświadczenie: &f{exp}&7/&f{next_level}'
+      - '&8[&e{progress}&8] &e{percent}%'
+      - '&7Punkty umiejętności: &f{skill_points}'
+      - '&7Punkty klasy: &f{class_points}'
+  rasa:
+    slots: [ 46 ]
+    item: COMPASS
+    name: '&ePochodzenie'
+    lore:
+      - '&7Rasa: &f%wiary_rasa_nazwa%'
+      - '&8Rasa wynika z klasy postaci.'
+  wiara:
+    slots: [ 47 ]
+    item: TOTEM_OF_UNDYING
+    name: '&6Wiara'
+    lore:
+      - '&7Patron: &f%wiary_patron_imie%'
+      - '&7Atrybut Wiary: &f%wiary_wiara%'
+  zasoby:
+    slots: [ 48 ]
+    item: HEART_OF_THE_SEA
+    name: '&bZasoby'
+    lore:
+      - '&7Życie: &f%mmocore_health%&7/&f%mmocore_stat_max_health%'
+      - '&7Mana: &f%mmocore_mana%&7/&f%mmocore_stat_max_mana%'
+      - '&7Wytrzymałość: &f%mmocore_stamina%&7/&f%mmocore_stat_max_stamina%'
+  atak:
+    slots: [ 17 ]
+    item: NETHERITE_SWORD
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&cAtak'
+    lore: ['&7Obrażenia: &f%mmocore_stat_attack_damage%']
+  obrona:
+    slots: [ 23 ]
+    item: SHIELD
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&9Obrona'
+    lore: ['&7Pancerz: &f%mmocore_stat_armor%']
+  magia:
+    slots: [ 24 ]
+    item: BLAZE_ROD
+    name: '&dMagia'
+    lore: ['&7Obrażenia magiczne: &f%mmocore_stat_magic_damage%%']
+  krytyk:
+    slots: [ 25 ]
+    item: IRON_AXE
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&cTrafienie krytyczne'
+    lore:
+      - '&7Szansa: &f%mmocore_stat_critical_strike_chance%%'
+      - '&7Moc: &f%mmocore_stat_critical_strike_power%%'
+  pancernosc:
+    slots: [ 26 ]
+    item: NETHERITE_CHESTPLATE
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&9Pancerz i odporność'
+    lore: ['&7Wytrzymałość pancerza: &f%mmocore_stat_armor_toughness%']
+  mana:
+    slots: [ 32 ]
+    item: LAPIS_LAZULI
+    name: '&dMana'
+    lore: ['&7Maksymalna mana: &f%mmocore_stat_max_mana%']
+  szybkosc_ataku:
+    slots: [ 33 ]
+    item: IRON_SWORD
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&cTempo walki'
+    lore: ['&7Szybkość ataku: &f%mmocore_stat_attack_speed%']
+  zycie:
+    slots: [ 34 ]
+    item: GOLDEN_APPLE
+    name: '&9Życie'
+    lore: ['&7Maksymalne życie: &f%mmocore_stat_max_health%']
+  umiejetnosci_bojowe:
+    slots: [ 35 ]
+    item: ENCHANTED_BOOK
+    name: '&dZaklęcia i umiejętności'
+    lore: ['&7Obrażenia umiejętności: &f%mmocore_stat_skill_damage%%']
+  obrazenia_fizyczne:
+    slots: [ 41 ]
+    item: ARROW
+    name: '&cObrażenia fizyczne'
+    lore: ['&7Premia: &f%mmocore_stat_physical_damage%%']
+  regeneracja:
+    slots: [ 42 ]
+    item: GLISTERING_MELON_SLICE
+    name: '&9Regeneracja'
+    lore: ['&7Regeneracja życia: &f%mmocore_stat_health_regeneration%']
+  odnowienie:
+    slots: [ 43 ]
+    item: CLOCK
+    name: '&dOdnowienie'
+    lore:
+      - '&7Skrócenie odnowienia: &f%mmocore_stat_cooldown_reduction%%'
+      - '&7Regeneracja many: &f%mmocore_stat_mana_regeneration%'
+  profesje_surowce:
+    slots: [ 44 ]
+    item: IRON_PICKAXE
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&aZbieractwo'
+    lore:
+      - '&7Górnictwo: &f%mmocore_profession_mining%'
+      - '&7Drwal-stolarz: &f%mmocore_profession_woodworking%'
+      - '&7Zielarz: &f%mmocore_profession_herbalism%'
+      - '&7Rolnictwo: &f%mmocore_profession_farming%'
+  profesje_teren:
+    slots: [ 50 ]
+    item: FISHING_ROD
+    name: '&aTeren i zwierzęta'
+    lore:
+      - '&7Wędkarstwo: &f%mmocore_profession_fishing%'
+      - '&7Myślistwo: &f%mmocore_profession_hunting%'
+      - '&7Poskramiacz: &f%mmocore_profession_poskramiacz%'
+  profesje_rzemioslo:
+    slots: [ 51 ]
+    item: ANVIL
+    name: '&6Rzemiosło'
+    lore:
+      - '&7Kowalstwo: &f%mmocore_profession_smithing%'
+      - '&7Krawiectwo: &f%mmocore_profession_tailoring%'
+      - '&7Jubilerstwo: &f%mmocore_profession_jewelcrafting%'
+      - '&7Budownictwo: &f%mmocore_profession_building%'
+  profesje_wiedza:
+    slots: [ 52 ]
+    item: BREWING_STAND
+    name: '&dWiedza i kuchnia'
+    lore:
+      - '&7Alchemia: &f%mmocore_profession_alchemy%'
+      - '&7Zaklinanie: &f%mmocore_profession_enchanting%'
+      - '&7Gotowanie: &f%mmocore_profession_cooking%'
+  powrot:
+    slots: [ 27 ]
+    item: PAPER
+    item_model: 'nexo:hub_wstecz'
+    name: '&ePowrót do menu'
+    lore: ['&7Kliknij, aby otworzyć menu główne.']
+    script:
+      - 'command{format="dm open hub_glowne %player_name%"}'
+  umiejetnosci:
+    slots: [ 29 ]
+    item: PAPER
+    item_model: 'nexo:hub_umiejetnosci'
+    name: '&bUmiejętności i drzewko'
+    lore: ['&7Kliknij, aby wybrać umiejętności lub drzewko.']
+    script:
+      - 'command{format="dm open hub_umiejetnosci %player_name%"}'
+  ekwipunek:
+    slots: [ 53 ]
+    item: PAPER
+    item_model: 'nexo:hub_ekwipunek'
+    name: '&6Ekwipunek'
+    lore:
+      - '&7Otwórz klawiszem &eE&7 po zamknięciu karty.'
+      - '&7Akcesoria zakładasz w górnym rzędzie ekwipunku.'

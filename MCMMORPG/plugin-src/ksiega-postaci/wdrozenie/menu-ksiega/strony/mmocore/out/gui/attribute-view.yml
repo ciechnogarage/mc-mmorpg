@@ -1,0 +1,93 @@
+#####################################
+# Okno atrybutów (/attributes) — etap 0 przebudowy klas, 2026-09-29: po polsku, 4 atrybuty
+#####################################
+# Bonusy atrybutów definiuje attributes/default_attributes.yml; tu tylko wygląd.
+
+name: '&f䪄䪅䪆䪇&f'
+
+# Liczba slotów: 9-54, wielokrotność 9.
+slots: 54
+
+items:
+  reallocate:
+    slots: [ 37 ]
+    function: reallocation
+    item: CAULDRON
+    name: '&aPunkty atrybutów'
+    lore:
+      - ''
+      - '&7Wydane łącznie: &6{total}'
+      - '&7Prawy klik: rozdziel punkty od nowa.'
+      - ''
+      - '&eKosztuje 1 punkt zmiany atrybutów.'
+      - '&e◆ Punkty zmiany atrybutów: &6{points}'
+  str:
+    slots: [ 23 ]
+    function: attribute_strength
+    name: '&c{name}'
+    item: GOLDEN_APPLE
+    lore:
+      - '&8Główny atrybut wojownika'
+      - ''
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
+      - ''
+      - '&8Za każdy punkt:'
+      - '&7  +{buff_weapon_damage}% obrażeń broni (&a+{total_weapon_damage}%&7)'
+      - '&7  +{buff_max_health}% maks. zdrowia (&a+{total_max_health}%&7)'
+      - ''
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
+  dex:
+    slots: [ 24 ]
+    function: attribute_dexterity
+    name: '&7{name}'
+    item: LEATHER_BOOTS
+    item-flags: [ 'HIDE_ATTRIBUTES' ]
+    lore:
+      - '&8Główny atrybut ninji'
+      - ''
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
+      - ''
+      - '&8Za każdy punkt:'
+      - '&7  +{buff_physical_damage}% obrażeń fizycznych (&a+{total_physical_damage}%&7)'
+      - '&7  +{buff_projectile_damage}% obrażeń pocisków (&a+{total_projectile_damage}%&7)'
+      - '&7  +{buff_attack_speed}% szybkości ataku (&a+{total_attack_speed}%&7)'
+      - ''
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
+  int:
+    slots: [ 25 ]
+    function: attribute_intelligence
+    name: '&d{name}'
+    item: BOOK
+    lore:
+      - '&8Główny atrybut maga'
+      - ''
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
+      - ''
+      - '&8Za każdy punkt:'
+      - '&7  +{buff_magic_damage}% obrażeń magicznych (&a+{total_magic_damage}%&7)'
+      - '&7  +{buff_cooldown_reduction}% skrócenia odnowienia (&a+{total_cooldown_reduction}%&7)'
+      - ''
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
+  wiara:
+    slots: [ 26 ]
+    function: attribute_wiara
+    name: '&e{name}'
+    item: TOTEM_OF_UNDYING
+    lore:
+      - '&8Główny atrybut akolity'
+      - ''
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
+      - ''
+      - '&8Za każdy punkt:'
+      - '&7  +{buff_skill_damage}% obrażeń umiejętności (&a+{total_skill_damage}%&7)'
+      - '&7  +{buff_max_mana} do puli zasobu (&a+{total_max_mana}&7)'
+      - ''
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'

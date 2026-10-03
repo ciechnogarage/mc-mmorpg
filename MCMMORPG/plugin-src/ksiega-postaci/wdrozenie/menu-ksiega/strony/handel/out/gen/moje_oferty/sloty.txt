@@ -1,0 +1,54 @@
+00 | pusty_gora
+01 | pusty_dol
+02 | pusty_gora
+03 | pusty_dol
+04 | grzbiet (rezerwa techniczna)
+05 | pusty_dol
+06 | pusty_gora
+07 | pusty_dol
+08 | pusty_gora
+09 | pusty_dol
+10 | pusty_gora
+11 | pusty_dol
+12 | pusty_gora
+13 | grzbiet (rezerwa techniczna)
+14 | lista
+15 | lista
+16 | lista
+17 | lista
+18 | pusty_gora
+19 | pusty_dol
+20 | pusty_gora
+21 | pusty_dol
+22 | grzbiet (rezerwa techniczna)
+23 | lista
+24 | lista
+25 | lista
+26 | lista
+27 | player_items_all
+28 | player_items_active
+29 | player_items_expired_not_taken
+30 | player_items_purchased
+31 | grzbiet (rezerwa techniczna)
+32 | lista
+33 | lista
+34 | lista
+35 | lista
+36 | player_items_old
+37 | home
+38 | player_items_previous
+39 | player_items_next
+40 | grzbiet (rezerwa techniczna)
+41 | lista
+42 | lista
+43 | lista
+44 | lista
+45 | pusty_dol
+46 | pusty_gora
+47 | pusty_dol
+48 | pusty_gora
+49 | grzbiet (rezerwa techniczna)
+50 | lista
+51 | lista
+52 | lista
+53 | lista

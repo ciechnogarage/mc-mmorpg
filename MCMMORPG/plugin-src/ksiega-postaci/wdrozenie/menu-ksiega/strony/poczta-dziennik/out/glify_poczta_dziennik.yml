@@ -1,0 +1,49 @@
+# Cztery ćwiartki na stronę; U+4B00–U+4B07.
+dziennik_przygod_1:
+  font: minecraft:default
+  texture: nexo:gui/dziennik_przygod_1
+  ascent: 13
+  height: 111
+  char: "䬀"
+dziennik_przygod_2:
+  font: minecraft:default
+  texture: nexo:gui/dziennik_przygod_2
+  ascent: 13
+  height: 111
+  char: "䬁"
+dziennik_przygod_3:
+  font: minecraft:default
+  texture: nexo:gui/dziennik_przygod_3
+  ascent: -98
+  height: 111
+  char: "䬂"
+dziennik_przygod_4:
+  font: minecraft:default
+  texture: nexo:gui/dziennik_przygod_4
+  ascent: -98
+  height: 111
+  char: "䬃"
+poczta_1:
+  font: minecraft:default
+  texture: nexo:gui/poczta_1
+  ascent: 13
+  height: 111
+  char: "䬄"
+poczta_2:
+  font: minecraft:default
+  texture: nexo:gui/poczta_2
+  ascent: 13
+  height: 111
+  char: "䬅"
+poczta_3:
+  font: minecraft:default
+  texture: nexo:gui/poczta_3
+  ascent: -98
+  height: 111
+  char: "䬆"
+poczta_4:
+  font: minecraft:default
+  texture: nexo:gui/poczta_4
+  ascent: -98
+  height: 111
+  char: "䬇"
