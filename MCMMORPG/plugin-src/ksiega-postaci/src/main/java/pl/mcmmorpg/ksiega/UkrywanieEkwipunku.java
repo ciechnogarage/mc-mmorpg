@@ -79,16 +79,19 @@ final class UkrywanieEkwipunku implements Listener {
     }
     boolean panelEnabled = event.getView().getTopInventory().getSize() == 54
         && panel.matches(plain, legacy);
-    ItemStack[] items = panelEnabled ? panel.render(player) : new ItemStack[36];
-    views.put(player.getUniqueId(), new BookView(event.getView(), panelEnabled, items));
+    boolean portalEnabled = event.getView().getTopInventory().getSize() == 54
+        && (plain.contains(Portal.titleSign()) || legacy.contains(Portal.titleSign()));
+    ItemStack[] items = panelEnabled ? panel.render(player)
+        : portalEnabled ? plugin.portal.panelItems(player) : new ItemStack[36];
+    views.put(player.getUniqueId(), new BookView(event.getView(), panelEnabled, portalEnabled, items));
   }
 
   private void refresh() {
     for (Player player : Bukkit.getOnlinePlayers()) {
       BookView state = views.get(player.getUniqueId());
-      if (state == null || !state.panelEnabled
+      if (state == null || (!state.panelEnabled && !state.portalEnabled)
           || state.view.getTopInventory() != player.getOpenInventory().getTopInventory()) continue;
-      ItemStack[] next = panel.render(player);
+      ItemStack[] next = state.portalEnabled ? plugin.portal.panelItems(player) : panel.render(player);
       if (Arrays.equals(state.panelItems, next)) continue;
       state.panelItems = next;
       player.updateInventory();
@@ -146,15 +149,20 @@ final class UkrywanieEkwipunku implements Listener {
         || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
         || !Przedmioty.empty(event.getCursor());
     if (blocked) event.setCancelled(true);
-    if (!bottom || state == null || !state.panelEnabled || !Przedmioty.empty(event.getCursor())
+    if (!bottom || state == null || (!state.panelEnabled && !state.portalEnabled)
+        || !Przedmioty.empty(event.getCursor())
         || click != ClickType.LEFT && click != ClickType.RIGHT) return;
     int panelSlot = raw - first;
-    if (!panel.hasAction(panelSlot, state.panelItems[panelSlot])) return;
+    if (state.portalEnabled ? panelSlot != 1 && panelSlot != 4
+        : !panel.hasAction(panelSlot, state.panelItems[panelSlot])) return;
     Player player = (Player) event.getWhoClicked();
     Bukkit.getScheduler().runTask(plugin, () -> {
       if (player.isOnline() && views.get(player.getUniqueId()) == state
           && player.getOpenInventory().getTopInventory() == state.view.getTopInventory()
-          && panel.hasAction(panelSlot, state.panelItems[panelSlot])) panel.run(player, panelSlot);
+          && (state.portalEnabled || panel.hasAction(panelSlot, state.panelItems[panelSlot]))) {
+        if (state.portalEnabled) plugin.portal.panelClick(player, panelSlot);
+        else panel.run(player, panelSlot);
+      }
     });
   }
 
@@ -197,13 +205,15 @@ final class UkrywanieEkwipunku implements Listener {
     final InventoryView view;
     final int topSize;
     final boolean panelEnabled;
+    final boolean portalEnabled;
     volatile ItemStack[] panelItems;
     volatile int windowId = -1;
 
-    BookView(InventoryView view, boolean panelEnabled, ItemStack[] panelItems) {
+    BookView(InventoryView view, boolean panelEnabled, boolean portalEnabled, ItemStack[] panelItems) {
       this.view = view;
       topSize = view.getTopInventory().getSize();
       this.panelEnabled = panelEnabled;
+      this.portalEnabled = portalEnabled;
       this.panelItems = panelItems;
     }
   }

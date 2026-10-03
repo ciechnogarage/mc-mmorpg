@@ -19,6 +19,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   Bron bron;
   Migracja migracja;
   UkrywanieEkwipunku ukrywanie;
+  Portal portal;
 
   @Override public void onEnable() {
     saveDefaultConfig();
@@ -29,8 +30,10 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
     bron = new Bron(this);
     migracja = new Migracja(this);
     ukrywanie = new UkrywanieEkwipunku(this);
+    portal = new Portal(this);
+    getCommand("ksiegaportal").setExecutor(portal);
     MMOItems.plugin.getInventory().register(bizuteria.supplier());
-    for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie}) {
+    for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie, portal}) {
       Bukkit.getPluginManager().registerEvents(listener, this);
     }
     if (Bukkit.getPluginManager().isPluginEnabled("MMOProfiles"))
@@ -40,6 +43,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
 
   @Override public void onDisable() {
     if (ukrywanie != null) ukrywanie.stop();
+    if (portal != null) portal.stop();
     for (Player player : Bukkit.getOnlinePlayers()) {
       bizuteria.clearView(player);
       bron.clearClone(player);

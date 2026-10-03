@@ -65,12 +65,17 @@ final class PanelDolny {
   }
 
   boolean hasAction(int slot, ItemStack visible) {
+    if (slot >= 18 && slot <= 26) return plugin.portal.quickAction(slot, visible);
     Entry entry = entries.get(slot);
     return entry != null && visible != null && !visible.getType().isAir()
         && !entry.commands.isEmpty();
   }
 
   void run(Player player, int slot) {
+    if (slot >= 18 && slot <= 26) {
+      plugin.portal.quickClick(player, slot);
+      return;
+    }
     Entry entry = entries.get(slot);
     if (entry == null) return;
     for (String raw : entry.commands) {
@@ -112,6 +117,8 @@ final class PanelDolny {
       item.setItemMeta(meta);
       result[entry.slot] = item;
     }
+    ItemStack[] quick = plugin.portal.quickItems(player);
+    System.arraycopy(quick, 0, result, 18, quick.length);
     return result;
   }
 

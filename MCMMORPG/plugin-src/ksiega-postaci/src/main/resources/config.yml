@@ -1,7 +1,7 @@
 karta-komenda: player
 ukryj-ekwipunek:
   wlaczone: true
-  znaki-tytulu: ['䅠', '䅨']
+  znaki-tytulu: ['䅠', '䅨', '䅬']
 # Slot 0 = lewy gorny slot dolnego ekwipunku w oknie 54-slotowym (raw 54).
 # 0-8 = rzad A, 9-17 = B, 18-26 = C, 27-35 = hotbar.
 panel-dolny:
