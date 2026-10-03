@@ -3,7 +3,13 @@ package pl.mcmmorpg.ksiega;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -60,6 +66,8 @@ final class Bron implements Listener {
   private final NamespacedKey consumableKey;
   // Nośnik zaklęcia (i pusta dłoń) z pluginu Zaklecia - nie broń, ale ma zostać w ręce.
   private final NamespacedKey spellKey = new NamespacedKey("zaklecia", "nosnik");
+  // Nakładki z wdrozenie/klon/generuj.py: klon widać w slocie, w dłoni nic (właściciel 03.10).
+  private final Set<String> hiddenModels = new HashSet<>();
 
   Bron(KsiegaPostaci plugin) {
     this.plugin = plugin;
@@ -67,6 +75,25 @@ final class Bron implements Listener {
     imageKey = new NamespacedKey("ksiega", "obraz");
     reserveKey = new NamespacedKey(plugin, "zapas");
     consumableKey = new NamespacedKey(plugin, "zuzywalny-slot");
+    Path dir = plugin.getDataFolder().toPath().resolveSibling("Nexo/pack/assets/ksiega/items/klon");
+    if (Files.isDirectory(dir)) try (Stream<Path> files = Files.walk(dir)) {
+      files.filter(f -> f.toString().endsWith(".json")).forEach(f -> {
+        String rel = dir.relativize(f).toString().replace('\\', '/');
+        hiddenModels.add("klon/" + rel.substring(0, rel.length() - 5));
+      });
+    } catch (IOException e) { plugin.getLogger().warning("Nakladki klona: " + e); }
+    plugin.getLogger().info("Nakladki klona (niewidoczny w dloni): " + hiddenModels.size());
+  }
+
+  // Klon lewej: ten sam wygląd w slocie, ale w dłoni pusty - broń nie dubluje się w rękach.
+  private ItemStack hiddenInHand(ItemStack item) {
+    if (hiddenModels.isEmpty()) return item;
+    Key model = item.getData(DataComponentTypes.ITEM_MODEL);
+    if (model == null) model = item.getType().getKey();
+    String path = "klon/" + model.namespace() + "/" + model.value();
+    item.setData(DataComponentTypes.ITEM_MODEL,
+        Key.key("ksiega", hiddenModels.contains(path) ? path : "klon/pusty"));
+    return item;
   }
 
   boolean isClone(ItemStack item) { return Przedmioty.marked(item, cloneKey); }
@@ -194,9 +221,10 @@ final class Bron implements Listener {
     NamespacedKey key = right ? imageKey : cloneKey;
     if (Przedmioty.empty(source)) {
       String side = right ? "pusta-prawa" : "pusta-lewa";
-      return Przedmioty.icon(plugin.getConfig().getString("ikony." + side,
+      ItemStack icon = Przedmioty.icon(plugin.getConfig().getString("ikony." + side,
               "nexo:mmo_icon_gloves"),
           iconName(side), "§8Puste", key);
+      return right ? icon : hiddenInHand(icon);
     }
     // Nowy stos kopiuje wyłącznie komponenty wizualne, nigdy CUSTOM_DATA/NBT/PDC MMOItems.
     ItemStack result = new ItemStack(source.getType(), 1);
@@ -206,7 +234,7 @@ final class Bron implements Listener {
     ItemMeta meta = result.getItemMeta();
     meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
     result.setItemMeta(meta);
-    return result;
+    return right ? result : hiddenInHand(result);
   }
 
   private ItemStack emptyIcon(String side, NamespacedKey key, String lore) {
@@ -308,7 +336,7 @@ final class Bron implements Listener {
       Migracja.give(player, left);
     }
     inventory.setItem(LEFT_IMAGE, twoHanded(inventory.getItem(RIGHT))
-        ? emptyIcon("zajeta-lewa", cloneKey, "§8Zajęta")
+        ? hiddenInHand(emptyIcon("zajeta-lewa", cloneKey, "§8Zajęta"))
         : image(inventory.getItemInOffHand(), false));
     inventory.setItem(RIGHT_IMAGE, image(inventory.getItem(RIGHT), true));
     for (int slot : new int[] {RIGHT_SPARE, LEFT_SPARE}) {
