@@ -91,7 +91,7 @@ panel-dolny:
       lore: ['&7Aktywny: &f%chowance_aktywny_nazwa%', '&7Otwórz menażerię.']
       komendy: ['[menu] chowance_menazeria']
 podstrony:
-  wstecz-nazwa: '&eWróć do Księgi'
+  wstecz-nazwa: '&eWróć do menu'
   wstecz-lore: ['&7Wróć do poprzedniej strony.']
   # Klucz to pierwszy glif tytulu podstrony; wartosc to menu otwierane po kliknieciu 3-5.
   strony:

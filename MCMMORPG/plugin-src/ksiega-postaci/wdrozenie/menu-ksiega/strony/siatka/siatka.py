@@ -122,9 +122,9 @@ def socket(slot):
 
 def heading(label, left, right, y=43):
     """Tabliczka grupy, odsunięta od gniazd i ramy emblematu."""
-    W.R((left, y, right, y + 22), 'gold0', 'leather0')
-    W.R((left + 2, y + 2, right - 2, y + 20), 'blue0', 'gold1')
-    W.bitmap_text(label, (left + right) // 2, y + 15, 'gold2', max_width=right-left-10)
+    W.R((left, y-4, right, y+26), 'gold0', 'leather0')
+    W.R((left+2, y-2, right-2, y+24), 'blue0', 'gold1')
+    W.gui_text(label, (left+right)//2, y+2, 'gold2', max_gui=(right-left-10)//2, frame=(left,y-4,right,y+26))
 
 
 def emblem_faith(x, y):
@@ -220,7 +220,7 @@ def draw_page(title, ident, slots, index):
                 177 if ident == 'wiara' else 249 if ident == 'ksiega_zaklec' else 213,right)
     W.draw_footer()
     foot_ornament(262, 226 if ident == 'wiara' else 253 if ident == 'ksiega_zaklec' else 235)
-    W.draw_lower('Wróć do Księgi')
+    W.draw_lower('WRÓĆ DO MENU')
     W.clean_orphans()
     assert not W.find_orphans(image)
     assert {color for _, color in image.getcolors(352 * 444)} <= set(W.C.values())

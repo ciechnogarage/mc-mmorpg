@@ -294,18 +294,17 @@ def arrow_frame(slot):
 
 
 def heading(label, a, b, y):
-    W.R((a, y, b, y+22), 'gold0', 'leather0')
-    W.R((a+2, y+2, b-2, y+20), 'blue0', 'gold1')
-    W.bitmap_text(label, (a+b)//2, y+15, 'gold2', max_width=b-a-8)
+    W.R((a, y-4, b, y+26), 'gold0', 'leather0')
+    W.R((a+2, y-2, b-2, y+24), 'blue0', 'gold1')
+    W.gui_text(label, (a+b)//2, y+2, 'gold2', max_gui=(b-a-8)//2, frame=(a,y-4,b,y+26))
 
 
 def description_card():
     W.R((198, 153, 326, 224), 'paper1', 'gold0')
     W.R((201, 156, 323, 221), 'paper4', 'paper0')
     W.L([(210, 163), (314, 163)], 'gold1')
-    for line, baseline in zip(('Wybierz recepturę', 'Składniki w plecaku',
-                               'Odbierz z kolejki'), (180, 196, 212)):
-        W.bitmap_text(line, 262, baseline, 'blue0', max_width=112)
+    W.gui_body(('Kliknij przepis.', 'Użyj plecaka.',
+                'Odbierz wyrób.'), 262, 169, 120, 47, frame=(198,153,326,224), max_lines=3)
 
 
 def draw_page(ident, title, layout, n):
@@ -314,7 +313,7 @@ def draw_page(ident, title, layout, n):
     W.draw_title(title)
     W.hero_frame(14, 34, lambda x, y: emblem(ident, x, y))
     heading('Kolejka', 53, 119, 146)
-    heading('Receptury', 230, 299, 39)
+    heading('Receptury', 214, 315, 39)
     W.R((18, 177, 157, 250), 'paper1', 'gold0')
     W.R((21, 180, 154, 248), 'paper3', 'paper0')
     if layout:
@@ -331,7 +330,7 @@ def draw_page(ident, title, layout, n):
         for slot in (RECIPE_PREV, RECIPE_NEXT):
             arrow_frame(slot)
     W.draw_footer()
-    W.draw_lower('Wróć do Księgi')
+    W.draw_lower('WRÓĆ DO MENU')
     W.clean_orphans()
     assert not W.find_orphans(pic)
     assert {color for _, color in pic.getcolors(352*444)} <= set(W.C.values())

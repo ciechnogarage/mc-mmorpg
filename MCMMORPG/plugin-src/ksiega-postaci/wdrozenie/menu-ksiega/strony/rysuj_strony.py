@@ -100,7 +100,7 @@ def shop(x,y):
     for xx in (13,24,35): R((x+xx,y+5,x+xx+5,y+13),'paper4')
     R((x+11,y+20,x+41,y+27),'paper2','ink')
     for xx in (14,23,32): E((x+xx,y+20,x+xx+6,y+26),'gold2','gold0')
-    R((x+7,y+29,x+45,y+33),'wood0','ink')
+    R((x+7,y+29,x+45,y+33),'wood1','ink')
 
 def buyback(x,y):
     W.scene_trade(x,y)
@@ -154,7 +154,7 @@ def key_q(x,y):
     R((x+7,y+4,x+44,y+35),'ink','gold0')
     R((x+10,y+7,x+41,y+32),'stone1','paper2')
     R((x+13,y+10,x+38,y+29),'paper3','gold0')
-    W.bitmap_text('Q',x+26,y+26,'blue0',sx=2,sy=2,bold=True,max_width=24)
+    W.bitmap_text('Q',x+26,y+26,'blue0',sx=2,sy=2,bold=True,max_width=24,frame=(x,y,x+51,y+38))
 
 def about(x,y):
     field(x,y,'wood1')
@@ -305,7 +305,7 @@ def hero_travel(x,y):
 DESCRIPTIONS = {
     'hub_postac': ('Twoja postać:', 'statystyki, atrybuty', 'i patron wiary.'),
     'hub_umiejetnosci': ('Rozwijaj zdolności', 'klasy, drzewka', 'i księgę zaklęć.'),
-    'hub_ekonomia': ('Kupuj, sprzedawaj', 'i licytuj z innymi', 'wędrowcami.'),
+    'hub_ekonomia': ('Kupuj i sprzedawaj.', 'Licytuj z graczami.'),
     'hub_spolecznosc': ('Drużyna, znajomi', 'i gildia razem', 'łatwiej przetrwać.'),
     'hub_ustawienia': ('Dopasuj grę', 'do siebie.'),
     'hub_pomoc': ('Q otwiera Księgę.', 'Najedź na kafel,', 'by poznać opis.'),
@@ -316,9 +316,7 @@ def description_card(lines, x=14, y=142):
     R((x,y,x+143,y+107),'paper1','gold0')
     R((x+3,y+3,x+140,y+104),'paper3','gold0')
     R((x+6,y+6,x+137,y+101),'paper4')
-    baselines = (178,190,202) if len(lines)==3 else (184,196)
-    for line, baseline in zip(lines, baselines):
-        W.bitmap_text(line,x+72,baseline,'blue0',max_width=126)
+    W.gui_body(lines,x+72,y+8,126,82,frame=(x,y,x+143,y+107))
     L([(x+43,226),(x+63,226)],'gold0')
     L([(x+81,226),(x+101,226)],'gold0')
     G([(x+72,222),(x+76,226),(x+72,230),(x+68,226)],'gold1','gold0')
@@ -326,9 +324,9 @@ def description_card(lines, x=14, y=142):
 
 PAGES = [
     ('hub_postac','Postać',hero_character,[('Statystyki','Statystyki',stats),('Atrybuty','Atrybuty',attributes),('Wiara','Wiara',faith),('Zmień postać','Zmień postać',change_character)]),
-    ('hub_umiejetnosci','Umiejętności',hero_mage,[('Umiejętności','Umiejętności',skill),('Drzewka rozwoju','Drzewka',tree),('Tryb rzucania','Rzucanie',casting),('Księga zaklęć','Zaklęcia',spellbook)]),
+    ('hub_umiejetnosci','ZDOLNOŚCI',hero_mage,[('Umiejętności','Umiejętności',skill),('Drzewka rozwoju','Drzewka',tree),('Tryb rzucania','Rzucanie',casting),('Księga zaklęć','Zaklęcia',spellbook)]),
     ('hub_ekonomia','Handel',hero_trade,[('Dom aukcyjny','Aukcje',auction),('Sklep','Sklep',shop),('Skup','Skup',buyback)]),
-    ('hub_spolecznosc','Społeczność',hero_social,[('Drużyna','Drużyna',party),('Znajomi','Znajomi',friends),('Gildia','Gildia',guild)]),
+    ('hub_spolecznosc','DRUŻYNA',hero_social,[('Drużyna','Drużyna',party),('Znajomi','Znajomi',friends),('Gildia','Gildia',guild)]),
     ('hub_ustawienia','Ustawienia',hero_settings,[('Tryb PvP','Tryb PvP',pvp)]),
     ('hub_pomoc','Pomoc',hero_help,[('Sterowanie','Sterowanie',key_q),('O menu','O menu',about),('Wkrótce','Wkrótce',soon)]),
     ('stolica_podroze','Podróże',hero_travel,[('Loch 001','Loch 001',dungeon),('Kolejne lochy','Dalsze lochy',locked),('Wyspy','Wyspy',islands)]),
@@ -388,7 +386,7 @@ def main():
             W.tile(x,y,label,painter,caption)
             placements.append((x,y,label))
             miniatures.append((ident,label,caption,painter))
-        W.draw_footer(); W.draw_lower('Wróć do Księgi')
+        W.draw_footer(); W.draw_lower('WRÓĆ DO MENU')
         W.clean_orphans()
         assert image.size==(352,444)
         assert len(image.getcolors(352*444) or [])<=32

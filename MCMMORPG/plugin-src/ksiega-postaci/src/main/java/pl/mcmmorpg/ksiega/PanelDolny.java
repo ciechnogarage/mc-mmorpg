@@ -37,7 +37,7 @@ final class PanelDolny {
   PanelDolny(KsiegaPostaci plugin) {
     this.plugin = plugin;
     String titleSign = plugin.getConfig().getString("panel-dolny.znak-tytulu", "䅨");
-    backName = plugin.getConfig().getString("podstrony.wstecz-nazwa", "&eWróć do Księgi");
+    backName = plugin.getConfig().getString("podstrony.wstecz-nazwa", "&eWróć do menu");
     backLore = plugin.getConfig().isList("podstrony.wstecz-lore")
         ? plugin.getConfig().getStringList("podstrony.wstecz-lore")
         : List.of("&7Wróć do poprzedniej strony.");

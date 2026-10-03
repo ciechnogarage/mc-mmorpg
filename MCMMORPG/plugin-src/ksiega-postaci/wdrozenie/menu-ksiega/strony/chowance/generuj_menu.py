@@ -325,9 +325,9 @@ def miniature(kind):
 
 
 DESCRIPTIONS = {
-    'hodowla': ('Dobierz parę.', 'Jaja wykluwają się', 'podczas wędrówki.'),
-    'lochy': ('Wybierz wyzwanie.', 'Każde miejsce ma', 'własne stworzenia.'),
-    'ranking': ('Zbieraj punkty ELO.', 'Turniej i pojedynki', 'czekają na ciebie.'),
+    'hodowla': ('Dobierz parę.', 'Jaja dojrzewają', 'w czasie podróży.'),
+    'lochy': ('Wybierz loch.', 'Każdy ma własne', 'stworzenia.'),
+    'ranking': ('Zbieraj ELO.', 'Walcz z innymi.', 'Wygraj turniej.'),
 }
 
 
@@ -335,17 +335,13 @@ def description_card(lines, x, y=142):
     W.R((x,y,x+143,y+107),'paper1','gold0')
     W.R((x+3,y+3,x+140,y+104),'paper3','gold0')
     W.R((x+6,y+6,x+137,y+101),'paper4')
-    for line, baseline in zip(lines,(y+36,y+48,y+60)):
-        W.bitmap_text(line,x+72,baseline,'blue0',max_width=126)
-    W.L([(x+43,y+84),(x+63,y+84)],'gold0')
-    W.L([(x+81,y+84),(x+101,y+84)],'gold0')
-    W.G([(x+72,y+80),(x+76,y+84),(x+72,y+88),(x+68,y+84)],'gold1','gold0')
+    W.gui_body(lines,x+72,y+8,126,94,frame=(x,y,x+143,y+107))
 
 
 def heading(label, x, y=43):
-    W.R((x,y,x+135,y+22),'gold0','leather0')
-    W.R((x+2,y+2,x+133,y+20),'blue0','gold1')
-    W.bitmap_text(label,x+68,y+15,'gold2',max_width=122)
+    W.R((x,y-4,x+135,y+26),'gold0','leather0')
+    W.R((x+2,y-2,x+133,y+24),'blue0','gold1')
+    W.gui_text(label,x+68,y+2,'gold2',max_gui=61,frame=(x,y-4,x+135,y+26))
 
 
 def tile(x, y, caption, kind):
@@ -391,8 +387,8 @@ def draw_page(ident, slots):
         tile(194,70,'Turniej','turniej')
         tile(266,70,'Pojedynek','pojedynek')
         description_card(DESCRIPTIONS[ident],14)
-        description_card(('Sprawdź swoją lokatę.',
-                          'Wyzwania budują', 'pozycję w rankingu.'),194)
+        description_card(('Sprawdź lokatę.',
+                          'Wygrywaj walki.', 'Awansuj w rankingu.'),194)
     elif ident == 'bestiariusz':
         heading('Gatunki',194)
         heading('Wpisy',22,146)
@@ -416,7 +412,7 @@ def draw_page(ident, slots):
         W.R((22,145,155,247),'paper3','paper0')
         for s in right+left: socket(s)
     W.draw_footer()
-    W.draw_lower('Wróć do Księgi')
+    W.draw_lower('WRÓĆ DO MENU')
     W.clean_orphans()
     assert not W.find_orphans(image)
     assert {color for _,color in image.getcolors(352*444)} <= set(W.C.values())

@@ -53,7 +53,7 @@ def dopisz_powroty(plugins, wpisy):
     cfg = plugins / 'KsiegaPostaci/config.yml'
     tekst = cfg.read_text(encoding='utf-8')
     if '\npodstrony:' not in tekst:
-        blok = ("podstrony:\n  wstecz-nazwa: '&eWróć do Księgi'\n  wstecz-lore: ['&7Wróć do poprzedniej strony.']\n"
+        blok = ("podstrony:\n  wstecz-nazwa: '&eWróć do menu'\n  wstecz-lore: ['&7Wróć do poprzedniej strony.']\n"
                 "  # Klucz to pierwszy glif tytulu podstrony; wartosc to menu otwierane po kliknieciu 3-5.\n  strony:\n")
         i = tekst.index('typy-broni:')
         tekst = tekst[:i] + blok + tekst[i:]

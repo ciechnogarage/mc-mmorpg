@@ -81,7 +81,7 @@ def open_mailbox(x, y):
 def draw(ident):
     W.new_canvas()
     W.draw_book()
-    W.draw_title('Dziennik przygód' if ident == 'dziennik_przygod' else 'Poczta')
+    W.draw_title('DZIENNIK' if ident == 'dziennik_przygod' else 'POCZTA')
     W.hero_frame(14,34,book_and_quill if ident == 'dziennik_przygod' else sealed_letter)
     if ident == 'dziennik_przygod':
         S.heading('Postęp',22,157,146)
@@ -101,7 +101,7 @@ def draw(ident):
         W.tile(266,106,'Odebrane',open_mailbox,caption='Odebrane')
         S.foot_ornament(262,226)
     W.draw_footer()
-    W.draw_lower('Wróć do Księgi')
+    W.draw_lower('WRÓĆ DO MENU')
     W.clean_orphans()
     assert not W.find_orphans(W.im)
     assert {color for _, color in W.im.getcolors(352*444)} <= set(W.C.values())

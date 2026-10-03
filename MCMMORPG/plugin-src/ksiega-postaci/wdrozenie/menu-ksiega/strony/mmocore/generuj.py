@@ -234,9 +234,9 @@ def panel(label,x1,x2,y1,y2,where):
     W.R((x1+3,y1+3,x2-3,y2-3),'paper3','paper0')
     for s in where: socket(s)
     if label:
-        W.R((x1,y1-22,x2,y1-2),'gold0','leather0')
-        W.R((x1+2,y1-20,x2-2,y1-4),'blue0','gold1')
-        W.bitmap_text(label,(x1+x2)//2,y1-8,'gold2',max_width=x2-x1-8)
+        W.R((x1,y1-29,x2,y1-1),'gold0','leather0')
+        W.R((x1+2,y1-27,x2-2,y1-3),'blue0','gold1')
+        W.gui_text(label,(x1+x2)//2,y1-23,'gold2',max_gui=(x2-x1-8)//2,frame=(x1,y1-29,x2,y1-1))
 
 
 TILES = {
@@ -273,7 +273,7 @@ DESCRIPTIONS = {
 }
 
 RIGHT_HEADINGS = {
-    'player-stats': 'Zasoby, atak i obrona',
+    'player-stats': 'Statystyki',
     'attribute-view': 'Atrybuty postaci',
     'skill-list': 'Umiejętności',
     'quest-list': 'Dziennik zadań',
@@ -324,8 +324,7 @@ def action_icon(name,x,y):
 def description(lines,x=194,y=174,w=136,h=75):
     W.R((x,y,x+w-1,y+h-1),'paper1','gold0')
     W.R((x+3,y+3,x+w-4,y+h-4),'paper4','paper0')
-    for line,base in zip(lines,(y+27,y+39,y+51)):
-        W.bitmap_text(line,x+w//2,base,'blue0',max_width=w-12)
+    W.gui_body(lines,x+w//2,y+6,w-12,h-20,frame=(x,y,x+w-1,y+h-1))
     W.L([(x+w//2-23,y+h-13),(x+w//2-7,y+h-13)],'gold0')
     W.L([(x+w//2+7,y+h-13),(x+w//2+23,y+h-13)],'gold0')
     W.G([(x+w//2,y+h-17),(x+w//2+4,y+h-13),
@@ -362,7 +361,7 @@ def draw(ident,index):
         elif ident == 'party-view':
             description(DESCRIPTIONS[ident],194,179,136,70)
     W.draw_footer()
-    W.draw_lower('Wróć do Księgi')
+    W.draw_lower('WRÓĆ DO MENU')
     W.clean_orphans()
     assert not W.find_orphans(im)
     assert {c for _,c in im.getcolors(im.width*im.height)}<=set(W.C.values())

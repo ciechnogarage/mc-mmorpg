@@ -1047,15 +1047,14 @@ TILE_ART = {
 def description(lines,x,y=146):
     W.R((x,y,x+137,y+100),'paper1','gold0')
     W.R((x+3,y+3,x+134,y+97),'paper4','gold0')
-    for n,line in enumerate(lines):
-        W.bitmap_text(line,x+69,y+36+n*14,'blue0',max_width=124)
+    W.gui_body(lines,x+69,y+10,124,84,frame=(x,y,x+137,y+100))
     S.foot_ornament(x+69,y+82)
 
 def left_heading(label):
     # Emblemat zajmuje y=34..141, gniazda y=142..249; pas poniżej jest wolny.
-    W.R((22,250,157,260),'gold0','leather0')
-    W.R((24,251,155,259),'blue0','gold1')
-    W.bitmap_text(label,89,258,'gold2',max_width=126)
+    W.R((22,112,157,141),'gold0','leather0')
+    W.R((24,114,155,139),'blue0','gold1')
+    W.gui_text(label,89,120,'gold2',max_gui=61,frame=(22,112,157,141))
 
 def bag_socket(x,y):
     W.R((x+2,y+2,x+33,y+33),'leather0','gold0')
@@ -1069,7 +1068,7 @@ def draw_backpack():
     W.R((9,391,342,431),'leather1','gold0')
     W.R((136,262,216,276),'gold0','leather0')
     W.R((139,264,213,274),'blue0','gold1')
-    W.bitmap_text('Plecak',176,272,'gold2',max_width=68)
+    W.bitmap_text('PLECAK',176,272,'gold2',max_width=68,frame=(136,262,216,276),margin=2)
     for y in (278,314,350,394):
         for c in range(9):
             bag_socket(14+36*c,y)
@@ -1080,10 +1079,10 @@ def draw_page(ident, title, slots, free):
     W.draw_book()
     W.draw_title(title)
     W.hero_frame(14,34,emblem_for(ident))
-    headings = {'sklep':'Towary', 'sklep_ilosc':'Kupowany towar',
-                'skup':'Towary skupu', 'skup_ilosc':'Towar i decyzja',
+    headings = {'sklep':'Towary', 'sklep_ilosc':'Towar',
+                'skup':'Towary skupu', 'skup_ilosc':'Decyzja',
                 'rynek':'Oferty graczy', 'moje_oferty':'Twoje oferty',
-                'kupno':'Zakup oferty', 'wystawienie':'Przedmiot i czas'}
+                'kupno':'Oferta', 'wystawienie':'Oferta'}
     S.heading(headings[ident],194,330,43)
     real = {s for name, arr in slots.items() if name not in FILLERS for s in arr}
     sockets = sorted(real | free)
@@ -1097,9 +1096,9 @@ def draw_page(ident, title, slots, free):
         bottom = 216 if max(s//9 for s in left_sockets)==4 else 252
         S.group_frame(16,161,141,bottom,left_sockets)
     left_labels = {'sklep':'Kategorie', 'sklep_ilosc':'Kup lub wróć',
-                   'skup':'Kategorie i strony', 'skup_ilosc':'Wybierz ilość',
-                   'rynek':'Kategorie i akcje', 'moje_oferty':'Zakładki ofert',
-                   'kupno':'Potwierdź lub wróć', 'wystawienie':'Wpisz cenę'}
+                   'skup':'Kategorie', 'skup_ilosc':'Wybierz ilość',
+                   'rynek':'Kategorie', 'moje_oferty':'Zakładki ofert',
+                   'kupno':'Akcje', 'wystawienie':'Wpisz cenę'}
     for s in (set(left+right)-tile_slots_all):
         S.socket(s)
     for name,(caption,painter) in tiles.items():
@@ -1111,7 +1110,7 @@ def draw_page(ident, title, slots, free):
         draw_backpack()
     else:
         W.draw_footer()
-        W.draw_lower('Wróć do Księgi')
+        W.draw_lower('WRÓĆ DO MENU')
     left_heading(left_labels[ident])
     W.clean_orphans()
     assert not W.find_orphans(image)
@@ -1224,7 +1223,7 @@ def main_ksiega():
         x,y=(j%4)*240,(j//4)*210
         studies.paste(scene.resize((208,156),Image.Resampling.NEAREST),(x+16,y+10))
         W.set_canvas(studies)
-        W.bitmap_text(caption,x+120,y+190,'gold2',sx=2,sy=2,max_width=224)
+        W.bitmap_text(caption,x+120,y+190,'gold2',sx=2,sy=2,max_width=224,frame=(x,y+164,x+240,y+202))
     studies.save(out/'kafle_x4.png')
     studies.save(out.parent/'kafle_x4.png')
     (out/'glify_handel.yml').write_text('\n'.join(glyphs)+'\n',encoding='utf-8')
