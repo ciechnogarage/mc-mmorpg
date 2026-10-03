@@ -515,7 +515,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       if (teraz - ostatniBrakStaminy.getOrDefault(id, -1000) >= 40) {
         ostatniBrakStaminy.put(id, teraz);
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.8f, 0.7f);
-        komunikat(p, "&x&F&2&F&2&E&DBrakuje &x&E&8&7&9&7&3staminy");
+        komunikat(p, "&x&F&2&F&2&E&DBrakuje &x&E&8&7&9&7&3staminy", 40);
       }
       dbg("MOCNY typ=" + NBTItem.get(item).getType() + " wariant=brak_staminy ticki=" + ticki + " obrazenia=0 stamina=0");
       return;
@@ -586,7 +586,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     p.getWorld().playSound(l, Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 1f, kombo == 2 ? 0.7f : 0.9f);
     if (kombo == 2) p.getWorld().playSound(l, Sound.ITEM_MACE_SMASH_AIR, SoundCategory.PLAYERS, 0.7f, 1.2f);
     if (getServer().getCurrentTick() - ostatniBrakStaminy.getOrDefault(p.getUniqueId(), -1000) >= 40)
-      komunikat(p, kombo == 2 ? "&6⚔ Kombo: L + L + P" : "&e⚔ Kombo: L + P");
+      komunikat(p, kombo == 2 ? "&6⚔ Kombo: L + L + P" : "&e⚔ Kombo: L + P", 30);
   }
 
   /** Krok ciosu nie wpycha gracza w istote przed nim: przy celu blizej niz mocny.dystans_kroku zdejmuje skladowa do przodu. */
@@ -820,10 +820,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     p.getWorld().playSound(styk, Sound.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS, 0.8f, 1.5f);
   }
 
-  private void komunikat(Player p, String tekst) {
+  /** Priorytety paska MythicLib: 40 = odmowa (brak staminy), 30 = informacja (kombo); pasek MMOCore ma 10. */
+  private void komunikat(Player p, String tekst, int priorytet) {
     String t = org.bukkit.ChatColor.translateAlternateColorCodes('&', tekst);
-    PlayerData dane = mmocore ? PlayerData.get(p) : null;
-    if (dane != null) dane.displayActionBar(t);   // zwykly pasek akcji MMOCore zamazuje po 0,25 s
+    if (mmocore) MMOPlayerData.get(p).getActionBar().show(priorytet, 40L, t);   // zwykly pasek akcji MMOCore zamazuje po 0,25 s
     else p.sendActionBar(net.kyori.adventure.text.Component.text(t));
   }
 
