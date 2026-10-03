@@ -1,0 +1,44 @@
+menu_title: '&f䨘䨙䨚䨛'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&bPodróże'
+    lore:
+      - '&7Kolejne lochy powstaną po sprawdzeniu'
+      - '&7pierwszego lochu. Ta brama jest zamknięta.'
+      - '&7Podróż między serwerami ruszy po'
+      - '&7otwarciu wyspy i wspólnego postępu.'
+  loch_001:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&dLoch 001 &8» &aKwietna Polana'
+    lore:
+      - '&7Pierwsza wyprawa. Poziom 1–5.'
+      - '&7Solo lub drużyna do 4 graczy.'
+    left_click_commands:
+      - '[console] md play loch_001 %player_name%'
+      - '[close]'
+  kolejne_lochy:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&7Dalsze lochy'
+    lore:
+      - '&7Powstaną po ukończeniu'
+      - '&7i sprawdzeniu pierwszego lochu.'
+      - '&8Ta brama jest jeszcze zamknięta.'
+  wyspy:
+    material: nexo-mmo_icon_blank
+    slots: [24, 25, 33, 34]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&7Wyspy'
+    lore:
+      - '&7Podróż między serwerami ruszy'
+      - '&7po otwarciu wyspy i wspólnego postępu.'
+      - '&8Ta trasa jest jeszcze zamknięta.'
