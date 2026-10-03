@@ -90,6 +90,18 @@ panel-dolny:
       nazwa: '&aChowaniec'
       lore: ['&7Aktywny: &f%chowance_aktywny_nazwa%', '&7Otwórz menażerię.']
       komendy: ['[menu] chowance_menazeria']
+podstrony:
+  wstecz-nazwa: '&eWróć do Księgi'
+  wstecz-lore: ['&7Wróć do poprzedniej strony.']
+  # Klucz to pierwszy glif tytulu podstrony; wartosc to menu otwierane po kliknieciu 3-5.
+  strony:
+    "䨀": hub_glowne # hub_postac
+    "䨄": hub_glowne # hub_umiejetnosci
+    "䨈": hub_glowne # hub_ekonomia
+    "䨌": hub_glowne # hub_spolecznosc
+    "䨐": hub_glowne # hub_ustawienia
+    "䨔": hub_glowne # hub_pomoc
+    "䨘": hub_glowne # stolica_podroze
 typy-broni:
   - SWORD
   - DAGGER

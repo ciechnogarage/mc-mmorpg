@@ -4,9 +4,11 @@ import com.nexomc.nexo.api.NexoItems;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -24,15 +26,34 @@ import org.bukkit.inventory.meta.ItemMeta;
 /** Dane panelu sa odczytywane i renderowane tylko na glownym watku. */
 final class PanelDolny {
   private final KsiegaPostaci plugin;
-  private final String titleSign;
   private final Map<Integer, Entry> entries;
+  private final Map<String, Page> pages;
+  private final String backName;
+  private final List<String> backLore;
   private final boolean papi;
   private final boolean nexo;
   private final Set<String> warnedNexoIds = ConcurrentHashMap.newKeySet();
 
   PanelDolny(KsiegaPostaci plugin) {
     this.plugin = plugin;
-    titleSign = plugin.getConfig().getString("panel-dolny.znak-tytulu", "䅨");
+    String titleSign = plugin.getConfig().getString("panel-dolny.znak-tytulu", "䅨");
+    backName = plugin.getConfig().getString("podstrony.wstecz-nazwa", "&eWróć do Księgi");
+    backLore = plugin.getConfig().isList("podstrony.wstecz-lore")
+        ? plugin.getConfig().getStringList("podstrony.wstecz-lore")
+        : List.of("&7Wróć do poprzedniej strony.");
+    Map<String, Page> configuredPages = new LinkedHashMap<>();
+    if (titleSign != null && !titleSign.isEmpty()) configuredPages.put(titleSign, new Page(null));
+    var section = plugin.getConfig().getConfigurationSection("podstrony.strony");
+    if (section != null) for (String sign : new TreeSet<>(section.getKeys(false))) {
+      String menu = section.getString(sign, "").trim();
+      if (sign.isEmpty() || !menu.matches("[a-zA-Z0-9_-]+")) {
+        plugin.getLogger().warning("Podstrony: niepoprawny znak lub menu powrotu: " + sign);
+        continue;
+      }
+      if (configuredPages.putIfAbsent(sign, new Page(menu)) != null)
+        plugin.getLogger().warning("Podstrony: znak koliduje z panelem Q: " + sign);
+    }
+    pages = Collections.unmodifiableMap(configuredPages);
     papi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
     nexo = Bukkit.getPluginManager().isPluginEnabled("Nexo");
     if (!papi) plugin.getLogger().warning("Brak PlaceholderAPI: panel Q pokaze kreski i ukryje liczniki.");
@@ -59,18 +80,39 @@ final class PanelDolny {
     entries = Collections.unmodifiableMap(configured);
   }
 
-  boolean matches(String plain, String legacy) {
-    return titleSign != null && !titleSign.isEmpty()
-        && (plain.contains(titleSign) || legacy.contains(titleSign));
+  Set<String> pageSigns() { return pages.keySet(); }
+
+  Page match(String plain, String legacy) {
+    Page found = firstMatch(plain);
+    return found != null ? found : firstMatch(legacy);
   }
 
-  boolean hasAction(int slot, ItemStack visible) {
+  private Page firstMatch(String title) {
+    int earliest = Integer.MAX_VALUE;
+    Page found = null;
+    for (Map.Entry<String, Page> candidate : pages.entrySet()) {
+      int at = title.indexOf(candidate.getKey());
+      if (at >= 0 && at < earliest) {
+        earliest = at;
+        found = candidate.getValue();
+      }
+    }
+    return found;
+  }
+
+  boolean hasAction(int slot, ItemStack visible, Page page) {
+    if (page != null && page.backMenu() != null && slot >= 3 && slot <= 5)
+      return visible != null && !visible.getType().isAir();
     Entry entry = entries.get(slot);
     return entry != null && visible != null && !visible.getType().isAir()
         && !entry.commands.isEmpty();
   }
 
-  void run(Player player, int slot) {
+  void run(Player player, int slot, Page page) {
+    if (page != null && page.backMenu() != null && slot >= 3 && slot <= 5) {
+      Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dm open " + page.backMenu() + " " + player.getName());
+      return;
+    }
     Entry entry = entries.get(slot);
     if (entry == null) return;
     for (String raw : entry.commands) {
@@ -89,9 +131,10 @@ final class PanelDolny {
     }
   }
 
-  ItemStack[] render(Player player) {
+  ItemStack[] render(Player player, Page page) {
     ItemStack[] result = new ItemStack[36];
     for (Entry entry : entries.values()) {
+      if (page != null && page.backMenu() != null && entry.slot >= 3 && entry.slot <= 5) continue;
       int amount = quantity(resolve(player, entry.amount));
       if (amount <= 0 && entry.hideWhenZero) continue;
       ItemStack item = base(entry);
@@ -111,6 +154,22 @@ final class PanelDolny {
       meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
       item.setItemMeta(meta);
       result[entry.slot] = item;
+    }
+    if (page != null && page.backMenu() != null) {
+      for (int slot = 3; slot <= 5; slot++) {
+        Entry entry = entries.get(slot);
+        ItemStack item = entry == null ? new ItemStack(Material.GOLD_NUGGET) : base(entry);
+        if (item == null || item.getType().isAir()) item = new ItemStack(Material.GOLD_NUGGET);
+        item.setAmount(1);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(text(resolve(player, backName)));
+        List<Component> lore = new ArrayList<>(backLore.size());
+        for (String line : backLore) lore.add(text(resolve(player, line)));
+        meta.lore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        item.setItemMeta(meta);
+        result[slot] = item;
+      }
     }
     return result;
   }
@@ -180,4 +239,6 @@ final class PanelDolny {
   private record Entry(int slot, String material, String nexoId, String itemModel,
       String name, List<String> lore, String amount, boolean hideWhenZero,
       List<String> commands, String noQuestCondition, List<String> noQuestLore) {}
+
+  record Page(String backMenu) {}
 }

@@ -7,7 +7,9 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,10 +45,11 @@ final class UkrywanieEkwipunku implements Listener {
 
   UkrywanieEkwipunku(KsiegaPostaci plugin) {
     this.plugin = plugin;
-    titleSigns = plugin.getConfig().getStringList("ukryj-ekwipunek.znaki-tytulu").stream()
-        .filter(sign -> sign != null && !sign.isEmpty()).toList();
     if (plugin.getConfig().getBoolean("ukryj-ekwipunek.wlaczone", true)) {
       panel = new PanelDolny(plugin);
+      Set<String> signs = new LinkedHashSet<>(plugin.getConfig().getStringList("ukryj-ekwipunek.znaki-tytulu"));
+      signs.addAll(panel.pageSigns());
+      titleSigns = signs.stream().filter(sign -> sign != null && !sign.isEmpty()).toList();
       packets = new PacketAdapter(plugin, ListenerPriority.HIGHEST,
           PacketType.Play.Server.OPEN_WINDOW,
           PacketType.Play.Server.WINDOW_ITEMS,
@@ -56,6 +59,7 @@ final class UkrywanieEkwipunku implements Listener {
       ProtocolLibrary.getProtocolManager().addPacketListener(packets);
       refreshTask = Bukkit.getScheduler().runTaskTimer(plugin, this::refresh, 20L, 20L);
     } else {
+      titleSigns = List.of();
       packets = null;
       panel = null;
       refreshTask = null;
@@ -77,18 +81,18 @@ final class UkrywanieEkwipunku implements Listener {
       views.remove(player.getUniqueId());
       return;
     }
-    boolean panelEnabled = event.getView().getTopInventory().getSize() == 54
-        && panel.matches(plain, legacy);
-    ItemStack[] items = panelEnabled ? panel.render(player) : new ItemStack[36];
-    views.put(player.getUniqueId(), new BookView(event.getView(), panelEnabled, items));
+    PanelDolny.Page page = event.getView().getTopInventory().getSize() == 54
+        ? panel.match(plain, legacy) : null;
+    ItemStack[] items = page != null ? panel.render(player, page) : new ItemStack[36];
+    views.put(player.getUniqueId(), new BookView(event.getView(), page, items));
   }
 
   private void refresh() {
     for (Player player : Bukkit.getOnlinePlayers()) {
       BookView state = views.get(player.getUniqueId());
-      if (state == null || !state.panelEnabled
+      if (state == null || state.page == null
           || state.view.getTopInventory() != player.getOpenInventory().getTopInventory()) continue;
-      ItemStack[] next = panel.render(player);
+      ItemStack[] next = panel.render(player, state.page);
       if (Arrays.equals(state.panelItems, next)) continue;
       state.panelItems = next;
       player.updateInventory();
@@ -146,15 +150,16 @@ final class UkrywanieEkwipunku implements Listener {
         || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
         || !Przedmioty.empty(event.getCursor());
     if (blocked) event.setCancelled(true);
-    if (!bottom || state == null || !state.panelEnabled || !Przedmioty.empty(event.getCursor())
+    if (!bottom || state == null || state.page == null || !Przedmioty.empty(event.getCursor())
         || click != ClickType.LEFT && click != ClickType.RIGHT) return;
     int panelSlot = raw - first;
-    if (!panel.hasAction(panelSlot, state.panelItems[panelSlot])) return;
+    if (!panel.hasAction(panelSlot, state.panelItems[panelSlot], state.page)) return;
     Player player = (Player) event.getWhoClicked();
     Bukkit.getScheduler().runTask(plugin, () -> {
       if (player.isOnline() && views.get(player.getUniqueId()) == state
           && player.getOpenInventory().getTopInventory() == state.view.getTopInventory()
-          && panel.hasAction(panelSlot, state.panelItems[panelSlot])) panel.run(player, panelSlot);
+          && panel.hasAction(panelSlot, state.panelItems[panelSlot], state.page))
+        panel.run(player, panelSlot, state.page);
     });
   }
 
@@ -181,7 +186,10 @@ final class UkrywanieEkwipunku implements Listener {
     if (state == null || state.view != event.getView()
         || !views.remove(player.getUniqueId(), state)) return;
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-      if (player.isOnline()) { player.updateInventory(); plugin.refreshLater(player); }
+      if (player.isOnline() && !views.containsKey(player.getUniqueId())) {
+        player.updateInventory();
+        plugin.refreshLater(player);
+      }
     }, 1L);
   }
 
@@ -196,14 +204,14 @@ final class UkrywanieEkwipunku implements Listener {
   private static final class BookView {
     final InventoryView view;
     final int topSize;
-    final boolean panelEnabled;
+    final PanelDolny.Page page;
     volatile ItemStack[] panelItems;
     volatile int windowId = -1;
 
-    BookView(InventoryView view, boolean panelEnabled, ItemStack[] panelItems) {
+    BookView(InventoryView view, PanelDolny.Page page, ItemStack[] panelItems) {
       this.view = view;
       topSize = view.getTopInventory().getSize();
-      this.panelEnabled = panelEnabled;
+      this.page = page;
       this.panelItems = panelItems;
     }
   }
