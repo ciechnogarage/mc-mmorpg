@@ -99,40 +99,20 @@ gui-layout:
   slots: 54
   enable_right_click_preview: false
   items:
-    previous_page:
-      item: PLAYER_HEAD
-      name: '&6Poprzednia strona'
-      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
-      slots: [5]
-      click_sound: BLOCK_LEVER_CLICK
-      hide_if_no_page: true
-      no_page:
-        item: AIR
-
-    next_page:
-      item: PLAYER_HEAD
-      name: '&6Nastepna strona'
-      texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
-      slots: [8]
-      click_sound: BLOCK_LEVER_CLICK
-      hide_if_no_page: true
-      no_page:
-        item: AIR
-
     previous_queue_item:
       function: previous_queue_item
       item: ARROW
       name: '&6Poprzednie wyroby'
-      slots: [27]
+      slots: [46]
 
     next_queue_item:
       function: next_queue_item
       item: ARROW
       name: '&6Następne wyroby'
-      slots: [30]
+      slots: [47]
 
     queued_item:
-      slots: [36, 37, 38, 45, 46]
+      slots: [36, 37, 38, 39]
       existing:
         name: '&6Kolejka:&f {name}'
         delay_format: 'smhdMy'
@@ -169,6 +149,6 @@ gui-layout:
           - '{ingredients}'
           - '{lore}'
       none:
-        item: GRAY_STAINED_GLASS_PANE
+        item: AIR
         name: '&7Brak receptury'
-      slots: [14, 15, 16, 23, 24, 25, 32, 33, 34]
+      slots: [14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35]

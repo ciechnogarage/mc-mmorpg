@@ -33,9 +33,10 @@ STATIONS = (
     ('profession-woodworking', 'Drwal-stolarz'),
     ('chowance', 'Poskramiacz'),
 )
-QUEUE = [36, 37, 38, 45, 46]
-QUEUE_PREV, QUEUE_NEXT = 27, 30
-RECIPE_PREV, RECIPE_NEXT = 5, 8
+# Cztery widoczne wyroby; nawigacja przewija kolejkę do limitu 10.
+QUEUE = [36, 37, 38, 39]
+QUEUE_PREV, QUEUE_NEXT = 46, 47
+RECIPE_PREV, RECIPE_NEXT = 50, 53
 BODY = re.compile(r'(?m)^    ([a-z_]+):\s*$')
 SLOTS = re.compile(r'(?m)^(      slots: )\[[^\n]*\](?:\s*#.*)?$')
 TITLE_TEMPLATE = re.search(r"^menu_title: '([^']+)'", (
@@ -65,29 +66,26 @@ def with_slots(block, slots):
     return SLOTS.sub(lambda m: m.group(1) + '[' + ', '.join(map(str, slots)) + ']', block, count=1)
 
 
+def recipe_block(block, slots):
+    block = with_slots(block, slots)
+    # Puste pola pozostają widoczne w glifie, bez szarego przedmiotu w GUI.
+    return block.replace('      none:\n        item: GRAY_STAINED_GLASS_PANE',
+                         '      none:\n        item: AIR')
+
+
 def recipe_slots(n):
     assert 1 <= n <= 29
-    if n > 20:
-        return [9 * row + col for row in range(1, 6) for col in range(5, 9)]
-    widths = {
-        5: [3, 2], 6: [3, 3], 8: [4, 4], 9: [3, 3, 3],
-        10: [4, 3, 3], 14: [4, 4, 4, 2],
-    }.get(n)
-    assert widths is not None, n
-    result = []
-    for row, width in enumerate(widths, 1):
-        columns = (5, 6, 7, 8) if width == 4 else (5, 6, 7) if width == 3 else (6, 7)
-        result.extend(9 * row + col for col in columns)
-    assert len(result) == n
-    return result
+    # Dolny rząd jest stale zarezerwowany na paginację wielostronicową.
+    rows = min(4, (n + 3) // 4)
+    return [9 * row + col for row in range(1, rows + 1) for col in range(5, 9)]
 
 
-def page_title(codes, page_placeholder):
+def page_title(codes):
     title = TITLE_TEMPLATE
     for old, code in zip(range(0x4168, 0x416C), codes):
         assert title.count(chr(old)) == 1
         title = title.replace(chr(old), chr(code))
-    return title + ('&f ' + page_placeholder if page_placeholder else '')
+    return title
 
 
 def nav_item(key, slot, label):
@@ -120,21 +118,22 @@ def convert(ident, raw, codes):
     assert {'queued_item', 'recipe'} <= old.keys()
     n = recipe_count(raw)
     layout = recipe_slots(n)
-    placeholder = re.search(r'^  name:.*?((?:\{page\}/\{max_page\}))', gui_head, re.M)
-    title = page_title(codes, placeholder.group(1) if placeholder else '')
+    title = page_title(codes)
     gui_head = re.sub(r"(?m)^  name:.*$", "  name: '" + title + "'", gui_head, count=1)
     gui_head = re.sub(r'(?m)^  slots: \d+$', '  slots: 54', gui_head, count=1)
     parts = []
-    for key in ('previous_page', 'next_page'):
-        slot = RECIPE_PREV if key == 'previous_page' else RECIPE_NEXT
-        if key in old:
-            parts.append(with_slots(old[key], [slot]))
-        else:
-            parts.append(nav_item(key, slot, 'Poprzednia strona' if key == 'previous_page' else 'Następna strona'))
+    multi_page = n > len(layout)
+    if multi_page:
+        for key in ('previous_page', 'next_page'):
+            slot = RECIPE_PREV if key == 'previous_page' else RECIPE_NEXT
+            if key in old:
+                parts.append(with_slots(old[key], [slot]))
+            else:
+                parts.append(nav_item(key, slot, 'Poprzednia strona' if key == 'previous_page' else 'Następna strona'))
     for key, slot, label in (('previous_queue_item', QUEUE_PREV, 'Poprzednie wyroby'),
                              ('next_queue_item', QUEUE_NEXT, 'Następne wyroby')):
         parts.append(with_slots(old[key], [slot]) if key in old else queue_nav(key, slot, label))
-    parts += [with_slots(old['queued_item'], QUEUE), with_slots(old['recipe'], layout)]
+    parts += [with_slots(old['queued_item'], QUEUE), recipe_block(old['recipe'], layout)]
     extra = set(old) - {'previous_page', 'next_page', 'previous_queue_item',
                         'next_queue_item', 'queued_item', 'recipe'}
     assert not extra, (ident, extra)
@@ -149,17 +148,31 @@ def validate(ident, old_raw, new_raw, n, layout, codes):
     assert old_before == new_before, ident
     _, old = split_items(old_gui)
     _, new = split_items(new_gui)
-    assert set(old) <= set(new)
-    for key in old:
-        assert SLOTS.sub('      slots: []', old[key]) == SLOTS.sub('      slots: []', new[key]), (ident, key)
+    multi_page = n > len(layout)
+    removed = set() if multi_page else {'previous_page', 'next_page'} & set(old)
+    assert set(old) - removed <= set(new)
+    for key in set(old) - removed:
+        expected = recipe_block(old[key], []) if key == 'recipe' else with_slots(old[key], [])
+        assert expected == with_slots(new[key], []), (ident, key)
     placements = {key: slots_of(block) for key, block in new.items()}
     all_slots = [slot for arr in placements.values() for slot in arr]
     assert all(0 <= slot < 54 and slot % 9 != 4 for slot in all_slots)
     assert len(all_slots) == len(set(all_slots)), (ident, Counter(all_slots))
     assert placements['recipe'] == layout and placements['queued_item'] == QUEUE
-    assert len(layout) >= n or {'next_page', 'previous_page'} <= new.keys()
+    assert (len(layout) < n) == multi_page
+    assert ({'next_page', 'previous_page'} <= new.keys()) == multi_page
+    if multi_page:
+        assert placements['previous_page'] == [RECIPE_PREV]
+        assert placements['next_page'] == [RECIPE_NEXT]
+    assert placements['previous_queue_item'] == [QUEUE_PREV]
+    assert placements['next_queue_item'] == [QUEUE_NEXT]
+    assert len(QUEUE) % 4 == 0 and len(layout) % 4 == 0
+    assert re.search(r'(?m)^max-queue-size: 10$', new_raw)
     assert '  slots: 54\n' in new_gui and len(re.findall(r'(?m)^  name: ', new_gui)) == 1
     assert new_gui.split("  name: '", 1)[1].startswith('&f')
+    gui_title = re.search(r"(?m)^  name: '([^']+)'$", new_gui).group(1)
+    assert re.fullmatch(r'(?:&f|[\ue000-\uf8ff\u4b10-\u4b47])+', gui_title), gui_title
+    assert '{page}' not in gui_title and '{max_page}' not in gui_title
     assert chr(codes[0]) in new_gui
     assert all(re.search(r'crafting-time: (?:[1-9]\d*|0\.\d*[1-9])', old_raw) for _ in [0])
 
@@ -272,6 +285,12 @@ def socket(slot):
 
 def arrow_frame(slot):
     socket(slot)
+    col, row = slot % 9, slot // 9
+    cx, cy = 14 + 36*col + 18, 34 + 36*row + 18
+    if slot in (QUEUE_PREV, RECIPE_PREV):
+        W.G([(cx-6, cy), (cx+4, cy-7), (cx+4, cy+7)], 'gold2', 'gold0')
+    else:
+        W.G([(cx+6, cy), (cx-4, cy-7), (cx-4, cy+7)], 'gold2', 'gold0')
 
 
 def heading(label, a, b, y):
@@ -280,7 +299,16 @@ def heading(label, a, b, y):
     W.bitmap_text(label, (a+b)//2, y+15, 'gold2', max_width=b-a-8)
 
 
-def draw_page(ident, title, layout):
+def description_card():
+    W.R((198, 153, 326, 224), 'paper1', 'gold0')
+    W.R((201, 156, 323, 221), 'paper4', 'paper0')
+    W.L([(210, 163), (314, 163)], 'gold1')
+    for line, baseline in zip(('Wybierz recepturę', 'Składniki w plecaku',
+                               'Odbierz z kolejki'), (180, 196, 212)):
+        W.bitmap_text(line, 262, baseline, 'blue0', max_width=112)
+
+
+def draw_page(ident, title, layout, n):
     pic = W.new_canvas()
     W.draw_book()
     W.draw_title(title)
@@ -295,8 +323,13 @@ def draw_page(ident, title, layout):
         W.R((197, 69, 327, min(248, 34+36*last_row+32)), 'paper3', 'paper0')
     for slot in QUEUE + layout:
         socket(slot)
-    for slot in (QUEUE_PREV, QUEUE_NEXT, RECIPE_PREV, RECIPE_NEXT):
+    if len(layout) == 8:
+        description_card()
+    for slot in (QUEUE_PREV, QUEUE_NEXT):
         arrow_frame(slot)
+    if n > len(layout):
+        for slot in (RECIPE_PREV, RECIPE_NEXT):
+            arrow_frame(slot)
     W.draw_footer()
     W.draw_lower('Wróć do Księgi')
     W.clean_orphans()
@@ -317,7 +350,7 @@ def main():
         codes = [0x4B10 + 4*index + i for i in range(4)]
         output, layout, generated_title, n = convert(ident, raw, codes)
         (OUT / 'gen' / (ident + '.yml')).write_text(output, encoding='utf-8')
-        pic = draw_page(ident, title, layout)
+        pic = draw_page(ident, title, layout, n)
         folder = OUT / ident
         folder.mkdir(exist_ok=True)
         pic.save(folder / (ident + '_2x.png'))
@@ -328,9 +361,11 @@ def main():
                                 f'  ascent: {13 if quarter <= 2 else -98}',
                                 '  height: 111', f'  char: "{chr(codes[quarter-1])}"'))
         mapping.append(f'U+{codes[0]:04X} {"chowance_menazeria" if ident == "chowance" else "profession_main"}  # {ident}')
-        checks.append(f'{ident}: receptury {n}, gniazda {len(layout)}, strony {(n+len(layout)-1)//len(layout)}, '
-                      f'kolejka {len(QUEUE)}/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+{codes[0]:04X}–U+{codes[-1]:04X}, '
-                      'stare elementy zachowane, kolizje 0, piksele osierocone 0')
+        checks.append(f'{ident}: receptury {n}, gniazda {len(layout)} ({len(layout)//4}×4), '
+                      f'strony {(n+len(layout)-1)//len(layout)}, strzałki stron {"50/53" if n > len(layout) else "brak"}, '
+                      f'kolejka {len(QUEUE)}/10 (4 widoczne, przewijanie 46/47), '
+                      f'54 sloty, kol. 4 pusta, glify U+{codes[0]:04X}–U+{codes[-1]:04X}, '
+                      'bez kolizji, tytuł bez tekstu, piksele osierocone 0')
         pages.append(pic)
     (OUT / 'glify_warsztaty.yml').write_text('\n'.join(glyph_lines)+'\n', encoding='utf-8')
     (OUT / 'podstrony.txt').write_text('\n'.join(mapping)+'\n', encoding='utf-8')

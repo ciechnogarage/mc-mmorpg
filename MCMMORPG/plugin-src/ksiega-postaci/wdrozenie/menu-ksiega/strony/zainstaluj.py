@@ -2,7 +2,7 @@
 """Instaluje strony Ksiegi do katalogu plugins (klon albo world1).
 
 Uzycie: zainstaluj.py <katalog plugins> <grupa> [<grupa> ...]
-Grupy: podstrony, siatka, poczta-dziennik, mmocore, chowance, handel.
+Grupy: podstrony, siatka, poczta-dziennik, mmocore, chowance, handel, warsztaty.
 Kopiuje tekstury cwiartek do Nexo/pack/assets/nexo/textures/gui, glify do Nexo/glyphs/ksiega_<grupa>.yml,
 pliki menu do wlasciwych pluginow i dopisuje mapowanie powrotu do KsiegaPostaci/config.yml (podstrony.strony).
 Niczego nie przeladowuje — po instalacji: restart serwera (glify Nexo + config pluginu).
@@ -22,6 +22,7 @@ GRUPY = {
                         [('dm/*.yml', 'DeluxeMenus/gui_menus/'), ('../cmi_dialogs/*.yml', 'CMI/Dialogs/'), ('../../../hub_glowne.yml', 'DeluxeMenus/gui_menus/')]),
     'mmocore': ('mmocore/out', 'glify_mmocore.yml', [('gui/*.yml', 'MMOCore/gui/')]),
     'chowance': ('chowance/out', 'glify_chowance.yml', [('gen/*.yml', 'DeluxeMenus/gui_menus/')]),
+    'warsztaty': ('warsztaty/out', 'glify_warsztaty.yml', [('gen/*.yml', 'MMOItems/crafting-stations/')]),
     'handel': ('handel/out/gen', 'glify_handel.yml',
                [('AuctionHouse/*.yml', 'CoreTools/AuctionHouse/'), ('Shops/*.yml', 'CoreTools/Shops/')]),
 }

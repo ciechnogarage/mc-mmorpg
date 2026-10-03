@@ -315,7 +315,7 @@ recipes:
     triggers:
       - 'exp{profession=poskramiacz,amount=90}'
 gui-layout:
-  name: '&f䭄䭅䭆䭇&f {page}/{max_page}'
+  name: '&f䭄䭅䭆䭇'
   slots: 54
   enable_right_click_preview: false
   items:
@@ -323,7 +323,7 @@ gui-layout:
       function: previous_page
       item: ARROW
       name: '&ePoprzednia strona'
-      slots: [5]
+      slots: [50]
       hide_if_no_page: true
       no_page:
         item: GRAY_STAINED_GLASS_PANE
@@ -333,7 +333,7 @@ gui-layout:
       function: next_page
       item: ARROW
       name: '&eNastępna strona'
-      slots: [8]
+      slots: [53]
       hide_if_no_page: true
       no_page:
         item: GRAY_STAINED_GLASS_PANE
@@ -343,16 +343,16 @@ gui-layout:
       function: previous_queue_item
       item: ARROW
       name: '&6Poprzednie wyroby'
-      slots: [27]
+      slots: [46]
 
     next_queue_item:
       function: next_queue_item
       item: ARROW
       name: '&6Następne wyroby'
-      slots: [30]
+      slots: [47]
 
     queued_item:
-      slots: [36, 37, 38, 45, 46]
+      slots: [36, 37, 38, 39]
       existing:
         name: '&6Kolejka:&f {name}'
         delay_format: 'smhdMy'
@@ -389,6 +389,6 @@ gui-layout:
           - '{ingredients}'
           - '{lore}'
       none:
-        item: GRAY_STAINED_GLASS_PANE
+        item: AIR
         name: '&7Brak receptury'
-      slots: [14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44, 50, 51, 52, 53]
+      slots: [14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44]
