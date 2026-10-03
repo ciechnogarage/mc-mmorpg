@@ -1,0 +1,226 @@
+name: 'Warsztat: Kowala'
+max-queue-size: 10
+command:
+  name: 'warsztat-smithing'
+  description: 'Otwiera warsztat profesji smithing'
+  usage: '/warsztat-smithing'
+  permission: ''
+  aliases: []
+recipes:
+  # >>> PRZEDMIOTY (tools/przedmioty/generuj.py — nie edytuj recznie)
+  'prz_prz_oselka':
+    output: 'mmoitems{type=CONSUMABLE,id=PRZ_OSELKA}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=smithing,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=10}'
+  'prz_prz_noz_rozbiorki':
+    output: 'mmoitems{type=CONSUMABLE,id=PRZ_NOZ_ROZBIORKI,amount=4}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=smithing,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ORE_CHUNK,amount=2}'
+    triggers:
+      - 'exp{profession=smithing,amount=4}'
+  # <<< PRZEDMIOTY
+  'prof_steel_mechanism':
+    output: 'mmoitems{type=MATERIAL,id=PROF_STEEL_MECHANISM}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=smithing,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=3}'
+    triggers:
+      - 'exp{profession=smithing,amount=12}'
+  'prof_metal_plate':
+    output: 'mmoitems{type=MATERIAL,id=PROF_METAL_PLATE}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=smithing,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=5}'
+    triggers:
+      - 'exp{profession=smithing,amount=28}'
+  'prof_arrowheads':
+    output: 'mmoitems{type=MATERIAL,id=PROF_ARROWHEADS}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=smithing,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=2}'
+    triggers:
+      - 'exp{profession=smithing,amount=55}'
+  'prof_metal_repair_kit':
+    output: 'mmoitems{type=MATERIAL,id=PROF_METAL_REPAIR_KIT}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=smithing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_METAL_PLATE,amount=2}'
+    triggers:
+      - 'exp{profession=smithing,amount=95}'
+  'prof_master_blade_blank':
+    output: 'mmoitems{type=MATERIAL,id=PROF_MASTER_BLADE_BLANK}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=smithing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ARCANE_CRYSTAL,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=120}'
+  'prof_axe_head':
+    output: 'mmoitems{type=MATERIAL,id=PROF_AXE_HEAD}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=smithing,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_METAL_PLATE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=2}'
+    triggers:
+      - 'exp{profession=smithing,amount=40}'
+  'prof_farmer_hoe':
+    output: 'mmoitems{type=TOOL,id=PROF_FARMER_HOE}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=smithing,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_METAL_PLATE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WEAPON_HANDLE,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=45}'
+  'prof_herb_sickle':
+    output: 'mmoitems{type=TOOL,id=PROF_HERB_SICKLE}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=smithing,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=3}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WEAPON_HANDLE,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=45}'
+  'prof_hunter_knife':
+    output: 'mmoitems{type=TOOL,id=PROF_HUNTER_KNIFE}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=smithing,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REFINED_IRON,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CURED_HIDE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_SINEW,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=50}'
+  'prof_master_farmer_hoe':
+    output: 'mmoitems{type=TOOL,id=PROF_MASTER_FARMER_HOE}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=smithing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MASTER_BLADE_BLANK,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_STEEL_MECHANISM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CARVED_FITTING,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=140}'
+  'prof_master_herb_sickle':
+    output: 'mmoitems{type=TOOL,id=PROF_MASTER_HERB_SICKLE}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=smithing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MASTER_BLADE_BLANK,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_METAL_PLATE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WEAPON_HANDLE,amount=1}'
+    triggers:
+      - 'exp{profession=smithing,amount=140}'
+  'prof_master_hunter_knife':
+    output: 'mmoitems{type=TOOL,id=PROF_MASTER_HUNTER_KNIFE}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=smithing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MASTER_BLADE_BLANK,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CURED_HIDE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_SINEW,amount=2}'
+    triggers:
+      - 'exp{profession=smithing,amount=150}'
+gui-layout:
+  name: '&f䬸䬹䬺䬻'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_page:
+      function: previous_page
+      item: ARROW
+      name: '&6Poprzednia strona'
+      slots: [5]
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+
+    next_page:
+      function: next_page
+      item: ARROW
+      name: '&6Następna strona'
+      slots: [8]
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [27]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [30]
+
+    queued_item:
+      slots: [36, 37, 38, 45, 46]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 42, 43]

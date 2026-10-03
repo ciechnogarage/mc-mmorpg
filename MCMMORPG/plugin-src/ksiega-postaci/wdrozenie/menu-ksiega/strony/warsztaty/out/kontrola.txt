@@ -1,0 +1,14 @@
+profession-alchemy: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B10–U+4B13, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-building: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B14–U+4B17, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-cooking: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B18–U+4B1B, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-enchanting: receptury 6, gniazda 6, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B1C–U+4B1F, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-farming: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B20–U+4B23, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-fishing: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B24–U+4B27, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-herbalism: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B28–U+4B2B, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-hunting: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B2C–U+4B2F, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-jewelcrafting: receptury 9, gniazda 9, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B30–U+4B33, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-mining: receptury 5, gniazda 5, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B34–U+4B37, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-smithing: receptury 14, gniazda 14, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B38–U+4B3B, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-tailoring: receptury 8, gniazda 8, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B3C–U+4B3F, stare elementy zachowane, kolizje 0, piksele osierocone 0
+profession-woodworking: receptury 10, gniazda 10, strony 1, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B40–U+4B43, stare elementy zachowane, kolizje 0, piksele osierocone 0
+chowance: receptury 29, gniazda 20, strony 2, kolejka 5/10 z nawigacją, 54 sloty, kol. 4 pusta, glify U+4B44–U+4B47, stare elementy zachowane, kolizje 0, piksele osierocone 0

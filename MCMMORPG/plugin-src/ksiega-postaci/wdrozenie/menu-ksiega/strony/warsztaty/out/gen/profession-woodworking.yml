@@ -1,0 +1,186 @@
+name: 'Warsztat: Drwala-stolarza'
+max-queue-size: 10
+command:
+  name: 'warsztat-woodworking'
+  description: 'Otwiera warsztat profesji woodworking'
+  usage: '/warsztat-woodworking'
+  permission: ''
+  aliases: []
+recipes:
+  'prof_seasoned_timber':
+    output: 'mmoitems{type=MATERIAL,id=PROF_SEASONED_TIMBER}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=woodworking,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_OAK_TIMBER,amount=8}'
+    triggers:
+      - 'exp{profession=woodworking,amount=12}'
+  'prof_weapon_handle':
+    output: 'mmoitems{type=MATERIAL,id=PROF_WEAPON_HANDLE}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=woodworking,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SEASONED_TIMBER,amount=2}'
+    triggers:
+      - 'exp{profession=woodworking,amount=28}'
+  'prof_bow_limb':
+    output: 'mmoitems{type=MATERIAL,id=PROF_BOW_LIMB}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=woodworking,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_BIRCH_LATH,amount=8}'
+    triggers:
+      - 'exp{profession=woodworking,amount=55}'
+  'prof_staff_core':
+    output: 'mmoitems{type=MATERIAL,id=PROF_STAFF_CORE}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=woodworking,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SEASONED_TIMBER,amount=4}'
+    triggers:
+      - 'exp{profession=woodworking,amount=95}'
+  'prof_carved_fitting':
+    output: 'mmoitems{type=MATERIAL,id=PROF_CARVED_FITTING}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=woodworking,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SPRUCE_RESIN,amount=10}'
+    triggers:
+      - 'exp{profession=woodworking,amount=120}'
+  'prof_unawakened_staff':
+    output: 'mmoitems{type=STAFF,id=PROF_UNAWAKENED_STAFF}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=woodworking,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_STAFF_CORE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CARVED_FITTING,amount=2}'
+    triggers:
+      - 'exp{profession=woodworking,amount=80}'
+  'prof_lumber_axe':
+    output: 'mmoitems{type=TOOL,id=PROF_LUMBER_AXE}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=woodworking,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_AXE_HEAD,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WEAPON_HANDLE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_SEASONED_TIMBER,amount=2}'
+    triggers:
+      - 'exp{profession=woodworking,amount=50}'
+  'prof_fishing_rod':
+    output: 'mmoitems{type=TOOL,id=PROF_FISHING_ROD}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=woodworking,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SEASONED_TIMBER,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_BOWSTRING,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CARVED_FITTING,amount=1}'
+    triggers:
+      - 'exp{profession=woodworking,amount=50}'
+  'prof_master_lumber_axe':
+    output: 'mmoitems{type=TOOL,id=PROF_MASTER_LUMBER_AXE}'
+    crafting-time: 9
+    conditions:
+      - 'profession{profession=woodworking,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MASTER_BLADE_BLANK,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_AXE_HEAD,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CARVED_FITTING,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WEAPON_HANDLE,amount=1}'
+    triggers:
+      - 'exp{profession=woodworking,amount=150}'
+  'prof_master_fishing_rod':
+    output: 'mmoitems{type=TOOL,id=PROF_MASTER_FISHING_ROD}'
+    crafting-time: 9
+    conditions:
+      - 'profession{profession=woodworking,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SEASONED_TIMBER,amount=4}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CARVED_FITTING,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_BOWSTRING,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_STAFF_CORE,amount=1}'
+    triggers:
+      - 'exp{profession=woodworking,amount=150}'
+gui-layout:
+  name: '&f䭀䭁䭂䭃'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_page:
+      function: previous_page
+      item: ARROW
+      name: '&6Poprzednia strona'
+      slots: [5]
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+
+    next_page:
+      function: next_page
+      item: ARROW
+      name: '&6Następna strona'
+      slots: [8]
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [27]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [30]
+
+    queued_item:
+      slots: [36, 37, 38, 45, 46]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 32, 33, 34]

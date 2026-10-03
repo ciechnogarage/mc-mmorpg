@@ -1,0 +1,337 @@
+# Warsztaty: 14 kart po cztery ćwiartki, U+4B10–U+4B47.
+profession-alchemy_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-alchemy_1
+  ascent: 13
+  height: 111
+  char: "䬐"
+profession-alchemy_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-alchemy_2
+  ascent: 13
+  height: 111
+  char: "䬑"
+profession-alchemy_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-alchemy_3
+  ascent: -98
+  height: 111
+  char: "䬒"
+profession-alchemy_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-alchemy_4
+  ascent: -98
+  height: 111
+  char: "䬓"
+profession-building_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-building_1
+  ascent: 13
+  height: 111
+  char: "䬔"
+profession-building_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-building_2
+  ascent: 13
+  height: 111
+  char: "䬕"
+profession-building_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-building_3
+  ascent: -98
+  height: 111
+  char: "䬖"
+profession-building_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-building_4
+  ascent: -98
+  height: 111
+  char: "䬗"
+profession-cooking_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-cooking_1
+  ascent: 13
+  height: 111
+  char: "䬘"
+profession-cooking_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-cooking_2
+  ascent: 13
+  height: 111
+  char: "䬙"
+profession-cooking_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-cooking_3
+  ascent: -98
+  height: 111
+  char: "䬚"
+profession-cooking_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-cooking_4
+  ascent: -98
+  height: 111
+  char: "䬛"
+profession-enchanting_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-enchanting_1
+  ascent: 13
+  height: 111
+  char: "䬜"
+profession-enchanting_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-enchanting_2
+  ascent: 13
+  height: 111
+  char: "䬝"
+profession-enchanting_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-enchanting_3
+  ascent: -98
+  height: 111
+  char: "䬞"
+profession-enchanting_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-enchanting_4
+  ascent: -98
+  height: 111
+  char: "䬟"
+profession-farming_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-farming_1
+  ascent: 13
+  height: 111
+  char: "䬠"
+profession-farming_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-farming_2
+  ascent: 13
+  height: 111
+  char: "䬡"
+profession-farming_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-farming_3
+  ascent: -98
+  height: 111
+  char: "䬢"
+profession-farming_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-farming_4
+  ascent: -98
+  height: 111
+  char: "䬣"
+profession-fishing_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-fishing_1
+  ascent: 13
+  height: 111
+  char: "䬤"
+profession-fishing_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-fishing_2
+  ascent: 13
+  height: 111
+  char: "䬥"
+profession-fishing_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-fishing_3
+  ascent: -98
+  height: 111
+  char: "䬦"
+profession-fishing_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-fishing_4
+  ascent: -98
+  height: 111
+  char: "䬧"
+profession-herbalism_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-herbalism_1
+  ascent: 13
+  height: 111
+  char: "䬨"
+profession-herbalism_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-herbalism_2
+  ascent: 13
+  height: 111
+  char: "䬩"
+profession-herbalism_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-herbalism_3
+  ascent: -98
+  height: 111
+  char: "䬪"
+profession-herbalism_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-herbalism_4
+  ascent: -98
+  height: 111
+  char: "䬫"
+profession-hunting_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-hunting_1
+  ascent: 13
+  height: 111
+  char: "䬬"
+profession-hunting_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-hunting_2
+  ascent: 13
+  height: 111
+  char: "䬭"
+profession-hunting_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-hunting_3
+  ascent: -98
+  height: 111
+  char: "䬮"
+profession-hunting_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-hunting_4
+  ascent: -98
+  height: 111
+  char: "䬯"
+profession-jewelcrafting_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-jewelcrafting_1
+  ascent: 13
+  height: 111
+  char: "䬰"
+profession-jewelcrafting_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-jewelcrafting_2
+  ascent: 13
+  height: 111
+  char: "䬱"
+profession-jewelcrafting_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-jewelcrafting_3
+  ascent: -98
+  height: 111
+  char: "䬲"
+profession-jewelcrafting_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-jewelcrafting_4
+  ascent: -98
+  height: 111
+  char: "䬳"
+profession-mining_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-mining_1
+  ascent: 13
+  height: 111
+  char: "䬴"
+profession-mining_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-mining_2
+  ascent: 13
+  height: 111
+  char: "䬵"
+profession-mining_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-mining_3
+  ascent: -98
+  height: 111
+  char: "䬶"
+profession-mining_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-mining_4
+  ascent: -98
+  height: 111
+  char: "䬷"
+profession-smithing_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-smithing_1
+  ascent: 13
+  height: 111
+  char: "䬸"
+profession-smithing_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-smithing_2
+  ascent: 13
+  height: 111
+  char: "䬹"
+profession-smithing_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-smithing_3
+  ascent: -98
+  height: 111
+  char: "䬺"
+profession-smithing_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-smithing_4
+  ascent: -98
+  height: 111
+  char: "䬻"
+profession-tailoring_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-tailoring_1
+  ascent: 13
+  height: 111
+  char: "䬼"
+profession-tailoring_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-tailoring_2
+  ascent: 13
+  height: 111
+  char: "䬽"
+profession-tailoring_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-tailoring_3
+  ascent: -98
+  height: 111
+  char: "䬾"
+profession-tailoring_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-tailoring_4
+  ascent: -98
+  height: 111
+  char: "䬿"
+profession-woodworking_1:
+  font: minecraft:default
+  texture: nexo:gui/profession-woodworking_1
+  ascent: 13
+  height: 111
+  char: "䭀"
+profession-woodworking_2:
+  font: minecraft:default
+  texture: nexo:gui/profession-woodworking_2
+  ascent: 13
+  height: 111
+  char: "䭁"
+profession-woodworking_3:
+  font: minecraft:default
+  texture: nexo:gui/profession-woodworking_3
+  ascent: -98
+  height: 111
+  char: "䭂"
+profession-woodworking_4:
+  font: minecraft:default
+  texture: nexo:gui/profession-woodworking_4
+  ascent: -98
+  height: 111
+  char: "䭃"
+chowance_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_1
+  ascent: 13
+  height: 111
+  char: "䭄"
+chowance_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_2
+  ascent: 13
+  height: 111
+  char: "䭅"
+chowance_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_3
+  ascent: -98
+  height: 111
+  char: "䭆"
+chowance_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_4
+  ascent: -98
+  height: 111
+  char: "䭇"

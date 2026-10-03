@@ -1,0 +1,394 @@
+name: 'Warsztat: Poskramiacza'
+max-queue-size: 10
+command:
+  name: 'warsztat-chowance'
+  description: 'Otwiera warsztat profesji Poskramiacz'
+  usage: '/warsztat-chowance'
+  permission: ''
+  aliases: []
+recipes:
+  'pieczec_kamienna':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_KAMIENNA,amount=3}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=poskramiacz,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ROUGH_STONE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=8}'
+  'pieczec_krysztalowa':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_KRYSZTALOWA,amount=3}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=poskramiacz,level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ROUGH_CRYSTAL,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=2}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=20}'
+  'pieczec_pradawna':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_PRADAWNA,amount=2}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=poskramiacz,level=25}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ARCANE_CRYSTAL,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=4}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=45}'
+  'pieczec_nocna':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_NOCNA,amount=3}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=poskramiacz,level=12}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_MOONLEAF,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=2}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=22}'
+  'pieczec_wodna':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_WODNA,amount=3}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=poskramiacz,level=12}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WATER_ESSENCE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=2}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=22}'
+  'pieczec_kradziezy':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_KRADZIEZY,amount=2}'
+    crafting-time: 6
+    conditions:
+      - 'profession{profession=poskramiacz,level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_VENOM_SAC,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=3}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=35}'
+  'pieczec_pradawna_wiez':
+    output: 'mmoitems{type=MISCELLANEOUS,id=PIECZEC_PRADAWNA_WIEZ,amount=1}'
+    crafting-time: 60
+    conditions:
+      - 'profession{profession=poskramiacz,level=40}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ARCANE_CRYSTAL,amount=4}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CHARGED_RUNE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_AWAKENING_SEAL,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=20}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=400}'
+  'kamien_przemiany_ogien':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_OGIEN,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=FIRE_ESSENCE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=40}'
+  'kamien_przemiany_woda':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_WODA,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WATER_ESSENCE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=40}'
+  'kamien_przemiany_ziemia':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_ZIEMIA,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=3}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=40}'
+  'kamien_przemiany_powietrze':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_POWIETRZE,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_FINE_WOOL,amount=3}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=40}'
+  'kamien_przemiany_natura':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_NATURA,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=8}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_HERBAL_EXTRACT,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=40}'
+  'kamien_przemiany_mrok':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_MROK,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_MOONLEAF,amount=3}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=6}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=50}'
+  'kamien_przemiany_swiatlo':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_SWIATLO,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=12}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ENCHANT_DUST,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=45}'
+  'kamien_przemiany_bestia':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_BESTIA,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=12}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_MONSTER_TROPHY,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=5}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=45}'
+  'kamien_przemiany_nieumarly':
+    output: 'mmoitems{type=MISCELLANEOUS,id=KAMIEN_PRZEMIANY_NIEUMARLY,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=WITHER_ESSENCE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=6}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=50}'
+  'prof_karma_miesna':
+    output: 'mmoitems{type=MATERIAL,id=PROF_KARMA_MIESNA,amount=2}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=poskramiacz,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_BEAST_SCRAP,amount=3}'
+      - 'mmoitem{type=MATERIAL,id=PROF_WILD_SPICE,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=6}'
+  'prof_karma_ziarnista':
+    output: 'mmoitems{type=MATERIAL,id=PROF_KARMA_ZIARNISTA,amount=2}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=poskramiacz,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_QUALITY_GRAIN,amount=3}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=6}'
+  'prof_karma_nektarowa':
+    output: 'mmoitems{type=MATERIAL,id=PROF_KARMA_NEKTAROWA,amount=2}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=poskramiacz,level=5}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MOONLEAF,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_HERBAL_EXTRACT,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=8}'
+  'prof_karma_rybna':
+    output: 'mmoitems{type=MATERIAL,id=PROF_KARMA_RYBNA,amount=2}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=poskramiacz,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_CATCH,amount=3}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=6}'
+  'prof_karma_mineralna':
+    output: 'mmoitems{type=MATERIAL,id=PROF_KARMA_MINERALNA,amount=2}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=poskramiacz,level=5}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ORE_CHUNK,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CLAY_LUMP,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=8}'
+  'prof_karma_upiorna':
+    output: 'mmoitems{type=MATERIAL,id=PROF_KARMA_UPIORNA,amount=2}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=poskramiacz,level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REDCAP,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=WITHER_ESSENCE,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=12}'
+  'prof_przysmak_mistrza':
+    output: 'mmoitems{type=MATERIAL,id=PROF_PRZYSMAK_MISTRZA,amount=1}'
+    crafting-time: 20
+    conditions:
+      - 'profession{profession=poskramiacz,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_KARMA_MIESNA,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_KARMA_ZIARNISTA,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_KARMA_NEKTAROWA,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_KARMA_RYBNA,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_PEARL,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=60}'
+  'eliksir_maly':
+    output: 'mmoitems{type=MISCELLANEOUS,id=ELIKSIR_MALY,amount=2}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=poskramiacz,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MEDICINAL_HERB,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ALCHEMICAL_BASE,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=8}'
+  'eliksir_duzy':
+    output: 'mmoitems{type=MISCELLANEOUS,id=ELIKSIR_DUZY,amount=2}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=poskramiacz,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_HERBAL_EXTRACT,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ALCHEMICAL_BASE,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=20}'
+  'eliksir_wskrzeszenia':
+    output: 'mmoitems{type=MISCELLANEOUS,id=ELIKSIR_WSKRZESZENIA,amount=1}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=poskramiacz,level=20}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_AWAKENING_SEAL,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ESENCJA_WIEZI,amount=3}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=35}'
+  'eliksir_przebudzenia':
+    output: 'mmoitems{type=MISCELLANEOUS,id=ELIKSIR_PRZEBUDZENIA,amount=2}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=poskramiacz,level=10}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ANTIDOTE,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_DRIED_HERBS,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=15}'
+  'siodlo_proste':
+    output: 'mmoitems{type=MISCELLANEOUS,id=SIODLO_PROSTE,amount=1}'
+    crafting-time: 10
+    conditions:
+      - 'profession{profession=poskramiacz,level=18}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_LEATHER_PANEL,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CURED_HIDE,amount=2}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=40}'
+  'siodlo_wzmocnione':
+    output: 'mmoitems{type=MISCELLANEOUS,id=SIODLO_WZMOCNIONE,amount=1}'
+    crafting-time: 20
+    conditions:
+      - 'profession{profession=poskramiacz,level=35}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_LEATHER_PANEL,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_METAL_PLATE,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_STEEL_MECHANISM,amount=1}'
+    triggers:
+      - 'exp{profession=poskramiacz,amount=90}'
+gui-layout:
+  name: '&f䭄䭅䭆䭇&f {page}/{max_page}'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_page:
+      function: previous_page
+      item: ARROW
+      name: '&ePoprzednia strona'
+      slots: [5]
+      hide_if_no_page: true
+      no_page:
+        item: GRAY_STAINED_GLASS_PANE
+        name: ' '
+
+    next_page:
+      function: next_page
+      item: ARROW
+      name: '&eNastępna strona'
+      slots: [8]
+      hide_if_no_page: true
+      no_page:
+        item: GRAY_STAINED_GLASS_PANE
+        name: ' '
+
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [27]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [30]
+
+    queued_item:
+      slots: [36, 37, 38, 45, 46]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrób gotowy.'
+          - '{queue}&7Pozostało: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrać!'
+          - '{queue}&e> Kliknij, aby anulować'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44, 50, 51, 52, 53]

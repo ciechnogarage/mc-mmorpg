@@ -1,0 +1,130 @@
+name: 'Warsztat: Budowniczego'
+max-queue-size: 10
+command:
+  name: 'warsztat-building'
+  description: 'Otwiera warsztat profesji building'
+  usage: '/warsztat-building'
+  permission: ''
+  aliases: []
+recipes:
+  'prof_mortar':
+    output: 'mmoitems{type=MATERIAL,id=PROF_MORTAR}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=building,level=0}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CLAY_LUMP,amount=8}'
+    triggers:
+      - 'exp{profession=building,amount=12}'
+  'prof_carved_stone':
+    output: 'mmoitems{type=MATERIAL,id=PROF_CARVED_STONE}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=building,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=4}'
+    triggers:
+      - 'exp{profession=building,amount=28}'
+  'prof_support_beam':
+    output: 'mmoitems{type=MATERIAL,id=PROF_SUPPORT_BEAM}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=building,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SEASONED_TIMBER,amount=4}'
+    triggers:
+      - 'exp{profession=building,amount=55}'
+  'prof_decorative_fitting':
+    output: 'mmoitems{type=MATERIAL,id=PROF_DECORATIVE_FITTING}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=building,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CARVED_FITTING,amount=2}'
+    triggers:
+      - 'exp{profession=building,amount=95}'
+  'prof_reinforced_block':
+    output: 'mmoitems{type=MATERIAL,id=PROF_REINFORCED_BLOCK}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=building,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_METAL_PLATE,amount=2}'
+    triggers:
+      - 'exp{profession=building,amount=120}'
+gui-layout:
+  name: '&f䬔䬕䬖䬗'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_page:
+      function: previous_page
+      item: ARROW
+      name: '&6Poprzednia strona'
+      slots: [5]
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+
+    next_page:
+      function: next_page
+      item: ARROW
+      name: '&6Następna strona'
+      slots: [8]
+      hide_if_no_page: true
+      no_page:
+        item: AIR
+
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [27]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [30]
+
+    queued_item:
+      slots: [36, 37, 38, 45, 46]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 24, 25]
