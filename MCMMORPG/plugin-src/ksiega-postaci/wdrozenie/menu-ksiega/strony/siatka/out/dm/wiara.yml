@@ -1,0 +1,469 @@
+# Wygenerowane przez strony/siatka/siatka.py; źródłowe pozycje zachowane.
+menu_title: '&f䩀䩁䩂䩃'
+size: 54
+update_interval: 20
+items:
+
+  'stan':
+    material: nexo-hub_wiara
+    slot: 10
+    update: true
+    display_name: '&6&lTwoja wiara'
+    lore:
+      - ''
+      - '&7Patron: %wiary_patron_imie%'
+      - '&7Rasa: &f%wiary_rasa_nazwa%'
+      - '&7Wiara (atrybut): &f%wiary_wiara%'
+      - '&7Łaska: %wiary_laska%'
+      - '&7Pozostało: &f%wiary_laska_czas%'
+      - ''
+      - '&8Im więcej Wiary, tym silniejsza łaska.'
+      - '&8Punkty Wiary rozdasz w oknie Atrybuty.'
+
+  'b_ordhun':
+    material: ROOTED_DIRT
+    slot: 15
+    priority: 1
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&6&lOrdhun'
+    lore:
+      - '&7Pierwszy Korzeń'
+      - '&8ziemia, rośliny, zwierzęta'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_ordhun%'
+      - ''
+      - '%wiary_status_ordhun%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_ordhun%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% ordhun'
+      - '[refresh]'
+
+  'b_nysara':
+    material: STRING
+    slot: 16
+    priority: 1
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&6&lNysara'
+    lore:
+      - '&7Tkaczka Losu'
+      - '&8los, przysięgi, podróże'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_nysara%'
+      - ''
+      - '%wiary_status_nysara%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_nysara%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% nysara'
+      - '[refresh]'
+
+  'b_vharun':
+    material: WITHER_ROSE
+    slot: 17
+    priority: 1
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&6&lVharun'
+    lore:
+      - '&7Ten, Który Milczy'
+      - '&8śmierć, sąd, spokój po życiu'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_vharun%'
+      - ''
+      - '%wiary_status_vharun%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_vharun%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% vharun'
+      - '[refresh]'
+
+  'b_solenna':
+    material: LANTERN
+    slot: 33
+    priority: 1
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&e&lSolenna'
+    lore:
+      - '&7Pani Latarni'
+      - '&8światło, ochrona dróg'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_solenna%'
+      - ''
+      - '%wiary_status_solenna%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_solenna%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% solenna'
+      - '[refresh]'
+
+  'b_valdris':
+    material: SHIELD
+    slot: 34
+    priority: 1
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&e&lValdris'
+    lore:
+      - '&7Kamienny Sędzia'
+      - '&8prawo, sprawiedliwość, tarcza'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_valdris%'
+      - ''
+      - '%wiary_status_valdris%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_valdris%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% valdris'
+      - '[refresh]'
+
+  'b_heldra':
+    material: WHEAT
+    slot: 35
+    priority: 1
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&e&lHeldra'
+    lore:
+      - '&7Matka Żniw'
+      - '&8urodzaj, dom, rzemiosło'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_heldra%'
+      - ''
+      - '%wiary_status_heldra%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_heldra%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% heldra'
+      - '[refresh]'
+
+  'b_aelyra':
+    material: SEA_LANTERN
+    slot: 33
+    priority: 2
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&b&lAelyra'
+    lore:
+      - '&7Pani Srebrnego Miesiąca'
+      - '&8księżyc, duchy przodków, przepowiednie'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_aelyra%'
+      - ''
+      - '%wiary_status_aelyra%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_aelyra%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% aelyra'
+      - '[refresh]'
+
+  'b_sylvaen':
+    material: FEATHER
+    slot: 34
+    priority: 2
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&b&lSylvaen'
+    lore:
+      - '&7Szept Koron'
+      - '&8wiatr, łowy, ścieżki lasu'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_sylvaen%'
+      - ''
+      - '%wiary_status_sylvaen%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_sylvaen%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% sylvaen'
+      - '[refresh]'
+
+  'b_iridel':
+    material: ENCHANTED_BOOK
+    slot: 35
+    priority: 2
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&b&lIridel'
+    lore:
+      - '&7Czytająca Gwiazdy'
+      - '&8magia, gwiazdy, wiedza'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_iridel%'
+      - ''
+      - '%wiary_status_iridel%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_iridel%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% iridel'
+      - '[refresh]'
+
+  'b_gorrath':
+    material: IRON_AXE
+    slot: 33
+    priority: 3
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&c&lGorrath'
+    lore:
+      - '&7Pierwszy Wódz'
+      - '&8przodkowie, wojna, honor rodu'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_gorrath%'
+      - ''
+      - '%wiary_status_gorrath%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_gorrath%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% gorrath'
+      - '[refresh]'
+
+  'b_kharzuk':
+    material: LIGHTNING_ROD
+    slot: 34
+    priority: 3
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&c&lKharzuk'
+    lore:
+      - '&7Burzowy Byk'
+      - '&8burza, piorun, szał bitewny'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_kharzuk%'
+      - ''
+      - '%wiary_status_kharzuk%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_kharzuk%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% kharzuk'
+      - '[refresh]'
+
+  'b_mogra':
+    material: BONE
+    slot: 35
+    priority: 3
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&c&lMogra'
+    lore:
+      - '&7Matka Kłów'
+      - '&8łowy, bestie, przetrwanie'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_mogra%'
+      - ''
+      - '%wiary_status_mogra%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_mogra%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% mogra'
+      - '[refresh]'
+
+  'b_morvhena':
+    material: SKELETON_SKULL
+    slot: 33
+    priority: 4
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&3&lMorvhena'
+    lore:
+      - '&7Pani, Która Podniosła'
+      - '&8nieśmiertelność, powrót zza progu'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_morvhena%'
+      - ''
+      - '%wiary_status_morvhena%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_morvhena%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% morvhena'
+      - '[refresh]'
+
+  'b_vhorax':
+    material: ECHO_SHARD
+    slot: 34
+    priority: 4
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&3&lVhorax'
+    lore:
+      - '&7Wieczny Głód'
+      - '&8dusze, głód, siła brana od innych'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_vhorax%'
+      - ''
+      - '%wiary_status_vhorax%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_vhorax%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% vhorax'
+      - '[refresh]'
+
+  'b_ossyra':
+    material: WHITE_CANDLE
+    slot: 35
+    priority: 4
+    update: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+    display_name: '&3&lOssyra'
+    lore:
+      - '&7Pasterka Umarłych'
+      - '&8pamięć, żałoba, opieka nad zmarłymi'
+      - ''
+      - '&fŁaska przy Wierze %wiary_wiara%:'
+      - '&7%wiary_opis_ossyra%'
+      - ''
+      - '%wiary_status_ossyra%'
+    view_requirement:
+      requirements:
+        dostepny:
+          type: string equals
+          input: '%wiary_dostepny_ossyra%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary wybierz %player_name% ossyra'
+      - '[refresh]'
+
+  'modlitwa':
+    material: nexo-hub_wiara
+    slot: 37
+    priority: 0
+    update: true
+    display_name: '&6&lMódl się'
+    lore:
+      - ''
+      - '&7Łaska patrona przy Wierze %wiary_wiara%:'
+      - '&f%wiary_opis_patrona%'
+      - ''
+      - '&eKliknij, aby się pomodlić.'
+    view_requirement:
+      requirements:
+        mozna:
+          type: string equals
+          input: '%wiary_modlitwa%'
+          output: 'tak'
+    left_click_commands:
+      - '[console] wiary modlitwa %player_name%'
+      - '[refresh]'
+
+  'modlitwa_trwa':
+    material: nexo-hub_wiara
+    slot: 37
+    priority: 1
+    update: true
+    display_name: '&7Łaska trwa'
+    lore:
+      - ''
+      - '%wiary_laska%'
+      - '&7Pozostało: &f%wiary_laska_czas%'
+      - ''
+      - '&8Kolejną modlitwę odmówisz, gdy łaska minie.'
+    view_requirement:
+      requirements:
+        trwa:
+          type: '!string equals'
+          input: '%wiary_laska_czas%'
+          output: 'brak'
+
+  'modlitwa_brak_patrona':
+    material: GRAY_DYE
+    slot: 37
+    priority: 2
+    display_name: '&7Módl się'
+    lore:
+      - ''
+      - '&7Najpierw obierz patrona:'
+      - '&7kliknij jedno z bóstw powyżej.'
+
+  'powrot_ksiega':
+    material: nexo-hub_wstecz
+    slot: 45
+    display_name: '&e&lWróć do Księgi'
+    left_click_commands:
+      - '[openguimenu] hub_glowne'

@@ -7,8 +7,8 @@ Skrzynia (sloty 0–53):
 03 | rząd 0, kol 3 | info
 04 | rząd 0, kol 4 | grzbiet
 05 | rząd 0, kol 5 | pusty
-06 | rząd 0, kol 6 | pusty
-07 | rząd 0, kol 7 | pusty
+06 | rząd 0, kol 6 | Tryb PvP
+07 | rząd 0, kol 7 | Tryb PvP
 08 | rząd 0, kol 8 | pusty
 09 | rząd 1, kol 0 | info
 10 | rząd 1, kol 1 | info
@@ -16,8 +16,8 @@ Skrzynia (sloty 0–53):
 12 | rząd 1, kol 3 | info
 13 | rząd 1, kol 4 | grzbiet
 14 | rząd 1, kol 5 | pusty
-15 | rząd 1, kol 6 | pusty
-16 | rząd 1, kol 7 | pusty
+15 | rząd 1, kol 6 | Tryb PvP
+16 | rząd 1, kol 7 | Tryb PvP
 17 | rząd 1, kol 8 | pusty
 18 | rząd 2, kol 0 | info
 19 | rząd 2, kol 1 | info
@@ -25,8 +25,8 @@ Skrzynia (sloty 0–53):
 21 | rząd 2, kol 3 | info
 22 | rząd 2, kol 4 | grzbiet
 23 | rząd 2, kol 5 | pusty
-24 | rząd 2, kol 6 | Tryb PvP
-25 | rząd 2, kol 7 | Tryb PvP
+24 | rząd 2, kol 6 | pusty
+25 | rząd 2, kol 7 | pusty
 26 | rząd 2, kol 8 | pusty
 27 | rząd 3, kol 0 | info
 28 | rząd 3, kol 1 | info
@@ -34,8 +34,8 @@ Skrzynia (sloty 0–53):
 30 | rząd 3, kol 3 | info
 31 | rząd 3, kol 4 | grzbiet
 32 | rząd 3, kol 5 | pusty
-33 | rząd 3, kol 6 | Tryb PvP
-34 | rząd 3, kol 7 | Tryb PvP
+33 | rząd 3, kol 6 | pusty
+34 | rząd 3, kol 7 | pusty
 35 | rząd 3, kol 8 | pusty
 36 | rząd 4, kol 0 | info
 37 | rząd 4, kol 1 | info

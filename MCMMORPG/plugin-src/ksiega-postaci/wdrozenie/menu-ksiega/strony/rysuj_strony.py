@@ -61,10 +61,19 @@ def tree(x,y):
 
 def casting(x,y):
     field(x,y,'blue0')
-    G([(x+6,y+37),(x+12,y+27),(x+18,y+25),(x+22,y+19),(x+25,y+21),(x+27,y+15),(x+31,y+17),(x+33,y+23),(x+42,y+25),(x+47,y+32),(x+42,y+38)],'paper1','ink')
-    L([(x+22,y+20),(x+20,y+29)],'gold0',2)
-    G([(x+28,y+2),(x+31,y+8),(x+39,y+10),(x+32,y+14),(x+29,y+21),(x+25,y+14),(x+18,y+11),(x+25,y+8)],'gold2','red0')
-    W.star(x+29,y+10,'paper4')
+    # Open palm, five separate fingers and a cuff; the spark has clear air around it.
+    G([(x+5,y+38),(x+10,y+27),(x+19,y+26),(x+21,y+20),(x+24,y+21),
+       (x+25,y+14),(x+28,y+14),(x+29,y+22),(x+32,y+16),(x+35,y+17),
+       (x+34,y+25),(x+39,y+20),(x+42,y+22),(x+39,y+29),(x+34,y+33),
+       (x+33,y+38)],'paper2','ink')
+    G([(x+13,y+37),(x+16,y+30),(x+24,y+27),(x+27,y+24),(x+30,y+27),
+       (x+34,y+26),(x+36,y+29),(x+31,y+35),(x+29,y+38)],'paper4')
+    L([(x+18,y+28),(x+14,y+33)],'gold0')
+    L([(x+31,y+27),(x+32,y+21)],'gold0')
+    G([(x+5,y+35),(x+15,y+35),(x+19,y+38),(x+4,y+38)],'blue1','ink')
+    G([(x+27,y+2),(x+29,y+7),(x+34,y+9),(x+29,y+11),(x+27,y+16),
+       (x+25,y+11),(x+20,y+9),(x+25,y+7)],'gold2','red0')
+    W.star(x+27,y+9,'paper4')
 
 def spellbook(x,y):
     field(x,y,'wood1')
@@ -109,11 +118,20 @@ def party(x,y):
 
 def friends(x,y):
     field(x,y,'blue0')
-    G([(x+1,y+28),(x+14,y+17),(x+26,y+24),(x+32,y+18),(x+49,y+28),(x+38,y+38),(x+28,y+32),(x+22,y+37),(x+12,y+33)],'paper1','ink')
-    G([(x+4,y+29),(x+15,y+22),(x+23,y+26),(x+16,y+32)],'red1','ink')
-    G([(x+47,y+29),(x+37,y+22),(x+30,y+26),(x+37,y+32)],'blue2','ink')
-    L([(x+17,y+27),(x+28,y+30)],'paper4',3)
-    W.star(x+26,y+10,'gold2')
+    # Diagonal grip: sleeves, wrists, crossed thumbs and four visible fingers.
+    G([(x,y+23),(x+9,y+19),(x+16,y+23),(x+11,y+37),(x,y+36)],'red1','ink')
+    G([(x+51,y+17),(x+42,y+14),(x+36,y+19),(x+40,y+33),(x+51,y+30)],'blue1','ink')
+    G([(x+11,y+21),(x+18,y+18),(x+25,y+22),(x+33,y+28),(x+32,y+31),
+       (x+27,y+32),(x+20,y+29),(x+16,y+33),(x+9,y+28)],'paper4','ink')
+    G([(x+40,y+17),(x+34,y+17),(x+27,y+21),(x+21,y+25),(x+24,y+28),
+       (x+29,y+25),(x+33,y+27),(x+26,y+33),(x+30,y+36),(x+37,y+31),
+       (x+43,y+25)],'paper1','ink')
+    G([(x+17,y+19),(x+22,y+16),(x+30,y+22),(x+35,y+27),(x+32,y+29),
+       (x+27,y+25),(x+23,y+27)],'paper4','ink')
+    for yy in (29,31,33):
+        L([(x+21,y+yy-2),(x+29,y+yy+1)],'ink')
+        L([(x+21,y+yy-3),(x+28,y+yy)],'paper4')
+    W.star(x+26,y+8,'gold2')
 
 def guild(x,y):
     field(x,y,'blue0')
@@ -181,21 +199,146 @@ def islands(x,y):
     R((x+23,y+6,x+26,y+18),'wood1','ink')
     G([(x+17,y+12),(x+24,y+3),(x+31,y+12)],'green0','ink')
 
+def hero_character(x,y):
+    field(x,y,'blue0')
+    G([(x+11,y+2),(x+39,y+2),(x+38,y+29),(x+25,y+36),(x+12,y+29)],'red0','gold1')
+    L([(x+25,y+3),(x+25,y+31)],'gold2')
+    E((x+20,y+5,x+29,y+14),'paper2','ink')
+    G([(x+19,y+5),(x+24,y+2),(x+30,y+6),(x+29,y+10),(x+20,y+10)],'blue1','ink')
+    G([(x+19,y+15),(x+31,y+15),(x+34,y+29),(x+17,y+29)],'stone1','ink')
+    R((x+22,y+16,x+28,y+25),'blue1','gold1')
+    G([(x+19,y+28),(x+24,y+28),(x+23,y+37),(x+16,y+37)],'stone0','ink')
+    G([(x+27,y+28),(x+32,y+28),(x+35,y+37),(x+28,y+37)],'stone0','ink')
+    L([(x+17,y+17),(x+12,y+27)],'stone2',4)
+    L([(x+33,y+17),(x+39,y+23)],'stone2',4)
+    G([(x+5,y+23),(x+16,y+23),(x+16,y+32),(x+11,y+37),(x+5,y+32)],'gold1','ink')
+    G([(x+7,y+25),(x+14,y+25),(x+14,y+31),(x+11,y+34),(x+7,y+31)],'red1')
+    L([(x+40,y+21),(x+44,y+5)],'paper4',3)
+    L([(x+35,y+20),(x+45,y+23)],'gold2',3)
+    L([(x+39,y+23),(x+37,y+30)],'wood2',3)
+
+def hero_mage(x,y):
+    field(x,y,'blue0')
+    E((x+9,y+2,x+44,y+36),'blue1','gold1')
+    E((x+13,y+6,x+40,y+32),'blue0','gold2')
+    for xx,yy in ((26,3),(42,19),(26,35),(10,19)):
+        W.star(x+xx,y+yy,'paper4')
+    G([(x+23,y+13),(x+29,y+13),(x+36,y+36),(x+15,y+36)],'blue2','ink')
+    G([(x+21,y+16),(x+17,y+22),(x+11,y+17),(x+8,y+19),(x+17,y+29),
+       (x+23,y+23)],'blue1','ink')
+    E((x+22,y+7,x+30,y+16),'paper2','ink')
+    G([(x+20,y+8),(x+23,y+3),(x+29,y+5),(x+32,y+11),(x+29,y+11),
+       (x+26,y+8),(x+23,y+12)],'blue1','ink')
+    L([(x+31,y+18),(x+38,y+10)],'blue2',4)
+    E((x+36,y+7,x+41,y+12),'paper4','gold2')
+    G([(x+39,y+1),(x+41,y+6),(x+46,y+8),(x+41,y+10),(x+39,y+15),
+       (x+37,y+10),(x+32,y+8),(x+37,y+6)],'gold2','red0')
+
+def hero_trade(x,y):
+    field(x,y,'blue0')
+    R((x+4,y+34,x+48,y+38),'wood1')
+    G([(x+6,y+16),(x+14,y+5),(x+39,y+5),(x+46,y+16),(x+39,y+19),
+       (x+12,y+19)],'wood2','ink')
+    G([(x+12,y+14),(x+17,y+8),(x+36,y+8),(x+40,y+14)],'red0','gold1')
+    R((x+8,y+19,x+44,y+34),'wood2','ink')
+    R((x+11,y+21,x+41,y+29),'gold2','gold0')
+    for xx,yy in ((15,22),(22,20),(29,22),(36,21),(18,26),(26,25),(34,26)):
+        E((x+xx-3,y+yy-2,x+xx+3,y+yy+2),'gold2','gold0')
+    R((x+8,y+29,x+44,y+35),'wood1','ink')
+    R((x+23,y+29,x+29,y+34),'gold1','ink')
+    G([(x+40,y+24),(x+47,y+24),(x+49,y+32),(x+46,y+37),(x+40,y+36),
+       (x+37,y+32)],'paper2','ink')
+    L([(x+41,y+23),(x+46,y+23)],'wood1',2)
+
+def hero_social(x,y):
+    field(x,y,'blue0')
+    R((x,y+31,x+51,y+38),'green0')
+    for xx,yy,coat in ((5,13,'red1'),(35,13,'blue1'),(20,4,'green1')):
+        E((x+xx+2,y+yy,x+xx+10,y+yy+8),'paper2','ink')
+        G([(x+xx,y+yy+9),(x+xx+12,y+yy+9),(x+xx+15,y+yy+24),
+           (x+xx-2,y+yy+24)],coat,'ink')
+    L([(x+18,y+35),(x+34,y+25)],'wood2',3)
+    L([(x+34,y+35),(x+18,y+25)],'wood2',3)
+    G([(x+20,y+29),(x+25,y+15),(x+28,y+25),(x+33,y+18),(x+34,y+29),
+       (x+29,y+34),(x+23,y+34)],'fire','red0')
+    G([(x+23,y+31),(x+26,y+22),(x+29,y+30),(x+31,y+26),(x+31,y+33)],'gold2')
+
+def hero_settings(x,y):
+    field(x,y,'blue0')
+    for cx,cy,rad in ((19,21,12),(37,15,9)):
+        for dx,dy in ((-rad-2,0),(rad+2,0),(0,-rad-2),(0,rad+2),
+                      (-rad,-rad),(rad,-rad),(-rad,rad),(rad,rad)):
+            R((x+cx+dx-2,y+cy+dy-2,x+cx+dx+2,y+cy+dy+2),'gold1','ink')
+        E((x+cx-rad,y+cy-rad,x+cx+rad,y+cy+rad),'gold1','ink')
+        E((x+cx-rad+3,y+cy-rad+3,x+cx+rad-3,y+cy+rad-3),'stone1','gold0')
+        E((x+cx-3,y+cy-3,x+cx+3,y+cy+3),'blue0','ink')
+        R((x+cx-1,y+cy-1,x+cx+1,y+cy+1),'paper4')
+
+def hero_help(x,y):
+    field(x,y,'blue0')
+    R((x,y+34,x+51,y+38),'green0')
+    R((x+23,y+5,x+27,y+37),'wood2','ink')
+    G([(x+25,y+19),(x+43,y+19),(x+48,y+24),(x+43,y+29),(x+25,y+29)],'gold1','ink')
+    G([(x+5,y+11),(x+25,y+11),(x+25,y+21),(x+5,y+21),(x+2,y+16)],'paper2','ink')
+    L([(x+8,y+16),(x+18,y+16)],'gold0',2)
+    R((x+31,y+3,x+39,y+18),'gold1','ink')
+    R((x+32,y+5,x+38,y+15),'paper4','gold0')
+    G([(x+34,y+14),(x+35,y+7),(x+38,y+14)],'fire','red0')
+    R((x+30,y+2,x+40,y+5),'stone2','ink')
+    R((x+31,y+17,x+39,y+19),'stone2','ink')
+    W.star(x+43,y+8,'gold2')
+
+def hero_travel(x,y):
+    field(x,y,'blue0')
+    G([(x+3,y+9),(x+17,y+5),(x+28,y+9),(x+46,y+5),(x+48,y+32),
+       (x+32,y+35),(x+20,y+31),(x+5,y+35)],'paper2','ink')
+    G([(x+6,y+11),(x+17,y+8),(x+27,y+12),(x+27,y+29),(x+19,y+28),
+       (x+7,y+32)],'paper4')
+    L([(x+28,y+10),(x+31,y+32)],'gold0')
+    G([(x+33,y+10),(x+42,y+9),(x+43,y+17),(x+35,y+18)],'green1','green0')
+    L([(x+11,y+27),(x+17,y+22),(x+19,y+16),(x+25,y+20),(x+32,y+25),
+       (x+39,y+22)],'red1',2)
+    E((x+35,y+18,x+47,y+30),'gold1','ink')
+    E((x+38,y+21,x+44,y+27),'paper4','gold0')
+    G([(x+41,y+19),(x+43,y+24),(x+41,y+28),(x+39,y+24)],'red1','ink')
+
+DESCRIPTIONS = {
+    'hub_postac': ('Twoja postać:', 'statystyki, atrybuty', 'i patron wiary.'),
+    'hub_umiejetnosci': ('Rozwijaj zdolności', 'klasy, drzewka', 'i księgę zaklęć.'),
+    'hub_ekonomia': ('Kupuj, sprzedawaj', 'i licytuj z innymi', 'wędrowcami.'),
+    'hub_spolecznosc': ('Drużyna, znajomi', 'i gildia razem', 'łatwiej przetrwać.'),
+    'hub_ustawienia': ('Dopasuj grę', 'do siebie.'),
+    'hub_pomoc': ('Q otwiera Księgę.', 'Najedź na kafel,', 'by poznać opis.'),
+    'stolica_podroze': ('Wybierz cel.', 'Lochy i wyspy', 'czekają.'),
+}
+
+def description_card(lines, x=14, y=142):
+    R((x,y,x+143,y+107),'paper1','gold0')
+    R((x+3,y+3,x+140,y+104),'paper3','gold0')
+    R((x+6,y+6,x+137,y+101),'paper4')
+    baselines = (178,190,202) if len(lines)==3 else (184,196)
+    for line, baseline in zip(lines, baselines):
+        W.bitmap_text(line,x+72,baseline,'blue0',max_width=126)
+    L([(x+43,226),(x+63,226)],'gold0')
+    L([(x+81,226),(x+101,226)],'gold0')
+    G([(x+72,222),(x+76,226),(x+72,230),(x+68,226)],'gold1','gold0')
+    R((x+72,225,x+72,227),'paper4')
+
 PAGES = [
-    ('hub_postac','Postać',change_character,[('Statystyki','Statystyki',stats),('Atrybuty','Atrybuty',attributes),('Wiara','Wiara',faith),('Zmień postać','Zmień postać',change_character)]),
-    ('hub_umiejetnosci','Umiejętności',spellbook,[('Umiejętności','Umiejętności',skill),('Drzewka rozwoju','Drzewka',tree),('Tryb rzucania','Rzucanie',casting),('Księga zaklęć','Zaklęcia',spellbook)]),
-    ('hub_ekonomia','Handel',buyback,[('Dom aukcyjny','Aukcje',auction),('Sklep','Sklep',shop),('Skup','Skup',buyback)]),
-    ('hub_spolecznosc','Społeczność',party,[('Drużyna','Drużyna',party),('Znajomi','Znajomi',friends),('Gildia','Gildia',guild)]),
-    ('hub_ustawienia','Ustawienia',pvp,[('Tryb PvP','Tryb PvP',pvp)]),
-    ('hub_pomoc','Pomoc',key_q,[('Sterowanie','Sterowanie',key_q),('O menu','O menu',about),('Wkrótce','Wkrótce',soon)]),
-    ('stolica_podroze','Podróże',dungeon,[('Loch 001','Loch 001',dungeon),('Kolejne lochy','Dalsze lochy',locked),('Wyspy','Wyspy',islands)]),
+    ('hub_postac','Postać',hero_character,[('Statystyki','Statystyki',stats),('Atrybuty','Atrybuty',attributes),('Wiara','Wiara',faith),('Zmień postać','Zmień postać',change_character)]),
+    ('hub_umiejetnosci','Umiejętności',hero_mage,[('Umiejętności','Umiejętności',skill),('Drzewka rozwoju','Drzewka',tree),('Tryb rzucania','Rzucanie',casting),('Księga zaklęć','Zaklęcia',spellbook)]),
+    ('hub_ekonomia','Handel',hero_trade,[('Dom aukcyjny','Aukcje',auction),('Sklep','Sklep',shop),('Skup','Skup',buyback)]),
+    ('hub_spolecznosc','Społeczność',hero_social,[('Drużyna','Drużyna',party),('Znajomi','Znajomi',friends),('Gildia','Gildia',guild)]),
+    ('hub_ustawienia','Ustawienia',hero_settings,[('Tryb PvP','Tryb PvP',pvp)]),
+    ('hub_pomoc','Pomoc',hero_help,[('Sterowanie','Sterowanie',key_q),('O menu','O menu',about),('Wkrótce','Wkrótce',soon)]),
+    ('stolica_podroze','Podróże',hero_travel,[('Loch 001','Loch 001',dungeon),('Kolejne lochy','Dalsze lochy',locked),('Wyspy','Wyspy',islands)]),
 ]
 
 def tile_positions(n):
-    if n == 1: return [(230,106)]
-    if n == 2: return [(194,106),(266,106)]
-    if n == 3: return [(230,70),(194,142),(266,142)]
-    if n == 4: return [(194,70),(266,70),(194,142),(266,142)]
+    if n == 1: return [(230,34)]
+    if n == 2: return [(194,34),(266,34)]
+    if n == 3: return [(194,34),(266,34),(230,106)]
+    if n == 4: return [(194,34),(266,34),(194,106),(266,106)]
     if n == 5: return [(194,34),(266,34),(230,106),(194,178),(266,178)]
     return [(194,34),(266,34),(194,106),(266,106),(194,178),(266,178)]
 
@@ -233,12 +376,13 @@ def main():
     glyph_lines=['# Cztery ćwiartki na stronę; char U+4A00 + 4*i + N-1.']
     title_lines=[]
     previews=[]
+    full_pages=[]
     miniatures=[]
     for i,(ident,heading,hero,tiles) in enumerate(PAGES):
         image=W.new_canvas()
         W.draw_book(); W.draw_title(heading)
         W.hero_frame(14,34,hero)
-        W.left_ornament()
+        description_card(DESCRIPTIONS[ident])
         placements=[]
         for (x,y),(label,caption,painter) in zip(tile_positions(len(tiles)),tiles):
             W.tile(x,y,label,painter,caption)
@@ -263,6 +407,7 @@ def main():
             menu_title=menu_title.replace(old,new)
         title_lines += [f'{ident} | ' + "menu_title: '"+menu_title+"'" + ' | ' + ', '.join(f'U+{c:04X}' for c in codes)]
         previews.append(image.resize((176,222),Image.Resampling.NEAREST))
+        full_pages.append(image.copy())
         print(ident,'colors',len(image.getcolors(352*444)),'orphans',len(W.find_orphans(image)))
     (OUT/'glify_strony.yml').write_text('\n'.join(glyph_lines)+'\n',encoding='utf-8')
     (OUT/'tytuly.txt').write_text('\n'.join(title_lines)+'\n',encoding='utf-8')
@@ -270,6 +415,11 @@ def main():
     sheet=Image.new('RGB',(176*4,222*2),W.C['table0'])
     for idx,page in enumerate([k12]+previews): sheet.paste(page,((idx%4)*176,(idx//4)*222))
     sheet.save(OUT/'arkusz.png')
+    pages_x2=Image.new('RGB',(704*4,888*2),W.C['table0'])
+    for idx,page in enumerate(full_pages):
+        pages_x2.paste(page.resize((704,888),Image.Resampling.NEAREST),
+                       ((idx%4)*704,(idx//4)*888))
+    pages_x2.save(OUT/'strony_x2.png')
     cells=4; width=72*4; height=72*4
     contact=Image.new('RGB',(cells*width,((len(miniatures)+cells-1)//cells)*height),W.C['table0'])
     for idx,(_,label,caption,painter) in enumerate(miniatures):

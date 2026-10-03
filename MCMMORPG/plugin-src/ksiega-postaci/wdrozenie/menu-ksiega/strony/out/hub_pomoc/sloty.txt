@@ -6,46 +6,46 @@ Skrzynia (sloty 0–53):
 02 | rząd 0, kol 2 | info
 03 | rząd 0, kol 3 | info
 04 | rząd 0, kol 4 | grzbiet
-05 | rząd 0, kol 5 | pusty
-06 | rząd 0, kol 6 | pusty
-07 | rząd 0, kol 7 | pusty
-08 | rząd 0, kol 8 | pusty
+05 | rząd 0, kol 5 | Sterowanie
+06 | rząd 0, kol 6 | Sterowanie
+07 | rząd 0, kol 7 | O menu
+08 | rząd 0, kol 8 | O menu
 09 | rząd 1, kol 0 | info
 10 | rząd 1, kol 1 | info
 11 | rząd 1, kol 2 | info
 12 | rząd 1, kol 3 | info
 13 | rząd 1, kol 4 | grzbiet
-14 | rząd 1, kol 5 | pusty
+14 | rząd 1, kol 5 | Sterowanie
 15 | rząd 1, kol 6 | Sterowanie
-16 | rząd 1, kol 7 | Sterowanie
-17 | rząd 1, kol 8 | pusty
+16 | rząd 1, kol 7 | O menu
+17 | rząd 1, kol 8 | O menu
 18 | rząd 2, kol 0 | info
 19 | rząd 2, kol 1 | info
 20 | rząd 2, kol 2 | info
 21 | rząd 2, kol 3 | info
 22 | rząd 2, kol 4 | grzbiet
 23 | rząd 2, kol 5 | pusty
-24 | rząd 2, kol 6 | Sterowanie
-25 | rząd 2, kol 7 | Sterowanie
+24 | rząd 2, kol 6 | Wkrótce
+25 | rząd 2, kol 7 | Wkrótce
 26 | rząd 2, kol 8 | pusty
 27 | rząd 3, kol 0 | info
 28 | rząd 3, kol 1 | info
 29 | rząd 3, kol 2 | info
 30 | rząd 3, kol 3 | info
 31 | rząd 3, kol 4 | grzbiet
-32 | rząd 3, kol 5 | O menu
-33 | rząd 3, kol 6 | O menu
+32 | rząd 3, kol 5 | pusty
+33 | rząd 3, kol 6 | Wkrótce
 34 | rząd 3, kol 7 | Wkrótce
-35 | rząd 3, kol 8 | Wkrótce
+35 | rząd 3, kol 8 | pusty
 36 | rząd 4, kol 0 | info
 37 | rząd 4, kol 1 | info
 38 | rząd 4, kol 2 | info
 39 | rząd 4, kol 3 | info
 40 | rząd 4, kol 4 | grzbiet
-41 | rząd 4, kol 5 | O menu
-42 | rząd 4, kol 6 | O menu
-43 | rząd 4, kol 7 | Wkrótce
-44 | rząd 4, kol 8 | Wkrótce
+41 | rząd 4, kol 5 | pusty
+42 | rząd 4, kol 6 | pusty
+43 | rząd 4, kol 7 | pusty
+44 | rząd 4, kol 8 | pusty
 45 | rząd 5, kol 0 | info
 46 | rząd 5, kol 1 | info
 47 | rząd 5, kol 2 | info
