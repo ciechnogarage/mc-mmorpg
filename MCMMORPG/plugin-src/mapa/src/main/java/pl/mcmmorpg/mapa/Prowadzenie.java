@@ -105,9 +105,9 @@ final class Prowadzenie {
       String kierunek = arrow(loc.getYaw(), dx, dz);
       long odleglosc = Math.round(distance / 5) * 5;
       OstatniTekst stary = ostatnie.get(entry.getKey());
-      if (stary == null || tick - stary.tick() >= 50 || tick - stary.tick() >= 20
+      if (stary == null || tick - stary.tick() >= 30 || tick - stary.tick() >= 20
           && (!stary.kierunek().equals(kierunek) || stary.odleglosc() != odleglosc)) {
-        MMOCoreMost.actionBar(player, "➤ " + target.name() + " · " + odleglosc + " m " + kierunek);
+        MMOCoreMost.nawigacja(player, "➤ " + target.name() + " · " + odleglosc + " m " + kierunek);
         ostatnie.put(entry.getKey(), new OstatniTekst(kierunek, odleglosc, tick));
       }
       waypoint(player, target);
