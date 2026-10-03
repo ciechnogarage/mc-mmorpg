@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,6 +14,9 @@ final class Prowadzenie {
   private final Map<UUID, Cel> targets = new HashMap<>();
   private volatile Map<UUID, Cel> snapshot = Map.of();
   private final Map<UUID, Boolean> tracked = new HashMap<>();
+  private record OstatniTekst(String kierunek, long odleglosc, int tick) {}
+  private final Map<UUID, OstatniTekst> ostatnie = new HashMap<>();
+  private int tick;
 
   Prowadzenie(MapaPlugin plugin) {
     this.plugin = plugin;
@@ -29,10 +31,10 @@ final class Prowadzenie {
     if (old != null && old.world().equals(target.world())
         && old.x() == target.x() && old.z() == target.z()) {
       clear(player);
-      player.sendActionBar(Component.text("Prowadzenie wyłączone"));
+      MMOCoreMost.actionBar(player, "Prowadzenie wyłączone");
     } else {
       set(player, target);
-      player.sendActionBar(Component.text("Prowadzę do: " + target.name()));
+      MMOCoreMost.actionBar(player, "Prowadzę do: " + target.name());
     }
   }
 
@@ -45,6 +47,7 @@ final class Prowadzenie {
   }
 
   void clear(Player player) {
+    ostatnie.remove(player.getUniqueId());
     Cel old = targets.remove(player.getUniqueId());
     snapshot = Map.copyOf(targets);
     if (old != null && tracked.remove(player.getUniqueId()) != null && plugin.waypointsEnabled()) {
@@ -74,11 +77,13 @@ final class Prowadzenie {
   }
 
   private void tick() {
+    tick += 10;
     for (Map.Entry<UUID, Cel> entry : Map.copyOf(targets).entrySet()) {
       Player player = Bukkit.getPlayer(entry.getKey());
       if (player == null || !player.isOnline()) {
         targets.remove(entry.getKey());
         tracked.remove(entry.getKey());
+        ostatnie.remove(entry.getKey());
         snapshot = Map.copyOf(targets);
         continue;
       }
@@ -97,10 +102,14 @@ final class Prowadzenie {
         clear(player);
         continue;
       }
-      String message = "➤ " + target.name() + " · " + Math.round(distance) + " m "
-          + arrow(loc.getYaw(), dx, dz);
-      if (plugin.mmoCoreEnabled()) MMOCoreMost.actionBar(player, message);
-      else player.sendActionBar(Component.text(message));
+      String kierunek = arrow(loc.getYaw(), dx, dz);
+      long odleglosc = Math.round(distance / 5) * 5;
+      OstatniTekst stary = ostatnie.get(entry.getKey());
+      if (stary == null || tick - stary.tick() >= 50 || tick - stary.tick() >= 20
+          && (!stary.kierunek().equals(kierunek) || stary.odleglosc() != odleglosc)) {
+        MMOCoreMost.actionBar(player, "➤ " + target.name() + " · " + odleglosc + " m " + kierunek);
+        ostatnie.put(entry.getKey(), new OstatniTekst(kierunek, odleglosc, tick));
+      }
       waypoint(player, target);
     }
   }

@@ -423,7 +423,7 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
       if (renderer != null) renderer.invalidate(player.getUniqueId());
       String label = next < 1 ? (int) (1 / next) + " piksele na blok"
           : "1 piksel = " + (next == Math.rint(next) ? Integer.toString((int) next) : next) + " bl.";
-      player.sendActionBar(Component.text("Przybliżenie: " + label));
+      MMOCoreMost.actionBar(player, "Przybliżenie: " + label);
     } else if (fullMap != null) {
       openFull(player, player.getWorld().getName(), player.getLocation().getX(),
           player.getLocation().getZ());

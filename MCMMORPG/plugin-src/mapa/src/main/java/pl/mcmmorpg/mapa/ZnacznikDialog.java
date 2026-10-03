@@ -124,7 +124,7 @@ final class ZnacznikDialog implements Listener {
       boolean iconAllowed = icon != null && (icons == null ? icon.equals("pin_czerwona")
           : icons.contains(icon));
       if (name == null || name.isBlank() || name.length() > 24 || !iconAllowed) {
-        player.sendActionBar(Component.text("Podaj nazwę i wybierz ikonę."));
+        MMOCoreMost.actionBar(player, "Podaj nazwę i wybierz ikonę.");
         return;
       }
       WlasneZnaczniki.Entry entry = new WlasneZnaczniki.Entry(id.isEmpty() ? newId(owner)
@@ -132,11 +132,11 @@ final class ZnacznikDialog implements Listener {
       boolean changed = id.isEmpty() ? plugin.own().add(owner, entry,
           Math.max(0, plugin.getConfig().getInt("wlasne.limit", 30)))
           : plugin.own().replace(owner, entry);
-      if (!changed) { player.sendActionBar(Component.text("Osiągnięto limit własnych znaczników.")); return; }
-      player.sendActionBar(Component.text("Zapisano znacznik: " + name));
+      if (!changed) { MMOCoreMost.actionBar(player, "Osiągnięto limit własnych znaczników."); return; }
+      MMOCoreMost.actionBar(player, "Zapisano znacznik: " + name);
     } else if (action.startsWith("usun/")) {
       plugin.own().remove(owner, id);
-      player.sendActionBar(Component.text("Usunięto znacznik."));
+      MMOCoreMost.actionBar(player, "Usunięto znacznik.");
     } else if (action.startsWith("prowadz/")) {
       plugin.navigation().toggle(player, new Prowadzenie.Cel(previous.world(), previous.x(),
           previous.z(), previous.name()));
