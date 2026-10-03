@@ -5,7 +5,7 @@
 sklep:
   permission: ''
   bottom_inventory: false
-  name: "<white>䩠䩡䩢䩣<white>Sklep"
+  name: "&f䩠䩡䩢䩣"
   size: 6
   fill_material: 'AIR'
   default_category: narzedzia
@@ -57,7 +57,7 @@ sklep:
     - "<yellow>Kliknij, aby kupić."
   bottom_item_lore: []
   advanced:
-    name: "<white>䩤䩥䩦䩧<white>Sklep"
+    name: "&f䩤䩥䩦䩧"
     size: 6
     fill_material: AIR
     animation: ''
@@ -76,7 +76,7 @@ sklep:
         material: paper
         name: " "
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_handel_pusty
+        item_model: nexo:mmo_icon_blank
         hide_tooltip: true
         lore: []
       back_to_category:
@@ -86,7 +86,7 @@ sklep:
         material: paper
         name: "<gray>Wróć"
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_wstecz
+        item_model: nexo:mmo_icon_blank
         lore: []
       sell_dollar:
         location: top
@@ -95,7 +95,7 @@ sklep:
         material: paper
         name: "<green><bold>Kup"
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_handel_zatwierdz
+        item_model: nexo:mmo_icon_blank
         lore:
           - ""
           - "<gray>Cena: <gold>{money_sell_dollar} $"
@@ -106,7 +106,7 @@ sklep:
         material: paper
         name: " "
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_handel_pusty
+        item_model: nexo:mmo_icon_blank
         hide_tooltip: true
         lore: []
   buttons:
@@ -139,7 +139,7 @@ sklep:
       material: paper
       name: " "
       flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-      item_model: nexo:hub_handel_pusty
+      item_model: nexo:mmo_icon_blank
       hide_tooltip: true
       lore: []
     pusty_dol:
@@ -149,7 +149,7 @@ sklep:
       material: paper
       name: " "
       flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-      item_model: nexo:hub_handel_pusty
+      item_model: nexo:mmo_icon_blank
       hide_tooltip: true
       lore: []
     pomoc:
@@ -159,7 +159,7 @@ sklep:
       material: paper
       name: "<yellow><bold>Sklep"
       flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-      item_model: nexo:hub_pomoc
+      item_model: nexo:mmo_icon_blank
       lore:
         - ""
         - "<gray>Podstawowe narzędzia i zapasy."
@@ -169,7 +169,7 @@ sklep:
         - "<gray>Na koncie: <gold>%coretools_eco_dollar% $"
   categories:
     narzedzia:
-      name: "<white>䩠䩡䩢䩣<white>Sklep · Narzędzia"
+      name: "&f䩠䩡䩢䩣"
       kilof_kamienny:
         options: {sell: true, buy: false}
         quick_sell_amount: 1
@@ -239,7 +239,7 @@ sklep:
           source: vanilla
           material: fishing_rod
     wyprawa:
-      name: "<white>䩠䩡䩢䩣<white>Sklep · Na wyprawę"
+      name: "&f䩠䩡䩢䩣"
       pochodnia:
         options: {sell: true, buy: false}
         quick_sell_amount: 16

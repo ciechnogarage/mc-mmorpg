@@ -1,10 +1,11 @@
 # Wygenerowane przez strony/chowance/generuj_menu.py.
-menu_title: '&f䫌䫍䫎䫏&fRanking'
+menu_title: '&f䫌䫍䫎䫏'
 size: 54
 update_interval: 5
 items:
   'top':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
     update: true
     display_name: '&6&lNajlepsi Poskramiacze'
@@ -23,6 +24,7 @@ items:
       - '&7Twoje ELO: &f%chowance_ranking_elo% &8(#%chowance_ranking_pozycja%)'
   'turniej':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [14, 15, 23, 24]
     update: true
     display_name: '&eTurniej sezonowy'
@@ -39,6 +41,7 @@ items:
       - '[refresh]'
   'pojedynek':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [16, 17, 25, 26]
     display_name: '&cWyzwij gracza'
     lore:

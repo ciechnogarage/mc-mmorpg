@@ -1,10 +1,10 @@
-player-stats: 26 itemów, 26 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A80–U+4A83; stary tytuł: &f䄑&fTwoja postać
-attribute-view: 5 itemów, 5 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A84–U+4A87; stary tytuł: Atrybuty
-skill-list: 7 itemów, 28 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A88–U+4A8B; stary tytuł: Selected Skill: &6{skill}
-quest-list: 3 itemów, 23 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A8C–U+4A8F; stary tytuł: Quests
-party-creation: 2 itemów, 2 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A90–U+4A93; stary tytuł: Party Creation
-party-view: 3 itemów, 10 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A94–U+4A97; stary tytuł: Party ({players}/{max})
-friend-list: 2 itemów, 22 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A98–U+4A9B; stary tytuł: Friends
-friend-removal: 2 itemów, 2 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4A9C–U+4A9F; stary tytuł: Friend Removal
-guild-creation: 2 itemów, 2 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4AA0–U+4AA3; stary tytuł: Guild Creation
-guild-view: 6 itemów, 26 pól, sloty 0–53, grzbiet wolny, duplikaty 0, glify U+4AA4–U+4AA7; stary tytuł: &0[&8{tag}&0] &8{name} &0- &8(&7{page}&8/&7{maxpages}&8)
+player-stats: 26 itemów, 26 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (2); tytuł bez tekstu, glify U+4A80–U+4A83; stary tytuł: &f䄑&fTwoja postać
+attribute-view: 5 itemów, 5 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (1); tytuł bez tekstu, glify U+4A84–U+4A87; stary tytuł: Atrybuty
+skill-list: 7 itemów, 28 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (1); tytuł bez tekstu, glify U+4A88–U+4A8B; stary tytuł: Selected Skill: &6{skill}
+quest-list: 3 itemów, 23 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (2); tytuł bez tekstu, glify U+4A8C–U+4A8F; stary tytuł: Quests
+party-creation: 2 itemów, 2 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (2); tytuł bez tekstu, glify U+4A90–U+4A93; stary tytuł: Party Creation
+party-view: 3 itemów, 10 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (2); tytuł bez tekstu, glify U+4A94–U+4A97; stary tytuł: Party ({players}/{max})
+friend-list: 2 itemów, 22 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (1); tytuł bez tekstu, glify U+4A98–U+4A9B; stary tytuł: Friends
+friend-removal: 2 itemów, 2 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (2); tytuł bez tekstu, glify U+4A9C–U+4A9F; stary tytuł: Friend Removal
+guild-creation: 2 itemów, 2 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (2); tytuł bez tekstu, glify U+4AA0–U+4AA3; stary tytuł: Guild Creation
+guild-view: 6 itemów, 26 pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału (1); tytuł bez tekstu, glify U+4AA4–U+4AA7; stary tytuł: &0[&8{tag}&0] &8{name} &0- &8(&7{page}&8/&7{maxpages}&8)

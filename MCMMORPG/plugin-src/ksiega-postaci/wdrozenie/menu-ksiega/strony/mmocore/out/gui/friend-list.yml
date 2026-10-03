@@ -1,5 +1,5 @@
 # GUI display name
-name: '&f䪘䪙䪚䪛&f'
+name: '&f䪘䪙䪚䪛'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -47,6 +47,8 @@ items:
   request:
     slots: [ 27 ]
     function: request
-    item: WRITABLE_BOOK
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aZaproś znajomego'
     lore: { }

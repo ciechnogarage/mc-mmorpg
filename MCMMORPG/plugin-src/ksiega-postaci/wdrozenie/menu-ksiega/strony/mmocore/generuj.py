@@ -13,6 +13,7 @@ sys.path.insert(0, str(HERE.parent))
 import ksiega_wspolne as W  # noqa: E402
 
 SOURCE = Path('/opt/docker/mc/data/world1/plugins/MMOCore/gui')
+BLANK_TEXTURE = Path('/opt/docker/mc/data/world1/plugins/Nexo/pack/assets/nexo/textures/item/mmo_equipment/fill.png')
 OUT = HERE / 'out'
 IDS = ('player-stats', 'attribute-view', 'skill-list', 'quest-list',
        'party-creation', 'party-view', 'friend-list', 'friend-removal',
@@ -27,6 +28,10 @@ ITEM = re.compile(r'^  ([\w-]+):\s*$', re.M)
 SLOT_LINE = re.compile(r'^(    slots: )\[[^\n]*\]', re.M)
 PLACEHOLDER = re.compile(r'(?<!\{)\{!?[a-zA-Z_][\w-]*\}')
 RIGHT = [9*r+c for r in range(1, 6) for c in range(5, 9)]
+
+
+def emblem_slot(slot):
+    return slot//9 < 3 and slot%9 < 4
 
 POSITION = {
     'player-stats': {
@@ -126,12 +131,12 @@ def slots(block):
     return [int(n) for n in re.findall(r'\d+', m.group(0))]
 
 
-def title(glyphs, suffix=''):
+def title(glyphs):
     template = (ROOT/'strony/out/dm/hub_postac.yml').read_text(encoding='utf-8')
     template = re.search(r"^menu_title: '([^']+)'",template,re.M).group(1)
     for a,b in zip(range(0x4A00,0x4A04),glyphs):
         template = template.replace(chr(a),chr(b))
-    return '&f'+template.lstrip('&f')+'&f'+suffix
+    return template
 
 
 def create_yaml(ident, raw, codes):
@@ -139,14 +144,7 @@ def create_yaml(ident, raw, codes):
     assert set(items) == set(POSITION[ident]), (ident,set(items)^set(POSITION[ident]))
     assert not re.search(r'^    slots: (?!\[)', raw, re.M)
     old_title = re.search(r'^name:\s*(.*)$', head,re.M).group(1).strip().strip("'\"")
-    extras = {
-        'skill-list':'Wybrana umiejętność: &6{skill}',
-        'party-view':'Drużyna ({players}/{max})',
-        'guild-view':'Gildia [&8{tag}&f] {name} ({page}/{maxpages})',
-    }.get(ident,'')
-    # MMOCore already resolves these same title placeholders in the deployed configs.
-    suffix = (' '+extras) if extras else ''
-    new_title = title(codes,suffix)
+    new_title = title(codes)
     head = re.sub(r'^name:.*$',lambda m:"name: '"+new_title.replace("'","''")+"'",head,count=1,flags=re.M)
     head = re.sub(r'^slots:\s*\d+', 'slots: 54',head,count=1,flags=re.M)
     out = {}
@@ -156,6 +154,11 @@ def create_yaml(ident, raw, codes):
         block = SLOT_LINE.sub(lambda m:m.group(1)+'[ '+', '.join(map(str,place))+' ]',block,count=1)
         for a,b in TRANSLATE.get(ident,{}).items():
             block = block.replace(a,b)
+        if ident == 'skill-list' and name == 'upgrade':
+            # UpgradeItem rozwija {skill} wybranej umiejętności (MMOCore jar).
+            block = block.replace("    lore:\n", "    lore:\n      - '&7Wybrana umiejętność: &6{skill}'\n", 1)
+        if name in {tile[0] for tile in TILES[ident]} or any(map(emblem_slot,place)):
+            block = blank_icon(block)
         out[name] = block.rstrip()+'\n'
     generated = head+'items:\n'+''.join(out.values())
     return generated, old_title
@@ -248,6 +251,18 @@ TILES = {
     'guild-creation': [('create',194,106,'Utwórz'),('back',266,106,'Anuluj')],
     'guild-view': [('request',14,142,'Zaproś')],
 }
+
+BLANK_MODEL = "nexo:mmo_icon_blank"
+
+
+def blank_icon(block):
+    """Zostaw logikę itemu, ukryj model na kaflu lub emblemacie."""
+    block = re.sub(r'^    (?:item_model|hide-flags|texture):.*\n', '', block, flags=re.M)
+    block, count = re.subn(r'^    item: [^\n]+$',
+                           "    item: PAPER\n    item_model: '" + BLANK_MODEL + "'\n    hide-flags: true",
+                           block, count=1, flags=re.M)
+    assert count == 1, block[:80]
+    return block
 
 DESCRIPTIONS = {
     'attribute-view': ('Rozdziel punkty', 'między atrybuty.', 'Reset zmienia wybór.'),
@@ -354,7 +369,7 @@ def draw(ident,index):
     return im
 
 
-def verify(ident,source,result):
+def verify(ident,source,result,codes):
     _,old=blocks(source)
     _,new=blocks(result)
     removed=set(old)-set(new)
@@ -366,18 +381,27 @@ def verify(ident,source,result):
         assert len(old_slots[k])==len(new_slots[k]),(ident,k)
         for line in re.findall(r'^\s+(?:function|script|offset|upgrade_on_click|disable_click):.*$',old[k],re.M):
             assert line in new[k],(ident,k,line)
-        assert Counter(PLACEHOLDER.findall(old[k]))==Counter(PLACEHOLDER.findall(new[k])),(ident,k,'placeholder')
+        added = Counter({'{skill}': 1}) if (ident,k)==('skill-list','upgrade') else Counter()
+        assert Counter(PLACEHOLDER.findall(old[k]))+added==Counter(PLACEHOLDER.findall(new[k])),(ident,k,'placeholder')
     occupied=[s for ss in new_slots.values() for s in ss]
     assert all(0<=s<54 and s%9!=4 for s in occupied),(ident,'spine')
     assert len(occupied)==len(set(occupied)),(ident,'duplicate')
     assert re.search(r'^slots: 54$',result,re.M)
-    old_title=re.search(r'^name:\s*(.*)$',source,re.M).group(1)
     new_title=re.search(r'^name:\s*(.*)$',result,re.M).group(1)
-    assert Counter(PLACEHOLDER.findall(old_title))==Counter(PLACEHOLDER.findall(new_title)),(ident,'title placeholders')
+    assert new_title == "'"+title(codes)+"'", (ident,'text in title')
+    assert not PLACEHOLDER.search(new_title), (ident,'placeholder in title')
     # Polecenia z oryginału pozostają dosłownie obecne; nie ma kasowanych przycisków.
     for line in re.findall(r'^\s+-\s+[\'\"]?command\{.*$',source,re.M):
         assert line in result,(ident,line)
     occupied=set(occupied)
+    covered={tile[0] for tile in TILES[ident]}
+    covered.update(name for name,ss in new_slots.items() if any(map(emblem_slot,ss)))
+    for name in covered:
+        block=new[name]
+        assert re.search(r'^    item: PAPER$',block,re.M),(ident,name,'visible material')
+        assert re.search(r"^    item_model: 'nexo:mmo_icon_blank'$",block,re.M),(ident,name,'visible model')
+        assert re.search(r'^    hide-flags: true$',block,re.M),(ident,name,'flags')
+        assert not re.search(r'^    texture:',block,re.M),(ident,name,'skull texture')
     for name,x,y,_ in TILES[ident]:
         anchor=new_slots[name][0]
         sx,sy=14+36*(anchor%9),34+36*(anchor//9)
@@ -385,10 +409,12 @@ def verify(ident,source,result):
         for other in occupied-{anchor}:
             sx,sy=14+36*(other%9),34+36*(other//9)
             assert not (x<=sx<x+72 and y<=sy<y+72),(ident,name,other)
-    return len(old),len(occupied)
+    return len(old),len(occupied),len(covered)
 
 
 def main():
+    with Image.open(BLANK_TEXTURE) as blank_texture:
+        assert blank_texture.convert('RGBA').getchannel('A').getextrema() == (0,0), 'Nexo blank icon is visible'
     OUT.mkdir(parents=True,exist_ok=True)
     (OUT/'gui').mkdir(exist_ok=True)
     glyph_lines=['# MMOCore: cztery ćwiartki na okno, U+4A80–U+4AA7.']
@@ -399,7 +425,7 @@ def main():
         source=(SOURCE/f'{ident}.yml').read_text(encoding='utf-8')
         codes=[0x4A80+i*4+n for n in range(4)]
         result,old_title=create_yaml(ident,source,codes)
-        count,occupied=verify(ident,source,result)
+        count,occupied,covered=verify(ident,source,result,codes)
         (OUT/'gui'/f'{ident}.yml').write_text(result,encoding='utf-8')
         im=draw(ident,i)
         folder=OUT/ident
@@ -414,7 +440,7 @@ def main():
                                 f'  ascent: {13 if n<=2 else -98}',
                                 '  height: 111',f'  char: "{chr(c)}"'))
         return_lines.append(f'U+{codes[0]:04X} {PARENTS[i]}  # {ident}')
-        checks.append(f'{ident}: {count} itemów, {occupied} pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji, glify U+{codes[0]:04X}–U+{codes[-1]:04X}; stary tytuł: {old_title}')
+        checks.append(f'{ident}: {count} itemów, {occupied} pól, sloty 0–53, grzbiet wolny, duplikaty 0, kafle bez kolizji; żaden item na kaflu/emblemacie nie ma widocznego materiału ({covered}); tytuł bez tekstu, glify U+{codes[0]:04X}–U+{codes[-1]:04X}; stary tytuł: {old_title}')
         images.append(im)
     (OUT/'glify_mmocore.yml').write_text('\n'.join(glyph_lines)+'\n',encoding='utf-8')
     (OUT/'podstrony.txt').write_text('\n'.join(return_lines)+'\n',encoding='utf-8')

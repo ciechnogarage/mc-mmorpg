@@ -34,9 +34,9 @@
 33 | missing_purchase, buy_dollar
 34 | back_to_category
 35 | back_to_category
-36 | set_1
-37 | set_64
-38 | empty
+36 | empty
+37 | set_1
+38 | set_64
 39 | empty
 40 | grzbiet (rezerwa techniczna)
 41 | missing_purchase, buy_dollar

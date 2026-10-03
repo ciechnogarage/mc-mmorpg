@@ -13,8 +13,8 @@ CENY = json.load(open(os.path.join(H, 'ceny.json')))
 REC = json.load(open(os.path.join(H, 'receptury.json')))
 ITEMS = REC['items']
 
-# Tytul: bialy PRZED glifem (inaczej tekstura x0.25 — memory glif-panelu-tint-tytulu),
-# -8 px, glif 6-rzedowego panelu handlu, -169 px, tekst.
+# Prefiks starego generatora sluzy wyłącznie jako znacznik do podmiany.
+# Widoczny tytul okna zawiera tylko &f, glify tla i glify przesuniecia.
 T = '<white>䆐<white>'
 q = lambda s: json.dumps(s, ensure_ascii=False)
 M = lambda nazwa: f'nexo:hub_{nazwa}'          # model ikony z huba/handlu
@@ -99,7 +99,7 @@ def kategoria_ah(cid, allow_id=(), allow_type=()):
     return '\n'.join([
         f'    {cid}:',
         '      minimum_bid_increment: -1',
-        f'      name: {q(T + "Aukcje · " + dict((k[0], k[1]) for k in KAT)[cid] + " [{page_no}]")}',
+        f'      name: {q(T)}',
         '      restriction_advanced:',
         '        allow:',
         '          source: [mmoitems]',
@@ -140,7 +140,7 @@ def rynek():
     a('  multi_server: single')
     a('  bottom_inventory: false')
     a("  fill_material: 'AIR'")
-    a(f'  name: {q(T + "Dom aukcyjny")}')
+    a(f'  name: {q(T)}')
     a('  size: 6')
     a('  default_category: all')
     a('  default_regions: [stolica]')
@@ -269,7 +269,7 @@ def rynek():
     a(btn('zamknij', [53], nazwa='<red><bold>Zamknij', model=M('zamknij'), conditions=akcja_ah('handel_zamknij')))
     # ---------------------------------------------------------------- moje oferty
     a('  player_items:')
-    a(f'    name: {q(T + "Moje oferty [{page_no}]")}')
+    a(f'    name: {q(T)}')
     a('    size: 6')
     a('    bottom_inventory: false')
     a('    bottom_inventory_use_default: false')
@@ -299,7 +299,7 @@ def rynek():
         a('\n'.join('  ' + l for l in b.split('\n')))
     # ---------------------------------------------------------------- zakup
     a('  purchase:')
-    a(f'    name: {q(T + "Kupno")}')
+    a(f'    name: {q(T)}')
     a('    size: 6')
     a('    bottom_inventory: false')
     a('    bottom_inventory_use_default: false')
@@ -327,7 +327,7 @@ def rynek():
         a('\n'.join('  ' + l for l in b.split('\n')))
     # ---------------------------------------------------------------- wystawianie
     a('  sell:')
-    a(f'    name: {q(T + "Wystaw przedmiot")}')
+    a(f'    name: {q(T)}')
     a('    size: 6')
     a('    buttons:')
     sell_lore = ['', '<gray>Ilość: <white>{amount}', '<gray>Cena za sztukę: <white>{unit_price} $',
@@ -400,7 +400,7 @@ def rynek():
     # ---------------------------------------------------------------- kategorie (biala lista)
     a('  categories:')
     a('    all:')
-    a(f'      name: {q(T + "Dom aukcyjny [{page_no}]")}')
+    a(f'      name: {q(T)}')
     a(kategoria_ah('surowce', SUROWCE))
     a(kategoria_ah('polprodukty', POLPRODUKTY))
     a(kategoria_ah('narzedzia', NARZEDZIA, ['tool']))
@@ -461,7 +461,7 @@ def skup():
     a('skup:')
     a("  permission: ''")
     a('  bottom_inventory: false')
-    a(f'  name: {q(T + "Skup")}')
+    a(f'  name: {q(T)}')
     a('  size: 6')
     a("  fill_material: 'AIR'")
     a(f'  default_category: {GRUPY_SKUPU[0][0]}')
@@ -516,7 +516,7 @@ def skup():
     a('  bottom_item_lore: []')
     # okno ilosci
     a('  advanced:')
-    a(f'    name: {q(T + "Skup · ilość")}')
+    a(f'    name: {q(T)}')
     a('    size: 6')
     a('    fill_material: AIR')
     a("    animation: ''")
@@ -558,7 +558,7 @@ def skup():
     a('  categories:')
     for gid, nm, _, _, _ in GRUPY_SKUPU:
         a(f'    {gid}:')
-        a(f'      name: {q(T + "Skup · " + nm)}')
+        a(f'      name: {q(T)}')
         items = sorted((i for i, g in przydzial.items() if g == gid), key=lambda i: CENY[i]['wartosc'])
         assert len(items) <= 36, (gid, len(items))
         for i in items:
@@ -607,7 +607,7 @@ def sklep():
     a('sklep:')
     a("  permission: ''")
     a('  bottom_inventory: false')
-    a(f'  name: {q(T + "Sklep")}')
+    a(f'  name: {q(T)}')
     a('  size: 6')
     a("  fill_material: 'AIR'")
     a(f'  default_category: {SKLEP[0][0]}')
@@ -656,7 +656,7 @@ def sklep():
         a(f'    - {q(l)}')
     a('  bottom_item_lore: []')
     a('  advanced:')
-    a(f'    name: {q(T + "Sklep")}')
+    a(f'    name: {q(T)}')
     a('    size: 6')
     a('    fill_material: AIR')
     a("    animation: ''")
@@ -680,7 +680,7 @@ def sklep():
     a('  categories:')
     for cid, nm, _, towary in SKLEP:
         a(f'    {cid}:')
-        a(f'      name: {q(T + "Sklep · " + nm)}')
+        a(f'      name: {q(T)}')
         for tid, mat, ilosc, cena, opis, pl in towary:
             a(f'      {tid}:')
             a('        options: {sell: true, buy: false}')
@@ -764,7 +764,7 @@ MAPS = {
                    'buy_dollar': tile_slots(3, 5),
                    'back_to_category': tile_slots(3, 7),
                    'remove_16': 27, 'remove_1': 28, 'add_1': 29, 'add_16': 30,
-                   'set_1': 36, 'set_64': 37},
+                   'set_1': 37, 'set_64': 38},
     'rynek': {**{f'category_{g[0]}': s for g, s in zip(KAT,
                                                    (27,28,29,30,36,37))},
               'saldo': 14, 'previous': 38, 'sorting': 39,
@@ -790,12 +790,22 @@ LIST_SCREENS = {'sklep', 'skup', 'rynek', 'moje_oferty'}
 
 
 def title_prefix(index):
-    # Wzorowane na rzeczywistym tytule DeluxeMenus hub_ekonomia; po glifach
-    # pozostaje tekst / {page_no} CoreTools, tak jak wymaga parser tego pluginu.
+    # Wzorowane na tytule DeluxeMenus hub_ekonomia: bez tekstu po glifach.
     template = '&f䨈䨉䨊䨋'
     for old, new in zip('䨈䨉䨊䨋', (chr(0x4A60 + 4*index+n) for n in range(4))):
         template = template.replace(old, new)
-    return template.replace('&f', '<white>') + '<white>'
+    return template
+
+
+BLANK_MODEL = 'nexo:mmo_icon_blank'
+
+
+def blank_button_model(block):
+    changed, count = re.subn(r'(^\s+item_model2?:\s*)[^\n]+',
+                             lambda match: match.group(1) + BLANK_MODEL,
+                             block, flags=re.M)
+    assert count >= 1, block[:100]
+    return changed
 
 
 def segment_text(raw, start, end=None):
@@ -865,8 +875,14 @@ def rewrite_screen(raw, ident, index, marker, next_marker, indent):
             pos = mapping[name]
             slots = pos if isinstance(pos,list) else [pos]
         moved = put_slots(block, slots)
+        # Kafle 2x2 i emblemat mają ikonę wypaloną w teksturze.
+        if name in FILLERS or isinstance(mapping.get(name), list):
+            moved = blank_button_model(moved)
         if name in original:
-            assert moved == put_slots(original[name], slots), (ident, name)
+            expected = put_slots(original[name], slots)
+            if isinstance(mapping[name], list):
+                expected = blank_button_model(expected)
+            assert moved == expected, (ident, name)
         rewritten.append(moved)
     # Nowe filler pochodzą z szablonu `btn`, pozostałe pozycje są oryginalne.
     segment = pre + '\n' + '\n'.join(rewritten) + '\n' + post
@@ -1036,10 +1052,10 @@ def description(lines,x,y=146):
     S.foot_ornament(x+69,y+82)
 
 def left_heading(label):
-    # Emblemat kończy się na y=131; tabliczka mieści się przed gniazdami rzędu 3.
-    W.R((22,132,157,144),'gold0','leather0')
-    W.R((24,134,155,142),'blue0','gold1')
-    W.bitmap_text(label,89,141,'gold2',max_width=126)
+    # Emblemat zajmuje y=34..141, gniazda y=142..249; pas poniżej jest wolny.
+    W.R((22,250,157,260),'gold0','leather0')
+    W.R((24,251,155,259),'blue0','gold1')
+    W.bitmap_text(label,89,258,'gold2',max_width=126)
 
 def bag_socket(x,y):
     W.R((x+2,y+2,x+33,y+33),'leather0','gold0')
@@ -1084,7 +1100,6 @@ def draw_page(ident, title, slots, free):
                    'skup':'Kategorie i strony', 'skup_ilosc':'Wybierz ilość',
                    'rynek':'Kategorie i akcje', 'moje_oferty':'Zakładki ofert',
                    'kupno':'Potwierdź lub wróć', 'wystawienie':'Wpisz cenę'}
-    left_heading(left_labels[ident])
     for s in (set(left+right)-tile_slots_all):
         S.socket(s)
     for name,(caption,painter) in tiles.items():
@@ -1097,6 +1112,7 @@ def draw_page(ident, title, slots, free):
     else:
         W.draw_footer()
         W.draw_lower('Wróć do Księgi')
+    left_heading(left_labels[ident])
     W.clean_orphans()
     assert not W.find_orphans(image)
     return image
@@ -1119,6 +1135,45 @@ def validate_record(ident, old, new_slots, free, reserve):
     return len(old), len(active), len(free), len(reserve), overlap
 
 
+def validate_export(paths):
+    title_count = 0
+    button_count = 0
+    specs = {
+        'sklep': [('sklep', r'^  buttons:\s*$', r'^  categories:\s*$', 2),
+                  ('sklep_ilosc', r'^  advanced:\s*$', r'^  buttons:\s*$', 4)],
+        'skup': [('skup', r'^  buttons:\s*$', r'^  categories:\s*$', 2),
+                 ('skup_ilosc', r'^  advanced:\s*$', r'^  buttons:\s*$', 4)],
+        'rynek': [('rynek', r'^mmoitems_example:\s*$', r'^  player_items:\s*$', 2),
+                  ('moje_oferty', r'^  player_items:\s*$', r'^  purchase:\s*$', 4),
+                  ('kupno', r'^  purchase:\s*$', r'^  sell:\s*$', 4),
+                  ('wystawienie', r'^  sell:\s*$', r'^  tax_system:\s*$', 4)],
+    }
+    for filename, path in paths.items():
+        raw = path.read_text(encoding='utf-8')
+        for line in raw.splitlines():
+            match = re.match(r'^\s+name: ("&f.*")$', line)
+            if not match:
+                continue
+            value = json.loads(match.group(1))
+            plain = re.sub(r'&[0-9a-fk-or]', '', value, flags=re.I)
+            plain = re.sub(r'[\uE000-\uF8FF\u4A60-\u4A7F]', '', plain)
+            assert not plain, (path, value, plain)
+            title_count += 1
+        for ident, marker, following, indent in specs[filename]:
+            _, segment, _ = segment_text(raw, marker, following)
+            _, blocks, _ = buttons_of(segment, indent)
+            tiles = {slot for pos in MAPS[ident].values() if isinstance(pos, list) for slot in pos}
+            for name, block in blocks.items():
+                if not set(read_slots(block)) & (tiles | EMBLEM):
+                    continue
+                assert re.search(r'^\s+material: paper\s*$', block, re.M), (ident, name)
+                models = re.findall(r'^\s+item_model2?:\s*(\S+)', block, re.M)
+                assert models and all(model == BLANK_MODEL for model in models), (ident, name, models)
+                button_count += 1
+    assert title_count >= 8 and button_count >= 8, (title_count, button_count)
+    return title_count, button_count
+
+
 def main_ksiega():
     out = Path(P)
     (out/'Shops').mkdir(parents=True,exist_ok=True)
@@ -1127,11 +1182,14 @@ def main_ksiega():
     glyphs = ['# Cztery ćwiartki na ekran; U+4A60..U+4A7F.']
     records = []
     images = []
+    paths = {}
     for filename in ('sklep','skup','rynek'):
         changed, rs = split_rewrite(raw[filename],filename)
         dest = out/('AuctionHouse' if filename=='rynek' else 'Shops')/(filename+'.yml')
         dest.write_text(changed,encoding='utf-8')
+        paths[filename] = dest
         records.extend(rs)
+    title_count, blank_count = validate_export(paths)
     for ident, old, slots, free, reserve in sorted(records,key=lambda x:SCREENS.index(x[0])):
         index = SCREENS.index(ident)
         result = validate_record(ident,old,slots,free,reserve)
@@ -1182,6 +1240,10 @@ def main_ksiega():
     lines += [
         'Usunięte: wstecz (sklep, skup, rynek); zamknij (sklep, skup, skup_ilosc, rynek, moje_oferty, kupno).',
         'Zachowane: zamknij i home w wystawieniu, prawdziwy plecak; wystawienie poza podstrony.txt.',
+        'Skup i ilość sprzedaży: klikają wybrany towar/kategorię CoreTools, a plugin sam pobiera pasujące sztuki z ekwipunku.',
+        'Każdy zachowany blok przycisku porównano ze źródłem: zmieniono tylko slots, modele kafli i prefiks tytułu.',
+        f'Tytuły: {title_count} bez tekstu po usunięciu koloru i glifów; modele niewidoczne: {blank_count} bloków na kaflach/emblemacie.',
+        'Zmienne {page_no}/kategoria pominięto w lore: brak lokalnego potwierdzenia rozwijania ich w lore przycisku CoreTools.',
         'Komendy usunięte tylko z tych przycisków: handel_do_menu ×3; handel_zamknij ×6.',
         'Rezerwa techniczna CoreTools: niewidoczny przycisk na grzbiecie blokuje automatyczne listy.'
     ]

@@ -8,5 +8,9 @@ kupno: stare funkcjonalne 5, nowe 14; lista 0; rezerwa 40; kol4 aktywne 0; dupli
 wystawienie: stare funkcjonalne 20, nowe 29; lista 0; rezerwa 25; kol4 aktywne 0; duplikaty brak
 Usunięte: wstecz (sklep, skup, rynek); zamknij (sklep, skup, skup_ilosc, rynek, moje_oferty, kupno).
 Zachowane: zamknij i home w wystawieniu, prawdziwy plecak; wystawienie poza podstrony.txt.
+Skup i ilość sprzedaży: klikają wybrany towar/kategorię CoreTools, a plugin sam pobiera pasujące sztuki z ekwipunku.
+Każdy zachowany blok przycisku porównano ze źródłem: zmieniono tylko slots, modele kafli i prefiks tytułu.
+Tytuły: 25 bez tekstu po usunięciu koloru i glifów; modele niewidoczne: 24 bloków na kaflach/emblemacie.
+Zmienne {page_no}/kategoria pominięto w lore: brak lokalnego potwierdzenia rozwijania ich w lore przycisku CoreTools.
 Komendy usunięte tylko z tych przycisków: handel_do_menu ×3; handel_zamknij ×6.
 Rezerwa techniczna CoreTools: niewidoczny przycisk na grzbiecie blokuje automatyczne listy.

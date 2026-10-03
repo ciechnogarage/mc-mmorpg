@@ -1,5 +1,5 @@
 # GUI display name
-name: '&f䪔䪕䪖䪗&f Drużyna ({players}/{max})'
+name: '&f䪔䪕䪖䪗'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -33,12 +33,16 @@ items:
   leave:
     slots: [ 29 ]
     function: leave
-    item: REDSTONE
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&cOpuść drużynę'
     lore: { }
   request:
     slots: [ 27 ]
     function: invite
-    item: WRITABLE_BOOK
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aZaproś gracza...'
     lore: { }

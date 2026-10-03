@@ -1,5 +1,5 @@
 # Wygenerowane przez strony/chowance/generuj_menu.py.
-menu_title: '&f䫀䫁䫂䫃&fChowańce'
+menu_title: '&f䫀䫁䫂䫃'
 size: 54
 update_interval: 2
 items:
@@ -281,6 +281,7 @@ items:
       - '&8Limit drużyny: &7%chowance_druzyna_limit%'
   'info':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
     update: true
     display_name: '&6&lChowańce'
@@ -292,6 +293,7 @@ items:
       - '&7Poskramiacz: &fpoz. %mmocore_profession_poskramiacz%'
   'walka_dziki':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [14, 23]
     display_name: '&cWalcz z dzikim'
     lore:
@@ -304,6 +306,7 @@ items:
       - '[player] chw walka'
   'gracze':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slot: 15
     display_name: '&6Wyzwania i handel'
     lore:
@@ -315,6 +318,7 @@ items:
       - '[player] chw gracze'
   'starter':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slot: 24
     priority: 0
     display_name: '&a&lWybierz startera!'
@@ -333,6 +337,7 @@ items:
       - '[player] chw starter'
   'magazyn':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [16, 25]
     update: true
     display_name: '&6Magazyn'
@@ -346,6 +351,7 @@ items:
       - '[openguimenu] chowance_magazyn'
   'bestiariusz':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [17, 26]
     update: true
     display_name: '&2Bestiariusz'
@@ -358,6 +364,7 @@ items:
       - '[openguimenu] chowance_bestiariusz'
   'hodowla':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [32, 41]
     update: true
     display_name: '&eHodowla'
@@ -370,6 +377,7 @@ items:
       - '[openguimenu] chowance_hodowla'
   'lochy':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [34, 43]
     update: true
     display_name: '&7Lochy i Mistrzowie'
@@ -382,6 +390,7 @@ items:
       - '[openguimenu] chowance_lochy'
   'ranking':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [35, 44]
     update: true
     display_name: '&6Ranking'
@@ -394,6 +403,7 @@ items:
       - '[openguimenu] chowance_ranking'
   'warsztat':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [33, 42]
     update: true
     display_name: '&6Warsztat Poskramiacza'

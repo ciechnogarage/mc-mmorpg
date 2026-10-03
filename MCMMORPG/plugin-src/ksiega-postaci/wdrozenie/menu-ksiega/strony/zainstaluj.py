@@ -22,7 +22,8 @@ GRUPY = {
                         [('dm/*.yml', 'DeluxeMenus/gui_menus/'), ('../cmi_dialogs/*.yml', 'CMI/Dialogs/'), ('../../../hub_glowne.yml', 'DeluxeMenus/gui_menus/')]),
     'mmocore': ('mmocore/out', 'glify_mmocore.yml', [('gui/*.yml', 'MMOCore/gui/')]),
     'chowance': ('chowance/out', 'glify_chowance.yml', [('gen/*.yml', 'DeluxeMenus/gui_menus/')]),
-    'handel': ('handel/out', None, []),  # sciezki z out/gen ustala integracja.txt grupy
+    'handel': ('handel/out/gen', 'glify_handel.yml',
+               [('AuctionHouse/*.yml', 'CoreTools/AuctionHouse/'), ('Shops/*.yml', 'CoreTools/Shops/')]),
 }
 
 # Strony z grup podstrony/siatka nie maja podstrony.txt — mapowanie powrotu ustalone przy przegladzie.

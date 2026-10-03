@@ -1,5 +1,5 @@
 # GUI display name
-name: '&f䪈䪉䪊䪋&f Wybrana umiejętność: &6{skill}'
+name: '&f䪈䪉䪊䪋'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -56,7 +56,9 @@ items:
   reallocate:
     slots: [ 29 ]
     function: reallocation
-    item: CAULDRON
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aRozdziel punkty umiejętności od nowa'
     lore:
       - ''
@@ -112,6 +114,7 @@ items:
     item: GREEN_STAINED_GLASS_PANE
     name: '&a&lULEPSZ {skill_caps}'
     lore:
+      - '&7Wybrana umiejętność: &6{skill}'
       - '&7Koszt: 1 punkt umiejętności.'
       - ''
       - '&eDostępne punkty umiejętności: {skill_points}'

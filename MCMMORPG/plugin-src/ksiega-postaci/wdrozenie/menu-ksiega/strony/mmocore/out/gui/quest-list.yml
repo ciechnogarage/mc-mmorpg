@@ -1,5 +1,5 @@
 # GUI display name
-name: '&f䪌䪍䪎䪏&f'
+name: '&f䪌䪍䪎䪏'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -64,14 +64,16 @@ items:
   next:
     slots: [ 29 ]
     function: next
-    item: PLAYER_HEAD
-    texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aNastępna strona'
     lore: { }
   previous:
     slots: [ 27 ]
     function: previous
-    item: PLAYER_HEAD
-    texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aPoprzednia strona'
     lore: { }

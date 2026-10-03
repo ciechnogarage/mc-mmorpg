@@ -8,7 +8,7 @@
 skup:
   permission: ''
   bottom_inventory: false
-  name: "<white>䩨䩩䩪䩫<white>Skup"
+  name: "&f䩨䩩䩪䩫"
   size: 6
   fill_material: 'AIR'
   default_category: drewno
@@ -63,7 +63,7 @@ skup:
     - "<dark_gray>Założona zbroja i druga ręka są pomijane."
   bottom_item_lore: []
   advanced:
-    name: "<white>䩬䩭䩮䩯<white>Skup · ilość"
+    name: "&f䩬䩭䩮䩯"
     size: 6
     fill_material: AIR
     animation: ''
@@ -72,12 +72,12 @@ skup:
     buttons:
       empty:
         location: top
-        slots: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 31, 38, 39, 40, 45, 46, 47, 48, 49, 50, 51, 52, 53]
+        slots: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 31, 36, 39, 40, 45, 46, 47, 48, 49, 50, 51, 52, 53]
         source: vanilla
         material: paper
         name: " "
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_handel_pusty
+        item_model: nexo:mmo_icon_blank
         hide_tooltip: true
         lore: []
       item_to_be_purchased:
@@ -92,7 +92,7 @@ skup:
         material: paper
         name: " "
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_handel_pusty
+        item_model: nexo:mmo_icon_blank
         hide_tooltip: true
         lore: []
       back_to_category:
@@ -102,7 +102,7 @@ skup:
         material: paper
         name: "<gray>Wróć do skupu"
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_wstecz
+        item_model: nexo:mmo_icon_blank
         lore: []
       remove_16:
         location: top
@@ -142,7 +142,7 @@ skup:
         lore: []
       set_1:
         location: top
-        slots: [36]
+        slots: [37]
         source: vanilla
         material: paper
         name: "<white>Ustaw 1"
@@ -152,7 +152,7 @@ skup:
         amount: 1
       set_64:
         location: top
-        slots: [37]
+        slots: [38]
         source: vanilla
         material: paper
         name: "<white>Ustaw 64"
@@ -167,7 +167,7 @@ skup:
         material: paper
         name: "<green><bold>Sprzedaj"
         flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-        item_model: nexo:hub_handel_zatwierdz
+        item_model: nexo:mmo_icon_blank
         lore:
           - ""
           - "<gray>Dostaniesz: <gold>{money_buy_dollar} $"
@@ -287,7 +287,7 @@ skup:
       material: paper
       name: " "
       flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
-      item_model: nexo:hub_handel_pusty
+      item_model: nexo:mmo_icon_blank
       hide_tooltip: true
       lore: []
     pomoc:
@@ -318,7 +318,7 @@ skup:
       lore: []
   categories:
     drewno:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Drewno"
+      name: "&f䩨䩩䩪䩫"
       prof_oak_timber:
         options: {sell: false, buy: true}
         prices:
@@ -489,7 +489,7 @@ skup:
           type: TOOL
           id: PROF_MASTER_FISHING_ROD
     ziola:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Zioła i alchemia"
+      name: "&f䩨䩩䩪䩫"
       prof_redcap:
         options: {sell: false, buy: true}
         prices:
@@ -634,7 +634,7 @@ skup:
           type: MATERIAL
           id: PROF_WEAPON_OIL
     plony:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Plony i hodowla"
+      name: "&f䩨䩩䩪䩫"
       prof_fresh_harvest:
         options: {sell: false, buy: true}
         prices:
@@ -701,7 +701,7 @@ skup:
           type: MATERIAL
           id: PROF_FINE_WOOL
     polow:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Połów"
+      name: "&f䩨䩩䩪䩫"
       prof_raw_catch:
         options: {sell: false, buy: true}
         prices:
@@ -781,7 +781,7 @@ skup:
           type: MATERIAL
           id: PROF_PEARL
     kamien:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Ruda i kamień"
+      name: "&f䩨䩩䩪䩫"
       prof_clay_lump:
         options: {sell: false, buy: true}
         prices:
@@ -952,7 +952,7 @@ skup:
           type: MATERIAL
           id: PROF_REINFORCED_BLOCK
     lowy:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Łowy"
+      name: "&f䩨䩩䩪䩫"
       prof_beast_scrap:
         options: {sell: false, buy: true}
         prices:
@@ -1045,7 +1045,7 @@ skup:
           type: MATERIAL
           id: PROF_SINEW
     klejnoty:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Klejnoty i runy"
+      name: "&f䩨䩩䩪䩫"
       prof_rough_crystal:
         options: {sell: false, buy: true}
         prices:
@@ -1242,7 +1242,7 @@ skup:
           type: STAFF
           id: PROF_AWAKENED_STAFF
     kuznia:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Kuźnia i krawiectwo"
+      name: "&f䩨䩩䩪䩫"
       prof_cloth_bolt:
         options: {sell: false, buy: true}
         prices:
@@ -1491,7 +1491,7 @@ skup:
           type: TOOL
           id: PROF_MASTER_HERB_SICKLE
     kuchnia:
-      name: "<white>䩨䩩䩪䩫<white>Skup · Kuchnia"
+      name: "&f䩨䩩䩪䩫"
       prof_wild_spice:
         options: {sell: false, buy: true}
         prices:

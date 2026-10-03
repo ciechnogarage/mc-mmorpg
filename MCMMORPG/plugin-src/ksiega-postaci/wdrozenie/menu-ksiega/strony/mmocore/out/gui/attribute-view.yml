@@ -3,7 +3,7 @@
 #####################################
 # Bonusy atrybutów definiuje attributes/default_attributes.yml; tu tylko wygląd.
 
-name: '&f䪄䪅䪆䪇&f'
+name: '&f䪄䪅䪆䪇'
 
 # Liczba slotów: 9-54, wielokrotność 9.
 slots: 54
@@ -12,7 +12,9 @@ items:
   reallocate:
     slots: [ 37 ]
     function: reallocation
-    item: CAULDRON
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aPunkty atrybutów'
     lore:
       - ''

@@ -1,9 +1,12 @@
-chowance_menazeria: 24→22 itemów; 40→40 komend; 34 zajętych slotów; U+4AC0–U+4AC3; tytuł &f䫀䫁䫂䫃&fChowańce
-chowance_hodowla: 9→8 itemów; 6→6 komend; 17 zajętych slotów; U+4AC4–U+4AC7; tytuł &f䫄䫅䫆䫇&fHodowla
-chowance_lochy: 5→4 itemów; 8→8 komend; 16 zajętych slotów; U+4AC8–U+4ACB; tytuł &f䫈䫉䫊䫋&fLochy i Mistrzowie
-chowance_ranking: 4→3 itemów; 5→5 komend; 20 zajętych slotów; U+4ACC–U+4ACF; tytuł &f䫌䫍䫎䫏&fRanking
-chowance_magazyn: 37→36 itemów; 72→72 komend; 36 zajętych slotów; U+4AD0–U+4AD3; tytuł &f䫐䫑䫒䫓&fMagazyn &8(%chowance_magazyn_strona%/%chowance_magazyn_stron%)
-chowance_bestiariusz: 88→87 itemów; 60→60 komend; 42 zajętych slotów; U+4AD4–U+4AD7; tytuł &f䫔䫕䫖䫗&fBestiariusz &8%chowance_bestiariusz_procent%%
-Usunięte: wstecz ×6, zamknij ×1; pozostałe nazwy itemów, komendy, warunki i placeholdery zachowane.
+chowance_menazeria: 24→22 itemów; 40→40 komend; 34 zajętych slotów; U+4AC0–U+4AC3; tytuł &f䫀䫁䫂䫃
+chowance_hodowla: 9→8 itemów; 6→6 komend; 17 zajętych slotów; U+4AC4–U+4AC7; tytuł &f䫄䫅䫆䫇
+chowance_lochy: 5→4 itemów; 8→8 komend; 16 zajętych slotów; U+4AC8–U+4ACB; tytuł &f䫈䫉䫊䫋
+chowance_ranking: 4→3 itemów; 5→5 komend; 20 zajętych slotów; U+4ACC–U+4ACF; tytuł &f䫌䫍䫎䫏
+chowance_magazyn: 37→37 itemów; 72→72 komend; 48 zajętych slotów; U+4AD0–U+4AD3; tytuł &f䫐䫑䫒䫓
+chowance_bestiariusz: 88→87 itemów; 60→60 komend; 42 zajętych slotów; U+4AD4–U+4AD7; tytuł &f䫔䫕䫖䫗
+Usunięte: wstecz ×6, zamknij ×1; dodany informacyjny emblemat magazynu; pozostałe nazwy itemów, komendy, warunki i placeholdery zachowane.
+Tytuły: bez tekstu po odjęciu kodów kolorów i glifów; zmienne tytułów w lore emblematów.
+Kafle i emblematy: nexo-mmo_icon_blank oraz HIDE_ADDITIONAL_TOOLTIP; gniazda 1×1 zachowały ikony.
 Listy: magazyn 28+6 miejsc, bestiariusz 28 miejsc; sloty 0–53, kolumna 4 pusta, tylko zamierzone warianty współdzielą slot.
 Obraz: sześć stron bez osieroconych pikseli, paleta K12; kafle_x4.png i arkusz_x2.png wygenerowane przez NEAREST.
+Ograniczenie: magazyn zajmuje 36/36 pól poza emblematem; nagłówek nad listą wymagałby zmniejszenia liczby pól.

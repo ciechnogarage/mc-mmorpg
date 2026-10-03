@@ -1,5 +1,5 @@
 # GUI display name
-name: '&f䪜䪝䪞䪟&f'
+name: '&f䪜䪝䪞䪟'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -8,7 +8,9 @@ slots: 54
 items:
   yes:
     slots: [ 23 ]
-    item: RED_TERRACOTTA
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     function: 'yes'
 
     #custom_model_data_float: 0.45        # 1.20.4+ Float custom model data. Either this, or string option above works completely fine
@@ -26,7 +28,9 @@ items:
     lore: { }
   back:
     slots: [ 25 ]
-    item: GREEN_TERRACOTTA
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     function: 'back'
     name: '&aZachowaj {name}'
     lore: { }

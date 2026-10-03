@@ -2,8 +2,8 @@
 """Odtwarza sześć stron Chowańców z serwerowych YAML (tylko odczyt).
 
 Serwerowa kopia tools/chowance/generuj_menu.py nie jest dostępna w tym
-środowisku. Ten lokalny generator zachowuje bloki źródłowe bez zmian poza
-położeniem, rozmiarem, tytułem i usunięciem przycisków powrotu.
+środowisku. Ten lokalny generator zachowuje bloki źródłowe poza układem,
+niewidocznymi polami na grafice, lore emblematu i usunięciem powrotów.
 """
 from collections import Counter
 from pathlib import Path
@@ -35,7 +35,7 @@ TILES = {
     'ranking': {'turniej': tile_slots(5,1), 'pojedynek': tile_slots(7,1)},
 }
 INFO = {'menazeria': 'info', 'hodowla': 'postep', 'ranking': 'top',
-        'bestiariusz': 'postep'}
+        'magazyn': 'informacja', 'bestiariusz': 'postep'}
 COMMAND_GROUP = re.compile(r'^    [a-z_]+_click_commands:\s*\n((?:      - .*\n)+)', re.M)
 PLACEHOLDER = re.compile(r'%[a-zA-Z0-9_]+%')
 
@@ -76,6 +76,8 @@ def positions(ident, blocks):
     if ident in INFO:
         slots[INFO[ident]] = EMBLEM
     expected = set(blocks) - {'wstecz', 'zamknij'}
+    if ident == 'magazyn':
+        expected.add('informacja')
     assert set(slots) == expected, (ident, expected - set(slots), set(slots) - expected)
     return slots
 
@@ -88,17 +90,35 @@ def title_template():
     return template, old
 
 
+def invisible_item(block):
+    assert '    item_flags:' not in block
+    return MATERIAL.sub('    material: nexo-mmo_icon_blank\n'
+                        '    item_flags: [HIDE_ADDITIONAL_TOOLTIP]', block, count=1)
+
+
+def on_artwork(ident, name):
+    return (name == INFO.get(ident) or
+            ident == 'menazeria' and not name.startswith('druzyna_') or
+            ident in ('lochy', 'ranking'))
+
+
+def warehouse_info():
+    return ("  'informacja':\n"
+            "    material: nexo-mmo_icon_blank\n"
+            "    item_flags: [HIDE_ADDITIONAL_TOOLTIP]\n"
+            "    slots: [" + ', '.join(map(str, EMBLEM)) + "]\n"
+            "    update: true\n"
+            "    display_name: '&6&lMagazyn'\n"
+            "    lore:\n"
+            "      - '&7Strona: &f%chowance_magazyn_strona%&7/&f%chowance_magazyn_stron%'\n")
+
+
 def render(ident, raw, slots, codes):
     header, blocks = split_menu(raw)
-    head_title = re.search(r"^menu_title: '([^']+)'", header, re.M).group(1)
-    # Zachowaj sufiks PAPI; stary ciąg sterujący Nexo kończy się przed &f.
-    suffix = re.search(r'&f([^&]*?(?:&8.*)?)$', head_title)
-    suffix = suffix.group(1) if suffix else LABELS[IDS.index(ident)]
     template, old = title_template()
     title = template
     for before, after in zip(old, map(chr, codes)):
         title = title.replace(before, after)
-    title += '&f' + suffix
     header = re.sub(r'^menu_title:.*$', "menu_title: '" + title + "'", header,
                     count=1, flags=re.M)
     header = re.sub(r'^size: *\d+$', 'size: 54', header, count=1, flags=re.M)
@@ -109,16 +129,15 @@ def render(ident, raw, slots, codes):
         if name in ('wstecz', 'zamknij'):
             continue
         place = slots[name]
-        if (name == INFO.get(ident) or
-            ident == 'menazeria' and not name.startswith('druzyna_') or
-            ident in ('lochy', 'ranking') or
-            ident == 'bestiariusz' and name in ('poprzednia','nastepna')):
-            block = MATERIAL.sub(r'\1nexo-mmo_icon_blank', block, count=1)
+        if on_artwork(ident, name):
+            block = invisible_item(block)
         if isinstance(place, list):
             block = SLOT.sub('    slots: [' + ', '.join(map(str, place)) + ']', block, count=1)
         else:
             block = SLOT.sub(lambda m: m.group(1) + str(place), block, count=1)
         rewritten.append(block.rstrip())
+    if ident == 'magazyn':
+        rewritten.append(warehouse_info().rstrip())
     return header.rstrip() + '\n' + '\n'.join(rewritten) + '\n', title
 
 
@@ -126,18 +145,20 @@ def check(ident, raw, menu, slots):
     old_header, old = split_menu(raw)
     new_header, new = split_menu(menu)
     keep = set(old) - {'wstecz', 'zamknij'}
+    if ident == 'magazyn':
+        keep.add('informacja')
     assert set(new) == keep
     def stable_header(header):
         return [line for line in header.splitlines()
                 if line and not line.startswith(('#', 'menu_title:', 'size:'))]
     assert stable_header(old_header) == stable_header(new_header)
     for name in keep:
+        if name == 'informacja':
+            assert new[name].strip() == warehouse_info().strip()
+            continue
         before, after = old[name], new[name]
-        if (name == INFO.get(ident) or
-            ident == 'menazeria' and not name.startswith('druzyna_') or
-            ident in ('lochy', 'ranking') or
-            ident == 'bestiariusz' and name in ('poprzednia','nastepna')):
-            before = MATERIAL.sub(r'\1nexo-mmo_icon_blank', before, count=1)
+        if on_artwork(ident, name):
+            before = invisible_item(before)
         if isinstance(slots[name], list):
             before = SLOT.sub('    slot: X', before, count=1)
             after = SLOTS.sub('    slot: X', after, count=1)
@@ -148,14 +169,26 @@ def check(ident, raw, menu, slots):
     def commands(items):
         return Counter(line for block in items for group in COMMAND_GROUP.findall(block)
                        for line in group.splitlines())
-    old_commands = commands(old[n] for n in keep)
+    old_commands = commands(old[n] for n in keep if n in old)
     new_commands = commands(new[n] for n in keep)
     assert old_commands == new_commands
-    assert Counter(PLACEHOLDER.findall(''.join(old[n] for n in keep))) == \
-           Counter(PLACEHOLDER.findall(''.join(new[n] for n in keep)))
-    old_title = re.search(r'^menu_title: (.*)$', old_header, re.M).group(1)
-    new_title = re.search(r'^menu_title: (.*)$', new_header, re.M).group(1)
-    assert Counter(PLACEHOLDER.findall(old_title)) == Counter(PLACEHOLDER.findall(new_title))
+    old_placeholders = Counter(PLACEHOLDER.findall(''.join(old[n] for n in old if n in keep)))
+    new_placeholders = Counter(PLACEHOLDER.findall(''.join(new[n] for n in keep)))
+    if ident == 'magazyn':
+        new_placeholders.subtract(PLACEHOLDER.findall(warehouse_info()))
+    assert old_placeholders == new_placeholders
+    old_title = re.search(r"^menu_title: '([^']+)'", old_header, re.M).group(1)
+    new_title = re.search(r"^menu_title: '([^']+)'", new_header, re.M).group(1)
+    bare_title = re.sub(r'[\uE000-\uF8FF\u4AC0-\u4AD7]', '',
+                        re.sub(r'&[0-9a-fk-or]', '', new_title, flags=re.I))
+    assert not bare_title, (ident, bare_title)
+    title_placeholders = set(PLACEHOLDER.findall(old_title))
+    if title_placeholders:
+        assert title_placeholders <= set(PLACEHOLDER.findall(new[INFO[ident]]))
+    for name, block in new.items():
+        if on_artwork(ident, name):
+            assert '    material: nexo-mmo_icon_blank\n' in block, (ident, name)
+            assert '    item_flags: [HIDE_ADDITIONAL_TOOLTIP]\n' in block, (ident, name)
     occupied = {}
     for name, place in slots.items():
         for slot in (place if isinstance(place, list) else [place]):
@@ -236,7 +269,15 @@ def emblem(ident):
 def miniature(kind):
     def paint(x, y):
         W.R((x,y,x+51,y+38),'blue0')
-        if kind in ('starcia','pojedynek'):
+        if kind == 'pojedynek':
+            for xx,coat in ((6,'red1'),(35,'blue1')):
+                W.E((x+xx+3,y+5,x+xx+11,y+14),'paper2','ink')
+                W.G([(x+xx,y+16),(x+xx+14,y+16),(x+xx+17,y+36),
+                     (x+xx-3,y+36)],coat,'ink')
+            W.L([(x+17,y+23),(x+35,y+17)],'stone2',3)
+            W.L([(x+35,y+23),(x+17,y+17)],'gold2',3)
+            W.star(x+26,y+12,'gold2')
+        elif kind == 'starcia':
             W.L([(x+8,y+5),(x+42,y+35)],'ink',7)
             W.L([(x+44,y+5),(x+10,y+35)],'ink',7)
             W.L([(x+8,y+5),(x+42,y+35)],'stone2',4)
@@ -361,11 +402,8 @@ def draw_page(ident, slots):
         W.R((22,179,155,247),'paper3','paper0')
         for s in [r*9+c for r in range(1,6) for c in (5,6,7,8)]: socket(s)
         for s in [r*9+c for r in (4,5) for c in (0,1,2,3)]: socket(s)
-        for slot, glyph in ((5,'<'),(8,'>')):
-            x,y=14+36*(slot%9),34
-            W.R((x+3,y+3,x+32,y+32),'leather0','gold0')
-            W.R((x+6,y+6,x+29,y+29),'blue0','gold1')
-            W.bitmap_text(glyph,x+18,y+24,'gold2',sx=2,sy=2)
+        for slot in (5, 8):
+            socket(slot)
     else:
         # Magazyn: 28 wpisów + 6 członków drużyny + 2 przyciski stron
         # zajmuje wszystkie 36 pól poza emblematem.
@@ -443,13 +481,20 @@ def main():
         crop=canvas.crop((14,34,86,106)).resize((288,288),Image.Resampling.NEAREST)
         contact.paste(crop,((offset%4)*cell_w+144,(offset//4)*cell_h+72))
     contact.save(OUT/'kafle_x4.png')
-    results += ['Usunięte: wstecz ×6, zamknij ×1; pozostałe nazwy itemów, '
-                'komendy, warunki i placeholdery zachowane.',
+    results += ['Usunięte: wstecz ×6, zamknij ×1; dodany informacyjny emblemat '
+                'magazynu; pozostałe nazwy itemów, komendy, warunki i '
+                'placeholdery zachowane.',
+                'Tytuły: bez tekstu po odjęciu kodów kolorów i glifów; '
+                'zmienne tytułów w lore emblematów.',
+                'Kafle i emblematy: nexo-mmo_icon_blank oraz '
+                'HIDE_ADDITIONAL_TOOLTIP; gniazda 1×1 zachowały ikony.',
                 'Listy: magazyn 28+6 miejsc, bestiariusz 28 miejsc; '
                 'sloty 0–53, kolumna 4 pusta, tylko zamierzone warianty '
                 'współdzielą slot.',
                 'Obraz: sześć stron bez osieroconych pikseli, paleta K12; '
-                'kafle_x4.png i arkusz_x2.png wygenerowane przez NEAREST.']
+                'kafle_x4.png i arkusz_x2.png wygenerowane przez NEAREST.',
+                'Ograniczenie: magazyn zajmuje 36/36 pól poza emblematem; '
+                'nagłówek nad listą wymagałby zmniejszenia liczby pól.']
     (OUT / 'kontrola.txt').write_text('\n'.join(results)+'\n', encoding='utf-8')
     print('\n'.join(results))
 

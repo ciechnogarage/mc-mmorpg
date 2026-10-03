@@ -1,5 +1,5 @@
 # GUI display name
-name: '&f䪤䪥䪦䪧&f Gildia [&8{tag}&f] {name} ({page}/{maxpages})'
+name: '&f䪤䪥䪦䪧'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -62,6 +62,8 @@ items:
   request:
     slots: [ 27 ]
     function: invite
-    item: WRITABLE_BOOK
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&aZaproś gracza...'
     lore: [ ]

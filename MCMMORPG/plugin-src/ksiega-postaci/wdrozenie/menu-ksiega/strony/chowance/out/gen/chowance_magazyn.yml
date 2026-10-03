@@ -1,5 +1,5 @@
 # Wygenerowane przez strony/chowance/generuj_menu.py.
-menu_title: '&f䫐䫑䫒䫓&fMagazyn &8(%chowance_magazyn_strona%/%chowance_magazyn_stron%)'
+menu_title: '&f䫐䫑䫒䫓'
 size: 54
 update_interval: 2
 items:
@@ -653,3 +653,11 @@ items:
     left_click_commands:
       - '[player] chw magazyn strona nastepna'
       - '[refresh]'
+  'informacja':
+    material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    update: true
+    display_name: '&6&lMagazyn'
+    lore:
+      - '&7Strona: &f%chowance_magazyn_strona%&7/&f%chowance_magazyn_stron%'

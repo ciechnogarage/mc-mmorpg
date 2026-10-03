@@ -1,5 +1,5 @@
 # Wygenerowane przez strony/chowance/generuj_menu.py.
-menu_title: '&f䫔䫕䫖䫗&fBestiariusz &8%chowance_bestiariusz_procent%%'
+menu_title: '&f䫔䫕䫖䫗'
 size: 54
 update_interval: 5
 items:
@@ -1377,6 +1377,7 @@ items:
           output: 'NIEZNANY'
   'postep':
     material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
     update: true
     display_name: '&2&lBestiariusz'
@@ -1388,7 +1389,7 @@ items:
       - '&7Nagrody: 10%, 25%, 50%, 100%,'
       - '&7komplet każdego typu, wszystkie lśniące.'
   'poprzednia':
-    material: nexo-mmo_icon_blank
+    material: 'nexo-hub_chw_wstecz'
     slot: 5
     display_name: '&ePoprzednia strona'
     lore:
@@ -1396,7 +1397,7 @@ items:
       - '[player] chw bestiariusz strona poprzednia'
       - '[refresh]'
   'nastepna':
-    material: nexo-mmo_icon_blank
+    material: 'ARROW'
     slot: 8
     display_name: '&eNastępna strona'
     lore:

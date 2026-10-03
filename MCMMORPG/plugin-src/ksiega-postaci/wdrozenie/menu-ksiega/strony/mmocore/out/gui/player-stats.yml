@@ -1,6 +1,6 @@
 # Karta postaci. Glif Nexo rysuje panel pod ikonami standardowego GUI 6-rzedowego.
 # &f przed glifem zapobiega tintowi 0x404040. Przesuniecia: -8 i -169.
-name: '&f䪀䪁䪂䪃&f'
+name: '&f䪀䪁䪂䪃'
 slots: 54
 
 items:
@@ -161,7 +161,8 @@ items:
   powrot:
     slots: [ 27 ]
     item: PAPER
-    item_model: 'nexo:hub_wstecz'
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&ePowrót do menu'
     lore: ['&7Kliknij, aby otworzyć menu główne.']
     script:
@@ -169,7 +170,8 @@ items:
   umiejetnosci:
     slots: [ 29 ]
     item: PAPER
-    item_model: 'nexo:hub_umiejetnosci'
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
     name: '&bUmiejętności i drzewko'
     lore: ['&7Kliknij, aby wybrać umiejętności lub drzewko.']
     script:
