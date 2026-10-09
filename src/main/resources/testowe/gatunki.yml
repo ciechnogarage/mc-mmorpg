@@ -1,0 +1,57 @@
+# Gatunki TESTOWE silnika (właściciel: Agent A) — do evali botem. testowy: true = poza Bestiariuszem.
+# Ciała zastępcze vanilla (mob MM nie istnieje celowo), żeby silnik dało się sprawdzić niezależnie od treści B.
+TESTOGNIK:
+  nazwa: "Testognik"
+  opis: ["Gatunek testowy silnika."]
+  typy: [OGIEN]
+  rzadkosc: POSPOLITY
+  stadium: 1
+  linia: TESTOGNIK
+  staty_bazowe: {zdrowie: 45, atak: 55, obrona: 40, atak_spec: 65, obrona_spec: 50, szybkosc: 65}
+  krzywa_exp: SREDNIA
+  exp_bazowy: 60
+  cechy: [TEST_ZAR]
+  ruchy:
+    1: [TEST_DRAPNIECIE, TEST_ISKRA]
+    5: [TEST_WARKNIECIE]
+    9: [TEST_PLOMIEN]
+  ewolucje:
+    - {do: TESTOGNIAK, poziom: 10}
+  hodowla: {grupy: [TESTOWA], dystans: 60}
+  lapanie: {pieczec: true}
+  wierzchowiec: true
+  mob: {oswojony: CHW_TEST_BRAK, dziki: CHW_TEST_BRAK_D, zastepczy: FOX}
+  ikona: chw_test
+  testowy: true
+TESTOGNIAK:
+  nazwa: "Testogniak"
+  typy: [OGIEN, BESTIA]
+  stadium: 2
+  linia: TESTOGNIK
+  staty_bazowe: {zdrowie: 65, atak: 80, obrona: 60, atak_spec: 85, obrona_spec: 65, szybkosc: 80}
+  exp_bazowy: 140
+  cechy: [TEST_ZAR]
+  ruchy:
+    1: [TEST_DRAPNIECIE, TEST_ISKRA]
+    5: [TEST_WARKNIECIE]
+    9: [TEST_PLOMIEN]
+  hodowla: {grupy: [TESTOWA], dystans: 60}
+  mob: {oswojony: CHW_TEST_BRAK2, zastepczy: WOLF}
+  testowy: true
+TESTWODNIK:
+  nazwa: "Testwodnik"
+  typy: [WODA]
+  rzadkosc: NIEPOSPOLITY
+  linia: TESTWODNIK
+  staty_bazowe: {zdrowie: 50, atak: 45, obrona: 55, atak_spec: 60, obrona_spec: 60, szybkosc: 45}
+  krzywa_exp: WOLNA
+  cechy: [TEST_ODPORNY_SEN]
+  ruchy:
+    1: [TEST_DRAPNIECIE, TEST_STRUMIEN, TEST_KOLYSANKA]
+  hodowla: {grupy: [TESTOWA], dystans: 60}
+  lapanie:
+    pieczec: true
+    oswajanie: true
+    przysmaki: {PROF_TEST_PRZYSMAK: 50}
+  mob: {oswojony: CHW_TEST_BRAK3, dziki: CHW_TEST_BRAK3_D, zastepczy: AXOLOTL}
+  testowy: true

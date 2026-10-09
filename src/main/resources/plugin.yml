@@ -1,0 +1,16 @@
+name: Chowance
+version: '${version}'
+main: pl.mcmmorpg.chowance.ChowancePlugin
+api-version: '1.21'
+description: Chowańce — łapanie, drużyna, walki, hodowla, handel, Bestiariusz.
+author: mcmmorpg
+depend: [MythicMobs, MythicLib, MMOProfiles]
+softdepend: [MMOCore, MMOItems, PlaceholderAPI, MythicDungeons, ModelEngine, DeluxeMenus, CharacterCreator]
+commands:
+  chw:
+    description: Chowańce
+    aliases: [chowance, chowaniec]
+    permission: chowance.gracz
+permissions:
+  chowance.gracz: {default: true}
+  chowance.admin: {default: op}
