@@ -14,6 +14,7 @@ val serverPluginsDir = file(providers.gradleProperty("serverPlugins").get())
 val pinnedPluginJars = listOf(
   "MythicLib-dist-1.7.1-20260330.110510-95.jar",
   "MMOItems-6.10.1-20260330.094756-58.jar",
+  "MMOCore-1.13.1-20260330.110342-58.jar",
   
 ).map { serverPluginsDir.resolve(it) }
 

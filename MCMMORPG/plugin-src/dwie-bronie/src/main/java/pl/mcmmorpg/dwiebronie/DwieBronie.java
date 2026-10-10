@@ -1,16 +1,29 @@
 package pl.mcmmorpg.dwiebronie;
 
 import io.lumine.mythic.lib.api.item.NBTItem;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.AttackRange;
+import io.papermc.paper.datacomponent.item.Consumable;
+import io.papermc.paper.datacomponent.item.UseEffects;
+import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
+import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import java.util.HashMap;
-import net.Indyuce.mmoitems.api.player.PlayerData;
 import java.util.Map;
 import java.util.UUID;
+import net.Indyuce.mmocore.api.event.PlayerResourceUpdateEvent;
+import net.Indyuce.mmoitems.api.player.PlayerData;
+import net.kyori.adventure.key.Key;
 import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -23,22 +36,34 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 
 /**
- * Walka dwiema bronia (wlasciciel 10.10: "rob 1 z PPM jak w 3").
+ * Walka dwiema bronia na wzor Skyrima (wlasciciel 10.10).
  *
- * <p>Gdy w obu dloniach jest prawdziwa bron MMOItems (wybrany slot 1 = prawa, off-hand = lewa):
- * LPM bije naprzemiennie prawa i lewa, PPM bije zawsze lewa. MMOItems liczy obrazenia tylko z glownej
- * reki, wiec cios lewa skaluje obrazenia proporcja ATTACK_DAMAGE lewej do prawej (w tym samym ticku,
- * tylko glowny cel - rozprysk MMOItems zostaje bez zmian). Klon lewej (ksiega:klon) nie ma danych
- * MMOItems, wiec przy wybranym slocie 2 plugin nic nie robi.
+ * <p>Dziala, gdy w obu dloniach jest prawdziwa bron MMOItems (Ksiega: wybrany slot 1 = prawa, off-hand =
+ * lewa) i postac spelnia wymagania lewej:
+ * <ul>
+ *   <li>LPM - ciosy naprzemiennie prawa / lewa (wybor wlasciciela),</li>
+ *   <li>PPM stukniecie - cios lewa; PPM przytrzymany - mocny cios lewa (Skyrim: x2, stamina, zachwianie),</li>
+ *   <li>Shift + PPM przytrzymany - podwojny mocny cios (Skyrim: 3 ataki L/P/L po x1,5),</li>
+ *   <li>bez staminy mocny cios zamienia sie w zwykly (jak w Skyrimie),</li>
+ *   <li>premia szybkosci ataku za dwie bronie (Skyrim: dwie bronie ~ +33% obrazen na sekunde).</li>
+ * </ul>
+ * MMOItems liczy obrazenia tylko z glownej reki, wiec cios lewa skaluje obrazenia proporcja ATTACK_DAMAGE
+ * lewej do prawej (tylko glowny cel w tym ticku). Przytrzymanie PPM uzywa lewej: off-hand dostaje komponent
+ * consumable (klient uzywa off-handu, gdy glowna reka nie ma uzycia) - lewa reka unosi sie do zamachu.
  */
 public final class DwieBronie extends JavaPlugin implements Listener {
 
@@ -47,18 +72,30 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   private static final class Stan {
     int ostatniTick = -1000;
     boolean poprzedniaLewa;
-    boolean wymuszonaLewa;
-    int ppmTick = -1000;
+    double wymuszonaSkala;      // >0 = najblizszy cios idzie lewa z ta skala (PPM)
     int lewaTick = -1000;
+    int brakStaminyTick = -1000;
   }
 
   private final Map<UUID, Stan> stany = new HashMap<>();
   private final Map<UUID, Cios> ciosyLewa = new HashMap<>();
+  private NamespacedKey kluczUzbrojenia;
+  private NamespacedKey kluczPremii;
+  private boolean mmocore;
 
   @Override
   public void onEnable() {
     saveDefaultConfig();
+    kluczUzbrojenia = new NamespacedKey(this, "ppm");
+    kluczPremii = new NamespacedKey(this, "premia_szybkosci");
+    mmocore = getServer().getPluginManager().isPluginEnabled("MMOCore");
     getServer().getPluginManager().registerEvents(this, this);
+    getServer().getScheduler().runTaskTimer(this, () -> getServer().getOnlinePlayers().forEach(this::odswiez), 10L, 5L);
+  }
+
+  @Override
+  public void onDisable() {
+    getServer().getOnlinePlayers().forEach(p -> { rozbroj(p); zdejmijPremie(p); });
   }
 
   private int tick() { return getServer().getCurrentTick(); }
@@ -68,12 +105,14 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   static double obrazenia(ItemStack item) {
     if (item == null || item.getType().isAir()) return 0;
     NBTItem nbt = NBTItem.get(item);
-    if (nbt.getString("MMOITEMS_ITEM_TYPE") == null || nbt.getString("MMOITEMS_ITEM_TYPE").isEmpty()) return 0;
+    String typ = nbt.getString("MMOITEMS_ITEM_TYPE");
+    if (typ == null || typ.isEmpty()) return 0;
     return nbt.getStat("ATTACK_DAMAGE");
   }
 
   // Lewa liczy sie tylko, gdy postac spelnia jej wymagania (poziom, klasa, bieglosc) - inaczej nowa
   // postac bilaby co drugi cios bronia z wysokiego poziomu trzymana w off-handzie.
+  @SuppressWarnings("deprecation")
   private boolean dwieBronie(Player p) {
     ItemStack lewa = p.getInventory().getItemInOffHand();
     if (obrazenia(p.getInventory().getItemInMainHand()) <= 0 || obrazenia(lewa) <= 0) return false;
@@ -85,28 +124,94 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     return obrazenia(p.getInventory().getItemInOffHand()) / obrazenia(p.getInventory().getItemInMainHand());
   }
 
+  // ------------------------------------------------------------------ uzbrojenie lewej i premia
+
+  private boolean oznaczona(ItemStack item) {
+    return item != null && !item.getType().isAir() && item.hasItemMeta()
+        && item.getPersistentDataContainer().has(kluczUzbrojenia, PersistentDataType.BYTE);
+  }
+
+  // AnimacjeBroni resetuje CONSUMABLE przy pierwszym ulozeniu broni w off-handzie - sam znacznik nie wystarcza.
+  private boolean uzbrojona(ItemStack item) {
+    return oznaczona(item) && item.hasData(DataComponentTypes.CONSUMABLE);
+  }
+
+  private void uzbroj(ItemStack item) {
+    item.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable().consumeSeconds(3600f)
+        .animation(ItemUseAnimation.valueOf(getConfig().getString("poza-zamachu", "TRIDENT")))
+        .hasConsumeParticles(false).sound(Key.key("minecraft", "intentionally_empty")).build());
+    item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects().canSprint(false)
+        .speedMultiplier((float) getConfig().getDouble("spowolnienie-zamachu", 0.45)).interactVibrations(true).build());
+    item.editPersistentDataContainer(pdc -> pdc.set(kluczUzbrojenia, PersistentDataType.BYTE, (byte) 1));
+  }
+
+  private ItemStack rozbrojony(ItemStack item) {
+    if (!oznaczona(item)) return null;
+    item.resetData(DataComponentTypes.CONSUMABLE);
+    item.resetData(DataComponentTypes.USE_EFFECTS);
+    item.editPersistentDataContainer(pdc -> pdc.remove(kluczUzbrojenia));
+    return item;
+  }
+
+  private void rozbroj(Player p) {
+    PlayerInventory inv = p.getInventory();
+    ItemStack lewa = inv.getItemInOffHand();
+    if (rozbrojony(lewa) != null) inv.setItemInOffHand(lewa);
+    for (int i = 0; i < 36; i++) {
+      ItemStack it = inv.getItem(i);
+      if (rozbrojony(it) != null) inv.setItem(i, it);
+    }
+    ItemStack kursor = p.getItemOnCursor();
+    if (rozbrojony(kursor) != null) p.setItemOnCursor(kursor);
+  }
+
+  private void zdejmijPremie(Player p) {
+    AttributeInstance a = p.getAttribute(Attribute.ATTACK_SPEED);
+    if (a != null) a.removeModifier(kluczPremii);
+  }
+
+  /** Co 5 tickow: lewa uzbrojona tylko przy dwoch broniach; bron poza off-handem nigdy nie ma consumable. */
+  private void odswiez(Player p) {
+    PlayerInventory inv = p.getInventory();
+    boolean dwie = dwieBronie(p);
+    for (int i = 0; i < 36; i++) {
+      ItemStack it = inv.getItem(i);
+      if (rozbrojony(it) != null) inv.setItem(i, it);
+    }
+    ItemStack lewa = inv.getItemInOffHand();
+    if (!p.isHandRaised()) {
+      if (dwie && !uzbrojona(lewa)) { uzbroj(lewa); inv.setItemInOffHand(lewa); }
+      else if (!dwie && rozbrojony(lewa) != null) inv.setItemInOffHand(lewa);
+    }
+    AttributeInstance a = p.getAttribute(Attribute.ATTACK_SPEED);
+    double premia = getConfig().getDouble("premia-szybkosci-ataku", 0.33);
+    if (a == null) return;
+    boolean ma = a.getModifier(kluczPremii) != null;
+    if (dwie && premia > 0 && !ma)
+      a.addTransientModifier(new AttributeModifier(kluczPremii, premia,
+          AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY));
+    else if ((!dwie || premia <= 0) && ma) a.removeModifier(kluczPremii);
+  }
+
   // ------------------------------------------------------------------ LPM: naprzemiennie
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void przedCiosem(PrePlayerAttackEntityEvent e) {
     Player p = e.getPlayer();
     Stan s = stany.computeIfAbsent(p.getUniqueId(), k -> new Stan());
-    if (!dwieBronie(p) || !(e.getAttacked() instanceof LivingEntity)) {
-      s.wymuszonaLewa = false;
-      return;
-    }
+    double wymuszona = s.wymuszonaSkala;
+    s.wymuszonaSkala = 0;
+    if (!dwieBronie(p) || !(e.getAttacked() instanceof LivingEntity)) return;
     int teraz = tick();
-    boolean lewa;
-    if (s.wymuszonaLewa) lewa = true;
-    else lewa = teraz - s.ostatniTick <= getConfig().getInt("okno-serii-tickow", 40) && !s.poprzedniaLewa;
-    s.wymuszonaLewa = false;
+    boolean lewa = wymuszona > 0
+        || teraz - s.ostatniTick <= getConfig().getInt("okno-serii-tickow", 40) && !s.poprzedniaLewa;
     s.ostatniTick = teraz;
     s.poprzedniaLewa = lewa;
     if (!lewa) { dbg(p.getName() + " cios PRAWA tick=" + teraz); return; }
-    double k = skala(p);
+    double k = wymuszona > 0 ? wymuszona : skala(p);
     ciosyLewa.put(p.getUniqueId(), new Cios(e.getAttacked().getUniqueId(), teraz, k));
     s.lewaTick = teraz;
-    p.swingOffHand();
+    if (wymuszona <= 0) p.swingOffHand();
     dbg(p.getName() + " cios LEWA tick=" + teraz + " skala=" + String.format("%.3f", k));
   }
 
@@ -134,56 +239,127 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     if (wytnij) e.setCancelled(true);
   }
 
-  // ------------------------------------------------------------------ PPM: zawsze lewa
+  // ------------------------------------------------------------------ PPM: lewa (stukniecie / mocny / podwojny)
 
-  @EventHandler(priority = EventPriority.HIGH)
-  public void ppm(PlayerInteractEvent e) {
-    if (e.getHand() != EquipmentSlot.HAND) return;
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void startZamachu(PlayerInteractEvent e) {
+    if (e.getHand() != EquipmentSlot.OFF_HAND || !uzbrojona(e.getItem())) return;
     if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-    if (ciosLewa(e.getPlayer(), null)) e.setCancelled(true);
+    Player p = e.getPlayer();
+    int pelne = getConfig().getInt("mocny.pelne-ticki", 12);
+    getServer().getScheduler().runTaskLater(this, () -> {
+      if (p.isOnline() && p.isHandRaised() && p.getActiveItemHand() == EquipmentSlot.OFF_HAND
+          && p.getActiveItemUsedTime() >= pelne - 1) {
+        p.playSound(p.getLocation(), Sound.ITEM_CROSSBOW_LOADING_END, SoundCategory.PLAYERS, 0.6f, 1.4f);
+      }
+    }, pelne);
   }
 
   @EventHandler(priority = EventPriority.HIGH)
-  public void ppmIstota(PlayerInteractEntityEvent e) {
-    if (e.getHand() != EquipmentSlot.HAND) return;
-    ciosLewa(e.getPlayer(), e.getRightClicked());
+  public void puszczenie(PlayerStopUsingItemEvent e) {
+    Player p = e.getPlayer();
+    if (!uzbrojona(e.getItem()) || !dwieBronie(p)) return;
+    int ticki = e.getTicksHeldFor();
+    int prog = getConfig().getInt("mocny.prog-ticki", 6), pelne = getConfig().getInt("mocny.pelne-ticki", 12);
+    String wariant = ticki < prog ? "stukniecie" : ticki < pelne ? "przerwany" : p.isSneaking() ? "podwojny" : "mocny";
+    double l = skala(p), mnoznik;
+    if (wariant.equals("podwojny")) {
+      // Skyrim: 3 ataki (2x lewa, 1x prawa) po x1,5 - tu jednym trafieniem, trzy zamachy dla oka
+      if (stamina(p, getConfig().getDouble("podwojny.koszt-staminy", 18))) mnoznik = getConfig().getDouble("podwojny.mnoznik", 1.5) * (2 * l + 1);
+      else { wariant = "podwojny-bez-staminy"; mnoznik = l; }
+    } else if (wariant.equals("mocny")) {
+      if (stamina(p, getConfig().getDouble("mocny.koszt-staminy", 12))) mnoznik = getConfig().getDouble("mocny.mnoznik", 2.0) * l;
+      else { wariant = "mocny-bez-staminy"; mnoznik = l; }
+    } else mnoznik = l;
+    boolean naladowany = p.getAttackCooldown() >= (float) getConfig().getDouble("min-naladowanie-ppm", 0.9);
+    Entity cel = naladowany ? cel(p, null) : null;
+    dbg(p.getName() + " PPM " + wariant + " ticki=" + ticki + " mnoznik=" + String.format("%.3f", mnoznik)
+        + " cel=" + (cel == null ? "-" : cel.getType()));
+    p.swingOffHand();
+    if (wariant.equals("podwojny")) {
+      getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) p.swingMainHand(); }, 4L);
+      getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) p.swingOffHand(); }, 8L);
+    }
+    if (cel == null) return;
+    Stan s = stany.computeIfAbsent(p.getUniqueId(), k -> new Stan());
+    s.wymuszonaSkala = mnoznik;
+    p.attack(cel);
+    s.wymuszonaSkala = 0;
+    if (cel instanceof LivingEntity z && (wariant.equals("mocny") || wariant.equals("podwojny"))) efektMocnego(p, z, wariant);
+  }
+
+  private boolean stamina(Player p, double procent) {
+    if (!mmocore || procent <= 0) return true;
+    double koszt = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA")) * procent / 100.0;
+    net.Indyuce.mmocore.api.player.PlayerData dane = net.Indyuce.mmocore.api.player.PlayerData.get(p);
+    if (dane != null && dane.getStamina() + 1e-6 >= koszt) {
+      dane.giveStamina(-koszt, PlayerResourceUpdateEvent.UpdateReason.SKILL_COST);
+      return true;
+    }
+    Stan s = stany.computeIfAbsent(p.getUniqueId(), k -> new Stan());
+    if (tick() - s.brakStaminyTick >= 40) {
+      s.brakStaminyTick = tick();
+      p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.8f, 0.7f);
+      MMOPlayerData.get(p).getActionBar().show(40, 40L, "§x§F§2§F§2§E§DBrakuje §x§E§8§7§9§7§3staminy");
+    }
+    return false;
+  }
+
+  /** Mocny cios: zachwianie (jak AnimacjeBroni), iskry, dzwiek; podwojny - trzy trafienia dla oka i ucha. */
+  private void efektMocnego(Player p, LivingEntity cel, String wariant) {
+    cel.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 2, false, true, true));
+    Vector od = cel.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+    if (od.lengthSquared() > 1e-4) cel.setVelocity(cel.getVelocity().add(od.normalize().multiply(0.35).setY(0.1)));
+    boolean podwojny = wariant.equals("podwojny");
+    for (int i = 0; i < (podwojny ? 3 : 1); i++) {
+      getServer().getScheduler().runTaskLater(this, () -> {
+        if (cel.isDead()) return;
+        Location l = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
+        cel.playHurtAnimation(0);
+        cel.getWorld().spawnParticle(Particle.SWEEP_ATTACK, l, 1, 0.3, 0.2, 0.3, 0);
+        cel.getWorld().spawnParticle(Particle.CRIT, l, 15, 0.35, 0.35, 0.35, 0.3);
+        cel.getWorld().playSound(l, Sound.ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 1f, podwojny ? 1.1f : 0.8f);
+      }, i * 4L);
+    }
+    MMOPlayerData.get(p).getActionBar().show(30, 30L, podwojny ? "§6⚔ Podwójny mocny cios" : "§e⚔ Mocny cios lewą");
   }
 
   private double zasieg(Player p) {
-    ItemStack lewa = p.getInventory().getItemInOffHand();
-    AttackRange r = lewa.getData(DataComponentTypes.ATTACK_RANGE);
+    AttackRange r = p.getInventory().getItemInOffHand().getData(DataComponentTypes.ATTACK_RANGE);
     if (r != null) return r.maxReach();
     AttributeInstance a = p.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
     return a == null ? 3.0 : a.getValue();
   }
 
-  private boolean ciosLewa(Player p, Entity klikniety) {
-    if (!dwieBronie(p)) return false;
+  private Entity cel(Player p, Entity klikniety) {
+    if (klikniety instanceof LivingEntity && !(klikniety instanceof ArmorStand)) return klikniety;
+    RayTraceResult r = p.getWorld().rayTrace(p.getEyeLocation(), p.getEyeLocation().getDirection(), zasieg(p),
+        FluidCollisionMode.NEVER, true, 0.3,
+        x -> x instanceof LivingEntity && x != p && !(x instanceof ArmorStand) && !x.isDead());
+    return r == null ? null : r.getHitEntity();
+  }
+
+  // Zapasowo: gdy lewa nie zostala jeszcze uzbrojona (pierwsze ticki po zalozeniu), PPM bije od razu.
+  @EventHandler(priority = EventPriority.HIGH)
+  public void ppmBezUzbrojenia(PlayerInteractEvent e) {
+    if (e.getHand() != EquipmentSlot.HAND) return;
+    if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+    Player p = e.getPlayer();
+    if (uzbrojona(p.getInventory().getItemInOffHand()) || !dwieBronie(p)) return;
+    if (p.getAttackCooldown() < (float) getConfig().getDouble("min-naladowanie-ppm", 0.9)) return;
+    Entity cel = cel(p, null);
+    p.swingOffHand();
+    if (cel == null) return;
     Stan s = stany.computeIfAbsent(p.getUniqueId(), k -> new Stan());
-    int teraz = tick();
-    if (s.ppmTick == teraz) return true;
-    if (p.getAttackCooldown() < (float) getConfig().getDouble("min-naladowanie-ppm", 0.9)) return false;
-    Entity cel = klikniety instanceof LivingEntity && !(klikniety instanceof ArmorStand) ? klikniety : null;
-    if (cel == null) {
-      RayTraceResult r = p.getWorld().rayTrace(p.getEyeLocation(), p.getEyeLocation().getDirection(), zasieg(p),
-          FluidCollisionMode.NEVER, true, 0.3,
-          x -> x instanceof LivingEntity && x != p && !(x instanceof ArmorStand) && !x.isDead());
-      cel = r == null ? null : r.getHitEntity();
-    }
-    if (cel == null) { p.swingOffHand(); s.ppmTick = teraz; return false; }
-    s.ppmTick = teraz;
-    s.wymuszonaLewa = true;
+    s.wymuszonaSkala = skala(p);
     p.attack(cel);
-    if (s.wymuszonaLewa) {
-      // attack() nie wywolal PrePlayerAttackEntityEvent (cel nietrafialny) - nie zostawiaj flagi
-      s.wymuszonaLewa = false;
-      dbg(p.getName() + " PPM bez ciosu");
-    }
-    return true;
+    s.wymuszonaSkala = 0;
   }
 
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) {
+    rozbroj(e.getPlayer());
+    zdejmijPremie(e.getPlayer());
     stany.remove(e.getPlayer().getUniqueId());
     ciosyLewa.remove(e.getPlayer().getUniqueId());
   }

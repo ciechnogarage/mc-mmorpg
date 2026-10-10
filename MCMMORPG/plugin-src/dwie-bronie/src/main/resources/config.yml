@@ -1,5 +1,18 @@
 # Cios po ciosie w tym oknie (ticki) = seria naprzemienna; dluzsza przerwa = znow od prawej.
 okno-serii-tickow: 40
-# PPM bije lewa dopiero przy takim naladowaniu ataku (0-1), zeby trzymanie PPM nie bylo spamem.
+# PPM bije lewa dopiero przy takim naladowaniu ataku (0-1), zeby PPM nie byl spamem.
 min-naladowanie-ppm: 0.9
+# Skyrim: dwie bronie ~ +33% obrazen na sekunde. Mnoznik szybkosci ataku, 0 = wylaczone.
+premia-szybkosci-ataku: 0.33
+# Przytrzymany PPM: lewa reka w zamachu (animacja uzycia off-handu) i spowolnienie ruchu.
+poza-zamachu: TRIDENT
+spowolnienie-zamachu: 0.45
+mocny:
+  prog-ticki: 6        # krocej = stukniecie (zwykly cios lewa)
+  pelne-ticki: 12      # od tylu = mocny cios (dzwiek sygnalu)
+  mnoznik: 2.0         # Skyrim: mocny cios jedna bronia x2
+  koszt-staminy: 12    # % maks. staminy (jak mocny w AnimacjeBroni)
+podwojny:              # Shift + przytrzymany PPM
+  mnoznik: 1.5         # Skyrim: 3 ataki (2x lewa, 1x prawa) po x1,5
+  koszt-staminy: 18    # Skyrim: 0,5 kosztu za kazdy z 3 atakow
 debug: false
