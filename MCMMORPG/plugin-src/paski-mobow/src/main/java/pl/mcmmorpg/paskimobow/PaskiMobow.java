@@ -144,7 +144,10 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
   }
 
   @EventHandler public void wyjscie(PlayerQuitEvent e) {
-    for (Pasek p : paski.values()) p.widzowie.remove(e.getPlayer().getUniqueId());
+    for (Pasek p : paski.values()) {
+      p.widzowie.remove(e.getPlayer().getUniqueId());
+      p.skale.remove(e.getPlayer().getUniqueId());
+    }
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -195,6 +198,7 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
       if (g != null) pakiety.ukryj(g, p);
     }
     p.widzowie.clear();
+    p.skale.clear();
     if (przywrocNazwe && getServer().getEntity(p.mob) instanceof LivingEntity mob && mob.isValid()) odswiezNazwe(mob);
   }
 
@@ -242,6 +246,10 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
     for (Pasek p : new ArrayList<>(paski.values())) {
       if (p.widzowie.isEmpty()) continue;
       if (!(getServer().getEntity(p.mob) instanceof LivingEntity mob) || !mob.isValid()) { usun(p, false); continue; }
+      for (UUID w : p.widzowie) {
+        Player g = getServer().getPlayer(w);
+        if (g != null && g.getWorld().equals(mob.getWorld())) pakiety.aktualizujSkale(g, p, mob, u);
+      }
       if (p.podazanie) {
         org.bukkit.Location l = mob.getLocation();
         double dx = l.getX() - p.ostatnieX, dy = l.getY() - p.ostatnieY, dz = l.getZ() - p.ostatnieZ;

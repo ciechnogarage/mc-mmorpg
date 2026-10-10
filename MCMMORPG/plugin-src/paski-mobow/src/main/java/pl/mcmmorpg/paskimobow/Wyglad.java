@@ -98,11 +98,18 @@ final class Wyglad {
     Component imie = nazwa.color(r.kolor());
     if (r.pogrubiona()) imie = imie.decorate(TextDecoration.BOLD);
     if (r.ikona() < 0) return imie;
+    // Magiczny i Rzadki współdzielą glif klejnotu. Litera rozróżnia je także bez koloru.
+    String oznaczenie = switch (r.id()) {
+      case "magiczny" -> "M";
+      case "rzadki" -> "R";
+      default -> "";
+    };
     // ikona + 2 px, a za nazwa tyle samo pustego miejsca -> nazwa wypada na srodku nad mobem
     Component ikona = Component.text(String.valueOf((char) (RZADKOSC + r.ikona())) + (char) (SPACJA + 2 + 128), r.kolor())
         .font(FONT);
-    Component wyrownanie = Component.text(String.valueOf((char) (SPACJA + 12 + 128))).font(FONT);
-    return Component.text().append(ikona, imie, wyrownanie).build();
+    Component skrot = oznaczenie.isEmpty() ? Component.empty() : Component.text(oznaczenie + " ", NamedTextColor.WHITE);
+    Component wyrownanie = Component.text(String.valueOf((char) (SPACJA + (oznaczenie.isEmpty() ? 12 : 20) + 128))).font(FONT);
+    return Component.text().append(ikona, skrot, imie, wyrownanie).build();
   }
 
   private static Component liniaPaska(Rzadkosc r, int poziom, double hp, double duch, double max,

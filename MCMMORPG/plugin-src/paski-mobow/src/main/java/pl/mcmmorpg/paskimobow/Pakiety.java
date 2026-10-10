@@ -19,6 +19,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -82,7 +83,8 @@ final class Pakiety {
     wyslij(gracz, new WrapperPlayServerSpawnEntity(p.idWyswietlacza, Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
         new Vector3d(l.getX(), l.getY() + (p.podazanie ? p.wysokoscModelu : mob.getHeight()), l.getZ()),
         0f, 0f, 0f, 0, Optional.empty()));
-    float s = (float) u.skala();
+    float s = skala(gracz, p, mob, u);
+    p.skale.put(gracz.getUniqueId(), s);
     List<EntityData<?>> m = new ArrayList<>();
     if (p.podazanie) m.add(new EntityData<>(10, EntityDataTypes.INT, 3));
     m.add(new EntityData<>(11, EntityDataTypes.VECTOR3F,
@@ -114,7 +116,24 @@ final class Pakiety {
         List.of(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT, tekst))));
   }
 
+  void aktualizujSkale(Player gracz, Pasek p, LivingEntity mob, Ustawienia u) {
+    float s = skala(gracz, p, mob, u);
+    Float poprzednia = p.skale.get(gracz.getUniqueId());
+    if (poprzednia != null && Math.abs(s - poprzednia) < 0.02f) return;
+    p.skale.put(gracz.getUniqueId(), s);
+    wyslij(gracz, new WrapperPlayServerEntityMetadata(p.idWyswietlacza,
+        List.of(new EntityData<>(12, EntityDataTypes.VECTOR3F, new Vector3f(s, s, s)))));
+  }
+
+  private static float skala(Player gracz, Pasek p, Entity mob, Ustawienia u) {
+    double dx = gracz.getX() - mob.getX();
+    double dy = gracz.getY() + gracz.getEyeHeight() - mob.getY() - p.wysokoscModelu - u.wysokosc();
+    double dz = gracz.getZ() - mob.getZ();
+    return Skala.dlaOdleglosci(Math.sqrt(dx * dx + dy * dy + dz * dz), u.skala());
+  }
+
   void ukryj(Player gracz, Pasek p) {
+    p.skale.remove(gracz.getUniqueId());
     wyslij(gracz, new WrapperPlayServerDestroyEntities(p.idWyswietlacza));
   }
 

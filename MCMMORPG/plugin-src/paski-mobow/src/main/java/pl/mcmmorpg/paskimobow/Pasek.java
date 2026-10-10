@@ -1,6 +1,8 @@
 package pl.mcmmorpg.paskimobow;
 
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ final class Pasek {
   final int idMoba;
   final int idWyswietlacza;
   final Set<UUID> widzowie = new HashSet<>();
+  final Map<UUID, Float> skale = new HashMap<>();
   String nazwa;
   Wyglad.Rzadkosc rzadkosc;
   int poziom;
