@@ -1,0 +1,5 @@
+# Cios po ciosie w tym oknie (ticki) = seria naprzemienna; dluzsza przerwa = znow od prawej.
+okno-serii-tickow: 40
+# PPM bije lewa dopiero przy takim naladowaniu ataku (0-1), zeby trzymanie PPM nie bylo spamem.
+min-naladowanie-ppm: 0.9
+debug: false
