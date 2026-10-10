@@ -1,6 +1,7 @@
 package pl.mcmmorpg.ksiega;
 
 import com.nexomc.nexo.api.NexoItems;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,7 @@ final class Portal implements Listener, CommandExecutor {
 
   void open(Player player) {
     if (!PlayerData.has(player)) {
-      player.sendActionBar(line("Dane postaci jeszcze się wczytują.", NamedTextColor.RED));
+      player.sendMessage(line("Dane postaci jeszcze się wczytują.", NamedTextColor.RED));
       return;
     }
     Holder holder = new Holder();
@@ -85,6 +86,13 @@ final class Portal implements Listener, CommandExecutor {
       if (dest.slot() >= 0) inventory.setItem(dest.slot(), icon(data, dest));
     }
     player.openInventory(inventory);
+    Destination nearest = nearestUndiscovered(player, data);
+    if (nearest != null) {
+      Location at = find(nearest.id()).getLocation();
+      player.sendMessage(line("Najbliższy nieodkryty punkt: " + nearest.name() + " — "
+          + direction(player.getLocation(), at) + " (x " + at.getBlockX()
+          + ", z " + at.getBlockZ() + ").", NamedTextColor.YELLOW));
+    }
   }
 
   ItemStack[] panelItems(Player player) {
@@ -101,7 +109,15 @@ final class Portal implements Listener, CommandExecutor {
     ItemStack counter = blankButton();
     ItemMeta countMeta = counter.getItemMeta();
     countMeta.displayName(line("Odkryte " + count + "/9", NamedTextColor.GOLD));
-    countMeta.lore(List.of(line("Punkty szybkiej podróży", NamedTextColor.GRAY)));
+    Destination nearest = nearestUndiscovered(player, data);
+    countMeta.lore(nearest == null ? List.of(
+        line("Wszystkie punkty w tej krainie są odkryte.", NamedTextColor.GRAY))
+        : List.of(
+            line("Najbliższy nowy punkt: " + nearest.name(), NamedTextColor.YELLOW),
+            line(direction(player.getLocation(), find(nearest.id()).getLocation())
+                + " · x " + find(nearest.id()).getLocation().getBlockX()
+                + ", z " + find(nearest.id()).getLocation().getBlockZ(), NamedTextColor.GRAY),
+            line("Podejdź na 8 bloków, aby go odkryć.", NamedTextColor.GRAY)));
     counter.setItemMeta(countMeta);
     items[7] = counter;
     items[4] = icon(data, DESTINATIONS.get(8));
@@ -144,13 +160,18 @@ final class Portal implements Listener, CommandExecutor {
     ItemStack item = waypointItem(dest, unlocked);
     ItemMeta meta = item.getItemMeta();
     meta.displayName(line(dest.name(), unlocked ? NamedTextColor.GOLD : NamedTextColor.GRAY));
+    Location at = waypoint == null ? null : waypoint.getLocation();
     meta.lore(unlocked ? List.of(
         line("Kraina: " + dest.realm(), NamedTextColor.GRAY),
         line("Odkryty punkt podróży", NamedTextColor.GREEN),
         line("Kliknij, aby podróżować (3 s, nie ruszaj się)", NamedTextColor.YELLOW))
+        : at == null ? List.of(
+            line("Punkt podróży jest niedostępny.", NamedTextColor.RED))
         : List.of(
             line("Kraina: " + dest.realm(), NamedTextColor.GRAY),
-            line("Zamknięty - odwiedź: " + dest.hint(), NamedTextColor.GRAY)));
+            line("Warunek: podejdź na 8 bloków do punktu.", NamedTextColor.YELLOW),
+            line("Położenie: x " + at.getBlockX() + ", z " + at.getBlockZ(), NamedTextColor.GRAY),
+            line("Wskazówka: " + dest.hint(), NamedTextColor.GRAY)));
     meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
     item.setItemMeta(meta);
     return item;
@@ -228,28 +249,56 @@ final class Portal implements Listener, CommandExecutor {
     return waypoint != null && data.hasWaypoint(waypoint);
   }
 
+  private static Destination nearestUndiscovered(Player player, PlayerData data) {
+    Location here = player.getLocation();
+    Destination nearest = null;
+    double distance = Double.POSITIVE_INFINITY;
+    for (Destination dest : DESTINATIONS) {
+      if (dest.id().equals("start") || dest.id().equals("nexus")) continue;
+      if (unlocked(data, dest)) continue;
+      Waypoint waypoint = find(dest.id());
+      Location at = waypoint == null ? null : waypoint.getLocation();
+      if (at == null || at.getWorld() != here.getWorld()) continue;
+      double dx = at.getX() - here.getX(), dz = at.getZ() - here.getZ();
+      double candidate = dx * dx + dz * dz;
+      if (candidate < distance) { distance = candidate; nearest = dest; }
+    }
+    return nearest;
+  }
+
+  private static String direction(Location from, Location to) {
+    double dx = to.getX() - from.getX(), dz = to.getZ() - from.getZ();
+    String northSouth = Math.abs(dz) < 16 ? "" : dz < 0 ? "północ" : "południe";
+    String eastWest = Math.abs(dx) < 16 ? "" : dx < 0 ? "zachód" : "wschód";
+    return northSouth.isEmpty() ? eastWest.isEmpty() ? "w pobliżu" : eastWest
+        : eastWest.isEmpty() ? northSouth : northSouth + " i " + eastWest;
+  }
+
   private void travel(Player player, Destination dest) {
     if (!PlayerData.has(player)) {
-      player.sendActionBar(line("Dane postaci jeszcze się wczytują.", NamedTextColor.RED));
+      player.sendMessage(line("Dane postaci jeszcze się wczytują.", NamedTextColor.RED));
       return;
     }
     PlayerData data = PlayerData.get(player);
     Waypoint waypoint = find(dest.id());
     if (waypoint == null) {
-      player.sendActionBar(line("Punkt podróży nie jest wczytany.", NamedTextColor.RED));
+      showBar(player, 40, 40, "§cPunkt podróży nie jest wczytany.");
     } else if (!data.hasWaypoint(waypoint)) {
-      player.sendActionBar(line("Zamknięty - odwiedź: " + dest.hint(), NamedTextColor.YELLOW));
+      Location at = waypoint.getLocation();
+      showBar(player, 40, 40, at == null ? "§cPunkt podróży jest niedostępny."
+          : "§eOdkryj punkt: x " + at.getBlockX() + ", z " + at.getBlockZ() + ".");
     } else if (data.isInCombat()) {
-      player.sendActionBar(line("Nie możesz podróżować podczas walki.", NamedTextColor.RED));
+      showBar(player, 40, 40, "§cNie możesz podróżować podczas walki.");
     } else if (pending.containsKey(player.getUniqueId())) {
-      player.sendActionBar(line("Podróż już trwa.", NamedTextColor.YELLOW));
+      showBar(player, 30, 30, "§ePodróż już trwa.");
     } else {
       Location target = waypoint.getLocation();
       if (target == null || target.getWorld() == null) {
-        player.sendActionBar(line("Cel podróży jest niedostępny.", NamedTextColor.RED));
+        showBar(player, 40, 40, "§cCel podróży jest niedostępny.");
         return;
       }
       player.closeInventory();
+      player.sendMessage(line("Podróż za 3 sekundy. Ruch przerwie podróż.", NamedTextColor.YELLOW));
       Pending state = new Pending(player.getLocation().clone(), target.clone());
       pending.put(player.getUniqueId(), state);
       state.task = Bukkit.getScheduler().runTaskTimer(plugin, () -> tick(player, state), 0L, 20L);
@@ -273,8 +322,8 @@ final class Portal implements Listener, CommandExecutor {
       showTravelTitle(player, "Podróż zakończona", "Dotarłeś do punktu podróży.", NamedTextColor.GREEN);
       player.playSound(landing, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.7f);
     } else {
-      showTravelTitle(player, "Podróż: " + state.seconds,
-          "Nie ruszaj się", NamedTextColor.YELLOW);
+      showBar(player, 20, 22, "§ePodróż: " + state.seconds
+          + " s  §7•  Ruch przerwie podróż");
       state.seconds--;
     }
   }
@@ -289,7 +338,7 @@ final class Portal implements Listener, CommandExecutor {
         || Math.abs(from.getZ() - to.getZ()) > 0.01) {
       pending.remove(event.getPlayer().getUniqueId());
       state.task.cancel();
-      showTravelTitle(event.getPlayer(), "Podróż przerwana", "Poruszyłeś się", NamedTextColor.RED);
+      showBar(event.getPlayer(), 40, 45, "§cPodróż przerwana — poruszyłeś się.");
     }
   }
 
@@ -310,6 +359,10 @@ final class Portal implements Listener, CommandExecutor {
         net.kyori.adventure.title.Title.Times.times(
             java.time.Duration.ZERO, java.time.Duration.ofMillis(1100),
             java.time.Duration.ofMillis(150))));
+  }
+
+  private static void showBar(Player player, int priority, long ticks, String message) {
+    MMOPlayerData.get(player).getActionBar().show(priority, ticks, message);
   }
 
   @EventHandler public void drag(InventoryDragEvent event) {

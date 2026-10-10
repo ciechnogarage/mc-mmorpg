@@ -33,7 +33,8 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
     portal = new Portal(this);
     getCommand("ksiegaportal").setExecutor(portal);
     MMOItems.plugin.getInventory().register(bizuteria.supplier());
-    for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie, portal}) {
+    for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie,
+        portal, new PotwierdzenieZadania(this)}) {
       Bukkit.getPluginManager().registerEvents(listener, this);
     }
     if (Bukkit.getPluginManager().isPluginEnabled("MMOProfiles"))
