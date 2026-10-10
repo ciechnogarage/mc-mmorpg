@@ -183,6 +183,7 @@ klawisz-q:
   zwykle: 'dm open hub_glowne %gracz%'
 
 # Wejscie przytrzymanego PPM i atrybuty trybu zaklec.
+debug: false
 ppm-tolerancja: 7
 rowno: 4
 zasieg-blokow: 0

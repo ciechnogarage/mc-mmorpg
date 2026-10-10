@@ -42,7 +42,10 @@ final class Skille {
   }
 
   void cele(Player p, String nazwa, List<Entity> cele) {
-    if (!jest(nazwa) || cele.isEmpty()) return;
+    boolean obecny = jest(nazwa);
+    if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG skill=" + nazwa
+        + " obecny=" + obecny + " cele=" + cele.stream().map(e -> e.getUniqueId().toString()).toList());
+    if (!obecny || cele.isEmpty()) return;
     try { MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa, p, p.getLocation(), cele, List.of(), 1f); }
     catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "trafienia " + nazwa + ": " + t, t); }
   }

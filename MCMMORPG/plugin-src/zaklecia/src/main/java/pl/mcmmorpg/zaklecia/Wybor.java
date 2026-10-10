@@ -30,7 +30,7 @@ import org.bukkit.inventory.EquipmentSlot;
  */
 final class Wybor implements Listener {
   private static final LegacyComponentSerializer L = LegacyComponentSerializer.legacySection();
-  private static final class Sesja { int i; BossBar bar, opis; long ostatnio; }
+  private static final class Sesja { int i; BossBar bar, opis; String tekstBaru, tekstOpisu; long ostatnio; }
 
   private final Zaklecia plugin;
   private final Ksiega ksiega;
@@ -96,7 +96,8 @@ final class Wybor implements Listener {
       okno.append(j == s.i ? "§f§l[" + n + "]§r" : "§7" + n);
     }
     okno.append(doIndeks < k.size() ? "  §7›" : "  §8 ");
-    s.bar.name(L.deserialize("§5✦  " + okno));
+    String tekstBaru = "§5✦  " + okno;
+    if (!tekstBaru.equals(s.tekstBaru)) { s.bar.name(L.deserialize(tekstBaru)); s.tekstBaru = tekstBaru; }
 
     String id = k.get(s.i);
     Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
@@ -104,7 +105,8 @@ final class Wybor implements Listener {
         + " §8· §7P: §f" + nazwa(ksiega.w(p.getInventory().getItemInMainHand()));
     String opis = z == null ? "§7pusta §8· §7bez kosztu" : kolor(z.szkola()) + z.nazwa()
         + " §8· §7" + typ(z) + " §8· §b" + koszt(z) + " many" + (z.koncentracja() ? "/s" : "");
-    s.opis.name(L.deserialize(opis + "   §8│   " + dlonie));
+    String tekstOpisu = opis + "   §8│   " + dlonie;
+    if (!tekstOpisu.equals(s.tekstOpisu)) { s.opis.name(L.deserialize(tekstOpisu)); s.tekstOpisu = tekstOpisu; }
   }
 
   private static String kolor(String szkola) {
@@ -173,7 +175,6 @@ final class Wybor implements Listener {
     s.ostatnio = System.currentTimeMillis();
     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.UI_BUTTON_CLICK, 0.3f, 1.8f);
     odswiez(e.getPlayer(), s);
-    podpowiedz(e.getPlayer());
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
@@ -205,6 +206,7 @@ final class Wybor implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void uderzenie(EntityDamageByEntityEvent e) {
+    if (e instanceof io.lumine.mythic.lib.api.event.fake.FakeEntityDamageByEntityEvent) return;
     if (!(e.getDamager() instanceof Player p) || !otwarty(p)) return;
     // tylko prawdziwy cios wrecz; obrazenia zaklec (mmodamage) tez maja gracza jako sprawce
     if (e.getCause() != org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK || rzucanie.trybLpm(p)) return;

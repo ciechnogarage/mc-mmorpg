@@ -3,6 +3,7 @@ package pl.mcmmorpg.zaklecia;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.lib.MythicLib;
 import io.lumine.mythic.lib.comp.interaction.InteractionType;
+import io.lumine.mythic.lib.api.event.fake.FakeEntityDamageByEntityEvent;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ final class EfektyCzasowe implements Listener {
   private final Map<UUID, LivingEntity> celSlugi = new HashMap<>();
   private final Map<UUID, Long> ostatnieCelowanie = new HashMap<>();
   private final Set<String> bledneKonfiguracje = new HashSet<>();
+  private boolean sprawdzanieCelu;
   private long tick;
 
   EfektyCzasowe(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik, Skille skille) {
@@ -367,6 +369,7 @@ final class EfektyCzasowe implements Listener {
   }
 
   private boolean dozwolonyCel(Entity sluga, Entity cel) {
+    if (sprawdzanieCelu) return false;
     String id = sluga.getPersistentDataContainer().get(kWlasciciel, PersistentDataType.STRING);
     Player wlasciciel;
     try { wlasciciel = id == null ? null : Bukkit.getPlayer(UUID.fromString(id)); }
@@ -375,7 +378,10 @@ final class EfektyCzasowe implements Listener {
         || !(cel instanceof LivingEntity zywy)
         || chowance(cel) || cel.getPersistentDataContainer().has(kWlasciciel, PersistentDataType.STRING)) return false;
     if (!(cel instanceof org.bukkit.entity.Enemy) && !(cel instanceof Player)) return false;
-    return MythicLib.inst().getEntities().canTarget(wlasciciel, zywy, InteractionType.OFFENSE_ACTION);
+    // canTarget wywoluje sztuczne zdarzenie obrazen; ponowne wejscie nie moze uruchomic kolejnej oceny.
+    sprawdzanieCelu = true;
+    try { return MythicLib.inst().getEntities().canTarget(wlasciciel, zywy, InteractionType.OFFENSE_ACTION); }
+    finally { sprawdzanieCelu = false; }
   }
 
   void wylacz() {
@@ -436,6 +442,7 @@ final class EfektyCzasowe implements Listener {
     if (oznaczona(i)) e.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void obrazenia(EntityDamageByEntityEvent e) {
+    if (e instanceof FakeEntityDamageByEntityEvent || sprawdzanieCelu) return;
     Entity sprawca = e.getDamager();
     if (sprawca instanceof org.bukkit.entity.Projectile pocisk && pocisk.getShooter() instanceof Entity byt) sprawca = byt;
     if (spokoj.getOrDefault(sprawca.getUniqueId(), 0L) > tick) { e.setCancelled(true); return; }
@@ -443,6 +450,7 @@ final class EfektyCzasowe implements Listener {
     if (!dozwolonyCel(sprawca, e.getEntity())) e.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true) public void pomocSlug(EntityDamageByEntityEvent e) {
+    if (e instanceof FakeEntityDamageByEntityEvent || sprawdzanieCelu) return;
     Entity sprawca = e.getDamager();
     if (sprawca instanceof org.bukkit.entity.Projectile pocisk && pocisk.getShooter() instanceof Entity byt) sprawca = byt;
     if (sprawca instanceof Player p && e.getEntity() instanceof LivingEntity cel) wskazCel(p, cel);

@@ -1,6 +1,8 @@
 package pl.mcmmorpg.zaklecia;
 
 import io.lumine.mythic.lib.player.resource.ResourceUpdateReason;
+import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.api.event.AttackEvent;
 import io.lumine.mythic.lib.damage.DamageType;
 import java.util.ArrayList;
@@ -474,7 +476,11 @@ final class Rzucanie implements Listener {
             s.oplaconeL = lewa != null && (!lewaInni || sojusznik != null);
             tikZaklec(p, prawaInni ? null : prawa, lewaInni ? null : lewa);
             if ((prawa != null && prawa.cel().equals("stozek")) || (lewa != null && lewa.cel().equals("stozek"))) {
-              List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek);
+              List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek,
+                  plugin.getConfig().getBoolean("debug", false) ? x -> plugin.getLogger().info("ZAKDBG " + x) : null);
+              if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG tik gracz="
+                  + p.getName() + " kandydaci=" + cele.size() + " prawa=" + (prawa == null ? "-" : prawa.id())
+                  + " lewa=" + (lewa == null ? "-" : lewa.id()));
               if (!cele.isEmpty()) trafienia(p, cele,
                   prawa != null && prawa.cel().equals("stozek") ? prawa : null,
                   lewa != null && lewa.cel().equals("stozek") ? lewa : null);
@@ -508,7 +514,9 @@ final class Rzucanie implements Listener {
    * Cele stozka liczone tutaj, nie targeterem MM. Istota zywa (bez rzucajacego, stojakow), w zasiegu od oczu,
    * kat do srodka hitboxa <= pol-kat (+ poprawka na szerokosc hitboxa blisko), linia wzroku.
    */
-  static List<Entity> stozek(Player p, Ksiega.Stozek st) {
+  static List<Entity> stozek(Player p, Ksiega.Stozek st) { return stozek(p, st, null); }
+
+  static List<Entity> stozek(Player p, Ksiega.Stozek st, java.util.function.Consumer<String> debug) {
     Location oko = p.getEyeLocation();
     Vector os = oko.getDirection().normalize();
     List<Entity> wynik = new ArrayList<>();
@@ -517,17 +525,37 @@ final class Rzucanie implements Listener {
       BoundingBox bb = le.getBoundingBox();
       Vector doCelu = bb.getCenter().subtract(oko.toVector());
       double d = doCelu.length();
-      if (d > st.zasieg() + bb.getWidthX() / 2) continue;
+      if (d > st.zasieg() + bb.getWidthX() / 2) {
+        if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId() + " wynik=ZASIEG d=" + d);
+        continue;
+      }
       double kat = Math.toDegrees(os.angle(doCelu));
       double margines = Math.toDegrees(Math.atan2(bb.getWidthX() / 2, Math.max(d, 0.1)));
-      if (kat > st.polKat() + margines) continue;
-      if (!p.hasLineOfSight(e)) continue;
+      if (kat > st.polKat() + margines) {
+        if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId() + " wynik=KAT kat=" + kat);
+        continue;
+      }
+      boolean los = p.hasLineOfSight(e);
+      if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId()
+          + " d=" + d + " kat=" + kat + " los=" + los + " wynik=" + (los ? "CEL" : "LOS"));
+      if (!los) continue;
       wynik.add(e);
     }
     return wynik;
   }
 
   private void trafienia(Player p, List<Entity> cele, Ksiega.Zaklecie prawa, Ksiega.Zaklecie lewa) {
+    if (plugin.getConfig().getBoolean("debug", false)) for (Entity cel : cele) {
+      boolean mmo = MythicLib.inst().getEntities().canTarget(p, cel, InteractionType.OFFENSE_ACTION);
+      double przed = cel instanceof LivingEntity le ? le.getHealth() : -1;
+      plugin.getLogger().info("ZAKDBG traf gracz=" + p.getName() + " celMM=" + cel.getUniqueId()
+          + " mmoCanTarget=" + mmo + " losMM=" + p.hasLineOfSight(cel) + " hpPrzed=" + przed
+          + " skillP=" + (prawa == null ? "-" : prawa.skille().traf())
+          + " skillL=" + (lewa == null ? "-" : lewa.skille().traf()));
+      Bukkit.getScheduler().runTask(plugin, () -> plugin.getLogger().info("ZAKDBG wynik gracz=" + p.getName()
+          + " celMM=" + cel.getUniqueId() + " hpPo=" + (cel instanceof LivingEntity le ? le.getHealth() : -1)
+          + " obrazenia=" + (cel instanceof LivingEntity le ? przed - le.getHealth() : -1)));
+    }
     if (toSamo(prawa, lewa)) {
       skille.cele(p, prawa.skille().obie(prawa.skille().traf()), cele);
       return;
@@ -559,6 +587,7 @@ final class Rzucanie implements Listener {
 
   @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void obrazenia(EntityDamageEvent e) {
+    if (e instanceof io.lumine.mythic.lib.api.event.fake.FakeEntityDamageByEntityEvent) return;
     if (!(e.getEntity() instanceof Player p)) return;
     Stan s = rzucajacy.get(p.getUniqueId());
     if (s == null || e.getDamage() <= 0) return;
@@ -577,6 +606,14 @@ final class Rzucanie implements Listener {
       s.oslonaL -= blok; e.setDamage(Math.max(0, e.getDamage() - blok));
       if (s.oslonaL <= 0) pekla(p, s, zl, false, false);
     }
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void debugObrazenia(EntityDamageEvent e) {
+    if (!plugin.getConfig().getBoolean("debug", false)
+        || e instanceof io.lumine.mythic.lib.api.event.fake.FakeEntityDamageByEntityEvent) return;
+    plugin.getLogger().info("ZAKDBG damage cel=" + e.getEntity().getUniqueId() + " przyczyna="
+        + e.getCause() + " wartosc=" + e.getDamage() + " anulowane=" + e.isCancelled());
   }
 
   private void pekla(Player p, Stan s, Ksiega.Zaklecie z, boolean prawa, boolean obie) {
