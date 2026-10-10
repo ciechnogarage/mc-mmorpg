@@ -9,6 +9,9 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.keys.DataComponentTypeKeys;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -50,10 +53,12 @@ final class Nosnik implements Listener {
   private final NamespacedKey klucz;
   private final NamespacedKey kluczPustej;
   private final DataComponentType debugStickState;
+  private final Map<UUID, Long> ostatniaOdmowa = new HashMap<>();
   /** Slot paska prawej dloni z zakleciem, zachowany przy opróżnieniu dloni. */
   private final NamespacedKey kluczSlotu;
   /** Lewa dlon byla uzywana do zaklec. */
   private final NamespacedKey kluczLewej;
+  private final NamespacedKey kluczPodpowiedzi;
   /** Bloki, ktore przyjmuja albo zamieniaja przedmiot z reki. */
   private static final Set<Material> BLOKI_BIORACE = Set.of(Material.DECORATED_POT, Material.FLOWER_POT,
       Material.VAULT, Material.CHISELED_BOOKSHELF, Material.LECTERN, Material.JUKEBOX);
@@ -65,6 +70,7 @@ final class Nosnik implements Listener {
     this.kluczPustej = new NamespacedKey(plugin, "pusta_dlon");
     this.kluczSlotu = new NamespacedKey(plugin, "slot_zaklec");
     this.kluczLewej = new NamespacedKey(plugin, "lewa_zaklec");
+    this.kluczPodpowiedzi = new NamespacedKey(plugin, "podpowiedz_shift_q");
     this.debugStickState = RegistryAccess.registryAccess()
         .getRegistry(RegistryKey.DATA_COMPONENT_TYPE).getOrThrow(DataComponentTypeKeys.DEBUG_STICK_STATE);
     org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, this::odswiezPuste, 1, 1);
@@ -130,10 +136,11 @@ final class Nosnik implements Listener {
     for (int s = 0; s < 36; s++) if (pusta(inv.getItem(s))) inv.setItem(s, null);
   }
 
-  private static void pasek(Player p, String tekst) {
+  private static void pasek(Player p, String tekst, int priorytet) {
     // pasek MMOCore co 5 tickow nadpisuje zwykly actionbar — piszemy przez handler MythicLib z wyzszym priorytetem
     // Dane MMO bywaja nieaktualne po przelogowaniu w <1 s (MMOCore: "Player is offline") — wtedy zwykly pasek.
-    try { MMOPlayerData.get(p).getActionBar().show(50, tekst); } catch (Throwable t) { p.sendActionBar(net.kyori.adventure.text.Component.text(tekst.replaceAll("§.", ""))); }
+    try { MMOPlayerData.get(p).getActionBar().show(priorytet, 40L, tekst); }
+    catch (Throwable t) { p.sendActionBar(net.kyori.adventure.text.Component.text(tekst.replaceAll("§.", ""))); }
   }
 
   /** Slot paska prawej dloni z zakleciem albo -1. */
@@ -212,11 +219,24 @@ final class Nosnik implements Listener {
         .minCreativeReach(64f).maxCreativeReach(64f).hitboxMargin(0f).build());
   }
 
-  void komunikat(Player p, String tekst) { pasek(p, tekst); }
+  void komunikat(Player p, String tekst) { pasek(p, tekst, tekst.startsWith("§c") ? 40 : 30); }
+
+  /** Jeden raz na gracza, po pierwszym udanym przypisaniu zaklęcia. */
+  void podpowiedzShiftQ(Player p) {
+    if (p.getPersistentDataContainer().has(kluczPodpowiedzi, PersistentDataType.BYTE)) return;
+    p.getPersistentDataContainer().set(kluczPodpowiedzi, PersistentDataType.BYTE, (byte) 1);
+    p.sendMessage(net.kyori.adventure.text.Component.text("Zaklęcia: Shift+Q otwiera szybki pasek. LPM wybiera prawą dłoń, PPM lewą."));
+  }
 
   // ------------------------------------------------------------------ blokady
 
-  private void odmowa(Player p) { pasek(p, "§7Zaklęcie jest związane z dłonią — zmienisz je w §fKsiędze zaklęć§7."); }
+  private void odmowa(Player p) {
+    long teraz = System.currentTimeMillis();
+    UUID id = p.getUniqueId();
+    if (teraz - ostatniaOdmowa.getOrDefault(id, 0L) < 2000) return;
+    ostatniaOdmowa.put(id, teraz);
+    pasek(p, "§7Zaklęcie jest związane z dłonią — zmienisz je w §fKsiędze zaklęć§7.", 40);
+  }
 
   @EventHandler(priority = EventPriority.LOW)
   public void klik(InventoryClickEvent e) {
@@ -244,7 +264,7 @@ final class Nosnik implements Listener {
   public void smierc(PlayerDeathEvent e) { e.getDrops().removeIf(this::jest); usunPuste(e.getEntity()); }
 
   @EventHandler
-  public void wyjscie(PlayerQuitEvent e) { usunPuste(e.getPlayer()); }
+  public void wyjscie(PlayerQuitEvent e) { usunPuste(e.getPlayer()); ostatniaOdmowa.remove(e.getPlayer().getUniqueId()); }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void zmianaSlotu(PlayerItemHeldEvent e) {

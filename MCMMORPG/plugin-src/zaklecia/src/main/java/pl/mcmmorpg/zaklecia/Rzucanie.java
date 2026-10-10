@@ -127,6 +127,31 @@ final class Rzucanie implements Listener {
     return s != null && (prawa ? s.prawa : s.lewa) ? "rzuca" : "gotowa";
   }
 
+  int postepDloni(Player p, boolean prawa) { return odrzutowe.postep(p, prawa); }
+
+  String pozostaloDloni(Player p, boolean prawa) {
+    int d = odrzutowe.pozostaloDziesiatych(p, prawa);
+    return (d / 10) + "," + (d % 10) + " s";
+  }
+
+  String kosztDloni(Player p, boolean prawa) {
+    Ksiega.Zaklecie z = zak(p, prawa);
+    if (z == null) return "";
+    double koszt = z.odrzutowe() ? z.mana() : z.manaZaTik();
+    boolean obie;
+    if (z.odrzutowe()) {
+      obie = odrzutowe.oburacz(p, prawa);
+      if (obie) koszt *= z.manaOburacz();
+    } else {
+      Stan s = rzucajacy.get(p.getUniqueId());
+      obie = s != null && s.prawa && s.lewa && toSamo(zak(p, true), zak(p, false));
+      if (obie) koszt = koszt(p, true, true);
+    }
+    String liczba = String.format(java.util.Locale.forLanguageTag("pl-PL"), "%.1f", koszt);
+    if (liczba.endsWith(",0")) liczba = liczba.substring(0, liczba.length() - 2);
+    return liczba + (z.odrzutowe() ? " many" : " many / 0,5 s") + (obie ? " łącznie" : "");
+  }
+
   /** Czy dana dlon jest aktywna (w trakcie rzucania); poza rzucaniem — czy trzyma zaklecie. Dla warunkow MM. */
   boolean aktywna(Player p, boolean prawa) {
     Ksiega.Zaklecie z = zak(p, prawa);
@@ -462,7 +487,7 @@ final class Rzucanie implements Listener {
               s.lewa && (!lewaInni || sojusznik != null));
           PlayerData d = PlayerData.get(p);
           if (d.getMana() < koszt) {
-            komunikat.mana(p);
+            komunikat.mana(p, koszt - d.getMana());
             if (lw) blokadaPpm.put(p.getUniqueId(), teraz);
             s.przelacznik = false;
             it.remove(); strumien.stop(p); ruch(p, false);

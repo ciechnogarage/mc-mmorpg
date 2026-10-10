@@ -72,6 +72,20 @@ public final class Zaklecia extends JavaPlugin implements Listener {
    */
   @Override
   public boolean onCommand(org.bukkit.command.CommandSender s, org.bukkit.command.Command c, String l, String[] a) {
+    // Mostek dla licznika cięć MythicMobs: stały format, wyłącznie konsola, wspólny arbiter paska.
+    if (a.length == 5 && a[0].equalsIgnoreCase("pasek") && a[2].equalsIgnoreCase("ciecie")) {
+      if (!(s instanceof org.bukkit.command.ConsoleCommandSender)) return true;
+      Player p = getServer().getPlayerExact(a[1]);
+      if (p == null) return true;
+      try {
+        int ile = (int) Double.parseDouble(a[3]);
+        int razem = Integer.parseInt(a[4]);
+        if (razem < 1 || razem > 10 || ile < 1 || ile > razem) return true;
+        String tekst = "§6Cięcie §f" + ile + "/" + razem;
+        io.lumine.mythic.lib.api.player.MMOPlayerData.get(p).getActionBar().show(30, 25L, tekst);
+      } catch (NumberFormatException ignored) { /* nieprawidłowa zmienna MythicMobs */ }
+      return true;
+    }
     if (a.length == 2 && a[0].equalsIgnoreCase("q")) {
       // E: klawisz Q (MenuKey wola 'zaklecia q <gracz>'): z Shiftem okno ulubionych, bez — hub jak dotad
       Player p = getServer().getPlayerExact(a[1]);
@@ -103,7 +117,9 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     boolean prawa = reka.equals("prawa");
     rzucanie.stop(p, false);
     rzucanie.zdejmijBronie(p);
-    nosnik.komunikat(p, nosnik.przypisz(p, id, prawa));
+    String wynik = nosnik.przypisz(p, id, prawa);
+    nosnik.komunikat(p, wynik);
+    if (wynik.startsWith("§f")) nosnik.podpowiedzShiftQ(p);
     return true;
   }
 
