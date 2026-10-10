@@ -126,19 +126,16 @@ public final class TrenerNpc implements Listener {
     StringBuilder sklad = new StringBuilder();
     for (Wojownik w : jego) sklad.append(sklad.isEmpty() ? "" : ", ").append(w.g.nazwa()).append(" poz. ").append(w.o.poziom);
     okna.pokaz(p, t.nazwa(), List.of(
-        "<gray>Drużyna: <white>" + sklad,
-        "",
-        "<gold>Walka turowa</gold> <gray>— wybierasz ruch klawiszami <white>1–4</white>, tura rozgrywa się na arenie.",
-        "<gray>  <white>5</white> zmiana, <white>6</white> przedmiot, <white>8</white>×2 poddanie.",
-        "<red>Real-time</red> <gray>— stwory walczą same, po KO wchodzi następny. Rozkazy:",
-        "<gray>  <white>1–4</white> ruch, <white>5</white> unik (gdy „TERAZ!”), <white>6</white> eliksir, <white>7</white> zmiana, <white>8</white>×2 poddanie."),
+        "<white>Drużyna: <yellow>" + sklad,
+        "<white>Wybierz tryb. Sterowanie zobaczysz w walce."),
         List.of(
-            Okna.Przycisk.of("<gold>Walka turowa", "Cała drużyna trenera", x -> { if (walki.startTrener(x, t.id(), null, 0)) ukryj(x, npc); }),
-            Okna.Przycisk.of("<red>Real-time", "Stwory walczą same, ty wydajesz rozkazy", x -> {
+            new Okna.Przycisk("<gold>Walka turowa · wybierasz ruch", "<white>[1–4] ruch · [5] zmiana · [6] przedmiot · [8]×2 poddanie", 300,
+                x -> { if (walki.startTrener(x, t.id(), null, 0)) ukryj(x, npc); }),
+            new Okna.Przycisk("<aqua>Walka na żywo · stwory walczą same", "<white>[1–4] rozkaz · [5] unik · [6] eliksir · [7] zmiana · [8]×2 poddanie", 300, x -> {
               List<Wojownik> l = walki.druzynaTrenera(t);
               if (!l.isEmpty() && pojedynki.startNpc(x, t.nazwa(), l)) ukryj(x, npc);
             }),
-            Okna.Przycisk.of("<green>Ulecz drużynę", "Do prób — pełne zdrowie bez eliksirów", x -> {
+            new Okna.Przycisk("<green>Ulecz drużynę", "<white>Pełne zdrowie bez eliksirów", 300, x -> {
               ProfilDane dx = c.dane(x);
               if (dx == null) return;
               druzyny.leczWszystkich(x, dx, 100);

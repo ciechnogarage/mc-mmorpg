@@ -62,16 +62,15 @@ public final class MmoCoreHook {
   }
 
   /**
-   * Komunikat na pasku akcji przez MMOCore. Domyślny pasek MMOCore (❤ | ♦ | ⛨) nadpisuje zwykły pasek co 5 ticków,
-   * więc komunikaty Chowańców znikały po ćwierć sekundy (bot na klonie: żaden nie doszedł). displayActionBar
-   * wstrzymuje domyślny pasek na 1,5 s (MythicLib ActionBarHandler). false = MMOCore niedostępny.
+   * Komunikat przez wspólny MythicLib ActionBarHandler. Priorytet 30 = informacja, 40 = odmowa;
+   * oba wyprzedzają nawigację (20) i zwykły stan MMOCore (10). false = dane gracza niedostępne.
    */
-  public boolean pasek(Player p, String legacy) {
+  public boolean pasek(Player p, String legacy, int priorytet) {
     if (!Bukkit.getPluginManager().isPluginEnabled("MMOCore")) return false;
     try {
       PlayerData d = PlayerData.get(p);
       if (d == null) return false;
-      d.displayActionBar(legacy);
+      io.lumine.mythic.lib.api.player.MMOPlayerData.get(p).getActionBar().show(priorytet, 40L, legacy);
       return true;
     } catch (RuntimeException | LinkageError e) {
       return false;

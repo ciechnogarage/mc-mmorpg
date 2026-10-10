@@ -12,6 +12,7 @@ import pl.mcmmorpg.chowance.logika.Generator;
 import pl.mcmmorpg.chowance.model.Gatunek;
 import pl.mcmmorpg.chowance.model.Osobnik;
 import pl.mcmmorpg.chowance.model.Typ;
+import pl.mcmmorpg.chowance.model.Stat;
 
 /** Wybór startera 1 z 3 (SPEC §3): oferta zależna od rasy (CharacterCreator) albo klasy MMOCore. */
 public final class Startery {
@@ -51,15 +52,45 @@ public final class Startery {
     List<Gatunek> of = oferta(p);
     if (of.isEmpty()) { c.blad(p, "Oferta starterów jest pusta (startery.yml) — zgłoś administracji."); return; }
     List<String> tresc = new ArrayList<>();
-    tresc.add("<gray>Wybierz towarzysza, który zwiąże się z tobą na zawsze. Tego wyboru nie cofniesz.");
+    tresc.add("<gray>Porównaj towarzyszy. Wybór jest trwały; następne okno poprosi o potwierdzenie.");
     List<Okna.Przycisk> pr = new ArrayList<>();
     for (Gatunek g : of) {
       StringBuilder typy = new StringBuilder();
       for (Typ t : g.typy()) typy.append(t.kolor()).append(t.nazwa()).append(" ");
-      tresc.add("<white><b>" + g.nazwa() + "</b></white> " + typy + "<gray>— " + (g.opis().isEmpty() ? "" : g.opis().get(0)));
-      pr.add(new Okna.Przycisk("<white>" + g.nazwa(), typy.toString().trim(), 110, x -> wybierz(x, g.id())));
+      tresc.add("<white><b>" + g.nazwa() + "</b></white> " + typy + "<gray>· Rola: <white>" + rola(g));
+      tresc.add("<gray>Ruchy na poz. " + c.rej.startery().poziom() + ": <white>" + ruchy(g));
+      pr.add(new Okna.Przycisk("<white>" + g.nazwa(), "Typ: " + typy.toString().trim() + " · " + rola(g), 110,
+          x -> potwierdz(x, g)));
     }
     okna.pokaz(p, "<gold>Pierwszy chowaniec", tresc, pr, Okna.Przycisk.of("<gray>Później", "Wrócisz tu z menu Chowańców (klawisz Q)", x -> {}), 3, true, false);
+  }
+
+  private String ruchy(Gatunek g) {
+    List<String> nazwy = new ArrayList<>();
+    for (String id : g.ruchyDo(c.rej.startery().poziom())) {
+      var r = c.rej.ruch(id);
+      if (r != null) nazwy.add(r.nazwa());
+    }
+    return nazwy.isEmpty() ? "brak" : String.join(", ", nazwy);
+  }
+
+  private static String rola(Gatunek g) {
+    int obrona = g.bazowy(Stat.OBRONA) + g.bazowy(Stat.OBRONA_SPEC);
+    int atak = g.bazowy(Stat.ATAK) + g.bazowy(Stat.ATAK_SPEC);
+    if (obrona >= atak + 12) return "obrona";
+    if (g.bazowy(Stat.ATAK_SPEC) >= g.bazowy(Stat.ATAK) + 12) return "atak magiczny";
+    if (g.bazowy(Stat.SZYBKOSC) >= 60 && g.bazowy(Stat.ATAK) > g.bazowy(Stat.ATAK_SPEC)) return "szybki atak";
+    if (atak >= obrona + 12) return "atak";
+    return "wszechstronny";
+  }
+
+  private void potwierdz(Player p, Gatunek g) {
+    okna.pokaz(p, "<gold>Potwierdź wybór", List.of(
+        "<white>" + g.nazwa() + " <gray>· " + rola(g),
+        "<gray>Ruchy: <white>" + ruchy(g),
+        "<red>Tej decyzji nie można cofnąć.</red>"),
+        List.of(Okna.Przycisk.of("<green>Wybieram " + g.nazwa(), "Potwierdź wybór", x -> wybierz(x, g.id()))),
+        Okna.Przycisk.of("<gray>Wróć do porównania", "", this::otworz), 1, true, false);
   }
 
   public void wybierz(Player p, String gatunek) {

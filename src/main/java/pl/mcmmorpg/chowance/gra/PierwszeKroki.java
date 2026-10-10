@@ -1,7 +1,9 @@
 package pl.mcmmorpg.chowance.gra;
 
 import java.util.Map;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -77,8 +79,16 @@ public final class PierwszeKroki implements Listener {
     if (!c.ust.pierwszeKrokiWlaczone || !d.starter) return;
     int n = Kroki.nastepny(d.pierwszeKrokiMaska);
     if (n == 0) return;
-    c.pasek(p, "<gold>Pierwsze kroki " + Kroki.postep(d.pierwszeKrokiMaska) + "/4: <white>" + c.ust.krokiOpisy.get(n - 1));
+    // MythicHUD pokazuje ten sam bieżący cel przy włączonym ustawieniu ui_goal.
+    // Gdy gracz ukryje cel, actionbar pozostaje krótką wskazówką zastępczą.
+    if (!celNaHud(p)) c.pasek(p, "<gold>Pierwsze kroki " + Kroki.postep(d.pierwszeKrokiMaska) + "/4: <white>" + c.ust.krokiOpisy.get(n - 1));
     c.msg(p, "<gold>[Pierwsze kroki " + Kroki.postep(d.pierwszeKrokiMaska) + "/4]</gold> <white>" + c.ust.krokiWskazowki.get(n - 1));
+  }
+
+  private boolean celNaHud(Player p) {
+    if (p.getGameMode() == GameMode.SPECTATOR || !Bukkit.getPluginManager().isPluginEnabled("MythicHUD")
+        || !Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) return false;
+    return !"off".equalsIgnoreCase(PlaceholderAPI.setPlaceholders(p, "%luckperms_meta_ui_goal%"));
   }
 
   @EventHandler public void przywolanie(ChowaniecPrzywolanyEvent e) { zalicz(e.getPlayer(), 1); }

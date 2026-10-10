@@ -515,6 +515,10 @@ public final class WalkiTurowe implements Listener {
     Player p = w.gracze[s];
     if (p == null || hud == null) return;
     long zostalo = Math.max(0, w.terminWyboru[s] - System.currentTimeMillis());
+    long sek = (zostalo + 999) / 1000;
+    var stanHud = hud.stan(p.getUniqueId());
+    if (stanHud != null) stanHud.pozostaloTury = w.odtwarzanie || w.wybor[s] != null ? ""
+        : sek <= 10 ? "<red><b>! " + sek + " s</b></red>" : "<yellow>" + sek + " s</yellow>";
     float postep = (float) zostalo / Math.max(1, c.ust.czasTuryS * 1000L);
     if (w.odtwarzanie) {
       hud.klawisze(p, List.of());
@@ -532,7 +536,6 @@ public final class WalkiTurowe implements Listener {
     if (w.rodzaj == Rodzaj.DZIKI) k.add("<gold>[7]</gold> <gray>Pieczęć" + etykietaSzansy(szansaPieczeci(w, s)));
     k.add("<red>[8]</red> <gray>" + (w.rodzaj == Rodzaj.DZIKI ? "Ucieczka" : "Poddaj"));
     hud.klawisze(p, k);
-    long sek = (zostalo + 999) / 1000;
     hud.menu(p, "<gold>Tura " + (w.silnik.nrTury() + 1) + "</gold> <gray>—</gray> <yellow><b>Twój ruch</b></yellow> <gray>(" + sek + " s)",
         postep, postep < 0.25f ? net.kyori.adventure.bossbar.BossBar.Color.RED : net.kyori.adventure.bossbar.BossBar.Color.YELLOW);
   }

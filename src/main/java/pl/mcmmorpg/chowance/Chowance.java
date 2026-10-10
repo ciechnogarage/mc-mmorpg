@@ -2,6 +2,8 @@ package pl.mcmmorpg.chowance;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -27,6 +29,8 @@ public final class Chowance {
   public volatile Rejestr rej;
   public final MagazynDanych dane;
   public final MmoCoreHook mmocore;
+  private record OstatniPasek(String tekst, long czas) {}
+  private final Map<UUID, OstatniPasek> ostatniPasek = new ConcurrentHashMap<>();
   /** Czytelne nazwy przedmiotów MMOItems do komunikatów (nigdy surowe ID). */
   public final pl.mcmmorpg.chowance.integracja.NazwyMmo nazwyMmo = new pl.mcmmorpg.chowance.integracja.NazwyMmo();
 
@@ -55,8 +59,13 @@ public final class Chowance {
   public void blad(Player p, String tekst) { p.sendMessage(mm(PREFIX + "<red>" + MiniMessage.miniMessage().escapeTags(tekst))); }
 
   public void pasek(Player p, String miniMessage) {
+    long teraz = System.currentTimeMillis();
+    OstatniPasek poprzedni = ostatniPasek.get(p.getUniqueId());
+    if (poprzedni != null && poprzedni.tekst().equals(miniMessage) && teraz - poprzedni.czas() < 2000) return;
+    ostatniPasek.put(p.getUniqueId(), new OstatniPasek(miniMessage, teraz));
     Component k = mm(miniMessage);
-    if (!mmocore.pasek(p, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(k))) p.sendActionBar(k);
+    int priorytet = miniMessage.startsWith("<red>") || miniMessage.startsWith("<dark_red>") ? 40 : 30;
+    if (!mmocore.pasek(p, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(k), priorytet)) p.sendActionBar(k);
   }
 
   public ProfilDane dane(Player p) { return dane.dane(p.getUniqueId()); }

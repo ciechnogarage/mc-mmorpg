@@ -2,6 +2,7 @@ package pl.mcmmorpg.chowance.integracja;
 
 import java.util.List;
 import java.util.Map;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -69,6 +70,7 @@ public final class Placeholdery extends PlaceholderExpansion {
     switch (k) {
       case "klawisze": return st.klawisze.isEmpty() ? "nie" : "tak";
       case "naglowek": return st.naglowek;
+      case "pozostalo_tury": return st.pozostaloTury;
       case "kto": return st.kto;
       case "on_nazwa": return st.onNazwa;
       case "on_opis": return st.onOpis;
@@ -97,6 +99,12 @@ public final class Placeholdery extends PlaceholderExpansion {
     if (k.equals("turniej_stan")) return turnieje.stan();
     if (!(op instanceof Player p) || !p.isOnline()) return "";
     if (k.startsWith("walka_")) return walka(p, k.substring(6));
+    if (k.equals("pozostalo_tury")) return walka(p, k);
+    if (k.equals("ma_zadanie_mmocore")) {
+      String nazwa = PlaceholderAPI.setPlaceholders(p, "%mmocore_quest%");
+      return nazwa != null && !nazwa.isBlank() && !nazwa.equalsIgnoreCase("None")
+          && !nazwa.equals("%mmocore_quest%") ? "tak" : "nie";
+    }
     ProfilDane d = c.dane(p);
     if (d == null) return k.endsWith("_istnieje") || k.equals("starter_wybrany") ? "nie" : "";
     switch (k) {

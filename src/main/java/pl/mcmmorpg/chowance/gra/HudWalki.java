@@ -29,7 +29,7 @@ public final class HudWalki {
 
   /** Co widzi gracz — czytane przez placeholdery (MythicHUD odświeża co 5 ticków). */
   public static final class Stan {
-    public volatile String onNazwa = "", onOpis = "", jaNazwa = "", jaOpis = "", naglowek = "", kto = "";
+    public volatile String onNazwa = "", onOpis = "", jaNazwa = "", jaOpis = "", naglowek = "", kto = "", pozostaloTury = "";
     public volatile double onHp, jaHp;
     public volatile int onMax = 1, jaMax = 1;
     public volatile List<String> klawisze = List.of();
