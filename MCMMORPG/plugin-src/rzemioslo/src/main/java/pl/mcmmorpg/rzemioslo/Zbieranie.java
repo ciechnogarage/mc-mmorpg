@@ -200,6 +200,8 @@ final class Zbieranie implements Listener {
             return;
         }
         s.t++;
+        // inne pluginy odswiezaja trzymany slot kilka razy na sekunde (zmierzone) — ponawiamy narzedzie co tick
+        wyslijNarzedzie(p, s.narz.item());
         float postep = Math.min(1f, s.t / (float) s.ticki);
         if (s.t % plugin.dane().machniecieCo == 1) {
             p.swingMainHand();
@@ -288,6 +290,13 @@ final class Zbieranie implements Listener {
 
     // ================================================================ narzedzie w dloni (tylko pakiety)
     private void pokazNarzedzie(Player p, ItemStack narz) {
+        wyslijNarzedzie(p, narz);
+        for (Player o : p.getWorld().getPlayers()) {
+            if (o != p && o.canSee(p) && o.getLocation().distanceSquared(p.getLocation()) < 4096) o.sendEquipmentChange(p, EquipmentSlot.HAND, narz);
+        }
+    }
+
+    private void wyslijNarzedzie(Player p, ItemStack narz) {
         try {
             // 1.21.2+: wlasny ekwipunek klient aktualizuje pakietem set_player_inventory (indeks slotu gracza 0-40)
             var stack = SpigotConversionUtil.fromBukkitItemStack(narz);
@@ -295,9 +304,6 @@ final class Zbieranie implements Listener {
                     new com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPlayerInventory(p.getInventory().getHeldItemSlot(), stack));
         } catch (Throwable t) {
             plugin.getLogger().warning("Nie udalo sie pokazac narzedzia w dloni: " + t);
-        }
-        for (Player o : p.getWorld().getPlayers()) {
-            if (o != p && o.canSee(p) && o.getLocation().distanceSquared(p.getLocation()) < 4096) o.sendEquipmentChange(p, EquipmentSlot.HAND, narz);
         }
     }
 

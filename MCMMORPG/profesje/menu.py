@@ -104,9 +104,10 @@ class Menu:
                                   'view_requirement': {'requirements': {'poziom': {
                                       'type': '>=', 'input': f'%mmocore_profession_{p}%', 'output': str(start)}}},
                                   'left_click_commands': [f'[console] mi stations open {st} %player_name%']}
-            items[f'tier_{t}_zamk'] = {'material': 'nexo-mmo_icon_blank', 'slot': GNIAZDA[t - 1], 'priority': 2,
-                                       'display_name': f'&8Warsztat {MISTRZ_PL[p]} {T.ROMAN[t]}',
-                                       'lore': [f'&cOd poziomu {start}', f'&7Kraina: &f{T.KRAINY[t][0]}']}
+            # zablokowany tier pokazuje ikone swojego materialu (zapowiedz krainy), nie pusta kratke
+            items[f'tier_{t}_zamk'] = {'material': ikona, 'slot': GNIAZDA[t - 1], 'priority': 2,
+                                       'display_name': f'&8✖ Warsztat {MISTRZ_PL[p]} {T.ROMAN[t]}',
+                                       'lore': [f'&cOd poziomu {start}', f'&7Kraina: &f{T.KRAINY[t][0]}', f'&7Receptur: &f{len(rec)}']}
         items['zlecenia'] = {'material': 'WRITABLE_BOOK', 'slot': GNIAZDA[10], 'display_name': '&e&lZlecenia dnia',
                              'lore': ['&7Trzy zlecenia z twojego tieru.', '&7Nagroda: XP profesji i pieniądze.'],
                              'left_click_commands': [f'[openguimenu] zlecenia_{p}']}
