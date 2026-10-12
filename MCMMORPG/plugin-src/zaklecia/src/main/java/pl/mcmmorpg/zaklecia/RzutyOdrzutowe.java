@@ -215,12 +215,14 @@ final class RzutyOdrzutowe {
 
   private void runy() {
     if (czas % 4 != 0) return;
-    for (Iterator<Map.Entry<UUID, Deque<Runa>>> i = runy.entrySet().iterator(); i.hasNext();) {
-      var e = i.next(); Player p = Bukkit.getPlayer(e.getKey());
-      for (Iterator<Runa> j = e.getValue().iterator(); j.hasNext();) {
-        Runa r = j.next();
+    for (UUID u : java.util.List.copyOf(runy.keySet())) {
+      Deque<Runa> lista = runy.get(u);
+      if (lista == null) continue;
+      Player p = Bukkit.getPlayer(u);
+      for (Runa r : java.util.List.copyOf(lista)) {
+        if (!lista.contains(r)) continue;
         if (p == null || !p.isOnline() || czas >= r.wygasa || !r.znacznik.isValid()) {
-          r.znacznik.remove(); j.remove(); continue;
+          r.znacznik.remove(); lista.remove(r); continue;
         }
         Location at = r.znacznik.getLocation();
         skille.punkt(p, "Zak_" + Character.toUpperCase(r.zaklecie.id().charAt(0)) +
@@ -230,10 +232,10 @@ final class RzutyOdrzutowe {
         if (cel) {
           skille.punkt(p, "Zak_" + Character.toUpperCase(r.zaklecie.id().charAt(0)) +
               r.zaklecie.id().substring(1) + (r.obie ? "_Wybuch_Obie" : "_Wybuch"), at);
-          r.znacznik.remove(); j.remove();
+          r.znacznik.remove(); lista.remove(r);
         }
       }
-      if (e.getValue().isEmpty()) i.remove();
+      if (lista.isEmpty()) runy.remove(u, lista);
     }
   }
 }

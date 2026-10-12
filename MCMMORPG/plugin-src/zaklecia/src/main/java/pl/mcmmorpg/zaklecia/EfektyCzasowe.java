@@ -313,18 +313,20 @@ final class EfektyCzasowe implements Listener {
         if (b != null && (tick >= b.koniec() || p.isDead())) zdejmij(p, prawa);
       }
     }
-    for (var it = sludzy.entrySet().iterator(); it.hasNext();) {
-      var wpis = it.next(); Player p = Bukkit.getPlayer(wpis.getKey());
-      for (var j = wpis.getValue().iterator(); j.hasNext();) {
-        Sluga s = j.next();
+    for (UUID u : List.copyOf(sludzy.keySet())) {
+      Deque<Sluga> lista = sludzy.get(u);
+      if (lista == null) continue;
+      Player p = Bukkit.getPlayer(u);
+      for (Sluga s : List.copyOf(lista)) {
+        if (!lista.contains(s)) continue;
         if (p == null || !p.isOnline() || p.isDead() || tick >= s.koniec() || !s.byt().isValid()
-            || s.byt().getWorld() != p.getWorld()) { usun(s.byt()); j.remove(); }
+            || s.byt().getWorld() != p.getWorld()) { usun(s.byt()); lista.remove(s); }
         else if (s.byt() instanceof Mob m) {
           aktualizujCel(m);
           strzelec(m, s.zaklecie());
         }
       }
-      if (wpis.getValue().isEmpty()) it.remove();
+      if (lista.isEmpty()) sludzy.remove(u, lista);
     }
     for (var it = spokoj.entrySet().iterator(); it.hasNext();) {
       var wpis = it.next();
