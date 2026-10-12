@@ -93,6 +93,60 @@ panel-dolny:
 podstrony:
   wstecz-nazwa: '&eWróć do menu'
   wstecz-lore: ['&7Wróć do poprzedniej strony.']
+  # Glif tytulu -> identyfikator strony: historia przycisku Wroc i wylaczenie stacji
+  # MMOItems (profession-*), ktore musza widziec prawdziwy ekwipunek gracza.
+  identyfikatory:
+    "䅨": hub_glowne
+    "䅬": portal
+    "䨀": hub_postac
+    "䨄": hub_umiejetnosci
+    "䨈": hub_ekonomia
+    "䨌": hub_spolecznosc
+    "䨐": hub_ustawienia
+    "䨔": hub_pomoc
+    "䨘": stolica_podroze
+    "䩀": wiara
+    "䩄": ksiega_zaklec
+    "䩈": profession_main
+    "䬀": dziennik_przygod
+    "䬄": poczta
+    "䪀": player-stats
+    "䪄": attribute-view
+    "䪈": skill-list
+    "䪌": quest-list
+    "䪐": party-creation
+    "䪔": party-view
+    "䪘": friend-list
+    "䪜": friend-removal
+    "䪠": guild-creation
+    "䪤": guild-view
+    "䫀": chowance_menazeria
+    "䫄": chowance_hodowla
+    "䫈": chowance_lochy
+    "䫌": chowance_ranking
+    "䫐": chowance_magazyn
+    "䫔": chowance_bestiariusz
+    "䩠": sklep
+    "䩤": sklep_ilosc
+    "䩨": skup
+    "䩬": skup_ilosc
+    "䩰": rynek
+    "䩴": moje_oferty
+    "䩸": kupno
+    "䬐": profession-alchemy
+    "䬔": profession-building
+    "䬘": profession-cooking
+    "䬜": profession-enchanting
+    "䬠": profession-farming
+    "䬤": profession-fishing
+    "䬨": profession-herbalism
+    "䬬": profession-hunting
+    "䬰": profession-jewelcrafting
+    "䬴": profession-mining
+    "䬸": profession-smithing
+    "䬼": profession-tailoring
+    "䭀": profession-woodworking
+    "䭄": chowance
   # Klucz to pierwszy glif tytulu podstrony; wartosc to menu otwierane po kliknieciu 3-5.
   strony:
     "䨀": hub_glowne # hub_postac
@@ -137,8 +191,10 @@ typy-broni:
   - GREATBOW
   - LANCE
 # Reguly rak (12.10): dwurecznosc z typu (flaga MMOItems TWO_HANDED jest niespojna) + przedmioty tylko do lewej.
-typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAMMER, HALBERD, LANCE, KOSA, GREATSTAFF]
-typy-tylko-lewa: [SHIELD, OFF_CATALYST]
+typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAMMER, HALBERD, LANCE, KOSA, GREATSTAFF, STAFF, SPEAR]
+typy-tylko-lewa: [OFF_CATALYST]
+# tarcza: w obu rekach (Nosiciel Relikwii ma ja jako bron startowa), nigdy dwureczna mimo flagi przedmiotu
+typy-zawsze-jednoreczne: [SHIELD]
 typy-mikstur-i-uzytkowych:
   - CONSUMABLE
 staty-mikstur:

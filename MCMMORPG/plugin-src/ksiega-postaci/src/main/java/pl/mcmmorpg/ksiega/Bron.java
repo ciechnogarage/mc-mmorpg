@@ -130,10 +130,12 @@ final class Bron implements Listener {
   }
 
   // Reguly rak (12.10, test macierzy w grze): flaga TWO_HANDED jest niespojna w MMOItems (luki 0/11, kusze 0/8,
-  // wielki topor 0/1, tarcza 1/11), wiec dwurecznosc liczy sie tez z typu; tarcza/OFF_CATALYST tylko w lewej.
+  // wielki topor 0/1, tarcza 1/11), wiec dwurecznosc liczy sie tez z typu. OFF_CATALYST tylko w lewej (MMOItems: staty
+  // tylko z off-handu). Tarcza w OBU rekach - Nosiciel Relikwii ma tarcze jako bron startowa - ale nigdy dwureczna.
   private static final List<String> DOMYSLNE_DWURECZNE = List.of("BOW", "CROSSBOW", "MUSKET", "GREATBOW",
-      "GREATSWORD", "GREATAXE", "GREATHAMMER", "HALBERD", "LANCE", "KOSA", "GREATSTAFF");
-  private static final List<String> DOMYSLNE_TYLKO_LEWA = List.of("SHIELD", "OFF_CATALYST");
+      "GREATSWORD", "GREATAXE", "GREATHAMMER", "HALBERD", "LANCE", "KOSA", "GREATSTAFF", "STAFF", "SPEAR");
+  private static final List<String> DOMYSLNE_TYLKO_LEWA = List.of("OFF_CATALYST");
+  private static final List<String> DOMYSLNE_ZAWSZE_JEDNORECZNE = List.of("SHIELD");
 
   private List<String> typy(String sciezka, List<String> domyslne) {
     return plugin.getConfig().isList(sciezka) ? plugin.getConfig().getStringList(sciezka) : domyslne;
@@ -147,6 +149,7 @@ final class Bron implements Listener {
   private boolean twoHanded(ItemStack item) {
     if (Przedmioty.empty(item) || leftOnly(item)) return false;
     String type = Przedmioty.type(item);
+    if (type != null && typy("typy-zawsze-jednoreczne", DOMYSLNE_ZAWSZE_JEDNORECZNE).contains(type)) return false;
     if (type != null && typy("typy-dwureczne", DOMYSLNE_DWURECZNE).contains(type)) return true;
     NBTItem nbt = NBTItem.get(item);
     return nbt.getBoolean("TWO_HANDED") || nbt.getBoolean("MMOITEMS_TWO_HANDED")
@@ -354,9 +357,16 @@ final class Bron implements Listener {
       if (Przedmioty.empty(item) || spell(item)) continue;
       boolean right = slot == RIGHT || slot == RIGHT_SPARE;
       if (right ? rightAllowed(item) : leftAllowed(item)) continue;
+      // przelozenie do drugiej reki tego samego zestawu, gdy jest pusta (np. kit startowy wlozyl bron nie tam)
+      int druga = slot == RIGHT ? LEFT : slot == LEFT ? RIGHT : slot == RIGHT_SPARE ? LEFT_SPARE : RIGHT_SPARE;
       inventory.setItem(slot, null);
-      Migracja.give(player, item);
-      plugin.message(player, right ? "tylko-lewa" : "dwureczna-do-prawej");
+      if (Przedmioty.empty(real(inventory, druga)) && (right ? leftAllowed(item) : rightAllowed(item))
+          && !(right && twoHanded(real(inventory, druga == LEFT ? RIGHT : RIGHT_SPARE)))) {
+        inventory.setItem(druga, item);
+      } else {
+        Migracja.give(player, item);
+        plugin.message(player, right ? "tylko-lewa" : "dwureczna-do-prawej");
+      }
     }
     if (twoHanded(inventory.getItem(RIGHT)) && !Przedmioty.empty(inventory.getItemInOffHand())
         && !spell(inventory.getItemInOffHand())) {

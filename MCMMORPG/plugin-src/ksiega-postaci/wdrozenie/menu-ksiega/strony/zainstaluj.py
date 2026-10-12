@@ -49,6 +49,13 @@ def powroty(grupa, out):
     return wynik
 
 
+def _przed_strony(tekst):
+    """Poczatek sekcji podstrony.strony razem z jej komentarzem (koniec sekcji identyfikatory)."""
+    i = tekst.index('\n  strony:\n') + 1
+    j = tekst.rfind('\n', 0, i - 1) + 1
+    return j if tekst[j:i].lstrip().startswith('#') else i
+
+
 def dopisz_powroty(plugins, wpisy):
     cfg = plugins / 'KsiegaPostaci/config.yml'
     tekst = cfg.read_text(encoding='utf-8')
@@ -57,14 +64,29 @@ def dopisz_powroty(plugins, wpisy):
                 "  # Klucz to pierwszy glif tytulu podstrony; wartosc to menu otwierane po kliknieciu 3-5.\n  strony:\n")
         i = tekst.index('typy-broni:')
         tekst = tekst[:i] + blok + tekst[i:]
+    if '\n  identyfikatory:\n' not in tekst:
+        # Glif -> id strony: historia przycisku Wroc i pominiecie stacji MMOItems (profession-*).
+        i = _przed_strony(tekst)
+        tekst = tekst[:i] + '  identyfikatory:\n    "\u4168": hub_glowne\n    "\u416c": portal\n' + tekst[i:]
     for kod, menu, opis in wpisy:
         znak = chr(kod)
+        wzor = re.compile(rf'    "{re.escape(znak)}":[^\n]*\n')
+        # strony i identyfikatory maja te same klucze — kazda linia podmieniana tylko w swojej sekcji.
         linia = f'    "{znak}": {menu} # {opis}\n'
-        if f'"{znak}":' in tekst:
-            tekst = re.sub(rf'    "{znak}":[^\n]*\n', linia, tekst)
+        m = wzor.search(tekst, tekst.index('\n  strony:\n'))
+        if m and m.start() < tekst.index('typy-broni:'):
+            tekst = tekst[:m.start()] + linia + tekst[m.end():]
         else:
             i = tekst.index('typy-broni:')
             tekst = tekst[:i] + linia + tekst[i:]
+        if opis:
+            linia_id = f'    "{znak}": {opis}\n'
+            m = wzor.search(tekst, tekst.index('\n  identyfikatory:\n'), _przed_strony(tekst))
+            if m:
+                tekst = tekst[:m.start()] + linia_id + tekst[m.end():]
+            else:
+                i = _przed_strony(tekst)
+                tekst = tekst[:i] + linia_id + tekst[i:]
     cfg.write_text(tekst, encoding='utf-8')
 
 
