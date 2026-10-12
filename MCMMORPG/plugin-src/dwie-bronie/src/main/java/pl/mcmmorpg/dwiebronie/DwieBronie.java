@@ -9,7 +9,9 @@ import io.papermc.paper.datacomponent.item.UseEffects;
 import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Map;
 import java.util.UUID;
 import net.Indyuce.mmocore.api.event.PlayerResourceUpdateEvent;
@@ -17,6 +19,7 @@ import net.Indyuce.mmoitems.api.player.PlayerData;
 import net.kyori.adventure.key.Key;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -37,7 +40,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
@@ -75,10 +85,13 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     double wymuszonaSkala;      // >0 = najblizszy cios idzie lewa z ta skala (PPM)
     int lewaTick = -1000;
     int brakStaminyTick = -1000;
+    int wymaganiaTick = -1000;
+    UUID trafiony; int trafionyTick = -1000;
   }
 
   private final Map<UUID, Stan> stany = new HashMap<>();
   private final Map<UUID, Cios> ciosyLewa = new HashMap<>();
+  private final Set<String> typyBroni = new java.util.HashSet<>();
   private NamespacedKey kluczUzbrojenia;
   private NamespacedKey kluczPremii;
   private boolean mmocore;
@@ -86,6 +99,7 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   @Override
   public void onEnable() {
     saveDefaultConfig();
+    getConfig().getStringList("typy-broni").forEach(t -> typyBroni.add(t.toUpperCase(java.util.Locale.ROOT)));
     kluczUzbrojenia = new NamespacedKey(this, "ppm");
     kluczPremii = new NamespacedKey(this, "premia_szybkosci");
     mmocore = getServer().getPluginManager().isPluginEnabled("MMOCore");
@@ -102,22 +116,43 @@ public final class DwieBronie extends JavaPlugin implements Listener {
 
   private void dbg(String s) { if (getConfig().getBoolean("debug", false)) getLogger().info("DBDBG " + s); }
 
-  static double obrazenia(ItemStack item) {
-    if (item == null || item.getType().isAir()) return 0;
+  // Przedmioty z wlasnym uzyciem w vanilli (strzal, rzut, blok) - consumable zabralby im PPM, a puszczenie
+  // naciagu luku odpalaloby mocny cios lewa (zmierzone 12.10: strzal z luku w lewej zjadal 25% staminy).
+  private static final Set<Material> Z_WLASNYM_UZYCIEM = EnumSet.of(Material.BOW, Material.CROSSBOW, Material.TRIDENT,
+      Material.SHIELD);
+
+  /** ATTACK_DAMAGE jednorecznej broni do walki wrecz z listy `typy-broni`; 0 dla wszystkiego innego. */
+  double obrazenia(ItemStack item) {
+    if (item == null || item.getType().isAir() || Z_WLASNYM_UZYCIEM.contains(item.getType())) return 0;
     NBTItem nbt = NBTItem.get(item);
     String typ = nbt.getString("MMOITEMS_ITEM_TYPE");
-    if (typ == null || typ.isEmpty()) return 0;
+    if (typ == null || typ.isEmpty() || !typyBroni.contains(typ.toUpperCase(java.util.Locale.ROOT))) return 0;
     return nbt.getStat("ATTACK_DAMAGE");
   }
 
   // Lewa liczy sie tylko, gdy postac spelnia jej wymagania (poziom, klasa, bieglosc) - inaczej nowa
   // postac bilaby co drugi cios bronia z wysokiego poziomu trzymana w off-handzie.
-  @SuppressWarnings("deprecation")
   private boolean dwieBronie(Player p) {
-    ItemStack lewa = p.getInventory().getItemInOffHand();
-    if (obrazenia(p.getInventory().getItemInMainHand()) <= 0 || obrazenia(lewa) <= 0) return false;
+    return obrazenia(p.getInventory().getItemInMainHand()) > 0 && obrazenia(p.getInventory().getItemInOffHand()) > 0
+        && lewaDozwolona(p);
+  }
+
+  @SuppressWarnings("deprecation")
+  private boolean lewaDozwolona(Player p) {
     PlayerData data = PlayerData.has(p) ? PlayerData.get(p) : null;
-    return data != null && data.getRPG().canUse(NBTItem.get(lewa), false);
+    return data != null && data.getRPG().canUse(NBTItem.get(p.getInventory().getItemInOffHand()), false);
+  }
+
+  // Prawa bron z wlasna umiejetnoscia pod PPM (MMOItems ability mode RIGHT_CLICK) zachowuje PPM dla siebie -
+  // inaczej jeden klik odpalalby i umiejetnosc, i cios lewa.
+  static boolean maUmiejetnoscPpm(ItemStack item) {
+    if (item == null || item.getType().isAir()) return false;
+    String ab = NBTItem.get(item).getString("MMOITEMS_ABILITY");
+    return ab != null && ab.contains("RIGHT_CLICK");
+  }
+
+  private boolean ppmLewa(Player p) {
+    return dwieBronie(p) && !maUmiejetnoscPpm(p.getInventory().getItemInMainHand());
   }
 
   private double skala(Player p) {
@@ -173,15 +208,17 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   /** Co 5 tickow: lewa uzbrojona tylko przy dwoch broniach; bron poza off-handem nigdy nie ma consumable. */
   private void odswiez(Player p) {
     PlayerInventory inv = p.getInventory();
-    boolean dwie = dwieBronie(p);
+    boolean dwie = dwieBronie(p), ppm = dwie && !maUmiejetnoscPpm(inv.getItemInMainHand());
     for (int i = 0; i < 36; i++) {
       ItemStack it = inv.getItem(i);
       if (rozbrojony(it) != null) inv.setItem(i, it);
     }
+    ItemStack kursor = p.getItemOnCursor();
+    if (rozbrojony(kursor) != null) p.setItemOnCursor(kursor);
     ItemStack lewa = inv.getItemInOffHand();
     if (!p.isHandRaised()) {
-      if (dwie && !uzbrojona(lewa)) { uzbroj(lewa); inv.setItemInOffHand(lewa); }
-      else if (!dwie && rozbrojony(lewa) != null) inv.setItemInOffHand(lewa);
+      if (ppm && !uzbrojona(lewa)) { uzbroj(lewa); inv.setItemInOffHand(lewa); }
+      else if (!ppm && rozbrojony(lewa) != null) inv.setItemInOffHand(lewa);
     }
     AttributeInstance a = p.getAttribute(Attribute.ATTACK_SPEED);
     double premia = getConfig().getDouble("premia-szybkosci-ataku", 0.33);
@@ -225,6 +262,9 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     double przed = e.getDamage();
     e.setDamage(przed * c.skala());
     ciosyLewa.remove(p.getUniqueId());
+    Stan s = stany.computeIfAbsent(p.getUniqueId(), k -> new Stan());
+    s.trafiony = e.getEntity().getUniqueId();
+    s.trafionyTick = tick();
     dbg(p.getName() + " obrazenia lewej " + String.format("%.2f -> %.2f", przed, e.getDamage()));
   }
 
@@ -258,7 +298,7 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.HIGH)
   public void puszczenie(PlayerStopUsingItemEvent e) {
     Player p = e.getPlayer();
-    if (!uzbrojona(e.getItem()) || !dwieBronie(p)) return;
+    if (!uzbrojona(e.getItem()) || !ppmLewa(p)) return;
     int ticki = e.getTicksHeldFor();
     int prog = getConfig().getInt("mocny.prog-ticki", 6), pelne = getConfig().getInt("mocny.pelne-ticki", 12);
     String wariant = ticki < prog ? "stukniecie" : ticki < pelne ? "przerwany" : p.isSneaking() ? "podwojny" : "mocny";
@@ -288,7 +328,10 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     s.wymuszonaSkala = mnoznik;
     p.attack(cel);
     s.wymuszonaSkala = 0;
-    if (cel instanceof LivingEntity z && (wariant.equals("mocny") || wariant.equals("podwojny"))) efektMocnego(p, z, wariant);
+    // efekty tylko po prawdziwym trafieniu - nie przy obrazeniach anulowanych przez ochrone (PvP w Stolicy, NPC)
+    boolean trafil = cel.getUniqueId().equals(s.trafiony) && s.trafionyTick == tick();
+    dbg(p.getName() + " PPM trafil=" + trafil);
+    if (trafil && cel instanceof LivingEntity z && (wariant.equals("mocny") || wariant.equals("podwojny"))) efektMocnego(p, z, wariant);
   }
 
   /** Kierunek z klawiszy ruchu w chwili puszczenia PPM (jak w Skyrimie: przod > tyl > bok). */
@@ -323,6 +366,17 @@ public final class DwieBronie extends JavaPlugin implements Listener {
         kierunek.equals("przod") ? 0L : 2L);
   }
 
+  /** Bron w lewej, ale postac nie spelnia jej wymagan: PPM nic nie robi - powiedz dlaczego (raz na 10 s). */
+  private void informujOWymaganiach(Player p) {
+    if (obrazenia(p.getInventory().getItemInMainHand()) <= 0 || obrazenia(p.getInventory().getItemInOffHand()) <= 0
+        || lewaDozwolona(p)) return;
+    Stan s = stany.computeIfAbsent(p.getUniqueId(), k -> new Stan());
+    if (tick() - s.wymaganiaTick < 200) return;
+    s.wymaganiaTick = tick();
+    MMOPlayerData.get(p).getActionBar().show(40, 60L,
+        "§x§F§2§F§2§E§DLewa broń nie działa §7- §x§E§8§7§9§7§3nie spełniasz jej wymagań");
+  }
+
   private boolean stamina(Player p, double procent) {
     if (!mmocore || procent <= 0) return true;
     double maks = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA"));
@@ -347,7 +401,10 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   private void efektMocnego(Player p, LivingEntity cel, String wariant) {
     cel.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 2, false, true, true));
     Vector od = cel.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
-    if (od.lengthSquared() > 1e-4) cel.setVelocity(cel.getVelocity().add(od.normalize().multiply(0.35).setY(0.1)));
+    AttributeInstance kb = cel.getAttribute(Attribute.KNOCKBACK_RESISTANCE);
+    double odpornosc = kb == null ? 0 : Math.max(0, Math.min(1, kb.getValue()));
+    if (od.lengthSquared() > 1e-4 && odpornosc < 1)
+      cel.setVelocity(cel.getVelocity().add(od.normalize().multiply(0.35 * (1 - odpornosc)).setY(0.1 * (1 - odpornosc))));
     boolean podwojny = wariant.equals("podwojny");
     for (int i = 0; i < (podwojny ? 3 : 1); i++) {
       getServer().getScheduler().runTaskLater(this, () -> {
@@ -385,7 +442,8 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     if (e.getHand() != EquipmentSlot.HAND) return;
     if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
     Player p = e.getPlayer();
-    if (uzbrojona(p.getInventory().getItemInOffHand()) || !dwieBronie(p)) return;
+    if (uzbrojona(p.getInventory().getItemInOffHand())) return;
+    if (!ppmLewa(p)) { informujOWymaganiach(p); return; }
     if (p.getAttackCooldown() < (float) getConfig().getDouble("min-naladowanie-ppm", 0.9)) return;
     Entity cel = cel(p, null);
     p.swingOffHand();
@@ -395,6 +453,36 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     p.attack(cel);
     s.wymuszonaSkala = 0;
   }
+
+  // Uzbrojona bron poza off-handem nie moze wyjsc ze swiata gracza z consumable: wyrzucenie, skrzynia, zmiana slotu.
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void wyrzucenie(PlayerDropItemEvent e) {
+    ItemStack it = e.getItemDrop().getItemStack();
+    if (rozbrojony(it) != null) e.getItemDrop().setItemStack(it);
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void zamkniecie(InventoryCloseEvent e) {
+    Inventory gora = e.getView().getTopInventory();
+    if (gora.getType() == InventoryType.CRAFTING || gora.getHolder() instanceof Player) return;
+    for (int i = 0; i < gora.getSize(); i++) {
+      ItemStack it = gora.getItem(i);
+      if (rozbrojony(it) != null) gora.setItem(i, it);
+    }
+  }
+
+  private void odswiezZaraz(Player p) {
+    getServer().getScheduler().runTask(this, () -> { if (p.isOnline()) odswiez(p); });
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void slot(PlayerItemHeldEvent e) { odswiezZaraz(e.getPlayer()); }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void zamiana(PlayerSwapHandItemsEvent e) { odswiezZaraz(e.getPlayer()); }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void klik(InventoryClickEvent e) { if (e.getWhoClicked() instanceof Player p) odswiezZaraz(p); }
 
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) {

@@ -1,3 +1,6 @@
+# Typy MMOItems liczone jako bron do walki dwiema bronia (jednoreczne, wrecz). Luki, kusze, wlocznie (TRIDENT),
+# tarcze, katalizatory, kostury i rozdzki - NIE: maja wlasne uzycie PPM albo nie sa bronia wrecz.
+typy-broni: [SWORD, LONG_SWORD, KATANA, AXE, DAGGER, THRUSTING_SWORD, WHIP, HAMMER, SIERP, GAUNTLET]
 # Cios po ciosie w tym oknie (ticki) = seria naprzemienna; dluzsza przerwa = znow od prawej.
 okno-serii-tickow: 40
 # PPM bije lewa dopiero przy takim naladowaniu ataku (0-1), zeby PPM nie byl spamem.

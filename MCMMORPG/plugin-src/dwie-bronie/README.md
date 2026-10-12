@@ -26,3 +26,13 @@ wiec kierunki testuje sie prawdziwym klientem (eval-kierunki-bot.js mierzy tylko
 
 Build `./build.sh`; testy `eval-dwie2.js` (v2, 9 przypadkow) i `eval-dwie.js` (v1 - jego PPM uzywa glownej
 reki, w v2 nieaktualny); wdrozenie `./wdroz.sh` + restart world1.
+
+## Przeglad bledow 12.10 (eval-bledy, eval-bledy2, eval-wycieki - razem z eval-dwie2 26/26)
+- NAPRAWIONE: luk/kusza/wlocznia/tarcza/kostur w lewej liczone jako bron - luk dostawal consumable, kazdy strzal
+  odpalal "mocny cios" (25% staminy, cios wrecz lukiem); teraz tylko `typy-broni` + wykluczone BOW/CROSSBOW/TRIDENT/SHIELD.
+- NAPRAWIONE: zachwianie/spowolnienie po mocnym ciosie takze gdy ochrona anulowala obrazenia (PvP w Stolicy, nietykalni).
+- NAPRAWIONE: odrzut ignorowal knockback_resistance (bossy przesuwane) - teraz x(1 - odpornosc).
+- NAPRAWIONE: prawa z umiejetnoscia PPM (np. LONG_SWORD FIREBOLT) - lewa nie jest uzbrajana, PPM zostaje umiejetnosci.
+- NAPRAWIONE: lewa ponad wymagania - komunikat "Lewa bron nie dziala" przy PPM (raz na 10 s).
+- NAPRAWIONE: uzbrojona bron poza off-handem - kursor/skrzynia/wyrzucenie zdejmuja consumable; odswiezenie w nastepnym ticku.
+- SPRAWDZONE OK: PPM na NPC (Przewodniczka) otwiera menu, bez ciosu; odrzut mocnego = mocny AnimacjeBroni (4,1 bl.).
