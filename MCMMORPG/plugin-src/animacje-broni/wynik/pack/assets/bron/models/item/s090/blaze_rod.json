@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/blaze_rod",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    55
+   ],
+   "translation": [
+    0.0,
+    3.231,
+    0.636
+   ],
+   "scale": [
+    0.765,
+    0.765,
+    0.765
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -55
+   ],
+   "translation": [
+    -0.0,
+    3.231,
+    0.636
+   ],
+   "scale": [
+    0.765,
+    0.765,
+    0.765
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    25
+   ],
+   "translation": [
+    1.13,
+    2.906,
+    1.023
+   ],
+   "scale": [
+    0.646,
+    0.646,
+    0.646
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -25
+   ],
+   "translation": [
+    1.13,
+    2.906,
+    1.023
+   ],
+   "scale": [
+    0.646,
+    0.646,
+    0.646
+   ]
+  }
+ }
+}
