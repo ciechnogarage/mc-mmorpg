@@ -586,11 +586,16 @@ class Generator:
         wyj = {}
         for iid, c in self.m.ceny.items():
             it = self.m.items[iid]
-            st = next((r['st'] for r in self.m.rec if r['out'] == iid), None)
-            droga = (st or ('profesja-' + (it['prof'] or 'lochy'))) + f": {it['kind']} T{it['tier']}"
+            if it['kind'] == 'sprzet':
+                continue  # sprzet z warsztatu = system v2 (rozbiorka), nie skup
+            # pierwsze slowo drogi = id profesji (tools/handel/generuj.py: zakladka skupu); rzadkie z lochow -> Klejnoty
+            droga = f"{it['prof'] or 'jewelcrafting'} T{it['tier']}: {it['kind']}"
             wyj[iid] = {'id': iid, 'typ': it['typ'], 'nazwa': it['nazwa'], 'wartosc': c['wartosc'], 'skup': c['skup'],
-                        'k': T.SKUP, 'droga': droga, 'kind': it['kind'], 'tier': it['tier']}
+                        'k': T.SKUP, 'droga': droga, 'kind': it['kind'], 'tier': it['tier'],
+                        # NPC skupuje surowce, polprodukty i lup z lochow; gotowe wyroby ida na rynek graczy i do zlecen
+                        'do_skupu': it['kind'] in ('surowiec', 'polprodukt', 'rzadki')}
         pisz(os.path.join(self.a.handel, 'ceny_profesje.json'), json.dumps(wyj, ensure_ascii=False, indent=1) + '\n', self.raport)
+        pisz(os.path.join(self.a.handel, 'surowce_profesje.json'), json.dumps(sorted(self.m.surowce), indent=1) + '\n', self.raport)
 
     # ======================================================= KATALOG.md
     def katalog_md(self):
