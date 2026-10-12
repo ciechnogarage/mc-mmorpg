@@ -1,0 +1,145 @@
+# Chowańce: cztery ćwiartki Nexo na stronę.
+chowance_menazeria_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_menazeria_1
+  ascent: 13
+  height: 111
+  char: "䫀"
+chowance_menazeria_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_menazeria_2
+  ascent: 13
+  height: 111
+  char: "䫁"
+chowance_menazeria_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_menazeria_3
+  ascent: -98
+  height: 111
+  char: "䫂"
+chowance_menazeria_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_menazeria_4
+  ascent: -98
+  height: 111
+  char: "䫃"
+chowance_hodowla_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_hodowla_1
+  ascent: 13
+  height: 111
+  char: "䫄"
+chowance_hodowla_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_hodowla_2
+  ascent: 13
+  height: 111
+  char: "䫅"
+chowance_hodowla_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_hodowla_3
+  ascent: -98
+  height: 111
+  char: "䫆"
+chowance_hodowla_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_hodowla_4
+  ascent: -98
+  height: 111
+  char: "䫇"
+chowance_lochy_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_lochy_1
+  ascent: 13
+  height: 111
+  char: "䫈"
+chowance_lochy_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_lochy_2
+  ascent: 13
+  height: 111
+  char: "䫉"
+chowance_lochy_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_lochy_3
+  ascent: -98
+  height: 111
+  char: "䫊"
+chowance_lochy_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_lochy_4
+  ascent: -98
+  height: 111
+  char: "䫋"
+chowance_ranking_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_ranking_1
+  ascent: 13
+  height: 111
+  char: "䫌"
+chowance_ranking_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_ranking_2
+  ascent: 13
+  height: 111
+  char: "䫍"
+chowance_ranking_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_ranking_3
+  ascent: -98
+  height: 111
+  char: "䫎"
+chowance_ranking_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_ranking_4
+  ascent: -98
+  height: 111
+  char: "䫏"
+chowance_magazyn_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_magazyn_1
+  ascent: 13
+  height: 111
+  char: "䫐"
+chowance_magazyn_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_magazyn_2
+  ascent: 13
+  height: 111
+  char: "䫑"
+chowance_magazyn_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_magazyn_3
+  ascent: -98
+  height: 111
+  char: "䫒"
+chowance_magazyn_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_magazyn_4
+  ascent: -98
+  height: 111
+  char: "䫓"
+chowance_bestiariusz_1:
+  font: minecraft:default
+  texture: nexo:gui/chowance_bestiariusz_1
+  ascent: 13
+  height: 111
+  char: "䫔"
+chowance_bestiariusz_2:
+  font: minecraft:default
+  texture: nexo:gui/chowance_bestiariusz_2
+  ascent: 13
+  height: 111
+  char: "䫕"
+chowance_bestiariusz_3:
+  font: minecraft:default
+  texture: nexo:gui/chowance_bestiariusz_3
+  ascent: -98
+  height: 111
+  char: "䫖"
+chowance_bestiariusz_4:
+  font: minecraft:default
+  texture: nexo:gui/chowance_bestiariusz_4
+  ascent: -98
+  height: 111
+  char: "䫗"

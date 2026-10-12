@@ -1,0 +1,144 @@
+# Ikony kolorowe i szare sylwetki Portalu Q; źródło: Mapa/ikony.
+portal_wp_start:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/start
+
+portal_wp_start_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/start_locked
+
+portal_wp_szepczacy_gaj:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/szepczacy_gaj
+
+portal_wp_szepczacy_gaj_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/szepczacy_gaj_locked
+
+portal_wp_wilcze_ostepy:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/wilcze_ostepy
+
+portal_wp_wilcze_ostepy_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/wilcze_ostepy_locked
+
+portal_wp_swietlisty_gaszcz:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/swietlisty_gaszcz
+
+portal_wp_swietlisty_gaszcz_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/swietlisty_gaszcz_locked
+
+portal_wp_wietrzne_turnie:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/wietrzne_turnie
+
+portal_wp_wietrzne_turnie_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/wietrzne_turnie_locked
+
+portal_wp_perlowa_zatoka:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/perlowa_zatoka
+
+portal_wp_perlowa_zatoka_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/perlowa_zatoka_locked
+
+portal_wp_rdzawe_wawozy:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/rdzawe_wawozy
+
+portal_wp_rdzawe_wawozy_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/rdzawe_wawozy_locked
+
+portal_wp_wygasle_palenisko:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/wygasle_palenisko
+
+portal_wp_wygasle_palenisko_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/wygasle_palenisko_locked
+
+portal_wp_nexus:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/nexus
+
+portal_wp_nexus_locked:
+  itemname: '<gray>Punkt podróży'
+  material: PAPER
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/portal/nexus_locked
