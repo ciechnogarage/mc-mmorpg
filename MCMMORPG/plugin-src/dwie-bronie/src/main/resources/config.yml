@@ -1,0 +1,24 @@
+# Typy MMOItems liczone jako bron do walki dwiema bronia (jednoreczne, wrecz). Luki, kusze, wlocznie (TRIDENT),
+# tarcze, katalizatory, kostury i rozdzki - NIE: maja wlasne uzycie PPM albo nie sa bronia wrecz.
+typy-broni: [SWORD, LONG_SWORD, KATANA, AXE, DAGGER, THRUSTING_SWORD, WHIP, HAMMER, SIERP, GAUNTLET]
+# Cios po ciosie w tym oknie (ticki) = seria naprzemienna; dluzsza przerwa = znow od prawej.
+okno-serii-tickow: 40
+# PPM bije lewa dopiero przy takim naladowaniu ataku (0-1), zeby PPM nie byl spamem.
+min-naladowanie-ppm: 0.9
+# Skyrim: dwie bronie ~ +33% obrazen na sekunde. Mnoznik szybkosci ataku, 0 = wylaczone.
+premia-szybkosci-ataku: 0.33
+# Przytrzymany PPM: lewa reka w zamachu (animacja uzycia off-handu) i spowolnienie ruchu.
+poza-zamachu: TRIDENT
+spowolnienie-zamachu: 0.45
+mocny:
+  prog-ticki: 6        # krocej = stukniecie (zwykly cios lewa)
+  pelne-ticki: 12      # od tylu = mocny cios (dzwiek sygnalu)
+  mnoznik: 2.0         # Skyrim: mocny cios jedna bronia x2
+  koszt-staminy: 25    # % maks. staminy (Skyrim: ok. 40-60% przy 100 staminy; u nas regeneracja wolniejsza)
+  wypad: {zasieg: 1.5, min-dystans: 2.2, sila: 0.75}   # W + mocny: doskok i dalszy zasieg
+  odskok: {sila: 0.5}                                    # S + mocny: cios z odskokiem
+  unik: {sila: 0.5}                                      # A/D + mocny: cios z unikiem w bok
+podwojny:              # Shift + przytrzymany PPM
+  mnoznik: 1.5         # Skyrim: 3 ataki (2x lewa, 1x prawa) po x1,5
+  koszt-staminy: 40    # Skyrim: 3 ataki po 0,5 kosztu mocnego (~1,5x mocnego)
+debug: false
