@@ -116,4 +116,10 @@ def tekstura_bloku(nid, w, ik, model, katalog):
         im = Image.open(pliki[0]).convert('RGBA')
     if t > 1:
         ik.przebarw_kraina(im, t, 0.45)
+    # roslina w swiecie bez konturu ikony (vanilla rosliny go nie maja; z nim wygladala jak powiekszony przedmiot)
+    px = im.load()
+    for y in range(16):
+        for x in range(16):
+            if px[x, y][3] and px[x, y][:3] == OUT[:3]:
+                px[x, y] = (0, 0, 0, 0)
     return {f'{katalog}/{nid}.png': im}

@@ -388,7 +388,7 @@ class Generator:
                         'drop': {'silktouch': False, 'loots': []}}
                 nb += 1
                 if w['profesja'] == 'woodworking':
-                    mech['model'] = f'nexo:block/profesje_v2/{nid}'
+                    # bez mech['model']: Nexo uzywa modelu generowanego z Pack (sciezka do pliku = brak tekstury)
                     pack = {'parent_model': 'block/cube_column', 'textures': {
                         'end': f'nexo:block/profesje_v2/{nid}_top', 'side': f'nexo:block/profesje_v2/{nid}'}}
                 else:

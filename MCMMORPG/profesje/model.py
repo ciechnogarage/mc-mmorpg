@@ -126,7 +126,7 @@ class Model:
         return f'PROF_A{t}_{rodzaj.upper()}'
 
     def _rzadkie(self):
-        ks = {'pyl': 'enchant_dust', 'esencja': 'water_essence', 'serce': 'raw_gem'}
+        ks = {'pyl': 'enchant_dust', 'esencja': 'water_essence', 'serce': 'serce'}
         skad = {'pyl': 'wrogowie aktu', 'esencja': 'elity aktu', 'serce': 'bossowie aktu'}
         for t, nazwy in T.RZADKIE.items():
             for rodzaj, nazwa in zip(('pyl', 'esencja', 'serce'), nazwy):

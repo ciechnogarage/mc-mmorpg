@@ -4,7 +4,7 @@
 set -euo pipefail
 N=${1:-profesje}; D=/opt/docker/mc/klony/$N/data; R="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [[ -d "$D/plugins" ]] || { echo "brak klonu: /opt/docker/mc/narzedzia/klon.sh start $N"; exit 2; }
-/opt/docker/mc/narzedzia/klon.sh stop "$N"
+DZIALA=$(docker ps --format "{{.Names}}" | grep -cx "klon-$N" || true)   # restart wlasnego kontenera nie oddaje slotu klonu
 docker run --rm --name "profesje-gen-$$" --memory 768m -u "$(id -u):$(id -g)" -w /tmp -e HOME=/tmp \
   -v "$D/plugins:/k/plugins" -v "$R:/w:ro" -v /opt/docker/mc/data/world1/tools:/tools:ro \
   -v /opt/docker/mc/backups/mistrzostwa-20260923/wdrozenie:/mst:ro python:3.12-slim sh -c \
@@ -16,5 +16,10 @@ for j in rzemioslo mistrzostwa; do
 done
 G=$D/config/paper-global.yml
 [[ -f "$G" ]] && sed -i 's/disable-noteblock-updates: false/disable-noteblock-updates: true/; s/disable-tripwire-updates: false/disable-tripwire-updates: true/' "$G"
-/opt/docker/mc/narzedzia/klon.sh start "$N"
+if [[ "$DZIALA" == 1 ]]; then
+  L=$D/logs/latest.log; I0=$(stat -c %i "$L"); docker restart "klon-$N" >/dev/null
+  for i in $(seq 1 150); do sleep 4; [[ "$(stat -c %i "$L" 2>/dev/null)" != "$I0" ]] && grep -q 'Done (' "$L" && break; done
+else
+  /opt/docker/mc/narzedzia/klon.sh start "$N"
+fi
 grep 'Rzemioslo\] Kontrola' "$D/logs/latest.log" || echo "UWAGA: brak linii kontroli Rzemioslo"

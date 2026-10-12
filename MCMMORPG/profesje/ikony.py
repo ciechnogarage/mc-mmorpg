@@ -55,6 +55,25 @@ NOWE = {
         "................"]),
 }
 
+# serce bossa (rzadki skladnik aktu): czerwien z polyskiem w lewym gornym platku
+NOWE['serce'] = ('ruby', 'ruby', [
+    "................",
+    "................",
+    "...ooo....ooo...",
+    "..oAAbo..obbbo..",
+    ".oAhbbbooobbbso.",
+    ".oAbbbbbbbbbbso.",
+    ".obbbbbbbbbbbso.",
+    ".obbbbbbbbbbsso.",
+    "..obbbbbbbbsso..",
+    "...obbbbbbsso...",
+    "....obbbbsso....",
+    ".....obbsso.....",
+    "......osso......",
+    ".......oo.......",
+    "................",
+    "................"])
+
 KOLOR_TYPU = {  # barwa (h, s) dla buffow i klejnotow
     'MIKSTURA_LECZNICZA': (0.99, 0.75), 'MIKSTURA_MANY': (0.60, 0.70), 'ODTRUTKA': (0.33, 0.60),
     'ELIKSIR_SILY': (0.04, 0.80), 'ELIKSIR_UMYSLU': (0.78, 0.60), 'ELIKSIR_SKORY': (0.58, 0.20),
@@ -138,7 +157,8 @@ class Ikony:
         t = spec.get('kraina') or spec.get('tier') or 1
         if styl in ('material', 'narzedzie', 'rzadki', 'inne'):
             if not (styl == 'material' and t == 1):
-                self.przebarw_kraina(im, t, 0.65 if styl == 'rzadki' else 0.45)
+                sila = 0.2 if spec['ksztalt'] == 'serce' else 0.65 if styl == 'rzadki' else 0.45
+                self.przebarw_kraina(im, t, sila)
         elif styl in ('buff', 'klejnot'):
             if spec['kolor'] not in BEZ_PRZEBARWIENIA:
                 self.przebarw_typ(im, spec['kolor'])
