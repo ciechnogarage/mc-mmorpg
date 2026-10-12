@@ -1,0 +1,15 @@
+name: PaskiMobow
+version: '${version}'
+main: pl.mcmmorpg.paskimobow.PaskiMobow
+api-version: '1.21'
+depend: [packetevents]
+softdepend: [MythicMobs, ModelEngine, AnimacjeBroni]
+description: Pasek nad glowa moba - nazwa w kolorze rzadkosci, poziom, HP i ikony statusow (pakietowy text_display).
+commands:
+  paskimobow:
+    description: Przeladowanie configu / podglad paska moba pod celownikiem
+    usage: /paskimobow przeladuj | /paskimobow info
+    permission: paskimobow.admin
+permissions:
+  paskimobow.admin:
+    default: op
