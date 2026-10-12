@@ -30,6 +30,8 @@ final class Placeholdery extends PlaceholderExpansion {
     if (param.equals("prawa_stan")) return rzucanie.stanDloni(p, true);
     if (param.equals("lewa_postep")) return String.valueOf(rzucanie.postepDloni(p, false));
     if (param.equals("prawa_postep")) return String.valueOf(rzucanie.postepDloni(p, true));
+    if (param.equals("lewa_pasek")) return pasek(rzucanie.postepDloni(p, false));
+    if (param.equals("prawa_pasek")) return pasek(rzucanie.postepDloni(p, true));
     if (param.equals("lewa_pozostalo")) return rzucanie.pozostaloDloni(p, false);
     if (param.equals("prawa_pozostalo")) return rzucanie.pozostaloDloni(p, true);
     if (param.equals("lewa_koszt")) return rzucanie.kosztDloni(p, false);
@@ -41,5 +43,10 @@ final class Placeholdery extends PlaceholderExpansion {
       return z == null ? "pusta" : z.nazwa();
     }
     return null;
+  }
+
+  private static String pasek(int postep) {
+    int pelne = Math.max(0, Math.min(8, (postep * 8 + 50) / 100));
+    return "█".repeat(pelne) + "░".repeat(8 - pelne);
   }
 }
