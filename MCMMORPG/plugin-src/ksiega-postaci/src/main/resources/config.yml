@@ -124,6 +124,9 @@ typy-broni:
   - WAND
   - GREATBOW
   - LANCE
+# Reguly rak (12.10): dwurecznosc z typu (flaga MMOItems TWO_HANDED jest niespojna) + przedmioty tylko do lewej.
+typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAMMER, HALBERD, LANCE, KOSA, GREATSTAFF]
+typy-tylko-lewa: [SHIELD, OFF_CATALYST]
 typy-mikstur-i-uzytkowych:
   - CONSUMABLE
 staty-mikstur:
@@ -164,6 +167,8 @@ komunikaty:
   zly-typ: '&cTen przedmiot nie pasuje do tego slotu.'
   wymagania: '&cTa postac nie spelnia wymagan przedmiotu.'
   dwureczna: '&cBroń dwuręczna zajmuje obie ręce.'
+  dwureczna-do-prawej: '&cBroń dwuręczną zakładasz do prawej ręki.'
+  tylko-lewa: '&cTo trzyma się w lewej ręce.'
   brak-zapasu-lewej: '&cZapasowa lewa ręka jest zajęta; nie można zmienić prawej.'
   brak-miejsca-lewej: '&cBrak miejsca na broń z lewej ręki.'
   okno: '&cZamknij inne okno przed zmiana zestawu.'
