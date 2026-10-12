@@ -119,7 +119,7 @@ class Generator:
             b['max-item-damage'] = float(n['wytrzymalosc'])
             b['attack-damage'] = 1.0
             b['attack-speed'] = 1.0
-            b['repair-reference'] = 'narzedzie-profesji'
+            b['repair-type'] = 'narzedzie-profesji'
         elif kind == 'buff':
             bf = self.m.buffy[it['id']]
             b['vanilla-eating'] = True
@@ -133,7 +133,7 @@ class Generator:
                 b['material'] = 'PAPER'
         elif kind == 'naprawa':
             b['repair-percent'] = T.NAPRAWA_PROCENT * 100
-            b['repair-reference'] = 'narzedzie-profesji'
+            b['repair-type'] = 'narzedzie-profesji'
             b['inedible'] = True
         elif kind == 'zwoj':
             b['random-unsocket'] = 1.0
@@ -174,6 +174,10 @@ class Generator:
         dane = copy.deepcopy(oryg)
         base = dane.setdefault('base', {})
         base['gem-sockets'] = ['Uncolored']
+        # MMOItems 6.10 DoubleStat.whenPreviewed (podglad w stacji) wymaga wzoru w BAZIE dla kazdej statystyki,
+        # ktora dokladaja affiksy — inaczej 'Template Data is not Numeric Stat Formula'. Zero nie trafia do lore.
+        for stat in self.staty_affiksow():
+            base.setdefault(stat, {'base': 0.0})
         lore = list(base.get('lore') or [])
         lore += ['&6Wykonane w warsztacie: &fMagiczne + gniazdo na klejnot lub runę.']
         base['lore'] = lore
@@ -187,6 +191,24 @@ class Generator:
                 nowe[k] = v
         dane['modifiers'] = nowe
         return typ, dane
+
+    def staty_affiksow(self):
+        if getattr(self, '_staty_aff', None) is None:
+            src = yaml.safe_load(czytaj(self.P + '/MMOItems/modifiers/przedmioty.yml')) or {}
+            staty = set()
+
+            def zbierz(d):
+                if isinstance(d, dict):
+                    for k, v in d.items():
+                        if k == 'stats' and isinstance(v, dict):
+                            staty.update(s for s, x in v.items() if isinstance(x, (dict, int, float)) and s not in ('tier',))
+                        else:
+                            zbierz(v)
+            for k, v in src.items():
+                if k.startswith(('a_', 'pref_', 'suf_')):
+                    zbierz(v)
+            self._staty_aff = sorted(staty)
+        return self._staty_aff
 
     def modyfikatory(self):
         src = yaml.safe_load(czytaj(self.P + '/MMOItems/modifiers/przedmioty.yml')) or {}
@@ -280,6 +302,9 @@ class Generator:
         out = f"mmoitem{{type={r['typ_out']},id={r['out']},amount={r['ile']}"
         if r.get('poziom_przedmiotu'):
             out += f",level={r['poziom_przedmiotu']}"
+            # podglad stacji losuje affiksy — uczciwa nazwa zamiast przypadkowego rzutu
+            nazwa = self.m.items[r['out']]['nazwa']
+            out += f';display="&9{nazwa} &7(Magiczny: 1 prefiks + 1 sufiks, losowo)"'
         out += '}'
         sumy = {}
         for i, n in r['ing']:
@@ -449,6 +474,19 @@ class Generator:
                 s2 = self.podepnij_rzadkie(s2, rola)
             if s2 != s:
                 pisz(f, s2, self.raport)
+        # Loch 001 przywolywal wezly-moby v1 — teraz stawia bloki wezlow v2 (komenda pluginu, idempotentna)
+        f = self.P + '/MythicMobs/skills/Loch_001.yml'
+        if os.path.exists(f):
+            s = czytaj(f)
+            zam = {'NODE_HERB_PATCH': 'wezel_t1_herbalism', 'NODE_MUSHROOM_RING': 'wezel_t1_grzyby',
+                   'NODE_TIMBER_OAK': 'wezel_t1_woodworking'}
+            def podmien(mt):
+                return (f'{mt.group(1)}- command{{c="rzemioslo postaw {zam[mt.group(2)]} <caster.l.w> '
+                        f'{mt.group(3)} {mt.group(4)} {mt.group(5)}"}}')
+            s2 = re.sub(r'(?m)^(\s*)- summon\{m=(NODE_[A-Z_]+);[^}]*\} @Location\{c=(-?\d+),(-?\d+),(-?\d+)\}', podmien, s)
+            s2 = s2.replace('# wezly zasobow (WezlyZasobow.yml, klik prawym)', '# wezly zasobow v2 (bloki Nexo, plugin Rzemioslo — PPM z narzedziem)')
+            if s2 != s:
+                pisz(f, s2, self.raport)
         for f in [self.P + '/MythicMobs/mobs/WezlyZasobow.yml', self.P + '/MythicMobs/skills/WezlySkills.yml',
                   self.P + '/MythicMobs/spawners/demo_wezel_dab.yml']:
             if os.path.exists(f):
@@ -517,6 +555,8 @@ class Generator:
             'zlecenia-startowe': m.zlecenia_startowe,
             'relikty': list(T.RELIKTY),
             'nazwy': {i: it['nazwa'] for i, it in m.items.items()},
+            'typy': {i: it['typ'] for i, it in m.items.items()},
+            'lowisko-bloki': {l['blok']: t for t, l in m.lowiska.items() if l['blok']},
         }
         naglowek = ('# Plugin Rzemioslo — dane GENEROWANE: MCMMORPG/profesje/generuj.py z tresc.py (PROJEKT.md).\n'
                     '# Recznie zmieniaj tylko sekcje "komunikaty" (zachowywana przez generator).\n')

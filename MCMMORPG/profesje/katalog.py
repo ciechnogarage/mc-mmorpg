@@ -49,4 +49,7 @@ def pisz_katalog(g):
     for k, (nazwa, p, stat, (a, b)) in T.KLEJNOTY.items():
         L.append(f'| {nazwa} | {PROF_PL[p]} | {stat} | {a} | {round(a + 9 * b, 3)} |')
     f = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KATALOG.md')
-    open(f, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
+    try:
+        open(f, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
+    except OSError as e:  # repo zamontowane tylko do odczytu (np. gen_klon.sh) — katalog nie jest potrzebny serwerowi
+        print('KATALOG.md pominiety:', e)

@@ -204,7 +204,7 @@ class Model:
                             nazwa, opis = T.INNE_PRODUKTY[klucz]
                             kind = {'ZESTAW_NAPRAWCZY': 'naprawa', 'ZWOJ_WYJECIA': 'zwoj', 'OBOZOWISKO': 'obozowisko'}.get(
                                 klucz, 'przeprawa' if klucz.startswith('PRZEPRAWA') else 'inne')
-                            self._dodaj(iid, 'CONSUMABLE' if kind == 'zwoj' else 'MISCELLANEOUS',
+                            self._dodaj(iid, 'CONSUMABLE' if kind in ('zwoj', 'naprawa') else 'MISCELLANEOUS',
                                         f'{nazwa} {T.ROMAN[t]}', kind, prof, t,
                                         dict(ksztalt=IKONA_INNE[klucz], kraina=t, styl='inne', tier=t),
                                         lore=[f'&7{opis}', f'&8{kr} · tier {T.ROMAN[t]}'])

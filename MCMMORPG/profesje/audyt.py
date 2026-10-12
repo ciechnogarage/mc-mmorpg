@@ -3,7 +3,7 @@
 wiec sprawdza to, co faktycznie trafi na serwer.
 
 Uzycie (host bez pyyaml):
-  docker run --rm -v <plugins>:/p:ro -v <ten katalog>:/s:ro python:3.12-slim \
+  docker run --rm --name profesje-audyt --memory 512m -v <plugins>:/p:ro -v <ten katalog>:/s:ro python:3.12-slim \
     sh -c 'pip -q install pyyaml >/dev/null 2>&1; python -I /s/audyt.py /p'
 Kod wyjscia 0 = wszystkie bramki PASS. Kazdy FAIL wypisuje konkretne id i liczby.
 """
