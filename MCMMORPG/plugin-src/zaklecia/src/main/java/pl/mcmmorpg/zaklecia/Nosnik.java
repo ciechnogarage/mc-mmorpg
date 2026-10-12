@@ -226,7 +226,15 @@ final class Nosnik implements Listener {
     boolean dotyka = jest(e.getCurrentItem()) || jest(e.getCursor());
     if (e.getClick() == ClickType.NUMBER_KEY && e.getHotbarButton() >= 0) dotyka |= jest(p.getInventory().getItem(e.getHotbarButton()));
     if (e.getClick() == ClickType.SWAP_OFFHAND) dotyka |= jest(p.getInventory().getItemInOffHand());
-    if (dotyka) { e.setCancelled(true); odmowa(p); }
+    if (dotyka) {
+      e.setCancelled(true);
+      odmowa(p);
+      // Klient przewiduje ruch kursora i slotu nawet gdy klik jest anulowany.
+      // KsiegaPostaci moze jeszcze poprawic uklad w nastepnym tiku; zsynchronizuj po niej.
+      org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (p.isOnline()) p.updateInventory();
+      }, 2L);
+    }
   }
 
   @EventHandler(priority = EventPriority.LOW)
