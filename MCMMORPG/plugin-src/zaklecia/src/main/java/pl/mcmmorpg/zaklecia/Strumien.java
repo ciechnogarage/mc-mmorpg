@@ -68,7 +68,7 @@ final class Strumien {
     ItemDisplay wlasny = null;
     if (plugin.getConfig().getBoolean("strumien.waski-dla-rzucajacego", true)) {
       p.hideEntity(plugin, d);
-      wlasny = p.getWorld().spawn(gdzie, ItemDisplay.class, e -> {
+      wlasny = p.getWorld().spawn(dlonWlasna(p, prawa), ItemDisplay.class, e -> {
         ItemStack i = new ItemStack(Material.PAPER);
         i.editMeta(m -> m.setItemModel(new NamespacedKey("zaklecia", z.modelStrumienia())));
         e.setItemStack(i);
@@ -96,15 +96,19 @@ final class Strumien {
     return oko.clone().add(wPrawo.multiply(prawa ? 0.38 : -0.38)).add(przod.multiply(0.45)).add(0, -0.3, 0);
   }
 
+  private static Location dlonWlasna(Player p, boolean prawa) {
+    return dlon(p, prawa).add(p.getEyeLocation().getDirection().multiply(0.6));
+  }
+
   private static Transformation ksztalt(float dlugosc) {
     // model 1 blok dlugi w osi z, wysrodkowany; przesuniecie +dl/2 stawia jego poczatek w dloni
     return new Transformation(new Vector3f(0, 0, dlugosc / 2), new AxisAngle4f(), new Vector3f(1, 1, dlugosc), new AxisAngle4f());
   }
 
   private static Transformation ksztaltWlasny(float dlugosc) {
-    float krotki = Math.min(dlugosc, 1.2f);
+    float krotki = Math.min(dlugosc, 0.9f);
     return new Transformation(new Vector3f(0, 0, krotki / 2), new AxisAngle4f(),
-        new Vector3f(0.42f, 0.42f, krotki), new AxisAngle4f());
+        new Vector3f(0.3f, 0.3f, krotki), new AxisAngle4f());
   }
 
   /** Co tick: dlon, kierunek, dlugosc; co 4 ticki skill uderzenia danej dloni w punkcie trafienia. */
@@ -121,7 +125,12 @@ final class Strumien {
       start.setYaw(p.getEyeLocation().getYaw());
       start.setPitch(p.getEyeLocation().getPitch());
       w.d().teleport(start);
-      if (w.wlasny() != null) w.wlasny().teleport(start);
+      if (w.wlasny() != null) {
+        Location wlasnyStart = dlonWlasna(p, w.prawa());
+        wlasnyStart.setYaw(start.getYaw());
+        wlasnyStart.setPitch(start.getPitch());
+        w.wlasny().teleport(wlasnyStart);
+      }
       if (Math.abs(dl - w.dlugosc()[0]) > 0.15f) {       // metadane tylko przy zmianie dlugosci
         w.d().setInterpolationDelay(0);
         w.d().setTransformation(ksztalt(dl));
