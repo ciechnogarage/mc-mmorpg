@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import net.kyori.adventure.key.Key;
@@ -128,12 +129,35 @@ final class Bron implements Listener {
     return type != null && plugin.getConfig().getStringList("typy-broni").contains(type);
   }
 
+  // Reguly rak (12.10, test macierzy w grze): flaga TWO_HANDED jest niespojna w MMOItems (luki 0/11, kusze 0/8,
+  // wielki topor 0/1, tarcza 1/11), wiec dwurecznosc liczy sie tez z typu; tarcza/OFF_CATALYST tylko w lewej.
+  private static final List<String> DOMYSLNE_DWURECZNE = List.of("BOW", "CROSSBOW", "MUSKET", "GREATBOW",
+      "GREATSWORD", "GREATAXE", "GREATHAMMER", "HALBERD", "LANCE", "KOSA", "GREATSTAFF");
+  private static final List<String> DOMYSLNE_TYLKO_LEWA = List.of("SHIELD", "OFF_CATALYST");
+
+  private List<String> typy(String sciezka, List<String> domyslne) {
+    return plugin.getConfig().isList(sciezka) ? plugin.getConfig().getStringList(sciezka) : domyslne;
+  }
+
+  private boolean leftOnly(ItemStack item) {
+    String type = Przedmioty.type(item);
+    return !Przedmioty.empty(item) && type != null && typy("typy-tylko-lewa", DOMYSLNE_TYLKO_LEWA).contains(type);
+  }
+
   private boolean twoHanded(ItemStack item) {
-    if (Przedmioty.empty(item)) return false;
+    if (Przedmioty.empty(item) || leftOnly(item)) return false;
+    String type = Przedmioty.type(item);
+    if (type != null && typy("typy-dwureczne", DOMYSLNE_DWURECZNE).contains(type)) return true;
     NBTItem nbt = NBTItem.get(item);
     return nbt.getBoolean("TWO_HANDED") || nbt.getBoolean("MMOITEMS_TWO_HANDED")
         || nbt.getStat("TWO_HANDED") > 0;
   }
+
+  /** Czy przedmiot moze lezec w lewej (aktywnej lub zapasowej): nie dwureczny. */
+  private boolean leftAllowed(ItemStack item) { return Przedmioty.empty(item) || !twoHanded(item); }
+
+  /** Czy przedmiot moze lezec w prawej: nie tarcza ani katalizator tylko-lewy. */
+  private boolean rightAllowed(ItemStack item) { return Przedmioty.empty(item) || !leftOnly(item); }
 
   private boolean canStore(PlayerInventory inventory, ItemStack source, int first, int last) {
     if (Przedmioty.empty(source)) return true;
@@ -186,6 +210,8 @@ final class Bron implements Listener {
     if (!weapon(right) || !weapon(left)) {
       plugin.message(player, "zly-typ"); return false;
     }
+    if (!rightAllowed(right)) { plugin.message(player, "tylko-lewa"); return false; }
+    if (!leftAllowed(left)) { plugin.message(player, "dwureczna-do-prawej"); return false; }
     if (twoHanded(right) && !Przedmioty.empty(left)) {
       plugin.message(player, "dwureczna"); return false;
     }
@@ -323,6 +349,15 @@ final class Bron implements Listener {
         if (!virtual(item)) Migracja.give(player, item);
       }
     }
+    for (int slot : new int[] {RIGHT, RIGHT_SPARE, LEFT, LEFT_SPARE}) {
+      ItemStack item = real(inventory, slot);
+      if (Przedmioty.empty(item) || spell(item)) continue;
+      boolean right = slot == RIGHT || slot == RIGHT_SPARE;
+      if (right ? rightAllowed(item) : leftAllowed(item)) continue;
+      inventory.setItem(slot, null);
+      Migracja.give(player, item);
+      plugin.message(player, right ? "tylko-lewa" : "dwureczna-do-prawej");
+    }
     if (twoHanded(inventory.getItem(RIGHT)) && !Przedmioty.empty(inventory.getItemInOffHand())
         && !spell(inventory.getItemInOffHand())) {
       ItemStack left = inventory.getItemInOffHand();
@@ -363,6 +398,9 @@ final class Bron implements Listener {
 
   private boolean allowed(Player player, int slot, ItemStack incoming) {
     if (!weapon(incoming)) { plugin.message(player, "zly-typ"); return false; }
+    if ((slot == RIGHT || slot == RIGHT_SPARE) && !rightAllowed(incoming)) {
+      plugin.message(player, "tylko-lewa"); return false;
+    }
     PlayerInventory inventory = player.getInventory();
     if (slot == RIGHT) return leftDestination(player, incoming, false) != -2;
     if (slot == LEFT) return validPair(player, real(inventory, RIGHT), incoming);
@@ -532,6 +570,8 @@ final class Bron implements Listener {
       if (weapon(source)) {
         for (int target : new int[] {RIGHT, LEFT, RIGHT_SPARE, LEFT_SPARE}) {
           if (!Przedmioty.empty(real(inventory, target))) continue;
+          if ((target == RIGHT || target == RIGHT_SPARE) && !rightAllowed(source)) continue;
+          if ((target == LEFT || target == LEFT_SPARE) && !leftAllowed(source)) continue;
           if (target == LEFT && twoHanded(real(inventory, RIGHT))) {
             plugin.message(player, "dwureczna"); return;
           }
@@ -798,10 +838,17 @@ final class Bron implements Listener {
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void damage(EntityDamageByEntityEvent event) {
-    if (event.getDamager() instanceof Player player
-        && (player.getInventory().getHeldItemSlot() != RIGHT
-            && player.getInventory().getHeldItemSlot() != LEFT_IMAGE
-            || virtual(player.getInventory().getItemInMainHand()))) event.setCancelled(true);
+    if (!(event.getDamager() instanceof Player player)) return;
+    // MythicLib rejestruje AttackMetadata na celu przed wywolaniem Bukkit damage.
+    // mmodamage uzywa tej samej przyczyny ENTITY_ATTACK co cios wręcz.
+    var attack = io.lumine.mythic.lib.MythicLib.plugin.getDamage()
+        .getRegisteredAttackMetadata(event.getEntity());
+    // Brak metadanych oznacza takze zwykly cios, jesli ten listener wykona sie
+    // przed listenerem MythicLib na tym samym priorytecie HIGHEST.
+    if (attack != null && !(attack instanceof io.lumine.mythic.lib.damage.MeleeAttackMetadata)) return;
+    if ((player.getInventory().getHeldItemSlot() != RIGHT
+        && player.getInventory().getHeldItemSlot() != LEFT_IMAGE)
+        || virtual(player.getInventory().getItemInMainHand())) event.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void shoot(EntityShootBowEvent event) {
