@@ -125,8 +125,10 @@ typy-broni:
   - GREATBOW
   - LANCE
 # Reguly rak (12.10): dwurecznosc z typu (flaga MMOItems TWO_HANDED jest niespojna) + przedmioty tylko do lewej.
-typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAMMER, HALBERD, LANCE, KOSA, GREATSTAFF]
-typy-tylko-lewa: [SHIELD, OFF_CATALYST]
+typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAMMER, HALBERD, LANCE, KOSA, GREATSTAFF, STAFF, SPEAR]
+typy-tylko-lewa: [OFF_CATALYST]
+# tarcza: w obu rekach (Nosiciel Relikwii ma ja jako bron startowa), nigdy dwureczna mimo flagi przedmiotu
+typy-zawsze-jednoreczne: [SHIELD]
 typy-mikstur-i-uzytkowych:
   - CONSUMABLE
 staty-mikstur:
