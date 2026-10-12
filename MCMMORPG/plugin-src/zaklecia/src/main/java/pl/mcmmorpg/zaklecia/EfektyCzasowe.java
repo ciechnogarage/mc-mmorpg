@@ -145,8 +145,12 @@ final class EfektyCzasowe implements Listener {
     }
     if (z.typ().equals("na_cel")) return cel(p, z.zasieg(), e -> wrog(p, e) && poziom(e) <=
         maksPoziom(z, obie)) != null ? Odmowa.BRAK : Odmowa.CEL;
-    if (z.typ().equals("ladowany") && z.cel().equals("inny"))
-      return cel(p, z.zasieg(), e -> sojusznik(p, e)) != null ? Odmowa.BRAK : Odmowa.SOJUSZNIK;
+    if (z.typ().equals("ladowany") && z.cel().equals("inny")) {
+      LivingEntity cel = cel(p, z.zasieg(), e -> sojusznik(p, e));
+      if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG heal prepare "
+          + z.id() + " target=" + (cel == null ? "null" : cel.getUniqueId()));
+      return cel != null ? Odmowa.BRAK : Odmowa.SOJUSZNIK;
+    }
     return Odmowa.BRAK;
   }
 
@@ -171,18 +175,24 @@ final class EfektyCzasowe implements Listener {
     } catch (Throwable ignored) { return Integer.MAX_VALUE; }
   }
 
-  void wystrzel(Player p, Ksiega.Zaklecie z, boolean prawa, boolean obie, String reka) {
-    if (z.typ().equals("bron")) { dajBron(p, z, prawa || obie, obie); skille.cast(p, nazwa(z, "Wystrzal", reka)); }
-    else if (z.typ().equals("przywolanie")) przywolaj(p, z, obie, reka);
+  boolean wystrzel(Player p, Ksiega.Zaklecie z, boolean prawa, boolean obie, String reka) {
+    if (z.typ().equals("bron")) {
+      if (!dajBron(p, z, prawa || obie, obie)) return false;
+      skille.cast(p, nazwa(z, "Wystrzal", reka));
+      return true;
+    }
+    else if (z.typ().equals("przywolanie")) return przywolaj(p, z, obie, reka);
     else if (z.typ().equals("na_cel")) {
       LivingEntity cel = cel(p, z.zasieg(), e -> wrog(p, e) && poziom(e) <= maksPoziom(z, obie));
-      if (cel == null) return;
-      skille.cele(p, nazwa(z, "Wystrzal", reka), List.of(cel));
+      return cel != null && skille.cele(p, nazwa(z, "Wystrzal", reka), List.of(cel));
     } else if (z.typ().equals("ladowany")) {
       String nazwa = nazwa(z, "Wystrzal", reka);
       if (z.cel().equals("inny")) {
         LivingEntity cel = cel(p, z.zasieg(), e -> sojusznik(p, e));
-        if (cel != null) skille.cele(p, nazwa, List.of(cel));
+        if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG heal fire "
+            + z.id() + " target=" + (cel == null ? "null" : cel.getUniqueId())
+            + " hp=" + (cel == null ? "-" : cel.getHealth()));
+        return cel != null && skille.cele(p, nazwa, List.of(cel));
       } else if (z.cel().equals("obszar")) {
         List<Entity> cele = new java.util.ArrayList<>();
         cele.add(p);
@@ -190,10 +200,11 @@ final class EfektyCzasowe implements Listener {
           if (e instanceof LivingEntity zywy && !zywy.isDead()
               && e.getLocation().distanceSquared(p.getLocation()) <= z.promien() * z.promien()
               && sojusznik(p, zywy)) cele.add(e);
-        skille.cele(p, nazwa, cele);
-      } else if (z.cel().equals("siebie")) skille.cele(p, nazwa, List.of(p));
-      else skille.cast(p, nazwa);
+        return skille.cele(p, nazwa, cele);
+      } else if (z.cel().equals("siebie")) return skille.cele(p, nazwa, List.of(p));
+      else return skille.cast(p, nazwa);
     }
+    return false;
   }
 
   void uspokoj(LivingEntity cel, int ticki) {
@@ -203,15 +214,15 @@ final class EfektyCzasowe implements Listener {
     spokoj.put(cel.getUniqueId(), tick + Math.max(1, ticki));
   }
 
-  private void dajBron(Player p, Ksiega.Zaklecie z, boolean prawa, boolean obie) {
+  private boolean dajBron(Player p, Ksiega.Zaklecie z, boolean prawa, boolean obie) {
     int slot = prawa ? p.getInventory().getHeldItemSlot() : 40;
     ItemStack teraz = prawa ? p.getInventory().getItem(slot) : p.getInventory().getItemInOffHand();
     Map<Boolean, Bron> mapa = bronie.computeIfAbsent(p.getUniqueId(), u -> new HashMap<>());
     Bron stara = mapa.get(prawa);
+    if (stara == null && (teraz == null || ksiega.w(teraz) == null)) return false;
     ItemStack oryginal = stara == null ? teraz.clone() : stara.nosnik();
-    if (stara == null && ksiega.w(teraz) == null) return;
     ItemStack bron = MythicBukkit.inst().getItemManager().getItemStack(bronId(z));
-    if (bron == null) return;
+    if (bron == null) return false;
     bron.editMeta(m -> {
       m.getPersistentDataContainer().set(kBron, PersistentDataType.BYTE, (byte) 1);
       m.getPersistentDataContainer().set(kZrodlo, PersistentDataType.STRING, z.id());
@@ -219,22 +230,23 @@ final class EfektyCzasowe implements Listener {
     if (prawa) p.getInventory().setItem(slot, bron);
     else p.getInventory().setItemInOffHand(bron);
     mapa.put(prawa, new Bron(slot, prawa, oryginal, tick + z.czasZycia() * (obie ? 2 : 1)));
+    return true;
   }
 
-  private void przywolaj(Player p, Ksiega.Zaklecie z, boolean obie, String reka) {
+  private boolean przywolaj(Player p, Ksiega.Zaklecie z, boolean obie, String reka) {
     Location oko = p.getEyeLocation();
     RayTraceResult r = p.getWorld().rayTraceBlocks(oko, oko.getDirection(), z.zasieg(), FluidCollisionMode.NEVER, true);
     org.bukkit.util.Vector przod = p.getLocation().getDirection().setY(0);
     if (przod.lengthSquared() < 0.01) przod.setX(1);
     Location at = r == null ? p.getLocation().add(przod.normalize().multiply(2))
         : r.getHitPosition().toLocation(p.getWorld()).add(0, 1, 0);
-    if (!at.getBlock().isPassable() || !at.clone().add(0, 1, 0).getBlock().isPassable()) return;
+    if (!at.getBlock().isPassable() || !at.clone().add(0, 1, 0).getBlock().isPassable()) return false;
     String mob = plugin.getConfig().getString("zaklecia." + z.id() + ".mob", "");
     try {
       Entity e = MythicBukkit.inst().getAPIHelper().spawnMythicMob(mob, at);
-      if (e == null) return;
+      if (e == null) return false;
       var am = MythicBukkit.inst().getAPIHelper().getMythicMobInstance(e);
-      if (am == null) { e.remove(); return; }
+      if (am == null) { e.remove(); return false; }
       am.setOwnerUUID(p.getUniqueId());   // MM 5.11.2: ActiveMob.setOwnerUUID (setOwner nie istnieje)
       if (e instanceof Wolf w) w.setOwner(p);
       e.setPersistent(false);
@@ -244,7 +256,8 @@ final class EfektyCzasowe implements Listener {
       while (lista.size() >= limit) usun(lista.removeFirst().byt());
       lista.addLast(new Sluga(e, z.id(), tick + z.czasZycia() * (obie ? 2 : 1)));
       skille.punkt(p, nazwa(z, "Wystrzal", reka), at);
-    } catch (Throwable ex) { plugin.getLogger().warning("Przywolanie " + mob + ": " + ex); }
+      return true;
+    } catch (Throwable ex) { plugin.getLogger().warning("Przywolanie " + mob + ": " + ex); return false; }
   }
 
   private boolean oznaczona(ItemStack i) {

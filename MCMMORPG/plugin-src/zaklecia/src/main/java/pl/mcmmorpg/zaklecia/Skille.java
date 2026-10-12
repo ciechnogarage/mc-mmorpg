@@ -35,24 +35,24 @@ final class Skille {
     return jest;
   }
 
-  void cast(Player p, String nazwa) {
-    if (!jest(nazwa)) return;
-    try { MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa); }
-    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "skill " + nazwa + ": " + t, t); }
+  boolean cast(Player p, String nazwa) {
+    if (!jest(nazwa)) return false;
+    try { return MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa); }
+    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "skill " + nazwa + ": " + t, t); return false; }
   }
 
-  void cele(Player p, String nazwa, List<Entity> cele) {
+  boolean cele(Player p, String nazwa, List<Entity> cele) {
     boolean obecny = jest(nazwa);
     if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG skill=" + nazwa
         + " obecny=" + obecny + " cele=" + cele.stream().map(e -> e.getUniqueId().toString()).toList());
-    if (!obecny || cele.isEmpty()) return;
-    try { MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa, p, p.getLocation(), cele, List.of(), 1f); }
-    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "trafienia " + nazwa + ": " + t, t); }
+    if (!obecny || cele.isEmpty()) return false;
+    try { return MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa, p, p.getLocation(), cele, List.of(), 1f); }
+    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "trafienia " + nazwa + ": " + t, t); return false; }
   }
 
-  void punkt(Player p, String nazwa, Location gdzie) {
-    if (!jest(nazwa)) return;
-    try { MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa, gdzie); }
-    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "uderzenie " + nazwa + ": " + t, t); }
+  boolean punkt(Player p, String nazwa, Location gdzie) {
+    if (!jest(nazwa)) return false;
+    try { return MythicBukkit.inst().getAPIHelper().castSkill(p, nazwa, gdzie); }
+    catch (Throwable t) { plugin.getLogger().log(Level.WARNING, "uderzenie " + nazwa + ": " + t, t); return false; }
   }
 }

@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
@@ -84,7 +85,7 @@ final class Rzucanie implements Listener {
     this.komunikat = new Komunikat(skille, ksiega.skBrakMany);
     this.efekty = new EfektyCzasowe(plugin, ksiega, nosnik, skille);
     this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille, efekty, komunikat);
-    this.strumien = new Strumien(skille);
+    this.strumien = new Strumien(plugin, skille);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
     kSzybkosc = new NamespacedKey(plugin, "lpm_szybkosc");
@@ -286,6 +287,12 @@ final class Rzucanie implements Listener {
     rzucajacy.remove(u); czekaLpm.remove(u); ppmLewa.remove(u); blokadaPpm.remove(u);
     komunikat.wyjscie(e.getPlayer()); ostatniPpm.remove(u); ostatnieQ.remove(u);
     strumien.stop(e.getPlayer()); atrybutyLpm(e.getPlayer(), false); ruch(e.getPlayer(), false);
+    odrzutowe.wyjscie(e.getPlayer());
+  }
+
+  @EventHandler
+  public void zmianaSwiata(PlayerChangedWorldEvent e) {
+    stop(e.getPlayer(), false);
     odrzutowe.wyjscie(e.getPlayer());
   }
 

@@ -28,12 +28,13 @@ import org.joml.Vector3f;
  * do pierwszej przeszkody/istoty. Model: os +Z = kierunek strumienia, dlugosc modelu 1 blok (0..16 w z).
  */
 final class Strumien {
-  private record Wpis(ItemDisplay d, boolean prawa, Ksiega.Zaklecie zaklecie, float[] dlugosc) {}
+  private record Wpis(ItemDisplay d, ItemDisplay wlasny, boolean prawa, Ksiega.Zaklecie zaklecie, float[] dlugosc) {}
 
+  private final Zaklecia plugin;
   private final Skille skille;
   private final Map<UUID, List<Wpis>> aktywne = new HashMap<>();
 
-  Strumien(Skille skille) { this.skille = skille; }
+  Strumien(Zaklecia plugin, Skille skille) { this.plugin = plugin; this.skille = skille; }
 
   /** Wlacza/wylacza strumien jednej dloni (z == null = zgas). Wolane przy kazdej zmianie aktywnych dloni. */
   void ustaw(Player p, boolean prawa, Ksiega.Zaklecie z, double zasieg) {
@@ -42,7 +43,9 @@ final class Strumien {
       Wpis w = it.next();
       if (w.prawa() != prawa) continue;
       if (z != null && w.zaklecie().id().equals(z.id()) && w.d().isValid()) return;   // juz jest ten sam
-      w.d().remove(); it.remove();
+      w.d().remove();
+      if (w.wlasny() != null) w.wlasny().remove();
+      it.remove();
     }
     if (z != null) l.add(zrob(p, z, prawa, zasieg));
   }
@@ -62,7 +65,26 @@ final class Strumien {
       e.setPersistent(false);          // restart/crash nie zostawi strumieni w swiecie
       e.setTransformation(ksztalt(0.4f));
     });
-    return new Wpis(d, prawa, z, new float[] {0.4f});
+    ItemDisplay wlasny = null;
+    if (plugin.getConfig().getBoolean("strumien.waski-dla-rzucajacego", true)) {
+      p.hideEntity(plugin, d);
+      wlasny = p.getWorld().spawn(gdzie, ItemDisplay.class, e -> {
+        ItemStack i = new ItemStack(Material.PAPER);
+        i.editMeta(m -> m.setItemModel(new NamespacedKey("zaklecia", z.modelStrumienia())));
+        e.setItemStack(i);
+        e.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
+        e.setBillboard(Display.Billboard.FIXED);
+        e.setBrightness(new Display.Brightness(15, 15));
+        e.setTeleportDuration(2);
+        e.setInterpolationDuration(2);
+        e.setViewRange(0.6f);
+        e.setPersistent(false);
+        e.setVisibleByDefault(false);
+        e.setTransformation(ksztaltWlasny(0.4f));
+      });
+      p.showEntity(plugin, wlasny);
+    }
+    return new Wpis(d, wlasny, prawa, z, new float[] {0.4f});
   }
 
   /** Punkt startu strumienia: przed dlonia (poza z rekami przed siebie), prawa/lewa strona. */
@@ -79,6 +101,12 @@ final class Strumien {
     return new Transformation(new Vector3f(0, 0, dlugosc / 2), new AxisAngle4f(), new Vector3f(1, 1, dlugosc), new AxisAngle4f());
   }
 
+  private static Transformation ksztaltWlasny(float dlugosc) {
+    float krotki = Math.min(dlugosc, 1.2f);
+    return new Transformation(new Vector3f(0, 0, krotki / 2), new AxisAngle4f(),
+        new Vector3f(0.42f, 0.42f, krotki), new AxisAngle4f());
+  }
+
   /** Co tick: dlon, kierunek, dlugosc; co 4 ticki skill uderzenia danej dloni w punkcie trafienia. */
   void tick(Player p, double zasieg, int n) {
     List<Wpis> l = aktywne.get(p.getUniqueId());
@@ -93,9 +121,14 @@ final class Strumien {
       start.setYaw(p.getEyeLocation().getYaw());
       start.setPitch(p.getEyeLocation().getPitch());
       w.d().teleport(start);
+      if (w.wlasny() != null) w.wlasny().teleport(start);
       if (Math.abs(dl - w.dlugosc()[0]) > 0.15f) {       // metadane tylko przy zmianie dlugosci
         w.d().setInterpolationDelay(0);
         w.d().setTransformation(ksztalt(dl));
+        if (w.wlasny() != null) {
+          w.wlasny().setInterpolationDelay(0);
+          w.wlasny().setTransformation(ksztaltWlasny(dl));
+        }
         w.dlugosc()[0] = dl;
       }
       if (r != null && n % 4 == 0) {                    // male uderzenie w miejscu trafienia
@@ -107,11 +140,17 @@ final class Strumien {
 
   void stop(Player p) {
     List<Wpis> l = aktywne.remove(p.getUniqueId());
-    if (l != null) for (Wpis w : l) w.d().remove();
+    if (l != null) for (Wpis w : l) {
+      w.d().remove();
+      if (w.wlasny() != null) w.wlasny().remove();
+    }
   }
 
   void stopWszystkie() {
-    for (List<Wpis> l : aktywne.values()) for (Wpis w : l) w.d().remove();
+    for (List<Wpis> l : aktywne.values()) for (Wpis w : l) {
+      w.d().remove();
+      if (w.wlasny() != null) w.wlasny().remove();
+    }
     aktywne.clear();
   }
 }

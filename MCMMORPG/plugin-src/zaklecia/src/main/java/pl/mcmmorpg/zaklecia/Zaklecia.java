@@ -60,6 +60,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     wybor = new Wybor(this, ksiega, nosnik, ulubione, rzucanie);
     rzucanie.ustawWybor(wybor);
     getServer().getPluginManager().registerEvents(wybor, this);
+    if (getConfig().getBoolean("debug", false)) new DiagnostykaObrazen(this);
     kotwica = new Kotwica(this, rzucanie);
     getServer().getPluginManager().registerEvents(kotwica, this);
     if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione, rzucanie).register();
@@ -100,6 +101,10 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     String id = a[2].equalsIgnoreCase("nic") ? null : a[2].toLowerCase(Locale.ROOT);
     String reka = a[3].toLowerCase(Locale.ROOT);
     if (!reka.equals("prawa") && !reka.equals("lewa")) { s.sendMessage("Reka: prawa albo lewa"); return true; }
+    if (id != null && !ksiega.poId.containsKey(id)) {
+      s.sendMessage("Nieznane zaklęcie: " + id);
+      return true;
+    }
     boolean prawa = reka.equals("prawa");
     rzucanie.stop(p, false);
     rzucanie.zdejmijBronie(p);

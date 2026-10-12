@@ -193,3 +193,7 @@ kotwica:
   max: 16
   wyprzedzenie: 1.0
 spowolnienie: -0.5
+
+# Węższy i krótszy model widoczny tylko dla rzucającego.
+strumien:
+  waski-dla-rzucajacego: true

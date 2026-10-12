@@ -186,13 +186,18 @@ final class RzutyOdrzutowe {
     PlayerData dane = PlayerData.get(p);
     if (dane.getMana() < koszt) { komunikat.mana(p); return; }
     dane.giveMana(-koszt, ResourceUpdateReason.SKILL);
+    boolean wykonano;
     if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel")
         || z.typ().equals("ladowany") && !z.cel().equals("stozek"))
-      efekty.wystrzel(p, z, l.prawa, l.obie(), reka);
-    else if (miejsce == null) skille.cast(p, skill(z, "Wystrzal", reka));
+      wykonano = efekty.wystrzel(p, z, l.prawa, l.obie(), reka);
+    else if (miejsce == null) wykonano = skille.cast(p, skill(z, "Wystrzal", reka));
     else {
-      skille.punkt(p, skill(z, "Wystrzal", reka), miejsce);
-      postaw(p, z, miejsce, l.obie());
+      wykonano = skille.punkt(p, skill(z, "Wystrzal", reka), miejsce);
+      if (wykonano) postaw(p, z, miejsce, l.obie());
+    }
+    if (!wykonano) {
+      dane.giveMana(koszt, ResourceUpdateReason.SKILL);
+      komunikat.odmowa(p, "CAST_FAILED", "Zaklęcie nie zadziałało");
     }
   }
 

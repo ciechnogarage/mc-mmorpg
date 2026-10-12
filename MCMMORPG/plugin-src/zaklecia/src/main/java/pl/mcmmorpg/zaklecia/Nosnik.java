@@ -155,6 +155,8 @@ final class Nosnik implements Listener {
 
   /** @return komunikat dla gracza (co sie stalo). */
   String przypisz(Player p, String id, boolean prawa) {
+    Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
+    if (id != null && z == null) return "§cNieznane zaklęcie: " + id;
     PlayerInventory inv = p.getInventory();
     if (!prawa) {
       ItemStack teraz = inv.getItemInOffHand();
@@ -165,8 +167,6 @@ final class Nosnik implements Listener {
         inv.setItemInOffHand(null);
       }
       if (id == null) { inv.setItemInOffHand(null); ustawLewa(p, false); usunPuste(p); return "§7Lewa dłoń jest pusta."; }
-      Ksiega.Zaklecie z = ksiega.poId.get(id);
-      if (z == null) return "§cNieznane zaklęcie: " + id;
       inv.setItemInOffHand(zrob(z));
       ustawLewa(p, true);
       odswiezPusta(p);
@@ -176,8 +176,6 @@ final class Nosnik implements Listener {
     int miejsce = -1;
     for (int s = 0; s < 36; s++) if (jest(inv.getItem(s))) { inv.setItem(s, null); if (s < 9 && miejsce < 0) miejsce = s; }
     if (id == null) { ustawSlot(p, -1); odswiezPusta(p); return "§7Prawa dłoń jest pusta."; }
-    Ksiega.Zaklecie z = ksiega.poId.get(id);
-    if (z == null) return "§cNieznane zaklęcie: " + id;
     if (miejsce < 0) {
       int wybrany = inv.getHeldItemSlot();
       ItemStack w = inv.getItem(wybrany);
