@@ -9,10 +9,10 @@ public final class SkalaTest {
   }
 
   public static void main(String[] args) {
-    blisko(0.14f, 0.2, 0.9);
-    blisko(0.18f, 1.0, 0.9);
-    blisko(0.54f, 3.0, 0.9);
-    blisko(0.9f, 5.0, 0.9);
-    blisko(0.7f, 8.0, 0.7);
+    blisko(0.016f, 0.2, 0.4);
+    blisko(0.08f, 1.0, 0.4);
+    blisko(0.24f, 3.0, 0.4);
+    blisko(0.4f, 5.0, 0.4);
+    blisko(0.4f, 10.0, 0.4);
   }
 }
