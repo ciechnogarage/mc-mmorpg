@@ -1,0 +1,14 @@
+name: Wiary
+version: '${version}'
+main: pl.mcmmorpg.wiary.WiaryPlugin
+api-version: '1.21'
+description: Wiary — patron postaci (3 Starszych + 3 bóstwa rasy) i błogosławieństwo skalowane atrybutem Wiara.
+author: mcmmorpg
+depend: [MythicLib, MMOCore, MMOProfiles]
+softdepend: [PlaceholderAPI]
+commands:
+  wiary:
+    description: Wiary — komendy dla menu (konsola) i administracji
+    permission: wiary.admin
+permissions:
+  wiary.admin: {default: op}
