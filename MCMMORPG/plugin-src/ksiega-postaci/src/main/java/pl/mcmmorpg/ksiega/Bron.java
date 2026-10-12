@@ -812,6 +812,9 @@ final class Bron implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void held(PlayerItemHeldEvent event) {
+    // Pasek Zaklec anuluje przewiniecie: wybrany slot ekwipunku sie nie zmienia.
+    // Odswiezanie calej Ksiegi w takim przypadku wysylalo kilkanascie set_slot.
+    if (event.isCancelled()) return;
     canonical(event.getPlayer());
     refreshLater(event.getPlayer());
   }
