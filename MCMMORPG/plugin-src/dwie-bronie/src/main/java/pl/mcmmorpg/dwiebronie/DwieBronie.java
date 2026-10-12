@@ -272,9 +272,12 @@ public final class DwieBronie extends JavaPlugin implements Listener {
       else { wariant = "mocny-bez-staminy"; mnoznik = l; }
     } else mnoznik = l;
     boolean naladowany = p.getAttackCooldown() >= (float) getConfig().getDouble("min-naladowanie-ppm", 0.9);
-    Entity cel = naladowany ? cel(p, null) : null;
-    dbg(p.getName() + " PPM " + wariant + " ticki=" + ticki + " mnoznik=" + String.format("%.3f", mnoznik)
-        + " cel=" + (cel == null ? "-" : cel.getType()));
+    String kierunek = wariant.equals("mocny") ? kierunek(p) : "brak";
+    double dodatek = kierunek.equals("przod") ? getConfig().getDouble("mocny.wypad.zasieg", 1.5) : 0;
+    Entity cel = naladowany ? cel(p, null, dodatek) : null;
+    if (!kierunek.equals("brak")) ruchMocnego(p, kierunek, cel);
+    dbg(p.getName() + " PPM " + wariant + " kierunek=" + kierunek + " ticki=" + ticki + " mnoznik="
+        + String.format("%.3f", mnoznik) + " cel=" + (cel == null ? "-" : cel.getType()));
     p.swingOffHand();
     if (wariant.equals("podwojny")) {
       getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) p.swingMainHand(); }, 4L);
@@ -288,10 +291,45 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     if (cel instanceof LivingEntity z && (wariant.equals("mocny") || wariant.equals("podwojny"))) efektMocnego(p, z, wariant);
   }
 
+  /** Kierunek z klawiszy ruchu w chwili puszczenia PPM (jak w Skyrimie: przod > tyl > bok). */
+  private String kierunek(Player p) {
+    var in = p.getCurrentInput();
+    if (in.isForward() && !in.isBackward()) return "przod";
+    if (in.isBackward() && !in.isForward()) return "tyl";
+    if (in.isLeft() != in.isRight()) return in.isLeft() ? "lewo" : "prawo";
+    return "brak";
+  }
+
+  /** Skyrim: wypad do przodu (doskok, dalszy zasieg), cios z odskokiem, cios z unikiem w bok. */
+  private void ruchMocnego(Player p, String kierunek, Entity cel) {
+    Vector przod = p.getLocation().getDirection().setY(0);
+    if (przod.lengthSquared() < 1e-4) return;
+    przod.normalize();
+    Vector ruch = switch (kierunek) {
+      case "przod" -> {
+        double dystans = cel == null ? 99 : cel.getLocation().distance(p.getLocation());
+        // nie wpychaj w cel stojacy tuz przed nami - doskok tylko gdy jest do czego doskoczyc
+        yield dystans > getConfig().getDouble("mocny.wypad.min-dystans", 2.2)
+            ? przod.clone().multiply(getConfig().getDouble("mocny.wypad.sila", 0.75)) : new Vector();
+      }
+      case "tyl" -> przod.clone().multiply(-getConfig().getDouble("mocny.odskok.sila", 0.6));
+      default -> new Vector(-przod.getZ(), 0, przod.getX()).multiply(
+          (kierunek.equals("lewo") ? -1 : 1) * getConfig().getDouble("mocny.unik.sila", 0.6));
+    };
+    if (ruch.lengthSquared() < 1e-4) return;
+    final Vector v = ruch.setY(0);   // bez podbicia: w powietrzu tarcie prawie nie hamuje (3,5+ bloku zamiast ~1)
+    // tyl/bok: najpierw cios, potem krok (cios z odskokiem); przod: doskok razem z ciosem
+    getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) p.setVelocity(p.getVelocity().add(v)); },
+        kierunek.equals("przod") ? 0L : 2L);
+  }
+
   private boolean stamina(Player p, double procent) {
     if (!mmocore || procent <= 0) return true;
-    double koszt = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA")) * procent / 100.0;
+    double maks = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA"));
+    double koszt = maks * procent / 100.0;
     net.Indyuce.mmocore.api.player.PlayerData dane = net.Indyuce.mmocore.api.player.PlayerData.get(p);
+    dbg(p.getName() + " stamina maks=" + String.format("%.2f", maks) + " teraz="
+        + (dane == null ? "-" : String.format("%.2f", dane.getStamina())) + " koszt=" + String.format("%.2f", koszt));
     if (dane != null && dane.getStamina() + 1e-6 >= koszt) {
       dane.giveStamina(-koszt, PlayerResourceUpdateEvent.UpdateReason.SKILL_COST);
       return true;
@@ -331,9 +369,11 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     return a == null ? 3.0 : a.getValue();
   }
 
-  private Entity cel(Player p, Entity klikniety) {
+  private Entity cel(Player p, Entity klikniety) { return cel(p, klikniety, 0); }
+
+  private Entity cel(Player p, Entity klikniety, double dodatek) {
     if (klikniety instanceof LivingEntity && !(klikniety instanceof ArmorStand)) return klikniety;
-    RayTraceResult r = p.getWorld().rayTrace(p.getEyeLocation(), p.getEyeLocation().getDirection(), zasieg(p),
+    RayTraceResult r = p.getWorld().rayTrace(p.getEyeLocation(), p.getEyeLocation().getDirection(), zasieg(p) + dodatek,
         FluidCollisionMode.NEVER, true, 0.3,
         x -> x instanceof LivingEntity && x != p && !(x instanceof ArmorStand) && !x.isDead());
     return r == null ? null : r.getHitEntity();
