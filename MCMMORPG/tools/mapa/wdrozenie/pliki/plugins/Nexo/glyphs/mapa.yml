@@ -1,0 +1,8 @@
+# WYGENEROWANE przez tools/mapa/okno.py. Tlo okna 'Mapa swiata' (6 rzedow, 176x222).
+# font minecraft:default OBOWIAZKOWY (tytul okna), ascent 13 / height 222 jak chw_panel_6.
+mapa_swiata_bg:
+  font: minecraft:default
+  texture: nexo:gui/mapa_swiata_bg
+  ascent: 13
+  height: 222
+  char: 䆀
