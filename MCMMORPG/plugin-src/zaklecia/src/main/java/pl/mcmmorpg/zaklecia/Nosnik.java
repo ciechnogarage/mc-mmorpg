@@ -5,7 +5,6 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.item.AttackRange;
 import io.papermc.paper.datacomponent.item.SwingAnimation;
-import io.papermc.paper.datacomponent.item.Tool;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.keys.DataComponentTypeKeys;
@@ -39,8 +38,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Nosnik zaklecia: przedmiot MythicMobs w dloni, zwiazany z postacia. Nie da sie go wyrzucic, przeniesc,
- * wlozyc do pojemnika, ramki, doniczki ani skarbca. Zmienia sie go tylko przez Ksiege zaklec
- * (komenda {@code zaklecia przypisz}, wolana z menu jako konsola).
+ * wlozyc do pojemnika, ramki, doniczki ani skarbca. Zmienia sie go przez Ksiege zaklec
+ * lub pasek Shift+Q.
  *
  * Prawa dlon = slot paska (wybrany, jesli pusty; inaczej pierwszy wolny 1-8), lewa dlon = slot drugiej reki.
  * Nosnik nigdy nie nadpisuje cudzego przedmiotu: bez miejsca przypisanie jest odrzucane z komunikatem.
@@ -51,9 +50,9 @@ final class Nosnik implements Listener {
   private final NamespacedKey klucz;
   private final NamespacedKey kluczPustej;
   private final DataComponentType debugStickState;
-  /** Slot paska prawej dloni z zakleciem — zostaje po odlozeniu kolkiem ("pusta"), zeby kolkiem wrocic. */
+  /** Slot paska prawej dloni z zakleciem, zachowany przy opróżnieniu dloni. */
   private final NamespacedKey kluczSlotu;
-  /** Lewa dlon byla uzywana do zaklec (Shift+kolko dziala tez przy pustej lewej). */
+  /** Lewa dlon byla uzywana do zaklec. */
   private final NamespacedKey kluczLewej;
   /** Bloki, ktore przyjmuja albo zamieniaja przedmiot z reki. */
   private static final Set<Material> BLOKI_BIORACE = Set.of(Material.DECORATED_POT, Material.FLOWER_POT,
@@ -70,6 +69,14 @@ final class Nosnik implements Listener {
         .getRegistry(RegistryKey.DATA_COMPONENT_TYPE).getOrThrow(DataComponentTypeKeys.DEBUG_STICK_STATE);
     org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, this::odswiezPuste, 1, 1);
   }
+
+  /**
+   * Pusta dlon takze bez czaru w lewej — ustawia pasek Shift+Q. Klient przy PPM w powietrze z pusta reka nie wysyla
+   * zadnego pakietu, wiec bez nosnika w dloni pasek nie widzial PPM (nie dalo sie wziac zaklecia najpierw do lewej).
+   */
+  java.util.function.Predicate<Player> wymusPusta = p -> false;
+
+  private static final NamespacedKey KLON_KSIEGI = new NamespacedKey("ksiega", "klon");
 
   boolean jest(ItemStack i) {
     return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(klucz, PersistentDataType.BYTE);
@@ -109,8 +116,12 @@ final class Nosnik implements Listener {
       Ksiega.Zaklecie stare = ksiega.w(lewa);
       if (stare != null) inv.setItemInOffHand(zrob(stare));
     }
-    if (ksiega.w(inv.getItemInOffHand()) != null) {
-      if (w == null || w.getType().isAir()) inv.setItem(wybrany, zrobPusta());
+    if (ksiega.w(inv.getItemInOffHand()) != null || wymusPusta.test(p)) {
+      if (w == null || w.getType().isAir()) {
+        if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG pusta gracz="
+            + p.getName() + " slot=" + wybrany + " przed=" + (w == null ? "null" : w.getType()));
+        inv.setItem(wybrany, zrobPusta());
+      }
     } else if (pusta(w)) inv.setItem(wybrany, null);
   }
 
@@ -144,16 +155,18 @@ final class Nosnik implements Listener {
 
   /** @return komunikat dla gracza (co sie stalo). */
   String przypisz(Player p, String id, boolean prawa) {
+    Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
+    if (id != null && z == null) return "§cNieznane zaklęcie: " + id;
     PlayerInventory inv = p.getInventory();
     if (!prawa) {
       ItemStack teraz = inv.getItemInOffHand();
-      if (!teraz.getType().isAir() && !jest(teraz)) {
+      // Klon wizualny okna E (ksiega:klon) to tylko obraz broni ze slotu 1 — prawdziwa bron oddaje sama ksiega-postaci.
+      if (teraz.hasItemMeta() && teraz.getItemMeta().getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
+      else if (!teraz.getType().isAir() && !jest(teraz)) {
         if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
         inv.setItemInOffHand(null);
       }
       if (id == null) { inv.setItemInOffHand(null); ustawLewa(p, false); usunPuste(p); return "§7Lewa dłoń jest pusta."; }
-      Ksiega.Zaklecie z = ksiega.poId.get(id);
-      if (z == null) return "§cNieznane zaklęcie: " + id;
       inv.setItemInOffHand(zrob(z));
       ustawLewa(p, true);
       odswiezPusta(p);
@@ -163,8 +176,6 @@ final class Nosnik implements Listener {
     int miejsce = -1;
     for (int s = 0; s < 36; s++) if (jest(inv.getItem(s))) { inv.setItem(s, null); if (s < 9 && miejsce < 0) miejsce = s; }
     if (id == null) { ustawSlot(p, -1); odswiezPusta(p); return "§7Prawa dłoń jest pusta."; }
-    Ksiega.Zaklecie z = ksiega.poId.get(id);
-    if (z == null) return "§cNieznane zaklęcie: " + id;
     if (miejsce < 0) {
       int wybrany = inv.getHeldItemSlot();
       ItemStack w = inv.getItem(wybrany);
@@ -197,9 +208,8 @@ final class Nosnik implements Listener {
     i.setData(DataComponentTypes.SWING_ANIMATION,
         SwingAnimation.swingAnimation().type(SwingAnimation.Animation.NONE));
     i.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, false);
-    i.setData(DataComponentTypes.TOOL, Tool.tool().defaultMiningSpeed(1_000_000f));
-    // Klient (LocalPlayer.raycastHitResult) z attack_range szuka istot dopiero od min_reach: przy 64 celownik przechodzi
-    // przez moby do terenu za nimi, wiec LPM trzymany na wrogu dalej "kopie" blok za nim (bez tego: pudlo = impuls).
+    i.unsetData(DataComponentTypes.TOOL);
+    // Przy attack_range 64 celownik klienta ignoruje pobliskie istoty; LPM trafia w MISS.
     i.setData(DataComponentTypes.ATTACK_RANGE, AttackRange.attackRange().minReach(64f).maxReach(64f)
         .minCreativeReach(64f).maxCreativeReach(64f).hitboxMargin(0f).build());
   }
@@ -241,6 +251,9 @@ final class Nosnik implements Listener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void zmianaSlotu(PlayerItemHeldEvent e) {
     PlayerInventory inv = e.getPlayer().getInventory();
+    if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG slot gracz="
+        + e.getPlayer().getName() + " stary=" + e.getPreviousSlot() + " nowy=" + e.getNewSlot()
+        + " przedmiot=" + (inv.getItem(e.getNewSlot()) == null ? "null" : inv.getItem(e.getNewSlot()).getType()));
     if (pusta(inv.getItem(e.getPreviousSlot()))) inv.setItem(e.getPreviousSlot(), null);
     org.bukkit.Bukkit.getScheduler().runTask(plugin, () -> {
       if (e.getPlayer().isOnline() && !e.getPlayer().isDead()) odswiezPusta(e.getPlayer());

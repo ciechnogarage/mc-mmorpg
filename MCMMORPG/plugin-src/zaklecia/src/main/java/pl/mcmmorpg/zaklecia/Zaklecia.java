@@ -53,17 +53,17 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     ksiega = new Ksiega(getConfig());
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
-    rzucanie = new Rzucanie(this, ksiega);
-    ulubione = new Ulubione(this, ksiega, nosnik, rzucanie);
+    rzucanie = new Rzucanie(this, ksiega, nosnik);
+    ulubione = new Ulubione(this, ksiega);
     getServer().getPluginManager().registerEvents(rzucanie, this);
     getServer().getPluginManager().registerEvents(nosnik, this);
-    getServer().getPluginManager().registerEvents(ulubione, this);
     wybor = new Wybor(this, ksiega, nosnik, ulubione, rzucanie);
     rzucanie.ustawWybor(wybor);
     getServer().getPluginManager().registerEvents(wybor, this);
+    if (getConfig().getBoolean("debug", false)) new DiagnostykaObrazen(this);
     kotwica = new Kotwica(this, rzucanie);
     getServer().getPluginManager().registerEvents(kotwica, this);
-    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione).register();
+    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione, rzucanie).register();
     getLogger().info("zaklecia: " + ksiega.poId.keySet());
   }
 
@@ -101,7 +101,13 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     String id = a[2].equalsIgnoreCase("nic") ? null : a[2].toLowerCase(Locale.ROOT);
     String reka = a[3].toLowerCase(Locale.ROOT);
     if (!reka.equals("prawa") && !reka.equals("lewa")) { s.sendMessage("Reka: prawa albo lewa"); return true; }
+    if (id != null && !ksiega.poId.containsKey(id)) {
+      s.sendMessage("Nieznane zaklęcie: " + id);
+      return true;
+    }
     boolean prawa = reka.equals("prawa");
+    rzucanie.stop(p, false);
+    rzucanie.zdejmijBronie(p);
     nosnik.komunikat(p, nosnik.przypisz(p, id, prawa));
     return true;
   }
@@ -148,6 +154,20 @@ public final class Zaklecia extends JavaPlugin implements Listener {
           getLogger().log(Level.WARNING, "zakZasob: " + t, t);
           return SkillResult.ERROR;
         }
+      }
+    });
+  }
+
+  @EventHandler
+  public void mechanikaUspokojenia(MythicMechanicLoadEvent e) {
+    if (!e.getMechanicName().equalsIgnoreCase("zakUspokoj")) return;
+    int ticki = Math.max(1, e.getConfig().getInteger("t", 300));
+    e.register(new ITargetedEntitySkill() {
+      @Override public ThreadSafetyLevel getThreadSafetyLevel() { return ThreadSafetyLevel.SYNC_ONLY; }
+      @Override public SkillResult castAtEntity(SkillMetadata data, AbstractEntity cel) {
+        if (!(cel.getBukkitEntity() instanceof org.bukkit.entity.Mob m)) return SkillResult.INVALID_TARGET;
+        rzucanie.uspokoj(m, ticki);
+        return SkillResult.SUCCESS;
       }
     });
   }
