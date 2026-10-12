@@ -52,14 +52,13 @@ public final class Startery {
     List<Gatunek> of = oferta(p);
     if (of.isEmpty()) { c.blad(p, "Oferta starterów jest pusta (startery.yml) — zgłoś administracji."); return; }
     List<String> tresc = new ArrayList<>();
-    tresc.add("<gray>Porównaj towarzyszy. Wybór jest trwały; następne okno poprosi o potwierdzenie.");
+    tresc.add("<gray>Wybierz towarzysza. Decyzję potwierdzisz w następnym kroku.");
     List<Okna.Przycisk> pr = new ArrayList<>();
     for (Gatunek g : of) {
       StringBuilder typy = new StringBuilder();
       for (Typ t : g.typy()) typy.append(t.kolor()).append(t.nazwa()).append(" ");
-      tresc.add("<white><b>" + g.nazwa() + "</b></white> " + typy + "<gray>· Rola: <white>" + rola(g));
-      tresc.add("<gray>Ruchy na poz. " + c.rej.startery().poziom() + ": <white>" + ruchy(g));
-      pr.add(new Okna.Przycisk("<white>" + g.nazwa(), "Typ: " + typy.toString().trim() + " · " + rola(g), 110,
+      pr.add(new Okna.Przycisk("<white>" + g.nazwa() + "<gray>·" + typy.toString().trim() + "<gray>·" + krotkaRola(g),
+          "Ruchy na poz. " + c.rej.startery().poziom() + ": " + ruchy(g), 110,
           x -> potwierdz(x, g)));
     }
     okna.pokaz(p, "<gold>Pierwszy chowaniec", tresc, pr, Okna.Przycisk.of("<gray>Później", "Wrócisz tu z menu Chowańców (klawisz Q)", x -> {}), 3, true, false);
@@ -82,6 +81,15 @@ public final class Startery {
     if (g.bazowy(Stat.SZYBKOSC) >= 60 && g.bazowy(Stat.ATAK) > g.bazowy(Stat.ATAK_SPEC)) return "szybki atak";
     if (atak >= obrona + 12) return "atak";
     return "wszechstronny";
+  }
+
+  private static String krotkaRola(Gatunek g) {
+    return switch (rola(g)) {
+      case "atak magiczny" -> "magia";
+      case "szybki atak" -> "szybki";
+      case "wszechstronny" -> "balans";
+      default -> rola(g);
+    };
   }
 
   private void potwierdz(Player p, Gatunek g) {

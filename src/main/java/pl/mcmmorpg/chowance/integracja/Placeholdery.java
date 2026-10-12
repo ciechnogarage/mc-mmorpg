@@ -105,6 +105,11 @@ public final class Placeholdery extends PlaceholderExpansion {
       return nazwa != null && !nazwa.isBlank() && !nazwa.equalsIgnoreCase("None")
           && !nazwa.equals("%mmocore_quest%") ? "tak" : "nie";
     }
+    if (k.equals("zadanie_status")) {
+      String nazwa = PlaceholderAPI.setPlaceholders(p, "%mmocore_quest%");
+      return nazwa == null || nazwa.isBlank() || nazwa.equalsIgnoreCase("None")
+          || nazwa.equals("%mmocore_quest%") ? "Brak aktywnego zadania" : nazwa;
+    }
     ProfilDane d = c.dane(p);
     if (d == null) return k.endsWith("_istnieje") || k.equals("starter_wybrany") ? "nie" : "";
     switch (k) {
