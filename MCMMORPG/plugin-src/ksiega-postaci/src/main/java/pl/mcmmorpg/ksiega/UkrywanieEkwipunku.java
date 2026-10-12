@@ -118,6 +118,15 @@ final class UkrywanieEkwipunku implements Listener {
     String sign = pageIds.keySet().stream()
         .filter(key -> plain.contains(key) || legacy.contains(key)).findFirst().orElse("");
     String page = pageIds.getOrDefault(sign, "");
+    // Stacje MMOItems pobieraja skladniki z prawdziwego ekwipunku gracza.
+    // Ich dolnych slotow nie wolno zastapic panelem Ksiegi ani blokowac klikniec.
+    if (page.startsWith("profession-")) {
+      views.remove(uuid);
+      history.remove(uuid);
+      currentPage.remove(uuid);
+      returning.remove(uuid);
+      return;
+    }
     boolean subpageEnabled = event.getView().getTopInventory().getSize() == 54
         && !panelEnabled && !portalEnabled && parents.containsKey(sign);
     if (panelEnabled) history.remove(uuid);

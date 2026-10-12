@@ -62,6 +62,12 @@ final class Portal implements Listener, CommandExecutor {
 
   static String titleSign() { return "䅬"; }
 
+  int odkryte(Player player) {
+    if (!PlayerData.has(player)) return 0;
+    PlayerData data = PlayerData.get(player);
+    return (int) DESTINATIONS.stream().filter(dest -> unlocked(data, dest)).count();
+  }
+
   @Override public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
       @NotNull String label, @NotNull String[] args) {
     if (!(sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender)
@@ -130,7 +136,7 @@ final class Portal implements Listener, CommandExecutor {
     PlayerData data = PlayerData.get(player);
     for (int i = 0; i < DESTINATIONS.size(); i++) {
       Destination dest = DESTINATIONS.get(i);
-      if (unlocked(data, dest)) items[i] = icon(data, dest);
+      items[i] = icon(data, dest);
     }
     return items;
   }
@@ -166,8 +172,10 @@ final class Portal implements Listener, CommandExecutor {
         line("Odkryty punkt podróży", NamedTextColor.GREEN),
         line("Kliknij, aby podróżować (3 s, nie ruszaj się)", NamedTextColor.YELLOW))
         : at == null ? List.of(
-            line("Punkt podróży jest niedostępny.", NamedTextColor.RED))
+            line("Nieodkryty punkt podróży", NamedTextColor.GRAY),
+            line("Odkryjesz go podczas wyprawy.", NamedTextColor.YELLOW))
         : List.of(
+            line("Nieodkryty punkt podróży", NamedTextColor.GRAY),
             line("Kraina: " + dest.realm(), NamedTextColor.GRAY),
             line("Warunek: podejdź na 8 bloków do punktu.", NamedTextColor.YELLOW),
             line("Położenie: x " + at.getBlockX() + ", z " + at.getBlockZ(), NamedTextColor.GRAY),

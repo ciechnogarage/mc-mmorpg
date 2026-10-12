@@ -20,6 +20,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   Migracja migracja;
   UkrywanieEkwipunku ukrywanie;
   Portal portal;
+  PortalPlaceholdery placeholdery;
 
   @Override public void onEnable() {
     saveDefaultConfig();
@@ -31,6 +32,10 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
     migracja = new Migracja(this);
     ukrywanie = new UkrywanieEkwipunku(this);
     portal = new Portal(this);
+    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+      placeholdery = new PortalPlaceholdery(this);
+      placeholdery.register();
+    }
     getCommand("ksiegaportal").setExecutor(portal);
     MMOItems.plugin.getInventory().register(bizuteria.supplier());
     for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie,
@@ -45,6 +50,7 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   @Override public void onDisable() {
     if (ukrywanie != null) ukrywanie.stop();
     if (portal != null) portal.stop();
+    if (placeholdery != null) placeholdery.unregister();
     for (Player player : Bukkit.getOnlinePlayers()) {
       bizuteria.clearView(player);
       bron.clearClone(player);
