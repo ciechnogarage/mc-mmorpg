@@ -48,16 +48,17 @@ import pl.mcmmorpg.charactercreator.creator.NameRules;
  *     name: ...
  *     race: ...
  *     class: ...
- *     skin-source: ...
+ *     skin-source: ...    # klucz w skins.yml, np. 'elf_ninja'; puste = brak skorki
  *     owner-uuid: ...      # od schematu 2
  *     owner-name: ...      # od schematu 2, wylacznie informacyjne
  *     created-at: &lt;epoch millis&gt;
+ *     last-used: &lt;epoch millis&gt;   # od schematu 3; brak = postac nigdy nie byla wybrana
  * </pre>
  */
 public final class CharacterStore {
 
   /** Podbijac przy KAZDEJ zmianie ukladu pliku i dopisywac krok w {@link #migrate}. */
-  public static final int SCHEMA_VERSION = 2;
+  public static final int SCHEMA_VERSION = 3;
 
   /** 2 sekundy: dosc, by zlac serie zmian, za malo, by strata bolala. */
   private static final long DEBOUNCE_TICKS = 40L;
@@ -144,6 +145,7 @@ public final class CharacterStore {
           logger.warning("characters.yml: rekord " + profileId + " ma bledne 'owner-uuid': " + ownerRaw);
         }
       }
+      long lastUsed = c.getLong("last-used", 0L);
       CharacterRecord record = new CharacterRecord(
           profileIdKey,
           name,
@@ -152,7 +154,14 @@ public final class CharacterStore {
           c.getString("skin-source", ""),
           ownerUuid,
           c.getString("owner-name", ""),
-          Instant.ofEpochMilli(c.getLong("created-at", System.currentTimeMillis())));
+          Instant.ofEpochMilli(c.getLong("created-at", System.currentTimeMillis())),
+          // 0 = klucza nie ma (rekord sprzed schematu 3). NIE podstawiamy tu 'created-at':
+          // rozroznienie "nigdy nie wybrana" od "wybrana wtedy, kiedy powstala" robi
+          // CharacterRecord#effectiveLastUsed, a plik ma mowic prawde o tym, co wie.
+          lastUsed == 0L ? null : Instant.ofEpochMilli(lastUsed),
+          // Opcjonalne od sceny kreatora; brak = kolor domyslny. Bez podbicia schematu:
+          // pole tylko dopisane, a stary jar po prostu je pominie.
+          c.getString("icon-color", ""));
       cache.put(profileId, record);
       indexName(profileId, record.name());
     }
@@ -170,6 +179,14 @@ public final class CharacterStore {
   private void migrate(int fromVersion) {
     if (fromVersion == SCHEMA_VERSION) {
       return;
+    }
+    if (fromVersion < 3) {
+      // Schemat 3 tylko DOPISAL 'last-used'. Brak tego pola jest poprawnym stanem starego
+      // rekordu — wypelni sie sam przy pierwszym wyborze postaci przez gracza, a do tego
+      // czasu za znacznik robi 'created-at'.
+      logger.info("Migracja schematu " + fromVersion + " -> " + SCHEMA_VERSION
+          + ": rekordy bez 'last-used' uzywaja daty utworzenia, dopoki gracz nie wybierze "
+          + "postaci.");
     }
     if (fromVersion < 2) {
       long withoutOwner = cache.values().stream().filter(r -> !r.hasOwner()).count();
@@ -216,6 +233,40 @@ public final class CharacterStore {
 
   public List<UUID> corruptRecords() {
     return List.copyOf(corrupt);
+  }
+
+  /**
+   * Postac, ktora ten gracz grał ostatnio — albo {@code null}, gdy nie ma zadnej.
+   *
+   * <p>Uzywane przy WEJSCIU na serwer, zanim gracz cokolwiek wybierze: wtedy nie ma jeszcze
+   * ani eventu MMOProfiles, ani aktywnego profilu, a skorka ma juz byc na graczu.
+   */
+  public CharacterRecord lastUsedBy(UUID ownerUuid) {
+    return pickLastUsed(cache.values(), ownerUuid);
+  }
+
+  /**
+   * Czysta regula wyboru — bez Bukkita, bo to jedyna czesc tej sciezki, ktora da sie
+   * pomylic niezauwazenie (i jedyna, ktora ma test).
+   *
+   * <p>Najnowszy {@link CharacterRecord#effectiveLastUsed()} wygrywa. Rekordy bez
+   * wlasciciela (schemat 1) sa pomijane: nie da sie ich przypisac do gracza, a zgadywanie
+   * po nicku konczyloby sie zalozeniem komus cudzej skorki.
+   */
+  static CharacterRecord pickLastUsed(Collection<CharacterRecord> records, UUID ownerUuid) {
+    if (ownerUuid == null) {
+      return null;
+    }
+    CharacterRecord best = null;
+    for (CharacterRecord record : records) {
+      if (!ownerUuid.equals(record.ownerUuid())) {
+        continue;
+      }
+      if (best == null || record.effectiveLastUsed().isAfter(best.effectiveLastUsed())) {
+        best = record;
+      }
+    }
+    return best;
   }
 
   /** Zapisuje rekord i planuje utrwalenie. Zwraca rekord albo null, gdy imie jest zajete. */
@@ -307,6 +358,12 @@ public final class CharacterStore {
         yaml.set(path + ".owner-name", record.ownerName());
       }
       yaml.set(path + ".created-at", record.createdAt().toEpochMilli());
+      if (record.lastUsedAt() != null) {
+        yaml.set(path + ".last-used", record.lastUsedAt().toEpochMilli());
+      }
+      if (record.iconColor() != null && !record.iconColor().isBlank()) {
+        yaml.set(path + ".icon-color", record.iconColor());
+      }
     }
     return yaml.saveToString();
   }

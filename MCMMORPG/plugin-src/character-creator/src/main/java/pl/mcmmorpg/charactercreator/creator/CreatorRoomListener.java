@@ -41,6 +41,17 @@ public final class CreatorRoomListener implements Listener {
     void onConfirm(Player player, CreatorSession session);
   }
 
+  /**
+   * Druga strona tego samego szwu: rezygnacja z tworzenia postaci.
+   *
+   * <p>Osobny interfejs, a nie druga metoda w {@link ConfirmHandler}, bo to sa dwa rozne
+   * kontrakty wobec MMOProfiles — jeden konczy zawieszony {@code ProfileCreateEvent}
+   * zatwierdzeniem, drugi porzuca go bez zatwierdzenia.
+   */
+  public interface CancelHandler {
+    void onCancel(Player player, CreatorSession session);
+  }
+
   private final Plugin plugin;
   private final CreatorConfig config;
   private final CreatorSessionManager sessions;
@@ -49,10 +60,11 @@ public final class CreatorRoomListener implements Listener {
   private final NameInputDialog nameInputDialog;
   private final CharacterStore store;
   private final ConfirmHandler confirmHandler;
+  private final CancelHandler cancelHandler;
 
   public CreatorRoomListener(Plugin plugin, CreatorConfig config, CreatorSessionManager sessions,
       PreviewDummyManager dummies, CreatorMenu menu, NameInputDialog nameInputDialog,
-      CharacterStore store, ConfirmHandler confirmHandler) {
+      CharacterStore store, ConfirmHandler confirmHandler, CancelHandler cancelHandler) {
     this.plugin = plugin;
     this.config = config;
     this.sessions = sessions;
@@ -61,6 +73,7 @@ public final class CreatorRoomListener implements Listener {
     this.nameInputDialog = nameInputDialog;
     this.store = store;
     this.confirmHandler = confirmHandler;
+    this.cancelHandler = cancelHandler;
   }
 
   /**
@@ -187,7 +200,7 @@ public final class CreatorRoomListener implements Listener {
       switch (action) {
         case "set_name" -> {
           if (event.isRightClick()) {
-            applyName(player, session, randomName());
+            applyName(player, session, randomName(session));
             menu.repaint(player, session);
             return;
           }
@@ -213,6 +226,14 @@ public final class CreatorRoomListener implements Listener {
         }
         case "confirm" -> {
           tryConfirm(player, session);
+          return;
+        }
+        case "exit" -> {
+          // Bez ceremonii i bez pytania "na pewno?". Przycisk istnieje po to, zeby wyjscie
+          // bylo jednym klikiem — potwierdzenie zamienialoby go w to samo kombinowanie,
+          // ktore mial usunac. Ryzykiem jest porzucony wybor rasy i klasy, a nie dane.
+          click(player, Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f);
+          cancelHandler.onCancel(player, session);
           return;
         }
         default -> {
@@ -301,18 +322,21 @@ public final class CreatorRoomListener implements Listener {
   /**
    * Przebiera dummy'ego po zmianie rasy lub klasy — wybor ma byc widoczny na postaci.
    *
-   * <p>Model 3D tez sie teraz zmienia. Wczesniej {@code swapModel} bylo MARTWYM KODEM (jedyne
-   * wystapienie w calym {@code src/} to jego definicja), wiec model byl ustawiany raz, dla
-   * rasy domyslnej, i wybor rasy nie zmienial sylwetki — tylko kolor skorzanego helmu.
+   * <p>Wyboru NIE przebieramy juz na jednej encji: kazda skorka ma wlasnego nosiciela,
+   * a klikniecie tylko wystawia wlasciwego na kotwice. Przebieranie w locie oznaczalo
+   * skasowanie i odtworzenie encji u klienta, czyli migniecie skorka domyslna — patrz
+   * PreviewDummyManager.
    */
   private void refreshAppearance(CreatorSession session, Player viewer) {
-    var dummy = session.previewDummy();
-    if (dummy == null || dummy.isDead()) {
+    CreatorConfig.RaceOption race = config.races().get(session.currentRaceId());
+    CreatorConfig.ClassOption clazz = config.classes().get(session.currentClassId());
+    var shown = dummies.select(viewer, race, clazz);
+    if (shown == null) {
       return;
     }
-    CreatorConfig.RaceOption race = config.races().get(session.currentRaceId());
-    dummies.swapModel(dummy, race, viewer);
-    dummies.applyAppearance(dummy, race, config.classes().get(session.currentClassId()));
+    // Podgladem jest od teraz TEN nosiciel — rotacja i ceremonia musza wiedziec ktory.
+    session.setPreviewDummy(shown);
+    dummies.applyAppearance(viewer, race, clazz);
   }
 
   /** Krotka ceremonia zamiast natychmiastowego znikniecia — moment ma byc zauwazalny. */
@@ -342,13 +366,45 @@ public final class CreatorRoomListener implements Listener {
     }, 45L);
   }
 
-  private static String randomName() {
-    String[] prefix = {"Aer", "Bran", "Cor", "Dra", "El", "Fen", "Gor", "Hal",
-                       "Ith", "Kar", "Lor", "Mor", "Nar", "Oth", "Ral", "Syl"};
-    String[] suffix = {"ion", "wyn", "dor", "ath", "iel", "mir", "ruk", "gard",
-                       "essa", "thas", "vyn", "orn"};
+  private static final String[] NAME_PREFIX = {"Aer", "Bran", "Cor", "Dra", "El", "Fen",
+      "Gor", "Hal", "Ith", "Kar", "Lor", "Mor", "Nar", "Oth", "Ral", "Syl"};
+  private static final String[] NAME_SUFFIX = {"ion", "wyn", "dor", "ath", "iel", "mir",
+      "ruk", "gard", "essa", "thas", "vyn", "orn"};
+
+  /**
+   * Losowe imie, ktore jest WOLNE.
+   *
+   * <p>Pula ma 16 x 12 = 192 kombinacje i to jest caly problem: postaci na serwerze
+   * przybywa, a poprzednia wersja losowala jedna kombinacje i oddawala ja bez pytania.
+   * Przy 55 zajetych imionach co trzecie klikniecie "PPM — losuj" trafialo w zajete i nie
+   * robilo NIC poza czerwonym komunikatem — gracz klikal do skutku, nie wiedzac dlaczego.
+   * (Tak samo wygladalo to w evalach: scenariusz konczyl sie "brak komunikatu o utworzeniu",
+   * bo przycisk STWORZ zostawal w stanie "Najpierw ustaw imie".)
+   *
+   * <p>Losujemy wiec do skutku, a gdy pula sie wyczerpie — doklejamy liczbe, zamiast
+   * oddawac cokolwiek. {@link #applyName} i tak sprawdza zajetosc jeszcze raz: miedzy
+   * losowaniem a klinieciem "STWORZ" imie moze zajac ktos inny.
+   */
+  private String randomName(CreatorSession session) {
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
-    return prefix[rnd.nextInt(prefix.length)] + suffix[rnd.nextInt(suffix.length)];
+    for (int attempt = 0; attempt < 64; attempt++) {
+      String candidate = NAME_PREFIX[rnd.nextInt(NAME_PREFIX.length)]
+          + NAME_SUFFIX[rnd.nextInt(NAME_SUFFIX.length)];
+      if (!store.isNameTaken(candidate, session.profileId())) {
+        return candidate;
+      }
+    }
+    String base = NAME_PREFIX[rnd.nextInt(NAME_PREFIX.length)]
+        + NAME_SUFFIX[rnd.nextInt(NAME_SUFFIX.length)];
+    for (int number = 2; number < 1000; number++) {
+      String candidate = base + number;
+      if (!store.isNameTaken(candidate, session.profileId())) {
+        return candidate;
+      }
+    }
+    // Nie do osiagniecia przy jakiejkolwiek realnej liczbie postaci — ale niech oddaje
+    // cos, co przejdzie walidacje, zamiast null.
+    return base + java.util.UUID.randomUUID().toString().substring(0, 4);
   }
 
   private void tryConfirm(Player player, CreatorSession session) {

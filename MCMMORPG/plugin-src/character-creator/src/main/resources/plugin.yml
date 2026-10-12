@@ -9,15 +9,20 @@ load: POSTWORLD
 # Multiverse przypadkiem wstawalo 30 s przed nami.
 # MMOCore jest twarda zaleznoscia, bo bez niego `mmocore class select` przepada po cichu
 # i postac zostaje bez klasy.
-# packetevents ZNIKNELO: w kodzie nie bylo ani jednego uzycia, tylko komentarze po
-# poprzedniej implementacji obrotu podgladu (patrz PreviewRotationTask).
+# packetevents NADAL NIE MA i to jest wynik pomiaru, a nie przeoczenie: rozgrzewka skorek
+# (PreviewDummyManager#warmUpSkins) byla najpierw napisana na jego pakiecie player_info
+# z kompletem 16 profili. Pakiet DOCHODZI do klienta — potwierdzone botem protokolowym —
+# ale klient nie pobiera z niego ani jednej tekstury, bo rozwiazuje skorki leniwie, przy
+# rysowaniu. Rozgrzewka stoi wiec na prawdziwych encjach i nie potrzebuje packetevents.
+# packetevents jest w softdepend tylko dla ciszy na czacie w scenie (SceneChatMute) — bez niego
+# czat w scenie po prostu nie jest wyciszany.
 depend: [ModelEngine, MMOProfiles, LibsDisguises, MMOCore, Multiverse-Core]
-softdepend: [LuckPerms, CMI, MythicLib, ProtocolLib]
+softdepend: [LuckPerms, CMI, MythicLib, ProtocolLib, packetevents]
 
 commands:
   charactercreator:
     description: Narzedzia administracyjne kreatora postaci.
-    usage: /<command> <reload|info|delete|prune|sessions>
+    usage: /<command> <reload|info|delete|prune|sessions|skin>
     permission: charactercreator.admin
     aliases: [cc, chcreator]
 

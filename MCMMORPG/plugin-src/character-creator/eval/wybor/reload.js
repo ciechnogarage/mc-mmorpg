@@ -1,0 +1,22 @@
+// /cc reload przeladowuje wybor-postaci: lista-od 20 -> po wejsciu BEZ listy; z powrotem 6 -> lista.
+const fs = require('fs')
+const w = require('./lib/w')
+const R = new w.Results('reload')
+const CFG = '/clone-rw/plugins/CharacterCreator/config.yml'
+const ustaw = n => fs.writeFileSync(CFG, fs.readFileSync(CFG, 'utf8').replace(/^  lista-od: \d+$/m, '  lista-od: ' + n))
+;(async () => {
+  ustaw(20)
+  R.assert(/Config przeladowany/.test((await w.rcon('cc reload')).replace(/§./g, '')), 'cc reload')
+  let bot = await w.connect('WyborQA')
+  const d = await w.waitDialog(bot, () => true, 8000)
+  R.assert(!d, 'lista-od 20 po reload: lista NIE otwiera sie sama (9 postaci)')
+  await w.quit(bot); await w.sleep(5000)
+  ustaw(6)
+  await w.rcon('cc reload')
+  bot = await w.connect('WyborQA')
+  R.assert(!!await w.waitDialog(bot, d => /Twoje postacie/.test(w.plain(d.title)), 10000), 'lista-od 6 po reload: lista znow sama')
+  await w.click(bot, /^(★ )?Aldor /)
+  await w.sleep(3000)
+  await w.quit(bot)
+  R.print(); console.log(`WYNIK: ${R.rows.length - R.failed}/${R.rows.length} PASS`); process.exit(R.failed)
+})().catch(e => { ustaw(6); R.print(); console.error('ERR', e); process.exit(99) })

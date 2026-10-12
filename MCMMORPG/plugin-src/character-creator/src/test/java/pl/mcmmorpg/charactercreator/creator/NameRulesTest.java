@@ -83,4 +83,39 @@ class NameRulesTest {
       assertFalse(rejection.message().isBlank(), rejection + " nie ma komunikatu dla gracza");
     }
   }
+
+  // --- filtr wulgaryzmow ---
+
+  @ParameterizedTest
+  @ValueSource(strings = {"Kurwa", "kuuurwa", "KURW4", "Chuj_", "chój", "Jeb4c", "Pierd0l", "Fuck3r",
+      "Sk_urwysyn", "HITLER1", "xXpizdaXx", "Łajza_kurwiszon"})
+  void rejectsOffensiveNames(String name) {
+    assertEquals(NameRules.Rejection.OFFENSIVE, NameRules.validate(name).rejection(), name);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"Kassandra", "Cumulus", "Nazir", "Pasukan", "Dickens", "Grapevine",
+      "Bormir", "Galwen", "Thalriel", "Grokthar", "Mirosław", "Huberto", "Szymek"})
+  void acceptsInnocentNamesContainingShortWords(String name) {
+    assertTrue(NameRules.validate(name).ok(), name + " odrzucono: " + NameRules.validate(name).rejection());
+  }
+
+  @Test
+  void configListReplacesBuiltInAndEmptyRestoresIt() {
+    try {
+      NameRules.setBlockedWords(java.util.List.of("gorak"));
+      assertEquals(NameRules.Rejection.OFFENSIVE, NameRules.validate("Gorak").rejection());
+      assertTrue(NameRules.validate("Kurwa").ok());
+    } finally {
+      NameRules.setBlockedWords(java.util.List.of());
+    }
+    assertTrue(NameRules.validate("Gorak").ok());
+    assertFalse(NameRules.validate("Kurwa").ok());
+  }
+
+  @Test
+  void filterKeyStripsDiacriticsLeetAndRepeats() {
+    assertEquals("zazolc", NameRules.filterKey("Zażółć"));
+    assertEquals("kurwa", NameRules.filterKey("Kuuu_rw4"));
+  }
 }
