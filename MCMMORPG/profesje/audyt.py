@@ -43,7 +43,7 @@ def ld(f):
 
 WYNIKI = collections.OrderedDict((k, []) for k in (
     'yaml', 'istnienie', 'ujscie', 'przemiany', 'narzedzia', 'mielenie', 'luki', 'sila', 'buffy', 'vanilla', 'demo',
-    'perki', 'mistrzostwa', 'zlecenia', 'wezly'))
+    'perki', 'mistrzostwa', 'zlecenia', 'wezly', 'zrodla'))
 
 
 def g(t):
@@ -126,6 +126,8 @@ for b in narz:
     uzyte[b].add('narzedzie')
 for b in haki:
     uzyte[b].add('swiat')
+for b, k in (rz.get('uzycia') or {}).items():
+    uzyte[b].add('uzycie:' + str(k))
 for prof, tiers in zlecenia.items():
     for t, lst in (tiers or {}).items():
         for z in lst or []:
@@ -177,7 +179,7 @@ for prof in ['mining', 'woodworking', 'herbalism', 'farming']:
 brak_l = sorted(set(range(1, 11)) - {int(t) for t in lowiska})
 if brak_l:
     WYNIKI['wezly'].append(f'fishing: brak lowisk tierow {brak_l}')
-t_zw = {int(t) for t in zwierzyna.values()}
+t_zw = {int(t['tier'] if isinstance(t, dict) else t) for t in zwierzyna.values()}
 if 1 not in t_zw:
     WYNIKI['wezly'].append('hunting: zadna bestia T1 nie jest na liscie zwierzyna (Bestiariusz/Loch 001)')
 
@@ -202,45 +204,35 @@ for pid, d in profs.items():
             zle.append(f'L{l}:{akcje:.0f}≠{cel}')
     if zle:
         WYNIKI['mielenie'].append(f'{pid}: {len(zle)} poziomow poza celem, np. {zle[:4]}')
-# XP receptur: ekwiwalent surowcowy
-ekw = {}
-
-
-def ekwiwalent(i, stos=()):
-    if i in ekw:
-        return ekw[i]
-    if i in surowce or i in stos:
-        return 1.0
-    zr = [r for r in rec if r['out'] and r['out'][1] == i and r['st'] in aktywne_stacje]
-    if not zr:
-        return 1.0
-    r = zr[0]
-    ilosc_out = 1
-    m = re.search(r'amount=(\d+)', str((stacje[r['st']]['recipes'][r['id']] or {}).get('output', '')))
-    if m:
-        ilosc_out = int(m.group(1))
-    v = sum(c * ekwiwalent(b, stos + (i,)) for a, b, c in r['ing']) / ilosc_out
-    ekw[i] = v
-    return v
-
-
-for r in rec:
-    if r['st'] not in aktywne_stacje or r['prof'] not in WSZYSTKIE or r['st'] == 'chowance':
-        continue
-    if not r['xp']:
-        continue  # XP daje plugin (zdarzenie stacji) — sprawdzane nizej z configu
-    WYNIKI['mielenie'].append(f"{r['st']}/{r['id']}: XP w triggerze receptury (powinien liczyc plugin)")
+# XP receptur: ile wytworzen najlepszej receptury biezacego tieru na poziom (v1: 1254 olejow na 15 poziomow)
 xp_rec = rz.get('xp-receptur', {}) or {}
 for r in rec:
-    if r['st'] not in aktywne_stacje or r['prof'] not in WSZYSTKIE:
+    if r['st'] in aktywne_stacje and r['prof'] in WSZYSTKIE and r['xp'] and r['st'] != 'chowance':
+        WYNIKI['mielenie'].append(f"{r['st']}/{r['id']}: XP w triggerze receptury (liczy plugin — podwojne XP)")
+krzywa_v2 = P + '/MMOCore/exp-curves/profesje_v2.txt'
+need = [float(x) for x in open(krzywa_v2).read().split()] if os.path.exists(krzywa_v2) else []
+for pid in RZEMIOSLO + OGOLNE:
+    rs = [r for r in rec if r['prof'] == pid and r['st'] in aktywne_stacje and r['lv']]
+    brak_xp = [r['id'] for r in rs if r['id'] not in xp_rec]
+    if brak_xp:
+        WYNIKI['mielenie'].append(f'{pid}: {len(brak_xp)} receptur bez XP w Rzemioslo/config.yml, np. {brak_xp[:3]}')
         continue
-    if r['id'] not in xp_rec:
-        WYNIKI['mielenie'].append(f"{r['st']}/{r['id']}: brak XP w Rzemioslo xp-receptur")
-        continue
-    t = tier_poziomu(r['lv'] or 1)
-    oczek = sum(c * ekwiwalent(b) for a, b, c in r['ing']) * g(t) * 0.9
-    if oczek and abs(xp_rec[r['id']] - oczek) / oczek > 0.2:
-        WYNIKI['mielenie'].append(f"{r['st']}/{r['id']}: XP {xp_rec[r['id']]} vs ekwiwalent {oczek:.0f}")
+    najgorzej = (0, 0)
+    for l in range(1, min(100, len(need) + 1)):
+        t = tier_poziomu(l)
+        dost = [xp_rec[r['id']] for r in rs if r['lv'] <= l and tier_poziomu(r['lv']) == t]
+        if not dost:
+            WYNIKI['mielenie'].append(f'{pid}: poziom {l} bez receptury biezacego tieru')
+            continue
+        ile = need[l - 1] / max(dost)
+        najgorzej = max(najgorzej, (ile, l))
+        if ile > 20 + 2 * l:
+            WYNIKI['mielenie'].append(f'{pid}: poziom {l} wymaga {ile:.0f} wytworzen najlepszej receptury (> {20 + 2 * l} akcji)')
+    if SZCZEGOLY:
+        print(f'  [mielenie] {pid}: najwiecej {najgorzej[0]:.0f} wytworzen na poziom {najgorzej[1]}')
+    za_duzo = [r['id'] for r in rs if need and xp_rec[r['id']] > 3 * need[min(98, r['lv'] - 1)]]
+    if za_duzo:
+        WYNIKI['mielenie'].append(f'{pid}: receptury dajace >3 poziomy naraz: {za_duzo[:4]}')
 
 # ------------------------------------------------------------------ luki: nowa rzecz co <= MAX_LUKA poziomow do max
 for pid in WSZYSTKIE:
@@ -299,7 +291,7 @@ for (t, i), b in items.items():
         if dur > cd and i not in relikty:
             WYNIKI['buffy'].append(f'{i}: efekt vanilli {e} {dur:.0f}s > cooldown {cd:.0f}s (staly buff)')
 for bid, d in buffy.items():
-    if d.get('grupa') not in ('mikstura', 'eliksir', 'olej', 'posilek'):
+    if d.get('grupa') not in ('mikstura', 'eliksir', 'olej', 'posilek', 'opatrunek'):
         WYNIKI['buffy'].append(f'{bid}: nieznana grupa {d.get("grupa")}')
     if d.get('grupa') in ('eliksir', 'olej', 'posilek') and not d.get('czas'):
         WYNIKI['buffy'].append(f'{bid}: buff bez czasu')
@@ -342,6 +334,25 @@ for pid in RZEMIOSLO + OGOLNE:
 for pid in ZBIERACKIE:
     if not (rz.get('zlecenia-startowe') or {}).get(pid):
         WYNIKI['zlecenia'].append(f'{pid}: brak zlecenia startowego (narzedzie T1)')
+
+# ------------------------------------------------------------------ zrodla: kazdy skladnik da sie zdobyc
+zrodla = set(surowce)
+for w in list(wezly.values()) + list(zwierzyna.values()):
+    for k in ('glowny', 'poboczny', 'rzadki'):
+        if w.get(k):
+            zrodla.add(w[k])
+for l in lowiska.values():
+    zrodla.update(x for x in (l.get('glowny'), l.get('poboczny')) if x)
+    zrodla.update(x[0] for x in l.get('rzadkie') or [])
+for f in glob.glob(P + '/MythicMobs/**/*.yml', recursive=True):
+    zrodla.update(re.findall(r'id=([A-Z0-9_]+)', open(f, encoding='utf-8', errors='ignore').read()))
+zrodla.update(r['out'][1] for r in rec if r['out'] and r['st'] in aktywne_stacje)
+for r in rec:
+    if r['st'] not in aktywne_stacje:
+        continue
+    for a, b, c in r['ing']:
+        if b not in zrodla:
+            WYNIKI['zrodla'].append(f"{r['st']}/{r['id']}: skladnika {b} nie da sie zdobyc")
 
 # ------------------------------------------------------------------ raport
 fail = 0

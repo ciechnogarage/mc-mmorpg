@@ -123,6 +123,7 @@ dobiera bazy z `tools/przedmioty/katalog.json` — nowe akty w v2 automatycznie 
 | eliksir | alchemia | 1 aktywny; 5 min; zastępuje poprzedni |
 | olej | alchemia | 1 aktywny; 10 min |
 | posiłek | gotowanie | 1 aktywny; 20 min; słabszy od eliksiru, inna rodzina statystyk (przetrwanie) |
+| opatrunek | krawiectwo | leczenie w ciągu 8 s, przerywane obrażeniami; cooldown 20 s |
 
 Wartości rosną z tierem i są rzędu jednego affiksu T1–T2 v2 tego poziomu (tabela w `KATALOG.md`).
 Mikstura lecznicza: `6 + 1,8·(T−1)` HP (≈25% HP postaci aktu). Buff zdejmuje się przy wyjściu z gry; śmierć go nie zdejmuje.
