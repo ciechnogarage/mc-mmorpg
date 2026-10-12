@@ -123,7 +123,11 @@ final class Nosnik implements Listener {
       if (stare != null) inv.setItemInOffHand(zrob(stare));
     }
     if (ksiega.w(inv.getItemInOffHand()) != null || wymusPusta.test(p)) {
-      if (w == null || w.getType().isAir()) inv.setItem(wybrany, zrobPusta());
+      if (w == null || w.getType().isAir()) {
+        if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG pusta gracz="
+            + p.getName() + " slot=" + wybrany + " przed=" + (w == null ? "null" : w.getType()));
+        inv.setItem(wybrany, zrobPusta());
+      }
     } else if (pusta(w)) inv.setItem(wybrany, null);
   }
 
@@ -269,6 +273,9 @@ final class Nosnik implements Listener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void zmianaSlotu(PlayerItemHeldEvent e) {
     PlayerInventory inv = e.getPlayer().getInventory();
+    if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG slot gracz="
+        + e.getPlayer().getName() + " stary=" + e.getPreviousSlot() + " nowy=" + e.getNewSlot()
+        + " przedmiot=" + (inv.getItem(e.getNewSlot()) == null ? "null" : inv.getItem(e.getNewSlot()).getType()));
     if (pusta(inv.getItem(e.getPreviousSlot()))) inv.setItem(e.getPreviousSlot(), null);
     org.bukkit.Bukkit.getScheduler().runTask(plugin, () -> {
       if (e.getPlayer().isOnline() && !e.getPlayer().isDead()) odswiezPusta(e.getPlayer());
