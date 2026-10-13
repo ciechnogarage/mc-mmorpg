@@ -822,6 +822,9 @@ final class Bron implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void held(PlayerItemHeldEvent event) {
+    // Pasek Zaklec anuluje przewiniecie: wybrany slot ekwipunku sie nie zmienia.
+    // Odswiezanie calej Ksiegi w takim przypadku wysylalo kilkanascie set_slot.
+    if (event.isCancelled()) return;
     canonical(event.getPlayer());
     refreshLater(event.getPlayer());
   }
@@ -848,10 +851,17 @@ final class Bron implements Listener {
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void damage(EntityDamageByEntityEvent event) {
-    if (event.getDamager() instanceof Player player
-        && (player.getInventory().getHeldItemSlot() != RIGHT
-            && player.getInventory().getHeldItemSlot() != LEFT_IMAGE
-            || virtual(player.getInventory().getItemInMainHand()))) event.setCancelled(true);
+    if (!(event.getDamager() instanceof Player player)) return;
+    // MythicLib rejestruje AttackMetadata na celu przed wywolaniem Bukkit damage.
+    // mmodamage uzywa tej samej przyczyny ENTITY_ATTACK co cios wręcz.
+    var attack = io.lumine.mythic.lib.MythicLib.plugin.getDamage()
+        .getRegisteredAttackMetadata(event.getEntity());
+    // Brak metadanych oznacza takze zwykly cios, jesli ten listener wykona sie
+    // przed listenerem MythicLib na tym samym priorytecie HIGHEST.
+    if (attack != null && !(attack instanceof io.lumine.mythic.lib.damage.MeleeAttackMetadata)) return;
+    if ((player.getInventory().getHeldItemSlot() != RIGHT
+        && player.getInventory().getHeldItemSlot() != LEFT_IMAGE)
+        || virtual(player.getInventory().getItemInMainHand())) event.setCancelled(true);
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void shoot(EntityShootBowEvent event) {
