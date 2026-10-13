@@ -30,6 +30,13 @@ scenariusz('reguly-rak', async ({ w, polacz, rcon }) => {
   };
   const czysc = async () => { await rcon(`minecraft:clear ${nick}`); await sleep(700); bot.setQuickBarSlot(0); await sleep(300); };
   const zamknij = () => { try { bot.closeWindow(bot.inventory); } catch (e) { /* brak okna */ } };
+  // srodowisko: bez smierci (klon ma plaski swiat w powietrzu i nocne moby - bot ginal i gubil przedmioty)
+  for (const g of ['fall_damage false', 'keep_inventory true', 'spawn_mobs false', 'spawn_monsters false']) await rcon(`minecraft:gamerule ${g}`);
+  await rcon('minecraft:time set noon');
+  const p0 = bot.entity.position.floored();
+  await rcon(`minecraft:fill ${p0.x - 4} ${p0.y - 1} ${p0.z - 4} ${p0.x + 6} ${p0.y - 1} ${p0.z + 4} stone`);
+  await rcon(`minecraft:fill ${p0.x - 4} ${p0.y} ${p0.z - 4} ${p0.x + 6} ${p0.y + 3} ${p0.z + 4} air`);
+  await rcon(`minecraft:teleport ${nick} ${p0.x + 0.5} ${p0.y} ${p0.z + 0.5}`); await sleep(800);
   await rcon(`mmocore admin level set ${nick} main 100`);
 
   // 1. macierz: kazdy typ do prawej (sztylet w lewej) i do lewej (sztylet w prawej)
@@ -80,6 +87,7 @@ scenariusz('reguly-rak', async ({ w, polacz, rcon }) => {
   const czat = []; bot.on('messagestr', m => czat.push(m)); bot.on('actionBar', m => czat.push(String(m)));
   await rcon(`mi give SWORD MIECZ_KAMIENNY ${nick} 1`); await sleep(800);
   bot.setQuickBarSlot(0); await sleep(600);
+  await rcon(`minecraft:teleport ${nick} ${p0.x + 0.5} ${p0.y} ${p0.z + 0.5} -90 0`); await sleep(800);
   const p = bot.entity.position;
   await rcon(`minecraft:summon husk ${(p.x + 1.6).toFixed(2)} ${p.y} ${p.z.toFixed(2)} {NoAI:1b,PersistenceRequired:1b,Silent:1b,Tags:["qa_r"],attributes:[{id:"minecraft:max_health",base:200d}],Health:200f}`); await sleep(1500);
   const h = bot.nearestEntity(e => e.name === 'husk'); await bot.lookAt(h.position.offset(0, 1, 0), true); await sleep(600);
