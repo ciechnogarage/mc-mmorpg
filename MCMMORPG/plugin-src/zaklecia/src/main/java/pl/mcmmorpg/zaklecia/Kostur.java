@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
  */
 final class Kostur implements Listener {
   private static final String KLUCZ = "zaklecia.kostur";
+  private static final org.bukkit.NamespacedKey NOSNIK = new org.bukkit.NamespacedKey("zaklecia", "nosnik");
   private final Zaklecia plugin;
   private final Map<UUID, StatModifier> aktywne = new HashMap<>();
 
@@ -43,6 +44,12 @@ final class Kostur implements Listener {
   double premia() { return plugin.getConfig().getDouble("kostur.premia-magii", 50); }
 
   void odswiez(Player p) {
+    // stare nosniki (sprzed 13.10) bez flagi MMOITEMS_HANDWORN - podmien, zeby MMOItems nie karal "zajetymi rekami"
+    ItemStack lewa = p.getInventory().getItemInOffHand();
+    if (lewa.hasItemMeta() && lewa.getItemMeta().getPersistentDataContainer().has(NOSNIK)) {
+      ItemStack nowa = Nosnik.naDloni(lewa);
+      if (nowa != lewa) p.getInventory().setItemInOffHand(nowa);
+    }
     boolean ma = premia() > 0 && kostur(p.getInventory().getItemInMainHand());
     StatModifier m = aktywne.get(p.getUniqueId());
     if (ma && m == null) {

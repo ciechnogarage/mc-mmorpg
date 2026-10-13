@@ -5,6 +5,7 @@ const { scenariusz, sleep } = require('/bot/lib');
 scenariusz('kostur', async ({ w, polacz, rcon }) => {
   const nick = 'BotKostur';
   const bot = await polacz({ nick });
+  const czat = []; bot.on('messagestr', m => czat.push(m)); bot.on('actionBar', m => czat.push(String(m)));
   const ok = async (slot, pred) => (await rcon(`execute if items entity ${nick} ${slot} ${pred}`)).includes('passed');
   const id = x => `*[custom_data~{MMOITEMS_ITEM_ID:"${x}"}]`;
   const NOS = '*[custom_data~{PublicBukkitValues:{"zaklecia:nosnik":1b}}]';
@@ -46,6 +47,17 @@ scenariusz('kostur', async ({ w, polacz, rcon }) => {
   w.sprawdz('premia-magii', mk >= 50, 'MAGIC_DAMAGE z kosturem >= 50 (premia 50 + magic-damage kostura)', mk);
   const z = await strzal('z kosturem');
   w.sprawdz('kostur-wzmacnia', bez > 0 && z > bez * 1.3, 'pocisk przez kostur wyraznie mocniejszy', `${bez} -> ${z} (x${(z / bez).toFixed(2)})`);
+  const zajete = czat.filter(m => /zajęte ręce/i.test(m)).length;
+  const efekty = await rcon(`data get entity ${nick} active_effects`);
+  w.sprawdz('bez-zajetych-rak', zajete === 0 && !/slowness/.test(efekty), 'kostur + zaklecie w lewej: bez komunikatu MMOItems i bez spowolnienia', `komunikaty=${zajete} slowness=${/slowness/.test(efekty)}`);
+  // odleglosc jak na world1: 3 bloki
+  await rcon('minecraft:kill @e[tag=qa_k]');
+  await rcon(`minecraft:teleport ${nick} ${p0.x + 0.5} ${p0.y} ${p0.z + 0.5} -90 8`); await sleep(600);
+  await rcon(`minecraft:summon husk ${p0.x + 3.5} ${p0.y} ${p0.z + 0.5} {NoAI:1b,PersistenceRequired:1b,Silent:1b,Tags:["qa_k"],attributes:[{id:"minecraft:max_health",base:500d}],Health:500f}`);
+  await rcon('minecraft:effect give @e[tag=qa_k] minecraft:fire_resistance 120 0 true'); await sleep(1200);
+  await rcon(`mmocore admin resource-mana set ${nick} 1000`);
+  { const a = await hp(); for (let t = 0; t < 700; t += 200) { bot.activateItem(false); bot.activateItem(true); await sleep(200); } bot.deactivateItem(); await sleep(2500);
+    const d = +(a - await hp()).toFixed(2); console.log('3 bloki, pochylenie 8: obrazenia', d); w.sprawdz('trafia-z-3-blokow', d > 0, 'pocisk trafia z 3 blokow', d); }
   bot.setQuickBarSlot(4); await sleep(1500);
   const mp = await magia();
   w.sprawdz('premia-znika', mp < 10, 'po zmianie slotu z kostura premia znika', mp);
