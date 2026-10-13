@@ -39,10 +39,12 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Rzucanie rzucanie;
   private Wybor wybor;
   private Kotwica kotwica;
+  private Kostur kostur;
 
   @Override
   public void onDisable() {
     if (kotwica != null) kotwica.wylacz();
+    if (kostur != null) kostur.wylacz();
     if (rzucanie != null) rzucanie.wylacz();
     if (nosnik != null) for (Player p : getServer().getOnlinePlayers()) nosnik.usunPuste(p);
   }
@@ -63,6 +65,8 @@ public final class Zaklecia extends JavaPlugin implements Listener {
     if (getConfig().getBoolean("debug", false)) new DiagnostykaObrazen(this);
     kotwica = new Kotwica(this, rzucanie);
     getServer().getPluginManager().registerEvents(kotwica, this);
+    kostur = new Kostur(this);
+    getServer().getPluginManager().registerEvents(kostur, this);
     if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(ksiega, ulubione, rzucanie).register();
     getLogger().info("zaklecia: " + ksiega.poId.keySet());
   }

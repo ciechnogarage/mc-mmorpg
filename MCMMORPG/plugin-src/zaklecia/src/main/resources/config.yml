@@ -197,3 +197,7 @@ spowolnienie: -0.5
 # Węższy i krótszy model widoczny tylko dla rzucającego.
 strumien:
   waski-dla-rzucajacego: true
+# Kostur = ognisko zaklec (13.10): dwureczny, jedno zaklecie (lewa, PPM), dopoki kostur w prawej - premia MAGIC_DAMAGE (%).
+kostur:
+  typy: [STAFF, GREATSTAFF]
+  premia-magii: 50
