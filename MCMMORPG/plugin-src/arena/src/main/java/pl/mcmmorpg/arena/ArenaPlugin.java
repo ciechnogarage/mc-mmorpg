@@ -84,6 +84,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   private final Set<UUID> deathsOnArena = new HashSet<>();
   private NamespacedKey dummyKey, numberKey, launchRingKey, projectileOwnerKey, cloudOwnerKey;
   private Plugin profilesPlugin;
+  private MenuGracza menuGracza;
   private File stateFile;
   private long tick;
 
@@ -100,6 +101,9 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     stateFile = new File(getDataFolder(), "returns.yml");
     loadState();
     Bukkit.getPluginManager().registerEvents(this, this);
+    menuGracza = new MenuGracza(this);
+    Bukkit.getPluginManager().registerEvents(menuGracza, this);
+    getCommand("menugracza").setExecutor(menuGracza);
     Bukkit.getScheduler().runTaskTimer(this, () -> {
       tick++;
       if (tick % getConfig().getLong("dummy.check-ticks") == 0) ensureDummies();
@@ -140,7 +144,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     else player.sendMessage(message);
   }
   private void deny(Player player, String message) { bar(player, 40, "§c" + message); }
-  private String profile(Player player) {
+  String profile(Player player) {
     if (profilesPlugin == null || !profilesPlugin.isEnabled()) return "";
     try {
       Object profiles = profilesPlugin.getClass().getMethod("getPlayerData", UUID.class).invoke(profilesPlugin, player.getUniqueId());
@@ -169,6 +173,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   private void onProfileUnload(org.bukkit.event.Event event) {
     try {
       Player player = (Player) event.getClass().getMethod("getPlayer").invoke(event);
+      if (player != null && menuGracza != null) menuGracza.cancelFor(player);
       if (player == null || !arena(player.getLocation())) return;
       Location destination = evacuate(player, "zmianę postaci");
       if (destination == null) return;
@@ -189,6 +194,34 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     }
   }
   private boolean tagged(Player player) { return combatUntil.getOrDefault(player.getUniqueId(), 0L) > System.currentTimeMillis(); }
+  String duelProblem(Player player) {
+    if (!player.isOnline() || player.isDead() || player.getHealth() <= 0) return "Gracz jest martwy lub offline.";
+    if (!arena(player.getLocation()) && !getConfig().getStringList("entry-worlds").contains(player.getWorld().getName())) return "Gracz jest poza bezpiecznym światem wejścia.";
+    if (!player.isOnGround() || player.getFallDistance() > getConfig().getDouble("entry.max-fall-distance")) return "Gracz spada lub nie stoi na ziemi.";
+    if (PlayerData.has(player) && PlayerData.get(player).isInCombat()) return "Gracz jest w walce MMOCore.";
+    if (tagged(player)) return "Gracz walczy już na arenie.";
+    if (forfeitUntil.getOrDefault(player.getUniqueId(), 0L) > System.currentTimeMillis()) return "Gracz ma jeszcze karę za opuszczenie walki.";
+    Location target = spawn();
+    if (target == null || !target.clone().add(0, -1, 0).getBlock().getType().isSolid()) return "Arena nie jest gotowa.";
+    return null;
+  }
+  boolean onArena(Player player) { return arena(player.getLocation()); }
+  boolean enterForDuel(Player player) {
+    if (onArena(player)) return true;
+    enter(player);
+    return onArena(player);
+  }
+  void leaveFailedDuel(Player player) { if (onArena(player) && !tagged(player)) leave(player); }
+  boolean placeForDuel(Player player, String side) {
+    World world = arenaWorld();
+    if (world == null) return false;
+    Location target = point("menu-gracza.ring." + side, world);
+    return target.clone().add(0, -1, 0).getBlock().getType().isSolid()
+        && target.getBlock().isPassable() && target.clone().add(0, 1, 0).getBlock().isPassable()
+        && safeTeleport(player, target);
+  }
+  void protectForDuel(Player player, long until) { safeUntil.put(player.getUniqueId(), until); }
+  void notice(Player player, String message) { deny(player, message); }
   private void tag(Player a, Player b) {
     long until = System.currentTimeMillis() + getConfig().getLong("combat.seconds") * 1000L;
     combatUntil.put(a.getUniqueId(), until);

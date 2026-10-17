@@ -27,6 +27,14 @@ boundary:
   min-y: 45
 entry:
   max-fall-distance: 0.1
+menu-gracza:
+  zasieg: 4.5
+  zwykle: 'dm open hub_glowne %gracz%'
+  cooldown: 15
+  waznosc-pojedynku: 30
+  ring:
+    pierwszy: {x: 0.5, y: 64, z: -8.5, yaw: 0, pitch: 0}
+    drugi: {x: 0.5, y: 64, z: 9.5, yaw: 180, pitch: 0}
 combat:
   seconds: 10
   logout-penalty-seconds: 60

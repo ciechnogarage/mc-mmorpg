@@ -29,7 +29,7 @@ echo "== kopia swiata"; /opt/docker/mc/kopie/kopia-swiata.sh
 STAMP=$(date +%Y%m%d-%H%M%S); B=$DANE/backups/arena-$STAMP; mkdir -p "$B/stare"
 (cd "$TU/baza" && find . -type f ! -name md5.txt) | while read -r f; do mkdir -p "$B/stare/$(dirname "$f")"; cp -a "$P/$f" "$B/stare/$f"; done
 mkdir -p "$B/stare/MythicLib" "$B/stare/Nexo/pack/assets/nexo/textures/gui"
-cp -a "$P/MythicLib/config.yml" "$B/stare/MythicLib/"; cp -a "$PNG"/hub_spolecznosc_{1,2,3,4}.png "$B/stare/Nexo/pack/assets/nexo/textures/gui/"
+mkdir -p "$B/stare/Zaklecia"; cp -a "$P/Zaklecia/config.yml" "$B/stare/Zaklecia/"; cp -a "$P/MythicLib/config.yml" "$B/stare/MythicLib/"; cp -a "$PNG"/hub_spolecznosc_{1,2,3,4}.png "$B/stare/Nexo/pack/assets/nexo/textures/gui/"
 cat > "$B/cofnij.sh" <<EOF
 #!/usr/bin/env bash
 # Cofa Otwarta Arene ($STAMP): pliki sprzed wdrozenia, bez jaru areny i moba manekina; flagi WG pvp w swiatach glownych
@@ -54,6 +54,9 @@ cp -a "$TU/pliki/MythicMobs/mobs/Arena.yml" "$P/MythicMobs/mobs/"
 cp -a "$TU/pliki/CoreTools/Scripts/kara-smierci.yml" "$P/CoreTools/Scripts/"
 cp -a "$TU/pack/gui"/hub_spolecznosc_{1,2,3,4}.png "$PNG/"
 mkdir -p "$P/WorldGuard/worlds/arena"; cp -a "$TU/swiat/regions.yml" "$P/WorldGuard/worlds/arena/regions.yml"
+# Q na gracza: tylko klucz klawisz-q.zwykle w Zaklecia (inne klucze bez zmian; brak trafienia = stare menu)
+sed -i "s#^  zwykle: 'dm open hub_glowne %gracz%'#  zwykle: 'menugracza q %gracz%'#" "$P/Zaklecia/config.yml"
+grep -q "zwykle: 'menugracza q %gracz%'" "$P/Zaklecia/config.yml" || echo "UWAGA: klawisz-q w Zaklecia nie zmieniony (inny format) - Q dziala jak dotad"
 python3 - "$P/MythicLib/config.yml" <<'PY'
 from pathlib import Path
 import sys
