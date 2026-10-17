@@ -20,6 +20,7 @@ typy:
     rodzaj: ciete
     reakcja: krytyk
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.08, 0.08, 0.12]
     skala: s100
@@ -33,6 +34,7 @@ typy:
     rodzaj: ciete
     reakcja: krytyk
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.08, 0.08, 0.12]
     skala: s100
@@ -46,6 +48,7 @@ typy:
     rodzaj: ciete
     reakcja: krytyk
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.08, 0.08, 0.12]
     skala: s100
@@ -60,6 +63,7 @@ typy:
     reakcja: krwawienie
     ladowanie: 0.6
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s100
@@ -74,6 +78,7 @@ typy:
     zasieg: 3.3
     poza: crossbow
     poza_mocnego: trident
+    waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.08, 0.08, 0.12]
@@ -88,6 +93,7 @@ typy:
     reakcja: krwawienie
     ladowanie: 0.8
     poza_mocnego: trident
+    waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.04, 0.04, 0.1]
@@ -102,6 +108,7 @@ typy:
     wzor: IRON_SPEAR
     poza: crossbow
     poza_mocnego: trident
+    waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.14, 0.14, -0.1]
@@ -114,9 +121,11 @@ typy:
     czas: 8
     rodzaj: klute
     wzor: IRON_SPEAR
+    waga: 1.4
     skala: s130
   SPEAR:
     rodzaj: klute
+    waga: 1.0
   DAGGER:
     zamach: stab
     czas: 4
@@ -124,6 +133,7 @@ typy:
     reakcja: z_ukrycia
     zasieg: 2.6
     poza_mocnego: trident
+    waga: 0.8
     rytm: true
     kroki: [0.18, 0.18, 0.24]
     skala: s080
@@ -136,6 +146,7 @@ typy:
     rodzaj: klute
     reakcja: krytyk
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.08, 0.08, 0.12]
     skala: s100
@@ -146,6 +157,7 @@ typy:
     zamach: whack
     czas: 7
     rodzaj: ciete
+    waga: 0.8
     rytm: true
     kroki: [0, 0, 0]
     prog_rytmu: 0.9
@@ -153,10 +165,12 @@ typy:
   WAND:
     zamach: stab
     czas: 5
+    waga: 1.0
     skala: s090
   STAFF:
     zamach: stab
     czas: 7
+    waga: 1.0
     skala: s125
   GREATSTAFF:
     zamach: whack
@@ -166,6 +180,7 @@ typy:
     ladowanie: 0.6
     zasieg: 3.3
     poza_mocnego: trident
+    waga: 1.4
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s140
@@ -174,12 +189,15 @@ typy:
   TOME:
     zamach: stab
     czas: 5
+    waga: 1.0
   TALISMAN:
     zamach: stab
     czas: 5
+    waga: 1.0
   FILAKTERIUM:
     zamach: stab
     czas: 5
+    waga: 1.0
   HAMMER:
     zamach: whack
     czas: 8
@@ -187,6 +205,7 @@ typy:
     reakcja: pancerz
     ladowanie: 0.6
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s100
@@ -200,6 +219,7 @@ typy:
     ladowanie: 0.9
     poza: trident
     poza_mocnego: trident
+    waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.06, 0.06, 0.1]
@@ -214,6 +234,7 @@ typy:
     reakcja: krwawienie
     zasieg: 2.8
     poza_mocnego: trident
+    waga: 1.0
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s100
@@ -227,6 +248,7 @@ typy:
     ladowanie: 0.8
     zasieg: 3.5
     poza_mocnego: trident
+    waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.04, 0.04, 0.1]
@@ -237,6 +259,7 @@ typy:
     zamach: whack
     czas: 7
     rodzaj: obuchowe
+    waga: 1.0
     rytm: true
     kroki: [0, 0, 0]
     prog_rytmu: 0.9
@@ -245,6 +268,7 @@ typy:
     zamach: stab
     czas: 4
     rodzaj: obuchowe
+    waga: 0.8
     rytm: true
     kroki: [0, 0, 0]
     prog_rytmu: 0.9

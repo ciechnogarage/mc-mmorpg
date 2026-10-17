@@ -4,6 +4,7 @@
 //   a = prawa reka: model, lekki, oddech, regeneracja, mocny, zadyszka, garda (bez regeneracji, koszt, pekniecie)
 //   b = ciagla walka dla zestawow 14/10/7 s
 //   c = DwieBronie: mocny lewa w jednostkach
+//   d = waga lekka (sztylet, x0,8): ciagla walka ~10/0,8 s;  e = waga ciezka (halabarda, x1,4): ~10/1,4 s
 // Kazdy tryb na swiezym graczu. Slot z mieczem bierzemy z serwera (Inventory) i ustawiamy wprost: przewijanie
 // hotbara otwiera pasek wyboru Zaklec, a wtedy kazdy PPM jest przejmowany (DENY) - zmierzone na klonie 17.10.
 const { scenariusz, czekaj, sleep } = require('/bot/lib');
@@ -11,6 +12,8 @@ const { scenariusz, czekaj, sleep } = require('/bot/lib');
 const TRYB = process.argv[2] || 'a';
 const NICK = 'BotSt' + TRYB + (Date.now() % 10000);
 const X = 0.5, Y = -59, Z = 0.5;
+const BRON = { d: ['JASTRZAB', 'DAGGER', 'SZTYLET_REKRUTA', 'iron_sword', 0.8], e: ['BASTION', 'HALBERD', 'HALABARDA_STRAZNIKA', 'iron_axe', 1.4] }[TRYB]
+  || ['BASTION', 'SWORD', 'MIECZ_ZELAZNY', 'iron_sword', 1.0];   // klasa z biegloscia, typ, id, material, waga
 
 scenariusz('stamina-' + TRYB, async ({ w, polacz, rcon }) => {
   const bot = await polacz({ nick: NICK });
@@ -20,27 +23,27 @@ scenariusz('stamina-' + TRYB, async ({ w, polacz, rcon }) => {
 
   const stan = async () => {
     const t = await rcon(`animacjebroni stamina gracz ${NICK}`);
-    const m = /zestaw=(\d+)s L=([\d.]+) pkt wsp_broni=([\d.]+) lekki=([\d.]+) stamina=([\d.]+)\/(\d+)/.exec(t);
+    const m = /zestaw=(\d+)s L=([\d.]+) pkt wsp_broni=([\d.]+) waga=([\d.]+) lekki=([\d.]+) stamina=([\d.]+)\/(\d+)/.exec(t);
     if (!m) throw new Error('nieczytelny stan: ' + t);
-    return { zestaw: +m[1], L: +m[2], wsp: +m[3], lekki: +m[4], st: +m[5], max: +m[6] };
+    return { zestaw: +m[1], L: +m[2], wsp: +m[3], waga: +m[4], lekki: +m[5], st: +m[6], max: +m[7] };
   };
   const ustaw = async (v) => rcon(`mmocore admin resource-stamina set ${NICK} ${v}`);
   const blisko = (a, b, tol) => Math.abs(a - b) <= tol;
   const trzymajMiecz = async () => {
     for (let proba = 0; proba < 5; proba++) {
-      if ((await rcon(`minecraft:data get entity ${NICK} SelectedItem.id`)).includes('iron_sword')) return true;
+      if ((await rcon(`minecraft:data get entity ${NICK} SelectedItem.id`)).includes(BRON[3])) return true;
       const inv = await rcon(`minecraft:data get entity ${NICK} Inventory`);
-      const m = /\{Slot: (\d)b, id: "minecraft:iron_sword"/.exec(inv) || /id: "minecraft:iron_sword"[^}]*?Slot: (\d)b/.exec(inv);
+      const m = new RegExp(`\\{Slot: (\\d)b, id: "minecraft:${BRON[3]}"`).exec(inv);
       if (m) bot.setQuickBarSlot(+m[1]);
       await sleep(400);
     }
     return false;
   };
 
-  const kl = await rcon(`mmocore admin class ${NICK} BASTION`);   // bieglosc miecz + tarcza
+  const kl = await rcon(`mmocore admin class ${NICK} ${BRON[0]}`);
   await rcon(`minecraft:gamemode survival ${NICK}`);
   await rcon(`minecraft:teleport ${NICK} ${X} ${Y} ${Z} 0 0`);
-  await rcon(`mi give SWORD MIECZ_ZELAZNY ${NICK} 1`);
+  await rcon(`mi give ${BRON[1]} ${BRON[2]} ${NICK} 1`);
   await sleep(1500);
   const trzyma = await trzymajMiecz();
   w.sprawdz('przygotowanie', trzyma, `${kl.trim().slice(0, 50)}; serwer trzyma miecz=${trzyma}`);
@@ -161,5 +164,23 @@ scenariusz('stamina-' + TRYB, async ({ w, polacz, rcon }) => {
     const d1 = (await stan()).st;
     w.sprawdz('dwie-bronie-mocny-lewa', lewa && blisko(d0 - d1, 2.5 * s.lekki, 0.25),
       `lewa=${lewa}; spadek ${(d0 - d1).toFixed(2)}, oczekiwany 2,5 x ${s.lekki} = ${(2.5 * s.lekki).toFixed(2)} (wsp ${s.wsp}, z premia szybkosci dwoch broni)`);
+  }
+  if (TRYB === 'd' || TRYB === 'e') {
+    s = await stan();
+    w.sprawdz('waga-broni', blisko(s.waga, BRON[4], 0.01) && blisko(s.lekki, s.L * s.wsp * BRON[4], 0.02),
+      `${BRON[1]}: waga=${s.waga} (oczekiwana ${BRON[4]}), lekki=${s.lekki} = L ${s.L} x wsp ${s.wsp} x waga`);
+    const T = s.zestaw / BRON[4];
+    await ustaw(s.max); await sleep(300);
+    const szybkosc = 1.6 / s.wsp;
+    const start = Date.now();
+    let przy70 = null;
+    while ((Date.now() - start) / 1000 < T * 1.1) {
+      bot.swingArm('right');
+      await sleep(1000 / szybkosc);
+      if (przy70 === null && (Date.now() - start) / 1000 >= T * 0.7) przy70 = (await stan()).st;
+    }
+    const koniec = (await stan()).st;
+    w.sprawdz('ciagla-walka-waga', przy70 > s.lekki && koniec < s.lekki,
+      `${BRON[1]} (waga ${BRON[4]}): cel ${T.toFixed(1)} s; po ${(0.7 * T).toFixed(1)} s: ${przy70?.toFixed(2)}, po ${(1.1 * T).toFixed(1)} s: ${koniec.toFixed(2)} (${szybkosc.toFixed(2)} ciosu/s)`);
   }
 }, { limitMs: 200000 });

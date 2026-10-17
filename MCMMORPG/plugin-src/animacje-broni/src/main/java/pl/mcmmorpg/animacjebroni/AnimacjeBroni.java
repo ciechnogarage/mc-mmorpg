@@ -122,6 +122,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       DataComponentTypes.KINETIC_WEAPON, DataComponentTypes.USE_EFFECTS);
 
   private final Map<String, Ustawienie> typy = new HashMap<>();
+  /** Waga typu broni = mnoznik kosztu staminy (typy.<typ>.waga, domyslnie 1). */
+  private final Map<String, Double> wagi = new HashMap<>();
   private final Map<UUID, Riposta> riposty = new HashMap<>();
   private final Map<UUID, Integer> odnowienieMocnego = new HashMap<>();
   private final Set<UUID> sygnalMocnego = new HashSet<>();
@@ -185,6 +187,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private void wczytaj() {
     reloadConfig();
     typy.clear();
+    wagi.clear();
     modele.clear();
     przestrzen = getConfig().getString("przestrzen-modeli", "bron");
     debug = getConfig().getBoolean("debug", false);
@@ -267,6 +270,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
             getLogger().warning("Typ " + typ + ": nieznana poza mocnego '" + t.getString("poza_mocnego") + "'");
           }
         }
+        wagi.put(typ.toUpperCase(Locale.ROOT), t.getDouble("waga", 1.0));
         typy.put(typ.toUpperCase(Locale.ROOT), new Ustawienie(zamach, t.getInt("czas", 6), t.getString("skala"), rodzaj,
             liczbaLubNull(t, "ladowanie"), liczbaLubNull(t, "zasieg"), wzor, garda,
             t.getBoolean("ciezka", false), t.getBoolean("drzewce", false),
@@ -850,6 +854,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   void komunikatWytrzymalosci(Player p, String tekst) { komunikat(p, tekst, 40); }
 
   void dbgWytrzymalosci(String m) { dbg(m); }
+
+  /** Waga broni w prawej rece (1 = bez broni MMOItems albo typ bez wagi). */
+  double wagaBroni(Player p) {
+    ItemStack i = p.getInventory().getItemInMainHand();
+    if (i.getType().isAir()) return 1.0;
+    String typ = NBTItem.get(i).getType();
+    return typ == null ? 1.0 : wagi.getOrDefault(typ.toUpperCase(Locale.ROOT), 1.0);
+  }
 
   /**
    * API dla innych pluginow walki (DwieBronie, przez refleksje): punkty staminy za akcje warta {@code jednostki}

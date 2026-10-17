@@ -86,7 +86,8 @@ final class Wytrzymalosc implements Listener {
     return Math.max(wspMin, Math.min(wspMax, ciosyNaSekunde / Math.max(0.1, szybkosc)));
   }
 
-  double kosztLekkiego(Player p) { return jednostka(p) * wspolczynnikBroni(p); }
+  /** Lekki cios: porcja wg szybkosci ataku (wyrownuje czas walki) x waga broni (ciezka meczy bardziej). */
+  double kosztLekkiego(Player p) { return jednostka(p) * wspolczynnikBroni(p) * plugin.wagaBroni(p); }
 
   double kosztMocnego(Player p, double mnoznikWariantu) { return kosztLekkiego(p) * mnoznikWariantu; }
 
@@ -199,8 +200,8 @@ final class Wytrzymalosc implements Listener {
   String opis(Player p) {
     if (!wlaczona) return "stamina: model wylaczony";
     return String.format(java.util.Locale.ROOT,
-        "zestaw=%ds L=%.2f pkt wsp_broni=%.2f lekki=%.2f stamina=%.2f/%.0f oddech=%dt", zestaw, jednostka(p),
-        wspolczynnikBroni(p), kosztLekkiego(p), stamina(p), MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA"),
+        "zestaw=%ds L=%.2f pkt wsp_broni=%.2f waga=%.1f lekki=%.2f stamina=%.2f/%.0f oddech=%dt", zestaw, jednostka(p),
+        wspolczynnikBroni(p), plugin.wagaBroni(p), kosztLekkiego(p), stamina(p), MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA"),
         Math.max(0, oddechTicki - (plugin.getServer().getCurrentTick() - ostatniWydatek.getOrDefault(p.getUniqueId(), -1000))));
   }
 }

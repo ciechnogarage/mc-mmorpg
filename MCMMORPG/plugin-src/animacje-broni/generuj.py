@@ -83,6 +83,12 @@ for typ in ('AXE', 'GREATAXE', 'KOSA', 'SIERP'):
 for typ in ('HAMMER', 'GREATHAMMER', 'GREATSTAFF'):
     TYPY[typ]['kroki'] = [0.06, 0.06, 0.10]
 TYPY['HALBERD']['kroki'] = [0.14, 0.14, -0.10]
+# waga = mnoznik kosztu staminy (model jednostek): ciezka bron meczy bardziej takze w przeliczeniu na sekunde
+# walki (lekka ~12,5 s, srednia 10 s, ciezka ~7 s przy zestawie 10). W zamian ciezka ma obrazenia na cios,
+# przebicie pancerza, zachwianie i ciosy obszarowe. Lekka: sztylet, piesciak, bicz; ciezka: flaga ciezka
+# oraz dwureczne kostur bojowy i kopia.
+for typ, u in TYPY.items():
+    u['waga'] = 0.8 if typ in ('DAGGER', 'GAUNTLET', 'WHIP') else 1.4 if u.get('ciezka') or typ in ('GREATSTAFF', 'LANCE') else 1.0
 for typ in ('SHIELD', 'GAUNTLET', 'WHIP'):
     TYPY[typ]['kroki'] = [0, 0, 0]
     TYPY[typ]['prog_rytmu'] = 0.9
@@ -348,7 +354,7 @@ def main():
     linie.append('typy:')
     for typ, u in TYPY.items():
         linie.append('  %s:' % typ)
-        for k in ('zamach', 'czas', 'rodzaj', 'reakcja', 'ladowanie', 'zasieg', 'wzor', 'poza', 'poza_mocnego'):
+        for k in ('zamach', 'czas', 'rodzaj', 'reakcja', 'ladowanie', 'zasieg', 'wzor', 'poza', 'poza_mocnego', 'waga'):
             if k in u:
                 linie.append('    %s: %s' % (k, u[k]))
         if u.get('ciezka'):
