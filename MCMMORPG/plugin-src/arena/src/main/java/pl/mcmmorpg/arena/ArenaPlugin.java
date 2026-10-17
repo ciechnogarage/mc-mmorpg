@@ -264,6 +264,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     // menu woła [console]; RCON to tez tylko administrator (testy na klonie). Gracz nie ma dostepu.
     if (!(sender instanceof org.bukkit.command.ConsoleCommandSender) && !(sender instanceof org.bukkit.command.RemoteConsoleCommandSender)) { sender.sendMessage("§cTylko menu areny może wykonać tę czynność."); return true; }
+    if (args.length == 1 && args[0].equalsIgnoreCase("manekiny")) { ensureDummies(sender); return true; }
     if (args.length != 2 || !(args[0].equalsIgnoreCase("wejdz") || args[0].equalsIgnoreCase("wyjdz"))) { sender.sendMessage("arena <wejdz|wyjdz> <gracz>"); return true; }
     Player player = Bukkit.getPlayerExact(args[1]);
     if (player == null) { sender.sendMessage("Gracz jest offline: " + args[1]); return true; }
@@ -565,20 +566,23 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     Bukkit.getScheduler().runTaskLater(this, display::remove, getConfig().getLong("ui.number-lifetime-ticks"));
   }
   private boolean isDummy(Entity entity) { return entity != null && entity.getPersistentDataContainer().has(dummyKey, PersistentDataType.BYTE); }
-  private void ensureDummies() {
+  private void ensureDummies() { ensureDummies(null); }
+  // raport != null: `arena manekiny` z konsoli - jeden przebieg z opisem kazdej stacji (diagnostyka na produkcji)
+  private void ensureDummies(CommandSender raport) {
     World world = arenaWorld();
-    if (world == null) return;
+    if (world == null) { if (raport != null) raport.sendMessage("manekiny: brak swiata areny"); return; }
     var positions = getConfig().getConfigurationSection("dummy.positions");
-    if (positions == null) return;
+    if (positions == null) { if (raport != null) raport.sendMessage("manekiny: brak dummy.positions w configu"); return; }
     for (String name : positions.getKeys(false)) {
       Location point = point("dummy.positions." + name, world);
       world.getChunkAt(point).load();
-      if (!point.clone().add(0, -1, 0).getBlock().getType().isSolid()) continue;
+      if (!point.clone().add(0, -1, 0).getBlock().getType().isSolid()) { if (raport != null) raport.sendMessage(name + ": pod stacja " + point.clone().add(0, -1, 0).getBlock().getType() + " - pomijam"); continue; }
       double rx = getConfig().getDouble("dummy.search-radius-xz"), ry = getConfig().getDouble("dummy.search-radius-y");
       boolean found = world.getNearbyEntities(point, rx, ry, rx).stream().anyMatch(this::isDummy);
-      if (found) continue;
+      if (found) { if (raport != null) raport.sendMessage(name + ": manekin jest"); continue; }
       try {
         var mob = MythicBukkit.inst().getMobManager().spawnMob(getConfig().getString("dummy.mob-id"), point);
+        if (raport != null) raport.sendMessage(name + ": spawnMob -> " + (mob == null ? "null" : mob.getEntity() == null ? "bez encji" : mob.getEntity().getBukkitEntity().getType() + " @ " + mob.getEntity().getBukkitEntity().getLocation().toVector() + " valid=" + mob.getEntity().getBukkitEntity().isValid()));
         Entity entity = mob.getEntity().getBukkitEntity();
         entity.getPersistentDataContainer().set(dummyKey, PersistentDataType.BYTE, (byte) 1);
         if (entity instanceof LivingEntity living) { living.setAI(false); living.setSilent(true); living.setRemoveWhenFarAway(false); living.setCollidable(false); }
@@ -587,7 +591,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     for (Entity entity : world.getEntities()) if (isDummy(entity)) {
       double max = getConfig().getDouble("dummy.max-displacement");
       boolean atStation = positions.getKeys(false).stream().anyMatch(name -> entity.getLocation().distanceSquared(point("dummy.positions." + name, world)) < max * max);
-      if (!atStation) { entity.remove(); continue; }
+      if (!atStation) { if (raport != null) raport.sendMessage("usuwam manekin poza stacja @ " + entity.getLocation().toVector()); entity.remove(); continue; }
       entity.setVelocity(new Vector());
       if (entity.getFireTicks() > getConfig().getInt("dummy.max-fire-seconds") * 20) entity.setFireTicks(0);
     }

@@ -33,6 +33,7 @@ mkdir -p $D/plugins/WorldGuard/worlds/arena && cp $A/wdrozenie/swiat/regions.yml
 L=$D/logs/latest.log; I=$(stat -c %i $L); docker restart $K >/dev/null
 for i in $(seq 1 120); do [ "$(stat -c %i $L 2>/dev/null)" != "$I" ] && grep -q 'Done (' $L && break; sleep 5; done
 grep -a -E 'Enabling (Arena|Chowance|Wiary|MMOProfiles)' $L
+R 'mv remove arena' >/dev/null || true   # po wdrozeniu world1 ma 'arena' w worlds.yml, a klon nie ma jej folderu
 grep -v '^#' $A/wdrozenie/swiat/ustaw.txt | grep -v '^$' | grep -v '^mv setspawn ' | R | grep -c -i 'success' || true
 grep -v '^#' $A/wdrozenie/swiat/wg-pvp-deny.txt | grep -v '^$' | R | grep -c -i 'success' || true
 grep -v '^#' $A/wdrozenie/swiat/budowa.txt | grep -v '^$' | R | grep -c -E 'Changed|filled' || true
