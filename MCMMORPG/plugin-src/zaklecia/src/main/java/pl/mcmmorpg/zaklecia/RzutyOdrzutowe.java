@@ -69,7 +69,8 @@ final class RzutyOdrzutowe {
 
   private void sprawdzMane(Player p, Ladunek l) {
     double koszt = l.zaklecie.mana() * (l.obie() ? l.zaklecie.manaOburacz() : 1);
-    if (PlayerData.get(p).getMana() < koszt) komunikat.mana(p);
+    double brak = koszt - PlayerData.get(p).getMana();
+    if (brak > 0) komunikat.mana(p, brak);
   }
 
   void ppm(Player p, Ksiega.Zaklecie z, int rowno) {
@@ -89,6 +90,24 @@ final class RzutyOdrzutowe {
   String stan(Player p, boolean prawaDlon) {
     Ladunek l = (prawaDlon ? prawa : lewa).get(p.getUniqueId());
     return l == null ? null : l.gotowe ? "gotowe" : "laduje";
+  }
+
+  int postep(Player p, boolean prawaDlon) {
+    Ladunek l = (prawaDlon ? prawa : lewa).get(p.getUniqueId());
+    if (l == null) return 0;
+    return (int) Math.min(100, Math.max(0, (czas - l.start) * 100 / Math.max(1, l.zaklecie.czasLadowania())));
+  }
+
+  boolean oburacz(Player p, boolean prawaDlon) {
+    Ladunek l = (prawaDlon ? prawa : lewa).get(p.getUniqueId());
+    return l != null && l.obie();
+  }
+
+  int pozostaloDziesiatych(Player p, boolean prawaDlon) {
+    Ladunek l = (prawaDlon ? prawa : lewa).get(p.getUniqueId());
+    if (l == null) return 0;
+    long ticki = Math.max(0, l.zaklecie.czasLadowania() - (czas - l.start));
+    return (int) ((ticki + 1) / 2);
   }
 
   boolean aktywna(Player p, boolean prawaDlon) {
@@ -184,7 +203,7 @@ final class RzutyOdrzutowe {
     }
     double koszt = z.mana() * (l.obie() ? z.manaOburacz() : 1);
     PlayerData dane = PlayerData.get(p);
-    if (dane.getMana() < koszt) { komunikat.mana(p); return; }
+    if (dane.getMana() < koszt) { komunikat.mana(p, koszt - dane.getMana()); return; }
     dane.giveMana(-koszt, ResourceUpdateReason.SKILL);
     boolean wykonano;
     if (z.typ().equals("bron") || z.typ().equals("przywolanie") || z.typ().equals("na_cel")

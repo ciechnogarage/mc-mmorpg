@@ -3,6 +3,7 @@ package pl.mcmmorpg.zaklecia;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Locale;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Sound;
@@ -20,8 +21,10 @@ final class Komunikat {
 
   void wyjscie(Player p) { ostatnie.remove(p.getUniqueId()); }
 
-  void mana(Player p) {
-    if (pokaz(p, "NO_MANA", "§x§F§2§F§2§E§DBrakuje §x§7§8§B§9§E§Fmany"))
+  void mana(Player p, double brak) {
+    String liczba = String.format(Locale.forLanguageTag("pl-PL"), "%.1f", Math.ceil(Math.max(0, brak) * 10) / 10);
+    if (liczba.endsWith(",0")) liczba = liczba.substring(0, liczba.length() - 2);
+    if (pokaz(p, "NO_MANA", "§x§F§2§F§2§E§DBrakuje " + liczba + " §x§7§8§B§9§E§Fmany"))
       skille.cast(p, brakMany);
   }
 
