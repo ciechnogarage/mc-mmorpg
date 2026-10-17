@@ -166,8 +166,9 @@ final class Wytrzymalosc implements Listener {
    */
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void blok(EntityDamageByEntityEvent e) {
-    // obrazenia 0 = udane parowanie (AnimacjeBroni#parowanie) - ono zwraca stamine zamiast kosztowac
-    if (!wlaczona || !(e.getEntity() instanceof Player p) || !p.isBlocking() || e.getDamage() <= 0) return;
+    // obrazenia 0 = udane parowanie (AnimacjeBroni#parowanie) - ono zwraca stamine zamiast kosztowac;
+    // ~0 (zmierzone na klonie: 2e-8 co tick od przywolanca) to nie cios - inaczej garda topnialaby od widm
+    if (!wlaczona || !(e.getEntity() instanceof Player p) || !p.isBlocking() || e.getDamage() < 0.01) return;
     Vector doNapastnika = e.getDamager().getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
     Vector patrzy = p.getLocation().getDirection().setY(0);
     if (doNapastnika.lengthSquared() < 1e-4 || patrzy.lengthSquared() < 1e-4
@@ -178,7 +179,10 @@ final class Wytrzymalosc implements Listener {
     double prog = Math.max(1, (hp == null ? 20 : hp.getValue()) * blokProgHp);
     double l = blokMin + (blokMax - blokMin) * Math.min(1, e.getDamage() / prog);
     double koszt = jednostka(p) * l * (zTarcza ? tarcza : 1);
-    if (wydaj(p, koszt)) return;
+    boolean ok = wydaj(p, koszt);
+    plugin.dbgWytrzymalosci(String.format(java.util.Locale.ROOT, "BLOK_STAMINA cios=%.2f L=%.2f koszt=%.2f tarcza=%b peka=%b",
+        e.getDamage(), l, koszt, zTarcza, !ok));
+    if (ok) return;
     wydajIleSie(p, koszt);
     if (!garda.getType().isAir()) p.setCooldown(garda, peknietaGardaTicki);
     p.clearActiveItem();

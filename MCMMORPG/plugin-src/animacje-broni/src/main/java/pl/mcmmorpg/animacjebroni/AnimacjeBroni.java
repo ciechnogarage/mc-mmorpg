@@ -849,6 +849,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   void komunikatWytrzymalosci(Player p, String tekst) { komunikat(p, tekst, 40); }
 
+  void dbgWytrzymalosci(String m) { dbg(m); }
+
   /**
    * API dla innych pluginow walki (DwieBronie, przez refleksje): punkty staminy za akcje warta {@code jednostki}
    * lekkich ciosow trzymana bronia; -1, gdy model jednostek jest wylaczony (wtedy plugin zostaje przy swoich %).
