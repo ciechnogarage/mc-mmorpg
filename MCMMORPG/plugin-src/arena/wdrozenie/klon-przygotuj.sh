@@ -4,7 +4,7 @@ set -euo pipefail
 N=${1:-arena}; K=klon-$N; D=/opt/docker/mc/klony/$N/data; A="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 R() { docker exec -i $K rcon-cli "$@" | sed 's/\x1b\[[0-9;]*m//g'; }
 rm -f $D/plugins/character-creator-*.jar $D/plugins/arena-*.jar
-sed -i 's/^default-profile: false/default-profile: true/' $D/plugins/MMOProfiles/config.yml
+sed -i -e 's/^default-profile: false/default-profile: true/' -e 's/^profile-selection-invulnerability: true/profile-selection-invulnerability: false/' $D/plugins/MMOProfiles/config.yml  # boty bez kreatora: inaczej MMOProfiles robi je niesmiertelnymi
 cp $A/build/libs/arena-*.jar $D/plugins/
 cp -r $A/wdrozenie/pliki/. $D/plugins/
 rm -f $D/plugins/MythicLib/config.yml.PATCH.md
@@ -20,7 +20,7 @@ indent = len(lines[offense]) - len(lines[offense].lstrip())
 end = next((i for i in range(offense + 1, len(lines))
             if lines[i].strip() and not lines[i].lstrip().startswith('#')
             and len(lines[i]) - len(lines[i].lstrip()) <= indent), len(lines))
-for key in ('party_other', 'guild_enemy'):
+for key in ('party_member', 'guild_ally', 'party_other', 'guild_enemy'):  # PvP tylko w ringu (WG+plugin), wiec przyjaciele tez moga sie bic
     entry = next((i for i in range(offense + 1, end) if lines[i].lstrip().startswith(key + ':')), None)
     if entry is None:
         lines.insert(end, ' ' * (indent + 2) + key + ': true\n')

@@ -1,13 +1,7 @@
-# Zmiana w plugins/MythicLib/config.yml
+# Zmiana w plugins/MythicLib/config.yml (robi ja wdroz.sh)
 
-W istniejącej sekcji `interaction_rules.pvp_on.offense` dodaj dokładnie dwa klucze:
-
-```yaml
-      party_other: true
-      guild_enemy: true
-```
-
-Zachowaj pozostałe wartości (`party_member: false`, `guild_ally: false`,
-`guild_neutral: true`, `self: false`). Wcięcie nowych kluczy ma być takie
-samo jak `party_member`. Ta zmiana odblokowuje PvP w ringu; globalną zaporę
-stanowi `pvp-tylko-w-ringu: true` w pluginie Arena i flagi WorldGuard.
+W sekcji `interaction_rules.pvp_on.offense` ustaw na `true`:
+`party_other`, `guild_enemy` (brakowalo ich - przez to PvP nie dzialalo NIGDZIE) oraz
+`party_member`, `guild_ally` (inaczej czlonkowie jednej druzyny/gildii nie moga sie bic w ringu - zmierzone 17.10).
+`self: false` zostaje. `pvp_on` dziala tylko tam, gdzie swiat ma PvP i WG pozwala na PvP: po wdrozeniu to tylko
+ring areny (swiaty glowne: WG pvp deny; lochy MythicDungeons: PvP: false). Reszta serwera uzywa `pvp_off`.

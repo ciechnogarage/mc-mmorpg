@@ -63,13 +63,13 @@ off = next(i for i in range(pvp + 1, len(lines)) if lines[i].strip() == 'offense
 ind = len(lines[off]) - len(lines[off].lstrip())
 end = next((i for i in range(off + 1, len(lines)) if lines[i].strip() and not lines[i].lstrip().startswith('#')
             and len(lines[i]) - len(lines[i].lstrip()) <= ind), len(lines))
-for key in ('party_other', 'guild_enemy'):
+for key in ('party_member', 'guild_ally', 'party_other', 'guild_enemy'):  # PvP tylko w ringu (WG+plugin), wiec przyjaciele tez moga sie bic
     e = next((i for i in range(off + 1, end) if lines[i].lstrip().startswith(key + ':')), None)
     if e is None: lines.insert(end, ' ' * (ind + 2) + key + ': true\n'); end += 1
     else: lines[e] = ' ' * (ind + 2) + key + ': true\n'
 path.write_text(''.join(lines))
 PY
-grep -n -A10 'pvp_on:' "$P/MythicLib/config.yml" | grep -E 'party_other|guild_enemy'
+sed -n '/pvp_on:/,/builtin_mana/p' "$P/MythicLib/config.yml" | sed -n '/offense:/,$p' | grep -E 'party|guild'
 
 echo "== start world1"; L=$DANE/logs/latest.log; I=$(stat -c %i "$L"); docker start "$KONT" >/dev/null
 for i in $(seq 1 120); do [[ "$(stat -c %i "$L" 2>/dev/null)" != "$I" ]] && grep -q 'Done (' "$L" && break; sleep 5; done
