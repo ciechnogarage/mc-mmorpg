@@ -257,6 +257,15 @@ final class Nosnik implements Listener {
     boolean dotyka = jest(e.getCurrentItem()) || jest(e.getCursor());
     if (e.getClick() == ClickType.NUMBER_KEY && e.getHotbarButton() >= 0) dotyka |= jest(p.getInventory().getItem(e.getHotbarButton()));
     if (e.getClick() == ClickType.SWAP_OFFHAND) dotyka |= jest(p.getInventory().getItemInOffHand());
+    // Broń wchodząca do lewej dłoni zastępuje zaklęcie; Księga weryfikuje typ i reguły rąk.
+    if (jest(p.getInventory().getItemInOffHand()) &&
+        ((e.getClickedInventory() == p.getInventory() && (e.getSlot() == 40 || e.getSlot() == 1)
+            && (e.getClick() == ClickType.LEFT || e.getClick() == ClickType.RIGHT)
+            && !jest(e.getCursor()) && e.getCursor() != null && !e.getCursor().getType().isAir())
+        || (e.getClickedInventory() == p.getInventory() && e.getSlot() == 40
+            && e.getClick() == ClickType.NUMBER_KEY && e.getHotbarButton() >= 0
+            && !jest(p.getInventory().getItem(e.getHotbarButton())))
+        || (e.getClick() == ClickType.SWAP_OFFHAND && !jest(e.getCurrentItem())))) dotyka = false;
     if (dotyka) {
       e.setCancelled(true);
       odmowa(p);

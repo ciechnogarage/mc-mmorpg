@@ -180,7 +180,7 @@ stozek-podwojny:
 
 zaslanianie:
   wlaczone: true
-  wlasne-przywolania-zaslaniaja: false
+  wlasne-przywolania-zaslaniaja: true
 
 # Gdy prawa zostala wlaczona LPM podczas PPM, puszczenie PPM moze zgasic obie.
 ppm-puszczenie-gasi-obie: true
