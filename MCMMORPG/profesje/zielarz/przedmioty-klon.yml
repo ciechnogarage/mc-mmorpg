@@ -1,0 +1,46 @@
+# >>> ZIELARZ wycinek (tylko klon; docelowo generuj.py)
+PROF_KORZEN_KOZLKA:
+  base:
+    material: HANGING_ROOTS
+    name: '&fKorzeń kozłka'
+    lore:
+    - '&7Surowiec: &fZielarstwo'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_SUSZONY_KORZEN_KOZLKA:
+  base:
+    material: DEAD_BUSH
+    name: '&fSuszony korzeń kozłka'
+    lore:
+    - '&7Półprodukt: &fZielarstwo &7(suszarnia)'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_LISC_KONWALII:
+  base:
+    material: LILY_OF_THE_VALLEY
+    name: '&fLiść konwalii'
+    lore:
+    - '&7Surowiec: &fZielarstwo'
+    - '&cTrujący.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_SZEROKIE_LISCIE:
+  base:
+    material: BIG_DRIPLEAF
+    name: '&fSzerokie liście'
+    lore:
+    - '&7Nie wiadomo, z jakiej rośliny.'
+    disable-crafting: true
+    disable-smelting: true
+PROF_SPLESNIALE_ZIELE:
+  base:
+    material: BROWN_MUSHROOM
+    name: '&8Spleśniałe ziele'
+    lore:
+    - '&7Zmokło na suszarni. Do wyrzucenia.'
+    disable-crafting: true
+    disable-smelting: true
+# <<< ZIELARZ wycinek

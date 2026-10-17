@@ -120,6 +120,36 @@ final class Komenda implements TabExecutor {
                     s.sendMessage("[Rzemioslo] zle wspolrzedne");
                 }
             }
+            case "kepa" -> {               // kepa <gatunek|usun> — kepa zielarza na bloku pod celownikiem (admin, teren testowy)
+                if (!(s instanceof Player p) || a.length < 2) { s.sendMessage("kepa <" + String.join("|", Zielarz.GATUNKI) + "|usun>"); return true; }
+                Block b = p.getTargetBlockExact(6);
+                if (b == null) { s.sendMessage("Patrz na blok rosliny."); return true; }
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().ustawKepe(b, a[1].equalsIgnoreCase("usun") ? null : a[1].toLowerCase()));
+            }
+            case "kepa-xyz" -> {           // kepa-xyz <gatunek> <swiat> <x> <y> <z> — z konsoli (skrypt terenu)
+                if (a.length < 6) { s.sendMessage("kepa-xyz <gatunek> <swiat> <x> <y> <z>"); return true; }
+                var w = Bukkit.getWorld(a[2]);
+                if (w == null) { s.sendMessage("brak swiata"); return true; }
+                Block b = w.getBlockAt(Integer.parseInt(a[3]), Integer.parseInt(a[4]), Integer.parseInt(a[5]));
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().ustawKepe(b, a[1].toLowerCase()));
+            }
+            case "suszarnia" -> {          // suszarnia [usun] — suszarnia zielarza na bloku pod celownikiem (admin)
+                if (!(s instanceof Player p)) return true;
+                Block b = p.getTargetBlockExact(6);
+                if (b == null) { s.sendMessage("Patrz na blok."); return true; }
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().suszarnia.ustaw(b, a.length > 1 && a[1].equalsIgnoreCase("usun")));
+            }
+            case "suszarnia-xyz" -> {      // suszarnia-xyz <swiat> <x> <y> <z> — z konsoli
+                if (a.length < 5) return true;
+                var w = Bukkit.getWorld(a[1]);
+                if (w == null) { s.sendMessage("brak swiata"); return true; }
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().suszarnia.ustaw(w.getBlockAt(Integer.parseInt(a[2]), Integer.parseInt(a[3]), Integer.parseInt(a[4])), false));
+            }
+            case "zielnik" -> {            // zielnik <gracz> — okno zielnika (menu Q wola z konsoli)
+                Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : (s instanceof Player pp ? pp : null);
+                if (p == null) { s.sendMessage("brak gracza"); return true; }
+                plugin.zielarz().zielnik.pokaz(p);
+            }
             case "wezel" -> {              // wezel <x> <y> <z> [swiat] — co to za blok (diagnostyka dla projektantow)
                 if (a.length < 4) { pomoc(s); return true; }
                 try {
