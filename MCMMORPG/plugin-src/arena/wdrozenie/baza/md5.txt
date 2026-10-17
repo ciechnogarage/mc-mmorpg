@@ -10,4 +10,4 @@ c471d2ed1286b231f6da77888cecdadf  ./DeluxeMenus/gui_menus/hub_glowne.yml
 fee6d395aa141d382ff285b4e02c88ab  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_2.png
 adb5deb5201e5c41347f881180719fa6  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_3.png
 c807ddadf11105ba929d4fd4495d28d1  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_4.png
-61651e8ecf8cab449567a7d84eb40a0c  Zaklecia/config.yml
+8c3fd677f07ec05480e6b3f1e50fc664  Zaklecia/config.yml
