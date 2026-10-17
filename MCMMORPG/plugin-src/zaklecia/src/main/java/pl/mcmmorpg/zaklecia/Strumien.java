@@ -118,13 +118,14 @@ final class Strumien {
     if (l == null) return;
     for (Wpis w : l) {
       if (!w.d().isValid()) continue;
+      Location oko = p.getEyeLocation();
       Location start = dlon(p, w.prawa());
-      Vector kier = p.getEyeLocation().getDirection();
+      Vector kier = oko.getDirection();
       RayTraceResult r = zaslanianie.wlaczone()
-          ? p.getWorld().rayTrace(start, kier, zasieg, FluidCollisionMode.NEVER, true, 0.15,
+          ? p.getWorld().rayTrace(oko, kier, zasieg, FluidCollisionMode.NEVER, true, 0.15,
               e -> zaslanianie.istota(p, e))
-          : p.getWorld().rayTraceBlocks(start, kier, zasieg, FluidCollisionMode.NEVER, true);
-      float dl = (float) (r == null ? zasieg : r.getHitPosition().distance(start.toVector()));
+          : p.getWorld().rayTraceBlocks(oko, kier, zasieg, FluidCollisionMode.NEVER, true);
+      float dl = (float) (r == null ? zasieg : r.getHitPosition().distance(oko.toVector()));
       start.setYaw(p.getEyeLocation().getYaw());
       start.setPitch(p.getEyeLocation().getPitch());
       w.d().teleport(start);

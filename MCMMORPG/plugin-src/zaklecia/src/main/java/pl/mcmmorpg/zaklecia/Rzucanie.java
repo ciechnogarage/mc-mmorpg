@@ -571,18 +571,22 @@ final class Rzucanie implements Listener {
       BoundingBox bb = le.getBoundingBox();
       Vector doCelu = bb.getCenter().subtract(oko.toVector());
       double d = doCelu.length();
-      if (d > st.zasieg() + bb.getWidthX() / 2) {
+      double promien = Math.sqrt(bb.getWidthX() * bb.getWidthX()
+          + bb.getWidthZ() * bb.getWidthZ() + bb.getHeight() * bb.getHeight()) / 2;
+      if (d > st.zasieg() + promien) {
         if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId() + " wynik=ZASIEG d=" + d);
         continue;
       }
       double kat = Math.toDegrees(os.angle(doCelu));
-      double margines = Math.toDegrees(Math.atan2(bb.getWidthX() / 2, Math.max(d, 0.1)));
+      // Sfera obejmująca hitbox: trafienie celownikiem w odsłoniętą głowę nie może
+      // zostać odrzucone tylko dlatego, że środek wysokiej istoty leży poza stożkiem.
+      double margines = Math.toDegrees(Math.asin(Math.min(1, promien / Math.max(d, 0.1))));
       if (kat > st.polKat() + margines) {
         if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId() + " wynik=KAT kat=" + kat);
         continue;
       }
       boolean los = zaslanianie == null ? p.hasLineOfSight(e)
-          : zaslanianie.pierwszyCel(p, le, oko, doCelu);
+          : zaslanianie.pierwszyCel(p, le, oko, doCelu, st.zasieg());
       if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId()
           + " d=" + d + " kat=" + kat + " los=" + los + " wynik=" + (los ? "CEL" : "LOS"));
       if (!los) continue;
