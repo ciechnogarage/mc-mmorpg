@@ -16,8 +16,10 @@ copy_file() {
   cp -p "$src" "$dest"
 }
 # U operatora: najpierw wykonaj pierwszą komendę ustaw.txt na klonie, zatrzymaj klon,
-# potem wywołaj ten skrypt. Po ponownym starcie wykonaj pozostałe komendy ustaw.txt,
-# a następnie budowa.txt przez RCON, po jednej komendzie. Zweryfikuj mv gamerule list arena.
+# potem wywołaj ten skrypt. Po ponownym starcie wykonaj pozostałe komendy ustaw.txt
+# z wyjątkiem mv setspawn, potem wg-pvp-deny.txt, potem budowa.txt przez RCON.
+# Na końcu wykonaj mv setspawn z ustaw.txt i zweryfikuj mv gamerule list arena.
+# Dwa klucze MythicLib zastosuj według pliki/MythicLib/config.yml.PATCH.md przed startem.
 copy_file "$JAR" "$SERVER/plugins/$(basename "$JAR")"
 for menu in "$ROOT"/pliki/DeluxeMenus/gui_menus/*.yml; do
   copy_file "$menu" "$SERVER/plugins/DeluxeMenus/gui_menus/$(basename "$menu")"

@@ -18,6 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,12 +46,15 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectTypeCategory;
 import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,11 +64,10 @@ import java.util.UUID;
 /** Arena is deliberately self-contained: all travel is mediated by one console command. */
 public final class ArenaPlugin extends JavaPlugin implements Listener {
   private record ReturnPoint(String world, double x, double y, double z, float yaw, float pitch, String profile) {}
-  private record Hit(long at, double amount) {}
   private static final class Meter {
     double total;
     int count;
-    final ArrayDeque<Hit> recent = new ArrayDeque<>();
+    long firstHit, lastHit;
   }
   private final Map<UUID, ReturnPoint> returns = new HashMap<>();
   private final Map<UUID, Long> combatUntil = new HashMap<>();
@@ -78,7 +81,9 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   private final Map<UUID, Long> lastNumber = new HashMap<>();
   private final Map<UUID, Long> lastDummyHitTick = new HashMap<>();
   private final Set<UUID> internalTeleport = new HashSet<>();
-  private NamespacedKey dummyKey, numberKey, launchRingKey;
+  private final Set<UUID> deathsOnArena = new HashSet<>();
+  private NamespacedKey dummyKey, numberKey, launchRingKey, projectileOwnerKey, cloudOwnerKey;
+  private Plugin profilesPlugin;
   private File stateFile;
   private long tick;
 
@@ -88,6 +93,10 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     dummyKey = new NamespacedKey(this, "dummy");
     numberKey = new NamespacedKey(this, "number");
     launchRingKey = new NamespacedKey(this, "launch_ring");
+    projectileOwnerKey = new NamespacedKey(this, "projectile_owner");
+    cloudOwnerKey = new NamespacedKey(this, "cloud_owner");
+    profilesPlugin = Bukkit.getPluginManager().getPlugin("MMOProfiles");
+    if (profilesPlugin != null && profilesPlugin.isEnabled()) registerProfileUnload();
     stateFile = new File(getDataFolder(), "returns.yml");
     loadState();
     Bukkit.getPluginManager().registerEvents(this, this);
@@ -98,13 +107,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
         World world = arenaWorld();
         if (world != null) for (Player player : world.getPlayers()) {
           ReturnPoint saved = returns.get(player.getUniqueId());
-          if (saved != null && !saved.profile.equals(profile(player)) && !forfeitUntil.containsKey(player.getUniqueId())) {
-            forfeitUntil.put(player.getUniqueId(), System.currentTimeMillis() + getConfig().getLong("combat.logout-penalty-seconds") * 1000L);
-            combatUntil.remove(player.getUniqueId());
-            safeTeleport(player, spawn());
-            deny(player, "Zmiana postaci oznacza poddanie walki; powrót tylko do Stolicy.");
-            saveState();
-          }
+          if (saved != null && profilesDiffer(saved.profile, profile(player))) evacuate(player, "zmianę postaci");
           if (forfeitUntil.getOrDefault(player.getUniqueId(), 0L) > System.currentTimeMillis() && inRing(player.getLocation())) safeTeleport(player, spawn());
         }
       }
@@ -112,7 +115,12 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     Bukkit.getScheduler().runTaskLater(this, this::cleanNumbers, getConfig().getLong("service.number-cleanup-delay-ticks"));
   }
 
-  @Override public void onDisable() { saveState(); cleanNumbers(); }
+  @Override public void onDisable() {
+    World world = arenaWorld();
+    if (world != null) for (Player player : world.getPlayers()) evacuate(player, "restart serwera");
+    saveState();
+    cleanNumbers();
+  }
 
   private World arenaWorld() { return Bukkit.getWorld(getConfig().getString("world", "arena")); }
   private boolean arena(Location location) { return location != null && location.getWorld() != null && location.getWorld().getName().equals(getConfig().getString("world", "arena")); }
@@ -133,12 +141,51 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   }
   private void deny(Player player, String message) { bar(player, 40, "§c" + message); }
   private String profile(Player player) {
-    if (!MMOPlayerData.has(player)) return "";
+    if (profilesPlugin == null || !profilesPlugin.isEnabled()) return "";
     try {
-      UUID id = MMOPlayerData.get(player).getProfileId();
+      Object profiles = profilesPlugin.getClass().getMethod("getPlayerData", UUID.class).invoke(profilesPlugin, player.getUniqueId());
+      if (profiles == null) return "";
+      Object current = profiles.getClass().getMethod("getCurrent").invoke(profiles);
+      if (current == null) return "";
+      UUID id = (UUID) current.getClass().getMethod("getUniqueId").invoke(current);
       return id == null ? "" : id.toString();
-    } catch (RuntimeException brakProfilu) {   // MythicLib rzuca NPE "No profile", gdy postac nie jest wybrana (kreator)
+    } catch (ReflectiveOperationException | RuntimeException | LinkageError brakProfilu) {
       return "";
+    }
+  }
+  private boolean profilesDiffer(String saved, String current) {
+    return !saved.isEmpty() && !current.isEmpty() && !saved.equals(current);
+  }
+  @SuppressWarnings("unchecked")
+  private void registerProfileUnload() {
+    try {
+      Class<? extends org.bukkit.event.Event> type = (Class<? extends org.bukkit.event.Event>)
+          Class.forName("fr.phoenixdevt.profiles.event.ProfileUnloadEvent", false, profilesPlugin.getClass().getClassLoader()).asSubclass(org.bukkit.event.Event.class);
+      Bukkit.getPluginManager().registerEvent(type, this, EventPriority.LOWEST, (listener, event) -> onProfileUnload(event), this);
+    } catch (ReflectiveOperationException | LinkageError error) {
+      getLogger().warning("Nie można podłączyć ProfileUnloadEvent: " + error.getMessage());
+    }
+  }
+  private void onProfileUnload(org.bukkit.event.Event event) {
+    try {
+      Player player = (Player) event.getClass().getMethod("getPlayer").invoke(event);
+      if (player == null || !arena(player.getLocation())) return;
+      Location destination = evacuate(player, "zmianę postaci");
+      if (destination == null) return;
+      // MMOProfiles 1.2 tworzy migawkę PRZED ProfileUnloadEvent; poprawiamy lokalizację tej migawki.
+      Object old = event.getClass().getMethod("getProfile").invoke(event);
+      UUID profileId = (UUID) old.getClass().getMethod("getUniqueId").invoke(old);
+      Object list = event.getClass().getMethod("getPlayerData").invoke(event);
+      Object entries = list.getClass().getMethod("getProfiles").invoke(list);
+      for (Object entry : (Iterable<?>) entries) {
+        UUID id = (UUID) entry.getClass().getMethod("getUniqueId").invoke(entry);
+        if (!profileId.equals(id)) continue;
+        Object locations = entry.getClass().getMethod("getLocationMap").invoke(entry);
+        locations.getClass().getMethod("setCurrent", Location.class).invoke(locations, destination);
+        break;
+      }
+    } catch (ReflectiveOperationException | RuntimeException | LinkageError error) {
+      getLogger().warning("Nie udało się poprawić zapisu lokacji MMOProfiles: " + error.getMessage());
     }
   }
   private boolean tagged(Player player) { return combatUntil.getOrDefault(player.getUniqueId(), 0L) > System.currentTimeMillis(); }
@@ -156,7 +203,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     finally { internalTeleport.remove(player.getUniqueId()); }
   }
   private boolean validReturn(ReturnPoint p, Player player) {
-    if (p == null || !p.profile.equals(profile(player))) return false;
+    if (p == null || profilesDiffer(p.profile, profile(player))) return false;
     if (!getConfig().getStringList("entry-worlds").contains(p.world)) return false;
     World world = Bukkit.getWorld(p.world);
     if (world == null) return false;
@@ -201,15 +248,43 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   private void leave(Player player) {
     if (!arena(player.getLocation())) { deny(player, "Nie jesteś na arenie."); return; }
     if (tagged(player)) { deny(player, "Walka trwa. Wyjście za " + Math.max(1, (combatUntil.get(player.getUniqueId()) - System.currentTimeMillis() + 999) / 1000) + " s."); return; }
-    ReturnPoint point = returns.get(player.getUniqueId());
-    Location destination;
-    if (validReturn(point, player)) {
-      World world = Bukkit.getWorld(point.world);
-      destination = new Location(world, point.x, point.y, point.z, point.yaw, point.pitch);
-    } else destination = fallback();
+    Location destination = returnDestination(player);
     if (destination == null) { deny(player, "Miejsce powrotu jest niedostępne."); return; }
     safeTeleport(player, destination);
-    if (!arena(player.getLocation())) { returns.remove(player.getUniqueId()); saveState(); }
+    if (!arena(player.getLocation())) { clearArenaState(player); saveState(); }
+  }
+  private Location returnDestination(Player player) {
+    ReturnPoint point = returns.get(player.getUniqueId());
+    if (validReturn(point, player)) return new Location(Bukkit.getWorld(point.world), point.x, point.y, point.z, point.yaw, point.pitch);
+    return fallback();
+  }
+  private void clearArenaState(Player player) {
+    UUID id = player.getUniqueId();
+    returns.remove(id);
+    combatUntil.remove(id);
+    lastOpponent.remove(id);
+    safeUntil.remove(id);
+    meters.remove(id);
+    lastNumber.remove(id);
+  }
+  private Location evacuate(Player player, String reason) {
+    if (!arena(player.getLocation())) return null;
+    UUID id = player.getUniqueId();
+    if (tagged(player)) {
+      forfeitUntil.put(id, System.currentTimeMillis() + getConfig().getLong("combat.logout-penalty-seconds") * 1000L);
+      UUID opponent = lastOpponent.get(id);
+      Player winner = opponent == null ? null : Bukkit.getPlayer(opponent);
+      if (winner != null && arena(winner.getLocation())) winner.sendMessage("§e" + player.getName() + " poddał walkę przez " + reason + ".");
+    }
+    Location destination = returnDestination(player);
+    if (destination == null || !safeTeleport(player, destination) || arena(player.getLocation())) {
+      getLogger().warning("Nie udało się wynieść " + player.getName() + " z areny.");
+      saveState();
+      return null;
+    }
+    clearArenaState(player);
+    saveState();
+    return destination;
   }
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
@@ -217,9 +292,19 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     if (internalTeleport.contains(event.getPlayer().getUniqueId()) || event.getTo() == null) return;
     // wewnatrz areny (perla, komenda administratora) - wolno; blokada tylko wejscia/wyjscia inna droga niz menu
     if (arena(event.getFrom()) && arena(event.getTo())) return;
-    if (arena(event.getFrom()) || arena(event.getTo())) {
+    if (arena(event.getFrom()) && !arena(event.getTo())) {
+      if (!tagged(event.getPlayer())) {
+        Player player = event.getPlayer();
+        Bukkit.getScheduler().runTask(this, () -> {
+          if (!arena(player.getLocation())) { clearArenaState(player); saveState(); }
+        });
+        return;
+      }
       event.setCancelled(true);
-      deny(event.getPlayer(), "Podróż z areny odbywa się przez menu.");
+      deny(event.getPlayer(), "Podróż z areny podczas walki jest zablokowana.");
+    } else if (arena(event.getTo())) {
+      event.setCancelled(true);
+      deny(event.getPlayer(), "Wejście na arenę odbywa się przez menu.");
     }
   }
   @EventHandler public void onMove(PlayerMoveEvent event) {
@@ -235,19 +320,13 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   @EventHandler public void onJoin(PlayerJoinEvent event) {
     Player player = event.getPlayer();
     if (arena(player.getLocation())) Bukkit.getScheduler().runTask(this, () -> {
-      if (player.isOnline() && arena(player.getLocation())) { safeTeleport(player, spawn()); safeUntil.put(player.getUniqueId(), System.currentTimeMillis() + getConfig().getLong("spawn.invulnerable-seconds") * 1000L); }
+      if (player.isOnline() && arena(player.getLocation())) evacuate(player, "ponowne wejście");
     });
     combatUntil.remove(player.getUniqueId());
   }
-  @EventHandler public void onQuit(PlayerQuitEvent event) {
+  @EventHandler(priority = EventPriority.LOWEST) public void onQuit(PlayerQuitEvent event) {
     Player player = event.getPlayer();
-    if (arena(player.getLocation()) && tagged(player)) {
-      forfeitUntil.put(player.getUniqueId(), System.currentTimeMillis() + getConfig().getLong("combat.logout-penalty-seconds") * 1000L);
-      UUID opponent = lastOpponent.get(player.getUniqueId());
-      Player winner = opponent == null ? null : Bukkit.getPlayer(opponent);
-      if (winner != null && arena(winner.getLocation())) winner.sendMessage("§e" + player.getName() + " poddał walkę przez wylogowanie.");
-      saveState();
-    }
+    if (arena(player.getLocation())) evacuate(player, "wylogowanie");
     combatUntil.remove(player.getUniqueId());
     safeUntil.remove(player.getUniqueId());
   }
@@ -271,10 +350,19 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
       event.setCancelled(true);
       return;
     }
-    if (target instanceof Player victim && (arena(attacker.getLocation()) || arena(victim.getLocation()))) {
-      if (!inRing(attacker.getLocation()) || !inRing(victim.getLocation()) || protectedNow(victim) || event.getDamage().hasType(DamageType.MINION)) { dbg("onAttack: ring A=" + inRing(attacker.getLocation()) + " ring B=" + inRing(victim.getLocation()) + " ochrona=" + protectedNow(victim) + " minion=" + event.getDamage().hasType(DamageType.MINION)); event.setCancelled(true); }
-      else if (!event.isCancelled() && event.getDamage().getDamage() > 0) tag(attacker, victim);
+    if (target instanceof Player victim && attacker != victim) {
+      boolean arenaFight = arena(attacker.getLocation()) || arena(victim.getLocation());
+      if (illegalPvp(attacker, victim) || arena(victim.getLocation()) && protectedNow(victim)
+          || arenaFight && event.getDamage().hasType(DamageType.MINION)) {
+        dbg("onAttack: ring A=" + inRing(attacker.getLocation()) + " ring B=" + inRing(victim.getLocation()));
+        event.setCancelled(true);
+      } else if (arenaFight && !event.isCancelled() && event.getDamage().getDamage() > 0) tag(attacker, victim);
     }
+  }
+  private boolean illegalPvp(Player source, Player victim) {
+    if (source == victim) return false;
+    if (getConfig().getBoolean("pvp-tylko-w-ringu", true)) return !inRing(source.getLocation()) || !inRing(victim.getLocation());
+    return (arena(source.getLocation()) || arena(victim.getLocation())) && (!inRing(source.getLocation()) || !inRing(victim.getLocation()));
   }
   private String kind(DamageMetadata d) {
     if (!d.collectElements().isEmpty()) return "żywioł " + d.collectElements().iterator().next().toString().toLowerCase();
@@ -284,14 +372,33 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     return "fizyczne";
   }
   private Player attacker(Entity damager) {
-    if (damager instanceof Player player) return player;
-    if (damager instanceof Projectile projectile && projectile.getShooter() instanceof Player player) return player;
-    return null;
+    UUID owner = playerOwner(damager);
+    return owner == null ? null : Bukkit.getPlayer(owner);
+  }
+  private UUID playerOwner(Entity damager) {
+    if (damager instanceof Player player) return player.getUniqueId();
+    if (damager instanceof Projectile projectile) {
+      if (projectile.getShooter() instanceof Player player) return player.getUniqueId();
+      if (projectile.getShooter() instanceof Entity shooter && shooter != damager) return playerOwner(shooter);
+      String saved = projectile.getPersistentDataContainer().get(projectileOwnerKey, PersistentDataType.STRING);
+      if (saved != null) try { return UUID.fromString(saved); } catch (IllegalArgumentException ignored) { }
+    }
+    if (damager instanceof Tameable tameable && tameable.getOwner() != null) return tameable.getOwner().getUniqueId();
+    var mob = MythicBukkit.inst().getMobManager().getActiveMob(damager.getUniqueId());
+    if (mob.isEmpty()) return null;
+    UUID owner = mob.get().getOwnerUUID().orElse(null);
+    if (owner == null) return null;
+    Entity ownerEntity = Bukkit.getEntity(owner);
+    if (ownerEntity != null && !(ownerEntity instanceof Player)) return null;
+    return Bukkit.getPlayer(owner) != null || Bukkit.getOfflinePlayer(owner).hasPlayedBefore() ? owner : null;
   }
   private void dbg(String m) { if (getConfig().getBoolean("sonda-pvp", false)) getLogger().info("SONDA-ARENA " + m); }
   private boolean protectedNow(Player player) { return safeUntil.getOrDefault(player.getUniqueId(), 0L) > System.currentTimeMillis(); }
   @EventHandler public void onProjectile(ProjectileLaunchEvent event) {
-    if (event.getEntity().getShooter() instanceof Player player && inRing(player.getLocation())) event.getEntity().getPersistentDataContainer().set(launchRingKey, PersistentDataType.BYTE, (byte) 1);
+    if (event.getEntity().getShooter() instanceof Player player) {
+      event.getEntity().getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
+      if (inRing(player.getLocation())) event.getEntity().getPersistentDataContainer().set(launchRingKey, PersistentDataType.BYTE, (byte) 1);
+    }
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void onDamage(EntityDamageEvent event) {
@@ -310,14 +417,29 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
       event.setCancelled(true);
       return;
     }
-    if (event.getEntity() instanceof Player victim && arena(victim.getLocation()) && (!inRing(victim.getLocation()) || protectedNow(victim))) { dbg("onDamage: ofiara poza ringiem/ochrona " + victim.getName() + " ring=" + inRing(victim.getLocation()) + " ochrona=" + protectedNow(victim)); event.setCancelled(true); return; }
-    if (!(event instanceof EntityDamageByEntityEvent hit)) return;
-    Player source = attacker(hit.getDamager());
-    if (!(hit.getEntity() instanceof Player victim)) return;
-    if (!arena(victim.getLocation()) && (source == null || !arena(source.getLocation()))) return;
+    if (!(event.getEntity() instanceof Player victim)) return;
+    EntityDamageByEntityEvent hit = event instanceof EntityDamageByEntityEvent byEntity ? byEntity : null;
+    Player source = hit == null ? null : attacker(hit.getDamager());
+    UUID ownerId = hit == null ? null : playerOwner(hit.getDamager());
+    if (source == victim || ownerId != null && ownerId.equals(victim.getUniqueId())) return;
+    if (arena(victim.getLocation()) && (!inRing(victim.getLocation()) || protectedNow(victim))) {
+      dbg("onDamage: ofiara poza ringiem/ochrona " + victim.getName());
+      event.setCancelled(true);
+      return;
+    }
+    if (hit == null) return;
+    if (source == null && ownerId != null) {
+      if (getConfig().getBoolean("pvp-tylko-w-ringu", true) || arena(victim.getLocation())) event.setCancelled(true);
+      return;
+    }
+    if (source == null) return;
     boolean projectileWasInRing = !(hit.getDamager() instanceof Projectile projectile) || projectile.getPersistentDataContainer().has(launchRingKey, PersistentDataType.BYTE);
-    if (source == null || !inRing(source.getLocation()) || !inRing(victim.getLocation()) || !projectileWasInRing) { dbg("onDamage: zrodlo " + (source == null ? "brak" : source.getName() + " ring=" + inRing(source.getLocation())) + " pocisk-z-ringu=" + projectileWasInRing); event.setCancelled(true); return; }
-    if (!event.isCancelled() && event.getFinalDamage() > 0) tag(source, victim);
+    if (illegalPvp(source, victim) || (arena(source.getLocation()) || arena(victim.getLocation())) && !projectileWasInRing) {
+      dbg("onDamage: zrodlo=" + source.getName() + " pocisk-z-ringu=" + projectileWasInRing);
+      event.setCancelled(true);
+      return;
+    }
+    if (inRing(source.getLocation()) && inRing(victim.getLocation()) && !event.isCancelled() && event.getFinalDamage() > 0) tag(source, victim);
   }
   @EventHandler(priority = EventPriority.HIGHEST) public void onExp(PlayerExperienceGainEvent event) {
     if (arena(event.getPlayer().getLocation())) event.setCancelled(true);
@@ -335,6 +457,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST) public void onDeath(PlayerDeathEvent event) {
     Player victim = event.getEntity();
     if (!arena(victim.getLocation())) return;
+    deathsOnArena.add(victim.getUniqueId());
     event.setKeepInventory(true);
     event.getDrops().clear();
     event.setKeepLevel(true);
@@ -353,11 +476,21 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     Double exp = deathExp.remove(victim.getUniqueId());
     if (exp != null) Bukkit.getScheduler().runTaskLater(this, () -> { if (PlayerData.has(victim)) PlayerData.get(victim).setExperience(exp); }, getConfig().getLong("service.exp-restore-delay-ticks"));
   }
-  @EventHandler public void onRespawn(PlayerRespawnEvent event) {
-    if (!arena(event.getPlayer().getLocation())) return;
+  @EventHandler(priority = EventPriority.HIGHEST) public void onRespawn(PlayerRespawnEvent event) {
+    if (!deathsOnArena.remove(event.getPlayer().getUniqueId()) && !arena(event.getPlayer().getLocation())) return;
     Location location = spawn();
     if (location != null) event.setRespawnLocation(location);
-    safeUntil.put(event.getPlayer().getUniqueId(), System.currentTimeMillis() + getConfig().getLong("spawn.invulnerable-seconds") * 1000L);
+    Player player = event.getPlayer();
+    safeUntil.put(player.getUniqueId(), System.currentTimeMillis() + getConfig().getLong("spawn.invulnerable-seconds") * 1000L);
+    Bukkit.getScheduler().runTask(this, () -> {
+      if (!player.isOnline()) return;
+      if (arena(player.getLocation()) && !onPlatform(player.getLocation())) safeTeleport(player, spawn());
+      bar(player, 40, "§aNa arenie nie tracisz doświadczenia.");
+    });
+  }
+  private boolean onPlatform(Location location) {
+    return arena(location) && location.getX() >= -6 && location.getX() < 7
+        && location.getZ() >= -35 && location.getZ() < -24 && location.getY() >= 64 && location.getY() < 69;
   }
 
   private void record(Player player, Entity dummy, double amount, String kind, boolean crit) {
@@ -365,14 +498,16 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     UUID id = player.getUniqueId();
     Meter meter = meters.computeIfAbsent(id, ignored -> new Meter());
     long now = System.currentTimeMillis();
+    if (meter.count == 0 || now - meter.lastHit >= getConfig().getLong("ui.series-reset-seconds", 6) * 1000L) {
+      meter.total = 0;
+      meter.count = 0;
+      meter.firstHit = now;
+    }
     meter.total += amount;
     meter.count++;
-    meter.recent.addLast(new Hit(now, amount));
-    long window = getConfig().getLong("ui.dps-window-seconds") * 1000L;
-    while (!meter.recent.isEmpty() && meter.recent.peekFirst().at < now - window) meter.recent.removeFirst();
-    double recent = meter.recent.stream().mapToDouble(h -> h.amount).sum();
-    double dps = recent / (window / 1000.0);
-    bar(player, 30, String.format(java.util.Locale.ROOT, "§e%.1f §7%s%s  §fSuma %.1f  DPS %.1f  Trafienia %d", amount, kind, crit ? " KRYT" : "", meter.total, dps, meter.count));
+    meter.lastHit = now;
+    double dps = meter.total / Math.max(1.0, (meter.lastHit - meter.firstHit) / 1000.0);
+    bar(player, 30, String.format(java.util.Locale.ROOT, "§e%.1f §7%s%s  §fSeria %.1f · DPS %.1f · %d traf.", amount, kind, crit ? " KRYT" : "", meter.total, dps, meter.count));
     dummyOwner.put(dummy.getUniqueId(), id);
     dummyOwnerTime.put(dummy.getUniqueId(), now);
     if (now - lastNumber.getOrDefault(id, 0L) < getConfig().getLong("ui.number-cooldown-ms")) return;
@@ -434,17 +569,40 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   @EventHandler public void onLeash(org.bukkit.event.entity.PlayerLeashEntityEvent event) { if (isDummy(event.getEntity())) event.setCancelled(true); }
   @EventHandler public void onEntityPlace(org.bukkit.event.entity.EntityPlaceEvent event) { if (arena(event.getEntity().getLocation())) event.setCancelled(true); }
   @EventHandler public void onSplash(org.bukkit.event.entity.PotionSplashEvent event) {
+    if (!harmful(event.getPotion().getEffects())) return;
     Player source = attacker(event.getPotion());
-    for (LivingEntity entity : event.getAffectedEntities()) if (entity instanceof Player target && (arena(target.getLocation()) || source != null && arena(source.getLocation()))) {
-      if (source == null || !inRing(source.getLocation()) || !inRing(target.getLocation())) event.setIntensity(entity, 0);
+    UUID ownerId = playerOwner(event.getPotion());
+    for (LivingEntity entity : event.getAffectedEntities()) if (entity instanceof Player target && ownerId != null && !ownerId.equals(target.getUniqueId())) {
+      if (source == null && (getConfig().getBoolean("pvp-tylko-w-ringu", true) || arena(target.getLocation()))
+          || source != null && (illegalPvp(source, target) || (arena(source.getLocation()) || arena(target.getLocation()))
+          && !event.getPotion().getPersistentDataContainer().has(launchRingKey, PersistentDataType.BYTE))) event.setIntensity(entity, 0);
     }
   }
   @EventHandler public void onCloud(org.bukkit.event.entity.AreaEffectCloudApplyEvent event) {
-    if (arena(event.getEntity().getLocation())) event.getAffectedEntities().removeIf(entity -> entity instanceof Player target && !inRing(target.getLocation()));
+    var cloud = event.getEntity();
+    if (!harmful(cloud.getCustomEffects()) && (cloud.getBasePotionType() == null || !harmful(cloud.getBasePotionType().getPotionEffects()))) return;
+    String owner = cloud.getPersistentDataContainer().get(cloudOwnerKey, PersistentDataType.STRING);
+    Player source = cloud.getSource() instanceof Player player ? player : null;
+    UUID ownerId = null;
+    if (owner != null) try { ownerId = UUID.fromString(owner); } catch (IllegalArgumentException ignored) { }
+    if (source == null && ownerId != null) source = Bukkit.getPlayer(ownerId);
+    final Player caster = source;
+    final UUID casterId = ownerId;
+    event.getAffectedEntities().removeIf(entity -> {
+      if (!(entity instanceof Player target) || casterId != null && casterId.equals(target.getUniqueId()) || caster == target) return false;
+      if (caster != null) return illegalPvp(caster, target) || (arena(caster.getLocation()) || arena(target.getLocation()))
+          && !cloud.getPersistentDataContainer().has(launchRingKey, PersistentDataType.BYTE);
+      return casterId != null || arena(cloud.getLocation()) && !inRing(target.getLocation());
+    });
   }
   @EventHandler public void onLingering(org.bukkit.event.entity.LingeringPotionSplashEvent event) {
-    Player source = attacker(event.getEntity());
-    if (arena(event.getEntity().getLocation()) && (source == null || !inRing(source.getLocation()))) event.setCancelled(true);
+    UUID owner = playerOwner(event.getEntity());
+    if (owner != null) event.getAreaEffectCloud().getPersistentDataContainer().set(cloudOwnerKey, PersistentDataType.STRING, owner.toString());
+    if (event.getEntity().getPersistentDataContainer().has(launchRingKey, PersistentDataType.BYTE))
+      event.getAreaEffectCloud().getPersistentDataContainer().set(launchRingKey, PersistentDataType.BYTE, (byte) 1);
+  }
+  private boolean harmful(Collection<PotionEffect> effects) {
+    return effects.stream().anyMatch(effect -> effect.getType().getCategory() == PotionEffectTypeCategory.HARMFUL);
   }
 
   private void loadState() {

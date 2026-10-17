@@ -47,7 +47,7 @@ regions:
     min: {x: 31, y: 60, z: -12}
     max: {x: 43, y: 85, z: 12}
     members: {}
-    flags: {pvp: deny, build: deny}
+    flags: {pvp: deny, build: deny, damage-animals: allow}
     owners: {}
     type: cuboid
     priority: 20

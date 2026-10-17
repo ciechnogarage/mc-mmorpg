@@ -1,4 +1,6 @@
 world: arena
+pvp-tylko-w-ringu: true
+sonda-pvp: false
 entry-worlds: [world, stolica_odnowa, stolica]
 fallback-worlds: [stolica_odnowa, stolica, world]
 blocked-player-commands: [/md, /ksiegaportal, /spawn, /home, /warp, /tpa, /tp, /teleport, /minecraft:teleport, /mmo, /mmoprofiles, /profile, /character, /kill, /minecraft:kill, /execute, /minecraft:execute, /summon, /minecraft:summon, /setblock, /minecraft:setblock, /fill, /minecraft:fill, /data, /minecraft:data]
@@ -30,7 +32,7 @@ combat:
   logout-penalty-seconds: 60
 ui:
   actionbar-ticks: 60
-  dps-window-seconds: 5
+  series-reset-seconds: 6
   number-cooldown-ms: 120
   max-numbers: 80
   number-height: 2.3

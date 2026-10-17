@@ -1,5 +1,7 @@
 mv create arena normal --generator VoidGen --world-type flat
-minecraft:execute in minecraft:arena run minecraft:setworldspawn 0 65 -28
+minecraft:execute in minecraft:arena run minecraft:setworldspawn 0 65 -29
+# Wykonaj ponizsza komende dopiero po budowa.txt (platforma musi istniec).
+mv setspawn arena:0.5,65,-28.5
 mv gamerule set minecraft:pvp true arena
 mv gamerule set minecraft:keep_inventory true arena
 mv gamerule set minecraft:fall_damage false arena
