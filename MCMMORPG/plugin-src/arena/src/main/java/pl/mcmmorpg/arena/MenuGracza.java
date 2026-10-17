@@ -37,6 +37,8 @@ import org.bukkit.util.RayTraceResult;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import org.bukkit.event.inventory.InventoryType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +53,12 @@ final class MenuGracza implements CommandExecutor, Listener {
   private record Cooldown(UUID from, UUID to, Kind kind) {}
   private final class Countdown extends BukkitRunnable {
     final UUID first, second;
+    final boolean firstEntered, secondEntered;   // kogo dopiero pojedynek wprowadzil na arene - przy przerwaniu wraca
     int remaining = 3;
-    Countdown(Player first, Player second) { this.first = first.getUniqueId(); this.second = second.getUniqueId(); }
+    Countdown(Player first, Player second, boolean firstEntered, boolean secondEntered) {
+      this.first = first.getUniqueId(); this.second = second.getUniqueId();
+      this.firstEntered = firstEntered; this.secondEntered = secondEntered;
+    }
     @Override public void run() {
       Player a = Bukkit.getPlayer(first), b = Bukkit.getPlayer(second);
       if (a == null || b == null || !arena.onArena(a) || !arena.onArena(b)
@@ -95,12 +101,39 @@ final class MenuGracza implements CommandExecutor, Listener {
     Player player = Bukkit.getPlayerExact(args[1]);
     if (player == null) { sender.sendMessage("Gracz jest offline: " + args[1]); return true; }
     if (player.getWorld().getName().equalsIgnoreCase("creator_limbo") || player.getGameMode() == GameMode.SPECTATOR) return true;
-    RayTraceResult hit = player.getWorld().rayTrace(player.getEyeLocation(), player.getEyeLocation().getDirection(),
-        arena.getConfig().getDouble("menu-gracza.zasieg", 4.5), FluidCollisionMode.NEVER, true, 0.1,
-        entity -> entity instanceof Player target && visible(player, target));
-    if (hit != null && hit.getHitEntity() instanceof Player target) openMenu(player, target);
+    Player target = target(player);
+    if (target != null) openMenu(player, target);
     else fallback(player);
     return true;
+  }
+
+  private Player target(Player player) {
+    RayTraceResult hit = player.getWorld().rayTrace(player.getEyeLocation(), player.getEyeLocation().getDirection(),
+        arena.getConfig().getDouble("menu-gracza.zasieg", 4.5), FluidCollisionMode.NEVER, true, 0.1,
+        entity -> entity instanceof Player other && visible(player, other));
+    return hit != null && hit.getHitEntity() instanceof Player other ? other : null;
+  }
+
+  private final Map<UUID, UUID> lastHint = new HashMap<>();
+  private final Map<UUID, Long> lastHintAt = new HashMap<>();
+  /** Co 5 tickow: gracz celujacy w innego gracza widzi na pasku, ze Q otworzy menu tego gracza. */
+  void hints() {
+    if (!arena.getConfig().getBoolean("menu-gracza.podpowiedz", true)) return;
+    long now = System.currentTimeMillis();
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      UUID id = player.getUniqueId();
+      Player target = quiet(player) ? null : target(player);
+      if (target == null) { lastHint.remove(id); continue; }
+      if (target.getUniqueId().equals(lastHint.get(id)) && now - lastHintAt.getOrDefault(id, 0L) < 1000) continue;
+      lastHint.put(id, target.getUniqueId()); lastHintAt.put(id, now);
+      if (MMOPlayerData.has(player)) MMOPlayerData.get(player).getActionBar().show(10, 25L, "§7[§eQ§7] Menu gracza: §f" + target.getName());
+    }
+  }
+  // bez podpowiedzi w walce, w ringu, w kreatorze, w trybie widza i przy otwartym oknie
+  private boolean quiet(Player player) {
+    return player.getGameMode() == GameMode.SPECTATOR || player.getWorld().getName().equalsIgnoreCase("creator_limbo")
+        || player.getOpenInventory().getType() != InventoryType.CRAFTING || arena.busy(player)
+        || PlayerData.has(player) && PlayerData.get(player).isInCombat();
   }
 
   private boolean visible(Player viewer, Player target) {
@@ -196,7 +229,9 @@ final class MenuGracza implements CommandExecutor, Listener {
   }
   private boolean cooldown(Player from, Player to, Kind kind) {
     Cooldown key = new Cooldown(from.getUniqueId(), to.getUniqueId(), kind);
-    long now = System.currentTimeMillis(), expires = cooldowns.getOrDefault(key, 0L);
+    long now = System.currentTimeMillis();
+    cooldowns.values().removeIf(until -> until <= now);
+    long expires = cooldowns.getOrDefault(key, 0L);
     if (expires > now) { arena.notice(from, "Poczekaj " + ((expires - now + 999) / 1000) + " s przed kolejnym zaproszeniem."); return false; }
     cooldowns.put(key, now + Math.max(1, arena.getConfig().getLong("menu-gracza.cooldown", 15)) * 1000);
     return true;
@@ -263,7 +298,7 @@ final class MenuGracza implements CommandExecutor, Listener {
       if (secondEntered) arena.leaveFailedDuel(target);
       arena.notice(from, "Nie udało się przenieść do ringu."); arena.notice(target, "Nie udało się przenieść do ringu."); return;
     }
-    Countdown countdown = new Countdown(from, target);
+    Countdown countdown = new Countdown(from, target, firstEntered, secondEntered);
     active.put(from.getUniqueId(), countdown); active.put(target.getUniqueId(), countdown);
     startProfiles.put(from.getUniqueId(), arena.profile(from)); startProfiles.put(target.getUniqueId(), arena.profile(target));
     countdown.runTaskTimer(arena, 0, 20);
@@ -303,14 +338,17 @@ final class MenuGracza implements CommandExecutor, Listener {
     startProfiles.remove(countdown.first); startProfiles.remove(countdown.second);
     for (UUID id : List.of(countdown.first, countdown.second)) {
       Player player = Bukkit.getPlayer(id);
-      if (player != null) { player.clearTitle(); arena.notice(player, reason); }
+      if (player == null) continue;
+      player.clearTitle(); arena.notice(player, reason);
+      boolean entered = id.equals(countdown.first) ? countdown.firstEntered : countdown.secondEntered;
+      if (entered && player.isOnline()) arena.leaveFailedDuel(player);
     }
   }
   void cancelFor(Player player) {
     UUID id = player.getUniqueId();
     clicks.entrySet().removeIf(entry -> entry.getValue().viewer().equals(id) || entry.getValue().target().equals(id));
     invitations.values().removeIf(invitation -> invitation.challenger().equals(id) || invitation.target().equals(id));
-    cooldowns.keySet().removeIf(key -> key.from().equals(id) || key.to().equals(id));
+    lastHint.remove(id); lastHintAt.remove(id);   // cooldowns zostaja: relog nie omija limitu zaproszen
     Countdown countdown = active.get(id);
     if (countdown != null) cancelCountdown(countdown, "Pojedynek przerwany: gracz wyszedł lub zmienił postać.");
   }

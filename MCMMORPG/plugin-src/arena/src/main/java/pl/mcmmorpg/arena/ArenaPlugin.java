@@ -104,6 +104,8 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     menuGracza = new MenuGracza(this);
     Bukkit.getPluginManager().registerEvents(menuGracza, this);
     getCommand("menugracza").setExecutor(menuGracza);
+    Bukkit.getScheduler().runTaskTimer(this, menuGracza::hints, 40L, 5L);
+    Bukkit.getScheduler().runTaskLater(this, this::checkQKey, 100L);
     Bukkit.getScheduler().runTaskTimer(this, () -> {
       tick++;
       if (tick % getConfig().getLong("dummy.check-ticks") == 0) ensureDummies();
@@ -219,6 +221,13 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     return target.clone().add(0, -1, 0).getBlock().getType().isSolid()
         && target.getBlock().isPassable() && target.clone().add(0, 1, 0).getBlock().isPassable()
         && safeTeleport(player, target);
+  }
+  boolean busy(Player player) { return tagged(player) || inRing(player.getLocation()); }
+  // Q na gracza zalezy od klucza klawisz-q.zwykle w Zaklecia (inny plugin, inna sesja) - glosno, gdy ktos go cofnie
+  private void checkQKey() {
+    var zaklecia = Bukkit.getPluginManager().getPlugin("Zaklecia");
+    String key = zaklecia == null ? null : zaklecia.getConfig().getString("klawisz-q.zwykle", "");
+    if (key == null || !key.startsWith("menugracza")) getLogger().warning("Q na gracza WYLACZONE: Zaklecia klawisz-q.zwykle = '" + key + "' (oczekiwane 'menugracza q %gracz%'). Q otwiera tylko hub.");
   }
   void protectForDuel(Player player, long until) { safeUntil.put(player.getUniqueId(), until); }
   void notice(Player player, String message) { deny(player, message); }

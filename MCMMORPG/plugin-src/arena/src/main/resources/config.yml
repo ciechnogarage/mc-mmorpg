@@ -28,6 +28,7 @@ boundary:
 entry:
   max-fall-distance: 0.1
 menu-gracza:
+  podpowiedz: true
   zasieg: 4.5
   zwykle: 'dm open hub_glowne %gracz%'
   cooldown: 15
