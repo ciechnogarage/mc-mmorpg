@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
@@ -84,7 +85,7 @@ final class Rzucanie implements Listener {
     this.komunikat = new Komunikat(skille, ksiega.skBrakMany);
     this.efekty = new EfektyCzasowe(plugin, ksiega, nosnik, skille);
     this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille, efekty, komunikat);
-    this.strumien = new Strumien(skille);
+    this.strumien = new Strumien(plugin, skille);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
     kSzybkosc = new NamespacedKey(plugin, "lpm_szybkosc");
@@ -314,6 +315,12 @@ final class Rzucanie implements Listener {
     odrzutowe.wyjscie(e.getPlayer());
   }
 
+  @EventHandler
+  public void zmianaSwiata(PlayerChangedWorldEvent e) {
+    stop(e.getPlayer(), false);
+    odrzutowe.wyjscie(e.getPlayer());
+  }
+
   void stop(Player p, boolean dzwiek) {
     odrzutowe.przerwij(p);
     UUID u = p.getUniqueId();
@@ -432,11 +439,13 @@ final class Rzucanie implements Listener {
       it.remove();
     }
     odrzutowe.tick(teraz, plugin.getConfig().getInt("ppm-tolerancja", 6));
-    for (var it = rzucajacy.entrySet().iterator(); it.hasNext(); ) {
-      var wpis = it.next();
-      Stan s = wpis.getValue();
-      Player p = Bukkit.getPlayer(wpis.getKey());
-      if (p == null || !p.isOnline() || p.isDead()) { it.remove(); if (p != null) { strumien.stop(p); ruch(p, false); } continue; }
+    // Skille wywoluja zdarzenia synchronicznie. Smierc gracza podczas trafienia
+    // usuwa jego wpis przez stop(), wiec nie wolno trzymac iteratora tej mapy.
+    for (UUID u : List.copyOf(rzucajacy.keySet())) {
+      Stan s = rzucajacy.get(u);
+      if (s == null) continue;
+      Player p = Bukkit.getPlayer(u);
+      if (p == null || !p.isOnline() || p.isDead()) { rzucajacy.remove(u, s); if (p != null) { strumien.stop(p); ruch(p, false); } continue; }
       try {
         boolean tryb = trybLpm(p);
         if (!tryb || zak(p, true) == null || !zak(p, true).koncentracja()) s.przelacznik = false;
@@ -446,7 +455,7 @@ final class Rzucanie implements Listener {
           if (s.prawa || s.lewa) przejscie(p, s.prawa ? zak(p, true) : null,
               s.lewa ? zak(p, false) : null, null, null);
           if (s.prawa || s.lewa) log(p, "dlonie: prawa=false lewa=false");
-          it.remove(); strumien.stop(p); ruch(p, false);
+          rzucajacy.remove(u, s); strumien.stop(p); ruch(p, false);
           continue;
         }
         boolean zmianaDloni = pr != s.prawa || lw != s.lewa;
@@ -492,7 +501,7 @@ final class Rzucanie implements Listener {
             komunikat.mana(p, koszt - d.getMana());
             if (lw) blokadaPpm.put(p.getUniqueId(), teraz);
             s.przelacznik = false;
-            it.remove(); strumien.stop(p); ruch(p, false);
+            rzucajacy.remove(u, s); strumien.stop(p); ruch(p, false);
             continue;
           }
           if (n % 10 == 0) {
@@ -529,7 +538,7 @@ final class Rzucanie implements Listener {
           s.oslonaL = Math.min(lewa.sila(), s.oslonaL + lewa.sila() / lewa.narastanie());
       } catch (Throwable t) {   // np. nieaktualne dane MMOCore po szybkim przelogowaniu: gasimy tylko tego gracza
         s.przelacznik = false;
-        it.remove(); strumien.stop(p); ruch(p, false);
+        rzucajacy.remove(u, s); strumien.stop(p); ruch(p, false);
         plugin.getLogger().warning("rzucanie przerwane (" + p.getName() + "): " + t);
       }
     }

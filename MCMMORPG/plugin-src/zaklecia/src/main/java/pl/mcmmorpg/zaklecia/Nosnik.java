@@ -101,7 +101,7 @@ final class Nosnik implements Listener {
       m.getPersistentDataContainer().set(kluczPustej, PersistentDataType.BYTE, (byte) 1);
     });
     komponenty(i);
-    return i;
+    return naDloni(i);
   }
 
   /** Niewidoczny nosnik jest wylacznie w aktualnie wybranym pustym slocie przy czarze w lewej. */
@@ -162,6 +162,8 @@ final class Nosnik implements Listener {
 
   /** @return komunikat dla gracza (co sie stalo). */
   String przypisz(Player p, String id, boolean prawa) {
+    Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
+    if (id != null && z == null) return "§cNieznane zaklęcie: " + id;
     PlayerInventory inv = p.getInventory();
     if (!prawa) {
       ItemStack teraz = inv.getItemInOffHand();
@@ -172,8 +174,6 @@ final class Nosnik implements Listener {
         inv.setItemInOffHand(null);
       }
       if (id == null) { inv.setItemInOffHand(null); ustawLewa(p, false); usunPuste(p); return "§7Lewa dłoń jest pusta."; }
-      Ksiega.Zaklecie z = ksiega.poId.get(id);
-      if (z == null) return "§cNieznane zaklęcie: " + id;
       inv.setItemInOffHand(zrob(z));
       ustawLewa(p, true);
       odswiezPusta(p);
@@ -183,8 +183,6 @@ final class Nosnik implements Listener {
     int miejsce = -1;
     for (int s = 0; s < 36; s++) if (jest(inv.getItem(s))) { inv.setItem(s, null); if (s < 9 && miejsce < 0) miejsce = s; }
     if (id == null) { ustawSlot(p, -1); odswiezPusta(p); return "§7Prawa dłoń jest pusta."; }
-    Ksiega.Zaklecie z = ksiega.poId.get(id);
-    if (z == null) return "§cNieznane zaklęcie: " + id;
     if (miejsce < 0) {
       int wybrany = inv.getHeldItemSlot();
       ItemStack w = inv.getItem(wybrany);
@@ -207,7 +205,18 @@ final class Nosnik implements Listener {
     if (i == null) throw new IllegalStateException("brak przedmiotu MythicMobs " + z.przedmiot());
     i.editMeta(m -> m.getPersistentDataContainer().set(klucz, PersistentDataType.BYTE, (byte) 1));
     komponenty(i);
-    return i;
+    return naDloni(i);
+  }
+
+  /**
+   * MMOItems: bron dwureczna + cokolwiek w drugiej rece = "zajete rece" (brak uzycia broni i umiejetnosci, slowness,
+   * komunikat hands-too-charged przy kazdym PPM). Nosnik zaklecia nie jest przedmiotem w rece, tylko dlonia - flaga
+   * MMOITEMS_HANDWORN (jak rekawica) wylacza te kare (InventoryResolver liczy encumbered tylko dla nie-handworn).
+   * Zmierzone 13.10: kostur + zaklecie w lewej = slowness + spam "Masz zajete rece".
+   */
+  static ItemStack naDloni(ItemStack i) {
+    if (i == null || i.getType().isAir() || io.lumine.mythic.lib.api.item.NBTItem.get(i).getBoolean("MMOITEMS_HANDWORN")) return i;
+    return io.lumine.mythic.lib.api.item.NBTItem.get(i).addTag(new io.lumine.mythic.lib.api.item.ItemTag("MMOITEMS_HANDWORN", true)).toItem();
   }
 
   private void komponenty(ItemStack i) {
@@ -248,7 +257,15 @@ final class Nosnik implements Listener {
     boolean dotyka = jest(e.getCurrentItem()) || jest(e.getCursor());
     if (e.getClick() == ClickType.NUMBER_KEY && e.getHotbarButton() >= 0) dotyka |= jest(p.getInventory().getItem(e.getHotbarButton()));
     if (e.getClick() == ClickType.SWAP_OFFHAND) dotyka |= jest(p.getInventory().getItemInOffHand());
-    if (dotyka) { e.setCancelled(true); odmowa(p); }
+    if (dotyka) {
+      e.setCancelled(true);
+      odmowa(p);
+      // Klient przewiduje ruch kursora i slotu nawet gdy klik jest anulowany.
+      // KsiegaPostaci moze jeszcze poprawic uklad w nastepnym tiku; zsynchronizuj po niej.
+      org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (p.isOnline()) p.updateInventory();
+      }, 2L);
+    }
   }
 
   @EventHandler(priority = EventPriority.LOW)

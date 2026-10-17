@@ -19,7 +19,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
@@ -65,6 +67,8 @@ final class Wybor implements Listener {
     s.opis = BossBar.bossBar(L.deserialize(""), 1f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS);
     s.ostatnio = System.currentTimeMillis();
     otwarte.put(p.getUniqueId(), s);
+    if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG boss open gracz="
+        + p.getName() + " bar=" + System.identityHashCode(s.bar) + " opis=" + System.identityHashCode(s.opis));
     p.showBossBar(s.bar);
     p.showBossBar(s.opis);
     nosnik.odswiezPusta(p);   // PPM z pusta reka nie dociera do serwera — od razu nosnik w dloni
@@ -75,6 +79,9 @@ final class Wybor implements Listener {
 
   void zamknij(Player p, UUID u) {
     Sesja s = otwarte.remove(u);
+    if (s != null && plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG boss close gracz="
+        + (p == null ? u : p.getName()) + " online=" + (p != null && p.isOnline())
+        + " bar=" + System.identityHashCode(s.bar) + " opis=" + System.identityHashCode(s.opis));
     if (s != null && p != null) {
       p.hideBossBar(s.bar); p.hideBossBar(s.opis);
       p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.6f, 0.8f);
@@ -188,8 +195,10 @@ final class Wybor implements Listener {
     if (e.getAction() == Action.LEFT_CLICK_AIR) {   // moze to machniecie po klawiszu Q (zamykajacym pasek) — sprawdz pozniej
       e.setCancelled(true);
       Player p = e.getPlayer();
+      Sesja kliknietaSesja = otwarte.get(p.getUniqueId());
       Bukkit.getScheduler().runTaskLater(plugin, () -> {
-        if (p.isOnline() && otwarty(p) && !rzucanie.swiezeQ(p)) wcisnietoLpm(p);
+        if (p.isOnline() && otwarte.get(p.getUniqueId()) == kliknietaSesja
+            && !rzucanie.swiezeQ(p)) wcisnietoLpm(p);
       }, Rzucanie.Q_OKNO);
       return;
     }
@@ -214,7 +223,13 @@ final class Wybor implements Listener {
   }
 
   @EventHandler
-  public void wyjscie(PlayerQuitEvent e) { otwarte.remove(e.getPlayer().getUniqueId()); }
+  public void wyjscie(PlayerQuitEvent e) { zamknij(e.getPlayer(), e.getPlayer().getUniqueId()); }
+
+  @EventHandler
+  public void smierc(PlayerDeathEvent e) { zamknij(e.getEntity(), e.getEntity().getUniqueId()); }
+
+  @EventHandler
+  public void zmianaSwiata(PlayerChangedWorldEvent e) { zamknij(e.getPlayer(), e.getPlayer().getUniqueId()); }
 
   /** Q nad slotem okna DeluxeMenus = zamknij okno (Q wlacza i wylacza menu). */
   @EventHandler(priority = EventPriority.LOWEST)
