@@ -167,7 +167,7 @@ final class Wytrzymalosc implements Listener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void blok(EntityDamageByEntityEvent e) {
     // obrazenia 0 = udane parowanie (AnimacjeBroni#parowanie) - ono zwraca stamine zamiast kosztowac;
-    // ~0 (zmierzone na klonie: 2e-8 co tick od przywolanca) to nie cios - inaczej garda topnialaby od widm
+    // ~0 to nie cios (zmierzone na klonie: SLIME o nieustalonym pochodzeniu, 2e-8 co tick przy dotyku) - inaczej garda topnialaby od widm
     if (!wlaczona || !(e.getEntity() instanceof Player p) || !p.isBlocking() || e.getDamage() < 0.01) return;
     Vector doNapastnika = e.getDamager().getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
     Vector patrzy = p.getLocation().getDirection().setY(0);
