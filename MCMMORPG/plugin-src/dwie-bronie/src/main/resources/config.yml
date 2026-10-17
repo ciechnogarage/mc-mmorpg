@@ -15,10 +15,12 @@ mocny:
   pelne-ticki: 12      # od tylu = mocny cios (dzwiek sygnalu)
   mnoznik: 2.0         # Skyrim: mocny cios jedna bronia x2
   koszt-staminy: 25    # % maks. staminy (Skyrim: ok. 40-60% przy 100 staminy; u nas regeneracja wolniejsza)
+  koszt-jednostek: 2.5 # model AnimacjeBroni: lekkie ciosy tej broni; x2 obrazen w jednej akcji (jak wypad). % tylko bez modelu
   wypad: {zasieg: 1.5, min-dystans: 2.2, sila: 0.75}   # W + mocny: doskok i dalszy zasieg
   odskok: {sila: 0.5}                                    # S + mocny: cios z odskokiem
   unik: {sila: 0.5}                                      # A/D + mocny: cios z unikiem w bok
 podwojny:              # Shift + przytrzymany PPM
   mnoznik: 1.5         # Skyrim: 3 ataki (2x lewa, 1x prawa) po x1,5
   koszt-staminy: 40    # Skyrim: 3 ataki po 0,5 kosztu mocnego (~1,5x mocnego)
+  koszt-jednostek: 4.0 # ~4,5 lekkiego ciosu obrazen (1,5 x (2L+P)) i trzy zamachy w jednej akcji
 debug: false

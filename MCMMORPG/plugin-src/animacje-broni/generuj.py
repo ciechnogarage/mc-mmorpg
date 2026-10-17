@@ -94,14 +94,27 @@ MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20
          'krok_szturchniecia': 0.18, 'dystans_kroku': 1.5, 'krok_wypadu': 0.4, 'krok_biegu': 0.65,
          'krok_boczny': 0.32, 'odskok': 0.35, 'odrzut_szturchniecia': 0.45,
          'brak_staminy': 'Za mało staminy na mocny cios'}
+# stamina = koszt wariantu w lekkich ciosach TEJ broni (model jednostek, sekcja STAMINA):
+# placisz za to, co mocny daje ponad lekki - skumulowane obrazenia i efekt. Wypad x1,3 + przebicie linii,
+# znad glowy x1,4 (mlot: fala), zamach boczny x1,0 ale wiele celow -> 2,5; odepchniecie slabe, placisz za
+# przestrzen -> 2,0; z rozbiegu/z powietrza x1,5 + odrzut/zachwianie, a bieg/skok sam meczy -> 3,0.
 CIEZKIE_WARIANTY = {
-    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6},
-    'znad_glowy': {'mnoznik': 1.4},
-    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360},
-    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1},
-    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1},
-    'z_powietrza': {'mnoznik': 1.5},
+    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.5},
+    'znad_glowy': {'mnoznik': 1.4, 'stamina': 2.5},
+    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5},
+    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1, 'stamina': 2.0},
+    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1, 'stamina': 3.0},
+    'z_powietrza': {'mnoznik': 1.5, 'stamina': 3.0},
 }
+# Model staminy w jednostkach L = lekki cios mieczem. zestaw = sekundy ciaglej walki na pelnym pasku (cel
+# projektowy do wyboru wlasciciela z zestawy); pula = zestaw * ciosy_na_sekunde L; regeneracja L/s po
+# oddech_ticki bez wysilku (nie w gardzie). Blok: od blok_min do blok_max L wg sily ciosu (blok_max przy
+# blok_prog_hp maks. zdrowia), tarcza x0,5; parowanie oddaje parowanie_zwrot L. Zmeczony bije za
+# zmeczenie_obrazenia. wspolczynnik broni = ciosy_na_sekunde / szybkosc ataku, przyciety do min/max.
+STAMINA = {'wlaczona': 'true', 'zestaw': 10, 'zestawy': '[7, 10, 14]', 'ciosy_na_sekunde': 1.6,
+           'regeneracja': 1.6, 'oddech_ticki': 20, 'zmeczenie_obrazenia': 0.6, 'szturchniecie': 1.0,
+           'blok_min': 0.5, 'blok_max': 3.0, 'blok_prog_hp': 0.25, 'tarcza': 0.5, 'parowanie_zwrot': 1.0,
+           'peknieta_garda_ticki': 40, 'wspolczynnik_min': 0.4, 'wspolczynnik_max': 2.5}
 KOMBO = {'mnoznik_1': 1.2, 'mnoznik_2': 1.4}
 RYTM = {'prog_rytmu': 0.7, 'okno_rytmu': 24, 'koszt_rytmu': 2, 'dlugosc': 3,
         'mnoznik': 1.4, 'luk_mnoznik': 0.5, 'krok_boczny_mnoznik': 0.35}
@@ -327,7 +340,7 @@ def main():
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
              '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
              'przestrzen-modeli: %s' % PRZESTRZEN, 'debug: false']
-    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM), ('kombo', KOMBO)):
+    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM), ('kombo', KOMBO), ('stamina', STAMINA)):
         linie.append('%s: {%s}' % (nazwa, ', '.join('%s: %s' % kv for kv in dane.items())))
     linie.append('ciezkie_warianty:')
     for nazwa, dane in CIEZKIE_WARIANTY.items():

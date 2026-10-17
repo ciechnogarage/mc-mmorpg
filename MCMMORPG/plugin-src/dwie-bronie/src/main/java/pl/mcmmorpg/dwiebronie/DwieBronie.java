@@ -248,7 +248,12 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     double k = wymuszona > 0 ? wymuszona : skala(p);
     ciosyLewa.put(p.getUniqueId(), new Cios(e.getAttacked().getUniqueId(), teraz, k));
     s.lewaTick = teraz;
-    if (wymuszona <= 0) p.swingOffHand();
+    if (wymuszona <= 0) {
+      p.swingOffHand();
+      // machniecie prawej jest wyciete, wiec AnimacjeBroni nie policzy tego lekkiego ciosu - placimy tu,
+      // tick pozniej: zadyszka przy obrazeniach liczy sie ze stanu sprzed ciosu
+      getServer().getScheduler().runTask(this, () -> { if (p.isOnline()) lekkiCios(p); });
+    }
     dbg(p.getName() + " cios LEWA tick=" + teraz + " skala=" + String.format("%.3f", k));
   }
 
@@ -305,12 +310,17 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     double l = skala(p), mnoznik;
     if (wariant.equals("podwojny")) {
       // Skyrim: 3 ataki (2x lewa, 1x prawa) po x1,5 - tu jednym trafieniem, trzy zamachy dla oka
-      if (stamina(p, getConfig().getDouble("podwojny.koszt-staminy", 18))) mnoznik = getConfig().getDouble("podwojny.mnoznik", 1.5) * (2 * l + 1);
+      if (stamina(p, getConfig().getDouble("podwojny.koszt-staminy", 18), getConfig().getDouble("podwojny.koszt-jednostek", 4.0)))
+        mnoznik = getConfig().getDouble("podwojny.mnoznik", 1.5) * (2 * l + 1);
       else { wariant = "podwojny-bez-staminy"; mnoznik = l; }
     } else if (wariant.equals("mocny")) {
-      if (stamina(p, getConfig().getDouble("mocny.koszt-staminy", 12))) mnoznik = getConfig().getDouble("mocny.mnoznik", 2.0) * l;
+      if (stamina(p, getConfig().getDouble("mocny.koszt-staminy", 12), getConfig().getDouble("mocny.koszt-jednostek", 2.5)))
+        mnoznik = getConfig().getDouble("mocny.mnoznik", 2.0) * l;
       else { wariant = "mocny-bez-staminy"; mnoznik = l; }
     } else mnoznik = l;
+    // stukniecie/przerwany i ciosy "bez staminy" to zwykly lekki cios lewa - tez wysilek (po trafieniu, jak w LPM)
+    if (wariant.equals("stukniecie") || wariant.equals("przerwany") || wariant.endsWith("bez-staminy"))
+      getServer().getScheduler().runTask(this, () -> { if (p.isOnline()) lekkiCios(p); });
     boolean naladowany = p.getAttackCooldown() >= (float) getConfig().getDouble("min-naladowanie-ppm", 0.9);
     String kierunek = wariant.equals("mocny") ? kierunek(p) : "brak";
     double dodatek = kierunek.equals("przod") ? getConfig().getDouble("mocny.wypad.zasieg", 1.5) : 0;
@@ -377,10 +387,45 @@ public final class DwieBronie extends JavaPlugin implements Listener {
         "§x§F§2§F§2§E§DLewa broń nie działa §7- §x§E§8§7§9§7§3nie spełniasz jej wymagań");
   }
 
-  private boolean stamina(Player p, double procent) {
+  // Model staminy AnimacjeBroni (jednostki lekkiego ciosu): metody szukane refleksja przy pierwszym uzyciu,
+  // zeby DwieBronie nie zalezaly od AnimacjeBroni przy kompilacji. Brak pluginu/metody = stare koszty w %.
+  private java.lang.reflect.Method apiKoszt, apiLekki;
+  private Object apiAnimacje;
+  private boolean apiSzukane;
+
+  private void szukajApi() {
+    if (apiSzukane) return;
+    apiSzukane = true;
+    var pl = getServer().getPluginManager().getPlugin("AnimacjeBroni");
+    if (pl == null || !pl.isEnabled()) return;
+    try {
+      apiKoszt = pl.getClass().getMethod("kosztJednostek", Player.class, double.class);
+      apiLekki = pl.getClass().getMethod("lekkiCiosZInnejReki", Player.class);
+      apiAnimacje = pl;
+    } catch (NoSuchMethodException ex) {
+      getLogger().info("AnimacjeBroni bez modelu jednostek staminy - koszty w % z configu.");
+    }
+  }
+
+  /** Punkty staminy za akcje warta {@code jednostki} lekkich ciosow; -1 = model jednostek niedostepny. */
+  private double kosztModelu(Player p, double jednostki) {
+    szukajApi();
+    if (apiKoszt == null) return -1;
+    try { return (double) apiKoszt.invoke(apiAnimacje, p, jednostki); }
+    catch (ReflectiveOperationException ex) { return -1; }
+  }
+
+  private void lekkiCios(Player p) {
+    szukajApi();
+    if (apiLekki == null) return;
+    try { apiLekki.invoke(apiAnimacje, p); } catch (ReflectiveOperationException ignored) { }
+  }
+
+  private boolean stamina(Player p, double procent, double jednostki) {
     if (!mmocore || procent <= 0) return true;
     double maks = Math.max(0, MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA"));
-    double koszt = maks * procent / 100.0;
+    double model = kosztModelu(p, jednostki);
+    double koszt = model >= 0 ? model : maks * procent / 100.0;
     net.Indyuce.mmocore.api.player.PlayerData dane = net.Indyuce.mmocore.api.player.PlayerData.get(p);
     dbg(p.getName() + " stamina maks=" + String.format("%.2f", maks) + " teraz="
         + (dane == null ? "-" : String.format("%.2f", dane.getStamina())) + " koszt=" + String.format("%.2f", koszt));

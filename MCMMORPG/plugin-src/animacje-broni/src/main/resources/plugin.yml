@@ -7,8 +7,8 @@ depend: [MMOItems, MythicLib]
 softdepend: [MMOCore]
 commands:
   animacjebroni:
-    description: reload | sprawdz <gracz>
-    usage: /animacjebroni <reload|sprawdz <gracz>>
+    description: reload | sprawdz <gracz> | stamina [<zestaw> | gracz <nick>]
+    usage: /animacjebroni <reload|sprawdz <gracz>|stamina [<zestaw>|gracz <nick>]>
     permission: animacjebroni.admin
 permissions:
   animacjebroni.admin:

@@ -144,6 +144,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Set<UUID> wykonczenieZamach = new HashSet<>();
   private final Map<UUID, Runnable> oczekujacyZamach = new HashMap<>();
   private boolean mmocore;
+  /** Model staminy w jednostkach lekkiego ciosu (sekcja stamina w configu); null bez MMOCore. */
+  private Wytrzymalosc wytrzymalosc;
   private double progRytmu, kosztRytmu, mnoznikRytmu, lukRytmu;
   private int progMocnego, odnowienieMocnegoTicki, odnowienieSzturchniecia, zmeczenieMocnego, oknoRytmu, dlugoscRytmu;
   private double mnoznikSzturchniecia, bazowyMnoznikMocnego;
@@ -162,9 +164,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     kluczZamachu = new NamespacedKey(this, "zamach_do_ticka");
     mmocore = getServer().getPluginManager().isPluginEnabled("MMOCore");
     if (!mmocore) getLogger().warning("Brak MMOCore: dodatkowe koszty staminy sa wylaczone.");
+    if (mmocore) wytrzymalosc = new Wytrzymalosc(this);
     saveDefaultConfig();
     wczytaj();
     getServer().getPluginManager().registerEvents(this, this);
+    if (wytrzymalosc != null) {
+      getServer().getPluginManager().registerEvents(wytrzymalosc, this);
+      getServer().getScheduler().runTaskTimer(this, wytrzymalosc::tyknij, 2L, 2L);
+    }
     getServer().getScheduler().runTaskTimer(this,
         () -> getServer().getOnlinePlayers().forEach(this::dopasujDlonie), 10L, 10L);
     getServer().getScheduler().runTaskTimer(this, this::tyknijKrwawienie, 1L, 1L);
@@ -193,6 +200,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     dlugoscRytmu = Math.max(2, getConfig().getInt("rytm.dlugosc", 3));
     mnoznikRytmu = getConfig().getDouble("rytm.mnoznik", 1.4);
     lukRytmu = getConfig().getDouble("rytm.luk_mnoznik", 0.5);
+    if (wytrzymalosc != null) wytrzymalosc.wczytaj(getConfig().getConfigurationSection("stamina"));
     ConfigurationSection sek = getConfig().getConfigurationSection("typy");
     if (sek != null) {
       for (String typ : sek.getKeys(false)) {
@@ -511,7 +519,15 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     }
     boolean szturchniecie = ticki < progMocnego;
     String wariant = szturchniecie ? "szturchniecie" : kierunekCiezkiego(p, u.ciezkie());
-    if (!szturchniecie && !pobierzStamine(p, u.ciezkie().koszt())) {
+    boolean model = wytrzymalosc != null && wytrzymalosc.wlaczona();
+    // Model jednostek: mocny = koszt lekkiego tej broni x mnoznik wariantu (ciezkie_warianty.<w>.stamina);
+    // szturchniecie tez jest wysilkiem, ale nie odmawia go zmeczonemu (pobiera, ile jest).
+    if (model && szturchniecie) wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztSzturchniecia(p));
+    boolean staminaOk = szturchniecie || (model
+        ? wytrzymalosc.wydaj(p, wytrzymalosc.kosztMocnego(p,
+            getConfig().getDouble("ciezkie_warianty." + wariant + ".stamina", 2.5)))
+        : pobierzStamine(p, u.ciezkie().koszt()));
+    if (!staminaOk) {
       if (teraz - ostatniBrakStaminy.getOrDefault(id, -1000) >= 40) {
         ostatniBrakStaminy.put(id, teraz);
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.PLAYERS, 0.8f, 0.7f);
@@ -748,6 +764,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         + " wariant=" + (ogniwo == 3 ? "wykonczenie" : ogniwo == 2 ? "z_lewej" : "z_prawej")
         + " ticki=0 obrazenia=0 stamina=0"
         + " zamach=" + (rodzajSmugi == Rodzaj.KLUTE ? "STAB" : "WHACK"));
+    // Kazde machniecie bronia to wysilek (takze pudlo): koszt lekkiego ciosu, zmeczonemu do zera, bez odmowy.
+    if (smuga != null && wytrzymalosc != null && wytrzymalosc.wlaczona())
+      wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztLekkiego(p));
     ostatniAtak.remove(p.getUniqueId());
     Runnable nastepny = oczekujacyZamach.remove(p.getUniqueId());
     if (nastepny != null) getServer().getScheduler().runTask(this, nastepny);
@@ -810,6 +829,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         // inaczej miecz dwureczny (opoznienie 0,3 s = 6 tickow) mialby okno ~1 tick
         || p.getActiveItemUsedTime() > Math.round(u.garda().opoznienie() * 20) + u.parowanie().okno()) return;
     e.setDamage(0);
+    if (wytrzymalosc != null && wytrzymalosc.wlaczona()) wytrzymalosc.zwrocZaParowanie(p);   // nagroda za timing
     dbg("BLOK typ=" + NBTItem.get(bron).getType() + " ogniwo=0 wariant=parowanie ticki="
         + p.getActiveItemUsedTime() + " obrazenia=0 stamina=0");
     riposty.put(p.getUniqueId(), new Riposta(getServer().getCurrentTick() + u.parowanie().ripostaTicki(),
@@ -826,6 +846,27 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     if (mmocore) MMOPlayerData.get(p).getActionBar().show(priorytet, 40L, t);   // zwykly pasek akcji MMOCore zamazuje po 0,25 s
     else p.sendActionBar(net.kyori.adventure.text.Component.text(t));
   }
+
+  void komunikatWytrzymalosci(Player p, String tekst) { komunikat(p, tekst, 40); }
+
+  /**
+   * API dla innych pluginow walki (DwieBronie, przez refleksje): punkty staminy za akcje warta {@code jednostki}
+   * lekkich ciosow trzymana bronia; -1, gdy model jednostek jest wylaczony (wtedy plugin zostaje przy swoich %).
+   */
+  public double kosztJednostek(Player p, double jednostki) {
+    return wytrzymalosc == null || !wytrzymalosc.wlaczona() ? -1 : wytrzymalosc.kosztLekkiego(p) * jednostki;
+  }
+
+  /** API: lekki cios innym kanalem (np. lewa reka w DwieBronie) - pobiera ile jest; true = gracz byl w zadyszce. */
+  public boolean lekkiCiosZInnejReki(Player p) {
+    if (wytrzymalosc == null || !wytrzymalosc.wlaczona()) return false;
+    boolean zmeczony = wytrzymalosc.zmeczony(p);
+    wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztLekkiego(p));
+    if (zmeczony) wytrzymalosc.sygnalizujZadyszke(p);
+    return zmeczony;
+  }
+
+  public double zmeczenieObrazenia() { return wytrzymalosc == null ? 1 : wytrzymalosc.zmeczenieObrazenia(); }
 
   private boolean pobierzStamine(Player p, double procent) {
     if (!mmocore || procent <= 0) return true;
@@ -1039,7 +1080,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       return false;
     }
     int numer = naladowanie >= u.progRytmu() && wOknie ? poprzedni.trafienia() + 1 : 1;
-    if (numer > 1 && !pobierzStamine(p, kosztRytmu)) numer = 1;
+    // W modelu jednostek cios w rytmie jest zwyklym lekkim ciosem (placony przy machnieciu), nie osobnym kosztem.
+    if (numer > 1 && (wytrzymalosc == null || !wytrzymalosc.wlaczona()) && !pobierzStamine(p, kosztRytmu)) numer = 1;
     if (numer == 1 && poprzedni != null && poprzedni.trafienia() == dlugoscRytmu - 1) przywrocZamach(p);
     ostatnieOgniwo.put(p.getUniqueId(), numer);
     dbg("RYTM numer=" + numer + " pelne=" + pelne + " okno=" + wOknie + " naladowanie=" + naladowanie);
@@ -1141,6 +1183,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     Ustawienie u = ustawienie(bron);
     if (u == null) return;
     int teraz = getServer().getCurrentTick();
+    // Zadyszka: zabraklo staminy na ten cios (pobierana dopiero przy machnieciu, ktore przychodzi po obrazeniach).
+    if (wytrzymalosc != null && wytrzymalosc.wlaczona() && wytrzymalosc.zmeczony(p)) {
+      e.setDamage(e.getDamage() * wytrzymalosc.zmeczenieObrazenia());
+      wytrzymalosc.sygnalizujZadyszke(p);
+    }
     podwojKrwawienie.remove(p.getUniqueId());
     // riposta zuzywa sie przy trafieniu (klient wysyla cios PRZED machnieciem, wiec nie przez PlayerAnimationEvent)
     Riposta riposta = u.parowanie() != null ? riposty.remove(p.getUniqueId()) : null;
@@ -1300,6 +1347,31 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       s.sendMessage("AnimacjeBroni: przeladowano (" + typy.size() + " typow).");
       return true;
     }
+    // /animacjebroni stamina [<zestaw> | gracz <nick>] - zestawy do porownania (sekundy ciaglej walki)
+    if (args.length >= 1 && args[0].equalsIgnoreCase("stamina")) {
+      if (wytrzymalosc == null) { s.sendMessage("Brak MMOCore - model staminy niedostepny."); return true; }
+      if (args.length == 3 && args[1].equalsIgnoreCase("gracz")) {
+        Player p = getServer().getPlayerExact(args[2]);
+        s.sendMessage(p == null ? "Brak gracza " + args[2] : wytrzymalosc.opis(p));
+        return true;
+      }
+      if (args.length == 2) {
+        int z;
+        try { z = Integer.parseInt(args[1]); } catch (NumberFormatException ex) { z = -1; }
+        if (!wytrzymalosc.zestawy().contains(z)) {
+          s.sendMessage("Zestawy: " + wytrzymalosc.zestawy() + " (sekundy ciaglej walki)");
+          return true;
+        }
+        wytrzymalosc.ustawZestaw(z);
+        getConfig().set("stamina.zestaw", z);
+        saveConfig();
+        s.sendMessage("Stamina: zestaw " + z + " s ciaglej walki (zapisany w configu).");
+        return true;
+      }
+      s.sendMessage("Stamina: " + (wytrzymalosc.wlaczona() ? "zestaw " + wytrzymalosc.zestaw() + " s" : "model wylaczony")
+          + ", dostepne " + wytrzymalosc.zestawy() + "; /animacjebroni stamina <zestaw> | gracz <nick>");
+      return true;
+    }
     if (args.length == 2 && args[0].equalsIgnoreCase("sprawdz")) {
       Player p = getServer().getPlayerExact(args[1]);
       if (p == null) { s.sendMessage("Brak gracza " + args[1]); return true; }
@@ -1330,6 +1402,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           + " sprint=" + p.isSprinting()
           + " stamina=" + (mmocore ? PlayerData.get(p).getStamina() + "/"
               + MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA") : "bez MMOCore")
+          + (wytrzymalosc != null ? " [" + wytrzymalosc.opis(p) + "]" : "")
           + " lewa=" + p.getInventory().getItemInOffHand().getType());
       return true;
     }
