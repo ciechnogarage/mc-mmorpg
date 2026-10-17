@@ -1,0 +1,53 @@
+# Docelowo plugins/WorldGuard/worlds/arena/regions.yml; kopiować przed startem świata.
+regions:
+  __global__:
+    members: {}
+    flags:
+      pvp: deny
+      build: deny
+      block-break: deny
+      block-place: deny
+      item-drop: deny
+      item-pickup: deny
+      fall-damage: deny
+      fire-spread: deny
+      tnt: deny
+      other-explosion: deny
+      creeper-explosion: deny
+      use: allow
+      interact: allow
+    owners: {}
+    type: global
+    priority: 0
+  arena_ring:
+    min: {x: -20, y: 63, z: -20}
+    max: {x: 20, y: 74, z: 20}
+    members: {}
+    flags: {pvp: allow, build: deny, block-break: deny, block-place: deny}
+    owners: {}
+    type: cuboid
+    priority: 10
+  arena_trybuny:
+    min: {x: -31, y: 64, z: -31}
+    max: {x: 31, y: 90, z: 31}
+    members: {}
+    flags: {pvp: deny, build: deny}
+    owners: {}
+    type: cuboid
+    priority: 5
+  arena_odrodzenie:
+    min: {x: -7, y: 60, z: -36}
+    max: {x: 7, y: 85, z: -24}
+    members: {}
+    flags: {pvp: deny, build: deny}
+    owners: {}
+    type: cuboid
+    priority: 20
+  arena_trening:
+    min: {x: 31, y: 60, z: -12}
+    max: {x: 43, y: 85, z: 12}
+    members: {}
+    flags: {pvp: deny, build: deny}
+    owners: {}
+    type: cuboid
+    priority: 20

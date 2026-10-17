@@ -1,0 +1,13 @@
+name: Arena
+version: '${version}'
+main: pl.mcmmorpg.arena.ArenaPlugin
+api-version: '1.21'
+depend: [MythicLib, MMOCore, MythicMobs, WorldGuard]
+commands:
+  arena:
+    description: Wejście i wyjście z Otwartej Areny przez menu.
+    usage: /arena <wejdz|wyjdz> <gracz>
+    permission: arena.console
+permissions:
+  arena.console:
+    default: op

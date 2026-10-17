@@ -1,0 +1,38 @@
+# Podróż należy do Nexusu. Tylko ukończony Loch 001 uruchamia instancję.
+menu_title: '&f䄐&fPortal Nexus'
+size: 27
+items:
+  'loch_001':
+    material: nexo-hub_przygoda
+    slot: 11
+    display_name: '&d&lLoch 001 &8» &aKwietna Polana'
+    lore:
+      - '&7Pierwszy dostępny loch: poziom 1–5.'
+      - '&7Solo lub drużyna do czterech osób.'
+      - '&7Po wyprawie wróć na rynek: sprzedaż,'
+      - '&7naprawa, rozbiórka i sakwa są obok.'
+      - ''
+      - '&aKliknij, by rozpocząć wyprawę.'
+    left_click_requirement:
+      requirements:
+        poza_arena:
+          type: '!string equals'
+          input: '%player_world%'
+          output: 'arena'
+      deny_commands:
+        - '[message] &cWyjdź z areny przez menu Społeczność.'
+    left_click_commands:
+      - '[console] md play loch_001 %player_name%'
+      - '[close]'
+  'wyspy':
+    material: nexo-hub_wbudowie
+    slot: 15
+    display_name: '&7Wyspy świata'
+    lore:
+      - '&7Trasy regionalne są przygotowywane.'
+      - '&8Brak dostępnego celu podróży.'
+  'zamknij':
+    material: nexo-hub_zamknij
+    slot: 26
+    display_name: '&cZamknij'
+    left_click_commands: ['[close]']
