@@ -22,7 +22,7 @@ items:
           input: '%player_world%'
           output: 'arena'
       deny_commands:
-        - '[message] &cWyjdź z areny przez menu Społeczność.'
+        - '[message] &cNajpierw wyjdź z areny: Q → Drużyna → Arena.'
     left_click_commands:
       - '[console] md play gniazdo_zmijow %player_name%'
       - '[close]'
@@ -46,7 +46,7 @@ items:
           input: '%player_world%'
           output: 'arena'
       deny_commands:
-        - '[message] &cWyjdź z areny przez menu Społeczność.'
+        - '[message] &cNajpierw wyjdź z areny: Q → Drużyna → Arena.'
     left_click_commands:
       - '[console] md play krypta_upiorow %player_name%'
       - '[close]'
@@ -69,7 +69,7 @@ items:
           input: '%player_world%'
           output: 'arena'
       deny_commands:
-        - '[message] &cWyjdź z areny przez menu Społeczność.'
+        - '[message] &cNajpierw wyjdź z areny: Q → Drużyna → Arena.'
     left_click_commands:
       - '[console] md play sala_mistrzow %player_name%'
       - '[close]'
@@ -91,7 +91,7 @@ items:
           input: '%player_world%'
           output: 'arena'
       deny_commands:
-        - '[message] &cWyjdź z areny przez menu Społeczność.'
+        - '[message] &cNajpierw wyjdź z areny: Q → Drużyna → Arena.'
     left_click_commands:
       - '[console] md play wieza_chowancow %player_name%'
       - '[close]'

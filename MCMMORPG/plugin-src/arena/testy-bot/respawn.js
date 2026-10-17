@@ -15,4 +15,7 @@ scenariusz('arena-respawn', async ({ w, polacz, rcon }) => {
   for (let i = 0; i < 10; i++) { await sleep(1000); console.log(i, 'hp', await t.hp('ArenaB'), 'bot.health', b.health, 'isAlive', b.isAlive, await t.wymiar('ArenaB'), JSON.stringify(await t.poz('ArenaB'))); }
   console.log('po:', await ile());
   w.sprawdz('respawn', spawny > 0, 'bot sie odrodzil', spawny);
+  const pp = await t.poz('ArenaB');
+  w.sprawdz('respawn-platforma', (await t.wymiar('ArenaB')).includes('arena') && Math.abs(pp.z + 28.5) < 2 && Math.abs(pp.x - 0.5) < 2, 'odradza sie na platformie, nie w ringu', JSON.stringify(pp));
+  await rcon('minecraft:clear ArenaB minecraft:diamond');
 }, { limitMs: 90000 });

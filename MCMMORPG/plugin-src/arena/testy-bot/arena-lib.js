@@ -20,6 +20,7 @@ function narzedzia(rcon) {
   t.przygotuj = async () => {
     for (const g of ['fall_damage false', 'spawn_monsters false', 'spawn_mobs false', 'advance_time false']) await rcon(`minecraft:gamerule ${g}`);
     await rcon('minecraft:time set 6000');
+    for (const n of ['ArenaA', 'ArenaB']) { await rcon(`mmocore admin class ${n} HUMAN`); await rcon(`zaklecia przypisz ${n} nic lewa`); await rcon(`zaklecia przypisz ${n} nic prawa`); await rcon(`minecraft:item replace entity ${n} container.0 with minecraft:air`); }
     await rcon('minecraft:execute in minecraft:overworld run minecraft:kill @e[type=#minecraft:undead]');
     await rcon('minecraft:execute in minecraft:overworld run minecraft:kill @e[type=minecraft:creeper]');
     await rcon('minecraft:execute in minecraft:overworld run minecraft:kill @e[type=minecraft:spider]');
@@ -32,7 +33,8 @@ function narzedzia(rcon) {
   t.wejdz = async n => { const r = await rcon(`arena wejdz ${n}`); await sleep(1500); return (await t.wymiar(n)).includes('arena'); };
   // A bije B (cel z serwera A); zwraca ubytek HP B; czeka po teleporcie na koniec nietykalnosci CMI
   t.cios = async (a, nickB, opis) => {
-    const e = await czekaj(() => a.players[nickB]?.entity || null, 5000, 200);
+    const ps = await t.poz(nickB);
+    const e = await czekaj(() => { const x = a.players[nickB]?.entity; return x && ps && Math.hypot(x.position.x - ps.x, x.position.z - ps.z) < 1.5 ? x : null; }, 6000, 200);
     if (!e) { console.log(opis, `${nickB} niewidoczny dla ${a.username}`); return null; }
     a.setQuickBarSlot(0); await a.lookAt(e.position.offset(0, 1.4, 0), true); await sleep(700);
     const h0 = await t.hp(nickB); a.attack(e); await sleep(900); const h1 = await t.hp(nickB);

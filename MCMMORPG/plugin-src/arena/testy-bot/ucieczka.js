@@ -21,7 +21,8 @@ scenariusz('arena-ucieczka', async ({ w, polacz, rcon }) => {
   w.sprawdz('wejscie-z-netheru', (await wA()).includes('nether'), 'z swiata spoza listy wejscie odrzucone', await wA());
   await rcon('minecraft:summon minecraft:zombie 3.5 -60 6.5 {NoAI:1b,Tags:["qa_ar"],PersistenceRequired:1b}');
   await t.tpWorld('ArenaA', { x: 1.5, y: -60, z: 5.5 }); await sleep(6500);
-  { const z = a.nearestEntity(e => e.name === 'zombie'); if (z) { a.setQuickBarSlot(0); await a.lookAt(z.position.offset(0, 1.4, 0), true); a.attack(z); } }
+  const hz = async () => (await rcon('minecraft:data get entity @e[tag=qa_ar,limit=1] Health')).replace(/.*data: /, '');
+  const hz0 = await hz(); await rcon('minecraft:damage @e[tag=qa_ar,limit=1] 2 minecraft:player_attack by ArenaA'); console.log('zombie HP', hz0, '->', await hz());
   await sleep(300); await rcon('arena wejdz ArenaA'); await sleep(1200);
   w.sprawdz('wejscie-w-walce-pve', !(await wA()).includes('arena'), 'zaraz po ciosie w moba (walka MMOCore) wejscie odrzucone', await wA());
   await rcon('minecraft:kill @e[tag=qa_ar]');
@@ -64,7 +65,7 @@ scenariusz('arena-ucieczka', async ({ w, polacz, rcon }) => {
   // bez walki: obcy teleport z areny
   await t.wejdz('ArenaA'); await sleep(3500);
   await t.tpWorld('ArenaA', { x: 1.5, y: -60, z: 2.5 }); await sleep(800);
-  console.log('INFO teleport konsoli bez walki ->', await wA());
+  w.sprawdz('teleport-bez-walki', (await wA()).includes('overworld'), 'bez walki obcy teleport z areny przepuszczony (portal, podroz)', await wA());
   await rcon('arena wyjdz ArenaA'); await rcon('arena wyjdz ArenaB'); await sleep(1000);
   await rcon('arena wyjdz ArenaA'); await sleep(500);
   console.log('INFO wyjdz gdy nie na arenie: ', JSON.stringify(czat.ArenaA.slice(-2)));

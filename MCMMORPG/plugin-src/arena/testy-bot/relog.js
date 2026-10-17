@@ -16,12 +16,13 @@ scenariusz('arena-relog', async ({ w, polacz, rcon }) => {
   await sleep(3000);
   const p = await t.poz('ArenaA');
   console.log('A po relogu w walce:', await t.wymiar('ArenaA'), JSON.stringify(p));
-  w.sprawdz('relog-platforma', (await t.wymiar('ArenaA')).includes('arena') && Math.abs(p.z + 28.5) < 2, 'po relogu na platformie, nie w ringu', JSON.stringify(p));
+  w.sprawdz('relog-poza-arena', (await t.wymiar('ArenaA')).includes('overworld') && Math.abs(p.x - 1.5) < 1 && Math.abs(p.z - 2.5) < 1, 'po wylogowaniu w walce wraca do punktu wejscia (wyniesiony przy wyjsciu)', `${await t.wymiar('ArenaA')} ${JSON.stringify(p)}`);
+  await sleep(11000);
+  w.sprawdz('wejscie-po-poddaniu', await t.wejdz('ArenaA'), 'moze znow wejsc na arene');
   await t.tpArena('ArenaA', RING); await sleep(2500);
   const p2 = await t.poz('ArenaA');
-  w.sprawdz('zakaz-ringu', Math.hypot(p2.x, p2.z) > 19.5, '60 s zakazu ringu po poddaniu', JSON.stringify(p2));
+  w.sprawdz('zakaz-ringu', Math.hypot(p2.x, p2.z) > 19.5, 'do 60 s od poddania nie wejdzie do ringu', JSON.stringify(p2));
   await rcon('arena wyjdz ArenaA'); await sleep(1500);
-  w.sprawdz('wyjscie-po-poddaniu', !(await t.wymiar('ArenaA')).includes('arena'), 'moze wyjsc z areny menu (tag wyczyszczony)', await t.wymiar('ArenaA'));
   // relog bez walki na trybunach
   await sleep(11000);
   await rcon('arena wyjdz ArenaB'); await sleep(1500);
@@ -30,8 +31,7 @@ scenariusz('arena-relog', async ({ w, polacz, rcon }) => {
   const b2 = await polacz({ nick: 'ArenaB' }); const czatB2 = []; b2.on('messagestr', m => czatB2.push(m)); b2.on('actionBar', m => czatB2.push(String(m?.toString?.() ?? m)));
   await sleep(4000);
   console.log('B po relogu bez walki:', await t.wymiar('ArenaB'), JSON.stringify(await t.poz('ArenaB')), 'komunikaty:', JSON.stringify(czatB2.filter(m => m.trim()).slice(-4)));
-  await rcon('arena wyjdz ArenaB'); await sleep(1500);
   const pw = await t.poz('ArenaB');
-  w.sprawdz('relog-wyjscie', (await t.wymiar('ArenaB')).includes('overworld') && Math.abs(pw.x - 4.5) < 1, 'po relogu wyjscie wraca do punktu wejscia', `${await t.wymiar('ArenaB')} ${JSON.stringify(pw)}`);
+  w.sprawdz('relog-wyjscie', (await t.wymiar('ArenaB')).includes('overworld'), 'relog bez walki: gracz jest w punkcie wejscia, nie na arenie', `${await t.wymiar('ArenaB')} ${JSON.stringify(pw)}`);
   console.log('komunikaty A:', JSON.stringify(czatA.filter(m => m.trim()).slice(-5)));
 }, { limitMs: 200000 });

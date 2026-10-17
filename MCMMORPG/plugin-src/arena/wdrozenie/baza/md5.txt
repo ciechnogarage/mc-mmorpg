@@ -1,0 +1,12 @@
+bd18df35d6001b471b8afe25d0ee7d92  ./DeluxeMenus/gui_menus/stolica_podroze.yml
+92647b9d34c4911c892d4f126193f0a4  ./DeluxeMenus/gui_menus/chowance_lochy.yml
+83007c632a65ab19e07468f1c9d54e22  ./DeluxeMenus/gui_menus/stolica_v2_podroze.yml
+6073f55e5f2645df01b19e15ac5fa089  ./DeluxeMenus/gui_menus/hub_przygoda.yml
+3cde83df5fa30b07e87324fb8fcd7fbb  ./DeluxeMenus/gui_menus/hub_spolecznosc.yml
+c471d2ed1286b231f6da77888cecdadf  ./DeluxeMenus/gui_menus/hub_glowne.yml
+3e4cedcd8aa4a137d9bf6ce9e964e508  ./CoreTools/Scripts/kara-smierci.yml
+9bb84da996e892d7d17540bcdeb83359  MythicLib/config.yml
+5c17292e70c2d407c33399d85b49e364  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_1.png
+fee6d395aa141d382ff285b4e02c88ab  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_2.png
+adb5deb5201e5c41347f881180719fa6  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_3.png
+c807ddadf11105ba929d4fd4495d28d1  Nexo/pack/assets/nexo/textures/gui/hub_spolecznosc_4.png

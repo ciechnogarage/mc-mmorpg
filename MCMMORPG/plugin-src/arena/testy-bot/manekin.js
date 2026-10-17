@@ -25,9 +25,9 @@ scenariusz('arena-manekin', async ({ w, polacz, rcon }) => {
   }
   await sleep(300); const ile = await liczby();
   await sleep(1500);
-  const wpisy = pasek.filter(m => /Suma/.test(m));
+  const wpisy = pasek.filter(m => /Seria/.test(m));
   console.log('pasek:', JSON.stringify(wpisy.slice(-2)), 'liczby nad manekinem w trakcie:', ile);
-  w.sprawdz('licznik', wpisy.length > 0 && /Trafienia [1-9]/.test(wpisy.at(-1)), 'pasek pokazuje cios, sume, DPS i trafienia', wpisy.at(-1));
+  w.sprawdz('licznik', wpisy.length > 0 && /[1-9] traf\./.test(wpisy.at(-1)) && /Seria/.test(wpisy.at(-1)), 'pasek pokazuje cios, sume, DPS i trafienia', wpisy.at(-1));
   w.sprawdz('liczby-znikaja', (await liczby()) === '0', 'liczby nad manekinem znikaja po ~1 s', await liczby());
   w.sprawdz('manekin-nie-traci-hp', (await hpM()) === h0, 'HP manekina bez zmian', `${h0} -> ${await hpM()}`);
   const p1 = await pozM();
