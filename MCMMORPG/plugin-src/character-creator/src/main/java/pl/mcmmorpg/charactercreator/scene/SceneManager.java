@@ -65,6 +65,12 @@ public final class SceneManager {
   /** Kto moze byc w swiecie sceny bez sceny (stary kreator, admin). Null = straznik wylaczony. */
   private java.util.function.Predicate<Player> strayExempt;
   private java.util.function.Supplier<Location> strayExit;
+  /** Wolane po otwarciu sceny (nie przy podmianie ekranu). Cisza na czacie zdejmuje tu blokade z wejscia. */
+  private java.util.function.Consumer<UUID> openHook = id -> { };
+
+  public void setOpenHook(java.util.function.Consumer<UUID> openHook) {
+    this.openHook = openHook;
+  }
 
   /**
    * Straznik zablakanych: gracz w swiecie sceny, ktory nie jest w scenie, nie ma tam czego
@@ -153,6 +159,7 @@ public final class SceneManager {
     SceneView view = new SceneView(this, player);
     view.controller = controller;
     views.put(player.getUniqueId(), view);
+    openHook.accept(player.getUniqueId());
 
     SceneSettings.Point point = settings.point(SceneSettings.DEFAULT_POINT);
     view.currentPoint = point;

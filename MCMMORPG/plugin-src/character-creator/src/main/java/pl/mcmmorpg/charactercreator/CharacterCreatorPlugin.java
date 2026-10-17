@@ -352,7 +352,8 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     sceneManager = new SceneManager(this, getLogger(), settings);
     getServer().getPluginManager().registerEvents(new SceneListener(sceneManager, getLogger()), this);
     // Cisza na czacie w scenie (wybor i kreator); pasek akcji z podpowiedziami przechodzi.
-    chatMute = pl.mcmmorpg.charactercreator.scene.SceneChatMute.register(sceneManager, getLogger());
+    chatMute = pl.mcmmorpg.charactercreator.scene.SceneChatMute.register(this, sceneManager, getLogger(),
+        settings.replaceSelector() && creatorConfig.enforceProfileSelection());
     sceneManager.start();
     if (profileEnforcer != null) {
       profileEnforcer.setSceneCheck(sceneManager::inScene);
