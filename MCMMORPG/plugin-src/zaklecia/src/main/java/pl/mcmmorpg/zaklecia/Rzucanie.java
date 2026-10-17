@@ -47,7 +47,7 @@ import org.bukkit.util.Vector;
 final class Rzucanie implements Listener {
   static final class Stan {
     int n;
-    boolean prawa, lewa, przelacznik;
+    boolean prawa, lewa, przelacznik, prawaPodczasPpm;
     double oslonaP, oslonaL;
     boolean oplaconeP, oplaconeL;
   }
@@ -59,6 +59,7 @@ final class Rzucanie implements Listener {
   private final Komunikat komunikat;
   private final RzutyOdrzutowe odrzutowe;
   private final EfektyCzasowe efekty;
+  private final Zaslanianie zaslanianie;
   private final Map<UUID, Stan> rzucajacy = new HashMap<>();
   private final Map<EntityDamageEvent, Boolean> typyMythicLib = new WeakHashMap<>();
   private final Map<UUID, Long> ppmLewa = new HashMap<>();
@@ -85,7 +86,8 @@ final class Rzucanie implements Listener {
     this.komunikat = new Komunikat(skille, ksiega.skBrakMany);
     this.efekty = new EfektyCzasowe(plugin, ksiega, nosnik, skille);
     this.odrzutowe = new RzutyOdrzutowe(this, ksiega, skille, efekty, komunikat);
-    this.strumien = new Strumien(plugin, skille);
+    this.zaslanianie = new Zaslanianie(plugin);
+    this.strumien = new Strumien(plugin, skille, zaslanianie);
     kZasieg = new NamespacedKey(plugin, "lpm_zasieg");
     kIstoty = new NamespacedKey(plugin, "lpm_istoty");
     kSzybkosc = new NamespacedKey(plugin, "lpm_szybkosc");
@@ -409,6 +411,7 @@ final class Rzucanie implements Listener {
           && zak(p, true).koncentracja()) {
         Stan s = rzucajacy.computeIfAbsent(e.getKey(), u -> new Stan());
         s.przelacznik = !s.przelacznik;
+        s.prawaPodczasPpm = s.przelacznik && lewaTeraz(p);
         log(p, "LPM: przelacznik prawej=" + s.przelacznik);
       }
       it.remove();
@@ -424,8 +427,11 @@ final class Rzucanie implements Listener {
       try {
         boolean tryb = trybLpm(p);
         if (!tryb || zak(p, true) == null || !zak(p, true).koncentracja()) s.przelacznik = false;
-        boolean pr = prawaTeraz(p, s);
         boolean lw = lewaTeraz(p);
+        if (!lw && s.prawaPodczasPpm && plugin.getConfig().getBoolean("ppm-puszczenie-gasi-obie", false))
+          s.przelacznik = false;
+        if (!lw) s.prawaPodczasPpm = false;
+        boolean pr = prawaTeraz(p, s);
         if (!pr && !lw) {                                        // obie dlonie puszczone — koniec
           if (s.prawa || s.lewa) przejscie(p, s.prawa ? zak(p, true) : null,
               s.lewa ? zak(p, false) : null, null, null);
@@ -486,7 +492,8 @@ final class Rzucanie implements Listener {
             tikZaklec(p, prawaInni ? null : prawa, lewaInni ? null : lewa);
             if ((prawa != null && prawa.cel().equals("stozek")) || (lewa != null && lewa.cel().equals("stozek"))) {
               List<Entity> cele = stozek(p, podwojne(p, s) ? ksiega.stozekPodwojny : ksiega.stozek,
-                  plugin.getConfig().getBoolean("debug", false) ? x -> plugin.getLogger().info("ZAKDBG " + x) : null);
+                  plugin.getConfig().getBoolean("debug", false) ? x -> plugin.getLogger().info("ZAKDBG " + x) : null,
+                  zaslanianie);
               if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG tik gracz="
                   + p.getName() + " kandydaci=" + cele.size() + " prawa=" + (prawa == null ? "-" : prawa.id())
                   + " lewa=" + (lewa == null ? "-" : lewa.id()));
@@ -526,6 +533,11 @@ final class Rzucanie implements Listener {
   static List<Entity> stozek(Player p, Ksiega.Stozek st) { return stozek(p, st, null); }
 
   static List<Entity> stozek(Player p, Ksiega.Stozek st, java.util.function.Consumer<String> debug) {
+    return stozek(p, st, debug, null);
+  }
+
+  private static List<Entity> stozek(Player p, Ksiega.Stozek st,
+      java.util.function.Consumer<String> debug, Zaslanianie zaslanianie) {
     Location oko = p.getEyeLocation();
     Vector os = oko.getDirection().normalize();
     List<Entity> wynik = new ArrayList<>();
@@ -544,7 +556,8 @@ final class Rzucanie implements Listener {
         if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId() + " wynik=KAT kat=" + kat);
         continue;
       }
-      boolean los = p.hasLineOfSight(e);
+      boolean los = zaslanianie == null ? p.hasLineOfSight(e)
+          : zaslanianie.pierwszyCel(p, le, oko, doCelu);
       if (debug != null) debug.accept("stozek gracz=" + p.getName() + " cel=" + e.getUniqueId()
           + " d=" + d + " kat=" + kat + " los=" + los + " wynik=" + (los ? "CEL" : "LOS"));
       if (!los) continue;

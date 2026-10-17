@@ -9,10 +9,8 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.ItemDisplay;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
@@ -32,9 +30,12 @@ final class Strumien {
 
   private final Zaklecia plugin;
   private final Skille skille;
+  private final Zaslanianie zaslanianie;
   private final Map<UUID, List<Wpis>> aktywne = new HashMap<>();
 
-  Strumien(Zaklecia plugin, Skille skille) { this.plugin = plugin; this.skille = skille; }
+  Strumien(Zaklecia plugin, Skille skille, Zaslanianie zaslanianie) {
+    this.plugin = plugin; this.skille = skille; this.zaslanianie = zaslanianie;
+  }
 
   /** Wlacza/wylacza strumien jednej dloni (z == null = zgas). Wolane przy kazdej zmianie aktywnych dloni. */
   void ustaw(Player p, boolean prawa, Ksiega.Zaklecie z, double zasieg) {
@@ -119,8 +120,10 @@ final class Strumien {
       if (!w.d().isValid()) continue;
       Location start = dlon(p, w.prawa());
       Vector kier = p.getEyeLocation().getDirection();
-      RayTraceResult r = p.getWorld().rayTrace(start, kier, zasieg, FluidCollisionMode.NEVER, true, 0.25,
-          e -> e != p && e instanceof LivingEntity && !(e instanceof ArmorStand));
+      RayTraceResult r = zaslanianie.wlaczone()
+          ? p.getWorld().rayTrace(start, kier, zasieg, FluidCollisionMode.NEVER, true, 0.15,
+              e -> zaslanianie.istota(p, e))
+          : p.getWorld().rayTraceBlocks(start, kier, zasieg, FluidCollisionMode.NEVER, true);
       float dl = (float) (r == null ? zasieg : r.getHitPosition().distance(start.toVector()));
       start.setYaw(p.getEyeLocation().getYaw());
       start.setPitch(p.getEyeLocation().getPitch());

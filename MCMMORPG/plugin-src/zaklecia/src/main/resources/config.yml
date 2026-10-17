@@ -178,6 +178,13 @@ stozek-podwojny:
   zasieg: 7
   pol-kat: 22.5
 
+zaslanianie:
+  wlaczone: true
+  wlasne-przywolania-zaslaniaja: false
+
+# Gdy prawa zostala wlaczona LPM podczas PPM, puszczenie PPM moze zgasic obie.
+ppm-puszczenie-gasi-obie: false
+
 # Klawisz Q (plugin MenuKey wola "zaklecia q <gracz>"): bez Shiftu hub, z Shiftem szybkie ulubione (jak Q w Skyrimie).
 klawisz-q:
   zwykle: 'dm open hub_glowne %gracz%'
