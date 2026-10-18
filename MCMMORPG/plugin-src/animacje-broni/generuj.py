@@ -22,6 +22,8 @@ GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 
 UNIESIONY_MLOT = {'tp_rot': [-90, 0, 45], 'tp_trans': [0, 6, 0],
                  'fp_rot': [-15, 0, -12], 'fp_trans': [-2, 8, -4]}
 G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
+# topor i bulawa (18.10 wlasciciel: "popraw blok dla toporow i bulaw"): zaslona trzonkiem, bez jelca -> slabiej niz miecz, bez parowania
+G_TOPOR = {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 PAROWANIE = {'okno': 6, 'riposta_ticki': 30, 'riposta_mnoznik': 1.5}
 KRWAWIENIE = {'procent': 0.25, 'czas': 60, 'stosy': 1}
 PANCERZ = {'procent': 0.30}
@@ -30,11 +32,14 @@ TYPY = {
     'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
-    'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
+    'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE,
+                        'garda': G_TOPOR},
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
                         'poza': 'crossbow', 'garda_oburacz': True,
                         'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
-    'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE},
+    'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE,
+                        'poza': 'crossbow', 'garda_oburacz': True,
+                        'garda': {'redukcja': 0.5, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
     'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
                         'zasieg': 4.5,
                         'poza': 'crossbow', 'garda_oburacz': True,
@@ -52,7 +57,8 @@ TYPY = {
     'TOME':            {'zamach': 'stab',  'czas': 5},
     'TALISMAN':        {'zamach': 'stab',  'czas': 5},
     'FILAKTERIUM':     {'zamach': 'stab',  'czas': 5},
-    'HAMMER':          {'zamach': 'whack', 'czas': 8,  'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'reakcja': 'pancerz', 'pancerz': PANCERZ},
+    'HAMMER':          {'zamach': 'whack', 'czas': 8,  'rodzaj': 'obuchowe', 'ladowanie': 0.6, 'reakcja': 'pancerz', 'pancerz': PANCERZ,
+                        'garda': G_TOPOR},
     'GREATHAMMER':     {'zamach': 'whack', 'czas': 12, 'skala': 1.30, 'rodzaj': 'obuchowe', 'ciezka': True, 'ladowanie': 0.9,
                         'reakcja': 'pancerz', 'pancerz': PANCERZ, 'poza': 'trident', 'uderzenie': {'promien': 3.5, 'mnoznik': 1.6}},
     'SIERP':           {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'zasieg': 2.8, 'reakcja': 'krwawienie', 'krwawienie': {'procent': 0.25, 'czas': 60, 'stosy': 3}},
@@ -72,6 +78,11 @@ for typ in ('HAMMER', 'GREATHAMMER', 'GREATSTAFF'):
 TYPY['DAGGER']['ciezkie'] = {'przod': 'wypad', 'koszt': 12}
 TYPY['SIERP']['ciezkie'] = {'bok': 'zamach_boczny', 'koszt': 12}
 TYPY['KOSA']['ciezkie'] = {'przod': 'znad_glowy', 'bok': 'zamach_boczny', 'koszt': 12}
+# Kosa tnie lukiem kazdym lekkim ciosem (18.10: rozprysk MMOItems trafial wszystkich albo jednego - ukryty cooldown 3 s);
+# 'on-attack' KOSA zdjety z MMOItems/item-types.yml, wiec luk jest jedynym zrodlem trafien obok.
+TYPY['KOSA']['luk_lekki'] = {'kat': 180, 'mnoznik': 0.5}
+# mlot dwureczny ma wlasny model uniesienia (poza trident) - postawy kierunkowe by go rozjechaly
+TYPY['GREATHAMMER']['pozy_kierunkowe'] = False
 for typ in (*MIECZE, 'GREATSWORD', 'AXE', 'GREATAXE', 'HAMMER', 'GREATHAMMER', 'GREATSTAFF', 'HALBERD',
             'DAGGER', 'SIERP', 'KOSA', 'SHIELD', 'GAUNTLET', 'WHIP'):
     TYPY[typ]['rytm'] = True
@@ -104,13 +115,16 @@ MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20
 # placisz za to, co mocny daje ponad lekki - skumulowane obrazenia i efekt. Wypad x1,3 + przebicie linii,
 # znad glowy x1,4 (mlot: fala), zamach boczny x1,0 ale wiele celow -> 2,5; odepchniecie slabe, placisz za
 # przestrzen -> 2,0; z rozbiegu/z powietrza x1,5 + odrzut/zachwianie, a bieg/skok sam meczy -> 3,0.
+# Wyglad wariantu (18.10 wlasciciel: "nie zmienia sie kierunek, wyglad"): kierunek przy wcisnieciu PPM = postawa, czyli
+# poza ladowania (poza: animacja uzycia), zamach po puszczeniu (whack|stab) i mnoznik jego czasu (czas). Pozy dobrane zrzutami.
 CIEZKIE_WARIANTY = {
-    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.5},
-    'znad_glowy': {'mnoznik': 1.4, 'stamina': 2.5},
-    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5},
-    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1, 'stamina': 2.0},
-    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1, 'stamina': 3.0},
-    'z_powietrza': {'mnoznik': 1.5, 'stamina': 3.0},
+    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.5, 'poza': 'spear', 'zamach': 'stab', 'czas': 1.0},
+    'znad_glowy': {'mnoznik': 1.4, 'stamina': 2.5, 'poza': 'trident', 'zamach': 'whack', 'czas': 1.6},
+    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5,
+                      'poza': 'crossbow', 'zamach': 'whack', 'czas': 0.8},
+    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1, 'stamina': 2.0, 'poza': 'block', 'zamach': 'stab', 'czas': 0.7},
+    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1, 'stamina': 3.0, 'poza': 'spear', 'zamach': 'stab', 'czas': 1.0},
+    'z_powietrza': {'mnoznik': 1.5, 'stamina': 3.0, 'poza': 'trident', 'zamach': 'whack', 'czas': 1.3},
 }
 # Model staminy w jednostkach L = lekki cios mieczem. zestaw = sekundy ciaglej walki na pelnym pasku (cel
 # projektowy do wyboru wlasciciela z zestawy); pula = zestaw * ciosy_na_sekunde L; regeneracja L/s po
@@ -136,6 +150,11 @@ TYPY['GREATHAMMER']['poza_mocnego'] = 'trident'
 TYPY['DAGGER']['ciezkie'].update({'bok': 'zamach_boczny', 'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu'})
 TYPY['SIERP']['ciezkie'].update({'przod': 'znad_glowy', 'tyl': 'odepchniecie'})
 TYPY['KOSA']['ciezkie'].update({'tyl': 'odepchniecie', 'bieg': 'z_rozbiegu'})
+# 18.10: kazdy kierunek ma swoj wariant (wlasciciel: "nie zmienia sie kierunek") - topory nie mialy S, buzdygany/kostur boku
+for typ in ('AXE', 'GREATAXE'):
+    TYPY[typ]['ciezkie']['tyl'] = 'odepchniecie'
+for typ in ('HAMMER', 'GREATSTAFF'):
+    TYPY[typ]['ciezkie']['bok'] = 'zamach_boczny'
 # Bez klawisza kierunku = cios znad glowy, W = wypad do przodu (wczesniej oba dawaly to samo).
 for typ, u in TYPY.items():
     c = u.get('ciezkie')
@@ -371,7 +390,9 @@ def main():
             linie.append('    skala: %s' % skala_nazwa(u['skala']))
         elif 'ciezkie' in u:
             linie.append('    skala: s100')
-        for k in ('garda', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie'):
+        if u.get('pozy_kierunkowe') is False:
+            linie.append('    pozy_kierunkowe: false')
+        for k in ('garda', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie', 'luk_lekki'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
         if 'atak_pchniecie' in u:

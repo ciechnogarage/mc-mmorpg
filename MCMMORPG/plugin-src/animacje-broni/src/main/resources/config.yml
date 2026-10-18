@@ -7,12 +7,12 @@ rytm: {prog_rytmu: 0.7, okno_rytmu: 24, koszt_rytmu: 2, dlugosc: 3, mnoznik: 1.4
 kombo: {mnoznik_1: 1.2, mnoznik_2: 1.4}
 stamina: {wlaczona: true, zestaw: 10, zestawy: [7, 10, 14], ciosy_na_sekunde: 1.6, regeneracja: 1.6, oddech_ticki: 20, zmeczenie_obrazenia: 0.6, szturchniecie: 1.0, blok_min: 0.5, blok_max: 3.0, blok_prog_hp: 0.25, tarcza: 0.5, parowanie_zwrot: 1.0, peknieta_garda_ticki: 40, wspolczynnik_min: 0.4, wspolczynnik_max: 2.5}
 ciezkie_warianty:
-  wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6, stamina: 2.5}
-  znad_glowy: {mnoznik: 1.4, stamina: 2.5}
-  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360, stamina: 2.5}
-  odepchniecie: {mnoznik: 1.0, sila: 1.1, stamina: 2.0}
-  z_rozbiegu: {mnoznik: 1.5, sila: 1.1, stamina: 3.0}
-  z_powietrza: {mnoznik: 1.5, stamina: 3.0}
+  wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6, stamina: 2.5, poza: spear, zamach: stab, czas: 1.0}
+  znad_glowy: {mnoznik: 1.4, stamina: 2.5, poza: trident, zamach: whack, czas: 1.6}
+  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360, stamina: 2.5, poza: crossbow, zamach: whack, czas: 0.8}
+  odepchniecie: {mnoznik: 1.0, sila: 1.1, stamina: 2.0, poza: block, zamach: stab, czas: 0.7}
+  z_rozbiegu: {mnoznik: 1.5, sila: 1.1, stamina: 3.0, poza: spear, zamach: stab, czas: 1.0}
+  z_powietrza: {mnoznik: 1.5, stamina: 3.0, poza: trident, zamach: whack, czas: 1.3}
 typy:
   SWORD:
     zamach: whack
@@ -67,8 +67,9 @@ typy:
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s100
+    garda: {redukcja: 0.35, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, tyl: odepchniecie, brak: znad_glowy}
   GREATSWORD:
     zamach: whack
     czas: 10
@@ -92,14 +93,16 @@ typy:
     rodzaj: ciete
     reakcja: krwawienie
     ladowanie: 0.8
+    poza: crossbow
     poza_mocnego: trident
     waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s130
+    garda: {redukcja: 0.5, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, tyl: odepchniecie, brak: znad_glowy}
   HALBERD:
     zamach: stab
     czas: 8
@@ -185,7 +188,7 @@ typy:
     kroki: [0.06, 0.06, 0.1]
     skala: s140
     pancerz: {procent: 0.3}
-    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, brak: znad_glowy}
   TOME:
     zamach: stab
     czas: 5
@@ -209,8 +212,9 @@ typy:
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s100
+    garda: {redukcja: 0.35, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     pancerz: {procent: 0.3}
-    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, brak: znad_glowy}
   GREATHAMMER:
     zamach: whack
     czas: 12
@@ -224,6 +228,7 @@ typy:
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s130
+    pozy_kierunkowe: false
     uderzenie: {promien: 3.5, mnoznik: 1.6}
     pancerz: {procent: 0.3}
     ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
@@ -255,6 +260,7 @@ typy:
     skala: s140
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
     ciezkie: {przod: wypad, bok: zamach_boczny, koszt: 12, pelne: 24, spadanie: z_powietrza, tyl: odepchniecie, bieg: z_rozbiegu, brak: znad_glowy}
+    luk_lekki: {kat: 180, mnoznik: 0.5}
   SHIELD:
     zamach: whack
     czas: 7
