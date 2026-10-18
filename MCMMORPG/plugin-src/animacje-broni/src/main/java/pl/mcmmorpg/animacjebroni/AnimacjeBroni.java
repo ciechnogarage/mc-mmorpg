@@ -1269,6 +1269,35 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     if (stan.nastepnyTick <= teraz) stan.nastepnyTick = teraz + 20;
   }
 
+  /** Pole serwera z licznikiem naladowania ciosu (Paper bez settera); null = nie znaleziono, wtedy bez przywracania. */
+  private java.lang.reflect.Field poleNaladowania;
+  private boolean szukanoPolaNaladowania;
+
+  private int licznikNaladowania(Player p) {
+    try {
+      Object uchwyt = p.getClass().getMethod("getHandle").invoke(p);
+      if (!szukanoPolaNaladowania) {
+        szukanoPolaNaladowania = true;
+        for (Class<?> k = uchwyt.getClass(); k != null && poleNaladowania == null; k = k.getSuperclass()) {
+          try {
+            poleNaladowania = k.getDeclaredField("attackStrengthTicker");
+            poleNaladowania.setAccessible(true);
+          } catch (NoSuchFieldException ignored) { }
+        }
+        if (poleNaladowania == null) getLogger().warning("Brak pola attackStrengthTicker: krwawienie zeruje naladowanie ciosu");
+      }
+      return poleNaladowania == null ? -1 : poleNaladowania.getInt(uchwyt);
+    } catch (ReflectiveOperationException | RuntimeException e) {
+      return -1;
+    }
+  }
+
+  private void przywrocNaladowanie(Player p, int licznik) {
+    if (licznik < 0 || poleNaladowania == null) return;
+    try { poleNaladowania.setInt(p.getClass().getMethod("getHandle").invoke(p), licznik); }
+    catch (ReflectiveOperationException | RuntimeException ignored) { }
+  }
+
   private void tyknijKrwawienie() {
     int teraz = getServer().getCurrentTick();
     var it = krwawiacy.entrySet().iterator();
@@ -1285,8 +1314,21 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         var meta = MMOPlayerData.get(p).getStatMap().cache(io.lumine.mythic.lib.api.player.EquipmentSlot.MAIN_HAND);
         cel.setNoDamageTicks(0);
         wlasnyCios = true;
+        // MythicLib zadaje DOT jako playerAttack gracza, a vanilla zeruje mu wtedy naladowanie ciosu (zmierzone: 0,975 -> 0,025).
+        // Takt co 20 t kasowal tak ciosy w trakcie krwawienia: kosa (minimum_attack_charge 0,8) 7/10 ciosow bez trafienia.
+        // Nietykalnosc i lastDamage celu tez wracaja: inaczej cios tuz po takcie tracil wartosc taktu (14,12 -> 12,96).
+        int naladowanie = licznikNaladowania(p);
+        int nietykalnosc = cel.getNoDamageTicks();
+        double ostatnie = cel.getLastDamage();
         try { meta.attack(cel, stos.obrazenia(), DamageType.DOT); }
-        finally { wlasnyCios = false; }
+        finally {
+          wlasnyCios = false;
+          przywrocNaladowanie(p, naladowanie);
+          if (!cel.isDead()) {
+            cel.setNoDamageTicks(nietykalnosc);
+            cel.setLastDamage(ostatnie);
+          }
+        }
       }
       cel.getWorld().spawnParticle(Particle.DUST, cel.getLocation().add(0, cel.getHeight() * 0.6, 0),
           8, 0.2, 0.2, 0.2, new Particle.DustOptions(org.bukkit.Color.fromRGB(95, 12, 18), 1.1f));
