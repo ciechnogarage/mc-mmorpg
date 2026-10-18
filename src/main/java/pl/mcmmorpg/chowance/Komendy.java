@@ -72,7 +72,7 @@ public final class Komendy implements TabExecutor {
     switch (sub) {
       case "pomoc", "help" -> pomoc(p);
       case "menu" -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dm open " + c.ust.menuDm + " " + p.getName());
-      case "starter" -> plg.startery.otworz(p);
+      case "starter" -> plg.zagroda.wskaz(p);
       case "druzyna" -> druzyna(p);
       case "info", "karta" -> info(p, a);
       case "gracze" -> gracze(p);

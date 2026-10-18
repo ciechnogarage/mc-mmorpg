@@ -70,8 +70,13 @@ public final class Ustawienia {
   public final int handelZaproszenieS;
   public final int skanS;
   public final double skanZasieg;
-  public final boolean starterAutoOkno;
   public final int starterOpoznienie;
+  /** Stanowisko młodego w zagrodzie: gatunek, pozycja, wysokość napisu nad podłogą. */
+  public record Stanowisko(String gatunek, double x, double y, double z, float yaw, double napis) {}
+  public final boolean zagrodaWlaczona;
+  public final String zagrodaSwiat, zagrodaTrener, zagrodaModelPieczeci, zagrodaWskazowka;
+  public final List<Stanowisko> zagrodaMiejsca;
+  public final long zagrodaOdrodzenieTicki;
   public final String profesjaId;
   public final double expZlapanie, expLsniacyMn, expWyklucie, expEwolucja, expOswojenie;
   public final String menuDm;
@@ -170,8 +175,23 @@ public final class Ustawienia {
     handelZaproszenieS = c.getInt("handel.zaproszenie_s", 60);
     skanS = Math.max(1, c.getInt("bestiariusz.skan_s", 3));
     skanZasieg = c.getDouble("bestiariusz.skan_zasieg", 12);
-    starterAutoOkno = c.getBoolean("starter.auto-okno", true);
     starterOpoznienie = c.getInt("starter.opoznienie_ticki", 60);
+    zagrodaWlaczona = c.getBoolean("zagroda.wlaczona", true);
+    zagrodaSwiat = c.getString("zagroda.swiat", "stolica_odnowa");
+    zagrodaTrener = c.getString("zagroda.trener", "TRENER_OGRODU");
+    zagrodaModelPieczeci = c.getString("zagroda.model_pieczeci", "nexo:chw_pieczec_krysztalowa");
+    zagrodaWskazowka = c.getString("zagroda.wskazowka", "Strażniczka Ogrodu w Stolicy powierza młode chowańce nowym opiekunom — "
+        + "Ogród Chowańców, północny wschód Stolicy.");
+    zagrodaOdrodzenieTicki = Math.max(40, c.getLong("zagroda.odrodzenie_ticki", 80));
+    List<Stanowisko> stan = new ArrayList<>();
+    for (Map<?, ?> m : c.getMapList("zagroda.miejsca")) {
+      try {
+        stan.add(new Stanowisko(String.valueOf(m.get("gatunek")).toUpperCase(java.util.Locale.ROOT),
+            ((Number) m.get("x")).doubleValue(), ((Number) m.get("y")).doubleValue(), ((Number) m.get("z")).doubleValue(),
+            m.get("yaw") instanceof Number n ? n.floatValue() : 0f, m.get("napis") instanceof Number n ? n.doubleValue() : 1.4));
+      } catch (RuntimeException ignored) {}
+    }
+    zagrodaMiejsca = List.copyOf(stan);
     profesjaId = c.getString("profesja.id", "poskramiacz");
     expZlapanie = c.getDouble("profesja.exp.zlapanie_bazowe", 20);
     expLsniacyMn = c.getDouble("profesja.exp.lsniacy_mnoznik", 5);

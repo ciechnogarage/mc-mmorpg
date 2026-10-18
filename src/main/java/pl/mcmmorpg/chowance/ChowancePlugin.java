@@ -59,6 +59,7 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
   public Towarzysz towarzysz;
   public Okna okna;
   public Startery startery;
+  public pl.mcmmorpg.chowance.gra.Zagroda zagroda;
   public WalkiTurowe walki;
   public Pojedynki pojedynki;
   public Kamera kamera;
@@ -132,7 +133,9 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
     hodowla = new Hodowla(ctx, druzyny, przywolania);
     handel = new Handel(ctx, okna, druzyny, przywolania);
     turnieje = new Turnieje(ctx, walki, ranking);
-    startery = new Startery(ctx, okna, druzyny);
+    startery = new Startery(ctx, druzyny);
+    zagroda = new pl.mcmmorpg.chowance.gra.Zagroda(ctx, ciala, startery);
+    trenerNpc.zagroda = zagroda;
     pierwszeKroki = new PierwszeKroki(ctx);
     towarzysz = new Towarzysz(ctx, przywolania);
     przywolania.towarzysz = towarzysz;
@@ -152,9 +155,9 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
     interakcje.wWalce = wWalce;
 
     var pm = Bukkit.getPluginManager();
-    for (Listener x : new Listener[] {this, okna, przywolania, dzikie, lapanie, interakcje, walki, pojedynki, handel, kamera, trenerNpc, pierwszeKroki, towarzysz}) pm.registerEvents(x, this);
+    for (Listener x : new Listener[] {this, okna, przywolania, dzikie, lapanie, interakcje, walki, pojedynki, handel, kamera, trenerNpc, pierwszeKroki, towarzysz, zagroda}) pm.registerEvents(x, this);
     if (pm.isPluginEnabled("ModelEngine")) {
-      pm.registerEvents(new pl.mcmmorpg.chowance.integracja.MostModelEngine(interakcje, lapanie), this);
+      pm.registerEvents(new pl.mcmmorpg.chowance.integracja.MostModelEngine(interakcje, lapanie, zagroda), this);
     }
     mythic = new MythicRejestracja(ctx, przywolania, dzikie, druzyny, lapanie, walki, pojedynki);
     pm.registerEvents(mythic, this);
@@ -186,6 +189,8 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
       try { pl.mcmmorpg.chowance.gra.Okna.rozgrzej(); } catch (RuntimeException | LinkageError ex) { getLogger().fine("rozgrzewka okien: " + ex); }
     }, 20L);
     Bukkit.getScheduler().runTaskTimer(this, () -> trenerNpc.pokazPoWalce(), 40L, 40L);
+    Bukkit.getScheduler().runTaskTimer(this, () -> zagroda.pilnuj(), 60L, 100L);
+    Bukkit.getScheduler().runTaskTimer(this, () -> zagroda.patrz(), 65L, 5L);
     Bukkit.getScheduler().runTaskTimer(this, () -> dzikie.skan(), 40L, ust.skanS * 20L);
     Bukkit.getScheduler().runTaskTimer(this, () -> hodowla.probkuj(), 100L, ust.probkowanieS * 20L);
     Bukkit.getScheduler().runTaskTimer(this, this::minuta, 1200L, 1200L);
@@ -252,12 +257,7 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
     hodowla.sprawdzJaja(p, d);
     bestiariusz.sprawdzNagrody(p, d);
     pierwszeKroki.poWczytaniu(p, d);
-    if (!d.starter && ctx.ust.starterAutoOkno && !ctx.rej.startery().domyslne().isEmpty()) {
-      Bukkit.getScheduler().runTaskLater(this, () -> {
-        ProfilDane teraz = ctx.dane(p);
-        if (p.isOnline() && teraz == d && !d.starter) startery.otworz(p);
-      }, ctx.ust.starterOpoznienie);
-    }
+    zagroda.poWczytaniu(p, d);
   }
 
   /** Przed zdjęciem profilu (zmiana postaci / wyjście): walki, handel, ciało — zanim zapis. */
@@ -302,6 +302,7 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
     Player p = e.getPlayer();
     sprzatnijSesje(p);
     hodowla.zapomnij(p.getUniqueId());
+    zagroda.zapomnij(p.getUniqueId());
     Bukkit.getScheduler().runTaskLater(this, () -> {
       if (Bukkit.getPlayer(p.getUniqueId()) == null && ctx.dane(p) != null) ctx.dane.dezaktywuj(p.getUniqueId());
     }, 40L);
@@ -316,6 +317,7 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
       if (handel != null) handel.przerwijWszystkie();
       if (kamera != null) kamera.wylaczWszystkich();
       if (przywolania != null) przywolania.odwolajWszystkich();
+      if (zagroda != null) zagroda.usunWszystkie();
     } catch (RuntimeException e) {
       getLogger().log(Level.SEVERE, "Błąd sprzątania przy wyłączaniu", e);
     }

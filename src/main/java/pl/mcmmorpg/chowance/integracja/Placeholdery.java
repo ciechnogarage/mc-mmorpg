@@ -113,9 +113,12 @@ public final class Placeholdery extends PlaceholderExpansion {
     ProfilDane d = c.dane(p);
     if (d == null) return k.endsWith("_istnieje") || k.equals("starter_wybrany") ? "nie" : "";
     switch (k) {
-      case "kroki_postep": return Kroki.postep(d.pierwszeKrokiMaska) + "/4";
-      case "kroki_opis": { int n = Kroki.nastepny(d.pierwszeKrokiMaska); return n == 0 ? "Ukończone" : c.ust.krokiOpisy.get(n - 1); }
-      case "kroki_aktywne": return c.ust.pierwszeKrokiWlaczone && d.starter && Kroki.nastepny(d.pierwszeKrokiMaska) != 0 ? "true" : "false";
+      case "kroki_postep": return (d.starter ? Kroki.postep(d.pierwszeKrokiMaska) : 0) + "/4";
+      case "kroki_opis": {
+        if (!d.starter) return "Odbierz młode od Strażniczki Ogrodu";
+        int n = Kroki.nastepny(d.pierwszeKrokiMaska); return n == 0 ? "Ukończone" : c.ust.krokiOpisy.get(n - 1);
+      }
+      case "kroki_aktywne": return c.ust.pierwszeKrokiWlaczone && (!d.starter || Kroki.nastepny(d.pierwszeKrokiMaska) != 0) ? "true" : "false";
       case "druzyna_liczba": return String.valueOf(d.druzyna.size());
       case "druzyna_limit": return String.valueOf(c.limitDruzyny(p));
       case "magazyn_liczba": return String.valueOf(d.magazyn.size());

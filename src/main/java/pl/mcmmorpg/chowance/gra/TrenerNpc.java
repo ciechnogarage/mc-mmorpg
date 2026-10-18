@@ -28,6 +28,7 @@ public final class TrenerNpc implements Listener {
   private final Pojedynki pojedynki;
   private final Druzyny druzyny;
   private final NamespacedKey klucz;
+  public Zagroda zagroda;
 
   public TrenerNpc(Chowance c, Okna okna, WalkiTurowe walki, Pojedynki pojedynki, Druzyny druzyny) {
     this.c = c; this.okna = okna; this.walki = walki; this.pojedynki = pojedynki; this.druzyny = druzyny;
@@ -114,7 +115,8 @@ public final class TrenerNpc implements Listener {
     ProfilDane d = c.daneLubBlad(p);
     if (d == null) return;
     if (walki.wWalce(p) || pojedynki.wPojedynku(p)) { c.blad(p, "Już walczysz."); return; }
-    if (d.druzyna.isEmpty()) { c.blad(p, "Nie masz jeszcze chowańca — wybierz startera w menu Chowańców (klawisz Q)."); return; }
+    if (zagroda != null && zagroda.rozmowa(p, t.id())) return;
+    if (d.druzyna.isEmpty()) { c.blad(p, "Nie masz chowańca w drużynie — weź go z magazynu (klawisz Q → Chowańce)."); return; }
     // Tick później i z zamknięciem ekwipunku: PPM z Dziennikiem w ręce otwierał menu Dziennika zamiast okna
     // trenera (klient QA 2026-09-27).
     Entity npc = e.getRightClicked();
