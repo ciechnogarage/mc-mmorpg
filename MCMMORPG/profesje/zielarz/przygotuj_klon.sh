@@ -12,11 +12,14 @@ sed -i '/^# >>> ZIELARZ wycinek/,/^# <<< ZIELARZ wycinek/d' "$M"; cat "$H/przedm
 L=$D/logs/latest.log; I0=$(stat -c %i "$L"); docker restart "klon-$N" >/dev/null
 for i in $(seq 1 150); do sleep 4; [[ "$(stat -c %i "$L" 2>/dev/null)" != "$I0" ]] && grep -q 'Done (' "$L" && break; done
 grep -E 'Rzemioslo\] (Kontrola|Profesje)' "$L" | tail -2
+R0(){ docker exec "klon-$N" rcon-cli "$@" >/dev/null; }
+R0 "minecraft:difficulty peaceful"; R0 "minecraft:time set 1000"
 [[ "${2:-}" == --bez-terenu ]] && exit 0
 R(){ docker exec "klon-$N" rcon-cli "$@" >/dev/null; }
 Y=-60   # wierzch trawy w plaskim swiecie klonu; rosliny na Y+1
 R "forceload add 30 30 80 80"
-R "gamerule doDaylightCycle false"; R "gamerule doWeatherCycle false"; R "time set 1000"; R "weather clear"
+R "minecraft:gamerule advance_time false"; R "minecraft:gamerule advance_weather false"; R "minecraft:time set 1000"; R "minecraft:weather clear"
+R "minecraft:difficulty peaceful"; R "fill 143 98 191 155 98 203 stone"   # spawn z configu world1 to na plaskim klonie powietrze
 R "fill 30 $((Y+1)) 30 80 $((Y+8)) 80 air"
 # laka w sloncu: dziurawiec
 for xz in "42 42" "45 44" "48 41" "44 48" "50 46"; do set -- $xz; R "setblock $1 $((Y+1)) $2 dandelion"; R "rzemioslo kepa-xyz dziurawiec world $1 $((Y+1)) $2"; done
@@ -29,8 +32,8 @@ i=0; for xz in "42 61" "43 63" "47 60" "49 64" "45 66" "50 59" "41 65"; do set -
   g=$([[ $((i % 3)) == 1 ]] && echo konwalia || echo czosnek); i=$((i+1))
   R "setblock $1 $((Y+1)) $2 lily_of_the_valley"; R "rzemioslo kepa-xyz $g world $1 $((Y+1)) $2"; done
 # szopa z suszarnia w cieniu + suszarnia na sloncu obok
-R "fill 60 $((Y+1)) 56 64 $((Y+4)) 60 spruce_planks hollow"; R "fill 60 $((Y+1)) 58 60 $((Y+2)) 58 air"
-R "fill 61 $((Y+3)) 58 63 $((Y+3)) 58 stripped_spruce_log[axis=x]"; R "rzemioslo suszarnia-xyz world 62 $((Y+3)) 58"
+R "fill 60 $Y 56 64 $((Y+5)) 60 spruce_planks hollow"; R "fill 60 $((Y+1)) 58 60 $((Y+2)) 58 air"   # wnetrze 4 bloki, wejscie od zachodu
+R "fill 61 $((Y+4)) 58 63 $((Y+4)) 58 stripped_spruce_log[axis=x]"; R "rzemioslo suszarnia-xyz world 62 $((Y+4)) 58"
 R "setblock 67 $((Y+1)) 58 spruce_fence"; R "setblock 67 $((Y+2)) 58 stripped_spruce_log[axis=x]"; R "rzemioslo suszarnia-xyz world 67 $((Y+2)) 58"
 R "setworldspawn 50 $((Y+1)) 52"
 echo "TEREN GOTOWY"

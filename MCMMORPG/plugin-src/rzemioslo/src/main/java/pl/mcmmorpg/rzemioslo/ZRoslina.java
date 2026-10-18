@@ -54,7 +54,7 @@ final class ZRoslina {
 
     final Plugin plugin;
     final Player p;
-    final Location o;            // podstawa rosliny (gora gruntu)
+    final Location o;            // podstawa rosliny (gora gruntu) — NIGDY nie oddawac na zewnatrz bez clone() (MMOCore przesuwa lokacje przy hologramie XP)
     final Vector f, r;           // przod (od gracza do rosliny) i prawo gracza
     final float yaw;
     final List<Czesc> czesci = new ArrayList<>();
@@ -152,8 +152,10 @@ final class ZRoslina {
             Vector3f t = new Vector3f(k.t0).sub(piv).rotate(q).add(piv).add(przesun);
             Quaternionf l = new Quaternionf(q).mul(k.r0);
             animuj(k.d, new Transformation(t, l, k.s0, new Quaternionf()), ticki);
+            if (DEBUG) plugin.getLogger().info("przechyl " + c.typ + c.nr + " y0=" + k.y0 + " t0=" + k.t0 + " -> t=" + t + " widziany=" + k.d.getTransformation().getTranslation());
         }
     }
+    static boolean DEBUG = false;
 
     /** Przesuniecie calej czesci (np. wyciaganie korzenia, drzenie). */
     void przesun(Czesc c, Vector3f v, int ticki) {

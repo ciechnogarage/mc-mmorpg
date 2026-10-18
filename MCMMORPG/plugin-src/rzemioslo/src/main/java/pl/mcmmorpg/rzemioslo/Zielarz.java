@@ -76,6 +76,7 @@ import java.util.concurrent.ThreadLocalRandom;
 final class Zielarz implements Listener {
     static final String PROF = "herbalism";
     static final Color PODSWIETL = Color.fromRGB(255, 240, 170);
+    private static final NamespacedKey K_ZAMROZ = new NamespacedKey("rzemioslo", "zielarz_zamroz");
 
     /** Stan kepy dla gracza: ten sam okaz az do odrostu. */
     static final class Stan {
@@ -91,13 +92,12 @@ final class Zielarz implements Listener {
         final Stan stan;
         final ZRoslina r;
         final Random rnd;
-        BlockDisplay siedzisko;
-        int slotReki = -1, slotSierpa = -1;
-        ItemStack schowany;
-        Key modelSierpa;
+        Location stoi;
+        int slotSierpa = -1, ostatniPpm;
+        ItemStack sierp;
         int t, ostatniLpm = -99, ostatniaAkcja, zajetyDo;
         ZRoslina.Czesc hover, chwyt;
-        boolean trzyma, chwytZalatwiony, konczy;
+        boolean trzyma, chwytZalatwiony, konczy, ukryjZnow;
         int trzymaOd;
         String widok = "";
         // kozlek
@@ -120,7 +120,8 @@ final class Zielarz implements Listener {
 
     private final Rzemioslo plugin;
     private final Map<String, String> kepy = new HashMap<>();
-    private final Map<UUID, Sesja> sesje = new HashMap<>();
+    private final Map<UUID, Sesja> sesje = new java.util.concurrent.ConcurrentHashMap<>();   // czytana tez z watku pakietow
+    private final Map<UUID, Long> poKoncu = new java.util.concurrent.ConcurrentHashMap<>();
     private final Map<UUID, Map<String, Stan>> stany = new HashMap<>();
     private final File plikKep;
     private final NamespacedKey kJakosc, kZamiana, kGatunek, kSlot, kUchwyt;
@@ -142,16 +143,68 @@ final class Zielarz implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, suszarnia::pokazWszystko, 40L);
         wczytajKepy();
         pakiety = new PacketListenerAbstract(PacketListenerPriority.NORMAL) {
+            /** W trakcie zbioru kliki naleza do zielarza: pakiety machniecia/uzycia/kopania sa anulowane, zanim powstanie
+             *  zdarzenie Bukkita (inne pluginy — bron, zaklecia, wymagania MMOItems — ich nie widza). Klient dostaje ack
+             *  sekwencji, zeby cofnal przewidziane zmiany blokow. */
             @Override
             public void onPacketReceive(PacketReceiveEvent e) {
-                if (e.getPacketType() != PacketType.Play.Client.PLAYER_DIGGING) return;
                 UUID u = e.getUser().getUUID();
-                if (u == null || !sesje.containsKey(u)) return;
-                if (new WrapperPlayClientPlayerDigging(e).getAction() != DiggingAction.RELEASE_USE_ITEM) return;
-                Bukkit.getScheduler().runTask(plugin, () -> { Sesja s = sesje.get(u); if (s != null) ppmPuszczony(s); });
+                if (u == null) return;
+                if (!sesje.containsKey(u)) {
+                    // tuz po zbiorze gracz zwykle jeszcze trzyma PPM/LPM — te kliki tez nalezaly do rosliny, nie do broni
+                    Long po = poKoncu.get(u);
+                    if (po == null || System.currentTimeMillis() > po) return;
+                    var t0 = e.getPacketType();
+                    if (t0 == PacketType.Play.Client.ANIMATION || t0 == PacketType.Play.Client.USE_ITEM || t0 == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
+                        e.setCancelled(true);
+                        if (t0 == PacketType.Play.Client.USE_ITEM) e.getUser().sendPacket(new com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAcknowledgeBlockChanges(new com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientUseItem(e).getSequence()));
+                        if (t0 == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) e.getUser().sendPacket(new com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAcknowledgeBlockChanges(new com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement(e).getSequence()));
+                    }
+                    return;
+                }
+                var typ = e.getPacketType();
+                Runnable akcja = null;
+                int seq = -1;
+                if (typ == PacketType.Play.Client.ANIMATION) {
+                    akcja = () -> { Sesja s = sesje.get(u); if (s != null) lpm(s); };
+                } else if (typ == PacketType.Play.Client.USE_ITEM) {
+                    var w = new com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientUseItem(e);
+                    seq = w.getSequence();
+                    if (w.getHand() == com.github.retrooper.packetevents.protocol.player.InteractionHand.MAIN_HAND)
+                        akcja = () -> { Sesja s = sesje.get(u); if (s != null) ppmWcisniety(s); };
+                } else if (typ == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
+                    var w = new com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement(e);
+                    seq = w.getSequence();
+                    if (w.getHand() == com.github.retrooper.packetevents.protocol.player.InteractionHand.MAIN_HAND)
+                        akcja = () -> { Sesja s = sesje.get(u); if (s != null) { s.ukryjZnow = true; ppmWcisniety(s); } };
+                } else if (typ == PacketType.Play.Client.PLAYER_DIGGING) {
+                    var w = new WrapperPlayClientPlayerDigging(e);
+                    if (w.getAction() == DiggingAction.RELEASE_USE_ITEM) return;
+                    seq = w.getSequence();
+                    akcja = () -> { Sesja s = sesje.get(u); if (s != null) s.ukryjZnow = true; };
+                } else if (typ == PacketType.Play.Client.INTERACT_ENTITY) {
+                    var w = new com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity(e);
+                    if (w.getAction() != com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity.InteractAction.ATTACK
+                            && w.getHand() == com.github.retrooper.packetevents.protocol.player.InteractionHand.MAIN_HAND)
+                        akcja = () -> { Sesja s = sesje.get(u); if (s != null) ppmWcisniety(s); };
+                } else {
+                    return;
+                }
+                e.setCancelled(true);
+                if (seq >= 0) {
+                    int sq = seq;
+                    e.getUser().sendPacket(new com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAcknowledgeBlockChanges(sq));
+                }
+                if (akcja != null) Bukkit.getScheduler().runTask(plugin, akcja);
             }
         };
         PacketEvents.getAPI().getEventManager().registerListener(pakiety);
+    }
+
+    private String opisEncji(int id) {
+        for (World w : Bukkit.getWorlds()) for (org.bukkit.entity.Entity en : w.getEntities()) if (en.getEntityId() == id)
+            return en.getType() + " " + en.getName() + " @" + en.getLocation().toVector();
+        return "?" + id;
     }
 
     // ================================================================ kepy (rejestr miejsc)
@@ -189,13 +242,14 @@ final class Zielarz implements Listener {
         Player p = e.getPlayer();
         Sesja s = sesje.get(p.getUniqueId());
         if (s != null) {
-            e.setCancelled(true);
-            e.setUseItemInHand(Event.Result.DENY);
-            e.setUseInteractedBlock(Event.Result.DENY);
-            if (e.getHand() == EquipmentSlot.OFF_HAND) return;
             Action a = e.getAction();
-            if (a == Action.LEFT_CLICK_AIR || a == Action.LEFT_CLICK_BLOCK) lpm(s);
-            else if (a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) ppmWcisniety(s);
+            e.setCancelled(true);
+            e.setUseInteractedBlock(Event.Result.DENY);
+            e.setUseItemInHand(Event.Result.DENY);
+            s.ukryjZnow = true;
+            if (e.getHand() == EquipmentSlot.OFF_HAND) return;
+            // LPM liczymy z machniecia reki (PlayerArmSwingEvent) — klikniecie w blok za roslina nie zawsze przychodzi
+            if (a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) ppmWcisniety(s);
             return;
         }
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK || e.getClickedBlock() == null) return;
@@ -219,6 +273,7 @@ final class Zielarz implements Listener {
         Stan st = stan(p, b);
         long teraz = System.currentTimeMillis();
         if (st.odrostDo > teraz) {
+            Bukkit.getScheduler().runTask(plugin, () -> p.sendBlockChange(b.getLocation(), Material.SHORT_GRASS.createBlockData()));
             plugin.pasek(p, "§7Ta kępa jeszcze odrasta. Wróć za §f" + czas((st.odrostDo - teraz) / 1000) + "§7.");
             return;
         }
@@ -248,12 +303,17 @@ final class Zielarz implements Listener {
         ZRoslina r = new ZRoslina(plugin, p, o, przod);
         Sesja s = new Sesja(p, b, gatunek, st, r);
         sesje.put(p.getUniqueId(), s);
-        zamienNarzedzie(s, sierp.slot());
+        s.sierp = sierp.item().clone();
+        s.slotSierpa = sierp.slot();
         p.sendBlockChange(b.getLocation(), Material.AIR.createBlockData());
+        // gracz stoi pochylony nad roslina, unieruchomiony (siedzenie odpada: jadacy klient zamienia PPM w machniecie
+        // i serwer nie odroznia przytrzymania od ciecia — zmierzone klientem QA 18.10)
         Location sm = miejsce.clone();
         sm.setDirection(przod);
-        s.siedzisko = p.getWorld().spawn(sm, BlockDisplay.class, d -> { d.setPersistent(false); d.setBlock(Material.AIR.createBlockData()); });
-        s.siedzisko.addPassenger(p);
+        sm.setPitch(35);
+        p.teleport(sm);
+        s.stoi = sm.clone();
+        zamroz(p, true);
         try {
             switch (gatunek) {
                 case "dziurawiec" -> budujDziurawiec(s);
@@ -266,10 +326,10 @@ final class Zielarz implements Listener {
             return;
         }
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (!s.konczy) p.lookAt(o.getX(), o.getY() + 0.55, o.getZ(), LookAnchor.EYES);
+            if (!s.konczy) patrz(p, o.clone().add(0, 0.55, 0));
         }, 2L);
         p.playSound(p.getLocation(), Sound.BLOCK_GRASS_STEP, SoundCategory.PLAYERS, 0.8f, 0.8f);
-        plugin.pasek(p, "§7" + nazwaKepy(s) + " §8· §7Shift: wstań");
+        plugin.pasek(p, "§7" + nazwaKepy(s) + " §8· §7Shift: odejdź");
         zielnik.zobaczono(p, widocznyGatunek(s));
         s.zad = Bukkit.getScheduler().runTaskTimer(plugin, () -> tik(s), 1L, 1L);
     }
@@ -290,93 +350,41 @@ final class Zielarz implements Listener {
         };
     }
 
-    // ================================================================ narzedzie: w rece neutralny uchwyt (patyk z wygladem sierpa)
-    // Sierp to motyka: przytrzymanie PPM z celownikiem na trawie = klient "orze" i nie zaczyna uzycia. Patyk nie ma akcji
-    // na blokach, a z komponentem consumable klient trzyma PPM az do puszczenia (RELEASE_USE_ITEM). Prawdziwy przedmiot
-    // z reki czeka w pamieci i w PDC gracza (powrot po awarii serwera).
-    private void zamienNarzedzie(Sesja s, int slotSierpa) {
-        PlayerInventory inv = s.p.getInventory();
-        s.slotReki = inv.getHeldItemSlot();
-        s.slotSierpa = slotSierpa;
-        ItemStack sierp = inv.getItem(slotSierpa);
-        s.modelSierpa = sierp != null && sierp.hasData(DataComponentTypes.ITEM_MODEL) ? sierp.getData(DataComponentTypes.ITEM_MODEL) : Key.key("minecraft", "iron_hoe");
-        ItemStack wReku = inv.getItem(s.slotReki);
-        s.schowany = wReku == null || wReku.getType().isAir() ? null : wReku.clone();
-        var pdc = s.p.getPersistentDataContainer();
-        if (s.schowany != null) pdc.set(kZamiana, PersistentDataType.BYTE_ARRAY, s.schowany.serializeAsBytes());
-        else pdc.set(kZamiana, PersistentDataType.BYTE_ARRAY, new byte[0]);
-        pdc.set(kSlot, PersistentDataType.INTEGER, s.slotReki);
-        inv.setItem(s.slotReki, uchwyt(s.modelSierpa, ItemUseAnimation.BOW, "Sierp"));
-    }
+    // ================================================================ narzedzie: tylko wyglad (pakiet), ekwipunek nietkniety
+    // Podmiana prawdziwego przedmiotu w rece zderza sie z Ksiega postaci (slot 0 = prawa reka, przywracana przy teleporcie
+    // — uchwyt znikal; prawdziwy sierp moglby przepasc). Narzedzie widac tylko u klienta, jak w Zbieraniu v2.
 
-    private ItemStack uchwyt(Key model, ItemUseAnimation anim, String nazwa) {
-        ItemStack it = new ItemStack(Material.STICK);
-        it.setData(DataComponentTypes.ITEM_MODEL, model);
-        it.setData(DataComponentTypes.CONSUMABLE, uzycie(anim));
-        it.setData(DataComponentTypes.CUSTOM_NAME, Component.text(nazwa));
-        it.setData(DataComponentTypes.MAX_STACK_SIZE, 1);
-        ItemMeta m = it.getItemMeta();
-        m.getPersistentDataContainer().set(kUchwyt, PersistentDataType.BYTE, (byte) 1);
-        it.setItemMeta(m);
-        return it;
-    }
-
-    private boolean toUchwyt(ItemStack it) {
-        return it != null && it.getType() == Material.STICK && it.hasItemMeta()
-                && it.getItemMeta().getPersistentDataContainer().has(kUchwyt, PersistentDataType.BYTE);
-    }
-
-    private static Consumable uzycie(ItemUseAnimation anim) {
-        return Consumable.consumable().consumeSeconds(3600f).animation(anim).hasConsumeParticles(false)
-                .sound(Key.key("minecraft", "intentionally_empty")).build();
-    }
-
-    /** Usuwa uchwyty z calego ekwipunku i oddaje przedmiot z PDC do slotu reki. */
-    private void oddajNarzedzie(Player p) {
-        PlayerInventory inv = p.getInventory();
-        for (int i = 0; i < inv.getSize(); i++) if (toUchwyt(inv.getItem(i))) inv.setItem(i, null);
-        var pdc = p.getPersistentDataContainer();
-        byte[] b = pdc.get(kZamiana, PersistentDataType.BYTE_ARRAY);
-        Integer slot = pdc.get(kSlot, PersistentDataType.INTEGER);
-        if (b != null && slot != null && b.length > 0) {
-            ItemStack it = ItemStack.deserializeBytes(b);
-            ItemStack tam = inv.getItem(slot);
-            if (tam == null || tam.getType().isAir()) inv.setItem(slot, it);
-            else for (ItemStack nad : inv.addItem(it).values()) p.getWorld().dropItemNaturally(p.getLocation(), nad);
-        }
-        pdc.remove(kZamiana);
-        pdc.remove(kSlot);
-        p.updateInventory();
-    }
-
-    /** Po awarii serwera w trakcie zbioru: przedmiot z reki wraca przy wejsciu, uchwyty znikaja. */
+    /** Stare buildy wycinka podmienialy przedmiot w rece — sprzatanie resztek (tylko klony testowe). */
     @EventHandler
     public void naWejscie(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (p.getPersistentDataContainer().has(kZamiana, PersistentDataType.BYTE_ARRAY)) {
-            try { oddajNarzedzie(p); } catch (RuntimeException ex) { plugin.getLogger().severe("Zielarz: zwrot przedmiotu " + p.getName() + ": " + ex); }
-        } else {
-            PlayerInventory inv = p.getInventory();
-            for (int i = 0; i < inv.getSize(); i++) if (toUchwyt(inv.getItem(i))) inv.setItem(i, null);
+        var pdc = p.getPersistentDataContainer();
+        pdc.remove(kZamiana);
+        pdc.remove(kSlot);
+        PlayerInventory inv = p.getInventory();
+        for (int i = 0; i < inv.getSize(); i++) {
+            ItemStack it = inv.getItem(i);
+            if (it != null && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(kUchwyt, PersistentDataType.BYTE)) inv.setItem(i, null);
         }
     }
 
-    private ItemStack wyglad(Sesja s, String model, ItemUseAnimation anim, String nazwa) {
-        return uchwyt(model == null ? s.modelSierpa : Key.key("minecraft", model), anim, nazwa == null ? "Sierp" : nazwa);
+    private ItemStack wyglad(Sesja s, Material m, String nazwa) {
+        if (m == null) return s.sierp.clone();
+        ItemStack it = new ItemStack(m);
+        it.setData(DataComponentTypes.CUSTOM_NAME, Component.text(nazwa));
+        return it;
     }
 
     private void pokazWDloni(Sesja s, String co) {
         ItemStack it = switch (co) {
-            case "lopatka" -> wyglad(s, "iron_shovel", ItemUseAnimation.NONE, "Łopatka");
-            case "rece-ciagnij" -> wyglad(s, "leather", ItemUseAnimation.BOW, "Rękawice");
-            case "rece-rozcieraj" -> wyglad(s, "leather", ItemUseAnimation.BRUSH, "Rękawice");
-            case "rece" -> wyglad(s, "leather", ItemUseAnimation.NONE, "Rękawice");
-            default -> wyglad(s, null, ItemUseAnimation.BOW, null);
+            case "lopatka" -> wyglad(s, Material.IRON_SHOVEL, "Łopatka");
+            case "rece-ciagnij", "rece-rozcieraj", "rece" -> wyglad(s, Material.LEATHER, "Rękawice");
+            default -> wyglad(s, null, null);
         };
         s.widok = co;
         try {
             PacketEvents.getAPI().getPlayerManager().sendPacket(s.p,
-                    new WrapperPlayServerSetPlayerInventory(s.slotReki, SpigotConversionUtil.fromBukkitItemStack(it)));
+                    new WrapperPlayServerSetPlayerInventory(s.p.getInventory().getHeldItemSlot(), SpigotConversionUtil.fromBukkitItemStack(it)));
         } catch (Throwable t) {
             plugin.getLogger().warning("Zielarz: wyglad narzedzia: " + t);
         }
@@ -397,8 +405,10 @@ final class Zielarz implements Listener {
     private void tik(Sesja s) {
         Player p = s.p;
         if (s.konczy) return;
-        if (!p.isOnline() || p.isDead() || p.getVehicle() != s.siedzisko || p.getWorld() != s.blok.getWorld()) { zakoncz(s, null); return; }
+        if (!p.isOnline() || p.isDead() || p.getWorld() != s.blok.getWorld() || p.getLocation().distanceSquared(s.stoi) > 1.0) { zakoncz(s, null); return; }
         s.t++;
+        if (s.t <= 3 || s.t % 20 == 0 || s.ukryjZnow) { p.sendBlockChange(s.blok.getLocation(), Material.AIR.createBlockData()); s.ukryjZnow = false; }
+        if (s.trzyma && s.t - s.ostatniPpm > 6) ppmPuszczony(s);
         if (!s.trzyma) {
             s.hover = s.t < s.zajetyDo ? null : s.r.celowana(4.5);
             s.r.podswietl(s.hover, PODSWIETL);
@@ -407,8 +417,8 @@ final class Zielarz implements Listener {
             trzymanie(s);
         }
         if (s.gatunek.equals("kozlek") && !(s.trzyma && s.chwyt != null && s.chwyt.typ.equals("rozeta"))) {
-            if (s.napiecie > 0) s.napiecie = Math.max(0, s.napiecie - 0.05);
-            if (s.trzeszczy && s.napiecie < 0.5) s.trzeszczy = false;
+            if (s.napiecie > 0) s.napiecie = Math.max(0, s.napiecie - 0.06);
+            if (s.trzeszczy && s.napiecie < 0.4) s.trzeszczy = false;
         }
         if (s.t - s.ostatniaAkcja > 900) zakoncz(s, "§7Wstajesz.");
         else if (wszystkoZebrane(s) && s.t >= s.zajetyDo) zakoncz(s, null);
@@ -424,6 +434,7 @@ final class Zielarz implements Listener {
 
     // ================================================================ gesty
     private void lpm(Sesja s) {
+        if (ZRoslina.DEBUG) plugin.getLogger().info("lpm t=" + s.t + " trzyma=" + s.trzyma + " ostLpm=" + s.ostatniLpm + " zajety=" + s.zajetyDo + " hover=" + (s.hover == null ? null : s.hover.typ + s.hover.nr));
         if (s.trzyma || s.t - s.ostatniLpm < 5 || s.t < s.zajetyDo) return;
         s.ostatniLpm = s.t;
         ZRoslina.Czesc c = s.hover;
@@ -443,7 +454,10 @@ final class Zielarz implements Listener {
         }
     }
 
+    /** Klient trzymajacy PPM powtarza uzycie co 4 ticki — kazde powtorzenie przedluza chwyt; cisza = puszczenie. */
     private void ppmWcisniety(Sesja s) {
+        s.ostatniPpm = s.t;
+        if (ZRoslina.DEBUG) plugin.getLogger().info("ppm t=" + s.t + " trzyma=" + s.trzyma + " hover=" + (s.hover == null ? null : s.hover.typ + s.hover.nr));
         if (s.trzyma || s.t < s.zajetyDo) return;
         ZRoslina.Czesc c = s.hover;
         if (c == null) return;
@@ -457,11 +471,11 @@ final class Zielarz implements Listener {
     private void ppmPuszczony(Sesja s) {
         if (!s.trzyma) return;
         s.trzyma = false;
-        int dl = s.t - s.trzymaOd;
+        int dl = s.ostatniPpm - s.trzymaOd;
         ZRoslina.Czesc c = s.chwyt;
         s.chwyt = null;
         if (c == null || c.zabrana || s.chwytZalatwiony) return;
-        if (dl <= 4) klik(s, c);
+        if (dl == 0) klik(s, c);
         else if (c.typ.equals("lisc")) plugin.pasek(s.p, "§7Za krótko, żeby cokolwiek poczuć.");
     }
 
@@ -483,6 +497,7 @@ final class Zielarz implements Listener {
         ZRoslina.Czesc c = s.chwyt;
         if (c == null || c.zabrana || s.chwytZalatwiony) return;
         int dl = s.t - s.trzymaOd;
+        if (dl < 5) return;            // pierwsze 4 ticki: nie wiadomo jeszcze, czy to klik, czy chwyt
         switch (c.typ) {
             case "rozeta" -> ciagnij(s, c);
             case "ped" -> { if (dl >= 10) wyrwijPed(s, c); else if (dl % 3 == 0) dzwiek(s, Sound.BLOCK_GRASS_HIT, 0.5f, 0.8f); }
@@ -506,22 +521,27 @@ final class Zielarz implements Listener {
             ZRoslina.Czesc c = r.czesc("ped", i, lx, 0, lz);
             c.cechy.put("h", h); c.cechy.put("faza", faza); c.cechy.put("chory", chory); c.cechy.put("dbl", dbl);
             c.box = new BoundingBox(lx - 0.09, 0, lz - 0.09, lx + 0.09, h + 0.06, lz + 0.09);
-            r.klocek(c, Material.STRIPPED_SPRUCE_WOOD, 0, 0, 0, 0.05, h * 0.25, 0.05, null);
-            r.klocek(c, Material.MOSS_BLOCK, 0, h * 0.25, 0, 0.04, h * 0.75, 0.04, null);
+            r.klocek(c, Material.STRIPPED_SPRUCE_WOOD, 0, 0, 0, 0.05, h * 0.18, 0.05, null);
+            r.klocek(c, Material.MOSS_BLOCK, 0, h * 0.18, 0, 0.045, h * 0.82, 0.045, null);
             int k = 0;
-            for (double y = h * 0.3; y < h - 0.24; y += 0.11 + rnd.nextDouble() * 0.03, k++) {
-                Quaternionf q = ZRoslina.obrotY(k * 90 + rnd.nextDouble() * 30).mul(ZRoslina.obrotZ(rnd.nextBoolean() ? 14 : -14));
-                Material m = y < h * 0.55 ? Material.GREEN_TERRACOTTA : Material.MOSS_BLOCK;
-                r.klocek(c, m, 0, y, 0, 0.19, 0.014, 0.05, q);
-                if (chory && rnd.nextDouble() < 0.7) {
-                    r.klocek(c, Material.BLACK_CONCRETE, (rnd.nextDouble() - 0.5) * 0.12, y + 0.012, (rnd.nextDouble() - 0.5) * 0.03, 0.024, 0.008, 0.024, q);
+            for (double y = h * 0.22; y < h - 0.2; y += 0.075 + rnd.nextDouble() * 0.02, k++) {
+                double kat = k * 90 + rnd.nextDouble() * 25;
+                double dl = 0.12 + 0.1 * (1 - y / h);
+                Material m = y < h * 0.4 ? Material.AZALEA_LEAVES : Material.OAK_LEAVES;
+                for (int strona = -1; strona <= 1; strona += 2) {
+                    Quaternionf q = ZRoslina.obrotY(kat).mul(ZRoslina.obrotZ(strona * 22));
+                    double ox = Math.cos(Math.toRadians(kat)) * dl / 2 * strona, oz = -Math.sin(Math.toRadians(kat)) * dl / 2 * strona;
+                    r.klocek(c, m, -ox, y, oz, dl, 0.016, 0.065, q);
+                    if (chory && rnd.nextDouble() < 0.6) {
+                        r.klocek(c, Material.BLACK_CONCRETE, -ox * 1.2, y + 0.014 + strona * ox * 0.35, oz * 1.2, 0.03, 0.01, 0.03, q);
+                    }
                 }
             }
             double fs = h - 0.2;
             switch (faza) {
                 case "kw" -> {
-                    for (int j = 0; j < 6; j++) r.klocek(c, Material.YELLOW_CONCRETE, (rnd.nextDouble() - 0.5) * 0.15, fs + rnd.nextDouble() * 0.16,
-                            (rnd.nextDouble() - 0.5) * 0.13, 0.055, 0.028, 0.055, ZRoslina.obrotY(rnd.nextDouble() * 90));
+                    for (int j = 0; j < 9; j++) r.klocek(c, Material.YELLOW_CONCRETE, (rnd.nextDouble() - 0.5) * 0.2, fs + rnd.nextDouble() * 0.17,
+                            (rnd.nextDouble() - 0.5) * 0.17, 0.07, 0.03, 0.07, ZRoslina.obrotY(rnd.nextDouble() * 90));
                     for (int j = 0; j < 4; j++) r.klocek(c, Material.ORANGE_CONCRETE, (rnd.nextDouble() - 0.5) * 0.12, fs + 0.02 + rnd.nextDouble() * 0.15,
                             (rnd.nextDouble() - 0.5) * 0.11, 0.022, 0.03, 0.022, null);
                     if (dbl) for (int j = 0; j < 5; j++) r.klocek(c, Material.YELLOW_CONCRETE, 0.08 + (rnd.nextDouble() - 0.5) * 0.08,
@@ -647,12 +667,12 @@ final class Zielarz implements Listener {
             }
         }
         ZRoslina.Czesc roz = r.czesc("rozeta", 0, 0, 0, 0);
-        roz.box = new BoundingBox(-0.3, 0, -0.3, 0.3, 0.3, 0.3);
+        roz.box = new BoundingBox(-0.17, 0, -0.17, 0.17, 0.1, 0.17);
         for (int k = 0; k < 7; k++) {
             double a = Math.toRadians(k * 360.0 / 7 + rnd.nextDouble() * 20);
             double len = 0.34 + rnd.nextDouble() * 0.08;
             Quaternionf q = ZRoslina.obrotY(-Math.toDegrees(a)).mul(ZRoslina.obrotZ(-18));
-            r.klocek(roz, k % 2 == 0 ? Material.MOSS_BLOCK : Material.GREEN_TERRACOTTA, -Math.cos(a) * len / 2, 0.03, Math.sin(a) * len / 2,
+            r.klocek(roz, k % 2 == 0 ? Material.OAK_LEAVES : Material.AZALEA_LEAVES, -Math.cos(a) * len / 2, 0.03, Math.sin(a) * len / 2,
                     len, 0.014, 0.1, q);
         }
         int lodygi = 1 + rnd.nextInt(2);
@@ -702,11 +722,11 @@ final class Zielarz implements Listener {
     private void ciagnij(Sesja s, ZRoslina.Czesc roz) {
         int otw = nieruszoneBoczne(s);
         double grip = 1 + otw;
-        double rate = 0.010 + 0.007 * grip;
+        double rate = 0.008 + 0.004 * grip;
         boolean zaczep = Math.abs(s.postep - 0.32) < 0.04 || Math.abs(s.postep - 0.66) < 0.04;
-        if (zaczep) rate += 0.03;
+        if (zaczep) rate += 0.012;
         s.napiecie += rate;
-        s.postep += s.napiecie < 0.8 ? 0.012 : 0.004;
+        s.postep += s.napiecie < 0.75 ? 0.014 : 0.006;
         int dl = s.t - s.trzymaOd;
         float drz = (float) (s.napiecie * 0.035);
         float jx = (float) ((ThreadLocalRandom.current().nextDouble() - 0.5) * 2 * drz), jz = (float) ((ThreadLocalRandom.current().nextDouble() - 0.5) * 2 * drz);
@@ -714,7 +734,7 @@ final class Zielarz implements Listener {
         Location base = s.r.swiat(0, 0.04, 0);
         if (dl % 2 == 0) s.p.spawnParticle(Particle.BLOCK, base, 1 + (int) (rate * 120), 0.18, 0.02, 0.18, Material.ROOTED_DIRT.createBlockData());
         if (dl % 3 == 0) dzwiek(s, Sound.BLOCK_HANGING_ROOTS_BREAK, (float) (0.15 + 0.6 * s.napiecie), (float) (0.5 + 1.3 * s.napiecie));
-        if (s.napiecie > 0.85 && !s.trzeszczy) { s.trzeszczy = true; wstrzas(s); plugin.pasek(s.p, "§6Korzeń trzeszczy…"); }
+        if (s.napiecie > 0.65 && !s.trzeszczy) { s.trzeszczy = true; wstrzas(s); plugin.pasek(s.p, "§6Korzeń trzeszczy…"); }
         if (s.napiecie >= 1.0) { zerwijKorzen(s, roz, otw); return; }
         if (s.postep >= 1.0) wyciagnijKorzen(s, roz, otw);
     }
@@ -725,7 +745,7 @@ final class Zielarz implements Listener {
         roz.box = null;
         s.zniszczona = true;
         s.zajetyDo = s.t + 14;
-        double q = Math.max(0, s.postep * (1 - 0.15 * otw));
+        double q = Math.min(0.45, Math.max(0, s.postep * (1 - 0.15 * otw)));   // urwany = zawsze slaby
         s.r.przechyl(roz, ZRoslina.obrotZ(70), new Vector3f(0, (float) (s.postep * 0.5 - 0.2), -0.1f), -2f, 8);
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(roz); }, 20L);
         dzwiek(s, Sound.ENTITY_ITEM_BREAK, 0.8f, 0.6f);
@@ -759,50 +779,71 @@ final class Zielarz implements Listener {
     private void budujLiscie(Sesja s, boolean czosnek) {
         Random rnd = s.rnd;
         ZRoslina r = s.r;
-        int n = czosnek ? 4 + rnd.nextInt(3) : 2 + rnd.nextInt(2);
-        double sektor = czosnek ? 360 : 70, start = rnd.nextDouble() * 360;
         boolean kwitnie = rnd.nextDouble() < (czosnek ? 0.5 : 0.6);
-        if (!czosnek) r.klocek(r.czesc("pochwa", 0, 0, 0, 0), Material.MOSS_BLOCK, 0, 0, 0, 0.07, 0.12, 0.07, null);
-        for (int i = 0; i < n; i++) {
-            double a = start + i * sektor / n + rnd.nextDouble() * 15;
-            double tilt = czosnek ? 24 + rnd.nextDouble() * 12 : 9 + rnd.nextDouble() * 8;
-            double len = czosnek ? 0.42 : 0.5, w = czosnek ? 0.14 : 0.21, ogonek = czosnek ? 0.18 : 0.02;
-            boolean stary = rnd.nextDouble() < 0.3;
-            double ar = Math.toRadians(a), tr = Math.toRadians(tilt);
-            ZRoslina.Czesc l = r.czesc("lisc", i, 0, 0, 0);
-            l.cechy.put("stary", stary); l.cechy.put("kwitnie", kwitnie);
-            Quaternionf q = ZRoslina.obrotY(-a).mul(ZRoslina.obrotX(tilt));
-            if (czosnek) r.klocek(l, Material.MOSS_BLOCK, 0, 0, 0, 0.022, ogonek, 0.022, q);
-            double bx = Math.sin(ar) * Math.sin(tr) * ogonek, bz = Math.cos(ar) * Math.sin(tr) * ogonek, by = Math.cos(tr) * ogonek;
-            r.klocek(l, stary ? Material.GREEN_TERRACOTTA : Material.MOSS_BLOCK, bx, by, bz, w, len, 0.012, q);
-            if (stary) {
-                double tx = Math.sin(ar) * Math.sin(tr) * (ogonek + len), tz = Math.cos(ar) * Math.sin(tr) * (ogonek + len), ty = Math.cos(tr) * (ogonek + len);
-                r.klocek(l, Material.YELLOW_TERRACOTTA, tx, ty - 0.06, tz, w * 0.7, 0.06, 0.013, q);
+        // czosnek: wiele pojedynczych lisci na ogonkach; konwalia: kilka pedow, kazdy z 2 lisci z jednej pochwy
+        int pedy = czosnek ? 6 + rnd.nextInt(4) : 3 + rnd.nextInt(2);
+        int nr = 0;
+        for (int i = 0; i < pedy; i++) {
+            double a = i * 360.0 / pedy + rnd.nextDouble() * 25;
+            double ar = Math.toRadians(a);
+            double rp = czosnek ? 0.04 + rnd.nextDouble() * 0.12 : 0.08 + rnd.nextDouble() * 0.12;
+            double px = Math.sin(ar) * rp, pz = Math.cos(ar) * rp;      // podstawa pedu (uklad encji: sin/cos)
+            int liscie = czosnek ? 1 : 2;
+            if (!czosnek) {
+                ZRoslina.Czesc pochwa = r.czesc("pochwa", i, 0, 0, 0);
+                r.klocek(pochwa, Material.MOSS_BLOCK, px, 0, pz, 0.05, 0.1, 0.05, null);
             }
-            double cx = Math.sin(ar) * Math.sin(tr) * (ogonek + len / 2), cz = Math.cos(ar) * Math.sin(tr) * (ogonek + len / 2), cyy = Math.cos(tr) * (ogonek + len / 2);
-            double hw = Math.max(0.09, w / 2 + 0.03);
-            l.box = new BoundingBox(cx - hw, Math.max(0, cyy - len / 2), cz - hw, cx + hw, cyy + len / 2, cz + hw);
+            for (int j = 0; j < liscie; j++) {
+                double la = a + (czosnek ? 0 : (j == 0 ? -25 : 25)) + rnd.nextDouble() * 10;
+                double lr = Math.toRadians(la);
+                double tilt = czosnek ? 38 + rnd.nextDouble() * 14 : 22 + rnd.nextDouble() * 12;
+                double len = czosnek ? 0.36 + rnd.nextDouble() * 0.08 : 0.42 + rnd.nextDouble() * 0.08;
+                double w = czosnek ? 0.13 : 0.17, ogonek = czosnek ? 0.14 : 0.05;
+                boolean stary = rnd.nextDouble() < 0.3;
+                ZRoslina.Czesc l = r.czesc("lisc", nr++, 0, 0, 0);
+                l.cechy.put("stary", stary); l.cechy.put("kwitnie", kwitnie);
+                Material mat = stary ? Material.MOSS_BLOCK : Material.OAK_LEAVES;
+                double[] d = {Math.sin(lr), Math.cos(lr)};
+                Quaternionf q1 = ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt));
+                double bx = px, bz = pz, by = 0;
+                if (czosnek) {
+                    r.klocek(l, Material.MOSS_BLOCK, bx, 0, bz, 0.02, ogonek, 0.02, ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt * 0.5)));
+                    double tr0 = Math.toRadians(tilt * 0.5);
+                    bx += d[0] * Math.sin(tr0) * ogonek; bz += d[1] * Math.sin(tr0) * ogonek; by += Math.cos(tr0) * ogonek;
+                }
+                double l1 = len * 0.55, l2 = len * 0.45, tr1 = Math.toRadians(tilt), tr2 = Math.toRadians(tilt + 28);
+                r.klocek(l, mat, bx, by, bz, w, l1, 0.014, q1);
+                double cx = bx + d[0] * Math.sin(tr1) * l1, cz = bz + d[1] * Math.sin(tr1) * l1, cy = by + Math.cos(tr1) * l1;
+                r.klocek(l, mat, cx, cy, cz, w * 0.85, l2, 0.014, ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt + 28)));
+                double ex = cx + d[0] * Math.sin(tr2) * l2, ez = cz + d[1] * Math.sin(tr2) * l2, ey = cy + Math.cos(tr2) * l2;
+                if (stary) r.klocek(l, Material.YELLOW_TERRACOTTA, ex - d[0] * 0.03, ey - 0.04, ez - d[1] * 0.03, w * 0.55, 0.05, 0.015,
+                        ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt + 28)));
+                double mnx = Math.min(Math.min(bx, cx), ex), mxx = Math.max(Math.max(bx, cx), ex);
+                double mnz = Math.min(Math.min(bz, cz), ez), mxz = Math.max(Math.max(bz, cz), ez);
+                l.box = new BoundingBox(mnx - 0.05, Math.max(0, by), mnz - 0.05, mxx + 0.05, Math.max(cy, ey) + 0.04, mxz + 0.05);
+            }
         }
         if (kwitnie) {
             ZRoslina.Czesc k = r.czesc("kwiat", 0, 0, 0, 0);
             if (czosnek) {
-                double h = 0.52 + rnd.nextDouble() * 0.1;
+                double h = 0.5 + rnd.nextDouble() * 0.1;
                 r.klocek(k, Material.MOSS_BLOCK, 0, 0, 0, 0.02, h, 0.02, null);
-                for (int j = 0; j < 10; j++) {
+                for (int j = 0; j < 12; j++) {
                     double a = rnd.nextDouble() * Math.PI * 2, el = rnd.nextDouble() * Math.PI / 2;
                     r.klocek(k, Material.WHITE_CONCRETE, Math.cos(a) * Math.cos(el) * 0.07, h + Math.sin(el) * 0.06, Math.sin(a) * Math.cos(el) * 0.07,
                             0.035, 0.012, 0.035, ZRoslina.obrotY(rnd.nextDouble() * 90));
                 }
-                k.box = new BoundingBox(-0.1, h - 0.05, -0.1, 0.1, h + 0.1, 0.1);
+                k.box = new BoundingBox(-0.09, h - 0.04, -0.09, 0.09, h + 0.09, 0.09);
             } else {
-                double a = Math.toRadians(start + 35), h = 0.36;
+                double a = rnd.nextDouble() * 360, ar = Math.toRadians(a), h = 0.34;
                 r.klocek(k, Material.MOSS_BLOCK, 0, 0, 0, 0.018, h, 0.018, null);
                 for (int j = 0; j < 6; j++) {
-                    double d = 0.03 + j * 0.035;
-                    r.klocek(k, Material.WHITE_CONCRETE, Math.cos(a) * d, h - 0.03 - j * 0.035 - 0.04, Math.sin(a) * d, 0.04, 0.04, 0.04, null);
-                    r.klocek(k, Material.MOSS_BLOCK, Math.cos(a) * d, h - j * 0.035 - 0.04 + 0.01, Math.sin(a) * d, 0.012, 0.03, 0.012, null);
+                    double dd = 0.03 + j * 0.035;
+                    r.klocek(k, Material.WHITE_CONCRETE, Math.sin(ar) * dd, h - 0.07 - j * 0.035, Math.cos(ar) * dd, 0.04, 0.04, 0.04, null);
+                    r.klocek(k, Material.MOSS_BLOCK, Math.sin(ar) * dd, h - 0.03 - j * 0.035, Math.cos(ar) * dd, 0.012, 0.03, 0.012, null);
                 }
-                k.box = new BoundingBox(-0.25, 0.1, -0.25, 0.25, h + 0.05, 0.25);
+                double bx = Math.sin(ar) * 0.12, bz = Math.cos(ar) * 0.12;
+                k.box = new BoundingBox(bx - 0.1, h - 0.3, bz - 0.1, bx + 0.1, h + 0.02, bz + 0.1);
             }
         }
     }
@@ -896,14 +937,14 @@ final class Zielarz implements Listener {
         z[0] += ile;
         z[1] += (int) Math.round(q * 100) * ile;
         double xp = plugin.dane().g(1) * (0.4 + 0.6 * q) * ile;
-        s.xp += plugin.profesje().daj(s.p, PROF, 1, xp, s.r.o);
+        s.xp += plugin.profesje().daj(s.p, PROF, 1, xp, s.r.o.clone().add(0, 0.8, 0));
         zielnik.zbior(s.p, s.gatunek, q);
     }
 
     private void uwaga(Sesja s, String u) { if (!s.uwagi.contains(u)) s.uwagi.add(u); }
 
     private void dzwiek(Sesja s, Sound d, float vol, float pitch) {
-        s.p.getWorld().playSound(s.r.o, d, SoundCategory.BLOCKS, vol, pitch);
+        s.p.getWorld().playSound(s.r.o.clone(), d, SoundCategory.BLOCKS, vol, pitch);
     }
 
     private void wstrzas(Sesja s) {
@@ -914,6 +955,17 @@ final class Zielarz implements Listener {
         }
     }
 
+    /** Bez chodzenia i skakania na czas zbioru (modyfikator przejsciowy — znika sam po wyjsciu z gry). */
+    static void zamroz(Player p, boolean tak) {
+        for (org.bukkit.attribute.Attribute at : new org.bukkit.attribute.Attribute[]{org.bukkit.attribute.Attribute.MOVEMENT_SPEED, org.bukkit.attribute.Attribute.JUMP_STRENGTH}) {
+            var inst = p.getAttribute(at);
+            if (inst == null) continue;
+            inst.removeModifier(K_ZAMROZ);
+            if (tak) inst.addTransientModifier(new org.bukkit.attribute.AttributeModifier(K_ZAMROZ, -1.0,
+                    org.bukkit.attribute.AttributeModifier.Operation.MULTIPLY_SCALAR_1, org.bukkit.inventory.EquipmentSlotGroup.ANY));
+        }
+    }
+
     static String czas(long sek) { return sek >= 60 ? (sek / 60) + " min" : sek + " s"; }
 
     void zakoncz(Sesja s, String komunikat) {
@@ -921,14 +973,15 @@ final class Zielarz implements Listener {
         s.konczy = true;
         if (s.zad != null) s.zad.cancel();
         sesje.remove(s.p.getUniqueId());
-        s.r.usun();
-        Player p = s.p;
-        if (s.siedzisko != null) { s.siedzisko.eject(); s.siedzisko.remove(); }
-        if (p.isOnline()) oddajNarzedzie(p);
-        // konsekwencje: odrost zalezy od tego, co zostalo
-        boolean cos = !s.zebrane.isEmpty() || s.zniszczona || s.chore > 0;
+        poKoncu.put(s.p.getUniqueId(), System.currentTimeMillis() + 1200);
         int zostalo = 0, wszystkich = 0;
         for (ZRoslina.Czesc c : s.r.czesci) if (c.typ.equals("ped") || c.typ.equals("lisc")) { wszystkich++; if (!c.zabrana) zostalo++; }
+        s.r.usun();
+        Player p = s.p;
+        if (p.isOnline()) zamroz(p, false);
+        if (p.isOnline()) p.updateInventory();
+        // konsekwencje: odrost zalezy od tego, co zostalo
+        boolean cos = !s.zebrane.isEmpty() || s.zniszczona || s.chore > 0;
         long odrost = 0;
         String odrostOpis = null;
         if (s.zniszczona) { odrost = 30 * 60; odrostOpis = "Kępa zniszczona: odrośnie za 30 min."; }
@@ -961,6 +1014,66 @@ final class Zielarz implements Listener {
 
     boolean wTrakcie(Player p) { return sesje.containsKey(p.getUniqueId()); }
 
+    /** Test/admin: obraca kamere gracza w trakcie zbioru na czesc rosliny (typ, nr) na wysokosci y nad jej kotwica. */
+    String celuj(Player p, String typ, int nr, double y) {
+        Sesja s = sesje.get(p.getUniqueId());
+        if (s == null) return "brak sesji";
+        if (nr < 0) {   // najblizsza graczowi, jeszcze nie zebrana
+            ZRoslina.Czesc best = null;
+            for (ZRoslina.Czesc c : s.r.czesci) if (c.typ.equals(typ) && !c.zabrana && c.box != null && (best == null || c.box.getCenterZ() < best.box.getCenterZ())) best = c;
+            if (best == null) return "brak czesci " + typ;
+            nr = best.nr;
+        }
+        for (ZRoslina.Czesc c : s.r.czesci) {
+            if (!c.typ.equals(typ) || c.nr != nr) continue;
+            Location l;
+            if (c.box != null && typ.equals("gleba")) {
+                double cx = (c.box.getMinX() + c.box.getMaxX()) / 2, cz = (c.box.getMinZ() + c.box.getMaxZ()) / 2;
+                l = s.r.swiat(cx * 1.25, 0.03, cz * 1.25);   // zewnetrzna czesc pola — nad lisciami rozety
+            } else if (c.box != null && (typ.equals("lisc") || typ.equals("kwiat")))
+                l = s.r.swiat((c.box.getMinX() + c.box.getMaxX()) / 2, (c.box.getMinY() + c.box.getMaxY()) / 2, (c.box.getMinZ() + c.box.getMaxZ()) / 2);
+            else l = s.r.swiat(c.kotwica.getX(), c.kotwica.getY() + y, c.kotwica.getZ());
+            patrzPlynnie(p, l);
+            return "celuje w " + typ + " " + nr + " oko=" + String.format("%.2f", p.getEyeLocation().getY() - s.r.o.getY()) + " (h=" + String.format("%.2f", c.d("h")) + ", faza=" + c.s("faza") + ", chory=" + c.b("chory") + ")";
+        }
+        return "brak czesci " + typ + " " + nr;
+    }
+
+    /** Obrot kamery na punkt liczony od oczu gracza na serwerze (lookAt przy siedzeniu celowal za wysoko). */
+    static void patrz(Player p, Location cel) {
+        p.lookAt(cel.getX(), cel.getY(), cel.getZ(), LookAnchor.EYES);
+    }
+
+    /** Test/nagrania: plynny obrot kamery na punkt w ~8 tickach (jak ruch mysza). */
+    void patrzPlynnie(Player p, Location cel) {
+        Vector oko = p.getEyeLocation().toVector();
+        Vector z = p.getEyeLocation().getDirection().normalize(), na = cel.toVector().subtract(oko).normalize();
+        int kroki = 8;
+        for (int i = 1; i <= kroki; i++) {
+            double t = i / (double) kroki, e = t * t * (3 - 2 * t);
+            Vector d = z.clone().multiply(1 - e).add(na.clone().multiply(e)).normalize();
+            Bukkit.getScheduler().runTaskLater(plugin, () -> { Vector o = p.getEyeLocation().toVector().add(d.clone().multiply(2)); p.lookAt(o.getX(), o.getY(), o.getZ(), LookAnchor.EYES); }, i);
+        }
+    }
+
+    String startTest(Player p, Block b) {
+        String g = kepy.get(klucz(b));
+        if (g == null) return "to nie kepa";
+        rozpocznij(p, b, g);
+        return sesje.containsKey(p.getUniqueId()) ? "sesja " + g : "nie ruszyla (patrz pasek gracza)";
+    }
+
+    /** Test/admin: opis okazu (czesci i ich cechy). */
+    String opis(Player p) {
+        Sesja s = sesje.get(p.getUniqueId());
+        if (s == null) return "brak sesji";
+        StringBuilder b = new StringBuilder(s.gatunek + ":");
+        for (ZRoslina.Czesc c : s.r.czesci) b.append(" ").append(c.typ).append(c.nr).append(c.zabrana ? "x" : "").append(c.cechy.isEmpty() ? "" : c.cechy.toString());
+        if (s.gatunek.equals("kozlek")) b.append(" boczne=").append(java.util.Arrays.toString(s.boczne)).append(" poluz=").append(java.util.Arrays.toString(s.poluzowane))
+                .append(String.format(" napiecie=%.2f postep=%.2f", s.napiecie, s.postep));
+        return b.toString();
+    }
+
     void zatrzymajWszystko() {
         for (Sesja s : new ArrayList<>(sesje.values())) zakoncz(s, null);
         try { PacketEvents.getAPI().getEventManager().unregisterListener(pakiety); } catch (Throwable ignored) { }
@@ -970,11 +1083,9 @@ final class Zielarz implements Listener {
 
     // ================================================================ przerwania i blokady
     @EventHandler(priority = EventPriority.LOWEST)
-    public void naZsiadanie(EntityDismountEvent e) {
-        if (e.getEntity() instanceof Player p) {
-            Sesja s = sesje.get(p.getUniqueId());
-            if (s != null && !s.konczy && e.getDismounted() == s.siedzisko) Bukkit.getScheduler().runTask(plugin, () -> zakoncz(s, "§7Wstajesz."));
-        }
+    public void naShift(org.bukkit.event.player.PlayerToggleSneakEvent e) {
+        Sesja s = sesje.get(e.getPlayer().getUniqueId());
+        if (s != null && e.isSneaking() && !s.konczy) zakoncz(s, "§7Wstajesz znad rośliny.");
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -983,6 +1094,14 @@ final class Zielarz implements Listener {
             Sesja s = sesje.get(p.getUniqueId());
             if (s != null) zakoncz(s, "§cCoś cię zraniło. Zrywasz się na nogi.");
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void naMachniecie(io.papermc.paper.event.player.PlayerArmSwingEvent e) {
+        Sesja s = sesje.get(e.getPlayer().getUniqueId());
+        if (s == null || e.getHand() != EquipmentSlot.HAND) return;
+        e.setCancelled(true);
+        lpm(s);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

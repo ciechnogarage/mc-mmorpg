@@ -145,6 +145,21 @@ final class Komenda implements TabExecutor {
                 if (w == null) { s.sendMessage("brak swiata"); return true; }
                 s.sendMessage("[Rzemioslo] " + plugin.zielarz().suszarnia.ustaw(w.getBlockAt(Integer.parseInt(a[2]), Integer.parseInt(a[3]), Integer.parseInt(a[4])), false));
             }
+            case "kepa-start" -> {         // kepa-start <gracz> <x> <y> <z> — test: otwiera kepe bez celowania w drobny kwiat
+                Player p = a.length > 4 ? Bukkit.getPlayerExact(a[1]) : null;
+                if (p == null) return true;
+                Block b = p.getWorld().getBlockAt(Integer.parseInt(a[2]), Integer.parseInt(a[3]), Integer.parseInt(a[4]));
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().startTest(p, b));
+            }
+            case "celuj" -> {              // celuj <gracz> <typ> <nr> [y] — test: kamera na czesc rosliny w trakcie zbioru
+                Player p = a.length > 3 ? Bukkit.getPlayerExact(a[1]) : null;
+                if (p == null) return true;
+                s.sendMessage(plugin.zielarz().celuj(p, a[2], Integer.parseInt(a[3]), a.length > 4 ? Double.parseDouble(a[4]) : 0.5));
+            }
+            case "okaz" -> {               // okaz <gracz> — test: czesci okazu i ich cechy
+                Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
+                if (p != null) s.sendMessage(plugin.zielarz().opis(p));
+            }
             case "zielnik" -> {            // zielnik <gracz> — okno zielnika (menu Q wola z konsoli)
                 Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : (s instanceof Player pp ? pp : null);
                 if (p == null) { s.sendMessage("brak gracza"); return true; }
