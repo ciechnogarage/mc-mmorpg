@@ -225,6 +225,21 @@ final class Zielarz implements Listener {
     }
 
     static final List<String> GATUNKI = List.of("dziurawiec", "kozlek", "czosnek", "konwalia");
+    /** Skala, w ktorej karty zblizenia pokrywaja blok kepy w swiecie (start przyblizenia / koniec oddalenia). */
+    static final Map<String, Float> SKALA_SWIATA = Map.of("dziurawiec", 0.55f, "kozlek", 0.72f, "czosnek", 0.9f, "konwalia", 0.9f);
+    /** Blok kepy (Nexo) zwykly i po zbiorze — ten sam pixel-art co karty zblizenia. */
+    static final Map<String, String[]> BLOK = Map.of("dziurawiec", new String[]{"zielarz_dziurawiec", "zielarz_dziurawiec_scieta"},
+            "kozlek", new String[]{"zielarz_kozlek", "zielarz_kozlek_wykopany"},
+            "czosnek", new String[]{"zielarz_szerokolistna", "zielarz_szerokolistna_zerwana"},
+            "konwalia", new String[]{"zielarz_szerokolistna", "zielarz_szerokolistna_zerwana"});
+
+    static org.bukkit.block.data.BlockData wygladBloku(String gatunek, boolean poZbiorze, Block b) {
+        try {
+            String[] ids = BLOK.get(gatunek);
+            if (ids != null) { var d = com.nexomc.nexo.api.NexoBlocks.blockData(ids[poZbiorze ? 1 : 0]); if (d != null) return d; }
+        } catch (Throwable ignored) { }
+        return poZbiorze ? Material.SHORT_GRASS.createBlockData() : b.getBlockData();
+    }
 
     String ustawKepe(Block b, String gatunek) {
         if (gatunek == null) { kepy.remove(klucz(b)); zapiszKepy(); return "usunieto"; }
@@ -273,7 +288,7 @@ final class Zielarz implements Listener {
         Stan st = stan(p, b);
         long teraz = System.currentTimeMillis();
         if (st.odrostDo > teraz) {
-            Bukkit.getScheduler().runTask(plugin, () -> p.sendBlockChange(b.getLocation(), Material.SHORT_GRASS.createBlockData()));
+            Bukkit.getScheduler().runTask(plugin, () -> p.sendBlockChange(b.getLocation(), wygladBloku(gatunek, true, b)));
             plugin.pasek(p, "§7Ta kępa jeszcze odrasta. Wróć za §f" + czas((st.odrostDo - teraz) / 1000) + "§7.");
             return;
         }
@@ -314,6 +329,7 @@ final class Zielarz implements Listener {
         p.teleport(sm);
         s.stoi = sm.clone();
         zamroz(p, true);
+        r.skalaStartu = SKALA_SWIATA.getOrDefault(gatunek, 0.7f);   // karty rodza sie w rozmiarze kepy w swiecie
         try {
             switch (gatunek) {
                 case "dziurawiec" -> budujDziurawiec(s);
@@ -325,6 +341,7 @@ final class Zielarz implements Listener {
             zakoncz(s, "§cBłąd rośliny.");
             return;
         }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1f, 10); }, 1L);   // przyblizenie
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!s.konczy) patrz(p, o.clone().add(0, 0.55, 0));
         }, 2L);
@@ -434,7 +451,6 @@ final class Zielarz implements Listener {
 
     // ================================================================ gesty
     private void lpm(Sesja s) {
-        if (ZRoslina.DEBUG) plugin.getLogger().info("lpm t=" + s.t + " trzyma=" + s.trzyma + " ostLpm=" + s.ostatniLpm + " zajety=" + s.zajetyDo + " hover=" + (s.hover == null ? null : s.hover.typ + s.hover.nr));
         if (s.trzyma || s.t - s.ostatniLpm < 5 || s.t < s.zajetyDo) return;
         s.ostatniLpm = s.t;
         ZRoslina.Czesc c = s.hover;
@@ -457,7 +473,6 @@ final class Zielarz implements Listener {
     /** Klient trzymajacy PPM powtarza uzycie co 4 ticki — kazde powtorzenie przedluza chwyt; cisza = puszczenie. */
     private void ppmWcisniety(Sesja s) {
         s.ostatniPpm = s.t;
-        if (ZRoslina.DEBUG) plugin.getLogger().info("ppm t=" + s.t + " trzyma=" + s.trzyma + " hover=" + (s.hover == null ? null : s.hover.typ + s.hover.nr));
         if (s.trzyma || s.t < s.zajetyDo) return;
         ZRoslina.Czesc c = s.hover;
         if (c == null) return;
@@ -512,89 +527,61 @@ final class Zielarz implements Listener {
         ZRoslina r = s.r;
         int n = 4 + rnd.nextInt(4);
         for (int i = 0; i < n; i++) {
-            double lx = -0.42 + 0.84 * i / (n - 1) + (rnd.nextDouble() * 0.08 - 0.04);
-            double lz = rnd.nextDouble() * 0.34 - 0.12;
-            double h = 1.0 + rnd.nextDouble() * 0.5;
+            double lx = -0.5 + 1.0 * i / (n - 1) + (rnd.nextDouble() * 0.1 - 0.05);
+            double lz = rnd.nextDouble() * 0.4 - 0.15;
+            double h = 1.25 + rnd.nextDouble() * 0.55;
             double v = rnd.nextDouble();
             String faza = v < 0.18 ? "pak" : v < 0.8 ? "kw" : "stary";
             boolean chory = rnd.nextDouble() < 0.22, dbl = faza.equals("kw") && rnd.nextDouble() < 0.12;
             ZRoslina.Czesc c = r.czesc("ped", i, lx, 0, lz);
             c.cechy.put("h", h); c.cechy.put("faza", faza); c.cechy.put("chory", chory); c.cechy.put("dbl", dbl);
-            c.box = new BoundingBox(lx - 0.09, 0, lz - 0.09, lx + 0.09, h + 0.06, lz + 0.09);
-            r.klocek(c, Material.STRIPPED_SPRUCE_WOOD, 0, 0, 0, 0.05, h * 0.18, 0.05, null);
-            r.klocek(c, Material.MOSS_BLOCK, 0, h * 0.18, 0, 0.045, h * 0.82, 0.045, null);
-            int k = 0;
-            for (double y = h * 0.22; y < h - 0.2; y += 0.075 + rnd.nextDouble() * 0.02, k++) {
-                double kat = k * 90 + rnd.nextDouble() * 25;
-                double dl = 0.12 + 0.1 * (1 - y / h);
-                Material m = y < h * 0.4 ? Material.AZALEA_LEAVES : Material.OAK_LEAVES;
-                for (int strona = -1; strona <= 1; strona += 2) {
-                    Quaternionf q = ZRoslina.obrotY(kat).mul(ZRoslina.obrotZ(strona * 22));
-                    double ox = Math.cos(Math.toRadians(kat)) * dl / 2 * strona, oz = -Math.sin(Math.toRadians(kat)) * dl / 2 * strona;
-                    r.klocek(c, m, -ox, y, oz, dl, 0.016, 0.065, q);
-                    if (chory && rnd.nextDouble() < 0.6) {
-                        r.klocek(c, Material.BLACK_CONCRETE, -ox * 1.2, y + 0.014 + strona * ox * 0.35, oz * 1.2, 0.03, 0.01, 0.03, q);
-                    }
-                }
+            double seg = h / 4;
+            c.box = new BoundingBox(lx - 0.12, 0, lz - 0.12, lx + 0.12, h, lz + 0.12);
+            String[] karty = {"dziurawiec_dol", chory ? "dziurawiec_srodek_chory" : "dziurawiec_srodek",
+                    chory ? "dziurawiec_gora_chory" : "dziurawiec_gora",
+                    faza.equals("pak") ? "dziurawiec_pak" : faza.equals("stary") ? "dziurawiec_przekwit" : "dziurawiec_kwiat"};
+            double obrot = rnd.nextDouble() * 90;
+            for (int k = 0; k < 4; k++) {
+                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, k * seg, 0, seg * (k == 3 ? 1.25 : 1.0), ZRoslina.obrotY(obrot + k * 13));
+                kl.seg = k;
             }
-            double fs = h - 0.2;
-            switch (faza) {
-                case "kw" -> {
-                    for (int j = 0; j < 9; j++) r.klocek(c, Material.YELLOW_CONCRETE, (rnd.nextDouble() - 0.5) * 0.2, fs + rnd.nextDouble() * 0.17,
-                            (rnd.nextDouble() - 0.5) * 0.17, 0.07, 0.03, 0.07, ZRoslina.obrotY(rnd.nextDouble() * 90));
-                    for (int j = 0; j < 4; j++) r.klocek(c, Material.ORANGE_CONCRETE, (rnd.nextDouble() - 0.5) * 0.12, fs + 0.02 + rnd.nextDouble() * 0.15,
-                            (rnd.nextDouble() - 0.5) * 0.11, 0.022, 0.03, 0.022, null);
-                    if (dbl) for (int j = 0; j < 5; j++) r.klocek(c, Material.YELLOW_CONCRETE, 0.08 + (rnd.nextDouble() - 0.5) * 0.08,
-                            fs - 0.16 + rnd.nextDouble() * 0.08, (rnd.nextDouble() - 0.5) * 0.08, 0.05, 0.026, 0.05, ZRoslina.obrotY(rnd.nextDouble() * 90));
-                }
-                case "pak" -> {
-                    for (int j = 0; j < 6; j++) r.klocek(c, Material.LIME_CONCRETE, (rnd.nextDouble() - 0.5) * 0.12, fs + 0.04 + rnd.nextDouble() * 0.14,
-                            (rnd.nextDouble() - 0.5) * 0.1, 0.034, 0.034, 0.034, null);
-                }
-                default -> {
-                    for (int j = 0; j < 5; j++) r.klocek(c, Material.BROWN_CONCRETE, (rnd.nextDouble() - 0.5) * 0.14, fs + rnd.nextDouble() * 0.15,
-                            (rnd.nextDouble() - 0.5) * 0.12, 0.045, 0.03, 0.045, ZRoslina.obrotY(rnd.nextDouble() * 90));
-                }
-            }
+            if (dbl) r.karta(c, "zielarz_k_dziurawiec_kwiat", 0.06, seg * 2.6, 0.04, seg * 0.9, ZRoslina.obrotY(obrot + 45)).seg = 3;
         }
     }
 
+    /** Ciecie na granicy segmentu (4 karty pedu): kwiaty / gorny ped / srodek / zdrewnialy dol = strefy jakosci. */
     private void tnijPed(Sesja s, ZRoslina.Czesc c) {
         Vector hit = s.r.trafienie(c);
         if (hit == null) return;
-        double cy = Math.max(0.03, hit.getY() - c.kotwica.getY());
-        double h = c.d("h"), fs = h - 0.2;
+        double h = c.d("h"), seg = h / 4;
+        int k = Math.max(0, Math.min(3, (int) Math.floor((hit.getY() - c.kotwica.getY()) / seg)));
+        float cy = (float) Math.max(0.04, k * seg);
         String faza = c.s("faza");
         double q;
         String m;
         if (faza.equals("pak")) { q = 0.3; m = "Pąki. Ziele jeszcze bez mocy."; }
         else if (faza.equals("stary")) { q = 0.25; m = "Przekwitłe. Ziele bez mocy."; }
-        else if (cy > fs - 0.02) { q = 0.4; m = "Same kwiaty, mało ziela."; }
-        else if (cy >= fs - 0.36) { q = c.b("bezKwiatow") ? 0.5 : 1.0; m = c.b("bezKwiatow") ? "Czyste cięcie, ale bez kwiatów." : "Czyste cięcie pod kwiatami."; }
-        else if (cy >= h * 0.25) { q = 0.65; m = "Za nisko: w pęczku starsze liście."; }
+        else if (k == 3) { q = 0.4; m = "Same kwiaty, mało ziela."; }
+        else if (k == 2) { q = c.b("bezKwiatow") ? 0.5 : 1.0; m = c.b("bezKwiatow") ? "Czyste cięcie, ale bez kwiatów." : "Czyste cięcie pod kwiatami."; }
+        else if (k == 1) { q = 0.65; m = "Za nisko: w pęczku starsze liście."; }
         else { q = 0.35; m = "Za nisko: zdrewniała łodyga w pęczku."; }
         if (c.b("chory")) { q = 0; s.chore++; m = "Liście z ciemnymi plamkami w pęczku."; }
         boolean okaz = q >= 1.0 && c.b("dbl");
         if (okaz) { s.okaz = true; m = "Czyste cięcie. Podwójny kwiatostan!"; }
-        // fizyka ciecia: gorna czesc pedu odpada i przewraca sie w trawe
-        rozetnij(s, c, (float) cy);
         float strona = s.rnd.nextBoolean() ? 1 : -1;
+        s.r.przechyl(c, ZRoslina.obrotZ(80 * strona), new Vector3f(0, -cy * 0.9f, -0.06f), cy, 12);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (s.konczy) return;
-            s.r.przechyl(c, ZRoslina.obrotZ(78 * strona), new Vector3f(0, (float) (-cy * 0.92), -0.05f), (float) cy, 12);
-        }, 1L);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (s.konczy) return;
-            c.klocki.removeIf(k -> { if (k.y0 >= cy - 1e-3) { k.d.remove(); return true; } return false; });
+            c.klocki.removeIf(kl -> { if (kl.y0 >= cy - 1e-3) { kl.d.remove(); return true; } return false; });
             dzwiek(s, Sound.BLOCK_AZALEA_LEAVES_FALL, 0.6f, 1.2f);
-        }, 18L);
+        }, 20L);
         c.zabrana = true;
         c.box = null;
         s.zajetyDo = s.t + 6;
         dzwiek(s, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.45f);
         dzwiek(s, Sound.BLOCK_GRASS_BREAK, 0.8f, 1.2f);
         Location pk = s.r.swiat(c.kotwica.getX(), cy, c.kotwica.getZ());
-        s.p.spawnParticle(Particle.BLOCK, pk, 10, 0.05, 0.03, 0.05, Material.MOSS_BLOCK.createBlockData());
+        s.p.spawnParticle(Particle.BLOCK, pk, 12, 0.06, 0.03, 0.06, Material.OAK_LEAVES.createBlockData());
         Przedmioty.zuzyj(s.p, s.slotSierpa);
         if (q > 0) daj(s, "PROF_MEDICINAL_HERB", 1, q);
         else uwaga(s, "chore");
@@ -602,26 +589,9 @@ final class Zielarz implements Listener {
         plugin.pasek(s.p, (q >= 0.85 ? "§a" : q >= 0.5 ? "§e" : "§c") + m);
     }
 
-    /** Klocki przecinajace wysokosc cy: dolna czesc skrocona, gorna jako nowy klocek (odpadnie z reszta). */
-    private void rozetnij(Sesja s, ZRoslina.Czesc c, float cy) {
-        List<ZRoslina.Klocek> nowe = new ArrayList<>();
-        for (ZRoslina.Klocek k : new ArrayList<>(c.klocki)) {
-            if (k.y0 < cy && k.y1 > cy + 0.01 && k.r0.equals(new Quaternionf(), 1e-4f)) {
-                Material mat = k.d.getBlock().getMaterial();
-                Vector3f sDol = new Vector3f(k.s0.x, cy - k.y0, k.s0.z);
-                k.d.setTransformation(new org.bukkit.util.Transformation(k.t0, k.r0, sDol, new Quaternionf()));
-                c.klocki.remove(k);
-                c.klocki.add(new ZRoslina.Klocek(k.d, k.t0, k.r0, sDol, k.y0, cy));
-                double lx = -(k.t0.x + k.s0.x / 2), lz = k.t0.z + k.s0.z / 2;
-                nowe.add(s.r.klocek(c, mat, lx, cy, lz, k.s0.x, k.y1 - cy, k.s0.z, null));
-            }
-        }
-    }
-
     private void zerwijKwiatyDziurawca(Sesja s, ZRoslina.Czesc c) {
         if (c.b("bezKwiatow")) { plugin.pasek(s.p, "§7Kwiatów już tu nie ma."); return; }
-        double fs = c.d("h") - 0.2;
-        c.klocki.removeIf(k -> { if (k.y0 >= fs - 0.01 && (k.s0.y < 0.05)) { k.d.remove(); return true; } return false; });
+        c.klocki.removeIf(kl -> { if (kl.seg == 3) { kl.d.remove(); return true; } return false; });
         c.cechy.put("bezKwiatow", true);
         dzwiek(s, Sound.BLOCK_AZALEA_LEAVES_BREAK, 0.6f, 1.6f);
         if (c.s("faza").equals("kw") && !c.b("chory")) { daj(s, "PROF_MEDICINAL_HERB", 1, 0.4); plugin.pasek(s.p, "§eZrywasz same kwiaty. Mało ziela."); }
@@ -653,47 +623,36 @@ final class Zielarz implements Listener {
         int boczne = 0;
         for (int i = 0; i < 4; i++) { s.boczne[i] = rnd.nextDouble() < 0.45; if (s.boczne[i]) boczne++; }
         if (boczne == 0) s.boczne[rnd.nextInt(4)] = true;
-        // gleba: 4 strony (0 przod, 1 prawo, 2 tyl, 3 lewo)
-        double[][] pola = {{-0.42, -0.42, 0.42, -0.12}, {0.12, -0.12, 0.42, 0.12}, {-0.42, 0.12, 0.42, 0.42}, {-0.42, -0.12, -0.12, 0.12}};
+        // ziemia: 4 placki lezace plasko wokol nasady (0 przod, 1 prawo, 2 tyl, 3 lewo)
+        double[][] pola = {{-0.45, -0.5, 0.45, -0.14}, {0.14, -0.14, 0.5, 0.14}, {-0.45, 0.14, 0.45, 0.5}, {-0.5, -0.14, -0.14, 0.14}};
+        double[] sx = {0, 0.3, 0, -0.3}, sz = {-0.3, 0, 0.3, 0};
         for (int i = 0; i < 4; i++) {
             double[] b = pola[i];
             ZRoslina.Czesc g = r.czesc("gleba", i, 0, 0, 0);
             g.box = new BoundingBox(b[0], 0, b[1], b[2], 0.07, b[3]);
-            r.klocek(g, Material.ROOTED_DIRT, (b[0] + b[2]) / 2, 0, (b[1] + b[3]) / 2, b[2] - b[0], 0.03, b[3] - b[1], null);
-            if (s.boczne[i] && rnd.nextDouble() < 0.55) {
-                double[] dx = {0, 0.2, 0, -0.2}, dz = {-0.22, 0, 0.22, 0};
-                r.klocek(g, Material.STRIPPED_BIRCH_WOOD, dx[i] + (rnd.nextDouble() - 0.5) * 0.08, 0.02, dz[i] + (rnd.nextDouble() - 0.5) * 0.08,
-                        0.035, 0.03, 0.09, ZRoslina.obrotY(i * 90 + rnd.nextDouble() * 40 - 20));
-            }
+            r.kartaSrodek(g, "zielarz_k_kozlek_gleba", sx[i], 0.012, sz[i], 0.5, ZRoslina.obrotY(i * 90 + rnd.nextDouble() * 20).mul(ZRoslina.obrotX(-90)));
+            if (s.boczne[i] && rnd.nextDouble() < 0.6)   // bielejaca koncowka korzonka zdradza, gdzie biegnie
+                r.klocek(g, Material.STRIPPED_BIRCH_WOOD, sx[i] * 0.8 + (rnd.nextDouble() - 0.5) * 0.08, 0.015, sz[i] * 0.8 + (rnd.nextDouble() - 0.5) * 0.08,
+                        0.04, 0.03, 0.1, ZRoslina.obrotY(i * 90 + rnd.nextDouble() * 40 - 20));
         }
         ZRoslina.Czesc roz = r.czesc("rozeta", 0, 0, 0, 0);
-        roz.box = new BoundingBox(-0.17, 0, -0.17, 0.17, 0.1, 0.17);
-        for (int k = 0; k < 7; k++) {
-            double a = Math.toRadians(k * 360.0 / 7 + rnd.nextDouble() * 20);
-            double len = 0.34 + rnd.nextDouble() * 0.08;
-            Quaternionf q = ZRoslina.obrotY(-Math.toDegrees(a)).mul(ZRoslina.obrotZ(-18));
-            r.klocek(roz, k % 2 == 0 ? Material.OAK_LEAVES : Material.AZALEA_LEAVES, -Math.cos(a) * len / 2, 0.03, Math.sin(a) * len / 2,
-                    len, 0.014, 0.1, q);
+        roz.box = new BoundingBox(-0.2, 0, -0.2, 0.2, 0.12, 0.2);
+        for (int k = 0; k < 7; k++) {   // pierzaste liscie rozety: karta lezaca, nasada w srodku
+            double a = k * 360.0 / 7 + rnd.nextDouble() * 20, len = 0.5 + rnd.nextDouble() * 0.1, ar = Math.toRadians(a);
+            Quaternionf q = ZRoslina.obrotY(a).mul(ZRoslina.obrotX(-72));
+            r.kartaSrodek(roz, "zielarz_k_kozlek_lisc", -Math.cos(ar) * len * 0.5, 0.05, -Math.sin(ar) * len * 0.5, len, q);
         }
         int lodygi = 1 + rnd.nextInt(2);
         for (int i = 0; i < lodygi; i++) {
-            double lx = (rnd.nextDouble() - 0.5) * 0.12, lz = (rnd.nextDouble() - 0.5) * 0.12;
-            double h = 0.85 + rnd.nextDouble() * 0.4;
-            r.klocek(roz, Material.MOSS_BLOCK, lx, 0, lz, 0.03, h, 0.03, null);
-            for (int j = 0; j < 9; j++) {
-                double a = rnd.nextDouble() * Math.PI * 2, rr = rnd.nextDouble() * 0.09;
-                r.klocek(roz, j % 3 == 0 ? Material.WHITE_CONCRETE : Material.PINK_CONCRETE, lx + Math.cos(a) * rr,
-                        h - 0.02 + (0.09 - rr) * 0.5, lz + Math.sin(a) * rr, 0.04, 0.03, 0.04, null);
-            }
+            double lx = (rnd.nextDouble() - 0.5) * 0.12, lz = (rnd.nextDouble() - 0.5) * 0.12, seg = 0.42 + rnd.nextDouble() * 0.08;
+            double ob = rnd.nextDouble() * 90;
+            r.karta(roz, "zielarz_k_kozlek_lodyga", lx, 0, lz, seg, ZRoslina.obrotY(ob));
+            r.karta(roz, "zielarz_k_kozlek_lodyga", lx, seg, lz, seg, ZRoslina.obrotY(ob + 40));
+            r.karta(roz, "zielarz_k_kozlek_baldach", lx, seg * 2 - 0.12, lz, seg * 1.15, ZRoslina.obrotY(ob + 20));
         }
-        // korzen pod ziemia (schowany w gruncie, wychodzi przy ciagnieciu)
-        r.klocek(roz, Material.STRIPPED_BIRCH_WOOD, 0, -0.55, 0, 0.07, 0.56, 0.07, null);
-        double[] dx = {0, 1, 0, -1}, dz = {-1, 0, 1, 0};
-        for (int i = 0; i < 4; i++) {
-            if (!s.boczne[i]) continue;
-            double y = -0.2 - rnd.nextDouble() * 0.2;
-            r.klocek(roz, Material.STRIPPED_BIRCH_WOOD, dx[i] * 0.15, y, dz[i] * 0.15, dx[i] != 0 ? 0.3 : 0.03, 0.03, dz[i] != 0 ? 0.3 : 0.03, null);
-        }
+        // korzen pod ziemia (dwie skrzyzowane karty), wychodzi przy ciagnieciu
+        r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(20));
+        r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(110));
     }
 
     private int nieruszoneBoczne(Sesja s) {
@@ -708,10 +667,8 @@ final class Zielarz implements Listener {
         if (s.postep > 0.98) return;
         s.poluzowane[i] = true;
         s.zajetyDo = s.t + 8;
-        for (ZRoslina.Klocek k : g.klocki) if (k.d.getBlock().getMaterial() == Material.ROOTED_DIRT) {
-            k.d.setBlock(Material.COARSE_DIRT.createBlockData());
-            ZRoslina.animuj(k.d, new org.bukkit.util.Transformation(new Vector3f(k.t0).add(0, -0.012f, 0), k.r0, k.s0, new Quaternionf()), 4);
-        }
+        for (ZRoslina.Klocek k : g.klocki) if (k.d instanceof org.bukkit.entity.ItemDisplay id)
+            id.setItemStack(ZRoslina.przedmiot("zielarz_k_kozlek_gleba_rozkopana"));
         Location l = s.r.swiat((g.box.getMinX() + g.box.getMaxX()) / 2, 0.05, (g.box.getMinZ() + g.box.getMaxZ()) / 2);
         s.p.spawnParticle(Particle.BLOCK, l, 18, 0.12, 0.04, 0.12, Material.ROOTED_DIRT.createBlockData());
         dzwiek(s, Sound.ITEM_SHOVEL_FLATTEN, 0.9f, 0.8f);
@@ -780,71 +737,29 @@ final class Zielarz implements Listener {
         Random rnd = s.rnd;
         ZRoslina r = s.r;
         boolean kwitnie = rnd.nextDouble() < (czosnek ? 0.5 : 0.6);
-        // czosnek: wiele pojedynczych lisci na ogonkach; konwalia: kilka pedow, kazdy z 2 lisci z jednej pochwy
-        int pedy = czosnek ? 6 + rnd.nextInt(4) : 3 + rnd.nextInt(2);
-        int nr = 0;
-        for (int i = 0; i < pedy; i++) {
-            double a = i * 360.0 / pedy + rnd.nextDouble() * 25;
-            double ar = Math.toRadians(a);
-            double rp = czosnek ? 0.04 + rnd.nextDouble() * 0.12 : 0.08 + rnd.nextDouble() * 0.12;
-            double px = Math.sin(ar) * rp, pz = Math.cos(ar) * rp;      // podstawa pedu (uklad encji: sin/cos)
-            int liscie = czosnek ? 1 : 2;
-            if (!czosnek) {
-                ZRoslina.Czesc pochwa = r.czesc("pochwa", i, 0, 0, 0);
-                r.klocek(pochwa, Material.MOSS_BLOCK, px, 0, pz, 0.05, 0.1, 0.05, null);
-            }
-            for (int j = 0; j < liscie; j++) {
-                double la = a + (czosnek ? 0 : (j == 0 ? -25 : 25)) + rnd.nextDouble() * 10;
-                double lr = Math.toRadians(la);
-                double tilt = czosnek ? 38 + rnd.nextDouble() * 14 : 22 + rnd.nextDouble() * 12;
-                double len = czosnek ? 0.36 + rnd.nextDouble() * 0.08 : 0.42 + rnd.nextDouble() * 0.08;
-                double w = czosnek ? 0.13 : 0.17, ogonek = czosnek ? 0.14 : 0.05;
-                boolean stary = rnd.nextDouble() < 0.3;
-                ZRoslina.Czesc l = r.czesc("lisc", nr++, 0, 0, 0);
-                l.cechy.put("stary", stary); l.cechy.put("kwitnie", kwitnie);
-                Material mat = stary ? Material.MOSS_BLOCK : Material.OAK_LEAVES;
-                double[] d = {Math.sin(lr), Math.cos(lr)};
-                Quaternionf q1 = ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt));
-                double bx = px, bz = pz, by = 0;
-                if (czosnek) {
-                    r.klocek(l, Material.MOSS_BLOCK, bx, 0, bz, 0.02, ogonek, 0.02, ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt * 0.5)));
-                    double tr0 = Math.toRadians(tilt * 0.5);
-                    bx += d[0] * Math.sin(tr0) * ogonek; bz += d[1] * Math.sin(tr0) * ogonek; by += Math.cos(tr0) * ogonek;
-                }
-                double l1 = len * 0.55, l2 = len * 0.45, tr1 = Math.toRadians(tilt), tr2 = Math.toRadians(tilt + 28);
-                r.klocek(l, mat, bx, by, bz, w, l1, 0.014, q1);
-                double cx = bx + d[0] * Math.sin(tr1) * l1, cz = bz + d[1] * Math.sin(tr1) * l1, cy = by + Math.cos(tr1) * l1;
-                r.klocek(l, mat, cx, cy, cz, w * 0.85, l2, 0.014, ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt + 28)));
-                double ex = cx + d[0] * Math.sin(tr2) * l2, ez = cz + d[1] * Math.sin(tr2) * l2, ey = cy + Math.cos(tr2) * l2;
-                if (stary) r.klocek(l, Material.YELLOW_TERRACOTTA, ex - d[0] * 0.03, ey - 0.04, ez - d[1] * 0.03, w * 0.55, 0.05, 0.015,
-                        ZRoslina.obrotY(-la).mul(ZRoslina.obrotX(tilt + 28)));
-                double mnx = Math.min(Math.min(bx, cx), ex), mxx = Math.max(Math.max(bx, cx), ex);
-                double mnz = Math.min(Math.min(bz, cz), ez), mxz = Math.max(Math.max(bz, cz), ez);
-                l.box = new BoundingBox(mnx - 0.05, Math.max(0, by), mnz - 0.05, mxx + 0.05, Math.max(cy, ey) + 0.04, mxz + 0.05);
-            }
+        String lisc = czosnek ? "czosnek_lisc" : "konwalia_lisc";
+        int n = czosnek ? 6 + rnd.nextInt(3) : 5 + rnd.nextInt(3);
+        double start = rnd.nextDouble() * 360;
+        for (int i = 0; i < n; i++) {
+            // czosnek: liscie rozchodza sie dookola, mocno pochylone; konwalia: kepa wyprostowanych, z jednej strony
+            double a = czosnek ? start + i * 360.0 / n + rnd.nextDouble() * 20 : start + (i - n / 2.0) * 22 + rnd.nextDouble() * 12;
+            double tilt = czosnek ? 34 + rnd.nextDouble() * 18 : 12 + rnd.nextDouble() * 14;
+            double len = czosnek ? 0.62 + rnd.nextDouble() * 0.12 : 0.7 + rnd.nextDouble() * 0.12;
+            double ar = Math.toRadians(a), tr = Math.toRadians(tilt), rp = czosnek ? 0.05 : 0.04;
+            double bx = Math.sin(ar) * rp, bz = Math.cos(ar) * rp;
+            boolean stary = rnd.nextDouble() < 0.3;
+            ZRoslina.Czesc l = r.czesc("lisc", i, 0, 0, 0);
+            l.cechy.put("stary", stary); l.cechy.put("kwitnie", kwitnie);
+            r.karta(l, "zielarz_k_" + lisc + (stary ? "_stary" : ""), bx, 0, bz, len, ZRoslina.obrotY(-a).mul(ZRoslina.obrotX(tilt)));
+            double ex = bx + Math.sin(ar) * Math.sin(tr) * len, ez = bz + Math.cos(ar) * Math.sin(tr) * len, ey = Math.cos(tr) * len;
+            double cx = (bx + ex) / 2, cz = (bz + ez) / 2;
+            l.box = new BoundingBox(Math.min(bx, ex) - 0.07, len * 0.25, Math.min(bz, ez) - 0.07, Math.max(bx, ex) + 0.07, ey, Math.max(bz, ez) + 0.07);
         }
         if (kwitnie) {
             ZRoslina.Czesc k = r.czesc("kwiat", 0, 0, 0, 0);
-            if (czosnek) {
-                double h = 0.5 + rnd.nextDouble() * 0.1;
-                r.klocek(k, Material.MOSS_BLOCK, 0, 0, 0, 0.02, h, 0.02, null);
-                for (int j = 0; j < 12; j++) {
-                    double a = rnd.nextDouble() * Math.PI * 2, el = rnd.nextDouble() * Math.PI / 2;
-                    r.klocek(k, Material.WHITE_CONCRETE, Math.cos(a) * Math.cos(el) * 0.07, h + Math.sin(el) * 0.06, Math.sin(a) * Math.cos(el) * 0.07,
-                            0.035, 0.012, 0.035, ZRoslina.obrotY(rnd.nextDouble() * 90));
-                }
-                k.box = new BoundingBox(-0.09, h - 0.04, -0.09, 0.09, h + 0.09, 0.09);
-            } else {
-                double a = rnd.nextDouble() * 360, ar = Math.toRadians(a), h = 0.34;
-                r.klocek(k, Material.MOSS_BLOCK, 0, 0, 0, 0.018, h, 0.018, null);
-                for (int j = 0; j < 6; j++) {
-                    double dd = 0.03 + j * 0.035;
-                    r.klocek(k, Material.WHITE_CONCRETE, Math.sin(ar) * dd, h - 0.07 - j * 0.035, Math.cos(ar) * dd, 0.04, 0.04, 0.04, null);
-                    r.klocek(k, Material.MOSS_BLOCK, Math.sin(ar) * dd, h - 0.03 - j * 0.035, Math.cos(ar) * dd, 0.012, 0.03, 0.012, null);
-                }
-                double bx = Math.sin(ar) * 0.12, bz = Math.cos(ar) * 0.12;
-                k.box = new BoundingBox(bx - 0.1, h - 0.3, bz - 0.1, bx + 0.1, h + 0.02, bz + 0.1);
-            }
+            double h = czosnek ? 0.78 : 0.62;
+            r.karta(k, "zielarz_k_" + (czosnek ? "czosnek_kwiat" : "konwalia_kwiat"), 0, 0, 0, h, ZRoslina.obrotY(rnd.nextDouble() * 90));
+            k.box = new BoundingBox(-0.12, h * 0.6, -0.12, 0.12, h, 0.12);
         }
     }
 
@@ -976,7 +891,6 @@ final class Zielarz implements Listener {
         poKoncu.put(s.p.getUniqueId(), System.currentTimeMillis() + 1200);
         int zostalo = 0, wszystkich = 0;
         for (ZRoslina.Czesc c : s.r.czesci) if (c.typ.equals("ped") || c.typ.equals("lisc")) { wszystkich++; if (!c.zabrana) zostalo++; }
-        s.r.usun();
         Player p = s.p;
         if (p.isOnline()) zamroz(p, false);
         if (p.isOnline()) p.updateInventory();
@@ -988,8 +902,16 @@ final class Zielarz implements Listener {
         else if (cos && wszystkich > 0 && zostalo == 0) { odrost = 10 * 60; odrostOpis = "Ogołocona do zera: odrośnie za 10 min."; }
         else if (cos) { odrost = 2 * 60; odrostOpis = "Zostawiłeś część (" + zostalo + "): odrośnie za 2 min."; }
         if (odrost > 0) s.stan.odrostDo = System.currentTimeMillis() + odrost * 1000;
+        boolean poZbiorze = odrost > 0;
+        if (p.isOnline() && p.getWorld() == s.blok.getWorld()) {
+            float k0 = SKALA_SWIATA.getOrDefault(s.gatunek, 0.7f);
+            s.r.skala(k0, 8);   // oddalenie: zostaje kepa w swiecie
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                s.r.usun();
+                if (p.isOnline() && p.getWorld() == s.blok.getWorld()) p.sendBlockChange(s.blok.getLocation(), wygladBloku(s.gatunek, poZbiorze, s.blok));
+            }, 9L);
+        } else s.r.usun();
         if (p.isOnline()) {
-            p.sendBlockChange(s.blok.getLocation(), odrost > 0 ? Material.SHORT_GRASS.createBlockData() : s.blok.getBlockData());
             if (odrost > 0) {
                 long ms = odrost * 20;
                 Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline() && p.getWorld() == s.blok.getWorld()) p.sendBlockChange(s.blok.getLocation(), s.blok.getBlockData()); }, ms);
