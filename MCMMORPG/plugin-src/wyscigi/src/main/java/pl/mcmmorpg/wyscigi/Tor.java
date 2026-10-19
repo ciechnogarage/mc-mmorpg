@@ -170,7 +170,7 @@ final class Tor {
       } else if (d <= sciana) {
         gora.setType(Material.GRASS_BLOCK, false);
         if (r.nextInt(6) == 0) w.getBlockAt(x, y, z).setType(KWIATY[r.nextInt(KWIATY.length)], false);
-      } else if (d <= sciana + 1.0) {
+      } else if (d <= sciana + 1.5) {   // pas 1,5 bloku: płot ciągły, bez ukośnych szpar (wilk ma 0,6)
         gora.setType(Material.GRASS_BLOCK, false);
         w.getBlockAt(x, y, z).setType(Material.OAK_FENCE, false);
       } else {

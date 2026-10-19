@@ -59,22 +59,25 @@ tory:
     # Linia środkowa (x, z), pętla zamknięta, kolejność = kierunek jazdy. Start/meta w pierwszym punkcie.
     punkty:
       - [0, 0]
-      - [30, 0]
-      - [60, 0]
-      - [84, 9]
-      - [96, 32]
-      - [88, 57]
-      - [62, 68]
-      - [42, 61]
-      - [26, 73]
-      - [6, 66]
-      - [-18, 72]
-      - [-38, 58]
-      - [-42, 33]
-      - [-32, 12]
-      - [-16, 2]
+      - [36, 0]
+      - [68, 2]
+      - [90, 13]
+      - [99, 35]
+      - [91, 57]
+      - [70, 67]
+      - [50, 62]
+      - [36, 47]
+      - [16, 42]
+      - [0, 52]
+      - [-6, 72]
+      - [-24, 86]
+      - [-46, 80]
+      - [-54, 58]
+      - [-47, 34]
+      - [-35, 15]
+      - [-19, 3]
     # Pola przyspieszenia: odległość od startu wzdłuż toru (bloki) i przesunięcie w bok (+ = prawa).
     przyspieszenia:
-      - {s: 40, bok: 0}
-      - {s: 205, bok: -2.5}
-      - {s: 300, bok: 2.5}
+      - {s: 40, bok: 0}       # prosta startowa
+      - {s: 228, bok: 2}      # wyjście z esa, wewnętrzna linia
+      - {s: 322, bok: 0}      # wyjście z nawrotu

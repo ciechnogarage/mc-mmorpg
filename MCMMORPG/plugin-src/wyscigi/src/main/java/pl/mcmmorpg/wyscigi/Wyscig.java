@@ -150,6 +150,7 @@ final class Wyscig {
       if (p == null || k.mob == null || !k.mob.isValid()) continue;
       if (k.naMecie()) continue;
       sprawdzWyjscie(k, p);
+      if (!kierowcy.contains(k)) continue;
       Location l = k.mob.getLocation();
       Tor.Rzut r = tor.rzut(l.getX(), l.getZ(), k.indeks, 40);
       double sNorm = mod(r.s(), tor.dlugosc), stary = mod(k.postep, tor.dlugosc);

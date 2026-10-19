@@ -85,6 +85,7 @@ final class Kierowca {
       mc.setVelocity(0, vy, 0);
       v = 0; poslizg = false; ladowanie = 0;
       shiftTrzymany = shift;
+      if (shift && !naMecie()) shiftPostoj++; else shiftPostoj = 0;   // wyjście działa też w poczekalni i odliczaniu
       return;
     }
 
@@ -129,11 +130,12 @@ final class Kierowca {
 
     // --- gaz / hamulec
     if (teraz < karaDo) front = 0;
-    if (front > 0.1) v += gatunek.przyspieszenie() * (v < 0 ? 2.5 : 1) * (pozaTorem ? 0.7 : 1);
+    // Gaz rozpędza tylko do vmax; nadwyżkę po turbo zdejmuje łagodnie linia niżej (inaczej gaz > zwalnianie = bez limitu).
+    if (front > 0.1) { if (v < vmax) v = Math.min(vmax, v + gatunek.przyspieszenie() * (v < 0 ? 2.5 : 1) * (pozaTorem ? 0.7 : 1)); }
     else if (front < -0.1) v -= v > 0.01 ? u.hamowanie : gatunek.przyspieszenie() * 0.6;
     else v -= Math.signum(v) * Math.min(Math.abs(v), u.wybieg);
     if (v < -u.wsteczny) v = -u.wsteczny;
-    if (v > vmax) v = Math.max(vmax, v - 0.03);                         // po turbo zwalnia płynnie
+    if (v > vmax) v = Math.max(vmax, v - 0.02);                         // po turbo / wjeździe na pobocze zwalnia płynnie
     if (turbo > 0 && v < vmax) v = Math.min(vmax, v + 0.06);
 
     // --- wektor ruchu (w poślizgu ruch odchylony na zewnątrz zakrętu)
