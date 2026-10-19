@@ -1,6 +1,41 @@
 {
  "model": {
-  "type": "minecraft:model",
-  "model": "bron:item/s125/bamboo"
+  "type": "minecraft:condition",
+  "property": "minecraft:view_entity",
+  "on_true": {
+   "type": "minecraft:condition",
+   "property": "minecraft:keybind_down",
+   "keybind": "key.left",
+   "on_true": {
+    "type": "minecraft:model",
+    "model": "bron:item/s125kl/bamboo"
+   },
+   "on_false": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.right",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s125kp/bamboo"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.back",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s125kt/bamboo"
+     },
+     "on_false": {
+      "type": "minecraft:model",
+      "model": "bron:item/s125/bamboo"
+     }
+    }
+   }
+  },
+  "on_false": {
+   "type": "minecraft:model",
+   "model": "bron:item/s125/bamboo"
+  }
  }
 }

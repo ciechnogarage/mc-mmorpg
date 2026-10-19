@@ -35,8 +35,43 @@
    }
   },
   "on_false": {
-   "type": "minecraft:model",
-   "model": "bron:item/s130/diamond_axe"
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s130kl/diamond_axe"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130kp/diamond_axe"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s130kt/diamond_axe"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s130/diamond_axe"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s130/diamond_axe"
+   }
   }
  }
 }

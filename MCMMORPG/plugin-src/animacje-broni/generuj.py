@@ -66,6 +66,16 @@ TYPY = {
     'SHIELD':          {'zamach': 'whack', 'czas': 7,  'rodzaj': 'obuchowe'},
     'GAUNTLET':        {'zamach': 'stab',  'czas': 4,  'rodzaj': 'obuchowe'},
 }
+# Prog naladowania lekkiego ciosu (minimum_attack_charge): klik przed progiem nie wchodzi i nie jest liczony (bez smugi i
+# kosztu) - lekki cios nie jest spamem, rytm wyznacza bron (19.10 wlasciciel: "ma pasowac do broni"). Lekka bron pozwala na
+# szybkie serie, dwureczna wymaga niemal pelnego zamachu. Przy szybkosci ataku: sztylet ~0,25 s, miecz ~0,45 s, kosa ~0,85 s.
+PROG_NALADOWANIA = {'DAGGER': 0.5, 'GAUNTLET': 0.5,
+                    'SWORD': 0.7, 'LONG_SWORD': 0.7, 'KATANA': 0.7, 'THRUSTING_SWORD': 0.7, 'SHIELD': 0.7,
+                    'AXE': 0.75, 'HAMMER': 0.75, 'SIERP': 0.75,
+                    'GREATSWORD': 0.85, 'GREATAXE': 0.85, 'KOSA': 0.85, 'HALBERD': 0.85, 'GREATSTAFF': 0.85,
+                    'GREATHAMMER': 0.9}
+for typ, prog in PROG_NALADOWANIA.items():
+    TYPY[typ]['ladowanie'] = prog
 # Kierunkowe ciosy i rytm sa cechami typu, a nie domyslnym zachowaniem kazdej broni.
 MIECZE = ('SWORD', 'LONG_SWORD', 'KATANA', 'THRUSTING_SWORD')
 for typ in MIECZE:
@@ -105,7 +115,7 @@ for typ in ('SHIELD', 'GAUNTLET', 'WHIP'):
     TYPY[typ]['okno_rytmu'] = 8
 
 MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20,
-         'odnowienie': 20, 'zmeczenie': 60, 'bazowy_mnoznik': 0.8,
+         'odnowienie': 20, 'zmeczenie': 60, 'bazowy_mnoznik': 1.0,
          'szerokosc_celu': 0.65, 'szerokosc_luku': 1.45,
          'krok_szturchniecia': 0.18, 'dystans_kroku': 1.5, 'krok_wypadu': 0.4, 'krok_biegu': 0.65,
          'krok_boczny': 0.32, 'odskok': 0.35, 'odrzut_szturchniecia': 0.45,
@@ -116,13 +126,18 @@ MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20
 # przestrzen -> 2,0; z rozbiegu/z powietrza x1,5 + odrzut/zachwianie, a bieg/skok sam meczy -> 3,0.
 # 19.10: wyglad wariantu NIE przez komponenty przedmiotu - kazda podmiana w dloni = klient chowa i wyjmuje bron
 # (poza na WASD migala przy kazdym kroku, zmierzone klientem QA). Wariant wybiera klawisz trzymany przy puszczeniu PPM.
+# 19.10 rachunek (wlasciciel: "musi miec sens"): lekki = 1 L staminy za ~1,13 obrazen (seria 1+1+1,4), cykl = pelne naladowanie.
+# Mocny: ladowanie ~ pelny cykl lekkiego + puszczenie, spowolnienie 45% i brak gardy w tym czasie. Stary mocny dawal 0,40-0,56
+# obrazen na L (lekki 1,13) - pulapka. Cel: mocny ~1,0 obr/L (troche mniej niz lekki, bo dochodzi efekt wariantu) i ~1,5x
+# obrazen na sekunde (nagroda za ryzyko ladowania). Wariant = efekt, nie same liczby: znad glowy czyste obrazenia + zachwianie,
+# wypad zasieg + linia, boczny luk (kazdy cel w luku ~1,0x), odepchniecie przestrzen, rozbieg/powietrze najmocniejsze, drozsze.
 CIEZKIE_WARIANTY = {
-    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.5},
-    'znad_glowy': {'mnoznik': 1.4, 'stamina': 2.5},
-    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5},
-    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1, 'stamina': 2.0},
-    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1, 'stamina': 3.0},
-    'z_powietrza': {'mnoznik': 1.5, 'stamina': 3.0},
+    'wypad': {'mnoznik': 2.0, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.0},
+    'znad_glowy': {'mnoznik': 2.2, 'stamina': 2.0},
+    'zamach_boczny': {'mnoznik': 1.4, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5},
+    'odepchniecie': {'mnoznik': 1.2, 'sila': 1.1, 'stamina': 1.5},
+    'z_rozbiegu': {'mnoznik': 2.2, 'sila': 1.1, 'stamina': 3.0},
+    'z_powietrza': {'mnoznik': 2.2, 'stamina': 2.5},
 }
 # Model staminy w jednostkach L = lekki cios mieczem. zestaw = sekundy ciaglej walki na pelnym pasku (cel
 # projektowy do wyboru wlasciciela z zestawy); pula = zestaw * ciosy_na_sekunde L; regeneracja L/s po
@@ -130,7 +145,7 @@ CIEZKIE_WARIANTY = {
 # blok_prog_hp maks. zdrowia), tarcza x0,5; parowanie oddaje parowanie_zwrot L. Zmeczony bije za
 # zmeczenie_obrazenia. wspolczynnik broni = ciosy_na_sekunde / szybkosc ataku, przyciety do min/max.
 STAMINA = {'wlaczona': 'true', 'zestaw': 10, 'zestawy': '[7, 10, 14]', 'ciosy_na_sekunde': 1.6,
-           'regeneracja': 1.6, 'oddech_ticki': 20, 'zmeczenie_obrazenia': 0.6, 'szturchniecie': 1.0,
+           'regeneracja': 1.6, 'oddech_ticki': 20, 'zmeczenie_obrazenia': 0.6, 'szturchniecie': 0.5,
            'blok_min': 0.5, 'blok_max': 3.0, 'blok_prog_hp': 0.25, 'tarcza': 0.5, 'parowanie_zwrot': 1.0,
            'peknieta_garda_ticki': 40, 'wspolczynnik_min': 0.4, 'wspolczynnik_max': 2.5}
 KOMBO = {'mnoznik_1': 1.2, 'mnoznik_2': 1.4}
@@ -402,9 +417,69 @@ def main():
     os.makedirs(a.out, exist_ok=True)
     open(os.path.join(a.out, 'config.yml'), 'w').write('\n'.join(linie) + '\n')
 
+    n += kierunki_w_pierwszej_osobie(baza)
     print('klient %s: %d modeli trzymania (%d materialow), %d typow' % (wersja, n, len(materialy), len(TYPY)))
     for m, pow_ in sorted(pominiete.items()):
         print('  pominiety %s: %s' % (m, pow_))
+
+
+# Kierunek ciosu widoczny w pierwszej osobie (19.10 wlasciciel: "tak sprobuj"): trzymany A/D/S przechyla bron do ciecia
+# z tej strony / cofa ja. Klient sam wybiera model (keybind_down), tylko dla wlasnej kamery (view_entity) - bez podmiany
+# przedmiotu, wiec bez chowania broni. W = bez zmiany (gracz trzyma go prawie stale, idac na wroga). Inni widza spoczynek.
+# Przesuniecia wzgledem modelu spoczynku dobrane na zrzutach klienta QA (qa/kierunki-fp.sh).
+KIERUNKI_FP = {
+    'l': ('key.left', {'rot': [0, 0, 40], 'trans': [-2.0, 0.6, 0.0]}),
+    'p': ('key.right', {'rot': [0, 0, -12], 'trans': [1.2, 1.0, 0.0]}),
+    't': ('key.back', {'rot': [-25, 0, 25], 'trans': [-1.6, 1.6, 1.0]}),
+}
+
+
+def kierunki_w_pierwszej_osobie(baza):
+    """Dla kazdego modelu spoczynku <skala>/<material> robi warianty <skala>k<l|p|t> i owija jego wezly w definicjach."""
+    mdl_dir = os.path.join(baza, 'models', 'item')
+    n = 0
+    spoczynek = {}
+    for sc in sorted(os.listdir(mdl_dir)):
+        if not re.fullmatch(r's\d{3}', sc):
+            continue
+        for plik in sorted(os.listdir(os.path.join(mdl_dir, sc))):
+            mdl = json.load(open(os.path.join(mdl_dir, sc, plik)))
+            for k, (_, d) in KIERUNKI_FP.items():
+                disp = json.loads(json.dumps(mdl['display']))
+                for ctx in ('firstperson_righthand', 'firstperson_lefthand'):
+                    e = disp[ctx]
+                    znak = -1 if 'lefthand' in ctx else 1
+                    e['rotation'] = [round(e['rotation'][0] + d['rot'][0], 2), round(e['rotation'][1] + znak * d['rot'][1], 2),
+                                     round(e['rotation'][2] + znak * d['rot'][2], 2)]
+                    e['translation'] = [round(e['translation'][0] + znak * d['trans'][0], 3),
+                                        round(e['translation'][1] + d['trans'][1], 3), round(e['translation'][2] + d['trans'][2], 3)]
+                cel = os.path.join(mdl_dir, sc + 'k' + k, plik)
+                os.makedirs(os.path.dirname(cel), exist_ok=True)
+                json.dump({'parent': mdl['parent'], 'display': disp}, open(cel, 'w'), indent=1)
+                n += 1
+            spoczynek['%s:item/%s/%s' % (PRZESTRZEN, sc, plik[:-5])] = (sc, plik[:-5])
+
+    def owin(wezel):
+        if isinstance(wezel, dict):
+            if wezel.get('type') == 'minecraft:model' and wezel.get('model') in spoczynek:
+                sc, nazwa = spoczynek[wezel['model']]
+                drzewo = wezel
+                for k, (klawisz, _) in reversed(list(KIERUNKI_FP.items())):
+                    drzewo = {'type': 'minecraft:condition', 'property': 'minecraft:keybind_down', 'keybind': klawisz,
+                              'on_true': {'type': 'minecraft:model', 'model': '%s:item/%sk%s/%s' % (PRZESTRZEN, sc, k, nazwa)},
+                              'on_false': drzewo}
+                return {'type': 'minecraft:condition', 'property': 'minecraft:view_entity', 'on_true': drzewo, 'on_false': wezel}
+            return {k: owin(v) for k, v in wezel.items()}
+        if isinstance(wezel, list):
+            return [owin(v) for v in wezel]
+        return wezel
+
+    it_dir = os.path.join(baza, 'items')
+    for sc in sorted(os.listdir(it_dir)):
+        for plik in sorted(os.listdir(os.path.join(it_dir, sc))):
+            pp = os.path.join(it_dir, sc, plik)
+            json.dump(owin(json.load(open(pp))), open(pp, 'w'), indent=1)
+    return n
 
 
 if __name__ == '__main__':

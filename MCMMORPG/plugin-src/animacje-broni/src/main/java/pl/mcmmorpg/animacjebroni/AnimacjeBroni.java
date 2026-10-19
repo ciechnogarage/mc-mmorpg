@@ -139,6 +139,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Set<UUID> sprintPrzyLadowaniu = new HashSet<>();
   /** Tick ostatniego machniecia - naladowanie lekkiego ciosu do kosztu staminy liczone niezaleznie od licznika serwera. */
   private final Map<UUID, Integer> ostatnieMachniecie = new HashMap<>();
+  /** Gracze kopiacy blok (LPM trzymany na bloku): klient macha w petli, to nie sa ciosy (19.10: 62 "ciosy" i pusty pasek w 2 s). */
+  private final Set<UUID> kopie = new HashSet<>();
   private final Map<UUID, Integer> tickProgramowegoZamachu = new HashMap<>(); // echo zamachu z API przychodzi pozniej
   private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
   private final Map<UUID, RytmStan> serie = new HashMap<>();
@@ -312,6 +314,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     programowyZamach.clear();
     sprintPrzyLadowaniu.clear();
     ostatnieMachniecie.clear();
+    kopie.clear();
     getLogger().info("Typy broni: " + typy.size() + ", materialy z modelami trzymania: " + modele.size());
   }
 
@@ -477,7 +480,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     tickProgramowegoZamachu.remove(id);
     sprintPrzyLadowaniu.remove(id);
     ostatnieMachniecie.remove(id);
+    kopie.remove(id);
   }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void kopanie(org.bukkit.event.block.BlockDamageEvent e) { kopie.add(e.getPlayer().getUniqueId()); }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void koniecKopania(org.bukkit.event.block.BlockDamageAbortEvent e) { kopie.remove(e.getPlayer().getUniqueId()); }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void wykopane(org.bukkit.event.block.BlockBreakEvent e) { kopie.remove(e.getPlayer().getUniqueId()); }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void slot(PlayerItemHeldEvent e) {
@@ -778,14 +791,28 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     ItemStack bron = p.getInventory().getItemInMainHand();
     Ustawienie smuga = ustawienie(bron);
     OstatniAtak ostatni = ostatniAtak.get(p.getUniqueId());
+    boolean trafilTeraz = ostatni != null && ostatni.tick() >= getServer().getCurrentTick() - 1;
+    if (smuga != null && !trafilTeraz) {
+      // machniecie przy kopaniu bloku to nie cios
+      if (kopie.contains(p.getUniqueId())) return;
+      // martwe klikniecie: przed progiem naladowania broni (minimum_attack_charge) cios nie wchodzi - bez smugi, swistu
+      // i kosztu; rytm broni wyznacza odstep od ostatniego liczonego machniecia
+      Integer poprzednie = ostatnieMachniecie.get(p.getUniqueId());
+      if (smuga.ladowanie() != null && poprzednie != null
+          && (double) (getServer().getCurrentTick() - poprzednie) / pelneNaladowanie(p) < smuga.ladowanie()) return;
+    }
     Rodzaj rodzajSmugi = ostatni != null && ostatni.tick() >= getServer().getCurrentTick() - 1
         ? ostatni.rodzaj() : smuga == null ? Rodzaj.BRAK
         : zapowiedzPchniecia(p, bron, smuga) ? smuga.atakPchniecie().rodzaj() : smuga.rodzaj();
     int ogniwo = ostatni != null && ostatni.tick() >= getServer().getCurrentTick() - 1
         ? ostatni.ogniwo() : zapowiedzOgniwo(p, bron);
+    // Kierunek lekkiego ciosu (19.10): A/D = ciecie z tej strony i krok w bok, S = ciecie z cofnieciem; W/brak = seria.
+    // Bez podmiany przedmiotu (zamach siedzi w komponencie broni) - kierunek widac w smudze i ruchu, obrazenia te same.
+    Input wejscie = p.getCurrentInput();
+    int bokKlawisza = wejscie.isLeft() == wejscie.isRight() ? 0 : wejscie.isLeft() ? -1 : 1;
     if (smuga != null && smuga.zamach() != null && smuga.rodzaj() != Rodzaj.BRAK)
-      smuga(p, rodzajSmugi, ogniwo == 2 ? -1 : ogniwo == 3 && rodzajSmugi == Rodzaj.KLUTE ? 0
-          : ogniwo == 3 ? 2 : 1);
+      smuga(p, rodzajSmugi, rodzajSmugi != Rodzaj.KLUTE && bokKlawisza != 0 ? -bokKlawisza
+          : ogniwo == 2 ? -1 : ogniwo == 3 && rodzajSmugi == Rodzaj.KLUTE ? 0 : ogniwo == 3 ? 2 : 1);
     if (smuga != null && smuga.ciezkie() != null) {
       Sound swist = smuga.drzewce() || smuga.rodzaj() == Rodzaj.KLUTE ? Sound.ITEM_TRIDENT_THROW
           : smuga.rodzaj() == Rodzaj.OBUCHOWE ? Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
@@ -797,10 +824,16 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     if (trafil && smuga != null && ogniwo >= 1 && ogniwo <= smuga.kroki().size()) {
       Vector kierunek = p.getLocation().getDirection().setY(0);
       if (kierunek.lengthSquared() > 1e-4) {
-        kierunek.normalize().multiply(smuga.kroki().get(ogniwo - 1));
-        if (ogniwo == 2 && !smuga.drzewce())
-          kierunek.add(new Vector(-kierunek.getZ(), 0, kierunek.getX())
-              .multiply(getConfig().getDouble("rytm.krok_boczny_mnoznik", 0.35)));
+        double krok = smuga.kroki().get(ogniwo - 1);
+        kierunek.normalize();
+        Vector prawo = new Vector(-kierunek.getZ(), 0, kierunek.getX());
+        if (bokKlawisza != 0) kierunek = prawo.multiply(bokKlawisza * Math.abs(krok));
+        else if (wejscie.isBackward()) kierunek.multiply(-Math.abs(krok));
+        else {
+          kierunek.multiply(krok);
+          if (ogniwo == 2 && !smuga.drzewce())
+            kierunek.add(prawo.multiply(krok * getConfig().getDouble("rytm.krok_boczny_mnoznik", 0.35)));
+        }
         p.setVelocity(p.getVelocity().add(bezWchodzeniaWCel(p, kierunek)));
       }
     }
@@ -810,11 +843,12 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         + " zamach=" + (rodzajSmugi == Rodzaj.KLUTE ? "STAB" : "WHACK"));
     // Kazde machniecie bronia to wysilek (takze pudlo), ale proporcjonalny do zamachu: spam niedoladowanych klikniec
     // (8 CPS) wyczerpywal pelny pasek w 2-3 s. Naladowanie z odstepu od poprzedniego machniecia (min. 0,25 kosztu).
-    if (smuga != null && wytrzymalosc != null && wytrzymalosc.wlaczona()) {
+    if (smuga != null) {
       int teraz = getServer().getCurrentTick();
       Integer poprzednie = ostatnieMachniecie.put(p.getUniqueId(), teraz);
       double zamachu = poprzednie == null ? 1 : Math.min(1, (double) (teraz - poprzednie) / pelneNaladowanie(p));
-      wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztLekkiego(p) * Math.max(0.25, zamachu));
+      if (wytrzymalosc != null && wytrzymalosc.wlaczona())
+        wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztLekkiego(p) * Math.max(0.25, zamachu));
     }
     ostatniAtak.remove(p.getUniqueId());
     Runnable nastepny = oczekujacyZamach.remove(p.getUniqueId());

@@ -35,8 +35,43 @@
    }
   },
   "on_false": {
-   "type": "minecraft:model",
-   "model": "bron:item/s100/golden_sword"
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s100kl/golden_sword"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s100kp/golden_sword"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s100kt/golden_sword"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s100/golden_sword"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s100/golden_sword"
+   }
   }
  }
 }

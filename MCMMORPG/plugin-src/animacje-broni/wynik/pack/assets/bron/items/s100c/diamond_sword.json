@@ -35,8 +35,43 @@
    }
   },
   "on_false": {
-   "type": "minecraft:model",
-   "model": "bron:item/s100/diamond_sword"
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s100kl/diamond_sword"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s100kp/diamond_sword"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s100kt/diamond_sword"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s100/diamond_sword"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s100/diamond_sword"
+   }
   }
  }
 }

@@ -74,14 +74,14 @@ scenariusz('stamina-' + TRYB, async ({ w, polacz, rcon }) => {
     w.sprawdz('regeneracja-tempo', blisko(tempo, 1.6 * s.L, 0.35 * 1.6 * s.L),
       `${tempo.toFixed(2)} pkt/s, oczekiwane ${(1.6 * s.L).toFixed(2)} (1,6 L/s) [${r1.toFixed(2)} -> ${r2.toFixed(2)}]`);
 
-    // mocny (PPM przytrzymany, bez kierunku = znad glowy): 2,5 x lekki
+    // mocny (PPM przytrzymany, bez kierunku = znad glowy): 2,0 x lekki (od 19.10)
     await trzymajMiecz();
     await ustaw(s.max); await sleep(1200);
     const m0 = (await stan()).st;
     bot.activateItem(); await sleep(800); bot.deactivateItem(); await sleep(400);
     const m1 = (await stan()).st;
-    w.sprawdz('mocny-2.5L', blisko(m0 - m1, 2.5 * s.lekki, 0.2),
-      `spadek ${(m0 - m1).toFixed(2)}, oczekiwany 2,5 x ${s.lekki} = ${(2.5 * s.lekki).toFixed(2)}`);
+    w.sprawdz('mocny-2.0L', blisko(m0 - m1, 2.0 * s.lekki, 0.2),
+      `spadek ${(m0 - m1).toFixed(2)}, oczekiwany 2,0 x ${s.lekki} = ${(2.0 * s.lekki).toFixed(2)} (znad glowy, 19.10)`);
 
     // zadyszka: pusty pasek = cios dalej wchodzi, ~60% obrazen
     await trzymajMiecz();

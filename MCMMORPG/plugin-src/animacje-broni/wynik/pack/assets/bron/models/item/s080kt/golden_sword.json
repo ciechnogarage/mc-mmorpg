@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/golden_sword",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    55
+   ],
+   "translation": [
+    0.0,
+    2.461,
+    0.771
+   ],
+   "scale": [
+    0.68,
+    0.68,
+    0.68
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -55
+   ],
+   "translation": [
+    -0.0,
+    2.461,
+    0.771
+   ],
+   "scale": [
+    0.68,
+    0.68,
+    0.68
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    -25,
+    -90,
+    50
+   ],
+   "translation": [
+    -0.47,
+    4.213,
+    1.916
+   ],
+   "scale": [
+    0.612,
+    0.612,
+    0.612
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    -25,
+    90,
+    -50
+   ],
+   "translation": [
+    2.73,
+    4.213,
+    1.916
+   ],
+   "scale": [
+    0.612,
+    0.612,
+    0.612
+   ]
+  }
+ }
+}

@@ -2,23 +2,24 @@
 # typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>
 przestrzen-modeli: bron
 debug: false
-mocny: {prog: 6, szturchniecie_mnoznik: 0.5, szturchniecie_odnowienie: 20, odnowienie: 20, zmeczenie: 60, bazowy_mnoznik: 0.8, szerokosc_celu: 0.65, szerokosc_luku: 1.45, krok_szturchniecia: 0.18, dystans_kroku: 1.5, krok_wypadu: 0.4, krok_biegu: 0.65, krok_boczny: 0.32, odskok: 0.35, odrzut_szturchniecia: 0.45, brak_staminy: Za mało staminy na mocny cios}
+mocny: {prog: 6, szturchniecie_mnoznik: 0.5, szturchniecie_odnowienie: 20, odnowienie: 20, zmeczenie: 60, bazowy_mnoznik: 1.0, szerokosc_celu: 0.65, szerokosc_luku: 1.45, krok_szturchniecia: 0.18, dystans_kroku: 1.5, krok_wypadu: 0.4, krok_biegu: 0.65, krok_boczny: 0.32, odskok: 0.35, odrzut_szturchniecia: 0.45, brak_staminy: Za mało staminy na mocny cios}
 rytm: {prog_rytmu: 0.7, okno_rytmu: 24, koszt_rytmu: 2, dlugosc: 3, mnoznik: 1.4, luk_mnoznik: 0.5, krok_boczny_mnoznik: 0.35}
 kombo: {mnoznik_1: 1.2, mnoznik_2: 1.4}
-stamina: {wlaczona: true, zestaw: 10, zestawy: [7, 10, 14], ciosy_na_sekunde: 1.6, regeneracja: 1.6, oddech_ticki: 20, zmeczenie_obrazenia: 0.6, szturchniecie: 1.0, blok_min: 0.5, blok_max: 3.0, blok_prog_hp: 0.25, tarcza: 0.5, parowanie_zwrot: 1.0, peknieta_garda_ticki: 40, wspolczynnik_min: 0.4, wspolczynnik_max: 2.5}
+stamina: {wlaczona: true, zestaw: 10, zestawy: [7, 10, 14], ciosy_na_sekunde: 1.6, regeneracja: 1.6, oddech_ticki: 20, zmeczenie_obrazenia: 0.6, szturchniecie: 0.5, blok_min: 0.5, blok_max: 3.0, blok_prog_hp: 0.25, tarcza: 0.5, parowanie_zwrot: 1.0, peknieta_garda_ticki: 40, wspolczynnik_min: 0.4, wspolczynnik_max: 2.5}
 ciezkie_warianty:
-  wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6, stamina: 2.5}
-  znad_glowy: {mnoznik: 1.4, stamina: 2.5}
-  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360, stamina: 2.5}
-  odepchniecie: {mnoznik: 1.0, sila: 1.1, stamina: 2.0}
-  z_rozbiegu: {mnoznik: 1.5, sila: 1.1, stamina: 3.0}
-  z_powietrza: {mnoznik: 1.5, stamina: 3.0}
+  wypad: {mnoznik: 2.0, sila: 0.45, linia_mnoznik: 0.6, stamina: 2.0}
+  znad_glowy: {mnoznik: 2.2, stamina: 2.0}
+  zamach_boczny: {mnoznik: 1.4, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360, stamina: 2.5}
+  odepchniecie: {mnoznik: 1.2, sila: 1.1, stamina: 1.5}
+  z_rozbiegu: {mnoznik: 2.2, sila: 1.1, stamina: 3.0}
+  z_powietrza: {mnoznik: 2.2, stamina: 2.5}
 typy:
   SWORD:
     zamach: whack
     czas: 6
     rodzaj: ciete
     reakcja: krytyk
+    ladowanie: 0.7
     poza_mocnego: trident
     waga: 1.0
     rytm: true
@@ -33,6 +34,7 @@ typy:
     czas: 7
     rodzaj: ciete
     reakcja: krytyk
+    ladowanie: 0.7
     poza_mocnego: trident
     waga: 1.0
     rytm: true
@@ -47,6 +49,7 @@ typy:
     czas: 5
     rodzaj: ciete
     reakcja: krytyk
+    ladowanie: 0.7
     poza_mocnego: trident
     waga: 1.0
     rytm: true
@@ -61,20 +64,21 @@ typy:
     czas: 8
     rodzaj: ciete
     reakcja: krwawienie
-    ladowanie: 0.6
+    ladowanie: 0.75
     poza_mocnego: trident
     waga: 1.0
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s100
+    garda: {redukcja: 0.35, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, tyl: odepchniecie, brak: znad_glowy}
   GREATSWORD:
     zamach: whack
     czas: 10
     rodzaj: ciete
     reakcja: krytyk
-    ladowanie: 0.8
+    ladowanie: 0.85
     zasieg: 3.3
     poza: crossbow
     poza_mocnego: trident
@@ -91,19 +95,22 @@ typy:
     czas: 10
     rodzaj: ciete
     reakcja: krwawienie
-    ladowanie: 0.8
+    ladowanie: 0.85
+    poza: crossbow
     poza_mocnego: trident
     waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s130
+    garda: {redukcja: 0.5, kat: 90, opoznienie: 0.3, spowolnienie: 0.35}
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
-    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, bok: zamach_boczny, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, tyl: odepchniecie, brak: znad_glowy}
   HALBERD:
     zamach: stab
     czas: 8
     rodzaj: klute
+    ladowanie: 0.85
     zasieg: 4.5
     wzor: IRON_SPEAR
     poza: crossbow
@@ -131,6 +138,7 @@ typy:
     czas: 4
     rodzaj: klute
     reakcja: z_ukrycia
+    ladowanie: 0.5
     zasieg: 2.6
     poza_mocnego: trident
     waga: 0.8
@@ -145,6 +153,7 @@ typy:
     czas: 5
     rodzaj: klute
     reakcja: krytyk
+    ladowanie: 0.7
     poza_mocnego: trident
     waga: 1.0
     rytm: true
@@ -177,7 +186,7 @@ typy:
     czas: 9
     rodzaj: obuchowe
     reakcja: pancerz
-    ladowanie: 0.6
+    ladowanie: 0.85
     zasieg: 3.3
     poza_mocnego: trident
     waga: 1.4
@@ -185,7 +194,7 @@ typy:
     kroki: [0.06, 0.06, 0.1]
     skala: s140
     pancerz: {procent: 0.3}
-    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, brak: znad_glowy}
   TOME:
     zamach: stab
     czas: 5
@@ -203,14 +212,15 @@ typy:
     czas: 8
     rodzaj: obuchowe
     reakcja: pancerz
-    ladowanie: 0.6
+    ladowanie: 0.75
     poza_mocnego: trident
     waga: 1.0
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s100
+    garda: {redukcja: 0.35, kat: 90, opoznienie: 0.15, spowolnienie: 0.5}
     pancerz: {procent: 0.3}
-    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, brak: znad_glowy}
   GREATHAMMER:
     zamach: whack
     czas: 12
@@ -226,12 +236,13 @@ typy:
     skala: s130
     uderzenie: {promien: 3.5, mnoznik: 1.6}
     pancerz: {procent: 0.3}
-    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
   SIERP:
     zamach: whack
     czas: 5
     rodzaj: ciete
     reakcja: krwawienie
+    ladowanie: 0.75
     zasieg: 2.8
     poza_mocnego: trident
     waga: 1.0
@@ -245,7 +256,7 @@ typy:
     czas: 10
     rodzaj: ciete
     reakcja: krwawienie
-    ladowanie: 0.8
+    ladowanie: 0.85
     zasieg: 3.5
     poza_mocnego: trident
     waga: 1.4
@@ -255,10 +266,12 @@ typy:
     skala: s140
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
     ciezkie: {przod: wypad, bok: zamach_boczny, koszt: 12, pelne: 24, spadanie: z_powietrza, tyl: odepchniecie, bieg: z_rozbiegu, brak: znad_glowy}
+    luk_lekki: {kat: 180, mnoznik: 0.5}
   SHIELD:
     zamach: whack
     czas: 7
     rodzaj: obuchowe
+    ladowanie: 0.7
     waga: 1.0
     rytm: true
     kroki: [0, 0, 0]
@@ -268,6 +281,7 @@ typy:
     zamach: stab
     czas: 4
     rodzaj: obuchowe
+    ladowanie: 0.5
     waga: 0.8
     rytm: true
     kroki: [0, 0, 0]
