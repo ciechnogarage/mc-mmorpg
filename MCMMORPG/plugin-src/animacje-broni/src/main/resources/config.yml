@@ -7,12 +7,12 @@ rytm: {prog_rytmu: 0.7, okno_rytmu: 24, koszt_rytmu: 2, dlugosc: 3, mnoznik: 1.4
 kombo: {mnoznik_1: 1.2, mnoznik_2: 1.4}
 stamina: {wlaczona: true, zestaw: 10, zestawy: [7, 10, 14], ciosy_na_sekunde: 1.6, regeneracja: 1.6, oddech_ticki: 20, zmeczenie_obrazenia: 0.6, szturchniecie: 1.0, blok_min: 0.5, blok_max: 3.0, blok_prog_hp: 0.25, tarcza: 0.5, parowanie_zwrot: 1.0, peknieta_garda_ticki: 40, wspolczynnik_min: 0.4, wspolczynnik_max: 2.5}
 ciezkie_warianty:
-  wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6, stamina: 2.5, poza: spear, zamach: stab, czas: 1.0}
-  znad_glowy: {mnoznik: 1.4, stamina: 2.5, poza: trident, zamach: whack, czas: 1.6}
-  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360, stamina: 2.5, poza: crossbow, zamach: whack, czas: 0.8}
-  odepchniecie: {mnoznik: 1.0, sila: 1.1, stamina: 2.0, poza: block, zamach: stab, czas: 0.7}
-  z_rozbiegu: {mnoznik: 1.5, sila: 1.1, stamina: 3.0, poza: spear, zamach: stab, czas: 1.0}
-  z_powietrza: {mnoznik: 1.5, stamina: 3.0, poza: trident, zamach: whack, czas: 1.3}
+  wypad: {mnoznik: 1.3, sila: 0.45, linia_mnoznik: 0.6, stamina: 2.5}
+  znad_glowy: {mnoznik: 1.4, stamina: 2.5}
+  zamach_boczny: {mnoznik: 1.0, luk_mnoznik: 0.7, kat: 120, kat_kosa: 180, kat_topor: 360, stamina: 2.5}
+  odepchniecie: {mnoznik: 1.0, sila: 1.1, stamina: 2.0}
+  z_rozbiegu: {mnoznik: 1.5, sila: 1.1, stamina: 3.0}
+  z_powietrza: {mnoznik: 1.5, stamina: 3.0}
 typy:
   SWORD:
     zamach: whack
@@ -228,10 +228,9 @@ typy:
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s130
-    pozy_kierunkowe: false
     uderzenie: {promien: 3.5, mnoznik: 1.6}
     pancerz: {procent: 0.3}
-    ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
+    ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
   SIERP:
     zamach: whack
     czas: 5

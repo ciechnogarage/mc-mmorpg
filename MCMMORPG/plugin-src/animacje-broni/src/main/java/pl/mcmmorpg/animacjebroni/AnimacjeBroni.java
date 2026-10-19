@@ -109,12 +109,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
                     ItemUseAnimation poza, String reakcja, Parowanie parowanie, Uderzenie uderzenie,
                     Ukrycie ukrycie, Krwawienie krwawienie, double pancerz, Ciezkie ciezkie, boolean rytm,
                     AtakPchniecie atakPchniecie, ItemUseAnimation pozaMocnego, List<Double> kroki,
-                    double progRytmu, int oknoRytmu, LukLekki lukLekki, boolean pozyKierunkowe) {}
+                    double progRytmu, int oknoRytmu, LukLekki lukLekki) {}
 
   /** Kosa: kazdy lekki cios tnie lukiem (kat w stopniach, zasieg broni) - boczne cele dostaja mnoznik obrazen. */
   record LukLekki(double kat, double mnoznik) {}
-  /** Postawa mocnego ciosu ustalona przy wcisnieciu PPM (kierunek i strona), widoczna jako poza ladowania. */
-  record Postawa(String wariant, int strona) {}
+
 
   /** Komponenty, ktore plugin ustawia; przy zmianie wracaja do wartosci materialu (resetData). */
   private static final List<DataComponentType> ZARZADZANE = List.of(
@@ -136,10 +135,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Set<UUID> programowyZamach = new HashSet<>();
   private final Map<UUID, Integer> komboStart = new HashMap<>(); // ile lekkich ciosow serii bylo, gdy zaczelo sie ladowanie PPM
   private final Map<UUID, Input> nowyInput = new HashMap<>(); // wejscie z PlayerInputEvent (getCurrentInput jeszcze stary)
-  private final Map<UUID, Postawa> postawy = new HashMap<>();
-  /** Wyglad wariantu mocnego ciosu: poza ladowania, zamach i mnoznik czasu zamachu (ciezkie_warianty.<w>.poza/zamach/czas). */
-  private final Map<String, ItemUseAnimation> pozaWariantu = new HashMap<>();
-  private final Map<String, SwingAnimation.Animation> zamachWariantu = new HashMap<>();
+  /** Sprint w chwili wcisniecia PPM (w trakcie ladowania sprint jest wylaczony, a z_rozbiegu ma byc osiagalny). */
+  private final Set<UUID> sprintPrzyLadowaniu = new HashSet<>();
+  /** Tick ostatniego machniecia - naladowanie lekkiego ciosu do kosztu staminy liczone niezaleznie od licznika serwera. */
+  private final Map<UUID, Integer> ostatnieMachniecie = new HashMap<>();
   private final Map<UUID, Integer> tickProgramowegoZamachu = new HashMap<>(); // echo zamachu z API przychodzi pozniej
   private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
   private final Map<UUID, RytmStan> serie = new HashMap<>();
@@ -184,7 +183,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       getServer().getScheduler().runTaskTimer(this, wytrzymalosc::tyknij, 2L, 2L);
     }
     getServer().getScheduler().runTaskTimer(this,
-        () -> getServer().getOnlinePlayers().forEach(this::dopasujDlonie), 10L, 10L);
+        () -> getServer().getOnlinePlayers().forEach(p -> dopasujDlonie(p, false)), 10L, 10L);
     getServer().getScheduler().runTaskTimer(this, this::tyknijKrwawienie, 1L, 1L);
     getServer().getScheduler().runTaskTimer(this, this::sygnalizujMocne, 2L, 2L);
   }
@@ -288,20 +287,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
             pozaMocnego, t.getDoubleList("kroki"), t.getDouble("prog_rytmu", progRytmu),
             t.getInt("okno_rytmu", oknoRytmu),
             t.isConfigurationSection("luk_lekki") ? new LukLekki(t.getDouble("luk_lekki.kat", 180),
-                t.getDouble("luk_lekki.mnoznik", 0.5)) : null,
-            t.getBoolean("pozy_kierunkowe", true)));
-      }
-    }
-    pozaWariantu.clear();
-    zamachWariantu.clear();
-    ConfigurationSection warianty = getConfig().getConfigurationSection("ciezkie_warianty");
-    if (warianty != null) for (String w : warianty.getKeys(false)) {
-      String poza = warianty.getString(w + ".poza"), zamach = warianty.getString(w + ".zamach");
-      try {
-        if (poza != null) pozaWariantu.put(w, (ItemUseAnimation) ItemUseAnimation.class.getField(poza.toUpperCase(Locale.ROOT)).get(null));
-        if (zamach != null) zamachWariantu.put(w, SwingAnimation.Animation.valueOf(zamach.toUpperCase(Locale.ROOT)));
-      } catch (ReflectiveOperationException | IllegalArgumentException ex) {
-        getLogger().warning("Wariant " + w + ": nieznana poza '" + poza + "' albo zamach '" + zamach + "'");
+                t.getDouble("luk_lekki.mnoznik", 0.5)) : null));
       }
     }
     for (String m : getConfig().getStringList("materialy-z-modelami")) {
@@ -324,7 +310,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     sygnalMocnego.clear();
     ostatniBrakStaminy.clear();
     programowyZamach.clear();
-    postawy.clear();
+    sprintPrzyLadowaniu.clear();
+    ostatnieMachniecie.clear();
     getLogger().info("Typy broni: " + typy.size() + ", materialy z modelami trzymania: " + modele.size());
   }
 
@@ -334,9 +321,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     return typ == null ? null : typy.get(typ.toUpperCase(Locale.ROOT));
   }
 
+  private static final java.util.regex.Pattern SAM_PPM = java.util.regex.Pattern.compile("(?<!SHIFT_)RIGHT_CLICK");
+
+  /** Umiejetnosc MMOItems na zwyklym PPM zabiera PPM (mocny, szarza); SHIFT_RIGHT_CLICK zabiera tylko garde. */
   private static boolean maUmiejetnoscPpm(ItemStack item) {
     String ab = NBTItem.get(item).getString("MMOITEMS_ABILITY");
-    return ab != null && ab.contains("RIGHT_CLICK");
+    return ab != null && SAM_PPM.matcher(ab).find();
+  }
+
+  private static boolean maUmiejetnoscShiftPpm(ItemStack item) {
+    String ab = NBTItem.get(item).getString("MMOITEMS_ABILITY");
+    return ab != null && ab.contains("SHIFT_RIGHT_CLICK");
   }
 
   private boolean pchniecie(Ustawienie u, String powod) {
@@ -356,8 +351,13 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     return zapowiedzPchniecia(p, item, u) ? u.atakPchniecie().zamach() : u.zamach();
   }
 
-  /** Zwraca true, gdy cos zmieniono. Przedmioty spoza MMOItems i typy spoza configu zostaja nietkniete. */
-  boolean dopasuj(ItemStack item, boolean lewaPusta, boolean sprint, Player gracz) {
+  /**
+   * Zwraca true, gdy cos zmieniono. Przedmioty spoza MMOItems i typy spoza configu zostaja nietkniete.
+   * Kazda zmiana komponentow broni w dloni = klient chowa i wyjmuje bron (~6 t, zmierzone klientem QA 19.10), wiec stan
+   * przedmiotu zalezy tylko od trybu PPM (brak/mocny/garda/szarza), nie od WASD ani sprintu broni bez szarzy.
+   * zamachTez=false (przeglad, ruch): sam zamach (odwrocony w serii) zostaje do najblizszego machniecia.
+   */
+  boolean dopasuj(ItemStack item, boolean lewaPusta, boolean sprint, Player gracz, boolean zamachTez) {
     Ustawienie u = ustawienie(item);
     if (u == null) return false;
     // Podmiana komponentu w trakcie uzywania zrywa animacje po stronie klienta.
@@ -367,16 +367,19 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     boolean skradanie = gracz != null && (zEventu != null ? zEventu.isSneak()
         : gracz.isSneaking() || gracz.getCurrentInput().isSneak());
     boolean szarza = ppm && u.wzor() != null && (u.garda() == null || sprint && !skradanie);
-    boolean garda = ppm && skradanie && u.garda() != null && !szarza;
+    boolean garda = ppm && skradanie && u.garda() != null && !szarza && !maUmiejetnoscShiftPpm(item);
     boolean mocny = ppm && !skradanie && u.ciezkie() != null && !szarza;
     Integer zamachDo = item.getPersistentDataContainer().get(kluczZamachu, PersistentDataType.INTEGER);
     boolean odwrotnyZamach = zamachDo != null && zamachDo > getServer().getCurrentTick();
     SwingAnimation.Animation zamach = zamachTeraz(gracz, item, u);
-    // Postawa mocnego: kierunek w chwili wcisniecia PPM wybiera wariant, a gracz widzi go od razu jako poze ladowania.
-    String wariant = mocny && gracz != null && u.pozyKierunkowe() ? kierunekCiezkiego(gracz, u.ciezkie(),
-        zEventu != null ? zEventu : gracz.getCurrentInput(), sprint) : null;
-    String stan = wersja + ":" + ppm + ":" + skradanie + ":" + sprint + ":" + zamach + ":" + wariant;
-    if (stan.equals(item.getPersistentDataContainer().get(kluczStanu, PersistentDataType.STRING))) return false;
+    String tryb = szarza ? "szarza" : garda ? "garda" : mocny ? "mocny" : "brak";
+    String baza = wersja + ":" + tryb;
+    String byl = item.getPersistentDataContainer().get(kluczStanu, PersistentDataType.STRING);
+    if (byl != null && byl.startsWith(baza + ":")) {
+      if (!zamachTez) return false;
+    }
+    String stan = baza + ":" + zamach;
+    if (stan.equals(byl)) return false;
 
     for (DataComponentType t : ZARZADZANE) item.resetData(t);
 
@@ -414,8 +417,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           .canSprint(false).speedMultiplier(0.45f).interactVibrations(true).build());
     }
 
-    ItemUseAnimation poza = garda ? u.poza() : mocny ? pozaWariantu.getOrDefault(String.valueOf(wariant), u.pozaMocnego()) : null;
-    if (ppm && !szarza && poza != null) {
+    ItemUseAnimation poza = garda ? u.poza() : mocny ? u.pozaMocnego() : null;
+    if ((mocny || garda) && poza != null) {
       // Godzina uzywania: gracz puszcza PPM zanim konsumpcja sie skonczy.
       item.setData(DataComponentTypes.CONSUMABLE, Consumable.consumable().consumeSeconds(3600f).animation(poza)
           .hasConsumeParticles(false).sound(Key.key("minecraft", "intentionally_empty")).build());
@@ -435,14 +438,16 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     return true;
   }
 
-  private void dopasujDlonie(Player p) {
+  private void dopasujDlonie(Player p) { dopasujDlonie(p, true); }
+
+  private void dopasujDlonie(Player p, boolean zamachTez) {
     if (!p.isOnline()) return;
     PlayerInventory inv = p.getInventory();
     ItemStack druga = inv.getItemInOffHand();
     boolean lewaPusta = druga.getType().isAir();
     ItemStack glowna = inv.getItemInMainHand();
-    if (dopasuj(glowna, lewaPusta, p.isSprinting(), p)) inv.setItemInMainHand(glowna);
-    if (dopasuj(druga, false, false, null)) inv.setItemInOffHand(druga);
+    if (dopasuj(glowna, lewaPusta, p.isSprinting(), p, zamachTez)) inv.setItemInMainHand(glowna);
+    if (dopasuj(druga, false, false, null, zamachTez)) inv.setItemInOffHand(druga);
   }
 
   private void pozniej(HumanEntity kto) {
@@ -470,7 +475,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     ostatniBrakStaminy.remove(id);
     programowyZamach.remove(id);
     tickProgramowegoZamachu.remove(id);
-    postawy.remove(id);
+    sprintPrzyLadowaniu.remove(id);
+    ostatnieMachniecie.remove(id);
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -488,12 +494,15 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void sprint(PlayerToggleSprintEvent e) { pozniej(e.getPlayer()); }
+  public void sprint(PlayerToggleSprintEvent e) {
+    Player p = e.getPlayer();
+    getServer().getScheduler().runTask(this, () -> dopasujDlonie(p, false));
+  }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void wejscieRuchu(PlayerInputEvent e) {
     nowyInput.put(e.getPlayer().getUniqueId(), e.getInput());
-    try { dopasujDlonie(e.getPlayer()); } finally { nowyInput.remove(e.getPlayer().getUniqueId()); }
+    try { dopasujDlonie(e.getPlayer(), false); } finally { nowyInput.remove(e.getPlayer().getUniqueId()); }
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -514,9 +523,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     Ustawienie u = ustawienie(bron);
     if (u != null && u.ciezkie() != null && bron.hasData(DataComponentTypes.CONSUMABLE)
         && !bron.hasData(DataComponentTypes.BLOCKS_ATTACKS) && !p.isHandRaised()) {
-      Input wejscie = p.getCurrentInput();
-      postawy.put(p.getUniqueId(), new Postawa(kierunekCiezkiego(p, u.ciezkie(), wejscie, p.isSprinting()),
-          wejscie.isLeft() ? -1 : 1));
+      if (p.isSprinting()) sprintPrzyLadowaniu.add(p.getUniqueId()); else sprintPrzyLadowaniu.remove(p.getUniqueId());
     }
     RytmStan stan = serie.get(p.getUniqueId());
     if (u == null || u.ciezkie() == null || stan == null || !bron.hasData(DataComponentTypes.CONSUMABLE)
@@ -557,13 +564,12 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       return;
     }
     boolean szturchniecie = ticki < progMocnego;
-    // Wariant z postawy przy wcisnieciu PPM (sprint wylacza sie w trakcie ladowania, kierunek gracz moze juz puscic);
-    // w powietrzu przy puszczeniu zawsze cios z gory.
-    Postawa postawa = postawy.remove(id);
+    // Kierunek przy puszczeniu (klawisz trzymany w trakcie ladowania), sprint z chwili wcisniecia (ladowanie go wylacza),
+    // w prawdziwym locie cios z gory.
+    boolean sprintStart = sprintPrzyLadowaniu.remove(id);
     Ciezkie c = u.ciezkie();
     String wariant = szturchniecie ? "szturchniecie"
-        : c.spadanie() != null && wLocie(p) ? c.spadanie()
-        : postawa != null ? postawa.wariant() : kierunekCiezkiego(p, c, p.getCurrentInput(), p.isSprinting());
+        : kierunekCiezkiego(p, c, p.getCurrentInput(), sprintStart || p.isSprinting());
     boolean model = wytrzymalosc != null && wytrzymalosc.wlaczona();
     // Model jednostek: mocny = koszt lekkiego tej broni x mnoznik wariantu (ciezkie_warianty.<w>.stamina);
     // szturchniecie tez jest wysilkiem, ale nie odmawia go zmeczonemu (pobiera, ile jest).
@@ -588,7 +594,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     ostatnieOgniwo.remove(id);
     String typ = NBTItem.get(item).getType();
     String iid = NBTItem.get(item).getString("MMOITEMS_ITEM_ID");
-    int strona = postawa != null ? postawa.strona() : p.getCurrentInput().isLeft() ? -1 : 1;
+    int strona = p.getCurrentInput().isLeft() ? -1 : 1;
     getServer().getScheduler().runTask(this, () -> {
       if (!p.isOnline() || p.isDead()) return;
       ItemStack bron = p.getInventory().getItemInMainHand();
@@ -681,14 +687,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     if (kombo > 0) mnoznik *= getConfig().getDouble("kombo.mnoznik_" + kombo, kombo == 1 ? 1.2 : 1.4);
     Rodzaj rodzaj = szturchniecie && u.rodzaj() != Rodzaj.KLUTE ? Rodzaj.OBUCHOWE
         : u.rodzaj();
-    SwingAnimation.Animation zamach = rodzaj == Rodzaj.KLUTE && !szturchniecie
-        ? SwingAnimation.Animation.STAB : SwingAnimation.Animation.WHACK;
-    if (!szturchniecie && u.pozyKierunkowe()) zamach = zamachWariantu.getOrDefault(wariant, zamach);
-    int czasZamachu = szturchniecie ? u.czas()
-        : (int) Math.round(u.czas() * getConfig().getDouble("ciezkie_warianty." + wariant + ".czas", 1.0));
-    bron.setData(DataComponentTypes.SWING_ANIMATION,
-        SwingAnimation.swingAnimation().type(zamach).duration(Math.max(2, czasZamachu)).build());
-    p.getInventory().setItemInMainHand(bron);
+    // Zamach broni bez podmiany przedmiotu (podmiana = klient chowa i wyjmuje bron w srodku ciosu).
+    SwingAnimation zamachBroni = bron.getData(DataComponentTypes.SWING_ANIMATION);
+    SwingAnimation.Animation zamach = zamachBroni != null ? zamachBroni.type() : u.zamach();
     programowyZamach.add(p.getUniqueId());
     tickProgramowegoZamachu.put(p.getUniqueId(), getServer().getCurrentTick());
     try { p.swingMainHand(); }
@@ -726,6 +727,9 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         ciezkiEfekt(p, cel, u, wariant, obrazenia, rodzaj == Rodzaj.KLUTE);
         if ("z_powietrza".equals(wariant)) zachwiej(cel, p.getLocation());
       }
+    } else if (!szturchniecie && "zamach_boczny".equals(wariant)) {
+      // obrot w tlumie trafia luk takze bez celu na wprost
+      ciezkiEfekt(p, null, u, wariant, obrazenia, false);
     }
     // Mlot zachowuje obszarowe uderzenie; pelne ladowanie i wariant przedni.
     if (!szturchniecie && u.uderzenie() != null && postep >= 1 && "znad_glowy".equals(wariant))
@@ -741,14 +745,6 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         + " ogniwo=0 wariant=" + wariant + " kombo=" + kombo + " ticki=" + ticki + " obrazenia=" + obrazenia
         + " stamina=" + (szturchniecie ? 0 : u.ciezkie().koszt()) + " cel=" + (cel == null ? "pudlo" : cel.getType())
         + " zamach=" + zamach + " zmeczenie=" + zmeczony);
-    getServer().getScheduler().runTaskLater(this, () -> {
-      if (!p.isOnline()) return;
-      ItemStack obecna = p.getInventory().getItemInMainHand();
-      if (obecna.getType() == bron.getType()) {
-        obecna.editPersistentDataContainer(pdc -> pdc.remove(kluczStanu));
-        dopasujDlonie(p);
-      }
-    }, 2L);
   }
 
   private void efektMocnegoTrafienia(Player p, LivingEntity cel, Rodzaj rodzaj, boolean ciezka) {
@@ -812,9 +808,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         + " wariant=" + (ogniwo == 3 ? "wykonczenie" : ogniwo == 2 ? "z_lewej" : "z_prawej")
         + " ticki=0 obrazenia=0 stamina=0"
         + " zamach=" + (rodzajSmugi == Rodzaj.KLUTE ? "STAB" : "WHACK"));
-    // Kazde machniecie bronia to wysilek (takze pudlo): koszt lekkiego ciosu, zmeczonemu do zera, bez odmowy.
-    if (smuga != null && wytrzymalosc != null && wytrzymalosc.wlaczona())
-      wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztLekkiego(p));
+    // Kazde machniecie bronia to wysilek (takze pudlo), ale proporcjonalny do zamachu: spam niedoladowanych klikniec
+    // (8 CPS) wyczerpywal pelny pasek w 2-3 s. Naladowanie z odstepu od poprzedniego machniecia (min. 0,25 kosztu).
+    if (smuga != null && wytrzymalosc != null && wytrzymalosc.wlaczona()) {
+      int teraz = getServer().getCurrentTick();
+      Integer poprzednie = ostatnieMachniecie.put(p.getUniqueId(), teraz);
+      double zamachu = poprzednie == null ? 1 : Math.min(1, (double) (teraz - poprzednie) / pelneNaladowanie(p));
+      wytrzymalosc.wydajIleSie(p, wytrzymalosc.kosztLekkiego(p) * Math.max(0.25, zamachu));
+    }
     ostatniAtak.remove(p.getUniqueId());
     Runnable nastepny = oczekujacyZamach.remove(p.getUniqueId());
     if (nastepny != null) getServer().getScheduler().runTask(this, nastepny);
@@ -841,10 +842,15 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           || !UtilityMethods.canTarget(p, cel, InteractionType.OFFENSE_ACTION)) continue;
       cel.setNoDamageTicks(0);
       wlasnyCios = true;
+      int naladowanie = licznikNaladowania(p);
+      int nietykalnosc = cel.getNoDamageTicks();
+      double ostatnie = cel.getLastDamage();
       try {
         meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL);
       } finally {
         wlasnyCios = false;
+        przywrocNaladowanie(p, naladowanie);
+        if (!cel.isDead()) { cel.setNoDamageTicks(nietykalnosc); cel.setLastDamage(ostatnie); }
       }
       zachwiej(cel, p.getLocation());
     }
@@ -1003,8 +1009,17 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     var meta = MMOPlayerData.get(p).getStatMap().cache(io.lumine.mythic.lib.api.player.EquipmentSlot.MAIN_HAND);
     cel.setNoDamageTicks(0);
     wlasnyCios = true;
+    // meta.attack = playerAttack gracza -> vanilla zeruje mu naladowanie (jak w krwawieniu), a cel dostaje nietykalnosc
+    // i lastDamage = nasz cios: LPM tuz po trafionym mocnym (4 t, klient QA/bot 19.10) nie zadawal nic. Oba wracaja.
+    int naladowanie = licznikNaladowania(p);
+    int nietykalnosc = cel.getNoDamageTicks();
+    double ostatnie = cel.getLastDamage();
     try { meta.attack(cel, obrazenia, DamageType.WEAPON, DamageType.PHYSICAL); }
-    finally { wlasnyCios = false; }
+    finally {
+      wlasnyCios = false;
+      przywrocNaladowanie(p, naladowanie);
+      if (!cel.isDead()) { cel.setNoDamageTicks(nietykalnosc); cel.setLastDamage(ostatnie); }
+    }
   }
 
   private double zasieg(Ustawienie u) { return u.zasieg() == null ? 3.0 : u.zasieg(); }
@@ -1099,9 +1114,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           || !java.util.Objects.equals(idWzoru, NBTItem.get(trzymany).getString("MMOITEMS_ITEM_ID"))) return;
       trzymany.editPersistentDataContainer(pdc -> pdc.set(kluczZamachu, PersistentDataType.INTEGER,
           getServer().getCurrentTick() + naTickow));
-      dopasuj(trzymany, p.getInventory().getItemInOffHand().getType().isAir(), p.isSprinting(), p);
+      dopasuj(trzymany, p.getInventory().getItemInOffHand().getType().isAir(), p.isSprinting(), p, true);
       p.getInventory().setItemInMainHand(trzymany);
-      getServer().getScheduler().runTaskLater(this, () -> dopasujDlonie(p), naTickow + 1L);
     };
     oczekujacyZamach.put(p.getUniqueId(), ustaw);
     getServer().getScheduler().runTaskLater(this, () -> {
@@ -1116,7 +1130,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     ItemStack bron = p.getInventory().getItemInMainHand();
     if (!bron.getPersistentDataContainer().has(kluczZamachu, PersistentDataType.INTEGER)) return;
     bron.editPersistentDataContainer(pdc -> pdc.remove(kluczZamachu));
-    dopasuj(bron, p.getInventory().getItemInOffHand().getType().isAir(), p.isSprinting(), p);
+    dopasuj(bron, p.getInventory().getItemInOffHand().getType().isAir(), p.isSprinting(), p, true);
     p.getInventory().setItemInMainHand(bron);
   }
 
@@ -1230,6 +1244,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       double roznica = Math.max(0, e.getDamage() - przed);
       e.setDamage(e.getDamage() + roznica * procent);
     }
+  }
+
+  /** Vanillowe ciecie zamaszyste (miecze z vanilli: 1 + sweeping na moby obok celu) to trzecie, niewidoczne zrodlo obszarowosci
+   *  obok lukow pluginu - "czasem trafia sasiada". Bronie z configu trafiaja obok tylko wg wlasnych regul (19.10). */
+  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+  public void bezVanillowegoZamachu(EntityDamageByEntityEvent e) {
+    if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK && e.getDamager() instanceof Player p
+        && ustawienie(p.getInventory().getItemInMainHand()) != null) e.setCancelled(true);
   }
 
   /** Lekki rytm i reakcje trafienia bronia w glownej rece. HIGHEST: MythicLib liczy obrazenia broni wczesniej

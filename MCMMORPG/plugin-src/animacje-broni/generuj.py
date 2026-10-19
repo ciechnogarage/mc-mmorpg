@@ -81,8 +81,7 @@ TYPY['KOSA']['ciezkie'] = {'przod': 'znad_glowy', 'bok': 'zamach_boczny', 'koszt
 # Kosa tnie lukiem kazdym lekkim ciosem (18.10: rozprysk MMOItems trafial wszystkich albo jednego - ukryty cooldown 3 s);
 # 'on-attack' KOSA zdjety z MMOItems/item-types.yml, wiec luk jest jedynym zrodlem trafien obok.
 TYPY['KOSA']['luk_lekki'] = {'kat': 180, 'mnoznik': 0.5}
-# mlot dwureczny ma wlasny model uniesienia (poza trident) - postawy kierunkowe by go rozjechaly
-TYPY['GREATHAMMER']['pozy_kierunkowe'] = False
+
 for typ in (*MIECZE, 'GREATSWORD', 'AXE', 'GREATAXE', 'HAMMER', 'GREATHAMMER', 'GREATSTAFF', 'HALBERD',
             'DAGGER', 'SIERP', 'KOSA', 'SHIELD', 'GAUNTLET', 'WHIP'):
     TYPY[typ]['rytm'] = True
@@ -115,16 +114,15 @@ MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20
 # placisz za to, co mocny daje ponad lekki - skumulowane obrazenia i efekt. Wypad x1,3 + przebicie linii,
 # znad glowy x1,4 (mlot: fala), zamach boczny x1,0 ale wiele celow -> 2,5; odepchniecie slabe, placisz za
 # przestrzen -> 2,0; z rozbiegu/z powietrza x1,5 + odrzut/zachwianie, a bieg/skok sam meczy -> 3,0.
-# Wyglad wariantu (18.10 wlasciciel: "nie zmienia sie kierunek, wyglad"): kierunek przy wcisnieciu PPM = postawa, czyli
-# poza ladowania (poza: animacja uzycia), zamach po puszczeniu (whack|stab) i mnoznik jego czasu (czas). Pozy dobrane zrzutami.
+# 19.10: wyglad wariantu NIE przez komponenty przedmiotu - kazda podmiana w dloni = klient chowa i wyjmuje bron
+# (poza na WASD migala przy kazdym kroku, zmierzone klientem QA). Wariant wybiera klawisz trzymany przy puszczeniu PPM.
 CIEZKIE_WARIANTY = {
-    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.5, 'poza': 'spear', 'zamach': 'stab', 'czas': 1.0},
-    'znad_glowy': {'mnoznik': 1.4, 'stamina': 2.5, 'poza': 'trident', 'zamach': 'whack', 'czas': 1.6},
-    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5,
-                      'poza': 'crossbow', 'zamach': 'whack', 'czas': 0.8},
-    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1, 'stamina': 2.0, 'poza': 'block', 'zamach': 'stab', 'czas': 0.7},
-    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1, 'stamina': 3.0, 'poza': 'spear', 'zamach': 'stab', 'czas': 1.0},
-    'z_powietrza': {'mnoznik': 1.5, 'stamina': 3.0, 'poza': 'trident', 'zamach': 'whack', 'czas': 1.3},
+    'wypad': {'mnoznik': 1.3, 'sila': 0.45, 'linia_mnoznik': 0.6, 'stamina': 2.5},
+    'znad_glowy': {'mnoznik': 1.4, 'stamina': 2.5},
+    'zamach_boczny': {'mnoznik': 1.0, 'luk_mnoznik': 0.7, 'kat': 120, 'kat_kosa': 180, 'kat_topor': 360, 'stamina': 2.5},
+    'odepchniecie': {'mnoznik': 1.0, 'sila': 1.1, 'stamina': 2.0},
+    'z_rozbiegu': {'mnoznik': 1.5, 'sila': 1.1, 'stamina': 3.0},
+    'z_powietrza': {'mnoznik': 1.5, 'stamina': 3.0},
 }
 # Model staminy w jednostkach L = lekki cios mieczem. zestaw = sekundy ciaglej walki na pelnym pasku (cel
 # projektowy do wyboru wlasciciela z zestawy); pula = zestaw * ciosy_na_sekunde L; regeneracja L/s po
@@ -161,6 +159,8 @@ for typ, u in TYPY.items():
     if c:
         c['brak'] = 'znad_glowy'
         c['przod'] = 'wypad'
+# mlot dwureczny: fala tylko ze znad glowy - z W (idac na wroga) tez ma byc osiagalna
+TYPY['GREATHAMMER']['ciezkie']['przod'] = 'znad_glowy'
 # BOW, CROSSBOW, GREATBOW, MUSKET celowo poza tabela (vanillowe naciaganie). Plugin ich nie rusza.
 
 PRZESTRZEN = 'bron'
@@ -390,8 +390,6 @@ def main():
             linie.append('    skala: %s' % skala_nazwa(u['skala']))
         elif 'ciezkie' in u:
             linie.append('    skala: s100')
-        if u.get('pozy_kierunkowe') is False:
-            linie.append('    pozy_kierunkowe: false')
         for k in ('garda', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie', 'luk_lekki'):
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))

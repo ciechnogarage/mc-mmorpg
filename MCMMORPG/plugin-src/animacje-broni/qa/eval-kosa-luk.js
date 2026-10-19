@@ -16,7 +16,7 @@ scenariusz('kosa-luk', async ({ w, polacz, rcon }) => {
   await rcon(`minecraft:gamemode survival ${NICK}`);
   await rcon(`minecraft:teleport ${NICK} ${X} ${Y} ${Z} 0 0`);
   await rcon(`mmocore admin attribute give ${NICK} bieglosc-kosa 1`);
-  await rcon(`mmocore admin attribute give ${NICK} bieglosc-miecz 1`);
+  for (const b of ['miecz', 'topor', 'bulawa', 'sierp', 'sztylet', 'drzewcowa']) await rcon(`mmocore admin attribute give ${NICK} bieglosc-${b} 1`);
   await rcon('minecraft:kill @e[type=husk,tag=kl]');
   for (const [n, [dx, dz]] of Object.entries(CELE))
     await rcon(`minecraft:summon husk ${X + dx} ${Y} ${Z + dz} {NoAI:1b,Silent:1b,PersistenceRequired:1b,Tags:["kl","kl_${n}"],attributes:[{id:"minecraft:max_health",base:2000}],Health:2000f}`);
