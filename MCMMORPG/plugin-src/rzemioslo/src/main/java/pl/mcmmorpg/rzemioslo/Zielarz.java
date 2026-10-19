@@ -226,7 +226,7 @@ final class Zielarz implements Listener {
 
     static final List<String> GATUNKI = List.of("dziurawiec", "kozlek", "czosnek", "konwalia");
     /** Skala, w ktorej karty zblizenia pokrywaja blok kepy w swiecie (start przyblizenia / koniec oddalenia). */
-    static final Map<String, Float> SKALA_SWIATA = Map.of("dziurawiec", 0.55f, "kozlek", 0.72f, "czosnek", 0.9f, "konwalia", 0.9f);
+    static final Map<String, Float> SKALA_SWIATA = Map.of("dziurawiec", 0.62f, "kozlek", 0.72f, "czosnek", 0.9f, "konwalia", 0.9f);
     /** Blok kepy (Nexo) zwykly i po zbiorze — ten sam pixel-art co karty zblizenia. */
     static final Map<String, String[]> BLOK = Map.of("dziurawiec", new String[]{"zielarz_dziurawiec", "zielarz_dziurawiec_scieta"},
             "kozlek", new String[]{"zielarz_kozlek", "zielarz_kozlek_wykopany"},
@@ -323,11 +323,8 @@ final class Zielarz implements Listener {
         p.sendBlockChange(b.getLocation(), Material.AIR.createBlockData());
         // gracz stoi pochylony nad roslina, unieruchomiony (siedzenie odpada: jadacy klient zamienia PPM w machniecie
         // i serwer nie odroznia przytrzymania od ciecia — zmierzone klientem QA 18.10)
-        Location sm = miejsce.clone();
-        sm.setDirection(przod);
-        sm.setPitch(35);
-        p.teleport(sm);
-        s.stoi = sm.clone();
+        // bez teleportu (kamera nie skacze): gracz zostaje, gdzie stal, i zastyga nad roslina
+        s.stoi = p.getLocation().clone();
         zamroz(p, true);
         r.skalaStartu = SKALA_SWIATA.getOrDefault(gatunek, 0.7f);   // karty rodza sie w rozmiarze kepy w swiecie
         try {
@@ -343,8 +340,8 @@ final class Zielarz implements Listener {
         }
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1f, 10); }, 1L);   // przyblizenie
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (!s.konczy) patrz(p, o.clone().add(0, 0.55, 0));
-        }, 2L);
+            if (!s.konczy) patrzPlynnie(p, o.clone().add(0, 0.62, 0));
+        }, 1L);
         p.playSound(p.getLocation(), Sound.BLOCK_GRASS_STEP, SoundCategory.PLAYERS, 0.8f, 0.8f);
         plugin.pasek(p, "§7" + nazwaKepy(s) + " §8· §7Shift: odejdź");
         zielnik.zobaczono(p, widocznyGatunek(s));
@@ -395,7 +392,7 @@ final class Zielarz implements Listener {
     private void pokazWDloni(Sesja s, String co) {
         ItemStack it = switch (co) {
             case "lopatka" -> wyglad(s, Material.IRON_SHOVEL, "Łopatka");
-            case "rece-ciagnij", "rece-rozcieraj", "rece" -> wyglad(s, Material.LEATHER, "Rękawice");
+            case "rece-ciagnij", "rece-rozcieraj", "rece" -> ZRoslina.przedmiot("zielarz_rekawice");
             default -> wyglad(s, null, null);
         };
         s.widok = co;
@@ -525,24 +522,25 @@ final class Zielarz implements Listener {
     private void budujDziurawiec(Sesja s) {
         Random rnd = s.rnd;
         ZRoslina r = s.r;
-        int n = 4 + rnd.nextInt(4);
+        int n = 4 + rnd.nextInt(2);
         for (int i = 0; i < n; i++) {
-            double lx = -0.5 + 1.0 * i / (n - 1) + (rnd.nextDouble() * 0.1 - 0.05);
-            double lz = rnd.nextDouble() * 0.4 - 0.15;
-            double h = 1.25 + rnd.nextDouble() * 0.55;
+            double lx = -0.3 + 0.6 * i / (n - 1) + (rnd.nextDouble() * 0.08 - 0.04);
+            double lz = rnd.nextDouble() * 0.3 - 0.12;
+            double h = (i == 0 || i == n - 1 ? 0.8 : 1.0) + rnd.nextDouble() * 0.2;   // kopula: srodek wyzszy
             double v = rnd.nextDouble();
-            String faza = v < 0.18 ? "pak" : v < 0.8 ? "kw" : "stary";
-            boolean chory = rnd.nextDouble() < 0.22, dbl = faza.equals("kw") && rnd.nextDouble() < 0.12;
+            String faza = v < 0.1 ? "pak" : v < 0.88 ? "kw" : "stary";
+            boolean chory = rnd.nextDouble() < 0.18, dbl = faza.equals("kw") && rnd.nextDouble() < 0.12;
             ZRoslina.Czesc c = r.czesc("ped", i, lx, 0, lz);
             c.cechy.put("h", h); c.cechy.put("faza", faza); c.cechy.put("chory", chory); c.cechy.put("dbl", dbl);
             double seg = h / 4;
-            c.box = new BoundingBox(lx - 0.12, 0, lz - 0.12, lx + 0.12, h, lz + 0.12);
+            c.box = new BoundingBox(lx - 0.12, 0, lz - 0.12, lx + 0.12, h + seg * 0.4, lz + 0.12);
             String[] karty = {"dziurawiec_dol", chory ? "dziurawiec_srodek_chory" : "dziurawiec_srodek",
                     chory ? "dziurawiec_gora_chory" : "dziurawiec_gora",
                     faza.equals("pak") ? "dziurawiec_pak" : faza.equals("stary") ? "dziurawiec_przekwit" : "dziurawiec_kwiat"};
             double obrot = rnd.nextDouble() * 90;
             for (int k = 0; k < 4; k++) {
-                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, k * seg, 0, seg * (k == 3 ? 1.25 : 1.0), ZRoslina.obrotY(obrot + k * 13));
+                double rozm = k == 3 ? seg * 1.7 : seg * 1.05;   // baldach wiekszy: z bliska ma byc kepa, jak blok w swiecie
+                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, k == 3 ? k * seg - seg * 0.25 : k * seg, 0, rozm, ZRoslina.obrotY(obrot + k * 13));
                 kl.seg = k;
             }
             if (dbl) r.karta(c, "zielarz_k_dziurawiec_kwiat", 0.06, seg * 2.6, 0.04, seg * 0.9, ZRoslina.obrotY(obrot + 45)).seg = 3;
@@ -639,8 +637,8 @@ final class Zielarz implements Listener {
         roz.box = new BoundingBox(-0.2, 0, -0.2, 0.2, 0.12, 0.2);
         for (int k = 0; k < 7; k++) {   // pierzaste liscie rozety: karta lezaca, nasada w srodku
             double a = k * 360.0 / 7 + rnd.nextDouble() * 20, len = 0.5 + rnd.nextDouble() * 0.1, ar = Math.toRadians(a);
-            Quaternionf q = ZRoslina.obrotY(a).mul(ZRoslina.obrotX(-72));
-            r.kartaSrodek(roz, "zielarz_k_kozlek_lisc", -Math.cos(ar) * len * 0.5, 0.05, -Math.sin(ar) * len * 0.5, len, q);
+            Quaternionf q = ZRoslina.obrotY(a).mul(ZRoslina.obrotX(-48));
+            r.kartaSrodek(roz, "zielarz_k_kozlek_lisc", -Math.cos(ar) * len * 0.4, len * 0.3, -Math.sin(ar) * len * 0.4, len, q);
         }
         int lodygi = 1 + rnd.nextInt(2);
         for (int i = 0; i < lodygi; i++) {
@@ -667,8 +665,12 @@ final class Zielarz implements Listener {
         if (s.postep > 0.98) return;
         s.poluzowane[i] = true;
         s.zajetyDo = s.t + 8;
-        for (ZRoslina.Klocek k : g.klocki) if (k.d instanceof org.bukkit.entity.ItemDisplay id)
-            id.setItemStack(ZRoslina.przedmiot("zielarz_k_kozlek_gleba_rozkopana"));
+        var gleba = ZRoslina.blok("zielarz_k_kozlek_gleba");
+        for (ZRoslina.Klocek k : g.klocki) {
+            if (k.d instanceof BlockDisplay bd && bd.getBlock().equals(gleba)) bd.setBlock(ZRoslina.blok("zielarz_k_kozlek_gleba_rozkopana"));
+            else if (k.d instanceof org.bukkit.entity.ItemDisplay id && "zielarz_k_kozlek_gleba".equals(com.nexomc.nexo.api.NexoItems.idFromItem(id.getItemStack())))
+                id.setItemStack(ZRoslina.przedmiot("zielarz_k_kozlek_gleba_rozkopana"));
+        }
         Location l = s.r.swiat((g.box.getMinX() + g.box.getMaxX()) / 2, 0.05, (g.box.getMinZ() + g.box.getMaxZ()) / 2);
         s.p.spawnParticle(Particle.BLOCK, l, 18, 0.12, 0.04, 0.12, Material.ROOTED_DIRT.createBlockData());
         dzwiek(s, Sound.ITEM_SHOVEL_FLATTEN, 0.9f, 0.8f);
@@ -736,17 +738,23 @@ final class Zielarz implements Listener {
     private void budujLiscie(Sesja s, boolean czosnek) {
         Random rnd = s.rnd;
         ZRoslina r = s.r;
-        boolean kwitnie = rnd.nextDouble() < (czosnek ? 0.5 : 0.6);
+        boolean kwitnie = rnd.nextDouble() < 0.2;   // jak blok w swiecie: zwykle same liscie; rozpoznanie po lisciach
         String lisc = czosnek ? "czosnek_lisc" : "konwalia_lisc";
-        int n = czosnek ? 6 + rnd.nextInt(3) : 5 + rnd.nextInt(3);
+        // czosnek: pojedyncze liscie na ogonkach rozchodza sie dookola; konwalia: 3-4 pedy po dwa liscie z jednej pochwy
+        int pedyK = 3 + rnd.nextInt(2);
+        int n = czosnek ? 6 + rnd.nextInt(3) : pedyK * 2;
         double start = rnd.nextDouble() * 360;
+        double[] pedX = new double[pedyK], pedZ = new double[pedyK], pedA = new double[pedyK];
+        for (int k = 0; k < pedyK; k++) {
+            double pa = Math.toRadians(start + k * 360.0 / pedyK + rnd.nextDouble() * 30), pr = 0.12 + rnd.nextDouble() * 0.12;
+            pedX[k] = Math.sin(pa) * pr; pedZ[k] = Math.cos(pa) * pr; pedA[k] = Math.toDegrees(pa) + rnd.nextDouble() * 40 - 20;
+        }
         for (int i = 0; i < n; i++) {
-            // czosnek: liscie rozchodza sie dookola, mocno pochylone; konwalia: kepa wyprostowanych, z jednej strony
-            double a = czosnek ? start + i * 360.0 / n + rnd.nextDouble() * 20 : start + (i - n / 2.0) * 22 + rnd.nextDouble() * 12;
-            double tilt = czosnek ? 34 + rnd.nextDouble() * 18 : 12 + rnd.nextDouble() * 14;
-            double len = czosnek ? 0.62 + rnd.nextDouble() * 0.12 : 0.7 + rnd.nextDouble() * 0.12;
-            double ar = Math.toRadians(a), tr = Math.toRadians(tilt), rp = czosnek ? 0.05 : 0.04;
-            double bx = Math.sin(ar) * rp, bz = Math.cos(ar) * rp;
+            double a = czosnek ? start + i * 360.0 / n + rnd.nextDouble() * 20 : pedA[i / 2] + (i % 2 == 0 ? -28 : 28);
+            double tilt = czosnek ? 34 + rnd.nextDouble() * 18 : 18 + rnd.nextDouble() * 14;
+            double len = czosnek ? 0.62 + rnd.nextDouble() * 0.12 : 0.62 + rnd.nextDouble() * 0.12;
+            double ar = Math.toRadians(a), tr = Math.toRadians(tilt), rp = czosnek ? 0.05 : 0;
+            double bx = czosnek ? Math.sin(ar) * rp : pedX[i / 2], bz = czosnek ? Math.cos(ar) * rp : pedZ[i / 2];
             boolean stary = rnd.nextDouble() < 0.3;
             ZRoslina.Czesc l = r.czesc("lisc", i, 0, 0, 0);
             l.cechy.put("stary", stary); l.cechy.put("kwitnie", kwitnie);
@@ -758,7 +766,13 @@ final class Zielarz implements Listener {
         if (kwitnie) {
             ZRoslina.Czesc k = r.czesc("kwiat", 0, 0, 0, 0);
             double h = czosnek ? 0.78 : 0.62;
-            r.karta(k, "zielarz_k_" + (czosnek ? "czosnek_kwiat" : "konwalia_kwiat"), 0, 0, 0, h, ZRoslina.obrotY(rnd.nextDouble() * 90));
+            // kwiaty na kartach odchylonych ku niebu: encja cieniuje kierunkowo i pionowa biel wychodzila szara
+            if (czosnek) {
+                r.karta(k, "zielarz_k_czosnek_lodyzka", 0, 0, 0, h * 0.85, ZRoslina.obrotY(rnd.nextDouble() * 90));
+                r.kartaSrodek(k, "zielarz_k_czosnek_baldach", 0, h * 0.8, 0.02, h * 0.42, ZRoslina.obrotX(-68));
+            } else {
+                r.karta(k, "zielarz_k_konwalia_kwiat", 0.04, 0, 0.06, h, ZRoslina.obrotX(28));   // twarza do gracza, odchylona
+            }
             k.box = new BoundingBox(-0.12, h * 0.6, -0.12, 0.12, h, 0.12);
         }
     }
@@ -906,10 +920,11 @@ final class Zielarz implements Listener {
         if (p.isOnline() && p.getWorld() == s.blok.getWorld()) {
             float k0 = SKALA_SWIATA.getOrDefault(s.gatunek, 0.7f);
             s.r.skala(k0, 8);   // oddalenie: zostaje kepa w swiecie
+            // blok wraca ZANIM znikna karty (odwrotnie byla dziura na 2-3 klatki)
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                s.r.usun();
                 if (p.isOnline() && p.getWorld() == s.blok.getWorld()) p.sendBlockChange(s.blok.getLocation(), wygladBloku(s.gatunek, poZbiorze, s.blok));
-            }, 9L);
+            }, 7L);
+            Bukkit.getScheduler().runTaskLater(plugin, s.r::usun, 11L);
         } else s.r.usun();
         if (p.isOnline()) {
             if (odrost > 0) {
@@ -989,7 +1004,8 @@ final class Zielarz implements Listener {
     String opis(Player p) {
         Sesja s = sesje.get(p.getUniqueId());
         if (s == null) return "brak sesji";
-        StringBuilder b = new StringBuilder(s.gatunek + ":");
+        StringBuilder b = new StringBuilder(s.gatunek + " jasnosc=" + s.r.jasnosc.getBlockLight() + "/" + s.r.jasnosc.getSkyLight()
+                + " blok=" + s.r.o.getBlock().getType() + ":");
         for (ZRoslina.Czesc c : s.r.czesci) b.append(" ").append(c.typ).append(c.nr).append(c.zabrana ? "x" : "").append(c.cechy.isEmpty() ? "" : c.cechy.toString());
         if (s.gatunek.equals("kozlek")) b.append(" boczne=").append(java.util.Arrays.toString(s.boczne)).append(" poluz=").append(java.util.Arrays.toString(s.poluzowane))
                 .append(String.format(" napiecie=%.2f postep=%.2f", s.napiecie, s.postep));

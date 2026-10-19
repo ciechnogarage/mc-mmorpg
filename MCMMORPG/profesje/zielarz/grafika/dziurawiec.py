@@ -54,40 +54,40 @@ T['dol'] = [  # zdrewnialy dol pedu: brazowa lodyga, stara para lisci, slad po o
     "......nbB.......",
     ".....n.b.n......",
 ]
-T['srodek'] = [  # dojrzala lodyga, dwie pary lisci (V), ciemniejsze
+T['srodek'] = [
     ".......g........",
-    ".......g........",
-    ".....j.g.j......",
-    "....jglglgj.....",
-    ".....GgggG......",
-    ".......g........",
-    ".......g........",
-    ".......g........",
-    ".......g........",
-    "....l..g..l.....",
+    "....j..g..j.....",
     "...jgl.g.lgj....",
     "....GgggggG.....",
     "......Ggg.......",
+    "..j....g....j...",
+    ".jgl.j.g.j.lgj..",
+    "..Gglglgg.lgGg..",
+    "....GglgggG.....",
     ".......g........",
+    "....l..g..l.....",
+    "...jgl.g.lgj....",
+    "...lGgggggGl....",
+    "..jgG.Ggg.Ggj...",
     ".......g........",
     ".......g........",
 ]
-T['gora'] = [  # gorny ped: mlode jasne liscie, gesto, dwie pary + boczne pedy
-    ".......l........",
+T['gora'] = [
     "......jlj.......",
     ".....jjljj......",
-    "......glg.......",
-    ".......l........",
-    "....j..l..j.....",
-    "...jlj.l.jlj....",
-    "....glglglg.....",
-    ".....GglgG......",
-    ".......l........",
-    ".......l........",
-    ".....j.l.j......",
-    "....jglglgj.....",
+    "...j..glg..j....",
+    "..jlj..l..jlj...",
+    "...glglllglg....",
+    "....GgglggG.....",
+    ".j.....l.....j..",
+    "jlj..j.l.j..jlj.",
+    ".glg.jjljj.glg..",
+    "..Gglgglgglgg...",
+    "....GGglgGG.....",
+    "...j...l...j....",
+    "..jlj..l..jlj...",
+    "...glglglglg....",
     ".....GgggG......",
-    ".......g........",
     ".......g........",
 ]
 T['kwiat'] = [  # baldach: 6 gwiazdek na szypulkach wyrastajacych z lodygi
@@ -145,23 +145,23 @@ T['przekwit'] = [  # przekwitle: rdzawe, oklapniete
     ".......g........",
 ]
 
-T['swiat_scieta'] = [  # po scieciu: krotkie kikuty z dolnymi liscmi
+T['swiat_scieta'] = [  # po scieciu: kikuty z dolnymi liscmi
     "................",
     "................",
     "................",
     "................",
     "................",
     "................",
-    "................",
-    "................",
-    "......B..B......",
-    "......g..g..B...",
-    "...v.vgv.g..g...",
-    "....vGg.vgv.g...",
-    "......g..gGvgv..",
-    "......g..g..g...",
-    "......b..b..b...",
-    "......b.b.......",
+    "......j..j......",
+    "...j..g..g..j...",
+    "..jgj.g..g.jgj..",
+    "...G.jgv.gj.G...",
+    "....v.Gg.gG.v...",
+    "...vgv.g.g.vgv..",
+    "....G..g.g..G...",
+    "......g.g.g.....",
+    "......b.b.b.....",
+    ".....b..b..b....",
 ]
 
 def obraz(rows):
@@ -173,10 +173,13 @@ def obraz(rows):
     return im
 
 def chory(im):
-    """Plamy choroby: kropki na pikselach lisci (nie na lodydze), staly wzor."""
+    """Plamy choroby 2x2: rdzawy srodek, jasniejsza obwodka (czarne pojedyncze piksele wygladaly jak dziury)."""
     im = im.copy(); px = im.load()
-    for (x, y) in [(5, 3), (9, 3), (4, 10), (10, 10), (6, 11), (9, 11), (5, 6), (9, 7)]:
-        if px[x, y][3] and x != 7: px[x, y] = (0x2a, 0x2a, 0x12, 255)
+    for (x, y) in [(4, 3), (9, 10), (3, 9), (10, 3)]:
+        for dx in (0, 1):
+            for dy in (0, 1):
+                xx, yy = x + dx, y + dy
+                if px[xx, yy][3] and xx != 7: px[xx, yy] = (0x8a, 0x4a, 0x22, 255) if (dx + dy) % 2 == 0 else (0xa8, 0x70, 0x30, 255)
     return im
 
 if __name__ == '__main__':

@@ -68,6 +68,9 @@ final class ZRoslina {
     final float yaw;
     final List<Czesc> czesci = new ArrayList<>();
     float skalaStartu = 1f;      // nowe encje rodza sie w tej skali (rozmiar kepy w swiecie), potem przyblizenie
+    /** Swiatlo jak blok kepy (bez tego karty ItemDisplay sa ciemniejsze od rosliny w swiecie). */
+    final Display.Brightness jasnosc;
+    static final Display.Brightness PODSWIETLENIE = new Display.Brightness(15, 15);
     private Czesc podswietlona;
 
     ZRoslina(Plugin plugin, Player p, Location o, Vector przod) {
@@ -79,6 +82,8 @@ final class ZRoslina {
         this.yaw = (float) Math.toDegrees(Math.atan2(-f.getX(), f.getZ()));
         this.o.setYaw(yaw);
         this.o.setPitch(0);
+        var b = this.o.getBlock();
+        this.jasnosc = new Display.Brightness(Math.min(15, b.getLightFromBlocks() + 2), Math.min(15, b.getLightFromSky()));
     }
 
     Location swiat(double lx, double ly, double lz) {
@@ -106,6 +111,7 @@ final class ZRoslina {
             e.setTransformation(new Transformation(new Vector3f(t).mul(skalaStartu), q, new Vector3f(s).mul(skalaStartu), new Quaternionf()));
             e.setViewRange(0.5f);
             e.setShadowRadius(0);
+            e.setBrightness(jasnosc);
         });
         p.showEntity(plugin, d);
         return d;
@@ -126,7 +132,8 @@ final class ZRoslina {
     /** Karta z tekstura (przedmiot Nexo: krzyzowy jak kwiat albo plaszczyzna), kwadrat o boku s.
      *  (lx,ly,lz) = srodek DOLNEJ krawedzi karty wzgledem kotwicy; obrot wokol tego punktu. */
     Klocek karta(Czesc c, String nexoId, double lx, double ly, double lz, double s, Quaternionf rot) {
-        Quaternionf q = rot == null ? new Quaternionf() : new Quaternionf(rot);
+        // lekkie odchylenie od gracza: normalne kart ku gornemu swiatlu encji (pionowa karta wychodzi ciemna)
+        Quaternionf q = new Quaternionf().rotateX((float) Math.toRadians(ODCHYL)).mul(rot == null ? new Quaternionf() : rot);
         Vector3f t = new Vector3f(0, (float) s / 2f, 0).rotate(q).add((float) -lx, (float) ly, (float) lz).add(c.kotwicaE);
         return kartaW(c, nexoId, t, (float) s, q, (float) ly, (float) (ly + s));
     }
@@ -138,16 +145,38 @@ final class ZRoslina {
         return kartaW(c, nexoId, t, (float) s, q, (float) (ly - s / 2), (float) (ly + s / 2));
     }
 
+    /** t = srodek karty. Karta to BlockDisplay wariantu bloku Nexo (model od rogu 0..1, wiec przesuwamy o pol boku). */
+    /** Odchylenie kart od gracza [st.]: swiatlo encji = 0,4 + 0,6*(n.L0+n.L1); pionowa karta ~0,74, odchylona o 28 st. ~0,9. */
+    static double ODCHYL = 28;
+    static boolean JAKO_PRZEDMIOT = true;   // test A/B: karta jako ItemDisplay (true) albo BlockDisplay bloku Nexo
+
     private Klocek kartaW(Czesc c, String nexoId, Vector3f t, float s, Quaternionf q, float y0, float y1) {
-        ItemStack it = przedmiot(nexoId);
+        if (JAKO_PRZEDMIOT) {
+            ItemStack it = przedmiot(nexoId);
+            Vector3f sk = new Vector3f(s, s, s);
+            ItemDisplay d = zrodz(ItemDisplay.class, e -> {
+                e.setItemStack(it);
+                e.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
+            }, t, q, sk);
+            Klocek k = new Klocek(d, t, q, sk, y0, y1);
+            c.klocki.add(k);
+            return k;
+        }
+        org.bukkit.block.data.BlockData bd = blok(nexoId);
         Vector3f sk = new Vector3f(s, s, s);
-        ItemDisplay d = zrodz(ItemDisplay.class, e -> {
-            e.setItemStack(it);
-            e.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
-        }, t, q, sk);
-        Klocek k = new Klocek(d, t, q, sk, y0, y1);
+        Vector3f rog = new Vector3f(t).sub(new Vector3f(s / 2f, s / 2f, s / 2f).rotate(q));
+        BlockDisplay d = zrodz(BlockDisplay.class, e -> e.setBlock(bd), rog, q, sk);
+        Klocek k = new Klocek(d, rog, q, sk, y0, y1);
         c.klocki.add(k);
         return k;
+    }
+
+    static org.bukkit.block.data.BlockData blok(String nexoId) {
+        try {
+            var b = com.nexomc.nexo.api.NexoBlocks.blockData(nexoId);
+            if (b != null) return b;
+        } catch (Throwable ignored) { }
+        return Material.SHORT_GRASS.createBlockData();
     }
 
     static ItemStack przedmiot(String nexoId) {
@@ -191,11 +220,20 @@ final class ZRoslina {
         return hit == null ? null : hit.getHitPosition();
     }
 
+    /** Czesc pod celownikiem lekko drga i rosnie (obrys glow wokol kazdego piksela zasmiecal obraz). */
     void podswietl(Czesc c, Color kolor) {
         if (c == podswietlona) return;
-        if (podswietlona != null) for (Klocek k : podswietlona.klocki) k.d.setGlowing(false);
+        if (podswietlona != null && !podswietlona.zabrana) puls(podswietlona, 1f, 3);
         podswietlona = c;
-        if (c != null) for (Klocek k : c.klocki) { k.d.setGlowColorOverride(kolor); k.d.setGlowing(true); }
+        if (c != null) puls(c, 1.07f, 3);
+    }
+
+    /** Skala czesci wzgledem jej kotwicy (podswietlenie). */
+    private void puls(Czesc c, float k, int ticki) {
+        for (Klocek kl : c.klocki) {
+            Vector3f t = new Vector3f(kl.t0).sub(c.kotwicaE).mul(k).add(c.kotwicaE);
+            animuj(kl.d, new Transformation(t, kl.r0, new Vector3f(kl.s0).mul(k), new Quaternionf()), ticki);
+        }
     }
 
     /** Obrot czesci wokol punktu (0, odY, 0) jej kotwicy + przesuniecie; klocki konczace sie ponizej odY zostaja. */

@@ -9,7 +9,9 @@ PAL = {
     'W': 'ffffff', 'w': 'e7e7e7', 'c': 'd6e8e8', 'C': 'b2d0d0',   # biel kwiatow
     'R': 'fccbe7', 'r': 'f7b9dc', 'q': 'f396cd', 'Q': 'e563a3',   # roz kozlka
     'K': 'eadbb0', 'k': 'c9b07a', 'z': '9a7f50',          # korzen
-    'd': '6b4a2c', 'D': '4e3420', 'e': '8a6440', 'E': 'a07a50',   # ziemia
+    'd': '5d3f2a', 'D': '45301f', 'e': '6e4c33', 'E': '79553a',   # ziemia (barwy dirt vanilli)
+    'a': '7fc059', 'A': '55ab2d', 's': '2f5a3a', 'S': '3e6e4e', 'T': '23452c',   # czosnek jasny zoltozielony / konwalia sinozielona
+    'x': 'f0d9a8', 'X': 'd4b47c', 'u': '3b2a1e',          # plotno rekawic (cieple), kontur
 }
 T = {}
 # ---------------------------------------------------------------- KOZLEK
@@ -139,7 +141,7 @@ T['kozlek_gleba_rozkopana'] = [  # rozluzniona ziemia: ciemniejsza, grudy, szcze
     "......DD.DD.....",
     "................",
 ]
-T['kozlek_swiat_wykopany'] = [  # po wykopaniu: dolek, rozrzucona ziemia, zwiedly lisc
+T['kozlek_swiat_wykopany'] = [  # po wykopaniu: ciemny dolek, zwiedly listek
     "................",
     "................",
     "................",
@@ -151,48 +153,48 @@ T['kozlek_swiat_wykopany'] = [  # po wykopaniu: dolek, rozrzucona ziemia, zwiedl
     "................",
     "................",
     "................",
-    ".........v......",
-    "...d....vg......",
-    "..dEd.dd.v..d...",
-    ".dDDDdEdDdd.dEd.",
-    "dEdDDDDdEdDdedEd",
+    "........v.......",
+    "......vgv.......",
+    "...dEdDDDDdEd...",
+    "..dDDDDDDDDDDd..",
+    ".dEdDDDDDDDdEdd.",
 ]
 # ---------------------------------------------------------------- SZEROKOLISTNE (sobowtory)
-T['szerokolistna_swiat'] = [  # wspolny blok: z daleka czosnek = konwalia
+T['szerokolistna_swiat'] = [  # wspolny blok: same liscie, z daleka czosnek = konwalia
     "................",
     "................",
-    "......W..W......",
-    ".....WcW.cW.....",
-    "......W.l.W.....",
-    "...H...l.l...H..",
-    "..Hh...l.l..hH..",
-    "..hhH..l.l.Hhh..",
-    "..LhhH.lll.hhL..",
-    "...LhH.ll.Hhh...",
-    "...LhhHllHhhL...",
+    "................",
+    "....H.....H.....",
+    "...Hh....Hh.....",
+    "...hhH..Hhh..H..",
+    "....hhH.hhh.Hh..",
+    ".H..LhH.hhL.hh..",
+    ".hH.LhhHhhL.hL..",
+    "..hHLhhlhhLHhL..",
+    "..LhhLhllhLhhL..",
+    "...LhhLllLhhL...",
     "....LhhllhhL....",
-    "....LLhllhLL....",
-    ".....LLhlLL.....",
+    ".....LLllLL.....",
     "......LLhL......",
     ".......LL.......",
 ]
-T['czosnek_lisc'] = [  # lancetowaty lisc na ogonku, jasny nerw
+T['czosnek_lisc'] = [  # lancetowaty, jasny zoltozielony, na jasnym ogonku
     ".......j........",
-    "......Hj........",
-    "......Hjh.......",
-    ".....HHjhh......",
-    ".....HHjhh......",
-    ".....HHjhL......",
-    ".....HhjhL......",
-    ".....hhjhL......",
-    "......hjL.......",
-    "......hjL.......",
-    ".......jL.......",
+    "......aj........",
+    ".....aajA.......",
+    "....aaajAA......",
+    "....aaajAAA.....",
+    "...aaaajAAA.....",
+    "...aaaajAAA.....",
+    "....aaajAA......",
+    "....aaajAA......",
+    ".....aajA.......",
+    "......ajA.......",
+    ".......j........",
+    ".......j........",
+    ".......j........",
     ".......h........",
     ".......h........",
-    ".......h........",
-    ".......L........",
-    ".......L........",
 ]
 T['czosnek_kwiat'] = [  # baldach bialych gwiazdek na prostej lodyzce
     "....W...W.......",
@@ -212,23 +214,59 @@ T['czosnek_kwiat'] = [  # baldach bialych gwiazdek na prostej lodyzce
     ".......h........",
     ".......h........",
 ]
-T['konwalia_lisc'] = [  # szeroki eliptyczny lisc wprost z pochwy, bez ogonka
-    ".......H........",
-    "......HHj.......",
-    ".....HHHjh......",
-    "....HHHHjhh.....",
-    "....HHHHjhhL....",
-    "....HHHhjhhL....",
-    "....HHHhjhhL....",
-    "....HHhhjhhL....",
-    ".....HhhjhL.....",
-    ".....HhhjhL.....",
-    "......hhjL......",
-    "......hhjL......",
-    ".......hjL......",
-    ".......hL.......",
-    "......LhhL......",
-    "......LLhL......",
+T['czosnek_baldach'] = [  # baldach z gory: gwiazdki bialych kwiatow w kole (karta pozioma)
+    "................",
+    "......W..W......",
+    "....WWcW.WcW....",
+    "...WcW.WWW.W....",
+    "....W.WcWcW.W...",
+    "..W.WW.lWW.WcW..",
+    ".WcW.WcWlWc.W...",
+    "..W.W.llHllW.W..",
+    "...WcWlHjHlWcW..",
+    "..W.W.llHll.W...",
+    ".WcW.WcWlWcW.W..",
+    "..W.WW.lW.W.WcW.",
+    "....W.WcWcW..W..",
+    "...WcW.WWW.WcW..",
+    "....W..WcW..W...",
+    "........W.......",
+]
+T['rekawice'] = [  # rekawice zielarza: cieply bez, kciuk, mankiet z rzemykiem
+    "................",
+    "......u..u......",
+    ".....uXuuXu.u...",
+    ".....uXuuXuuXu..",
+    "..u..uXuuXuuXu..",
+    ".uXu.uXuuXuuXu..",
+    ".uXxuuxXXxXXXu..",
+    "..uXxxxxxxxxXu..",
+    "...uXxxxxxxxXu..",
+    "...uXxxxxxxxXu..",
+    "....uXxxxxxXu...",
+    "....uDDDDDDDu...",
+    "....uDeDeDeDu...",
+    "....uDDDDDDDu...",
+    ".....uuuuuuu....",
+    "................",
+]
+T['konwalia_lisc'] = [  # szeroki owalny, ciemny sinozielony, bez ogonka, obejmuje lodyge
+    "................",
+    ".......S........",
+    "......SSs.......",
+    ".....SSSHs......",
+    "....SSSSHss.....",
+    "...SSSSSHsss....",
+    "...SSSSSHsss....",
+    "...SSSShHsss....",
+    "...SSShhHsss....",
+    "....SShhHss.....",
+    "....SShhHss.....",
+    ".....ShhHs......",
+    ".....ShhHs......",
+    "......hhH.......",
+    ".....ThhHT......",
+    ".....TThTT......",
 ]
 T['konwalia_kwiat'] = [  # wygieta lodyzka, dzwonki zwisaja na jedna strone
     "................",
@@ -277,17 +315,30 @@ def obraz(rows):
     return im
 
 def stary(im):
-    """Starszy lisc: koncowka zolknie pasami (bez szachownicy — szum wyglada tanio)."""
+    """Starszy lisc: zolknie sam czubek i brzegi przy czubku (pelne pasy na szerokosc wygladaly z bliska jak deska)."""
     im = im.copy(); px = im.load()
-    for y in range(0, 5):
-        kol = (0xd8, 0xc8, 0x5a) if y < 2 else (0xb0, 0xb4, 0x48) if y < 4 else (0x8a, 0x9a, 0x3a)
+    for y in range(0, 7):
+        xs = [x for x in range(16) if px[x, y][3]]
+        if not xs: continue
+        for x in xs:
+            brzeg = x in (xs[0], xs[-1])
+            if y < 2 or (y < 4 and brzeg) or (y < 7 and brzeg and y % 2 == 0):
+                px[x, y] = ((0xd0, 0xc0, 0x58) if y < 2 else (0xa8, 0xb0, 0x48)) + (255,)
+    return im
+
+def bez_bieli(im):
+    """Lodyzka bez kwiatow (biale gwiazdki przechodza na pozioma karte baldachu)."""
+    im = im.copy(); px = im.load()
+    for y in range(16):
         for x in range(16):
-            if px[x, y][3]: px[x, y] = kol + (255,)
+            r, g, b, a = px[x, y]
+            if a and r > 180 and g > 180 and b > 180: px[x, y] = (0, 0, 0, 0)
     return im
 
 if __name__ == '__main__':
     out = sys.argv[1]; os.makedirs(out, exist_ok=True)
     ims = {k: obraz(v) for k, v in T.items()}
     ims['czosnek_lisc_stary'] = stary(ims['czosnek_lisc']); ims['konwalia_lisc_stary'] = stary(ims['konwalia_lisc'])
+    ims['czosnek_lodyzka'] = bez_bieli(ims['czosnek_kwiat'])
     for k, im in ims.items(): im.save(f'{out}/{k}.png')
     print(' '.join(sorted(ims)))

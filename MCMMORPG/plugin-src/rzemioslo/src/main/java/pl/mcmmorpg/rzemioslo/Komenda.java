@@ -104,7 +104,8 @@ final class Komenda implements TabExecutor {
             case "postaw" -> {             // postaw <nexoId> <swiat> <x> <y> <z> — wezel/lowisko z MythicMobs (lochy, wyspy)
                 if (a.length < 6) { pomoc(s); return true; }
                 String nid = a[1];
-                if (!plugin.dane().wezly.containsKey(nid) && !plugin.dane().lowiskoBloki.containsKey(nid)) {
+                boolean kepaZielarza = nid.startsWith("zielarz_") && com.nexomc.nexo.api.NexoBlocks.isCustomBlock(nid);
+                if (!kepaZielarza && !plugin.dane().wezly.containsKey(nid) && !plugin.dane().lowiskoBloki.containsKey(nid)) {
                     s.sendMessage("[Rzemioslo] nieznany wezel " + nid);
                     return true;
                 }
@@ -150,6 +151,10 @@ final class Komenda implements TabExecutor {
                 if (p == null) return true;
                 Block b = p.getWorld().getBlockAt(Integer.parseInt(a[2]), Integer.parseInt(a[3]), Integer.parseInt(a[4]));
                 s.sendMessage("[Rzemioslo] " + plugin.zielarz().startTest(p, b));
+            }
+            case "karty" -> {              // karty przedmiot|blok — test wygladu kart zblizenia
+                ZRoslina.JAKO_PRZEDMIOT = a.length < 2 || a[1].equalsIgnoreCase("przedmiot");
+                s.sendMessage("karty jako przedmiot=" + ZRoslina.JAKO_PRZEDMIOT);
             }
             case "celuj" -> {              // celuj <gracz> <typ> <nr> [y] — test: kamera na czesc rosliny w trakcie zbioru
                 Player p = a.length > 3 ? Bukkit.getPlayerExact(a[1]) : null;

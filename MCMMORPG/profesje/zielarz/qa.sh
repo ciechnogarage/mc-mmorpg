@@ -9,6 +9,12 @@ Q=${QA_DIR:-$CLAUDE_JOB_DIR/tmp/qa}; C=mc-client-zielarz; N=${2:-zielarz}
 case "$1" in
 start)
   docker rm -f $C >/dev/null 2>&1 || true
+  if [[ ! -f "$Q/instance/options.txt" ]]; then   # wlasne ustawienia: bez pauzy, bez surowej myszy, gui 2
+    mkdir -p "$Q/instance" "$Q/captures"
+    sed -e 's/^pauseOnLostFocus:.*/pauseOnLostFocus:false/' -e 's/^renderDistance:.*/renderDistance:8/' -e 's/^resourcePacks:.*/resourcePacks:[]/' \
+        -e 's/^skipMultiplayerWarning:.*/skipMultiplayerWarning:true/' -e 's/^tutorialStep:.*/tutorialStep:none/' -e 's/^guiScale:.*/guiScale:2/' \
+        -e 's/^rawMouseInput:.*/rawMouseInput:false/' /home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client/instance/options.txt > "$Q/instance/options.txt"
+  fi
   docker run -d --name $C --memory 2g --network klon-$N-net -u 1000:1000 -e MC_SERVER=klon-$N -e MC_PORT=25565 -e MC_USER=QaZielarz \
     -v /home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client:/mc:ro -v "$Q/instance:/mc/instance" -v "$Q/captures:/review" \
     mc-client-test:latest bash /mc/launch.sh >/dev/null
