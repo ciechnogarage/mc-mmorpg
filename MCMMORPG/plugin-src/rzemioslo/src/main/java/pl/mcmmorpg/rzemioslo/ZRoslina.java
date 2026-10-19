@@ -246,6 +246,16 @@ final class ZRoslina {
         }
     }
 
+    /** Lekki wiatr: pedy, liscie i kwiaty kolysza sie wokol nasady o 2-3 st. (oprocz celowanej i trzymanej czesci). */
+    void wiatr(int t, Czesc pomin, Czesc pomin2) {
+        for (Czesc c : czesci) {
+            if (c.zabrana || c == pomin || c == pomin2 || c.klocki.isEmpty()) continue;
+            if (!c.typ.equals("ped") && !c.typ.equals("lisc") && !c.typ.equals("kwiat")) continue;
+            double a = 2.5 * Math.sin(t * 0.09 + c.nr * 1.7) + (Math.sin(t * 0.023) > 0.92 ? 3 : 0);   // rzadki podmuch
+            przechyl(c, obrotZ(a).mul(obrotX(a * 0.4)), new Vector3f(), 0f, 10);
+        }
+    }
+
     /** Przesuniecie calej czesci (wyciaganie korzenia, drzenie). */
     void przesun(Czesc c, Vector3f v, int ticki) {
         for (Klocek k : c.klocki) animuj(k.d, new Transformation(new Vector3f(k.t0).add(v), k.r0, k.s0, new Quaternionf()), ticki);

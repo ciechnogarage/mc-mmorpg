@@ -3,7 +3,7 @@ import os, sys
 from PIL import Image
 
 PAL = {
-    'G': '177c04', 'g': '4a8f28', 'l': '55ab2d', 'j': '7fc059',
+    'G': '2b702a', 'g': '3f7a2c', 'l': '55ab2d', 'j': '7fc059',
     'L': '377f13', 'h': '50922f', 'H': '64b132',          # liscie konwalii/czosnku (vanilla lily)
     'v': '8a9a3a', 'M': 'c9c860', 'y': 'e6d65a',          # starzejace sie / zolta koncowka
     'W': 'ffffff', 'w': 'e7e7e7', 'c': 'd6e8e8', 'C': 'b2d0d0',   # biel kwiatow
@@ -13,8 +13,8 @@ PAL = {
     'a': '7fc059', 'A': '55ab2d', 's': '2f6a34', 'S': '3e7e44', 'T': '23502a',   # czosnek jasny zoltozielony / konwalia sinozielona
     'x': 'f0d9a8', 'X': 'd4b47c', 'u': '3b2a1e',          # plotno rekawic (cieple), kontur
     'i': 'fff4dc', 'I': 'b0905c',                          # rekawice: swiatlo, cien
-    '1': '135e0c', '2': '177c04', '3': '4a8f28', '4': '55ab2d', '5': '7fc059', '6': 'a6d86e',   # zielen 5 tonow (jak dziurawiec)
-    'Z': '7a6038',                                         # korzen: cien gleboki
+    '1': '204626', '2': '2b702a', '3': '3f7a2c', '4': '55ab2d', '5': '7fc059', '6': 'a6d86e',   # zielen 5 tonow (jak dziurawiec)
+    'Z': '7a6038', 'B': '5e4228',                                         # korzen: cien gleboki
     'F': '78b070', 'f': '5aa050', 'U': '1a3822',           # konwalia: nerw, swiatlo, najglebszy cien
     'P': 'd88abc',                                         # roz kozlka: cien sredni
     'J': 'd6d6be', 'o': '9a6e46', 'O': 'b0825a', 'Y': 'c89a68', 'N': '2e1e12',   # biel w cieniu; skora rekawic
@@ -93,23 +93,23 @@ T['kozlek_lisc'] = [  # lisc rozety: pierzasty, lezy (os glowna poziomo, nasada 
     "................",
     "................",
 ]
-T['kozlek_korzen'] = [  # korzen: palowy z korzonkami (pionowo, gora = szyjka)
-    ".......KkZ......",
-    ".......KkZ......",
-    "......KKkzZ.....",
-    "......KkkzZ.....",
-    ".....kKkkzZ.....",
-    ".....kKkkzZ.k...",
-    "......KkkzZk....",
-    "......KkkzZ.....",
-    "....kkKkkzZ.....",
-    ".....kKkzZ......",
-    "......KkzZ.kk...",
-    "......KkzZkk....",
-    ".......kzZ......",
-    ".......kzZ......",
-    "........zZ......",
-    "........Z.......",
+T['kozlek_korzen'] = [  # korzen kozlka: krotkie brazowe klacze + peczek cienkich jasnych korzonkow (wiecha)
+    "......kzzZ......",
+    ".....kzzzZZ.....",
+    "....kzzBzzZB....",
+    "....zzBzZBZB....",
+    "...k.zZBzZB.k...",
+    "..k..k.zZ.z..k..",
+    "..k.k..z.Z.k..k.",
+    ".k..k.z..Z..k.k.",
+    ".k.k..z..Z..k..k",
+    "k..k.k...Z.k...k",
+    "...k.k..z..k..k.",
+    "..k..k..z...k...",
+    "..k.....z...k...",
+    ".k......k....k..",
+    "........k.......",
+    "................",
 ]
 T['kozlek_gleba'] = [  # placek luznej ziemi (lezy plasko), poszarpany brzeg
     "................",
@@ -131,20 +131,20 @@ T['kozlek_gleba'] = [  # placek luznej ziemi (lezy plasko), poszarpany brzeg
 ]
 T['kozlek_gleba_rozkopana'] = [  # rozluzniona ziemia: ciemniejsza, grudy, szczelina
     "................",
-    "....DD.De.......",
-    "..DDeEDDDED.D...",
-    ".DEDdDeDEDDEDD..",
-    "..DEDDdDEDeDDED.",
-    ".DeDDEdDDDeDED..",
-    "DEDDeDEdd.DDdED.",
-    ".DdDED...DeDDeDD",
-    "DDEDeDd..dEDdeD.",
-    ".DeDdDEd.DeDeDE.",
-    "..DEDDeDDdEDDD..",
-    ".DDEDEDdDeDEDD..",
-    "...DdDeDEDDED...",
-    "....DDEDDeDD....",
-    "......DD.DD.....",
+    "....dE.dE.......",
+    "..dEEdEEdEd.d...",
+    ".dEeDDDDDeEEdd..",
+    "..EeDDNNNDDeEd..",
+    ".dEDDNNNNNDDEd..",
+    "dEeDNNNNNNNDed..",
+    ".dEDNNNNNNNDeEdd",
+    "dEeDNNNNNNNDdeE.",
+    ".dEDDNNNNNDDeEd.",
+    "..EeDDNNNDDeEd..",
+    ".ddEeDDDDDeEEd..",
+    "...dEEdeEEdEd...",
+    "....ddEddedd....",
+    "......dd.dd.....",
     "................",
 ]
 T['kozlek_swiat_wykopany'] = [  # po wykopaniu: ciemny dolek, zwiedly listek
@@ -324,10 +324,13 @@ def stary(im):
     """Starszy lisc: nieregularna zolta plama na jednym brzegu przy czubku (bez czapki, bez zabkow)."""
     im = im.copy(); px = im.load()
     rows = [y for y in range(16) if any(px[x, y][3] for x in range(16))]
-    for n, y in enumerate(rows[:6]):
+    for n, y in enumerate(rows[:3]):           # zolknie tylko czubek (2-3 px), reszta liscia zywa
         xs = [x for x in range(16) if px[x, y][3]]
-        for x in xs[-(1 + (n % 3)):]:          # prawy brzeg, szerokosc 1-3 px zmienna
-            px[x, y] = ((0xc8, 0xb8, 0x50) if n < 3 else (0xa0, 0xa8, 0x44)) + (255,)
+        for x in xs[-(1 + (n % 2)):]:
+            px[x, y] = ((0xc8, 0xb8, 0x50) if n < 2 else (0xa0, 0xa8, 0x44)) + (255,)
+    if len(rows) > 7:                          # jedna brazowa plamka w polowie liscia
+        y = rows[len(rows) // 2]; xs = [x for x in range(16) if px[x, y][3]]
+        if len(xs) > 2: px[xs[len(xs) // 2], y] = (0x8a, 0x60, 0x30, 255)
     return im
 
 def bez_bieli(im):

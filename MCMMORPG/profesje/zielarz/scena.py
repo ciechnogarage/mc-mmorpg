@@ -30,7 +30,8 @@ def dziurawiec():
     if len(dobre)>1: celuj('ped',dobre[1],h[dobre[1]]*0.1); czekaj(0.4); lpm(); czekaj(2.0)        # za nisko: zdrewniala lodyga
     if zle: celuj('ped',zle[0],h[zle[0]]*0.42); czekaj(0.4); lpm(); czekaj(2.0)          # chory albo przekwitly
     reszta=[nr for nr,d in pedy if nr not in dobre[:2]+zle[:1]]
-    if reszta: celuj('ped',reszta[0],0.08); czekaj(0.4); trzymaj(1.4); czekaj(1.6)      # wyrwanie z korzeniem
+    if reszta: celuj('ped',reszta[0],0.08); czekaj(0.4); trzymaj(1.2); czekaj(1.6)      # nagina sie, puszczony wraca
+    if reszta: celuj('ped',reszta[0],0.08); czekaj(0.4); trzymaj(2.4); czekaj(1.6)      # trzymany dlugo: wyrwany
     wstan(); czekaj(2.5)
 
 def kozlek(dobrze=True, kepa=(57,-59,41), tp='54.4 -59 41.5 -90 22'):
@@ -40,9 +41,16 @@ def kozlek(dobrze=True, kepa=(57,-59,41), tp='54.4 -59 41.5 -90 22'):
         for i,b in enumerate(bocz):
             if b: celuj('gleba',i); czekaj(0.3); lpm(); czekaj(1.4)
         celuj('rozeta',0,0.05); czekaj(0.3)
-        for _ in range(4):
-            trzymaj(1.5); czekaj(0.9)
-            if not okaz()[0]: break
+        # gracz patrzy na roslinie: drzy mocno (napiecie > 0,8) = puszcza; uspokaja sie (< 0,5) = chwyta znowu
+        X('mousedown','3'); trzyma=True; t0=time.time()
+        while time.time()-t0 < 14:
+            m=re.search(r'napiecie=([0-9.]+)', R('rzemioslo okaz QaZielarz'))
+            if not m: break
+            n=float(m.group(1))
+            if trzyma and n>0.8: X('mouseup','3'); trzyma=False
+            elif not trzyma and n<0.5: X('mousedown','3'); trzyma=True
+            czekaj(0.08)
+        X('mouseup','3')
     else:
         celuj('rozeta',0,0.05); czekaj(0.3); trzymaj(3.2)
     czekaj(1.5)

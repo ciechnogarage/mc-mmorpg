@@ -52,6 +52,7 @@ final class ZSuszarnia implements Listener {
         int ilosc, klasa;
         long start;
         int probki, slonce, deszcz;
+        java.util.UUID wlasciciel;   // null = stary wpis, zdejmie kazdy
         ItemDisplay widok;
     }
 
@@ -104,6 +105,7 @@ final class ZSuszarnia implements Listener {
         k.ilosc = reka.getAmount();
         k.klasa = kl == null ? 1 : kl;
         k.start = System.currentTimeMillis();
+        k.wlasciciel = p.getUniqueId();
         l.add(k);
         p.getInventory().setItemInMainHand(null);
         pokazPek(b, l, k);
@@ -114,9 +116,10 @@ final class ZSuszarnia implements Listener {
 
     private void zdejmij(Player p, Block b, List<Pek> l) {
         long teraz = System.currentTimeMillis();
-        int zdjete = 0;
+        int zdjete = 0, cudze = 0;
         List<String> opis = new ArrayList<>();
         for (Pek k : new ArrayList<>(l)) {
+            if (k.wlasciciel != null && !k.wlasciciel.equals(p.getUniqueId())) { cudze++; continue; }
             if (teraz - k.start < SUSZENIE_MS) continue;
             l.remove(k);
             if (k.widok != null) k.widok.remove();
@@ -125,13 +128,18 @@ final class ZSuszarnia implements Listener {
             String uw = null;
             if (k.deszcz > 0 && ThreadLocalRandom.current().nextDouble() < 0.6) { daj(p, "PROF_SPLESNIALE_ZIELE", k.ilosc, 0); opis.add("§c" + k.ilosc + "× spleśniałe (zmokło)"); continue; }
             if (k.probki > 0 && k.slonce * 2 > k.probki) { klasa = Math.max(0, klasa - 1); uw = "wypalone słońcem"; }
-            daj(p, WYNIK.get(k.id), k.ilosc, klasa);
-            opis.add((klasa == 2 ? "§6" : klasa == 1 ? "§a" : "§c") + k.ilosc + "× " + nazwa(WYNIK.get(k.id)) + (uw != null ? " §7(" + uw + ")" : ""));
+            // jakosc = wydajnosc: wyborne schnie 1:1, dobre 2:1 (jak w alchemii), slabe 3:1 — reszta kruszy sie na proch
+            int wyn = klasa == 2 ? k.ilosc : klasa == 1 ? k.ilosc / 2 : k.ilosc / 3;
+            String z = " §8(z " + k.ilosc + ")";
+            if (wyn == 0) { opis.add("§c" + k.ilosc + "× " + nazwa(k.id) + " pokruszyło się" + (uw != null ? " §7(" + uw + ")" : "")); continue; }
+            daj(p, WYNIK.get(k.id), wyn, klasa);
+            opis.add((klasa == 2 ? "§6" : klasa == 1 ? "§a" : "§c") + wyn + "× " + nazwa(WYNIK.get(k.id)) + z + (uw != null ? " §7(" + uw + ")" : ""));
         }
         if (zdjete == 0) {
+            if (cudze > 0 && cudze == l.size()) { plugin.pasek(p, "§7Te pęczki powiesił ktoś inny."); return; }
             if (l.isEmpty()) { plugin.pasek(p, "§7Pusta suszarnia. Powieś świeże ziele albo korzeń (PPM z nim w ręce)."); return; }
             long najb = Long.MAX_VALUE;
-            for (Pek k : l) najb = Math.min(najb, SUSZENIE_MS - (teraz - k.start));
+            for (Pek k : l) if (k.wlasciciel == null || k.wlasciciel.equals(p.getUniqueId())) najb = Math.min(najb, SUSZENIE_MS - (teraz - k.start));
             plugin.pasek(p, "§7Jeszcze wilgotne. Najbliższy pęczek za §f" + Zielarz.czas(Math.max(1, najb / 1000)) + "§7.");
             return;
         }
@@ -147,9 +155,10 @@ final class ZSuszarnia implements Listener {
         int n = reka.getAmount();
         p.getInventory().setItemInMainHand(null);
         boolean czosnek = "czosnek".equals(gat);
-        daj(p, czosnek ? "PROF_WILD_SPICE" : "PROF_LISC_KONWALII", n, kl == null ? 1 : kl);
+        // rozcieranie kazdego liscia po fakcie gniecie je: jakosc o klase nizej (rozpoznanie przy zbiorze jest lepsze)
+        daj(p, czosnek ? "PROF_WILD_SPICE" : "PROF_LISC_KONWALII", n, Math.max(0, (kl == null ? 1 : kl) - 1));
         p.playSound(p.getLocation(), Sound.ITEM_BRUSH_BRUSHING_GENERIC, SoundCategory.PLAYERS, 0.7f, 1.2f);
-        p.sendMessage(czosnek ? "§2Rozcierasz liście po kolei: pachną czosnkiem. §7(" + n + "× czosnek niedźwiedzi)"
+        p.sendMessage(czosnek ? "§2Rozcierasz liście po kolei: pachną czosnkiem. §7(" + n + "× czosnek niedźwiedzi, pogniecione)"
                 : "§6Rozcierasz liście po kolei: bez zapachu, gorzkie. To konwalia. §7(" + n + "× liść konwalii, trujący)");
         plugin.zielarz().zielnik.odkryj(p, czosnek ? "czosnek_zapach" : "konwalia_zapach");
     }
@@ -242,6 +251,7 @@ final class ZSuszarnia implements Listener {
                 Pek p = new Pek();
                 p.id = x.getString("id"); p.ilosc = x.getInt("ilosc"); p.klasa = x.getInt("klasa"); p.start = x.getLong("start");
                 p.probki = x.getInt("probki"); p.slonce = x.getInt("slonce"); p.deszcz = x.getInt("deszcz");
+                String w = x.getString("wlasciciel"); if (w != null) p.wlasciciel = java.util.UUID.fromString(w);
                 l.add(p);
             }
             suszarnie.put(k.replace('_', ';').replace('~', '-'), l);
@@ -258,6 +268,7 @@ final class ZSuszarnia implements Listener {
                 String b = k + "." + (i++);
                 y.set(b + ".id", p.id); y.set(b + ".ilosc", p.ilosc); y.set(b + ".klasa", p.klasa); y.set(b + ".start", p.start);
                 y.set(b + ".probki", p.probki); y.set(b + ".slonce", p.slonce); y.set(b + ".deszcz", p.deszcz);
+                if (p.wlasciciel != null) y.set(b + ".wlasciciel", p.wlasciciel.toString());
             }
         }
         try { y.save(plik); } catch (IOException ex) { plugin.getLogger().warning("zielarz-suszarnie.yml: " + ex); }

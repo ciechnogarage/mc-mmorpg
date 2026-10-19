@@ -39,7 +39,7 @@ final class ZZielnik {
         Map<String, String> k = new java.util.LinkedHashMap<>();
         k.put("kozlek_widziany", "Wysoka łodyga z różowym baldachem, przy wodzie.");
         k.put("kozlek_zbior", "Cenny jest korzeń. Siedzi głęboko.");
-        k.put("kozlek_wyborny", "Korzeń z korzonkami: najpierw rozluźnić ziemię tam, gdzie biegną, potem ciągnąć z wyczuciem.");
+        k.put("kozlek_wyborny", "Korzeń z korzonkami: najpierw rozluźnić ziemię tam, gdzie biegną. Ciągnąć zrywami: napiąć, popuścić, gdy trzeszczy, napiąć znowu.");
         k.put("kozlek_urwany", "Ciągnięty na siłę urywa się w ziemi.");
         STRONY.put("kozlek", new Strona("Kozłek", k));
         Map<String, String> s = new java.util.LinkedHashMap<>();
