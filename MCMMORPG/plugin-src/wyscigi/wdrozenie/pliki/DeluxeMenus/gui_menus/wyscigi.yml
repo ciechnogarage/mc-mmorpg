@@ -1,0 +1,56 @@
+menu_title: '&8Wyścigi Chowańców'
+open_command: []
+size: 27
+update_interval: 20
+items:
+  tlo:
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [0,1,2,3,4,5,6,7,8,9,17,18,19,20,21,22,23,24,25,26]
+    display_name: ' '
+  czasowka:
+    material: CLOCK
+    slot: 10
+    display_name: '&eCzasówka'
+    lore:
+      - '&7Sam na torze, walczysz z zegarem.'
+      - '&7Najlepszy czas trafia do rekordów.'
+      - ''
+      - '&fKliknij, by wybrać wierzchowca.'
+    left_click_commands:
+      - '[openguimenu] wyscigi_czasowka'
+  wyscig:
+    material: FIREWORK_ROCKET
+    slot: 12
+    display_name: '&6Wyścig z innymi'
+    lore:
+      - '&7Do 8 jeźdźców naraz. Poczekalnia 20 s,'
+      - '&7każdy, kto dołączy, wydłuża ją o chwilę.'
+      - '&7Jeśli nikt nie przyjdzie, jedziesz sam.'
+      - ''
+      - '&fKliknij, by wybrać wierzchowca.'
+    left_click_commands:
+      - '[openguimenu] wyscigi_wyscig'
+  rekordy:
+    material: WRITABLE_BOOK
+    slot: 14
+    display_name: '&bRekordy toru'
+    lore:
+      - '&7Najlepsze przejazdy i najszybsze okrążenie.'
+    left_click_commands:
+      - '[console] wyscigi rekordy %player_name%'
+      - '[close]'
+  sterowanie:
+    material: OAK_SIGN
+    slot: 16
+    display_name: '&fJak jeździć'
+    lore:
+      - '&fW &7gaz, &fS &7hamulec, &fmysz &7skręt'
+      - '&fShift w zakręcie &7= poślizg; im dłużej,'
+      - '&7tym mocniejsze turbo po puszczeniu'
+      - '&7(iskry: &fbiałe &7→ &9niebieskie &7→ &6pomarańczowe&7)'
+      - '&fSpacja &7podskok, &fA/D &7unik w bok'
+      - '&dPola ▶▶ &7na torze przyspieszają'
+      - '&fW &7tuż przed &aSTART! &7= turbo startowe'
+      - '&7Za wcześnie = wierzchowiec się spłoszy'
+      - '&7Wyjście: przytrzymaj &fShift &7na postoju'
+      - '&7Widok z boku: &fF5'

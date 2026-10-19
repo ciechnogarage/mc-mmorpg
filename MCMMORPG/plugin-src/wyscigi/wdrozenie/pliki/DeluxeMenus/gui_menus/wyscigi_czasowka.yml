@@ -1,0 +1,105 @@
+menu_title: '&8Czasówka: wybierz wierzchowca'
+open_command: []
+size: 36
+update_interval: 20
+items:
+  tlo:
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [0,1,2,3,4,5,6,7,8,9,17,18,26,27,28,29,30,32,33,34,35]
+    display_name: ' '
+  wilkor:
+    material: nexo-chw_wilkor
+    slot: 10
+    display_name: '&eWilkor'
+    lore:
+      - '&7Zrywny: najszybciej rusza i wychodzi z zakrętów.'
+      - ''
+      - '&7Prędkość      &a▮▮&8▮▮▮▮▮▮'
+      - '&7Przyspieszenie &a▮▮▮▮▮▮▮▮&8'
+      - '&7Skręt          &a▮▮▮▮▮▮&8▮▮'
+      - ''
+      - '&fKliknij, by ruszyć.'
+    left_click_commands:
+      - '[console] wyscigi czasowka %player_name% wilkor'
+      - '[close]'
+  pozogar:
+    material: nexo-chw_pozogar
+    slot: 11
+    display_name: '&ePożogar'
+    lore:
+      - '&7Najszybszy na prostej, ale długo się rozpędza.'
+      - ''
+      - '&7Prędkość      &a▮▮▮▮▮▮▮▮&8'
+      - '&7Przyspieszenie &a▮▮▮&8▮▮▮▮▮'
+      - '&7Skręt          &a▮▮▮&8▮▮▮▮▮'
+      - ''
+      - '&fKliknij, by ruszyć.'
+    left_click_commands:
+      - '[console] wyscigi czasowka %player_name% pozogar'
+      - '[close]'
+  glebiniec:
+    material: nexo-chw_glebiniec
+    slot: 12
+    display_name: '&eGłębiniec'
+    lore:
+      - '&7Wszechstronny: bez słabych stron.'
+      - ''
+      - '&7Prędkość      &a▮▮▮▮▮&8▮▮▮'
+      - '&7Przyspieszenie &a▮▮▮▮▮&8▮▮▮'
+      - '&7Skręt          &a▮▮▮▮&8▮▮▮▮'
+      - ''
+      - '&fKliknij, by ruszyć.'
+    left_click_commands:
+      - '[console] wyscigi czasowka %player_name% glebiniec'
+      - '[close]'
+  puszczorog:
+    material: nexo-chw_puszczorog
+    slot: 14
+    display_name: '&ePuszczoróg'
+    lore:
+      - '&7Zwrotny: najciaśniej bierze zakręty.'
+      - ''
+      - '&7Prędkość      &a▮▮▮&8▮▮▮▮▮'
+      - '&7Przyspieszenie &a▮▮▮▮&8▮▮▮▮'
+      - '&7Skręt          &a▮▮▮▮▮▮▮▮&8'
+      - ''
+      - '&fKliknij, by ruszyć.'
+    left_click_commands:
+      - '[console] wyscigi czasowka %player_name% puszczorog'
+      - '[close]'
+  glazogrzbiet:
+    material: nexo-chw_glazogrzbiet
+    slot: 15
+    display_name: '&eGłazogrzbiet'
+    lore:
+      - '&7Ciężki: wolno rusza, rozpycha innych.'
+      - ''
+      - '&7Prędkość      &a▮▮▮▮▮▮▮&8▮'
+      - '&7Przyspieszenie &a▮▮&8▮▮▮▮▮▮'
+      - '&7Skręt          &a▮▮&8▮▮▮▮▮▮'
+      - ''
+      - '&fKliknij, by ruszyć.'
+    left_click_commands:
+      - '[console] wyscigi czasowka %player_name% glazogrzbiet'
+      - '[close]'
+  zelaznorog:
+    material: nexo-chw_zelaznorog
+    slot: 16
+    display_name: '&eŻelaznoróg'
+    lore:
+      - '&7Pewny: krótszy poślizg ładuje turbo szybciej.'
+      - ''
+      - '&7Prędkość      &a▮▮▮▮▮&8▮▮▮'
+      - '&7Przyspieszenie &a▮▮▮▮&8▮▮▮▮'
+      - '&7Skręt          &a▮▮▮▮&8▮▮▮▮'
+      - ''
+      - '&fKliknij, by ruszyć.'
+    left_click_commands:
+      - '[console] wyscigi czasowka %player_name% zelaznorog'
+      - '[close]'
+  wroc:
+    material: ARROW
+    slot: 31
+    display_name: '&7Wróć'
+    left_click_commands:
+      - '[openguimenu] wyscigi'
