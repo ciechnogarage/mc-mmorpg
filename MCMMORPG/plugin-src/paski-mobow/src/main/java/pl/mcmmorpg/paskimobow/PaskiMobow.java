@@ -341,7 +341,8 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
 
   private List<Wyglad.Status> statusy(LivingEntity m) {
     List<Wyglad.Status> s = new ArrayList<>(4);
-    if (m.getFireTicks() > 0 && !m.isDead()) s.add(Wyglad.Status.OGIEN);
+    // Trafienia przejmuja ogien mobow z modelem (vanilla rysowalaby slup ognia na niewidzialnej bazie) i znacza to tagiem
+    if ((m.getFireTicks() > 0 || m.getScoreboardTags().contains("traf_plonie")) && !m.isDead()) s.add(Wyglad.Status.OGIEN);
     if (m.hasPotionEffect(PotionEffectType.POISON)) s.add(Wyglad.Status.TRUCIZNA);
     if (krwawiacy != null && krwawiacy.containsKey(m.getUniqueId())) s.add(Wyglad.Status.KRWAWIENIE);
     if (m.hasPotionEffect(PotionEffectType.WITHER)) s.add(Wyglad.Status.OBUMARCIE);
@@ -349,7 +350,7 @@ public final class PaskiMobow extends JavaPlugin implements Listener {
     if (m.hasPotionEffect(PotionEffectType.WEAKNESS)) s.add(Wyglad.Status.OSLABIENIE);
     if (m.hasPotionEffect(PotionEffectType.BLINDNESS) || m.hasPotionEffect(PotionEffectType.DARKNESS))
       s.add(Wyglad.Status.OSLEPIENIE);
-    if (m.getFreezeTicks() > 0) s.add(Wyglad.Status.ZAMROZENIE);
+    if (m.getFreezeTicks() > 0 || m.getScoreboardTags().contains("traf_zmrozony")) s.add(Wyglad.Status.ZAMROZENIE);
     if (m.hasPotionEffect(PotionEffectType.STRENGTH)) s.add(Wyglad.Status.SILA);
     if (m.hasPotionEffect(PotionEffectType.RESISTANCE)) s.add(Wyglad.Status.ODPORNOSC);
     if (m.hasPotionEffect(PotionEffectType.REGENERATION)) s.add(Wyglad.Status.REGENERACJA);
