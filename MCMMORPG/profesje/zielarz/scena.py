@@ -26,9 +26,9 @@ def dziurawiec():
     dobre=[nr for nr,d in pedy if d.get('faza')=='kw' and d.get('chory')=='false']
     zle=[nr for nr,d in pedy if d.get('faza')!='kw' or d.get('chory')=='true']
     h={nr:float(d['h']) for nr,d in pedy}
-    if dobre: celuj('ped',dobre[0],h[dobre[0]]*0.62); czekaj(0.4); lpm(); czekaj(2.0)
-    if len(dobre)>1: celuj('ped',dobre[1],h[dobre[1]]*0.12); czekaj(0.4); lpm(); czekaj(2.0)        # za nisko: zdrewniala lodyga
-    if zle: celuj('ped',zle[0],h[zle[0]]*0.62); czekaj(0.4); lpm(); czekaj(2.0)          # chory albo przekwitly
+    if dobre: celuj('ped',dobre[0],h[dobre[0]]*0.42); czekaj(0.4); lpm(); czekaj(2.0)
+    if len(dobre)>1: celuj('ped',dobre[1],h[dobre[1]]*0.1); czekaj(0.4); lpm(); czekaj(2.0)        # za nisko: zdrewniala lodyga
+    if zle: celuj('ped',zle[0],h[zle[0]]*0.42); czekaj(0.4); lpm(); czekaj(2.0)          # chory albo przekwitly
     reszta=[nr for nr,d in pedy if nr not in dobre[:2]+zle[:1]]
     if reszta: celuj('ped',reszta[0],0.08); czekaj(0.4); trzymaj(1.4); czekaj(1.6)      # wyrwanie z korzeniem
     wstan(); czekaj(2.5)

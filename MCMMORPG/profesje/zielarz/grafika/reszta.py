@@ -10,13 +10,14 @@ PAL = {
     'R': 'fccbe7', 'r': 'f7b9dc', 'q': 'f396cd', 'Q': 'e563a3',   # roz kozlka
     'K': 'eadbb0', 'k': 'c9b07a', 'z': '9a7f50',          # korzen
     'd': '5d3f2a', 'D': '45301f', 'e': '6e4c33', 'E': '79553a',   # ziemia (barwy dirt vanilli)
-    'a': '7fc059', 'A': '55ab2d', 's': '2f5a3a', 'S': '3e6e4e', 'T': '23452c',   # czosnek jasny zoltozielony / konwalia sinozielona
+    'a': '7fc059', 'A': '55ab2d', 's': '2f6a34', 'S': '3e7e44', 'T': '23502a',   # czosnek jasny zoltozielony / konwalia sinozielona
     'x': 'f0d9a8', 'X': 'd4b47c', 'u': '3b2a1e',          # plotno rekawic (cieple), kontur
     'i': 'fff4dc', 'I': 'b0905c',                          # rekawice: swiatlo, cien
     '1': '135e0c', '2': '177c04', '3': '4a8f28', '4': '55ab2d', '5': '7fc059', '6': 'a6d86e',   # zielen 5 tonow (jak dziurawiec)
     'Z': '7a6038',                                         # korzen: cien gleboki
-    'F': '6a9e78', 'f': '4f8a62', 'U': '1a3822',           # konwalia: nerw, swiatlo, najglebszy cien
+    'F': '78b070', 'f': '5aa050', 'U': '1a3822',           # konwalia: nerw, swiatlo, najglebszy cien
     'P': 'd88abc',                                         # roz kozlka: cien sredni
+    'J': 'd6d6be', 'o': '9a6e46', 'O': 'b0825a', 'Y': 'c89a68', 'N': '2e1e12',   # biel w cieniu; skora rekawic
 }
 T = {}
 # ---------------------------------------------------------------- KOZLEK
@@ -60,10 +61,10 @@ T['kozlek_baldach'] = [  # baldach: kopula drobnych rozowo-bialych kwiatkow
     "................",
     "................",
     ".....RRWRr......",
-    "...RRrRWRrqr....",
-    "..RWRrqRrqRrq...",
-    "..rRrqPrqrqPqQ..",
-    "...qPqQ.QqPqQ...",
+    "...RRrRrRrqr....",
+    "..RRRrqRrqRrq...",
+    "..QrrqPrqrqPqQ..",
+    "...QPqQ.QqPQQ...",
     "....4.4.4.3.....",
     ".....4.443......",
     "......443.......",
@@ -78,13 +79,13 @@ T['kozlek_lisc'] = [  # lisc rozety: pierzasty, lezy (os glowna poziomo, nasada 
     "................",
     "................",
     "................",
-    "...5...5...5..5.",
-    "..54..54..54.54.",
-    ".5443.5443.54435",
-    "3444444444444444",
-    ".3322.3322.3322.",
-    "..22..22..22.22.",
-    "...1...1...1..1.",
+    "..5....5...5..5.",
+    ".54...54..54..5.",
+    "5443.5443.543.4.",
+    "3444444444444443",
+    ".3322..3322.32..",
+    "..22...22...2...",
+    "...1....1.......",
     "................",
     "................",
     "................",
@@ -97,14 +98,14 @@ T['kozlek_korzen'] = [  # korzen: palowy z korzonkami (pionowo, gora = szyjka)
     ".......KkZ......",
     "......KKkzZ.....",
     "......KkkzZ.....",
-    "....k.KkkzZ.....",
+    ".....kKkkzZ.....",
     ".....kKkkzZ.k...",
     "......KkkzZk....",
     "......KkkzZ.....",
-    "...kk.KkkzZ.....",
+    "....kkKkkzZ.....",
     ".....kKkzZ......",
-    "......KkzZ...k..",
-    "......KkzZkkk...",
+    "......KkzZ.kk...",
+    "......KkzZkk....",
     ".......kzZ......",
     ".......kzZ......",
     "........zZ......",
@@ -114,16 +115,16 @@ T['kozlek_gleba'] = [  # placek luznej ziemi (lezy plasko), poszarpany brzeg
     "................",
     "....dd.de.......",
     "..ddeEdddEd.d...",
-    ".dEdDdedEddEdd..",
-    "..dEddDdEdeDdEd.",
-    ".deDdEddDdedEd..",
-    "dEddedEddEdDdEd.",
-    ".dDdEdDdedEddedd",
-    "ddEdedEdDdEdDed.",
-    ".dedDdEddEdedEd.",
-    "..dEddedDdEddd..",
-    ".ddEdEdDdedEdd..",
-    "...dDdedEddEd...",
+    ".dEdDDedEddEdd..",
+    "..dEdDDdEdeDdEd.",
+    ".deddEddDDedEd..",
+    "dEddedEddDDdEd..",
+    ".dDDEdeEdedEdedd",
+    "dDDDedEddEdDded.",
+    ".ddDdEdeEdedEd..",
+    "..dEddedDDEddd..",
+    ".ddEdEdDDDedEd..",
+    "...dDdedDdEEd...",
     "....ddEddedd....",
     "......dd.dd.....",
     "................",
@@ -148,21 +149,21 @@ T['kozlek_gleba_rozkopana'] = [  # rozluzniona ziemia: ciemniejsza, grudy, szcze
 ]
 T['kozlek_swiat_wykopany'] = [  # po wykopaniu: ciemny dolek, zwiedly listek
     "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "........v.......",
-    "......vgv.......",
-    "...dEdDDDDdEd...",
+    "......dddd......",
+    "....ddDDDDdd....",
+    "...dDDDDDDDDd...",
     "..dDDDDDDDDDDd..",
-    ".dEdDDDDDDDdEdd.",
+    "..dDDDDDDDDDDd..",
+    ".dDDDDNNDDDDDDd.",
+    ".dDDDNNNNDDDDDd.",
+    ".dDDDDNNDDDDDDd.",
+    "..dDDDDDDDvDDd..",
+    "..dDDDDDDvgDDd..",
+    "...dDDDDDDvDd...",
+    "....ddDDDDdd....",
+    "......dddd......",
+    "................",
+    "................",
 ]
 # ---------------------------------------------------------------- SZEROKOLISTNE (sobowtory)
 T['szerokolistna_swiat'] = [  # wspolny blok: same liscie, z daleka czosnek = konwalia
@@ -221,34 +222,34 @@ T['czosnek_kwiat'] = [  # baldach bialych gwiazdek na prostej lodyzce
 ]
 T['czosnek_baldach'] = [  # baldach z gory: gwiazdki bialych kwiatow w kole (karta pozioma)
     "................",
-    "......W..W......",
-    "....WWcW.WcW....",
-    "...WcW.WWW.W....",
-    "....W.WcWcW.W...",
-    "..W.WW.lWW.WcW..",
-    ".WcW.WcWlWc.W...",
-    "..W.W.llHllW.W..",
-    "...WcWlHjHlWcW..",
-    "..W.W.llHll.W...",
-    ".WcW.WcWlWcW.W..",
-    "..W.WW.lW.W.WcW.",
-    "....W.WcWcW..W..",
-    "...WcW.WWW.WcW..",
-    "....W..WcW..W...",
-    "........W.......",
+    "....W.....W.....",
+    "...WcW...WcJ....",
+    "....J4...4J..W..",
+    ".W....4.4...WcJ.",
+    "WcJ....4....4J..",
+    "..4.4..l..4.....",
+    "....4lHjHl4.....",
+    "..J4..lHl..4J...",
+    ".WcJ.4.4.4..WcJ.",
+    "..J..4.4..4..J..",
+    "....4..4...4....",
+    "...WcJ.W..WcJ...",
+    "....J.WcJ..J....",
+    ".......J........",
+    "................",
 ]
 T['rekawice'] = [  # rekawice zielarza: cieply bez, kciuk, mankiet z rzemykiem
     "................",
     "......u..u......",
-    ".....uiuuiu.u...",
-    ".....uxuuxuuiu..",
-    "..u..uxuuxuuxu..",
-    ".uiu.uxuuxuuxu..",
-    ".uxXuuxxXxxxXu..",
-    "..uXxixxxxxxXu..",
-    "...uXxxxxxxXIu..",
-    "...uXxxxxxxXIu..",
-    "....uXxxxxXIu...",
+    ".....uYuuYu.u...",
+    ".....uOuuOuuYu..",
+    "..u..uOuNOuuOu..",
+    ".uYu.uOuNOuNOu..",
+    ".uOouuOoOOoOOu..",
+    "..uOoYooooooOu..",
+    "...uOooooooOou..",
+    "...uOooooooOou..",
+    "....uOooooOou...",
     "....uDDDDDDDu...",
     "....uDeDeDeDu...",
     "....uDDDDDDDu...",
@@ -259,16 +260,16 @@ T['konwalia_lisc'] = [  # szeroki owalny, ciemny sinozielony, bez ogonka, obejmu
     "................",
     ".......f........",
     "......ffS.......",
+    "......fFSs......",
     ".....ffFSs......",
-    "....ffFFSss.....",
-    "...fffFFSsss....",
-    "...ffFFFSssT....",
-    "...ffFFFSssT....",
-    "...ffFFSSssT....",
-    "....fFFSssT.....",
-    "....fFFSssT.....",
-    ".....fFSsT......",
-    ".....fFSsT......",
+    ".....fFFSsT.....",
+    "....ffFFSsT.....",
+    "....fFfFSsT.....",
+    "....fFfFSsT.....",
+    "....fFfFSsT.....",
+    ".....fFFSsT.....",
+    ".....fFFSs......",
+    "......FFSs......",
     "......FSs.......",
     ".....TFSsU......",
     ".....TTSUU......",
@@ -320,15 +321,13 @@ def obraz(rows):
     return im
 
 def stary(im):
-    """Starszy lisc: zolknie sam czubek i brzegi przy czubku (pelne pasy na szerokosc wygladaly z bliska jak deska)."""
+    """Starszy lisc: nieregularna zolta plama na jednym brzegu przy czubku (bez czapki, bez zabkow)."""
     im = im.copy(); px = im.load()
-    for y in range(0, 7):
+    rows = [y for y in range(16) if any(px[x, y][3] for x in range(16))]
+    for n, y in enumerate(rows[:6]):
         xs = [x for x in range(16) if px[x, y][3]]
-        if not xs: continue
-        for x in xs:
-            brzeg = x in (xs[0], xs[-1])
-            if y < 2 or (y < 4 and brzeg) or (y < 7 and brzeg and y % 2 == 0):
-                px[x, y] = ((0xd0, 0xc0, 0x58) if y < 2 else (0xa8, 0xb0, 0x48)) + (255,)
+        for x in xs[-(1 + (n % 3)):]:          # prawy brzeg, szerokosc 1-3 px zmienna
+            px[x, y] = ((0xc8, 0xb8, 0x50) if n < 3 else (0xa0, 0xa8, 0x44)) + (255,)
     return im
 
 def bez_bieli(im):

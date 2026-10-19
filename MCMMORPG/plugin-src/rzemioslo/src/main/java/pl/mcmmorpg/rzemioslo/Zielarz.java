@@ -76,6 +76,7 @@ import java.util.concurrent.ThreadLocalRandom;
 final class Zielarz implements Listener {
     static final String PROF = "herbalism";
     static final Color PODSWIETL = Color.fromRGB(255, 240, 170);
+    static final Particle.DustOptions GRUDKA = new Particle.DustOptions(Color.fromRGB(93, 63, 42), 0.7f);
     private static final NamespacedKey K_ZAMROZ = new NamespacedKey("rzemioslo", "zielarz_zamroz");
 
     /** Stan kepy dla gracza: ten sam okaz az do odrostu. */
@@ -519,31 +520,34 @@ final class Zielarz implements Listener {
     }
 
     // ================================================================ DZIURAWIEC: ciecie sierpem
+    /** Segmenty pedu dziurawca: polozenie i rozmiar kart (w jednostkach seg = h/4). */
+    static final double[] SEG_Y = {0, 0.75, 1.45, 2.05}, SEG_R = {0.85, 0.85, 0.9, 2.0};
+
     private void budujDziurawiec(Sesja s) {
         Random rnd = s.rnd;
         ZRoslina r = s.r;
-        int n = 4 + rnd.nextInt(2);
+        int n = 7 + rnd.nextInt(2);   // gesto: krzak, nie rzad tyczek
         for (int i = 0; i < n; i++) {
-            double lx = -0.3 + 0.6 * i / (n - 1) + (rnd.nextDouble() * 0.08 - 0.04);
-            double lz = rnd.nextDouble() * 0.3 - 0.12;
-            double h = (i == 0 || i == n - 1 ? 0.8 : 1.0) + rnd.nextDouble() * 0.2;   // kopula: srodek wyzszy
+            double lx = -0.34 + 0.68 * i / (n - 1) + (rnd.nextDouble() * 0.08 - 0.04);
+            double lz = (i % 2 == 0 ? -0.1 : 0.12) + rnd.nextDouble() * 0.1;
+            double h = (i == 0 || i == n - 1 ? 0.62 : 0.74) + rnd.nextDouble() * 0.12;   // kopula, ~30% nizej
             double v = rnd.nextDouble();
             String faza = v < 0.1 ? "pak" : v < 0.88 ? "kw" : "stary";
             boolean chory = rnd.nextDouble() < 0.18, dbl = faza.equals("kw") && rnd.nextDouble() < 0.12;
             ZRoslina.Czesc c = r.czesc("ped", i, lx, 0, lz);
             c.cechy.put("h", h); c.cechy.put("faza", faza); c.cechy.put("chory", chory); c.cechy.put("dbl", dbl);
             double seg = h / 4;
-            c.box = new BoundingBox(lx - 0.12, 0, lz - 0.12, lx + 0.12, h + seg * 0.4, lz + 0.12);
+            c.box = new BoundingBox(lx - 0.12, 0, lz - 0.12, lx + 0.12, (SEG_Y[3] + SEG_R[3] * 0.8) * seg, lz + 0.12);
             String[] karty = {"dziurawiec_dol", chory ? "dziurawiec_srodek_chory" : "dziurawiec_srodek",
                     chory ? "dziurawiec_gora_chory" : "dziurawiec_gora",
                     faza.equals("pak") ? "dziurawiec_pak" : faza.equals("stary") ? "dziurawiec_przekwit" : "dziurawiec_kwiat"};
             double obrot = rnd.nextDouble() * 90;
+            // niska, gesta kepa jak blok w swiecie: krotki dol, nakladajace sie segmenty, duzy kwiatostan
             for (int k = 0; k < 4; k++) {
-                double rozm = k == 3 ? seg * 1.7 : seg * 1.05;   // baldach wiekszy: z bliska ma byc kepa, jak blok w swiecie
-                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, k == 3 ? k * seg - seg * 0.25 : k * seg, 0, rozm, ZRoslina.obrotY(obrot + k * 13));
+                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, SEG_Y[k] * seg, 0, SEG_R[k] * seg, ZRoslina.obrotY(obrot + k * 13));
                 kl.seg = k;
             }
-            if (dbl) r.karta(c, "zielarz_k_dziurawiec_kwiat", 0.06, seg * 2.6, 0.04, seg * 0.9, ZRoslina.obrotY(obrot + 45)).seg = 3;
+            if (dbl) r.karta(c, "zielarz_k_dziurawiec_kwiat", 0.06, seg * 1.6, 0.04, seg * 1.3, ZRoslina.obrotY(obrot + 45)).seg = 3;
         }
     }
 
@@ -552,8 +556,9 @@ final class Zielarz implements Listener {
         Vector hit = s.r.trafienie(c);
         if (hit == null) return;
         double h = c.d("h"), seg = h / 4;
-        int k = Math.max(0, Math.min(3, (int) Math.floor((hit.getY() - c.kotwica.getY()) / seg)));
-        float cy = (float) Math.max(0.04, k * seg);
+        double yy = (hit.getY() - c.kotwica.getY()) / seg;
+        int k = yy < SEG_Y[1] ? 0 : yy < SEG_Y[2] ? 1 : yy < SEG_Y[3] ? 2 : 3;
+        float cy = (float) Math.max(0.04, SEG_Y[k] * seg);
         String faza = c.s("faza");
         double q;
         String m;
@@ -605,7 +610,7 @@ final class Zielarz implements Listener {
         s.zniszczona = true;
         s.zajetyDo = s.t + 8;
         Location base = s.r.swiat(c.kotwica.getX(), 0.05, c.kotwica.getZ());
-        s.p.spawnParticle(Particle.BLOCK, base, 24, 0.12, 0.05, 0.12, Material.ROOTED_DIRT.createBlockData());
+        s.p.spawnParticle(Particle.DUST, base, 18, 0.12, 0.05, 0.12, GRUDKA);
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 0.9f);
         dzwiek(s, Sound.BLOCK_GRASS_BREAK, 0.8f, 0.7f);
         wstrzas(s);
@@ -672,7 +677,7 @@ final class Zielarz implements Listener {
                 id.setItemStack(ZRoslina.przedmiot("zielarz_k_kozlek_gleba_rozkopana"));
         }
         Location l = s.r.swiat((g.box.getMinX() + g.box.getMaxX()) / 2, 0.05, (g.box.getMinZ() + g.box.getMaxZ()) / 2);
-        s.p.spawnParticle(Particle.BLOCK, l, 18, 0.12, 0.04, 0.12, Material.ROOTED_DIRT.createBlockData());
+        s.p.spawnParticle(Particle.DUST, l, 14, 0.12, 0.04, 0.12, GRUDKA);
         dzwiek(s, Sound.ITEM_SHOVEL_FLATTEN, 0.9f, 0.8f);
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 0.7f, 0.9f);
         plugin.pasek(s.p, s.boczne[i] ? "§7Ziemia puszcza. W ściance wykopu bieleje korzonek." : "§7Sama ziemia, nic tu nie trzyma.");
@@ -691,7 +696,7 @@ final class Zielarz implements Listener {
         float jx = (float) ((ThreadLocalRandom.current().nextDouble() - 0.5) * 2 * drz), jz = (float) ((ThreadLocalRandom.current().nextDouble() - 0.5) * 2 * drz);
         s.r.przesun(roz, new Vector3f(jx, (float) (s.postep * 0.5), jz), 2);
         Location base = s.r.swiat(0, 0.04, 0);
-        if (dl % 2 == 0) s.p.spawnParticle(Particle.BLOCK, base, 1 + (int) (rate * 120), 0.18, 0.02, 0.18, Material.ROOTED_DIRT.createBlockData());
+        if (dl % 2 == 0) s.p.spawnParticle(Particle.DUST, base, 1 + (int) (rate * 80), 0.18, 0.02, 0.18, GRUDKA);
         if (dl % 3 == 0) dzwiek(s, Sound.BLOCK_HANGING_ROOTS_BREAK, (float) (0.15 + 0.6 * s.napiecie), (float) (0.5 + 1.3 * s.napiecie));
         if (s.napiecie > 0.65 && !s.trzeszczy) { s.trzeszczy = true; wstrzas(s); plugin.pasek(s.p, "§6Korzeń trzeszczy…"); }
         if (s.napiecie >= 1.0) { zerwijKorzen(s, roz, otw); return; }
@@ -725,7 +730,7 @@ final class Zielarz implements Listener {
         s.r.przechyl(roz, ZRoslina.obrotZ(28), new Vector3f(0, 0.95f, -0.25f), -2f, 10);
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(roz); }, 26L);
         Location base = s.r.swiat(0, 0.05, 0);
-        s.p.spawnParticle(Particle.BLOCK, base, 40, 0.22, 0.08, 0.22, Material.ROOTED_DIRT.createBlockData());
+        s.p.spawnParticle(Particle.DUST, base, 30, 0.22, 0.08, 0.22, GRUDKA);
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 1.1f);
         dzwiek(s, Sound.BLOCK_MOSS_BREAK, 0.8f, 0.8f);
         Bukkit.getScheduler().runTaskLater(plugin, () -> dzwiek(s, Sound.ENTITY_ITEM_PICKUP, 0.7f, 1.0f), 8L);

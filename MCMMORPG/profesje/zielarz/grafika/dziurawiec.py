@@ -6,7 +6,7 @@ import os, sys
 from PIL import Image
 
 PAL = {
-    '1': '135e0c', '2': '177c04', '3': '4a8f28', '4': '55ab2d', '5': '7fc059', '6': 'a6d86e',
+    '1': '135e0c', '2': '177c04', 'h': '308416', '3': '4a8f28', '4': '55ab2d', '5': '7fc059', '6': 'a6d86e',
     'Y': 'fff27a', 'y': 'ffe04a', 'o': 'f5ba27', 'O': 'd98a1a', 'r': 'a8641c', 'k': '2a2a12',
     'n': '4a2e18', 'b': '6e4a2a', 'B': '8e6236',
     'v': '8a9a3a', 'V': '6e7a2a', 'w': 'b0b450',
@@ -15,8 +15,8 @@ PAL = {
 }
 
 # motywy kwiatostanu 3x3 (kwitnacy z kropka / bez, pak, przekwit); '.' = przezroczyste
-KWIAT = ["Yy.", "yOy", ".yo"]
-KWIAT_K = ["Yy.", "yOk", ".yo"]
+KWIAT = [".Y.", "YoY", ".y."]      # krzyzyk platkow (3 px nie pomiesci 5 platkow czytelnie), pomarancz tylko w srodku
+KWIAT_K = KWIAT
 PAK = [".M.", "Mmu", ".u."]
 PRZEK = [".P.", "pqp", ".q."]
 
@@ -25,55 +25,55 @@ T['gora'] = [  # gorny ped: mlode, jasne, siedzace liscie w parach
     "......545.......",
     ".....55453......",
     "......343.......",
-    "..55...4....32..",
+    "..55...4.....32.",
     ".554433433432...",
     "..4433.4.3322...",
     "....33.4.32.....",
     ".......4........",
-    "...55..4...33...",
-    "..554334333322..",
-    "...4433.3332....",
+    "...55..4..33....",
+    "..55433433322...",
+    "...4433.3h32....",
     ".....33.32......",
     ".......3........",
-    "..55...3....32..",
-    ".55433333333322.",
-    "..4433.3.3322...",
+    "...5...3....32..",
+    "..5433333333h2..",
+    "...433.3.3322...",
 ]
 T['srodek'] = [  # dojrzaly srodek pedu: ciemniejsze, wieksze liscie
     ".......3........",
-    "..44...3...22...",
-    ".44333333332211.",
-    "..3322.3.2211...",
-    "....22.3.21.....",
+    "...54..3...2....",
+    "..544..3..221...",
+    "...33.33.2211...",
+    "....2.3h.21.....",
     ".......3........",
     ".......3........",
-    ".44....3....21..",
-    "444333333322211.",
-    ".33322.3.22211..",
-    "...222.3.211....",
+    "..54...3....21..",
+    ".5443.33..2211..",
+    "..332.3h.2211...",
+    "...2..3.21......",
     ".......3........",
-    ".......2........",
+    ".......h........",
     ".......3........",
     ".......3........",
-    ".......2........",
+    ".......h........",
 ]
 T['dol'] = [  # zdrewnialy dol: brazowa lodyga, stare zolknace liscie
+    ".......V........",
+    "..ww...V...VV...",
+    ".wv33..V..2vVV..",
+    "..vv22.Vh.21V...",
+    "....22.Vh.1.....",
+    ".......Vh.......",
+    "......Vh........",
+    "......Vh........",
+    "......vV........",
+    "......VV........",
+    ".......VV.......",
+    ".......VV.......",
+    ".......Vb.......",
+    ".......bB.......",
+    ".......bB.......",
     ".......b........",
-    "..ww...b...VV...",
-    ".wv33..b..2vVV..",
-    "..vv22.bB.21V...",
-    "....22.bB.1.....",
-    ".......bB.......",
-    ".......bB.......",
-    ".......bB.......",
-    ".......nB.......",
-    "......nbB.......",
-    ".......bB.......",
-    ".......bB.......",
-    ".......bB.......",
-    "......nbBb......",
-    ".....n.bB.b.....",
-    "....n..n.n......",
 ]
 SZYPULKI = [  # wspolny szkielet szczytu: szypulki zbiegajace sie do lodygi (x=7)
     "................",
@@ -93,11 +93,11 @@ SZYPULKI = [  # wspolny szkielet szczytu: szypulki zbiegajace sie do lodygi (x=7
     ".....4433.......",
     ".......3........",
 ]
-MIEJSCA = [(1, 1), (6, 0), (11, 1), (0, 4), (12, 4), (5, 3)]   # lewy-gorny rog motywu 3x3
+MIEJSCA = [(1, 1), (6, 0), (11, 1), (0, 4), (12, 4), (5, 3), (9, 3)]   # lewy-gorny rog motywu 3x3
 
-T['swiat'] = [  # kepa w swiecie: 4 pedy, kwiatostany na gorze, ten sam rysunek lisci w miniaturze
+T['swiat'] = [  # yepa w swiecie: 4 pedy, ywiatostany na gorze, ten sam rysuney lisci w miniaturze
     "..Yy.....Yy.....",
-    "..yOy.Yy.yOk.Yy.",
+    "..yOy.Yy.yOy.Yy.",
     "...yo.yOy.yo.yOy",
     ".Yy.4..yo.3...yo",
     ".yOy.4..4.3..3..",
@@ -142,9 +142,9 @@ def szczyt(motywy):
     for (x, y), m in zip(MIEJSCA, motywy): stempel(g, m, x, y)
     return [''.join(r) for r in g]
 
-T['kwiat'] = szczyt([KWIAT, KWIAT_K, KWIAT, KWIAT_K, KWIAT, KWIAT])
-T['pak'] = szczyt([PAK] * 6)
-T['przekwit'] = szczyt([PRZEK, PRZEK, PAK, PRZEK, PRZEK, PRZEK])
+T['kwiat'] = szczyt([KWIAT, KWIAT_K, KWIAT, KWIAT, KWIAT, KWIAT_K, KWIAT])
+T['pak'] = szczyt([PAK] * 7)
+T['przekwit'] = szczyt([PRZEK, PRZEK, PAK, PRZEK, PRZEK, PRZEK, PRZEK])
 
 def obraz(rows):
     g = siatka(rows)

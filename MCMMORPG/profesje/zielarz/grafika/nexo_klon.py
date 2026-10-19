@@ -15,6 +15,7 @@ PRZEDMIOTY = ['rekawice']   # zwykly przedmiot (wyglad w dloni)
 PLASKIE = ['czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
 
 KOMP = 0.8    # gamma rozjasnienia kart zblizenia (patrz main)
+NASYC = 1.3   # nasycenie kart (patrz main)
 MNOZ = 1.05   # (zmierzone 19.10: pionowe karty 74% jasnosci kepy; z odchyleniem 28 st. ~90%)
 
 KARTA = {  # jedna plaszczyzna widoczna z obu stron, bez cieniowania (jak rosliny vanilli)
@@ -40,15 +41,25 @@ def main(tex, out):
                 for xx in range(im.width):
                     r, g, b_, a = px[xx, yy]
                     # gamma zamiast mnoznika: ciemne tony podnosi mocno, jasne prawie wcale (mnoznik wypalal bez korzenia na szaro)
-                    if a: px[xx, yy] = tuple(min(255, round(255 * (v / 255) ** KOMP * MNOZ)) for v in (r, g, b_)) + (a,)
+                    # HSV: jasnosc podniesiona, nasycenie tez (sama gamma prala kolory: S 0,53 vs 0,72 kepy, zmierzone 19.10)
+                    if a:
+                        import colorsys
+                        hh, ss, vv = colorsys.rgb_to_hsv(r / 255, g / 255, b_ / 255)
+                        ss = min(1.0, ss * NASYC); vv = min(1.0, (vv ** KOMP) * MNOZ)
+                        px[xx, yy] = tuple(round(c * 255) for c in colorsys.hsv_to_rgb(hh, ss, vv)) + (a,)
             im.save(f'{t}/{f}')
         else:
             shutil.copy(f'{tex}/{f}', f'{t}/{f}')
     json.dump(KARTA, open(f'{m}/karta.json', 'w'), indent=1)
+    plaski = {"ambientocclusion": False, "textures": {"particle": "#t"},
+              "elements": [{"from": [0, 0.5, 0], "to": [16, 0.5, 16], "shade": False,
+                            "faces": {"up": {"uv": [0, 0, 16, 16], "texture": "#t"}, "down": {"uv": [0, 16, 16, 0], "texture": "#t"}}}]}
+    json.dump(plaski, open(f'{m}/plaski.json', 'w'), indent=1)
     y = ['# Wycinek zielarza (MCMMORPG/profesje/zielarz/grafika/nexo_klon.py) — tylko klon']
     for bid, tx, var in BLOKI:
         y += [f'{bid}:', f'  itemname: <white>{bid}', '  material: PAPER', '  excludeFromInventory: false', '  Pack:',
-              '    parent_model: block/cross', '    textures:', f'      cross: nexo:block/zielarz/{tx}', '  Mechanics:',
+              *( ['    parent_model: nexo:zielarz/plaski', '    textures:', f'      t: nexo:block/zielarz/{tx}'] if tx == 'kozlek_swiat_wykopany'
+                 else ['    parent_model: block/cross', '    textures:', f'      cross: nexo:block/zielarz/{tx}'] ), '  Mechanics:',
               '    custom_block:', '      type: STRINGBLOCK', f'      custom_variation: {var}', '      hardness: -1',
               '      drop:', '        silktouch: false', '        loots: []']
     # karty zblizenia = tez warianty STRINGBLOCK (nigdy nie stawiane): BlockDisplay rysuje je jak blok kepy w swiecie
