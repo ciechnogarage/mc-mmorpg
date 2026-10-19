@@ -1,181 +1,163 @@
-"""Dziurawiec: blok w swiecie + karty pedu do zblizenia. Jeden znak = jeden piksel (16x16).
-Swiatlo z gory-lewej. Paleta z roslin vanilli (mniszek, konwalia)."""
+"""Dziurawiec v3: blok w swiecie + karty pedu do zblizenia. 16x16, swiatlo z gory-lewej.
+Zielen 5 tonow jak w roslinach vanilli (1 cien gleboki .. 5 swiatlo), lewa strona lisci jasna, prawa w cieniu.
+Kwiat: 5 platkow (3x3), pomaranczowy srodek, czarne kropki gruczolow na brzegu platka (cecha dziurawca).
+Rysunki = siatki znakow; kwiaty stemplowane recznie narysowanym motywem w recznie wybranych miejscach."""
 import os, sys
 from PIL import Image
 
 PAL = {
-    'G': '177c04',  # ciemna zielen (cien liscia, lodyga)
-    'g': '4a8f28',  # srednia
-    'l': '55ab2d',  # jasna
-    'j': '7fc059',  # mlody lisc / swiatlo
-    'v': '8a9a3a',  # starszy, zolknacy lisc
-    'Y': 'ffec4f', 'y': 'fed639', 'o': 'f5ba27', 'O': 'f19d25', 'r': 'bd6a22',
-    'k': '2a2a12',  # czarne kropki dziurawca / plamy choroby
-    'n': '5c3a20', 'b': '7e5330', 'B': 'a0703e',  # drewno
-    'p': '9a5a2a', 'P': 'c08040', 'q': '6e4020',  # przekwitle (rdza)
-    'm': 'a8b84a', 'M': 'c9c860',  # paki
+    '1': '135e0c', '2': '177c04', '3': '4a8f28', '4': '55ab2d', '5': '7fc059', '6': 'a6d86e',
+    'Y': 'fff27a', 'y': 'ffe04a', 'o': 'f5ba27', 'O': 'd98a1a', 'r': 'a8641c', 'k': '2a2a12',
+    'n': '4a2e18', 'b': '6e4a2a', 'B': '8e6236',
+    'v': '8a9a3a', 'V': '6e7a2a', 'w': 'b0b450',
+    'p': '9a5a2a', 'P': 'c08040', 'q': '6e4020',
+    'm': 'c9c860', 'M': 'e0dc78', 'u': '9aa040',
 }
 
+# motywy kwiatostanu 3x3 (kwitnacy z kropka / bez, pak, przekwit); '.' = przezroczyste
+KWIAT = ["Yy.", "yOy", ".yo"]
+KWIAT_K = ["Yy.", "yOk", ".yo"]
+PAK = [".M.", "Mmu", ".u."]
+PRZEK = [".P.", "pqp", ".q."]
+
 T = {}
-# para lisci w ksztalcie V przyczepiona do lodygi w kolumnie 7 (3 wiersze): klucz motywu
-T['swiat'] = [  # kepa w swiecie: 3 pedy, pary lisci, plaskie baldachy (bez ziemi, jak kwiaty vanilli)
-    "..Y...Y.........",
-    ".YoY.YoY..Y.....",
-    "..Y.l.Y..YoY....",
-    "...l.l.l..Y.Y...",
-    "....l.l.l.l.YoY.",
-    ".....lll.l...Y..",
-    ".jl...l.l...l...",
-    "..jgl.l.ll.l....",
-    "...Ggl.l.lgj....",
-    ".....l..lgGj....",
-    "..jl.l.jl.l.....",
-    "...jgl.lgl.l....",
-    "....Gglg.lgGj...",
-    "......g..g.G....",
-    "......b..b......",
-    "......b.b.......",
+T['gora'] = [  # gorny ped: mlode, jasne, siedzace liscie w parach
+    "......545.......",
+    ".....55453......",
+    "......343.......",
+    "..55...4....32..",
+    ".554433433432...",
+    "..4433.4.3322...",
+    "....33.4.32.....",
+    ".......4........",
+    "...55..4...33...",
+    "..554334333322..",
+    "...4433.3332....",
+    ".....33.32......",
+    ".......3........",
+    "..55...3....32..",
+    ".55433333333322.",
+    "..4433.3.3322...",
 ]
-T['dol'] = [  # zdrewnialy dol pedu: brazowa lodyga, stara para lisci, slad po opadlej
+T['srodek'] = [  # dojrzaly srodek pedu: ciemniejsze, wieksze liscie
+    ".......3........",
+    "..44...3...22...",
+    ".44333333332211.",
+    "..3322.3.2211...",
+    "....22.3.21.....",
+    ".......3........",
+    ".......3........",
+    ".44....3....21..",
+    "444333333322211.",
+    ".33322.3.22211..",
+    "...222.3.211....",
+    ".......3........",
+    ".......2........",
+    ".......3........",
+    ".......3........",
+    ".......2........",
+]
+T['dol'] = [  # zdrewnialy dol: brazowa lodyga, stare zolknace liscie
     ".......b........",
-    ".....v.b.v......",
-    "....vgbbbgv.....",
-    ".....Gnbng......",
-    ".......b........",
-    ".......b........",
-    ".......b........",
-    ".......B........",
-    "......nb........",
-    ".....n.b........",
-    ".......b........",
-    ".......B........",
-    ".......b........",
-    ".......b........",
+    "..ww...b...VV...",
+    ".wv33..b..2vVV..",
+    "..vv22.bB.21V...",
+    "....22.bB.1.....",
+    ".......bB.......",
+    ".......bB.......",
+    ".......bB.......",
+    ".......nB.......",
     "......nbB.......",
-    ".....n.b.n......",
+    ".......bB.......",
+    ".......bB.......",
+    ".......bB.......",
+    "......nbBb......",
+    ".....n.bB.b.....",
+    "....n..n.n......",
 ]
-T['srodek'] = [
-    ".......g........",
-    "....j..g..j.....",
-    "...jgl.g.lgj....",
-    "....GgggggG.....",
-    "......Ggg.......",
-    "..j....g....j...",
-    ".jgl.j.g.j.lgj..",
-    "..Gglglgg.lgGg..",
-    "....GglgggG.....",
-    ".......g........",
-    "....l..g..l.....",
-    "...jgl.g.lgj....",
-    "...lGgggggGl....",
-    "..jgG.Ggg.Ggj...",
-    ".......g........",
-    ".......g........",
-]
-T['gora'] = [
-    "......jlj.......",
-    ".....jjljj......",
-    "...j..glg..j....",
-    "..jlj..l..jlj...",
-    "...glglllglg....",
-    "....GgglggG.....",
-    ".j.....l.....j..",
-    "jlj..j.l.j..jlj.",
-    ".glg.jjljj.glg..",
-    "..Gglgglgglgg...",
-    "....GGglgGG.....",
-    "...j...l...j....",
-    "..jlj..l..jlj...",
-    "...glglglglg....",
-    ".....GgggG......",
-    ".......g........",
-]
-T['kwiat'] = [  # baldach: 6 gwiazdek na szypulkach wyrastajacych z lodygi
-    "...Y......Y.....",
-    "..YoY.Y..YoY....",
-    "...Yl.YoYkYl.Y..",
-    ".Y..l..Yl..l.YoY",
-    "YoY.l...l..l.lY.",
-    ".Yl..l..l.l..l..",
-    "...l.l..l.l.l...",
-    "....ll..l.ll....",
-    ".....l..l.l.....",
-    "......l.l.l.....",
-    ".......lll......",
-    ".......l........",
-    ".....j.l.j......",
-    "....jglglgj.....",
-    ".....GglgG......",
-    ".......l........",
-]
-T['pak'] = [  # paki: zielonozolte kulki na szypulkach
-    "................",
-    "...M......M.....",
-    "..mMm.M..mMm....",
-    "...ml.mMm.lm.M..",
-    "....l..ml..lmMm.",
-    ".m..l...l..l.ml.",
-    "mMm.l...l..l.l..",
-    ".ml..l..l.l..l..",
-    "...l.l..l.l.l...",
-    "....ll..l.ll....",
-    ".....l..l.l.....",
-    "......l.l.l.....",
-    ".......lll......",
-    ".....j.l.j......",
-    "....jglglgj.....",
-    ".......l........",
-]
-T['przekwit'] = [  # przekwitle: rdzawe, oklapniete
+SZYPULKI = [  # wspolny szkielet szczytu: szypulki zbiegajace sie do lodygi (x=7)
     "................",
     "................",
-    "...p......p.....",
-    "..pqP.p..pqP....",
-    "...qv.pqPkqv.p..",
-    ".p..v..qv..v.pqP",
-    "pqP.v...v..v.vq.",
-    ".qv..v..v.v..v..",
-    "...v.v..v.v.v...",
-    "....vv..v.vv....",
-    ".....v..v.v.....",
-    "......v.v.v.....",
-    ".......vvv......",
-    ".....v.g.v......",
-    "....vgvgvgv.....",
-    ".......g........",
+    "................",
+    "...4.......3....",
+    "....4..4..3.....",
+    ".4...4.4.3...3..",
+    "..4..4.4.3..3...",
+    "...4..44.3.3....",
+    "....4.444.3.....",
+    ".....4443.......",
+    "......443.......",
+    ".......4........",
+    ".....5.4.3......",
+    "....5543332.....",
+    ".....4433.......",
+    ".......3........",
+]
+MIEJSCA = [(1, 1), (6, 0), (11, 1), (0, 4), (12, 4), (5, 3)]   # lewy-gorny rog motywu 3x3
+
+T['swiat'] = [  # kepa w swiecie: 4 pedy, kwiatostany na gorze, ten sam rysunek lisci w miniaturze
+    "..Yy.....Yy.....",
+    "..yOy.Yy.yOk.Yy.",
+    "...yo.yOy.yo.yOy",
+    ".Yy.4..yo.3...yo",
+    ".yOy.4..4.3..3..",
+    "..yo..4.4.3.3...",
+    "...54..44.33.32.",
+    "..5543.4.432322.",
+    "...4433..4.3221.",
+    ".55..3.4.43.....",
+    "55433..4..3.32..",
+    ".4433.343.33221.",
+    "....3..4.3..2...",
+    ".....3.4.3......",
+    "......b.b.......",
+    ".....n..b.n.....",
+]
+T['swiat_scieta'] = [  # po scieciu: kikuty z dolnymi liscmi
+    "................", "................", "................", "................", "................",
+    "................",
+    "......5..4......",
+    "...5..3..3..3...",
+    "..553.3..3.332..",
+    "...43.53.3.32...",
+    "....v.33.32.V...",
+    "...wvv.3.3.VVv..",
+    "....v..3.3..V...",
+    "......b..b.b....",
+    "......b.b..b....",
+    ".....n..n.n.....",
 ]
 
-T['swiat_scieta'] = [  # po scieciu: kikuty z dolnymi liscmi
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "......j..j......",
-    "...j..g..g..j...",
-    "..jgj.g..g.jgj..",
-    "...G.jgv.gj.G...",
-    "....v.Gg.gG.v...",
-    "...vgv.g.g.vgv..",
-    "....G..g.g..G...",
-    "......g.g.g.....",
-    "......b.b.b.....",
-    ".....b..b..b....",
-]
+def siatka(rows):
+    assert len(rows) == 16 and all(len(r) == 16 for r in rows), [len(r) for r in rows]
+    return [list(r) for r in rows]
+
+def stempel(g, motyw, x, y):
+    for dy, r in enumerate(motyw):
+        for dx, ch in enumerate(r):
+            if ch != '.' and 0 <= x + dx < 16 and 0 <= y + dy < 16: g[y + dy][x + dx] = ch
+
+def szczyt(motywy):
+    g = siatka(SZYPULKI)
+    for (x, y), m in zip(MIEJSCA, motywy): stempel(g, m, x, y)
+    return [''.join(r) for r in g]
+
+T['kwiat'] = szczyt([KWIAT, KWIAT_K, KWIAT, KWIAT_K, KWIAT, KWIAT])
+T['pak'] = szczyt([PAK] * 6)
+T['przekwit'] = szczyt([PRZEK, PRZEK, PAK, PRZEK, PRZEK, PRZEK])
 
 def obraz(rows):
-    assert len(rows) == 16 and all(len(r) == 16 for r in rows), [len(r) for r in rows]
+    g = siatka(rows)
     im = Image.new('RGBA', (16, 16), (0, 0, 0, 0)); px = im.load()
-    for y, r in enumerate(rows):
+    for y, r in enumerate(g):
         for x, ch in enumerate(r):
             if ch != '.': px[x, y] = tuple(int(PAL[ch][i:i+2], 16) for i in (0, 2, 4)) + (255,)
     return im
 
 def chory(im):
-    """Plamy choroby 2x2: rdzawy srodek, jasniejsza obwodka (czarne pojedyncze piksele wygladaly jak dziury)."""
+    """Plamy choroby 2x2: rdzawy srodek, jasniejsza obwodka — tylko na lisciach (nie lodydze x=7)."""
     im = im.copy(); px = im.load()
-    for (x, y) in [(4, 3), (9, 10), (3, 9), (10, 3)]:
+    for (x, y) in [(2, 4), (10, 9), (2, 14), (11, 2)]:
         for dx in (0, 1):
             for dy in (0, 1):
                 xx, yy = x + dx, y + dy
