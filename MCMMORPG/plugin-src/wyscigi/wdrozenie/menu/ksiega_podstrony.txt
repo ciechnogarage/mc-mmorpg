@@ -1,0 +1,4 @@
+䰀	wyscigi	hub_spolecznosc
+䰄	wyscigi_czasowka	wyscigi
+䰈	wyscigi_wyscig	wyscigi
+䰌	wyscigi_pauza	wyscigi_zamknij

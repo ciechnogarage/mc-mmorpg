@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Klient QA jedzie jak czlowiek: W trzymane przez xdotool, skret ruchem myszy (wzgledny), poslizg Shiftem w zakretach.
-Kat liczony z pozycji wierzchowca (`wyscigi poz`) i obrotu gracza (`data get entity Rotation`) przez RCON klona.
+"""Klient QA jedzie jak czlowiek z klawiatura: W + A/D przez xdotool, poslizg Shift + strona w zakretach.
+Kat liczony z pozycji i kierunku wierzchowca (`wyscigi poz`) przez RCON klona.
 
   qa_jazda.py <klon> <kontener-klienta> <nick> [sekundy] [--poslizg]
 Czulosc myszy MC 0.5 (domyslna): 0.15 stopnia na piksel.
@@ -33,33 +33,38 @@ n = len(pkt)
 idx, shift = -1, False
 x('keydown', 'w')
 t0 = time.time()
+trzyma = set()
+def klawisze(chce):
+    for k in ('a', 'd', 'shift'):
+        if k in chce and k not in trzyma: x('keydown', k); trzyma.add(k)
+        if k not in chce and k in trzyma: x('keyup', k); trzyma.discard(k)
+strona = 0
 try:
     while time.time() - t0 < limit:
         r = rcon(f'wyscigi poz {nick}')
-        m = re.search(r'POZ ([-\d.]+) [-\d.]+ ([-\d.]+) .*faza=(\w+) meta=(-?\d+)', r)
+        m = re.search(r'POZ ([-\d.]+) [-\d.]+ ([-\d.]+) kier=([-\d.]+) .*faza=(\w+) meta=(-?\d+)', r)
         if not m:
             print('koniec: brak kierowcy'); break
-        px, pz, faza, meta = float(m.group(1)), float(m.group(2)), m.group(3), int(m.group(4))
+        px, pz, kier, faza, meta = float(m.group(1)), float(m.group(2)), float(m.group(3)), m.group(4), int(m.group(5))
         if meta >= 0:
             print('meta'); break
-        rot = re.search(r'\[([-\d.]+)f, ([-\d.]+)f\]', rcon(f'data get entity {nick} Rotation'))
-        if not rot:
-            continue
-        yaw = float(rot.group(1))
         zakres = range(n) if idx < 0 else [(idx + k - 10) % n for k in range(21)]
         idx = min(zakres, key=lambda i: (pkt[i][0] - px) ** 2 + (pkt[i][1] - pz) ** 2)
         cel = pkt[(idx + 4) % n]
-        cel_yaw = math.degrees(math.atan2(-(cel[0] - px), cel[1] - pz))
-        roznica = zawin(cel_yaw - yaw)
-        if poslizg:
+        roznica = zawin(math.degrees(math.atan2(-(cel[0] - px), cel[1] - pz)) - kier)
+        chce = set()
+        if poslizg and faza == 'JAZDA':
             a, b, c = pkt[(idx + 2) % n], pkt[(idx + 4) % n], pkt[(idx + 9) % n]
-            skret = abs(zawin(math.degrees(math.atan2(-(c[0] - b[0]), c[1] - b[1])) - math.degrees(math.atan2(-(b[0] - a[0]), b[1] - a[1]))))
-            chce = faza == 'JAZDA' and (skret > 20 or (shift and skret > 10))
-            if chce != shift:
-                x('keydown' if chce else 'keyup', 'shift'); shift = chce
-        dx = int(max(-400, min(400, roznica * 0.6 / STOPNI_NA_PIKSEL)))   # ~60% bledu na krok: plynnie jak reka
-        if abs(dx) > 1:
-            x('mousemove_relative', '--', str(dx), '0')
-        print(f'{time.time() - t0:6.1f}s {faza:10} yaw {yaw:7.1f} cel {cel_yaw:7.1f} dx {dx:5d} shift {shift}', flush=True)
+            skret = zawin(math.degrees(math.atan2(-(c[0] - b[0]), c[1] - b[1])) - math.degrees(math.atan2(-(b[0] - a[0]), b[1] - a[1])))
+            if not shift and abs(skret) > 20: shift, strona = True, (1 if skret > 0 else -1)
+            elif shift and (abs(skret) < 7 or (1 if skret > 0 else -1) != strona or roznica * strona < -25): shift = False
+        if shift:
+            chce.add('shift'); do_srodka = roznica * strona > -4
+            chce.add(('d' if strona > 0 else 'a') if do_srodka else ('a' if strona > 0 else 'd'))
+        elif roznica > 3: chce.add('d')
+        elif roznica < -3: chce.add('a')
+        klawisze(chce)
+        print(f'{time.time() - t0:6.1f}s {faza:10} kier {kier:7.1f} roz {roznica:6.1f} {sorted(chce)}', flush=True)
+        time.sleep(0.05)
 finally:
-    x('keyup', 'w'); x('keyup', 'shift')
+    x('keyup', 'w'); x('keyup', 'shift'); x('keyup', 'a'); x('keyup', 'd')

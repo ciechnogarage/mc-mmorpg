@@ -2,7 +2,7 @@ name: Wyscigi
 version: '${version}'
 main: pl.mcmmorpg.wyscigi.WyscigiPlugin
 api-version: '1.21'
-depend: [ModelEngine, MythicLib]
+depend: [ModelEngine, MythicLib, packetevents]
 softdepend: [MMOProfiles, Multiverse-Core]
 commands:
   wyscigi:

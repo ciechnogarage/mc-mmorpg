@@ -1,5 +1,5 @@
   wyscigi_kafel:
-    material: nexo-chw_wilkor
+    material: nexo-mmo_icon_blank
     slots: [43, 44, 52, 53]
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     display_name: '&6Wyścigi Chowańców'

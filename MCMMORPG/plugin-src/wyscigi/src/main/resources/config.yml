@@ -23,6 +23,7 @@ jazda:
   wsteczny: 0.14           # maks. prędkość na wstecznym
   poza-torem: 0.55         # mnożnik prędkości maks. na poboczu
   skret-przy-predkosci: 0.4  # o ile mniej skręca przy pełnej prędkości
+  skret-klawisz: 0.6         # A/D: część "skrętu" gatunku na tick (9 -> 5,4 st./tick w miejscu, 3,2 przy pełnej)
   przesuniecie-boczne: 0.07  # A/D lekko przesuwa w bok
   poslizg:
     min-predkosc: 0.55     # część prędkości maks. potrzebna do wejścia w poślizg
@@ -34,6 +35,7 @@ jazda:
     turbo-1-czas: 16
     turbo-2-czas: 30
     turbo-mnoznik: 1.22
+    przechyl: 18           # stopnie: wierzchowiec siada na zadzie w poślizgu (zad w dół, łeb w górę)
   pole-przyspieszenia: {czas: 26, mnoznik: 1.38}
   start-turbo: {okno: 10, czas: 30, mnoznik: 1.3, za-wczesnie: 32, kara: 24}
   zderzenie-sciana: 0.45   # mnożnik prędkości po uderzeniu w płot
@@ -77,6 +79,8 @@ tory:
       - [-47, 34]
       - [-35, 15]
       - [-19, 3]
+    # Skrzynki z bonusami (tylko wyścig z innymi): rzędy po 3 w poprzek toru, odległość od startu.
+    skrzynki: [80, 170, 270, 365]
     # Pola przyspieszenia: odległość od startu wzdłuż toru (bloki) i przesunięcie w bok (+ = prawa).
     przyspieszenia:
       - {s: 40, bok: 0}       # prosta startowa

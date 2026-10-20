@@ -15,8 +15,8 @@ import java.util.UUID;
 
 /**
  * Gracz w wyścigu i jego wierzchowiec. Fizyka jest nasza (ModelEngine podaje tylko wejścia WASD/skok/Shift):
- * kierunek goni wzrok gracza z ograniczoną szybkością skrętu, W/S zmieniają prędkość z bezwładnością,
- * Shift w zakręcie to poślizg ładujący turbo.
+ * A/D skręcają (kierownica z bezwładnością, kamera obracana za wierzchowcem), W/S zmieniają prędkość,
+ * Shift + A/D to poślizg ładujący turbo — wierzchowiec siada wtedy na zadzie.
  */
 final class Kierowca {
   final UUID id;
@@ -37,7 +37,14 @@ final class Kierowca {
   int karaDo;                   // "przegrzany" start: brak gazu do ticka
   int gazOd = -1;               // tick, od którego W jest trzymane (turbo startowe)
   boolean skokTrzymany, shiftTrzymany, podskok;
-  float yawPoprz = Float.NaN, obrotSr;
+  float kierownica;             // -1..1, wygładzone A/D
+  float[] pozaTest;             // komenda testowa: surowe (ex, ey, ez, py) do pomiaru osi kości
+  float przechylTest = -1;      // komenda testowa: wymuszona poza (podgląd modelu na postoju)
+  float przechyl;               // 0..1 — jak mocno wierzchowiec "siedzi" w poślizgu (animacja kości body)
+  int zachwianieDo;             // trafiony bonusem/ciosem: kręci się i zwalnia
+  int tarczaDo;                 // skorupa: zatrzymuje jedno trafienie
+  int ciosOd;                   // ostatni cios LPM (odnowienie)
+  String bonus;                 // trzymany bonus (F)
   int shiftPostoj;              // ticki Shift na postoju (wyjście)
   int[] poleOstatnio;
   double ostX = Double.NaN, ostZ, oczekiwane;
@@ -93,28 +100,28 @@ final class Kierowca {
     double vmaxBaza = gatunek.predkosc();
     double vmax = vmaxBaza * (pozaTorem ? u.pozaTorem : 1.0);
     if (turbo > 0) { vmax = Math.max(vmax, vmaxBaza * turboMnoznik); turbo--; }
+    boolean zachwiany = teraz < zachwianieDo;
+    if (zachwiany) { vmax = Math.min(vmax, vmaxBaza * 0.35); poslizg = false; ladowanie = 0; }
 
-    // --- skręt: kierunek goni wzrok gracza
-    float cel = p.getLocation().getYaw();
-    float roznica = zawin(cel - kierunek);
-    // Skręt gracza z ostatnich ~0,3 s (ruch myszy). Kierunek wierzchowca dogania wzrok w 1–2 tickach,
-    // więc sama różnica wzrok–kierunek prawie zawsze jest bliska zera i nie nadaje się do wykrycia zakrętu.
-    if (!Float.isNaN(yawPoprz)) obrotSr = obrotSr * 0.75f + zawin(cel - yawPoprz);
-    yawPoprz = cel;
+    // --- skręt: A/D jak kierownica (side > 0 = A = w lewo = malejący yaw)
+    int strona = Math.abs(side) > 0.1 ? (side > 0 ? -1 : 1) : 0;
+    kierownica += (strona - kierownica) * 0.35f;
     double udzial = Math.min(1, Math.abs(v) / vmaxBaza);
-    double szybkoscSkretu = gatunek.skret() * (1 - u.skretPrzyPredkosci * udzial);
-    if (Math.abs(v) < 0.04) szybkoscSkretu = gatunek.skret() * 0.7;   // obrót w miejscu
-    if (poslizg) szybkoscSkretu *= u.poslizgSkret;
-    float zmiana = (float) Math.max(-szybkoscSkretu, Math.min(szybkoscSkretu, roznica));
+    double szybkoscSkretu = gatunek.skret() * u.skretKlawisz * (1 - u.skretPrzyPredkosci * udzial);
+    if (Math.abs(v) < 0.04) szybkoscSkretu = gatunek.skret() * u.skretKlawisz * 0.5;   // obrót w miejscu
+    float zmiana;
+    if (poslizg) {
+      // W poślizgu łuk jest stały w stronę poślizgu; A/D tylko zacieśnia (do środka) albo poszerza (na zewnątrz).
+      zmiana = (float) (stronaPoslizgu * szybkoscSkretu * (0.8 + 0.55 * kierownica * stronaPoslizgu));
+    } else zmiana = (float) (kierownica * szybkoscSkretu);
     if (v < -0.01) zmiana = -zmiana * 0.6f;                           // wsteczny skręca odwrotnie, jak auto
+    if (zachwiany) zmiana = (float) (Math.sin(teraz * 0.9) * 14);     // kręci się po trafieniu
     kierunek = zawin(kierunek + zmiana);
+    kamera(p, zmiana);
 
-    // --- poślizg i mini-turbo
+    // --- poślizg i mini-turbo: Shift + kierunek
     boolean nowyShift = shift && !shiftTrzymany;
-    int strona = Math.abs(side) > 0.1 ? (side > 0 ? -1 : 1)              // A = w lewo, D = w prawo
-        : Math.abs(obrotSr) > 3 ? (obrotSr > 0 ? 1 : -1)
-        : Math.abs(roznica) > u.poslizgMinKat ? (roznica > 0 ? 1 : -1) : 0;
-    if (!poslizg && shift && naZiemi && v > u.poslizgMinPredkosc * vmaxBaza && strona != 0 && (nowyShift || ladowanie == 0)) {
+    if (!poslizg && !zachwiany && shift && naZiemi && v > u.poslizgMinPredkosc * vmaxBaza && strona != 0 && (nowyShift || ladowanie == 0)) {
       poslizg = true;
       stronaPoslizgu = strona;
       wyscig.plugin.debug(nick + " poslizg strona=" + strona + " v=" + String.format(java.util.Locale.ROOT, "%.2f", v));
@@ -130,10 +137,7 @@ final class Kierowca {
         poslizg = false;
         ladowanie = 0;
       } else {
-        boolean wZakret = (Math.abs(side) > 0.1 && strona == stronaPoslizgu)
-            || (Math.signum(obrotSr) == stronaPoslizgu && Math.abs(obrotSr) > 2)
-            || (Math.signum(roznica) == stronaPoslizgu && Math.abs(roznica) > 12);
-        ladowanie += wZakret ? 2 : 1;
+        ladowanie += strona == stronaPoslizgu ? 2 : 1;                    // ciasny poślizg ładuje szybciej
         iskry();
       }
     }
@@ -153,9 +157,8 @@ final class Kierowca {
     double kat = Math.toRadians(kierunek - (poslizg ? stronaPoslizgu * u.katUslizgu : 0));
     double hx = -Math.sin(kat), hz = Math.cos(kat);
     double vx = hx * v, vz = hz * v;
-    if (!poslizg && Math.abs(side) > 0.1 && Math.abs(v) > 0.05) {          // A/D: lekki unik w bok (side > 0 = A = w lewo)
-      double prawoX = -Math.cos(Math.toRadians(kierunek)), prawoZ = -Math.sin(Math.toRadians(kierunek));
-      vx -= prawoX * Math.signum(side) * u.przesuniecieBoczne; vz -= prawoZ * Math.signum(side) * u.przesuniecieBoczne;
+    if (pchniecie > 0.01) {                                            // cios / ryk: odepchnięcie w bok, gaśnie
+      vx += pchniecieX * pchniecie; vz += pchniecieZ * pchniecie; pchniecie *= 0.7;
     }
 
     // --- uderzenie w płot: przesunięcie dużo mniejsze, niż kazaliśmy
@@ -179,8 +182,37 @@ final class Kierowca {
     if (skok && !skokTrzymany && naZiemi && !poslizg) mc.jump();
     skokTrzymany = skok;
 
-    // Wyjście: Shift na postoju przez kilka sekund.
+    // Wyjście awaryjne: Shift na postoju przez kilka sekund (głównie Q -> pauza).
     if (shift && Math.abs(v) < 0.02 && !poslizg) shiftPostoj++; else shiftPostoj = 0;
+    float cel = poslizg ? 1f : 0f;
+    przechyl += (cel - przechyl) * (poslizg ? 0.35f : 0.2f);
+  }
+
+  double pchniecie, pchniecieX, pchniecieZ;
+
+  /** Kamera za wierzchowcem: obracamy widok gracza o tyle, o ile skręcił wierzchowiec, plus delikatne centrowanie. */
+  private void kamera(Player p, float zmiana) {
+    float odchylenie = zawin(kierunek - p.getLocation().getYaw());
+    float delta = zmiana + Math.max(-3f, Math.min(3f, odchylenie * 0.12f));
+    if (Math.abs(delta) > 0.02f) wyscig.plugin.obroc(p, delta);
+  }
+
+  /** Trafienie (kula, błoto, ryk, cios): zwalnia i kręci; tarcza je zatrzymuje. Zwraca, czy trafiło. */
+  boolean zachwiej(int ticki, double odX, double odZ, double sila, String skad) {
+    int teraz = Bukkit.getCurrentTick();
+    if (teraz < tarczaDo) {
+      tarczaDo = 0;
+      if (mob != null) { mob.getWorld().playSound(mob.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1.2f); mob.getWorld().spawnParticle(Particle.CRIT, mob.getLocation().add(0, 1, 0), 20, 0.5, 0.5, 0.5, 0.2); }
+      wyscig.plugin.debug(nick + " tarcza-zatrzymala " + skad);
+      return false;
+    }
+    zachwianieDo = Math.max(zachwianieDo, teraz + ticki);
+    v *= 0.4; poslizg = false; ladowanie = 0; turbo = 0;
+    double d = Math.hypot(odX, odZ);
+    if (d > 1e-3 && sila > 0) { pchniecieX = odX / d; pchniecieZ = odZ / d; pchniecie = sila; }
+    if (mob != null) { mob.getWorld().playSound(mob.getLocation(), Sound.ENTITY_WOLF_WHINE, 1f, 1.1f); mob.getWorld().spawnParticle(Particle.SMOKE, mob.getLocation().add(0, 0.8, 0), 14, 0.4, 0.3, 0.4, 0.02); }
+    wyscig.plugin.debug(nick + " zachwianie " + skad + " ticki=" + ticki);
+    return true;
   }
 
   void daj(int ticki, double mnoznik, String rodzaj) {

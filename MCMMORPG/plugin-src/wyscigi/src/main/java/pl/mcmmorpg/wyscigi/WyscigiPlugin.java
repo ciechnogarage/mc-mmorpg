@@ -1,5 +1,7 @@
 package pl.mcmmorpg.wyscigi;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerRotation;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -66,10 +68,13 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
   private final Map<UUID, Powrot> powroty = new HashMap<>();
   private final Map<UUID, BossBar> paski = new HashMap<>();
   private final Set<UUID> wlasnyTeleport = new HashSet<>();
+  private final Set<UUID> obserwatorzy = new HashSet<>();   // admin/QA oglądający tor (komenda konsoli), nie odsyłani
   private final Map<UUID, String> profilNaStarcie = new HashMap<>();
   private NamespacedKey kluczWierzchowca;
   private File plikPowrotow;
   private Plugin profile;
+  Bonusy bonusy;
+  Klawisze klawisze;
 
   @Override public void onEnable() {
     saveDefaultConfig();
@@ -80,6 +85,9 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     wczytajPowroty();
     profile = Bukkit.getPluginManager().getPlugin("MMOProfiles");
     KontrolerWierzchowca.zarejestruj(this);
+    bonusy = new Bonusy(this, kluczWierzchowca);
+    klawisze = new Klawisze(this);
+    PacketEvents.getAPI().getEventManager().registerListener(klawisze);
     Bukkit.getPluginManager().registerEvents(this, this);
     getLogger().info("Tor " + u.tor.nazwa + ": " + String.format(Locale.ROOT, "%.1f", u.tor.dlugosc) + " bloków, " + u.tor.probki() + " próbek.");
     Bukkit.getScheduler().runTaskTimer(this, this::tick, 20L, 1L);
@@ -94,6 +102,8 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
 
   @Override public void onDisable() {
     for (Kierowca k : new ArrayList<>(kierowcy.values())) zakoncz(k, true, "Restart serwera — wracasz.");
+    if (bonusy != null) { bonusy.zdejmijSkrzynki(); bonusy.zdejmijStrzalki(); }
+    if (klawisze != null) PacketEvents.getAPI().getEventManager().unregisterListener(klawisze);
     zapiszPowroty();
   }
 
@@ -101,6 +111,16 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
   Kierowca kierowca(UUID id) { return kierowcy.get(id); }
   private final Map<String, java.util.ArrayDeque<String>> zdarzenia = new HashMap<>();
   /** Zdarzenie jazdy: pierwsze słowo = nick. Ostatnie 40 na gracza do wglądu (`wyscigi zdarzenia`), log tylko z debug: true. */
+  /** Obrót kamery gracza (względny yaw, pochylenie bez zmian) — sterowanie A/D z kamerą za wierzchowcem. */
+  void obroc(Player p, float deltaYaw) {
+    try { PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerPlayerRotation(deltaYaw, true, 0f, true)); }
+    catch (RuntimeException e) { debug(p.getName() + " obrot-blad " + e.getMessage()); }
+  }
+  void ustawKamere(Player p, float yaw) {
+    try { PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerPlayerRotation(yaw, false, 12f, false)); }
+    catch (RuntimeException ignored) {}
+  }
+
   void debug(String s) {
     String nick = s.split(" ", 2)[0].toLowerCase(Locale.ROOT);
     java.util.ArrayDeque<String> q = zdarzenia.computeIfAbsent(nick, x -> new java.util.ArrayDeque<>());
@@ -120,6 +140,11 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     for (Wyscig w : new ArrayList<>(wyscigi)) {
       try { w.tick(); } catch (RuntimeException e) { getLogger().severe("Błąd wyścigu: " + e); e.printStackTrace(); }
     }
+    boolean zInnymi = wyscigi.stream().anyMatch(w -> w.tryb == Wyscig.Tryb.WYSCIG && w.faza != Wyscig.Faza.KONIEC);
+    World sw = swiat();
+    if (zInnymi && !bonusy.saSkrzynki() && sw != null) bonusy.postawSkrzynki(sw, u.tor);
+    if (!zInnymi && bonusy.saSkrzynki()) bonusy.zdejmijSkrzynki();
+    try { bonusy.tick(wyscigi); } catch (RuntimeException e) { getLogger().severe("Błąd bonusów: " + e); e.printStackTrace(); }
     int teraz = Bukkit.getCurrentTick();
     for (Kierowca k : new ArrayList<>(kierowcy.values())) pilnujDosiadu(k);
     if (teraz % 20 == 0) {
@@ -156,13 +181,16 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
   }
 
   // ------------------------------------------------------------------ wejście
-  String start(Player p, String gatunekId, Wyscig.Tryb tryb) {
+  String start(Player p, String gatunekId, Wyscig.Tryb tryb) { return start(p, gatunekId, tryb, false); }
+
+  /** ponowny = "Od nowa" z pauzy: gracz jest już na torze, punkt powrotu zostaje stary. */
+  String start(Player p, String gatunekId, Wyscig.Tryb tryb, boolean ponowny) {
     if (kierowcy.containsKey(p.getUniqueId())) return "Już się ścigasz.";
     Ustawienia.Gatunek g = u.gatunki.get(gatunekId);
     if (g == null) return "Nieznany wierzchowiec.";
     World w = swiat();
     if (w == null) return "Tor jest zamknięty.";
-    if (!getConfig().getStringList("swiaty-wejscia").contains(p.getWorld().getName())) return "Na wyścig wyruszysz ze Stolicy albo ze świata.";
+    if (!ponowny && !getConfig().getStringList("swiaty-wejscia").contains(p.getWorld().getName())) return "Na wyścig wyruszysz ze Stolicy albo ze świata.";
     if (p.isDead() || p.getGameMode() == GameMode.SPECTATOR) return "Teraz nie możesz.";
     if (p.isInsideVehicle()) return "Najpierw zsiądź.";
     Wyscig wyscig = null;
@@ -171,14 +199,17 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     if (nowy) wyscig = new Wyscig(this, tryb, w);
     int nr = tryb == Wyscig.Tryb.CZASOWKA ? 0 : wyscig.wolneMiejsce();
     if (nr < 0) return "Brak miejsc na starcie.";
-    if (nowy) { wyscigi.add(wyscig); zaladujTor(w, true); }
+    if (nowy) { wyscigi.add(wyscig); zaladujTor(w, true); bonusy.postawStrzalki(w, u.tor); }
 
-    Location l = p.getLocation();
-    powroty.put(p.getUniqueId(), new Powrot(l.getWorld().getName(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), profil(p)));
-    zapiszPowroty();
+    if (!ponowny) {
+      Location l = p.getLocation();
+      powroty.put(p.getUniqueId(), new Powrot(l.getWorld().getName(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), profil(p)));
+      zapiszPowroty();
+    }
     profilNaStarcie.put(p.getUniqueId(), profil(p));
     Kierowca k = new Kierowca(p, g, wyscig, nr);
     kierowcy.put(p.getUniqueId(), k);
+    klawisze.sciganci.add(p.getUniqueId());
     wyscig.dolaczyl(k);
 
     Location miejsce = u.tor.miejsceStartowe(w, nr);
@@ -195,8 +226,8 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     p.showBossBar(pasek);
     if (nowy && tryb == Wyscig.Tryb.WYSCIG) ogloszenie(p, g);
     Wyscig.tytul(p, "<gold>" + u.tor.nazwa + "</gold>", "<gray>Wierzchowiec:</gray> <white>" + g.nazwa() + "</white>", org.bukkit.Sound.ENTITY_HORSE_SADDLE, 1f);
-    p.sendMessage(MM.deserialize("<gold>[Wyścigi]</gold> <white>W</white><gray> gaz · </gray><white>S</white><gray> hamulec · </gray><white>mysz</white><gray> skręt · </gray>"
-        + "<white>Shift w zakręcie</white><gray> poślizg i turbo · </gray><white>spacja</white><gray> podskok · pola </gray><light_purple>▶▶</light_purple><gray> przyspieszają. Widok z boku: </gray><white>F5</white><gray>.</gray>"));
+    p.sendMessage(MM.deserialize("<gold>[Wyścigi]</gold> <white>W</white><gray> gaz · </gray><white>S</white><gray> hamulec · </gray><white>A/D</white><gray> skręt · </gray>"
+        + "<white>Shift w zakręcie</white><gray> poślizg i turbo · </gray><white>spacja</white><gray> podskok · złote </gray><gold>»</gold><gray> przyspieszają. Widok z boku: </gray><white>F5</white><gray>.</gray>"));
     getLogger().info(p.getName() + " -> " + tryb + " na " + g.id() + " (miejsce " + nr + ")");
     return null;
   }
@@ -205,7 +236,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     for (Player o : Bukkit.getOnlinePlayers()) {
       if (o.equals(p) || kierowcy.containsKey(o.getUniqueId())) continue;
       o.sendMessage(MM.deserialize("<gold>[Wyścigi]</gold> <yellow>" + p.getName() + "</yellow> <gray>czeka na wyścig Chowańców (" + u.tor.nazwa + "). Start za "
-          + u.poczekalnia + " s — dołącz: <white>Q → Społeczność → Wyścigi</white>.</gray>"));
+          + u.poczekalnia + " s — dołącz: <white>Q → Drużyna → Wyścigi</white>.</gray>"));
     }
   }
 
@@ -243,6 +274,8 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
       }
       if (ok) {
         k.model = am;
+        ustawKamere(p, k.kierunek);
+        animujPoslizg(k, am);
         if (k.wyscig.faza == Wyscig.Faza.JAZDA) k.zamrozonyDo = 0;
       } else if (proba < 10) dosiadzProba(k, am, proba + 1);
       else {
@@ -250,6 +283,29 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
         zakoncz(k, true, "Wierzchowiec się spłoszył — spróbuj ponownie.");
       }
     }, proba == 0 ? 3L : 5L);
+  }
+
+  /**
+   * Poślizg = wierzchowiec siada na zadzie: kość body (rodzic siodła) przechyla się do tyłu i lekko na bok,
+   * po trafieniu kołysze się. Animacja chodu pozostałych kości (nogi, ogon) działa dalej.
+   */
+  private void animujPoslizg(Kierowca k, ActiveModel am) {
+    am.getBone("body").ifPresent(b -> b.setManualAnimator(kosc -> {
+      float t = k.przechylTest >= 0 ? k.przechylTest : k.przechyl;
+      float kolys = Bukkit.getCurrentTick() < k.zachwianieDo ? (float) Math.sin(Bukkit.getCurrentTick() * 1.3) * 0.35f : 0f;
+      // ModelEngine co tick ustawia pozę z modelu, potem woła ten animator — dodajemy przechył do niej
+      // (getLeftEuler/getPosition zwracają kopie, zmieniać trzeba przez mutate*).
+      // Zmierzone na modelu (klon 20.10): oś X = przód/tył (+X opuszcza łeb), oś Z = przechył na bok, pozycja w blokach.
+      float pitch = (float) Math.toRadians(-u.przechylPoslizgu) * t, roll = (float) Math.toRadians(6) * t * k.stronaPoslizgu + kolys;
+      if (k.pozaTest != null) {
+        float[] q = k.pozaTest;
+        kosc.getLocalTransform().mutateLeftEuler(e -> e.add(q[0], q[1], q[2]));
+        kosc.getLocalTransform().mutatePosition(v -> v.add(0f, q[3], 0f));
+        return;
+      }
+      kosc.getLocalTransform().mutateLeftEuler(e -> e.add(pitch, 0f, roll));
+      kosc.getLocalTransform().mutatePosition(v -> v.add(0f, -0.08f * t, 0f));
+    }));
   }
 
   /** Wierzchowiec wypadł z toru: zsadzamy, stawiamy na linii za ostatnim dobrym miejscem i sadzamy znowu. */
@@ -288,6 +344,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
   /** Usuwa wierzchowca i HUD; nie rusza listy wyścigu (wołane też z jej pętli). */
   void sprzatnij(Kierowca k, boolean powrot, String komunikat) {
     kierowcy.remove(k.id);
+    klawisze.sciganci.remove(k.id);
     profilNaStarcie.remove(k.id);
     Player p = k.gracz();
     if (k.model != null) {
@@ -307,7 +364,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
 
   void usunWyscig(Wyscig w) {
     wyscigi.remove(w);
-    if (wyscigi.isEmpty() && swiat() != null) zaladujTor(swiat(), false);
+    if (wyscigi.isEmpty() && swiat() != null) { zaladujTor(swiat(), false); bonusy.zdejmijStrzalki(); bonusy.zdejmijSkrzynki(); }
   }
 
   private void odeslij(Player p) {
@@ -333,7 +390,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
 
   /** Gracz w świecie wyścigów bez wyścigu (relog, zmiana postaci, /tp) — wraca tam, skąd przyszedł. */
   private void odeslijObcego(Player p) {
-    if (kierowcy.containsKey(p.getUniqueId())) return;
+    if (kierowcy.containsKey(p.getUniqueId()) || obserwatorzy.contains(p.getUniqueId())) return;
     if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) return;
     odeslij(p);
   }
@@ -404,8 +461,28 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     for (Entity en : e.getEntities()) {
       String wl = en.getPersistentDataContainer().get(kluczWierzchowca, PersistentDataType.STRING);
       if (wl == null) continue;
+      if (wl.equals("dekoracja")) { if (wyscigi.isEmpty()) en.remove(); continue; }
       Kierowca k = kierowcy.get(UUID.fromString(wl));
       if (k == null || k.mob == null || !k.mob.getUniqueId().equals(en.getUniqueId())) en.remove();
+    }
+  }
+
+  // ------------------------------------------------------------------ klawisze w wyścigu (z pakietów)
+  void klawisz(Player p, String akcja) {
+    Kierowca k = kierowcy.get(p.getUniqueId());
+    if (k == null) return;
+    switch (akcja) {
+      case "pauza" -> {
+        p.updateInventory();
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dm open wyscigi_pauza " + p.getName());
+      }
+      case "bonus" -> {
+        p.updateInventory();
+        if (k.bonus == null) k.wyscig.pasek(p, 20, k.wyscig.tryb == Wyscig.Tryb.WYSCIG ? "§7Brak bonusu — przejedź przez skrzynkę." : "§7W czasówce nie ma bonusów.");
+        else if (k.wyscig.faza == Wyscig.Faza.JAZDA) bonusy.uzyj(k);
+      }
+      case "cios" -> { if (k.wyscig.tryb == Wyscig.Tryb.WYSCIG) bonusy.cios(k); }
+      default -> {}
     }
   }
 
@@ -450,6 +527,48 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
           p.sendMessage(MM.deserialize("<gold>[Wyścigi]</gold> <red>" + problem + "</red>"));
           s.sendMessage("Odmowa: " + problem);
         } else s.sendMessage("OK");
+      }
+      case "poza" -> {
+        Player p = a.length > 5 ? Bukkit.getPlayerExact(a[1]) : null;
+        Kierowca k = p == null ? null : kierowcy.get(p.getUniqueId());
+        if (k == null) { s.sendMessage("Brak kierowcy"); return true; }
+        k.pozaTest = new float[]{Float.parseFloat(a[2]), Float.parseFloat(a[3]), Float.parseFloat(a[4]), Float.parseFloat(a[5])};
+        s.sendMessage("OK poza");
+      }
+      case "przechyl" -> {
+        Player p = a.length > 2 ? Bukkit.getPlayerExact(a[1]) : null;
+        Kierowca k = p == null ? null : kierowcy.get(p.getUniqueId());
+        if (k == null) { s.sendMessage("Brak kierowcy"); return true; }
+        k.przechylTest = Float.parseFloat(a[2]);
+        if (a.length > 3) k.stronaPoslizgu = Integer.parseInt(a[3]);
+        s.sendMessage("OK przechyl=" + k.przechylTest);
+      }
+      case "obserwuj" -> {
+        Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
+        if (p == null || swiat() == null) { s.sendMessage("Brak gracza/swiata"); return true; }
+        if (obserwatorzy.remove(p.getUniqueId())) { p.setFlying(false); p.setAllowFlight(false); odeslij(p); s.sendMessage("Koniec obserwacji"); return true; }
+        obserwatorzy.add(p.getUniqueId());
+        Location gdzie = p.getLocation();
+        powroty.putIfAbsent(p.getUniqueId(), new Powrot(gdzie.getWorld().getName(), gdzie.getX(), gdzie.getY(), gdzie.getZ(), gdzie.getYaw(), gdzie.getPitch(), profil(p)));
+        Location cel = a.length > 4 ? new Location(swiat(), Double.parseDouble(a[2]), Double.parseDouble(a[3]), Double.parseDouble(a[4])) : u.tor.punkt(swiat(), -8, 0).add(0, 6, 0);
+        wlasnyTeleport.add(p.getUniqueId());
+        try { p.teleport(cel); } finally { wlasnyTeleport.remove(p.getUniqueId()); }
+        Bukkit.getScheduler().runTaskLater(this, () -> { p.setAllowFlight(true); p.setFlying(true); }, 5L);
+        s.sendMessage("Obserwacja: " + p.getName());
+      }
+      case "odnowa" -> {
+        Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
+        Kierowca k = p == null ? null : kierowcy.get(p.getUniqueId());
+        if (k == null) { s.sendMessage("Brak kierowcy"); return true; }
+        if (k.wyscig.tryb != Wyscig.Tryb.CZASOWKA) {
+          p.sendMessage(MM.deserialize("<gold>[Wyścigi]</gold> <gray>Wyścig z innymi trwa — od nowa zaczniesz tylko czasówkę.</gray>"));
+          return true;
+        }
+        String g = k.gatunek.id();
+        zakoncz(k, false, null);
+        String problem = start(p, g, Wyscig.Tryb.CZASOWKA, true);
+        s.sendMessage(problem == null ? "OK" : "Odmowa: " + problem);
+        if (problem != null) odeslij(p);
       }
       case "wyjdz" -> {
         Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;

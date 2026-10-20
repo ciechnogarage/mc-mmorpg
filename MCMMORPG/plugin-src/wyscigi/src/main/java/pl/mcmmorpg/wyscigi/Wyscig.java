@@ -93,7 +93,7 @@ final class Wyscig {
               : "<yellow>Czekamy na graczy</yellow> <gray>" + kierowcy.size() + "/" + u.maxGraczy + " · start za</gray> <white>" + zostalo + " s</white>";
           plugin.pasekBoss(p, opis, 1f - Math.min(1f, (float) (poczekalniaDo - teraz) / Math.max(1, poczekalniaDo - fazaOd)));
           sprawdzWyjscie(k, p);
-          if (teraz % 20 == 0) pasek(p, 10, "§7Przytrzymaj §fShift§7, aby wyjść · §fW§7 = gaz, §fmysz§7 = skręt");
+          if (teraz % 20 == 0) pasek(p, 10, "§fW§7 gaz · §fA/D§7 skręt · §fShift§7+§fA/D§7 poślizg · §fQ§7 pauza i wyjście");
         }
       }
       case ODLICZANIE -> odliczanie(teraz);
@@ -274,6 +274,7 @@ final class Wyscig {
     String poz = tryb == Tryb.WYSCIG ? " <gray>·</gray> <yellow>Pozycja " + k.pozycja + "/" + kierowcy.size() + "</yellow>" : "";
     float postep = (float) Math.max(0, Math.min(1, k.postep / (tor.okrazenia * tor.dlugosc)));
     plugin.pasekBoss(p, "<gold>Okrążenie " + okr + "/" + tor.okrazenia + "</gold>" + poz + " <gray>·</gray> <white>" + czasDziesietne((teraz - startTick) * 50L) + "</white>", postep);
+    if (teraz % 3 == 0) plugin.bonusy.efektTarczy(k);
     if (teraz % 4 == 0) {
       double bps = Math.abs(k.v) * 20;
       int kreski = (int) Math.round(Math.min(1.4, Math.abs(k.v) / k.gatunek.predkosc()) * 10);
@@ -283,6 +284,8 @@ final class Wyscig {
         double mn = "zelaznorog".equals(k.gatunek.id()) ? 0.85 : 1;
         tekst += k.ladowanie >= u.turbo2 * mn ? "  §6§lPOŚLIZG ✦✦" : k.ladowanie >= u.turbo1 * mn ? "  §9§lPOŚLIZG ✦" : "  §7POŚLIZG";
       } else if (k.pozaTorem) tekst += "  §6pobocze";
+      if (k.bonus != null) tekst += "  §e[F] " + Bonusy.NAZWY.get(k.bonus);
+      if (teraz < k.tarczaDo) tekst += "  §b◆ Skorupa";
       pasek(p, 5, tekst);
     }
   }

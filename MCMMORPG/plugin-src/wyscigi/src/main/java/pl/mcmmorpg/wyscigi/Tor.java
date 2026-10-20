@@ -26,6 +26,7 @@ final class Tor {
   final double polszerokosc, pobocze;
   final int okrazenia;
   final List<Pole> pola = new ArrayList<>();
+  final List<Double> skrzynki = new ArrayList<>();
   private final double[] px, pz, tx, tz;
   final double dlugosc;
 
@@ -75,6 +76,7 @@ final class Tor {
       tx[i] = dx / d; tz[i] = dz / d;
     }
     dlugosc = m * KROK;
+    for (Object o : c.getList("skrzynki", List.of())) skrzynki.add(((Number) o).doubleValue());
     for (Map<?, ?> p : c.getMapList("przyspieszenia"))
       pola.add(new Pole(((Number) p.get("s")).doubleValue(), p.get("bok") == null ? 0 : ((Number) p.get("bok")).doubleValue()));
   }
@@ -191,15 +193,8 @@ final class Tor {
   }
 
   private void zbudujPole(World w, Pole p) {
-    int i = indeks(p.s());
-    BlockFace kierunek = kierunekBloku(i);
-    for (double a = -1.5; a <= 1.5; a += 0.5) for (double b = -1.5; b <= 1.5; b += 0.5) {
-      double s = p.s() + a, bok = p.bok() + b;
-      Location l = punkt(w, s, bok);
-      Block blok = w.getBlockAt(l.getBlockX(), y - 1, l.getBlockZ());
-      blok.setType(Material.MAGENTA_GLAZED_TERRACOTTA, false);
-      if (blok.getBlockData() instanceof Directional dir) { dir.setFacing(kierunek.getOppositeFace()); blok.setBlockData(dir, false); }
-    }
+    // Pole nie zmienia bloków toru (na łukach siatka bloków dawała postrzępioną plamę) — oznaczają je
+    // złote strzałki » malowane na jezdni (TextDisplay z pluginu, Bonusy.postawStrzalki).
   }
 
   private BlockFace kierunekBloku(int i) {

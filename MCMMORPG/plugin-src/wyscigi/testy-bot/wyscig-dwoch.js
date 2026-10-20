@@ -12,7 +12,8 @@ scenariusz('wyscigi-dwoch', async ({ w, polacz, rcon }) => {
   const czatA = [], czatB = [], czatW = [];
   a.on('message', m => czatA.push(m.toString())); b.on('message', m => czatB.push(m.toString())); widz.on('message', m => czatW.push(m.toString()));
 
-  w.sprawdz('A-start', /OK/.test(await rcon(`wyscigi wyscig ${nA} pozogar`)), '');
+  const odpA = await rcon(`wyscigi wyscig ${nA} pozogar`);
+  w.sprawdz('A-start', /OK/.test(odpA), odpA);
   await sleep(1500);
   w.sprawdz('ogloszenie-dla-innych', czatW.some(c => /czeka na wyścig/.test(c)) && !czatA.some(c => /czeka na wyścig/.test(c)), czatW.slice(-1)[0]);
   w.sprawdz('B-dolacza', /OK/.test(await rcon(`wyscigi wyscig ${nB} glazogrzbiet`)), '');
