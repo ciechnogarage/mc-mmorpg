@@ -86,7 +86,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     Bukkit.getScheduler().runTaskLater(this, () -> {
       World w = swiat();
       if (w == null) { getLogger().warning("Brak świata '" + u.swiat + "' — wyścigi nieaktywne do jego utworzenia."); return; }
-      zaladujTor(w);
+      zaladujTor(w, false);   // forceload zapisuje się w świecie — zdejmujemy po poprzednim uruchomieniu
       for (Entity e : w.getEntities()) if (e.getPersistentDataContainer().has(kluczWierzchowca)) e.remove();
       for (Player p : w.getPlayers()) odeslijObcego(p);
     }, 40L);
@@ -109,9 +109,10 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     if (getConfig().getBoolean("debug", false)) getLogger().info("[debug] " + s);
   }
 
-  private void zaladujTor(World w) {
+  /** Tor (~117 chunków) jest załadowany tylko na czas wyścigów — na produkcji pusty tor nie kosztuje nic. */
+  private void zaladujTor(World w, boolean zaladuj) {
     int[] o = u.tor.obszar();
-    for (int cx = o[0] >> 4; cx <= o[2] >> 4; cx++) for (int cz = o[1] >> 4; cz <= o[3] >> 4; cz++) w.setChunkForceLoaded(cx, cz, true);
+    for (int cx = o[0] >> 4; cx <= o[2] >> 4; cx++) for (int cz = o[1] >> 4; cz <= o[3] >> 4; cz++) w.setChunkForceLoaded(cx, cz, zaladuj);
   }
 
   // ------------------------------------------------------------------ pętla
@@ -170,7 +171,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     if (nowy) wyscig = new Wyscig(this, tryb, w);
     int nr = tryb == Wyscig.Tryb.CZASOWKA ? 0 : wyscig.wolneMiejsce();
     if (nr < 0) return "Brak miejsc na starcie.";
-    if (nowy) wyscigi.add(wyscig);
+    if (nowy) { wyscigi.add(wyscig); zaladujTor(w, true); }
 
     Location l = p.getLocation();
     powroty.put(p.getUniqueId(), new Powrot(l.getWorld().getName(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), profil(p)));
@@ -304,7 +305,10 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     if (p != null && komunikat != null) p.sendMessage(MM.deserialize("<gold>[Wyścigi]</gold> <gray>" + komunikat + "</gray>"));
   }
 
-  void usunWyscig(Wyscig w) { wyscigi.remove(w); }
+  void usunWyscig(Wyscig w) {
+    wyscigi.remove(w);
+    if (wyscigi.isEmpty() && swiat() != null) zaladujTor(swiat(), false);
+  }
 
   private void odeslij(Player p) {
     Powrot pw = powroty.remove(p.getUniqueId());
@@ -461,12 +465,13 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
       case "zbuduj" -> {
         World w = swiat();
         if (w == null) { s.sendMessage("Brak świata " + u.swiat); return true; }
-        zaladujTor(w);
+        zaladujTor(w, true);
         int[] o = u.tor.obszar();
         for (int cx = o[0] >> 4; cx <= o[2] >> 4; cx++) for (int cz = o[1] >> 4; cz <= o[3] >> 4; cz++) { Chunk ch = w.getChunkAt(cx, cz); ch.load(true); }
         int n = u.tor.zbuduj(w);
         Location start = u.tor.punkt(w, -8, 0);
         w.setSpawnLocation(start);
+        if (wyscigi.isEmpty()) zaladujTor(w, false);
         s.sendMessage("Zbudowano " + n + " kolumn, tor " + String.format(Locale.ROOT, "%.1f", u.tor.dlugosc) + " bloków, obszar " + o[0] + "," + o[1] + " .. " + o[2] + "," + o[3]
             + ", chunki " + ((o[2] >> 4) - (o[0] >> 4) + 1) * ((o[3] >> 4) - (o[1] >> 4) + 1));
       }

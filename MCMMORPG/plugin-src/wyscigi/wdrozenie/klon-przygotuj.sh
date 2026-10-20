@@ -10,29 +10,7 @@ ls $A/build/libs/wyscigi-*.jar >/dev/null
 rm -f $D/plugins/wyscigi-*.jar
 cp $A/build/libs/wyscigi-*.jar $D/plugins/
 cp $A/wdrozenie/pliki/DeluxeMenus/gui_menus/wyscigi*.yml $D/plugins/DeluxeMenus/gui_menus/
-python3 - "$D/plugins/DeluxeMenus" "$A/wdrozenie/hub-kafel.yml" <<'PY'
-import sys, pathlib
-dm = pathlib.Path(sys.argv[1]); kafel = pathlib.Path(sys.argv[2]).read_text()
-cfg = dm / 'config.yml'; t = cfg.read_text()
-if 'wyscigi.yml' not in t:
-    wpis = ''.join(f"  {n}:\n    file: {n}.yml\n" for n in ('wyscigi', 'wyscigi_czasowka', 'wyscigi_wyscig'))
-    t = t.replace('gui_menus:\n', 'gui_menus:\n' + wpis, 1)
-    cfg.write_text(t)
-hub = dm / 'gui_menus/hub_spolecznosc.yml'; h = hub.read_text()
-if 'wyscigi_kafel' not in h:
-    hub.write_text(h.rstrip('\n') + '\n' + kafel)
-print('menu: ok')
-PY
-# Chowaniec towarzysz nie wchodzi do swiata wyscigow (despawn przy zmianie swiata juz jest).
-python3 - "$D/plugins/Chowance/config.yml" <<'PY'
-import sys, pathlib, re
-p = pathlib.Path(sys.argv[1]); t = p.read_text()
-m = re.search(r'^(\s*swiaty_zabronione: \[)([^\]]*)\]', t, re.M)
-if m and 'wyscigi' not in m.group(2):
-    t = t[:m.start()] + m.group(1) + (m.group(2) + ', ' if m.group(2).strip() else '') + 'wyscigi]' + t[m.end():]
-    p.write_text(t)
-print('chowance:', re.search(r'swiaty_zabronione: \[[^\]]*\]', t).group(0))
-PY
+python3 $A/wdrozenie/latka.py $D/plugins $A/wdrozenie/hub-kafel.yml
 
 L=$D/logs/latest.log; I=$(stat -c %i $L); docker restart -t 60 $K >/dev/null
 for i in $(seq 1 150); do [ "$(stat -c %i $L 2>/dev/null)" != "$I" ] && grep -q 'Done (' $L && break; sleep 5; done

@@ -13,3 +13,4 @@ mv gamerule set minecraft:mob_griefing false wyscigi
 mv gamerule set minecraft:advance_time false wyscigi
 mv gamerule set minecraft:advance_weather false wyscigi
 mv gamerule set minecraft:show_death_messages false wyscigi
+mv gamerule set minecraft:spawn_chunk_radius 0 wyscigi
