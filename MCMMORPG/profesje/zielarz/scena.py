@@ -64,4 +64,28 @@ def liscie(kepa=(42,-59,61), tp='42.5 -59 58.4 0 22'):
     celuj('lisc',-1); czekaj(0.3); ppm_klik(); czekaj(2.0)
     wstan(); czekaj(2.5)
 
+def kozlek_zle(): kozlek(False,(57,44),'54.4 -59 44.5 -90 22')
+
+def eq():
+    """Sloty z przedmiotami MMOItems gracza: {slot: (id, ilosc, jakosc)}."""
+    t=R('data get entity QaZielarz Inventory'); w={}
+    for m in re.finditer(r'\{count: (\d+), Slot: (\d+)b(.*?)id: "minecraft:[a-z_]+"\}', t):
+        tid=re.search(r'MMOITEMS_ITEM_ID: "(\w+)"', m.group(3)); jq=re.search(r'"rzemioslo:jakosc": (\d)', m.group(3))
+        if tid: w[int(m.group(2))]=(tid.group(1), int(m.group(1)), int(jq.group(1)) if jq else None)
+    return w
+
+def suszarnia():
+    """Jak gracz: ziele z plecaka na pasek, PPM na belke suszarni, czekanie, zdjecie."""
+    przed=eq(); print('przed', przed)
+    ziele=[(s,v) for s,v in przed.items() if v[0]=='PROF_MEDICINAL_HERB']
+    if not ziele: print('BRAK ZIELA'); return
+    s,v=max(ziele,key=lambda x:x[1][1])
+    R(f'item replace entity QaZielarz hotbar.4 from entity QaZielarz {"hotbar."+str(s) if s<9 else "inventory."+str(s-9)}')
+    if s!=4: R(f'item replace entity QaZielarz {"hotbar."+str(s) if s<9 else "inventory."+str(s-9)} with air')
+    R('minecraft:teleport QaZielarz 62.5 -59 56.2 facing 62.5 -55.6 58.5'); czekaj(1.5)
+    X('key','5'); czekaj(0.5); ppm_klik(); czekaj(1.5)
+    print('powieszone', v); ppm_klik(); czekaj(1.5)          # za wczesnie: jeszcze wilgotne
+    czekaj(122); ppm_klik(); czekaj(1.5)
+    po=eq(); print('po', po)
+
 if __name__=='__main__': globals()[sys.argv[1]](*sys.argv[2:])

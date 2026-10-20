@@ -150,6 +150,8 @@ final class Zielarz implements Listener {
         Bukkit.getPluginManager().registerEvents(suszarnia, plugin);
         Bukkit.getScheduler().runTaskLater(plugin, suszarnia::pokazWszystko, 40L);
         wczytajKepy();
+        wczytajStany();
+        Bukkit.getScheduler().runTaskTimer(plugin, this::zapiszStany, 6000L, 6000L);
         pakiety = new PacketListenerAbstract(PacketListenerPriority.NORMAL) {
             /** W trakcie zbioru kliki naleza do zielarza: pakiety machniecia/uzycia/kopania sa anulowane, zanim powstanie
              *  zdarzenie Bukkita (inne pluginy — bron, zaklecia, wymagania MMOItems — ich nie widza). Klient dostaje ack
@@ -353,8 +355,24 @@ final class Zielarz implements Listener {
         }, 1L);
         p.playSound(p.getLocation(), Sound.BLOCK_GRASS_STEP, SoundCategory.PLAYERS, 0.8f, 0.8f);
         plugin.pasek(p, "§7" + nazwaKepy(s) + " §8· §7Shift: odejdź");
+        s.r.zaslon(1.5f, gatunek.equals("kozlek") ? 1.6f : 1.2f);
+        String rada = wskazowka(s);
+        if (rada != null) p.sendMessage("§8Wskazówka: §7" + rada);
         zielnik.zobaczono(p, widocznyGatunek(s));
         s.zad = Bukkit.getScheduler().runTaskTimer(plugin, () -> tik(s), 1L, 1L);
+    }
+
+    /** Pierwsze zbiory: jedna rada, dopoki gracz sam nie zrobi tego dobrze (zielnik pamieta, co odkryl). */
+    private String wskazowka(Sesja s) {
+        return switch (widocznyGatunek(s)) {
+            case "dziurawiec" -> zielnik.ma(s.p, "dziurawiec_wyborny") ? null
+                    : "LPM sierpem tnie pęd tam, gdzie celujesz. Moc siedzi w kwiatach: tnij tuż pod nimi, chore pędy zostaw.";
+            case "kozlek" -> zielnik.ma(s.p, "kozlek_wyborny") ? null
+                    : "Korzeń trzymają korzonki: LPM łopatką rozluźnij ziemię tam, gdzie bieleją. Potem trzymaj PPM na rozecie, a gdy mocno drży, popuść.";
+            case "szerokolistna" -> zielnik.ma(s.p, "konwalia_zapach") || zielnik.ma(s.p, "czosnek_zapach") ? null
+                    : "Te liście mają trującego sobowtóra. Przytrzymaj PPM na liściu, żeby go roztrzeć i powąchać, zanim zerwiesz.";
+            default -> null;
+        };
     }
 
     /** Sobowtory wygladaja tak samo z daleka — nazwa dopiero po rozpoznaniu. */
@@ -1070,7 +1088,42 @@ final class Zielarz implements Listener {
         for (Sesja s : new ArrayList<>(sesje.values())) zakoncz(s, null);
         try { PacketEvents.getAPI().getEventManager().unregisterListener(pakiety); } catch (Throwable ignored) { }
         zielnik.zapiszWszystko();
+        zapiszStany();
         suszarnia.sprzatnij();
+    }
+
+    // ================================================================ stan kep na dysku (odrost i uklad rosliny przezywaja restart)
+    private File plikStanow() { return new File(plugin.getDataFolder(), "zielarz-stany.yml"); }
+
+    void wczytajStany() {
+        File f = plikStanow();
+        if (!f.exists()) return;
+        YamlConfiguration y = YamlConfiguration.loadConfiguration(f);
+        long teraz = System.currentTimeMillis();
+        for (String u : y.getKeys(false)) {
+            var sek = y.getConfigurationSection(u);
+            if (sek == null) continue;
+            Map<String, Stan> m = stany.computeIfAbsent(UUID.fromString(u), k -> new HashMap<>());
+            for (String k : sek.getKeys(false)) {
+                String[] a = sek.getString(k, "").split(";");
+                if (a.length < 3) continue;
+                Stan st = new Stan();
+                st.ziarno = Long.parseLong(a[0]); st.odrostDo = Long.parseLong(a[1]); st.rozpoznana = Boolean.parseBoolean(a[2]);
+                if (st.odrostDo > teraz || st.rozpoznana) m.put(k.replace('_', ';').replace('~', '-'), st);
+            }
+        }
+    }
+
+    void zapiszStany() {
+        YamlConfiguration y = new YamlConfiguration();
+        long teraz = System.currentTimeMillis();
+        for (Map.Entry<UUID, Map<String, Stan>> e : stany.entrySet())
+            for (Map.Entry<String, Stan> k : e.getValue().entrySet()) {
+                Stan st = k.getValue();
+                if (st.odrostDo <= teraz && !st.rozpoznana) continue;
+                y.set(e.getKey() + "." + k.getKey().replace(';', '_').replace('-', '~'), st.ziarno + ";" + st.odrostDo + ";" + st.rozpoznana);
+            }
+        try { y.save(plikStanow()); } catch (java.io.IOException ex) { plugin.getLogger().warning("zielarz-stany.yml: " + ex); }
     }
 
     // ================================================================ przerwania i blokady

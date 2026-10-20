@@ -72,6 +72,8 @@ final class ZRoslina {
     final Display.Brightness jasnosc;
     static final Display.Brightness PODSWIETLENIE = new Display.Brightness(15, 15);
     private Czesc podswietlona;
+    /** Niewidzialna encja nad roslina: celownik trafia w nia, nie w blok trawy — klient nie rysuje obrysu bloku. */
+    private org.bukkit.entity.Interaction zaslona;
 
     ZRoslina(Plugin plugin, Player p, Location o, Vector przod) {
         this.plugin = plugin;
@@ -274,7 +276,19 @@ final class ZRoslina {
         c.zabrana = true;
     }
 
+    void zaslon(float szer, float wys) {
+        zaslona = o.getWorld().spawn(o.clone().subtract(f.clone().multiply(0.1)), org.bukkit.entity.Interaction.class, e -> {
+            e.setVisibleByDefault(false);
+            e.setPersistent(false);
+            e.setInteractionWidth(szer);
+            e.setInteractionHeight(wys);
+            e.setResponsive(false);
+        });
+        p.showEntity(plugin, zaslona);
+    }
+
     void usun() {
+        if (zaslona != null) { zaslona.remove(); zaslona = null; }
         for (Czesc c : czesci) for (Klocek k : c.klocki) k.d.remove();
         czesci.clear();
         podswietlona = null;

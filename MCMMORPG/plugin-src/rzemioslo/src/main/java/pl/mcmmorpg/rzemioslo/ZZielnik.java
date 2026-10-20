@@ -59,6 +59,8 @@ final class ZZielnik {
         this.katalog = new File(plugin.getDataFolder(), "zielnik");
     }
 
+    boolean ma(Player p, String wpis) { return dla(p.getUniqueId()).contains(wpis); }
+
     private Set<String> dla(UUID u) {
         return odkrycia.computeIfAbsent(u, k -> {
             Set<String> s = new LinkedHashSet<>();
