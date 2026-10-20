@@ -21,7 +21,7 @@ function narzedzia(rcon) {
   };
   t.wymiar = async n => (await rcon(`data get entity ${n} Dimension`)).replace(/.*data: /, '').replace(/"/g, '').trim();
   t.pozGracza = async n => { const m = (await rcon(`data get entity ${n} Pos`)).match(/\[([-\d.]+)d, ([-\d.]+)d, ([-\d.]+)d\]/); return m ? { x: +m[1], y: +m[2], z: +m[3] } : null; };
-  t.wilki = async () => { const r = await rcon('minecraft:execute in minecraft:wyscigi if entity @e[type=minecraft:wolf]'); const m = r.match(/count: (\d+)/i); return m ? +m[1] : 0; };
+  t.wilki = async () => { const r = await rcon('minecraft:execute in minecraft:wyscigi positioned 20 64 40 if entity @e[type=minecraft:wolf,distance=..200]'); const m = r.match(/count: (\d+)/i); return m ? +m[1] : 0; };
   t.hp = async n => { const m = (await rcon(`data get entity ${n} Health`)).match(/([\d.]+)f/); return m ? +m[1] : null; };
   return t;
 }
