@@ -9,12 +9,12 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 /**
  * %hud_...%:
  *  druzyna_liczba (inni online), druzyna_<n>_{nazwa,nick,poziom,hp,hpmax,zasob,zasobmax,stan,lider};
- *    stan = ok|nisko|daleko|martwy, nick = imie z kolorem MiniMessage wg stanu.
+ *    stan = ok|nisko|daleko|martwy; teksty BEZ tagow MiniMessage (MythicHUD liczylby ich szerokosc).
  *  slugi_liczba, slugi_limit, slugi_<n>_{nazwa,hp,hpmax,s}.
  *  towarzysze = 0|1|2 (ile wierszy panelu: Chowaniec, slugi) -> uklad kolumny HUD-a.
  *  uklad = e<0|1>t<0|1|2>: czy jest rzad efektow i ile wierszy towarzyszy -> przesuniecie paneli kolumny.
  *  okno = pelne|przygaszone (walka MMOCore, walka Chowancow albo tryb kompakt) -> przygaszenie okna postaci.
- *  pet_typ = pierwszy typ aktywnego Chowanca w kolorze typu.
+ *  pet_typ = pierwszy typ aktywnego Chowanca.
  *  efekty_liczba, efekt_<n>_{id,czas}; czas = m:ss albo pusty dla efektu bez konca.
  * Indeksy n od 1; puste miejsce = pusty tekst, liczby = 0.
  */
@@ -53,7 +53,7 @@ final class Placeholdery extends PlaceholderExpansion {
     if (k.equals("pet_typ")) {
       String t = PlaceholderAPI.setPlaceholders(p, "%chowance_aktywny_typ%");
       String pierwszy = t.contains("/") ? t.substring(0, t.indexOf('/')) : t;
-      return KOLORY_TYPOW.getOrDefault(pierwszy, "<#D5A96B>") + pierwszy;
+      return pierwszy; // bez tagu koloru, patrz nick
     }
     String[] c = k.split("_", 3);
     if (c.length < 3) return null;
@@ -66,11 +66,7 @@ final class Placeholdery extends PlaceholderExpansion {
         String stan = x.martwy() ? "martwy" : x.daleko() ? "daleko" : x.hp() / Math.max(1, x.hpMax()) < pl.niskieHp ? "nisko" : "ok";
         return switch (c[2]) {
           case "nazwa" -> x.nazwa();
-          case "nick" -> switch (stan) {
-            case "martwy", "daleko" -> "<#8B7F86>" + x.nazwa();
-            case "nisko" -> "<#F36D62>" + x.nazwa();
-            default -> "<#FFF1CC>" + x.nazwa();
-          };
+          case "nick" -> x.nazwa(); // bez tagow: MythicHUD liczy szerokosc z surowego tekstu (tag = przesuniety HUD)
           case "poziom" -> String.valueOf(x.poziom());
           case "hp" -> liczba(x.hp());
           case "hpmax" -> liczba(x.hpMax());
@@ -104,11 +100,6 @@ final class Placeholdery extends PlaceholderExpansion {
       default -> { return null; }
     }
   }
-
-  /** Kolory typow jak w Chowance model/Typ.java (nazwy wyswietlane). */
-  private static final java.util.Map<String, String> KOLORY_TYPOW = java.util.Map.of(
-      "Ogień", "<#E8662A>", "Woda", "<#3C8BE0>", "Ziemia", "<#A07A45>", "Powietrze", "<#9FD6E8>", "Natura", "<#5DB04A>",
-      "Mrok", "<#8A63C2>", "Światło", "<#F2D55C>", "Metal", "<#9AA3AD>", "Bestia", "<#C98B5B>", "Nieumarły", "<#7FA38A>");
 
   private static String pusty(String pole) {
     return switch (pole) { case "hp", "hpmax", "zasob", "poziom" -> "0"; case "zasobmax" -> "1"; default -> ""; };
