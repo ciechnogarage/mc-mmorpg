@@ -34,7 +34,7 @@ final class ZZielnik {
         d.put("dziurawiec_widziany", "Krzaczek o żółtych gwiazdkach kwiatów, na słonecznej łące.");
         d.put("dziurawiec_zbior", "Ścięty pęd daje ziele lecznicze.");
         d.put("dziurawiec_wyborny", "Najlepsze ziele: ścinać tuż pod kwiatami, póki kwitnie.");
-        d.put("dziurawiec_chory", "Pędy z ciemnymi plamkami psują cały pęczek.");
+        d.put("dziurawiec_chory", "Pędów z ciemnymi plamkami nie brać: ziele z nich do niczego.");
         STRONY.put("dziurawiec", new Strona("Dziurawiec", d));
         Map<String, String> k = new java.util.LinkedHashMap<>();
         k.put("kozlek_widziany", "Wysoka łodyga z różowym baldachem, przy wodzie.");
@@ -59,7 +59,28 @@ final class ZZielnik {
         this.katalog = new File(plugin.getDataFolder(), "zielnik");
     }
 
-    boolean ma(Player p, String wpis) { return dla(p.getUniqueId()).contains(wpis); }
+    boolean ma(Player p, String wpis) { return dla(Zlecenia.profil(p)).contains(wpis); }
+
+    /** Ile razy gracz widzial juz rade do gatunku (ukryte wpisy, zielnik ich nie pokazuje); zwraca nowa liczbe. */
+    int rada(Player p, String gatunek) {
+        Set<String> s = dla(Zlecenia.profil(p));
+        int n = 0;
+        while (s.contains("_rada_" + gatunek + "_" + (n + 1))) n++;
+        s.add("_rada_" + gatunek + "_" + (n + 1));
+        return n + 1;
+    }
+
+    /** Odkrycia z trwajacego zbioru czekaja do konca sesji — w trakcie czat zaslanial rosline. */
+    private final Map<UUID, List<String>> zalegle = new HashMap<>();
+
+    void wypiszZaleglosci(Player p) {
+        List<String> l = zalegle.remove(p.getUniqueId());
+        if (l == null || l.isEmpty()) return;
+        Component c = Component.text("✎ Zielnik: ", NamedTextColor.DARK_GREEN);
+        for (int i = 0; i < l.size(); i++) c = c.append(Component.text((i > 0 ? " · " : "") + l.get(i), NamedTextColor.GRAY));
+        p.sendMessage(c);
+        p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.7f, 1.1f);
+    }
 
     private Set<String> dla(UUID u) {
         return odkrycia.computeIfAbsent(u, k -> {
@@ -83,14 +104,16 @@ final class ZZielnik {
 
     /** Zwraca true, gdy to nowy wpis (i oglasza go graczowi). */
     boolean odkryj(Player p, String klucz) {
-        if (!dla(p.getUniqueId()).add(klucz)) return false;
+        UUID u = Zlecenia.profil(p);
+        if (!dla(u).add(klucz)) return false;
         String tekst = null;
         for (Strona st : STRONY.values()) if (st.wpisy().containsKey(klucz)) tekst = st.wpisy().get(klucz);
-        if (tekst != null) {
+        if (tekst != null && plugin.zielarz().wTrakcie(p)) zalegle.computeIfAbsent(p.getUniqueId(), k -> new ArrayList<>()).add(tekst);
+        else if (tekst != null) {
             p.sendMessage(Component.text("✎ Zielnik: ", NamedTextColor.DARK_GREEN).append(Component.text(tekst, NamedTextColor.GRAY)));
             p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.7f, 1.1f);
         }
-        zapisz(p.getUniqueId());
+        zapisz(u);
         return true;
     }
 
@@ -105,22 +128,22 @@ final class ZZielnik {
     void zbior(Player p, String gatunek, double q) {
         switch (gatunek) {
             case "dziurawiec" -> { odkryj(p, "dziurawiec_zbior"); if (q >= 0.85) odkryj(p, "dziurawiec_wyborny"); else if (q == 0) odkryj(p, "dziurawiec_chory"); }
-            case "kozlek" -> { odkryj(p, "kozlek_zbior"); if (q >= 0.85) odkryj(p, "kozlek_wyborny"); else if (q < 0.5) odkryj(p, "kozlek_urwany"); }
+            case "kozlek" -> { odkryj(p, "kozlek_zbior"); if (q >= 0.85) odkryj(p, "kozlek_wyborny"); }   // urwanie odkrywa Zielarz.zerwijKorzen (nie z jakosci)
             case "czosnek" -> { if (q >= 0.85) odkryj(p, "czosnek_wyborny"); }
             default -> { }
         }
     }
 
-    int liczba(Player p) { return dla(p.getUniqueId()).size(); }
+    int liczba(Player p) { return dla(Zlecenia.profil(p)).size(); }
 
     /** Okno zielnika (dialog Papera): tylko to, co gracz odkryl. */
     void pokaz(Player p) {
-        Set<String> moje = dla(p.getUniqueId());
+        Set<String> moje = dla(Zlecenia.profil(p));
         List<DialogBody> cialo = new ArrayList<>();
         int strony = 0;
         for (Strona st : STRONY.values()) {
             List<String> w = new ArrayList<>();
-            for (Map.Entry<String, String> e : st.wpisy().entrySet()) if (moje.contains(e.getKey())) w.add("• " + e.getValue());
+            for (Map.Entry<String, String> e : st.wpisy().entrySet()) if (moje.contains(e.getKey())) w.add("• " + e.getValue());   // ukryte "_rada_" nie sa w STRONY
             if (w.isEmpty()) continue;
             strony++;
             cialo.add(DialogBody.plainMessage(Component.text(st.tytul(), NamedTextColor.DARK_GREEN, TextDecoration.BOLD), 300));

@@ -222,20 +222,34 @@ final class ZRoslina {
         return hit == null ? null : hit.getHitPosition();
     }
 
-    /** Czesc pod celownikiem lekko drga i rosnie (obrys glow wokol kazdego piksela zasmiecal obraz). */
+    /** Czesc pod celownikiem swieci pelnym swiatlem (puls skali 7% byl niewidoczny na kadrach). */
     void podswietl(Czesc c, Color kolor) {
         if (c == podswietlona) return;
-        if (podswietlona != null && !podswietlona.zabrana) puls(podswietlona, 1f, 3);
+        if (podswietlona != null) for (Klocek k : podswietlona.klocki) k.d.setBrightness(jasnosc);
         podswietlona = c;
-        if (c != null) puls(c, 1.07f, 3);
+        if (c != null) for (Klocek k : c.klocki) k.d.setBrightness(PODSWIETLENIE);
     }
 
-    /** Skala czesci wzgledem jej kotwicy (podswietlenie). */
-    private void puls(Czesc c, float k, int ticki) {
-        for (Klocek kl : c.klocki) {
-            Vector3f t = new Vector3f(kl.t0).sub(c.kotwicaE).mul(k).add(c.kotwicaE);
-            animuj(kl.d, new Transformation(t, kl.r0, new Vector3f(kl.s0).mul(k), new Quaternionf()), ticki);
+    /** Linia ciecia: cienka kreska w poprzek pedu na wysokosci celownika, w kolorze strefy jakosci (null = schowaj). */
+    private Klocek linia;
+    private Material liniaKolor;
+
+    void linia(Czesc c, double y, Material kolor) {
+        if (c == null || kolor == null) {
+            if (linia != null) linia.d.setViewRange(0f);
+            return;
         }
+        float sx = 0.34f, sy = 0.014f, sz = 0.014f;
+        Vector3f t = new Vector3f(-sx / 2f - (float) c.kotwica.getX(), (float) y, -sz / 2f + (float) c.kotwica.getZ() - 0.05f);
+        if (linia == null || kolor != liniaKolor) {
+            if (linia != null) linia.d.remove();
+            Czesc tmp = new Czesc("linia", 0, new Vector());
+            linia = klocek(tmp, kolor, 0, 0, 0, sx, sy, sz, null);
+            linia.d.setBrightness(PODSWIETLENIE);
+            liniaKolor = kolor;
+        }
+        linia.d.setViewRange(0.5f);
+        animuj(linia.d, new Transformation(t, new Quaternionf(), new Vector3f(sx, sy, sz), new Quaternionf()), 1);
     }
 
     /** Obrot czesci wokol punktu (0, odY, 0) jej kotwicy + przesuniecie; klocki konczace sie ponizej odY zostaja. */
@@ -248,13 +262,14 @@ final class ZRoslina {
         }
     }
 
-    /** Lekki wiatr: pedy, liscie i kwiaty kolysza sie wokol nasady o 2-3 st. (oprocz celowanej i trzymanej czesci). */
+    /** Wiatr: wspolna fala przechodzi przez kepe od lewej do prawej (faza z polozenia), ~5 st., co kilka sekund podmuch. */
     void wiatr(int t, Czesc pomin, Czesc pomin2) {
+        double podmuch = Math.max(0, Math.sin(t * 0.021)) > 0.85 ? 4 : 0;
         for (Czesc c : czesci) {
             if (c.zabrana || c == pomin || c == pomin2 || c.klocki.isEmpty()) continue;
             if (!c.typ.equals("ped") && !c.typ.equals("lisc") && !c.typ.equals("kwiat")) continue;
-            double a = 2.5 * Math.sin(t * 0.09 + c.nr * 1.7) + (Math.sin(t * 0.023) > 0.92 ? 3 : 0);   // rzadki podmuch
-            przechyl(c, obrotZ(a).mul(obrotX(a * 0.4)), new Vector3f(), 0f, 10);
+            double a = (4.5 + podmuch) * Math.sin(t * 0.11 - c.kotwica.getX() * 5);
+            przechyl(c, obrotZ(a).mul(obrotX(a * 0.35)), new Vector3f(), 0f, 10);
         }
     }
 
@@ -289,6 +304,7 @@ final class ZRoslina {
 
     void usun() {
         if (zaslona != null) { zaslona.remove(); zaslona = null; }
+        if (linia != null) { linia.d.remove(); linia = null; }
         for (Czesc c : czesci) for (Klocek k : c.klocki) k.d.remove();
         czesci.clear();
         podswietlona = null;

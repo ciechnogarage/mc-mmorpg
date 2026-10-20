@@ -111,10 +111,14 @@ final class Zielarz implements Listener {
         double napiecie, postep;
         final boolean[] poluzowane = new boolean[4], boczne = new boolean[4];
         boolean trzeszczy, zaczep1, zaczep2, wykopany;
+        boolean czekaNaPuszczenie = true;   // PPM trzymany od klikniecia w kepe nie chwyta rosliny
+        volatile long upuszczenieMs;        // Q: klient macha reka po upuszczeniu — to nie jest ciecie
+        boolean zranienie, zlaZiemia;
+        int zleKopanie, ostatniRuchKom = -99;
         int ostatniHover = -99;
         final int partia = ThreadLocalRandom.current().nextInt();   // nierozpoznane liscie z roznych zbiorow nie lacza sie w stos
         // wynik
-        final Map<String, int[]> zebrane = new LinkedHashMap<>();   // nazwa -> [ilosc, suma jakosci*100]
+        final Map<String, int[]> zebrane = new LinkedHashMap<>();   // nazwa -> [slabe, dobre, wyborne]
         final List<String> uwagi = new ArrayList<>();
         double xp;
         int chore;
@@ -178,6 +182,8 @@ final class Zielarz implements Listener {
                 Runnable akcja = null;
                 int seq = -1;
                 if (typ == PacketType.Play.Client.ANIMATION) {
+                    Sesja sq = sesje.get(u);
+                    if (sq != null && System.currentTimeMillis() - sq.upuszczenieMs < 200) { e.setCancelled(true); return; }   // Q macha reka
                     akcja = () -> { Sesja s = sesje.get(u); if (s != null) lpm(s); };
                 } else if (typ == PacketType.Play.Client.USE_ITEM) {
                     var w = new com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientUseItem(e);
@@ -192,6 +198,10 @@ final class Zielarz implements Listener {
                 } else if (typ == PacketType.Play.Client.PLAYER_DIGGING) {
                     var w = new WrapperPlayClientPlayerDigging(e);
                     if (w.getAction() == DiggingAction.RELEASE_USE_ITEM) return;
+                    if (w.getAction() == DiggingAction.DROP_ITEM || w.getAction() == DiggingAction.DROP_ITEM_STACK) {
+                        Sesja sq = sesje.get(u);
+                        if (sq != null) sq.upuszczenieMs = System.currentTimeMillis();
+                    }
                     seq = w.getSequence();
                     akcja = () -> { Sesja s = sesje.get(u); if (s != null) s.ukryjZnow = true; };
                 } else if (typ == PacketType.Play.Client.INTERACT_ENTITY) {
@@ -220,6 +230,10 @@ final class Zielarz implements Listener {
     }
 
     // ================================================================ kepy (rejestr miejsc)
+    /** Klucz kepy w YAML: '|' zamiast ';' (stary zapis '_'/'~' psul swiaty z podkresleniem w nazwie, np. lochy). */
+    static String doYaml(String k) { return k.replace(';', '|'); }
+    static String zYaml(String k) { return k.contains("|") ? k.replace('|', ';') : k.replace('_', ';').replace('~', '-'); }
+
     static String klucz(Block b) { return b.getWorld().getName() + ";" + b.getX() + ";" + b.getY() + ";" + b.getZ(); }
 
     private void wczytajKepy() {
@@ -227,12 +241,12 @@ final class Zielarz implements Listener {
         if (!plikKep.exists()) return;
         YamlConfiguration y = YamlConfiguration.loadConfiguration(plikKep);
         var sek = y.getConfigurationSection("kepy");
-        if (sek != null) for (String k : sek.getKeys(false)) kepy.put(k.replace('_', ';').replace('~', '-'), sek.getString(k));
+        if (sek != null) for (String k : sek.getKeys(false)) kepy.put(zYaml(k), sek.getString(k));
     }
 
     private void zapiszKepy() {
         YamlConfiguration y = new YamlConfiguration();
-        for (Map.Entry<String, String> e : kepy.entrySet()) y.set("kepy." + e.getKey().replace(';', '_').replace('-', '~'), e.getValue());
+        for (Map.Entry<String, String> e : kepy.entrySet()) y.set("kepy." + doYaml(e.getKey()), e.getValue());
         try { y.save(plikKep); } catch (IOException ex) { plugin.getLogger().warning("zielarz-kepy.yml: " + ex); }
     }
 
@@ -290,13 +304,13 @@ final class Zielarz implements Listener {
     }
 
     private Stan stan(Player p, Block b) {
-        return stany.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).computeIfAbsent(klucz(b), k -> new Stan());
+        return stany.computeIfAbsent(Zlecenia.profil(p), k -> new HashMap<>()).computeIfAbsent(klucz(b), k -> new Stan());   // per postac (MMOProfiles)
     }
 
     void rozpocznij(Player p, Block b, String gatunek) {
         if (sesje.containsKey(p.getUniqueId()) || plugin.zbieranie().wTrakcie(p) || p.isInsideVehicle()
                 || p.getGameMode() == GameMode.SPECTATOR) return;
-        if (p.getLocation().distance(b.getLocation().add(0.5, 0, 0.5)) > 5) { plugin.pasek(p, "§7Podejdź bliżej."); return; }
+        if (p.getLocation().distance(b.getLocation().add(0.5, 0, 0.5)) > 3.2) { plugin.pasek(p, "§7Podejdź bliżej, żeby pochylić się nad rośliną."); return; }   // stale, bliskie zblizenie
         Stan st = stan(p, b);
         long teraz = System.currentTimeMillis();
         if (st.odrostDo > teraz) {
@@ -304,13 +318,15 @@ final class Zielarz implements Listener {
             plugin.pasek(p, "§7Ta kępa jeszcze odrasta. Wróć za §f" + czas((st.odrostDo - teraz) / 1000) + "§7.");
             return;
         }
-        if (st.odrostDo != 0) { Stan nowy = new Stan(); stany.get(p.getUniqueId()).put(klucz(b), nowy); st = nowy; }
+        // po odroscie nowy okaz, ale rozpoznanie kepy zostaje (gracz juz wie, co tu rosnie)
+        if (st.odrostDo != 0) { Stan nowy = new Stan(); nowy.rozpoznana = st.rozpoznana; stany.get(Zlecenia.profil(p)).put(klucz(b), nowy); st = nowy; }
         String rodzaj = plugin.dane().narzedzieProfesji.getOrDefault(PROF, "sierp");
         Przedmioty.Znalezione sierp = plugin.przedmioty().najlepsze(p, rodzaj, 1);
         if (sierp == null) {
             plugin.pasek(p, plugin.kom("brak-narzedzia", "{narzedzie}", Przedmioty.nazwaRodzaju(rodzaj), "{tier}", "I"));
             return;
         }
+        if (Przedmioty.zepsute(sierp.item())) { plugin.pasek(p, "§cSierp jest stępiony do cna. Napraw go, zanim weźmiesz się za zioła."); return; }
         // miejsce przyklekniecia: ~1,7 bloku przed kepa od strony gracza, na gruncie
         Location o = b.getLocation().add(0.5, 0, 0.5);
         Vector przod = o.toVector().subtract(p.getLocation().toVector()).setY(0);
@@ -350,16 +366,15 @@ final class Zielarz implements Listener {
             zakoncz(s, "§cBłąd rośliny.");
             return;
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1.08f, 7); }, 1L);   // przyblizenie z lekkim odbiciem
-        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1f, 4); }, 9L);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (!s.konczy) patrzPlynnie(p, o.clone().add(0, 0.62, 0));
-        }, 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1.14f, 6); }, 1L);   // przyblizenie z wyraznym odbiciem
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(0.97f, 3); }, 8L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1f, 3); }, 12L);
+        // kamera gracza nie jest obracana na sile (walczyla z mysza); celowanie zostaje w rekach gracza
         p.playSound(p.getLocation(), Sound.BLOCK_GRASS_STEP, SoundCategory.PLAYERS, 0.8f, 0.8f);
         plugin.pasek(p, "§7" + nazwaKepy(s) + " §8· §7Shift: odejdź");
         s.r.zaslon(1.5f, gatunek.equals("kozlek") ? 1.6f : 1.2f);
         String rada = wskazowka(s);
-        if (rada != null) p.sendMessage("§8Wskazówka: §7" + rada);
+        if (rada != null && zielnik.rada(p, widocznyGatunek(s)) <= 3) plugin.pasek(p, "§fWskazówka: §7" + rada);   // najwyzej 3 razy, na pasku zamiast czatu
         zielnik.zobaczono(p, widocznyGatunek(s));
         s.zad = Bukkit.getScheduler().runTaskTimer(plugin, () -> tik(s), 1L, 1L);
     }
@@ -433,7 +448,7 @@ final class Zielarz implements Listener {
     }
 
     private String narzedzieDla(Sesja s, ZRoslina.Czesc c) {
-        if (c == null) return "sierp";
+        if (c == null) return switch (s.gatunek) { case "kozlek" -> "lopatka"; case "czosnek", "konwalia" -> "rece"; default -> "sierp"; };
         return switch (c.typ) {
             case "gleba" -> "lopatka";
             case "rozeta" -> "rece-ciagnij";
@@ -447,9 +462,10 @@ final class Zielarz implements Listener {
     private void tik(Sesja s) {
         Player p = s.p;
         if (s.konczy) return;
-        if (!p.isOnline() || p.isDead() || p.getWorld() != s.blok.getWorld() || p.getLocation().distanceSquared(s.stoi) > 1.0) { zakoncz(s, null); return; }
+        if (!p.isOnline() || p.isDead() || p.getWorld() != s.blok.getWorld() || p.getLocation().distanceSquared(s.stoi) > 1.0) { zakoncz(s, p.isOnline() && !p.isDead() ? "§7Coś cię odepchnęło od rośliny." : null); return; }
         s.t++;
         if (s.t <= 3 || s.t % 20 == 0 || s.ukryjZnow) { p.sendBlockChange(s.blok.getLocation(), Material.AIR.createBlockData()); s.ukryjZnow = false; }
+        if (s.czekaNaPuszczenie && s.t > 10 && s.t - s.ostatniPpm > 6) s.czekaNaPuszczenie = false;
         if (s.trzyma && s.t - s.ostatniPpm > 6) ppmPuszczony(s);
         if (!s.trzyma) {
             s.hover = s.t < s.zajetyDo ? null : s.r.celowana(4.5);
@@ -458,7 +474,9 @@ final class Zielarz implements Listener {
             // narzedzie zmienia sie dopiero po chwili celowania w nic (bez migania przy przejezdzaniu wzrokiem)
             String co = s.hover == null && s.t - s.ostatniHover < 8 && !s.widok.isEmpty() ? s.widok : narzedzieDla(s, s.hover);
             if (!co.equals(s.widok) || s.t % 20 == 0) pokazWDloni(s, co);
+            pokazLinie(s);
         } else {
+            s.r.linia(null, 0, null);
             trzymanie(s);
         }
         if (s.t % 10 == 0) s.r.wiatr(s.t, s.hover, s.chwyt);
@@ -469,7 +487,7 @@ final class Zielarz implements Listener {
                 ZRoslina.Czesc roz = rozeta(s);
                 if (roz != null && !roz.zabrana && s.t % 2 == 0) s.r.przesun(roz, new Vector3f(0, (float) (s.postep * 0.5), 0), 3);
             }
-            if (s.trzeszczy && s.napiecie < 0.6) s.trzeszczy = false;
+            if (s.trzeszczy && s.napiecie <= gornaPasma(s)) { s.trzeszczy = false; plugin.pasek(s.p, "§7Popuściłeś. Możesz ciągnąć dalej."); }
         }
         if (s.t - s.ostatniaAkcja > 900) zakoncz(s, "§7Wstajesz.");
         else if (wszystkoZebrane(s) && s.t >= s.zajetyDo) zakoncz(s, null);
@@ -488,17 +506,13 @@ final class Zielarz implements Listener {
         if (s.trzyma || s.t - s.ostatniLpm < 5 || s.t < s.zajetyDo) return;
         s.ostatniLpm = s.t;
         ZRoslina.Czesc c = s.hover;
-        if (c == null) return;
+        if (c == null) { dzwiek(s, Sound.BLOCK_GRASS_HIT, 0.3f, 1.4f); return; }   // machniecie w powietrze slychac, nie ginie bez sladu
         s.ostatniaAkcja = s.t;
         switch (c.typ) {
             case "ped" -> tnijPed(s, c);
             case "gleba" -> kop(s, c);
-            case "lisc" -> tnijLiscie(s);
-            case "kwiat" -> {
-                s.r.usunCzesc(c);
-                dzwiek(s, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.5f, 1.5f);
-                plugin.pasek(s.p, "§7Ścinasz kwiatostan. Kwiaty opadają w trawę.");
-            }
+            case "lisc" -> zerwijLisc(s, c);   // w rekawicach jeden lisc (scinanie calej kepy jednym klikiem bylo pulapka)
+            case "kwiat" -> plugin.pasek(s.p, "§7Kwiaty zostaw. Zbiera się liście.");
             case "rozeta" -> plugin.pasek(s.p, "§7Sierp ślizga się po liściach przy ziemi.");
             default -> { }
         }
@@ -507,6 +521,7 @@ final class Zielarz implements Listener {
     /** Klient trzymajacy PPM powtarza uzycie co 4 ticki — kazde powtorzenie przedluza chwyt; cisza = puszczenie. */
     private void ppmWcisniety(Sesja s) {
         s.ostatniPpm = s.t;
+        if (s.czekaNaPuszczenie) return;   // przycisk trzymany jeszcze z klikniecia w kepe
         if (s.trzyma || s.t < s.zajetyDo) return;
         ZRoslina.Czesc c = s.hover;
         if (c == null) return;
@@ -524,7 +539,7 @@ final class Zielarz implements Listener {
         ZRoslina.Czesc c = s.chwyt;
         s.chwyt = null;
         if (c == null || c.zabrana || s.chwytZalatwiony) return;
-        if (dl == 0) klik(s, c);
+        if (dl <= 4) klik(s, c);   // klik dluzszy niz jeden pakiet tez jest klikiem (wczesniej przepadal bez sladu)
         else if (c.typ.equals("lisc")) plugin.pasek(s.p, "§7Za krótko, żeby cokolwiek poczuć.");
         else if (c.typ.equals("ped") && dl >= 12) { s.r.przechyl(c, new org.joml.Quaternionf(), new Vector3f(), 0f, 6); plugin.pasek(s.p, "§7Puszczasz. Pęd prostuje się."); }
     }
@@ -561,12 +576,28 @@ final class Zielarz implements Listener {
                     if (dl == 12) plugin.pasek(s.p, "§6Pęd napina się w ziemi. Puść, jeśli nie chcesz go wyrwać.");
                 }
             }
-            case "lisc" -> rozcieraj(s, c, dl);
+            case "lisc" -> {
+                if (s.t - s.ostatniPpm > 6) return;
+                if (s.stan.rozpoznana) { s.chwytZalatwiony = true; zerwijLisc(s, c); }   // juz wiesz, co to — nie niszczysz liscia
+                else rozcieraj(s, c, dl);
+            }
             default -> { }
         }
     }
 
     // ================================================================ DZIURAWIEC: ciecie sierpem
+    /** Linia ciecia na celowanym pedzie: zielona = tuz pod kwiatami, zolta = za wysoko/nisko, czerwona = zniszczysz ziele. */
+    private void pokazLinie(Sesja s) {
+        ZRoslina.Czesc c = s.hover;
+        Vector hit = c != null && c.typ.equals("ped") ? s.r.trafienie(c) : null;
+        if (hit == null) { s.r.linia(null, 0, null); return; }
+        double seg = c.d("h") / 4, yy = (hit.getY() - c.kotwica.getY()) / seg;
+        int k = yy < SEG_Y[1] ? 0 : yy < SEG_Y[2] ? 1 : yy < SEG_Y[3] ? 2 : 3;
+        boolean zly = c.b("chory") || c.b("bezKwiatow") || !c.s("faza").equals("kw");
+        Material m = zly || k == 0 ? Material.RED_CONCRETE : k == 2 ? Material.LIME_CONCRETE : Material.YELLOW_CONCRETE;
+        s.r.linia(c, hit.getY(), m);
+    }
+
     /** Segmenty pedu dziurawca: polozenie i rozmiar kart (w jednostkach seg = h/4). */
     static final double[] SEG_Y = {0, 0.75, 1.45, 2.05}, SEG_R = {0.85, 0.85, 0.9, 2.0};
 
@@ -575,11 +606,12 @@ final class Zielarz implements Listener {
         ZRoslina r = s.r;
         int n = 7 + rnd.nextInt(2);   // gesto: krzak, nie rzad tyczek
         for (int i = 0; i < n; i++) {
-            double lx = -0.34 + 0.68 * i / (n - 1) + (rnd.nextDouble() * 0.08 - 0.04);
-            double lz = (i % 2 == 0 ? -0.1 : 0.12) + rnd.nextDouble() * 0.1;
-            double h = (i == 0 || i == n - 1 ? 0.62 : 0.74) + rnd.nextDouble() * 0.12;   // kopula, ~30% nizej
+            // kepa w kole (nie rzad tyczek): spirala zlotego kata, wyzsze pedy w srodku
+            double kat = Math.toRadians(i * 137.5 + rnd.nextDouble() * 20), rr = 0.06 + 0.28 * Math.sqrt((i + 0.5) / n);
+            double lx = Math.cos(kat) * rr, lz = Math.sin(kat) * rr * 0.85;
+            double h = 0.62 + 0.22 * (1 - rr / 0.34) + rnd.nextDouble() * 0.06;
             double v = rnd.nextDouble();
-            String faza = v < 0.1 ? "pak" : v < 0.88 ? "kw" : "stary";
+            String faza = v < 0.1 ? "pak" : v < 0.94 ? "kw" : "stary";   // przekwitle rzadziej: z bliska nie brunatny lan
             boolean chory = rnd.nextDouble() < 0.18, dbl = faza.equals("kw") && rnd.nextDouble() < 0.12;
             ZRoslina.Czesc c = r.czesc("ped", i, lx, 0, lz);
             c.cechy.put("h", h); c.cechy.put("faza", faza); c.cechy.put("chory", chory); c.cechy.put("dbl", dbl);
@@ -591,7 +623,7 @@ final class Zielarz implements Listener {
             double obrot = rnd.nextDouble() * 90;
             // niska, gesta kepa jak blok w swiecie: krotki dol, nakladajace sie segmenty, duzy kwiatostan
             for (int k = 0; k < 4; k++) {
-                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, SEG_Y[k] * seg, 0, SEG_R[k] * seg, ZRoslina.obrotY(obrot + k * 13));
+                ZRoslina.Klocek kl = r.karta(c, "zielarz_k_" + karty[k], 0, SEG_Y[k] * seg, 0, SEG_R[k] * seg, ZRoslina.obrotY(obrot));   // segmenty jednego pedu w jednej plaszczyznie
                 kl.seg = k;
             }
             if (dbl) r.karta(c, "zielarz_k_dziurawiec_kwiat", 0.06, seg * 1.6, 0.04, seg * 1.3, ZRoslina.obrotY(obrot + 45)).seg = 3;
@@ -611,7 +643,7 @@ final class Zielarz implements Listener {
         String m;
         if (faza.equals("pak")) { q = 0.3; m = "Pąki. Ziele jeszcze bez mocy."; }
         else if (faza.equals("stary")) { q = 0.25; m = "Przekwitłe. Ziele bez mocy."; }
-        else if (c.b("bezKwiatow") && k >= 2) { q = 0; m = "Bez kwiatów to sama łodyga. Moc zerwałeś wcześniej."; }
+        else if (c.b("bezKwiatow")) { q = 0; m = "Bez kwiatów to sama łodyga. Moc zerwałeś wcześniej."; }
         else if (k == 3) { q = 0.4; m = "Same kwiaty, mało ziela."; }
         else if (k == 2) { q = 1.0; m = "Czyste cięcie pod kwiatami."; }
         else if (k == 1) { q = 0.65; m = "Za nisko: w pęczku starsze liście."; }
@@ -621,10 +653,14 @@ final class Zielarz implements Listener {
         boolean okaz = q >= 1.0 && c.b("dbl");
         if (okaz) { s.okaz = true; m = "Czyste cięcie. Podwójny kwiatostan!"; }
         float strona = s.rnd.nextBoolean() ? 1 : -1;
-        s.r.przechyl(c, ZRoslina.obrotZ(80 * strona), new Vector3f(0, -cy * 0.9f, -0.06f), cy, 12);
+        s.r.przechyl(c, ZRoslina.obrotZ(80 * strona), new Vector3f(0, -cy * 0.9f, -0.06f), cy, 9);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {   // dotyka ziemi, odbija sie lekko i lezy chwile
+            if (!s.konczy) s.r.przechyl(c, ZRoslina.obrotZ(88 * strona), new Vector3f(0, -cy * 0.9f + 0.03f, -0.1f), cy, 3);
+        }, 10L);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (s.konczy) return;
-            c.klocki.removeIf(kl -> { if (kl.y0 >= cy - 1e-3) { kl.d.remove(); return true; } return false; });
+            // znika wszystko, co sie przewrocilo (takze segment przeciety linia ciecia — wczesniej zostawal przechylony)
+            c.klocki.removeIf(kl -> { if (kl.y1 > cy + 1e-3) { kl.d.remove(); return true; } return false; });
             dzwiek(s, Sound.BLOCK_AZALEA_LEAVES_FALL, 0.6f, 1.2f);
         }, 20L);
         c.zabrana = true;
@@ -633,7 +669,8 @@ final class Zielarz implements Listener {
         dzwiek(s, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.45f);
         dzwiek(s, Sound.BLOCK_GRASS_BREAK, 0.8f, 1.2f);
         Location pk = s.r.swiat(c.kotwica.getX(), cy, c.kotwica.getZ());
-        s.p.spawnParticle(Particle.BLOCK, pk, 12, 0.06, 0.03, 0.06, Material.OAK_LEAVES.createBlockData());
+        s.p.spawnParticle(Particle.DUST, pk, 6, 0.05, 0.03, 0.05, new Particle.DustOptions(Color.fromRGB(110, 160, 60), 0.35f));
+        s.p.spawnParticle(Particle.DUST, pk.clone().add(0, 0.1, 0), 3, 0.06, 0.04, 0.06, new Particle.DustOptions(Color.fromRGB(240, 210, 70), 0.3f));
         Przedmioty.zuzyj(s.p, s.slotSierpa);
         if (q > 0) daj(s, "PROF_MEDICINAL_HERB", 1, q);
         else if (chory) uwaga(s, "chore");
@@ -652,7 +689,7 @@ final class Zielarz implements Listener {
 
     private void wyrwijPed(Sesja s, ZRoslina.Czesc c) {
         s.chwytZalatwiony = true;
-        s.r.przechyl(c, ZRoslina.obrotZ(25), new Vector3f(0, 0.35f, -0.1f), -1f, 6);
+        s.r.przechyl(c, ZRoslina.obrotZ(12), new Vector3f(0, 0.3f, -0.12f), 0f, 6);   // unosi sie przed graczem, nie odlatuje w bok
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(c); }, 12L);
         c.zabrana = true;
         c.box = null;
@@ -663,9 +700,8 @@ final class Zielarz implements Listener {
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 0.9f);
         dzwiek(s, Sound.BLOCK_GRASS_BREAK, 0.8f, 0.7f);
         wstrzas(s);
-        if (!c.b("chory")) daj(s, "PROF_MEDICINAL_HERB", 1, 0.25);
         uwaga(s, "wyrwany");
-        plugin.pasek(s.p, "§cWyrwany z korzeniem. Ziele w ziemi, a kępa nie odrośnie szybko.");
+        plugin.pasek(s.p, "§cWyrwany z korzeniem. Ziele ubrudzone ziemią, do niczego, a kępa nie odrośnie szybko.");
     }
 
     // ================================================================ KOZLEK: korzen z oporem
@@ -683,12 +719,12 @@ final class Zielarz implements Listener {
             ZRoslina.Czesc g = r.czesc("gleba", i, 0, 0, 0);
             g.box = new BoundingBox(b[0], 0, b[1], b[2], 0.07, b[3]);
             r.kartaSrodek(g, "zielarz_k_kozlek_gleba", sx[i], 0.012, sz[i], 0.5, ZRoslina.obrotY(i * 90 + rnd.nextDouble() * 20).mul(ZRoslina.obrotX(-90)));
-            if (s.boczne[i] && rnd.nextDouble() < 0.6)   // bielejaca koncowka korzonka zdradza, gdzie biegnie
-                r.klocek(g, Material.STRIPPED_BIRCH_WOOD, sx[i] * 0.8 + (rnd.nextDouble() - 0.5) * 0.08, 0.015, sz[i] * 0.8 + (rnd.nextDouble() - 0.5) * 0.08,
-                        0.04, 0.03, 0.1, ZRoslina.obrotY(i * 90 + rnd.nextDouble() * 40 - 20));
+            if (s.boczne[i])   // kazdy korzonek wystaje bielejaca koncowka — czytanie rosliny jest prawdziwe
+                r.klocek(g, Material.MUSHROOM_STEM, sx[i] * 0.75 + (rnd.nextDouble() - 0.5) * 0.06, 0.015, sz[i] * 0.75 + (rnd.nextDouble() - 0.5) * 0.06,
+                        0.06, 0.045, 0.2, ZRoslina.obrotY(i * 90 + rnd.nextDouble() * 40 - 20));
         }
         ZRoslina.Czesc roz = r.czesc("rozeta", 0, 0, 0, 0);
-        roz.box = new BoundingBox(-0.2, 0, -0.2, 0.2, 0.12, 0.2);
+        roz.box = new BoundingBox(-0.2, 0, -0.2, 0.2, 0.5, 0.2);   // rozeta + dolna czesc lodyg: chwyta sie tam, gdzie gracz celuje
         for (int k = 0; k < 7; k++) {   // pierzaste liscie rozety: karta lezaca, nasada w srodku
             double a = k * 360.0 / 7 + rnd.nextDouble() * 20, len = 0.5 + rnd.nextDouble() * 0.1, ar = Math.toRadians(a);
             Quaternionf q = ZRoslina.obrotY(a).mul(ZRoslina.obrotX(-48));
@@ -706,6 +742,9 @@ final class Zielarz implements Listener {
         r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(20));
         r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(110));
     }
+
+    /** Gorna granica pasma: kazdy nieodkopany korzonek i kazde puste kopniecie zweza je (nie skraca czasu reakcji). */
+    private double gornaPasma(Sesja s) { return Math.max(0.62, PASMO_DO - 0.05 * nieruszoneBoczne(s) - 0.03 * s.zleKopanie); }
 
     private static ZRoslina.Czesc rozeta(Sesja s) {
         for (ZRoslina.Czesc c : s.r.czesci) if (c.typ.equals("rozeta")) return c;
@@ -734,32 +773,41 @@ final class Zielarz implements Listener {
         s.p.spawnParticle(Particle.DUST, l, 14, 0.12, 0.04, 0.12, GRUDKA);
         dzwiek(s, Sound.ITEM_SHOVEL_FLATTEN, 0.9f, 0.8f);
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 0.7f, 0.9f);
-        plugin.pasek(s.p, s.boczne[i] ? "§7Ziemia puszcza. W ściance wykopu bieleje korzonek." : "§7Sama ziemia, nic tu nie trzyma.");
+        if (!s.boczne[i]) s.zleKopanie++;   // niepotrzebnie ruszona ziemia osypuje sie na korzen: wezsze pasmo
+        plugin.pasek(s.p, s.boczne[i] ? "§7Ziemia puszcza. Korzonek odsłonięty." : "§6Sama ziemia. Osypuje się na korzeń, ciągnąć będzie trudniej.");
     }
 
     private void ciagnij(Sesja s, ZRoslina.Czesc roz) {
         if (s.t - s.ostatniPpm > 6) return;   // klient juz puscil — napiecie schodzi w tik()
         int otw = nieruszoneBoczne(s);
-        // nieodkopane korzonki trzymaja: napiecie skacze szybciej, trudniej utrzymac je w pasmie
-        double rate = 0.014 + 0.005 * otw;   // strojone symulacja: ciagle trzymanie zawsze urywa, uwazny gracz wyciaga w 5-7 s
-        s.napiecie += rate;
+        // tempo napiecia stale (czas reakcji zawsze ~0,5 s); nieodkopane korzonki i puste kopanie zwezaja pasmo
+        s.napiecie += 0.014;
+        double gorna = gornaPasma(s);
         if (!s.zaczep1 && s.postep >= 0.32 || !s.zaczep2 && s.postep >= 0.66) {   // korzonek trzyma: szarpniecie
             if (s.postep >= 0.66) s.zaczep2 = true; else s.zaczep1 = true;
             s.napiecie += 0.05;
             dzwiek(s, Sound.BLOCK_ROOTED_DIRT_HIT, 0.9f, 0.7f);
         }
-        boolean wPasmie = s.napiecie >= PASMO_OD && s.napiecie <= PASMO_DO;
+        boolean wPasmie = s.napiecie >= PASMO_OD && s.napiecie <= gorna;
         s.postep += s.napiecie < PASMO_OD ? 0.002 : wPasmie ? 0.025 : 0.006;
         int dl = s.t - s.trzymaOd;
         // widoczne napiecie: im mocniej, tym rozeta drzy szerzej i przechyla sie; w pasmie ziemia pracuje
-        float drz = (float) (s.napiecie < PASMO_OD ? 0.004 : wPasmie ? 0.01 : 0.03);
+        boolean zaMocno = s.napiecie > gorna;
+        float drz = (float) (s.napiecie < PASMO_OD ? 0.012 : wPasmie ? 0.022 : 0.055);   // widoczne golym okiem, rosnie z napieciem
         float jx = (float) ((ThreadLocalRandom.current().nextDouble() - 0.5) * 2 * drz), jz = (float) ((ThreadLocalRandom.current().nextDouble() - 0.5) * 2 * drz);
-        s.r.przesun(roz, new Vector3f(jx, (float) (s.postep * 0.5 + (s.napiecie > PASMO_DO ? 0.03 : 0)), jz), 2);
+        s.r.przesun(roz, new Vector3f(jx, (float) (s.postep * 0.5 + s.napiecie * 0.06), jz), 1);
+        if (dl % 2 == 0) for (ZRoslina.Czesc g : s.r.czesci) if (g.typ.equals("gleba"))   // ziemia wokol nasady unosi sie kopczykiem
+            s.r.przesun(g, new Vector3f(0, (float) (s.napiecie * 0.035), 0), 2);
         Location base = s.r.swiat(0, 0.04, 0);
-        if (wPasmie && dl % 3 == 0) s.p.spawnParticle(Particle.DUST, base, 3, 0.16, 0.02, 0.16, GRUDKA);
-        if (wPasmie && dl % 4 == 0) dzwiek(s, Sound.BLOCK_ROOTED_DIRT_STEP, 0.6f, 0.8f);
-        if (s.napiecie > PASMO_DO && dl % 2 == 0) dzwiek(s, Sound.BLOCK_HANGING_ROOTS_BREAK, (float) (0.4 + 0.5 * s.napiecie), (float) (0.9 + 1.0 * (s.napiecie - PASMO_DO)));
-        if (s.napiecie > 0.86 && !s.trzeszczy) { s.trzeszczy = true; wstrzas(s); plugin.pasek(s.p, "§6Korzeń trzeszczy… popuść."); }
+        if (dl % (wPasmie ? 3 : 5) == 0) s.p.spawnParticle(Particle.DUST, base, wPasmie ? 3 : 1, 0.16, 0.02, 0.16, GRUDKA);
+        if (!zaMocno && dl % 4 == 0) dzwiek(s, wPasmie ? Sound.BLOCK_ROOTED_DIRT_STEP : Sound.BLOCK_HANGING_ROOTS_STEP, wPasmie ? 0.6f : 0.35f, 0.8f);
+        if (zaMocno && dl % 2 == 0) dzwiek(s, Sound.BLOCK_HANGING_ROOTS_BREAK, (float) (0.4 + 0.5 * s.napiecie), (float) (0.9 + 1.0 * (s.napiecie - gorna)));
+        if (s.napiecie > gorna + 0.04 && !s.trzeszczy) {
+            s.trzeszczy = true;
+            wstrzas(s);
+            s.p.spawnParticle(Particle.DUST, base, 8, 0.12, 0.05, 0.12, GRUDKA);
+            plugin.pasek(s.p, "§6Korzeń trzeszczy… popuść.");
+        }
         if (s.napiecie >= ZERWANIE) { zerwijKorzen(s, roz, otw); return; }
         if (s.postep >= 1.0) wyciagnijKorzen(s, roz, otw);
     }
@@ -771,12 +819,15 @@ final class Zielarz implements Listener {
         s.zniszczona = true;
         s.zajetyDo = s.t + 14;
         double q = Math.min(0.45, Math.max(0, s.postep * (1 - 0.15 * otw)));   // urwany = zawsze slaby
-        s.r.przechyl(roz, ZRoslina.obrotZ(70), new Vector3f(0, (float) (s.postep * 0.5 - 0.2), -0.1f), -2f, 8);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(roz); }, 20L);
+        // urwany: rozeta odskakuje lekko w gore i opada obok, w dolku zostaje reszta korzenia
+        s.r.przesun(roz, new Vector3f(0.18f, (float) (s.postep * 0.5 + 0.12), -0.1f), 3);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.przesun(roz, new Vector3f(0.3f, 0.02f, -0.15f), 6); }, 4L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(roz); }, 22L);
         dzwiek(s, Sound.ENTITY_ITEM_BREAK, 0.8f, 0.6f);
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 0.6f);
         wstrzas(s);
         if (s.postep > 0.3) daj(s, "PROF_KORZEN_KOZLKA", 1, q);
+        zielnik.odkryj(s.p, "kozlek_urwany");
         uwaga(s, "urwany");
         plugin.pasek(s.p, "§cKorzeń urwał się w ziemi." + (s.postep > 0.3 ? " W ręku tylko kawałek." : ""));
     }
@@ -787,15 +838,22 @@ final class Zielarz implements Listener {
         roz.box = null;
         s.wykopany = true;
         s.zajetyDo = s.t + 16;
-        double q = Math.max(0.2, 1 - 0.15 * otw);
-        s.r.przechyl(roz, ZRoslina.obrotZ(28), new Vector3f(0, 0.95f, -0.25f), -2f, 10);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(roz); }, 26L);
+        // wyborny tylko z kompletem korzonkow; wtedy korzen glowny + peczek korzonkow (2 sztuki)
+        double q = otw == 0 ? 1.0 : Math.max(0.3, 0.75 - 0.15 * (otw - 1));
+        // wielki moment przed oczami: korzen wychodzi pionowo przed kamere i wisi chwile, potem do reki
+        s.r.przesun(roz, new Vector3f(0, 0.62f, -0.3f), 8);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (s.konczy) return;
+            s.r.przesun(roz, new Vector3f(0, 0.66f, -0.32f), 10);
+            s.p.spawnParticle(Particle.DUST, s.r.swiat(0, 0.3, -0.3), 10, 0.08, 0.15, 0.08, GRUDKA);   // ziemia sypie sie z korzonkow
+        }, 9L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.usunCzesc(roz); }, 34L);
         Location base = s.r.swiat(0, 0.05, 0);
         s.p.spawnParticle(Particle.DUST, base, 30, 0.22, 0.08, 0.22, GRUDKA);
         dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 1.1f);
         dzwiek(s, Sound.BLOCK_MOSS_BREAK, 0.8f, 0.8f);
         Bukkit.getScheduler().runTaskLater(plugin, () -> dzwiek(s, Sound.ENTITY_ITEM_PICKUP, 0.7f, 1.0f), 8L);
-        daj(s, "PROF_KORZEN_KOZLKA", 1, q);
+        daj(s, "PROF_KORZEN_KOZLKA", otw == 0 ? 2 : 1, q);
         plugin.pasek(s.p, otw == 0 ? "§aKorzeń wyszedł cały, z korzonkami." : "§eKorzeń wyszedł, ale korzonki zostały w ziemi (" + otw + ").");
         if (otw > 0) uwaga(s, "korzonki");
     }
@@ -824,7 +882,10 @@ final class Zielarz implements Listener {
             boolean stary = rnd.nextDouble() < 0.3;
             ZRoslina.Czesc l = r.czesc("lisc", i, 0, 0, 0);
             l.cechy.put("stary", stary); l.cechy.put("kwitnie", kwitnie);
-            r.karta(l, "zielarz_k_" + lisc + (stary ? "_stary" : ""), bx, 0, bz, len, ZRoslina.obrotY(-a).mul(ZRoslina.obrotX(tilt)));
+            // lisc przechyla sie w strone a, ale blaszka zostaje twarza do gracza (bokiem wygladal jak waski miecz)
+            double ra = Math.toRadians(a);
+            Quaternionf ql = ZRoslina.obrotY(Math.sin(ra) * 18).mul(ZRoslina.obrotZ(-tilt * Math.sin(ra))).mul(ZRoslina.obrotX(tilt * Math.cos(ra)));
+            r.karta(l, "zielarz_k_" + lisc + (stary ? "_stary" : ""), bx, 0, bz, len, ql);
             double ex = bx + Math.sin(ar) * Math.sin(tr) * len, ez = bz + Math.cos(ar) * Math.sin(tr) * len, ey = Math.cos(tr) * len;
             double cx = (bx + ex) / 2, cz = (bz + ez) / 2;
             l.box = new BoundingBox(Math.min(bx, ex) - 0.07, len * 0.25, Math.min(bz, ez) - 0.07, Math.max(bx, ex) + 0.07, ey, Math.max(bz, ez) + 0.07);
@@ -891,8 +952,8 @@ final class Zielarz implements Listener {
 
     private void rozcieraj(Sesja s, ZRoslina.Czesc l, int dl) {
         if (dl % 4 == 0) {
-            Location gdzie = s.r.swiat((l.box.getMinX() + l.box.getMaxX()) / 2, (l.box.getMinY() + l.box.getMaxY()) / 2, (l.box.getMinZ() + l.box.getMaxZ()) / 2);
-            s.p.spawnParticle(Particle.DUST, gdzie, 3, 0.04, 0.04, 0.04, new Particle.DustOptions(Color.fromRGB(90, 150, 60), 0.7f));
+            Location gdzie = s.r.swiat((l.box.getMinX() + l.box.getMaxX()) / 2, l.box.getMinY() + 0.04, (l.box.getMinZ() + l.box.getMaxZ()) / 2);
+            s.p.spawnParticle(Particle.DUST, gdzie, 2, 0.03, 0.02, 0.03, new Particle.DustOptions(Color.fromRGB(90, 150, 60), 0.3f));   // drobny sok, nie kwadraty przed kamera
             dzwiek(s, Sound.ITEM_BRUSH_BRUSHING_GENERIC, 0.6f, 1.3f);
         }
         if (dl < 20) return;
@@ -923,7 +984,15 @@ final class Zielarz implements Listener {
             m.getPersistentDataContainer().set(kPartia, PersistentDataType.INTEGER, s.partia);
         }
         it.setItemMeta(m);
-        for (ItemStack nad : s.p.getInventory().addItem(it).values()) s.p.getWorld().dropItemNaturally(s.p.getLocation(), nad);
+        // pusty trzymany slot zajmujemy na chwile zaslepka: zbior nie wpada pod podrobione narzedzie w dloni
+        var inv = s.p.getInventory();
+        int reka = inv.getHeldItemSlot();
+        boolean pusta = inv.getItem(reka) == null || inv.getItem(reka).getType().isAir();
+        if (pusta) inv.setItem(reka, new ItemStack(Material.BARRIER));
+        var nadmiar = inv.addItem(it).values();
+        if (pusta) inv.setItem(reka, null);
+        for (ItemStack nad : nadmiar) s.p.getWorld().dropItemNaturally(s.p.getLocation(), nad);
+        if (!nadmiar.isEmpty()) plugin.pasek(s.p, "§cKosz pełny. Reszta upadła na ziemię obok.");
         String nazwa = plugin.dane().nazwa(id);
         if (nazwa.equals(id)) nazwa = switch (id) {
             case "PROF_KORZEN_KOZLKA" -> "Korzeń kozłka";
@@ -931,12 +1000,10 @@ final class Zielarz implements Listener {
             case "PROF_SZEROKIE_LISCIE" -> "Szerokie liście";
             default -> id;
         };
-        int[] z = s.zebrane.computeIfAbsent(nazwa, k -> new int[2]);
-        z[0] += ile;
-        z[1] += (int) Math.round(q * 100) * ile;
+        s.zebrane.computeIfAbsent(nazwa, k -> new int[3])[klasa] += ile;
         double xp = plugin.dane().g(1) * (0.4 + 0.6 * q) * ile;
         s.xp += plugin.profesje().daj(s.p, PROF, 1, xp, s.r.o.clone().add(0, 0.8, 0));
-        zielnik.zbior(s.p, s.gatunek, q);
+        if (s.stan.rozpoznana || !(s.gatunek.equals("czosnek") || s.gatunek.equals("konwalia"))) zielnik.zbior(s.p, s.gatunek, q);   // sobowtor: bez podpowiedzi przed rozpoznaniem
     }
 
     private void uwaga(Sesja s, String u) { if (!s.uwagi.contains(u)) s.uwagi.add(u); }
@@ -946,11 +1013,14 @@ final class Zielarz implements Listener {
     }
 
     private void wstrzas(Sesja s) {
-        try {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(s.p, new WrapperPlayServerHurtAnimation(s.p.getEntityId(), 0f));
-        } catch (Throwable t) {
-            plugin.getLogger().warning("Zielarz: wstrzas: " + t);
+        // drzy roslina i ziemia, nie kamera (animacja zranienia czytala sie jak "dostalem")
+        for (ZRoslina.Czesc c : s.r.czesci) {
+            if (c.zabrana || c == s.chwyt) continue;
+            float a = (float) (ThreadLocalRandom.current().nextBoolean() ? 3.5 : -3.5);
+            s.r.przechyl(c, ZRoslina.obrotZ(a), new Vector3f(), 0f, 1);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy && !c.zabrana) s.r.przechyl(c, new org.joml.Quaternionf(), new Vector3f(), 0f, 3); }, 2L);
         }
+        dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 0.8f, 0.6f);
     }
 
     /** Bez chodzenia i skakania na czas zbioru (modyfikator przejsciowy — znika sam po wyjsciu z gry). */
@@ -971,11 +1041,12 @@ final class Zielarz implements Listener {
         s.konczy = true;
         if (s.zad != null) s.zad.cancel();
         sesje.remove(s.p.getUniqueId());
-        poKoncu.put(s.p.getUniqueId(), System.currentTimeMillis() + 1200);
+        if (!s.zranienie) poKoncu.put(s.p.getUniqueId(), System.currentTimeMillis() + 1200);   // po ciosie tarcza i mikstury od razu
         int zostalo = 0, wszystkich = 0, zdrowych = 0;
         for (ZRoslina.Czesc c : s.r.czesci) if (c.typ.equals("ped") || c.typ.equals("lisc")) {
             wszystkich++;
-            if (!c.zabrana) { zostalo++; if (!c.b("chory")) zdrowych++; }
+            // do odrostu licza sie tylko czesci, ktore same by daly zbior: kwitnace zdrowe pedy, mlode liscie
+            if (!c.zabrana) { zostalo++; if (c.typ.equals("ped") ? c.s("faza").equals("kw") && !c.b("chory") : !c.b("stary")) zdrowych++; }
         }
         Player p = s.p;
         if (p.isOnline()) zamroz(p, false);
@@ -987,12 +1058,16 @@ final class Zielarz implements Listener {
         boolean pedy = s.gatunek.equals("dziurawiec");
         if (s.zniszczona) { odrost = 30 * 60; odrostOpis = "Kępa zniszczona: odrośnie za 30 min."; }
         else if (s.wykopany) { odrost = 10 * 60; odrostOpis = "Korzeń wykopany czysto: nowa rozeta z korzonków za 10 min."; }
-        else if (cos && wszystkich > 0 && zdrowych == 0) { odrost = 10 * 60; odrostOpis = zostalo > 0 ? "Zostały same chore pędy: odrośnie za 10 min." : "Ogołocona do zera: odrośnie za 10 min."; }
-        else if (cos && zdrowych == 1) { odrost = 5 * 60; odrostOpis = (pedy ? "Został jeden zdrowy pęd" : "Został jeden liść") + ": odrośnie za 5 min."; }
-        else if (cos) { odrost = 2 * 60; odrostOpis = (pedy ? "Zostawiłeś zdrowe pędy (" : "Zostawiłeś liście (") + zdrowych + "): odrośnie za 2 min."; }
+        else if (cos && wszystkich > 0 && zdrowych == 0) { odrost = 10 * 60; odrostOpis = zostalo > 0 ? (pedy ? "Nie zostawiłeś żadnego kwitnącego pędu" : "Zostały same stare liście") + ": odrośnie za 10 min." : "Ogołocona do zera: odrośnie za 10 min."; }
+        else if (cos && zdrowych == 1) { odrost = 5 * 60; odrostOpis = (pedy ? "Został jeden kwitnący pęd" : "Został jeden młody liść") + ": odrośnie za 5 min."; }
+        else if (cos) { odrost = 2 * 60; odrostOpis = (pedy ? "Zostawiłeś kwitnące pędy (" : "Zostawiłeś młode liście (") + zdrowych + "): odrośnie za 2 min."; }
         if (odrost > 0) s.stan.odrostDo = System.currentTimeMillis() + odrost * 1000;
+        if (!wylaczanie) zapiszStany();   // crash nie cofa swiezych zbiorow
         boolean poZbiorze = odrost > 0;
-        if (p.isOnline() && p.getWorld() == s.blok.getWorld()) {
+        if (wylaczanie) {
+            s.r.usun();
+            if (p.isOnline() && p.getWorld() == s.blok.getWorld()) p.sendBlockChange(s.blok.getLocation(), s.blok.getBlockData());
+        } else if (p.isOnline() && p.getWorld() == s.blok.getWorld()) {
             float k0 = SKALA_SWIATA.getOrDefault(s.gatunek, 0.7f);
             s.r.skala(k0, 8);   // oddalenie: zostaje kepa w swiecie
             // blok wraca ZANIM znikna karty (odwrotnie byla dziura na 2-3 klatki)
@@ -1010,16 +1085,20 @@ final class Zielarz implements Listener {
                 StringBuilder sb = new StringBuilder("§2Zielarstwo: §f");
                 boolean pierwszy = true;
                 for (Map.Entry<String, int[]> e : s.zebrane.entrySet()) {
-                    int q = e.getValue()[1] / Math.max(1, e.getValue()[0]);
-                    if (!pierwszy) sb.append("§7, §f");
+                    int[] k = e.getValue();
+                    if (!pierwszy) sb.append("§7; §f");
                     pierwszy = false;
-                    sb.append(e.getValue()[0]).append("× ").append(e.getKey()).append(q >= 85 ? " §6(wyborne)" : q >= 50 ? " §a(dobre)" : " §c(słabe)");
+                    sb.append(e.getKey()).append(":");
+                    String[] kol = {" §c", " §a", " §6"}, slowo = {"słabe", "dobre", "wyborne"};
+                    boolean pp = true;
+                    for (int i = 2; i >= 0; i--) if (k[i] > 0) { sb.append(pp ? "" : "§7,").append(kol[i]).append(k[i]).append(" ").append(slowo[i]); pp = false; }
                 }
                 sb.append(" §8· §b+").append(Math.round(s.xp)).append(" XP");
                 p.sendMessage(sb.toString());
             }
-            if (s.chore > 0) p.sendMessage("§7Chore pędy w pęczku (" + s.chore + ") pójdą do wyrzucenia przy suszeniu.");
-            if (odrostOpis != null) p.sendMessage("§8" + odrostOpis);
+            if (s.chore > 0) p.sendMessage("§7Chorych pędów (" + s.chore + ") nie bierzesz do pęczka: ścięte poszły w trawę.");
+            if (odrostOpis != null) p.sendMessage("§7" + odrostOpis);
+            zielnik.wypiszZaleglosci(p);
             if (komunikat != null) plugin.pasek(p, komunikat);
         }
     }
@@ -1087,7 +1166,10 @@ final class Zielarz implements Listener {
         return b.toString();
     }
 
+    private boolean wylaczanie;
+
     void zatrzymajWszystko() {
+        wylaczanie = true;   // zadania opoznione juz sie nie wykonaja — zakoncz sprzata od razu
         for (Sesja s : new ArrayList<>(sesje.values())) zakoncz(s, null);
         try { PacketEvents.getAPI().getEventManager().unregisterListener(pakiety); } catch (Throwable ignored) { }
         zielnik.zapiszWszystko();
@@ -1112,7 +1194,7 @@ final class Zielarz implements Listener {
                 if (a.length < 3) continue;
                 Stan st = new Stan();
                 st.ziarno = Long.parseLong(a[0]); st.odrostDo = Long.parseLong(a[1]); st.rozpoznana = Boolean.parseBoolean(a[2]);
-                if (st.odrostDo > teraz || st.rozpoznana) m.put(k.replace('_', ';').replace('~', '-'), st);
+                if (st.odrostDo > teraz || st.rozpoznana) m.put(zYaml(k), st);
             }
         }
     }
@@ -1123,13 +1205,33 @@ final class Zielarz implements Listener {
         for (Map.Entry<UUID, Map<String, Stan>> e : stany.entrySet())
             for (Map.Entry<String, Stan> k : e.getValue().entrySet()) {
                 Stan st = k.getValue();
-                if (st.odrostDo <= teraz && !st.rozpoznana) continue;
-                y.set(e.getKey() + "." + k.getKey().replace(';', '_').replace('-', '~'), st.ziarno + ";" + st.odrostDo + ";" + st.rozpoznana);
+                if (st.odrostDo <= teraz && !st.rozpoznana) continue;   // wygasle nie ida na dysk (w pamieci zostaja do odwiedzin)
+                y.set(e.getKey() + "." + doYaml(k.getKey()), st.ziarno + ";" + st.odrostDo + ";" + st.rozpoznana);
             }
         try { y.save(plikStanow()); } catch (java.io.IOException ex) { plugin.getLogger().warning("zielarz-stany.yml: " + ex); }
     }
 
     // ================================================================ przerwania i blokady
+    /** Wyglad odrastajacej kepy zna tylko zbierajacy — przy kazdym wyslaniu chunka (relog, powrot) odsylamy go jeszcze raz. */
+    @EventHandler
+    public void naChunkGracza(io.papermc.paper.event.packet.PlayerChunkLoadEvent e) {
+        Map<String, Stan> m = stany.get(Zlecenia.profil(e.getPlayer()));
+        if (m == null) return;
+        long teraz = System.currentTimeMillis();
+        String pref = e.getWorld().getName() + ";";
+        for (Map.Entry<String, Stan> k : m.entrySet()) {
+            if (k.getValue().odrostDo <= teraz || !k.getKey().startsWith(pref)) continue;
+            String[] a = k.getKey().split(";");
+            int x = Integer.parseInt(a[1]), z = Integer.parseInt(a[3]);
+            if (x >> 4 != e.getChunk().getX() || z >> 4 != e.getChunk().getZ()) continue;
+            String g = kepy.get(k.getKey());
+            if (g == null) continue;
+            Block b = e.getWorld().getBlockAt(x, Integer.parseInt(a[2]), z);
+            Player p = e.getPlayer();
+            Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) p.sendBlockChange(b.getLocation(), wygladBloku(g, true, b)); }, 2L);
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void naShift(org.bukkit.event.player.PlayerToggleSneakEvent e) {
         Sesja s = sesje.get(e.getPlayer().getUniqueId());
@@ -1140,7 +1242,7 @@ final class Zielarz implements Listener {
     public void naObrazenia(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player p) {
             Sesja s = sesje.get(p.getUniqueId());
-            if (s != null) zakoncz(s, "§cCoś cię zraniło. Zrywasz się na nogi.");
+            if (s != null) { s.zranienie = true; zakoncz(s, "§cCoś cię zraniło. Zrywasz się na nogi."); }
         }
     }
 
@@ -1171,7 +1273,7 @@ final class Zielarz implements Listener {
     public void naWyjscie(PlayerQuitEvent e) {
         Sesja s = sesje.get(e.getPlayer().getUniqueId());
         if (s != null) zakoncz(s, null);
-        zielnik.zapisz(e.getPlayer().getUniqueId());
+        zielnik.zapisz(Zlecenia.profil(e.getPlayer()));
     }
 
     @EventHandler

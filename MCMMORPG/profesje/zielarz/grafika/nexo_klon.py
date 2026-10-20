@@ -14,8 +14,8 @@ KRZYZ = ['dziurawiec_dol', 'dziurawiec_srodek', 'dziurawiec_srodek_chory', 'dziu
 PRZEDMIOTY = ['rekawice']   # zwykly przedmiot (wyglad w dloni)
 PLASKIE = ['czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
 
-KOMP = 0.8    # gamma rozjasnienia kart zblizenia (patrz main)
-NASYC = 1.3   # nasycenie kart (patrz main)
+KOMP = 0.85   # gamma rozjasnienia kart zblizenia (patrz main)
+NASYC = 1.08  # nasycenie kart (1,3 dawalo neonowa zielen, recenzja v4)
 MNOZ = 1.05   # (zmierzone 19.10: pionowe karty 74% jasnosci kepy; z odchyleniem 28 st. ~90%)
 
 KARTA = {  # jedna plaszczyzna widoczna z obu stron, bez cieniowania (jak rosliny vanilli)

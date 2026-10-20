@@ -157,11 +157,11 @@ def obraz(rows):
 def chory(im):
     """Plamy choroby 2x2: rdzawy srodek, jasniejsza obwodka — tylko na lisciach (nie lodydze x=7)."""
     im = im.copy(); px = im.load()
-    for (x, y) in [(2, 4), (10, 9), (2, 14), (11, 2)]:
-        for dx in (0, 1):
-            for dy in (0, 1):
+    for (x, y) in [(2, 4), (10, 9), (2, 13), (11, 2), (4, 9)]:   # plamy 3x3 na wiekszosci lisci: widoczne z 2 blokow
+        for dx in (0, 1, 2):
+            for dy in (0, 1, 2):
                 xx, yy = x + dx, y + dy
-                if px[xx, yy][3] and xx != 7: px[xx, yy] = (0x8a, 0x4a, 0x22, 255) if (dx + dy) % 2 == 0 else (0xa8, 0x70, 0x30, 255)
+                if xx < 16 and yy < 16 and px[xx, yy][3] and xx != 7: px[xx, yy] = (0x8a, 0x4a, 0x22, 255) if (dx + dy) % 2 == 0 else (0xa8, 0x70, 0x30, 255)
     return im
 
 if __name__ == '__main__':

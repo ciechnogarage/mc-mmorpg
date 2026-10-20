@@ -94,19 +94,19 @@ T['kozlek_lisc'] = [  # lisc rozety: pierzasty, lezy (os glowna poziomo, nasada 
     "................",
 ]
 T['kozlek_korzen'] = [  # korzen kozlka: krotkie brazowe klacze + peczek cienkich jasnych korzonkow (wiecha)
-    "......kzzZ......",
-    ".....kzzzZZ.....",
-    "....kzzBzzZB....",
-    "....zzBzZBZB....",
-    "...k.zZBzZB.k...",
-    "..k..k.zZ.z..k..",
-    "..k.k..z.Z.k..k.",
-    ".k..k.z..Z..k.k.",
-    ".k.k..z..Z..k..k",
-    "k..k.k...Z.k...k",
-    "...k.k..z..k..k.",
+    "......ZBBN......",
+    ".....zZBBBN.....",
+    "....zZBNBBBN....",
+    "....ZBBZBNBN....",
+    "...z.ZBBZBN.z...",
+    "..z..z.ZB.Z..z..",
+    "..z.z..Z.B.z..z.",
+    ".z..z.Z..B..z.z.",
+    ".z.z..z..Z..z..z",
+    "k..z.z...Z.z...k",
+    "...z.k..z..z..k.",
     "..k..k..z...k...",
-    "..k.....z...k...",
+    "..k.....k...k...",
     ".k......k....k..",
     "........k.......",
     "................",
@@ -330,7 +330,7 @@ def stary(im):
             px[x, y] = ((0xc8, 0xb8, 0x50) if n < 2 else (0xa0, 0xa8, 0x44)) + (255,)
     if len(rows) > 7:                          # jedna brazowa plamka w polowie liscia
         y = rows[len(rows) // 2]; xs = [x for x in range(16) if px[x, y][3]]
-        if len(xs) > 2: px[xs[len(xs) // 2], y] = (0x8a, 0x60, 0x30, 255)
+        if len(xs) > 2: px[xs[len(xs) // 2], y] = (0x7a, 0x6e, 0x34, 255)   # oliwkowo-brazowa (rdzawa wygladala jak czerwony blad)
     return im
 
 def bez_bieli(im):
