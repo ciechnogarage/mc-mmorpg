@@ -52,7 +52,7 @@ def kozlek(dobrze=True, kepa=(57,-59,41), tp='54.4 -59 41.5 -90 22'):
             czekaj(0.08)
         X('mouseup','3')
     else:
-        celuj('rozeta',0,0.05); czekaj(0.3); trzymaj(3.2)
+        celuj('rozeta',0,0.05); czekaj(0.3); trzymaj(4.5)
     czekaj(1.5)
     if okaz()[0]: wstan()
     czekaj(2.5)
@@ -64,14 +64,18 @@ def liscie(kepa=(42,-59,61), tp='42.5 -59 58.4 0 22'):
     celuj('lisc',-1); czekaj(0.3); ppm_klik(); czekaj(2.0)
     wstan(); czekaj(2.5)
 
-def kozlek_zle(): kozlek(False,(57,44),'54.4 -59 44.5 -90 22')
+def kozlek_zle(): kozlek(False,(57,-59,44),'54.4 -59 44.5 -90 22')
 
 def eq():
-    """Sloty z przedmiotami MMOItems gracza: {slot: (id, ilosc, jakosc)}."""
-    t=R('data get entity QaZielarz Inventory'); w={}
-    for m in re.finditer(r'\{count: (\d+), Slot: (\d+)b(.*?)id: "minecraft:[a-z_]+"\}', t):
-        tid=re.search(r'MMOITEMS_ITEM_ID: "(\w+)"', m.group(3)); jq=re.search(r'"rzemioslo:jakosc": (\d)', m.group(3))
-        if tid: w[int(m.group(2))]=(tid.group(1), int(m.group(1)), int(jq.group(1)) if jq else None)
+    """Sloty z przedmiotami MMOItems gracza: {slot: (id, ilosc, jakosc)} (RCON ucina dlugie odpowiedzi — pytamy slot po slocie)."""
+    w={}
+    for sl in range(36):
+        t=R(f'data get entity QaZielarz Inventory[{{Slot:{sl}b}}].components."minecraft:custom_data".MMOITEMS_ITEM_ID')
+        m=re.search(r'data: "(\w+)"', t)
+        if not m: continue
+        n=re.search(r'data: (\d+)', R(f'data get entity QaZielarz Inventory[{{Slot:{sl}b}}].count'))
+        j=re.search(r'data: (\d+)', R(f'data get entity QaZielarz Inventory[{{Slot:{sl}b}}].components."minecraft:custom_data".PublicBukkitValues."rzemioslo:jakosc"'))
+        w[sl]=(m.group(1), int(n.group(1)) if n else 0, int(j.group(1)) if j else None)
     return w
 
 def suszarnia():

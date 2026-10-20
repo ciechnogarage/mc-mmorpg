@@ -54,6 +54,7 @@ final class ZSuszarnia implements Listener {
         int probki, slonce, deszcz;
         java.util.UUID wlasciciel;   // null = stary wpis, zdejmie kazdy
         ItemDisplay widok;
+        org.bukkit.entity.BlockDisplay sznurek;
     }
 
     private final Rzemioslo plugin;
@@ -72,7 +73,7 @@ final class ZSuszarnia implements Listener {
 
     String ustaw(Block b, boolean usun) {
         String k = Zielarz.klucz(b);
-        if (usun) { List<Pek> l = suszarnie.remove(k); if (l != null) for (Pek p : l) if (p.widok != null) p.widok.remove(); zapisz(); return "suszarnia usunieta"; }
+        if (usun) { List<Pek> l = suszarnie.remove(k); if (l != null) for (Pek p : l) { if (p.widok != null) p.widok.remove(); if (p.sznurek != null) p.sznurek.remove(); } zapisz(); return "suszarnia usunieta"; }
         suszarnie.putIfAbsent(k, new ArrayList<>());
         zapisz();
         return "suszarnia @ " + k;
@@ -123,15 +124,18 @@ final class ZSuszarnia implements Listener {
             if (teraz - k.start < SUSZENIE_MS) continue;
             l.remove(k);
             if (k.widok != null) k.widok.remove();
+            if (k.sznurek != null) k.sznurek.remove();
             zdjete++;
             int klasa = k.klasa;
             String uw = null;
             if (k.deszcz > 0 && ThreadLocalRandom.current().nextDouble() < 0.6) { daj(p, "PROF_SPLESNIALE_ZIELE", k.ilosc, 0); opis.add("§c" + k.ilosc + "× spleśniałe (zmokło)"); continue; }
             if (k.probki > 0 && k.slonce * 2 > k.probki) { klasa = Math.max(0, klasa - 1); uw = "wypalone słońcem"; }
             // jakosc = wydajnosc: wyborne schnie 1:1, dobre 2:1 (jak w alchemii), slabe 3:1 — reszta kruszy sie na proch
-            int wyn = klasa == 2 ? k.ilosc : klasa == 1 ? k.ilosc / 2 : k.ilosc / 3;
+            // zaokraglenie losowe: srednio dokladnie przelicznik (1 dobre ziele = 50% na 1 suszone), bez zysku z rozwieszania pojedynczo
+            double ile = k.ilosc * (klasa == 2 ? 1.0 : klasa == 1 ? 0.5 : 1.0 / 3);
+            int wyn = (int) ile + (ThreadLocalRandom.current().nextDouble() < ile - (int) ile ? 1 : 0);
             String z = " §8(z " + k.ilosc + ")";
-            if (wyn == 0) { opis.add("§c" + k.ilosc + "× " + nazwa(k.id) + " pokruszyło się" + (uw != null ? " §7(" + uw + ")" : "")); continue; }
+            if (wyn == 0) { opis.add("§c" + k.ilosc + "× " + nazwa(k.id) + " " + (klasa == 0 ? "słabe" : "dobre") + ", pokruszyło się" + (uw != null ? " §7(" + uw + ")" : "")); continue; }
             daj(p, WYNIK.get(k.id), wyn, klasa);
             opis.add((klasa == 2 ? "§6" : klasa == 1 ? "§a" : "§c") + wyn + "× " + nazwa(WYNIK.get(k.id)) + z + (uw != null ? " §7(" + uw + ")" : ""));
         }
@@ -165,7 +169,12 @@ final class ZSuszarnia implements Listener {
 
     private String nazwa(String id) {
         String n = plugin.dane().nazwa(id);
-        return !n.equals(id) ? n : id.equals("PROF_SUSZONY_KORZEN_KOZLKA") ? "Suszony korzeń kozłka" : id;
+        if (!n.equals(id)) return n;
+        return switch (id) {
+            case "PROF_SUSZONY_KORZEN_KOZLKA" -> "Suszony korzeń kozłka";
+            case "PROF_KORZEN_KOZLKA" -> "Korzeń kozłka";
+            default -> id;
+        };
     }
 
     private void daj(Player p, String id, int ile, int klasa) {
@@ -211,15 +220,26 @@ final class ZSuszarnia implements Listener {
     private void pokazPek(Block b, List<Pek> l, Pek k) { przestaw(b, l, k, l.indexOf(k)); }
 
     private void przestaw(Block b, List<Pek> l, Pek k, int i) {
-        Location loc = b.getLocation().add(0.17 + (i % 3) * 0.33, -0.18, i < 3 ? 0.2 : 0.8);
+        // pek wisi pionowo glowa w dol na krotkim sznurku pod belka, rzad wzdluz belki
+        Location loc = b.getLocation().add(0.17 + (i % 3) * 0.33, -0.38, i < 3 ? 0.35 : 0.65);
+        Location wez = b.getLocation().add(0.17 + (i % 3) * 0.33, 0, i < 3 ? 0.35 : 0.65);
         if (k.widok == null || !k.widok.isValid()) {
             ItemStack wyg = plugin.przedmioty().zrob(k.id, 1);
+            float obrot = (float) Math.toRadians(ThreadLocalRandom.current().nextDouble(-12, 12));
             k.widok = b.getWorld().spawn(loc, ItemDisplay.class, d -> {
                 d.setPersistent(false);
                 d.setItemStack(wyg == null ? new ItemStack(Material.DEAD_BUSH) : wyg);
-                d.setTransformation(new Transformation(new Vector3f(), new Quaternionf().rotateX((float) Math.PI), new Vector3f(0.45f), new Quaternionf()));
+                d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+                d.setTransformation(new Transformation(new Vector3f(), new Quaternionf().rotateY(obrot).rotateZ((float) Math.PI), new Vector3f(0.3f), new Quaternionf()));
             });
         } else k.widok.teleport(loc);
+        if (k.sznurek == null || !k.sznurek.isValid())
+            k.sznurek = b.getWorld().spawn(wez, org.bukkit.entity.BlockDisplay.class, d -> {
+                d.setPersistent(false);
+                d.setBlock(Material.BROWN_WOOL.createBlockData());
+                d.setTransformation(new Transformation(new Vector3f(-0.012f, -0.24f, -0.012f), new Quaternionf(), new Vector3f(0.024f, 0.24f, 0.024f), new Quaternionf()));
+            });
+        else k.sznurek.teleport(wez);
     }
 
     void pokazWszystko() {
@@ -234,7 +254,7 @@ final class ZSuszarnia implements Listener {
 
     void sprzatnij() {
         zapisz();
-        for (List<Pek> l : suszarnie.values()) for (Pek k : l) if (k.widok != null) k.widok.remove();
+        for (List<Pek> l : suszarnie.values()) for (Pek k : l) { if (k.widok != null) k.widok.remove(); if (k.sznurek != null) k.sznurek.remove(); }
     }
 
     // ================================================================ zapis

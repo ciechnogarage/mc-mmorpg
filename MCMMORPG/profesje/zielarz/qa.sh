@@ -21,7 +21,9 @@ start)
   L=/opt/docker/mc/klony/$N/data/logs/latest.log
   for i in $(seq 1 60); do grep -q "QaZielarz joined" "$L" && break
     docker exec -e DISPLAY=:99 $C sh -c 'xdotool mousemove 483 435; xdotool click --delay 200 1' 2>/dev/null || true; sleep 4; done
-  grep -q "QaZielarz joined" "$L" && echo "WSZEDL" || { echo "NIE WSZEDL"; exit 1; } ;;
+  grep -q "QaZielarz joined" "$L" || { echo "NIE WSZEDL"; exit 1; }
+  sleep 6; docker exec klon-$N rcon-cli "op QaZielarz" >/dev/null   # swiezy klon: konto QA bez narzedzia zielarza
+  docker exec klon-$N rcon-cli "mi give TOOL PROF_SIERP_1 QaZielarz 1" >/dev/null; echo "WSZEDL" ;;
 x) shift; docker exec -e DISPLAY=:99 $C xdotool "$@" ;;
 foto) docker exec -e DISPLAY=:99 $C import -window root "/review/$2.png" ;;
 stop) docker rm -f $C >/dev/null 2>&1 || true ;;

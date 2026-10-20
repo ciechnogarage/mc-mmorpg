@@ -80,6 +80,8 @@ final class Zielarz implements Listener {
     static final int WYRWANIE = 34;
     /** Korzen idzie tylko, gdy napiecie jest w pasmie: za slabo = stoi, za mocno = trzeszczy i grozi urwaniem. */
     static final double PASMO_OD = 0.45, PASMO_DO = 0.8;
+    /** Urwanie: zapas nad pasmem na reakcje gracza + 6 tikow, zanim serwer zauwazy puszczenie (symulacja 20.10). */
+    static final double ZERWANIE = 1.1;
     static final Particle.DustOptions GRUDKA = new Particle.DustOptions(Color.fromRGB(93, 63, 42), 0.7f);
     private static final NamespacedKey K_ZAMROZ = new NamespacedKey("rzemioslo", "zielarz_zamroz");
 
@@ -460,7 +462,7 @@ final class Zielarz implements Listener {
             trzymanie(s);
         }
         if (s.t % 10 == 0) s.r.wiatr(s.t, s.hover, s.chwyt);
-        boolean ciagnie = s.trzyma && s.chwyt != null && s.chwyt.typ.equals("rozeta") && s.t - s.ostatniPpm <= 4;
+        boolean ciagnie = s.trzyma && s.chwyt != null && s.chwyt.typ.equals("rozeta") && s.t - s.ostatniPpm <= 6;
         if (s.gatunek.equals("kozlek") && !ciagnie) {
             if (s.napiecie > 0) {
                 s.napiecie = Math.max(0, s.napiecie - 0.022);   // popuszczenie: napiecie schodzi, postep zostaje
@@ -550,7 +552,7 @@ final class Zielarz implements Listener {
         switch (c.typ) {
             case "rozeta" -> ciagnij(s, c);
             case "ped" -> {
-                if (s.t - s.ostatniPpm > 4) return;   // klient juz nie trzyma (puszczenie wykrywamy z opoznieniem)
+                if (s.t - s.ostatniPpm > 6) return;   // klient juz nie trzyma (puszczenie wykrywamy z opoznieniem)
                 if (dl >= WYRWANIE) { wyrwijPed(s, c); return; }
                 if (dl >= 12 && dl % 3 == 0) {
                     float u = (dl - 12f) / (WYRWANIE - 12f);   // ped nagina sie i unosi coraz bardziej
@@ -736,7 +738,7 @@ final class Zielarz implements Listener {
     }
 
     private void ciagnij(Sesja s, ZRoslina.Czesc roz) {
-        if (s.t - s.ostatniPpm > 4) return;   // klient juz puscil — napiecie schodzi w tik()
+        if (s.t - s.ostatniPpm > 6) return;   // klient juz puscil — napiecie schodzi w tik()
         int otw = nieruszoneBoczne(s);
         // nieodkopane korzonki trzymaja: napiecie skacze szybciej, trudniej utrzymac je w pasmie
         double rate = 0.014 + 0.005 * otw;   // strojone symulacja: ciagle trzymanie zawsze urywa, uwazny gracz wyciaga w 5-7 s
@@ -758,7 +760,7 @@ final class Zielarz implements Listener {
         if (wPasmie && dl % 4 == 0) dzwiek(s, Sound.BLOCK_ROOTED_DIRT_STEP, 0.6f, 0.8f);
         if (s.napiecie > PASMO_DO && dl % 2 == 0) dzwiek(s, Sound.BLOCK_HANGING_ROOTS_BREAK, (float) (0.4 + 0.5 * s.napiecie), (float) (0.9 + 1.0 * (s.napiecie - PASMO_DO)));
         if (s.napiecie > 0.86 && !s.trzeszczy) { s.trzeszczy = true; wstrzas(s); plugin.pasek(s.p, "§6Korzeń trzeszczy… popuść."); }
-        if (s.napiecie >= 1.0) { zerwijKorzen(s, roz, otw); return; }
+        if (s.napiecie >= ZERWANIE) { zerwijKorzen(s, roz, otw); return; }
         if (s.postep >= 1.0) wyciagnijKorzen(s, roz, otw);
     }
 
@@ -982,11 +984,12 @@ final class Zielarz implements Listener {
         boolean cos = !s.zebrane.isEmpty() || s.zniszczona || s.chore > 0;
         long odrost = 0;
         String odrostOpis = null;
+        boolean pedy = s.gatunek.equals("dziurawiec");
         if (s.zniszczona) { odrost = 30 * 60; odrostOpis = "Kępa zniszczona: odrośnie za 30 min."; }
         else if (s.wykopany) { odrost = 10 * 60; odrostOpis = "Korzeń wykopany czysto: nowa rozeta z korzonków za 10 min."; }
         else if (cos && wszystkich > 0 && zdrowych == 0) { odrost = 10 * 60; odrostOpis = zostalo > 0 ? "Zostały same chore pędy: odrośnie za 10 min." : "Ogołocona do zera: odrośnie za 10 min."; }
-        else if (cos && zdrowych == 1) { odrost = 5 * 60; odrostOpis = "Został jeden zdrowy pęd: odrośnie za 5 min."; }
-        else if (cos) { odrost = 2 * 60; odrostOpis = "Zostawiłeś zdrowe pędy (" + zdrowych + "): odrośnie za 2 min."; }
+        else if (cos && zdrowych == 1) { odrost = 5 * 60; odrostOpis = (pedy ? "Został jeden zdrowy pęd" : "Został jeden liść") + ": odrośnie za 5 min."; }
+        else if (cos) { odrost = 2 * 60; odrostOpis = (pedy ? "Zostawiłeś zdrowe pędy (" : "Zostawiłeś liście (") + zdrowych + "): odrośnie za 2 min."; }
         if (odrost > 0) s.stan.odrostDo = System.currentTimeMillis() + odrost * 1000;
         boolean poZbiorze = odrost > 0;
         if (p.isOnline() && p.getWorld() == s.blok.getWorld()) {
