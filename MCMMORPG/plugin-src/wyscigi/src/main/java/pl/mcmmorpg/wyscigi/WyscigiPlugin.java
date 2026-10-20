@@ -223,6 +223,8 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     ModeledEntity me = ModelEngineAPI.createModeledEntity(wilk);
     ActiveModel am = ModelEngineAPI.createActiveModel(k.gatunek.model());
     am.setCanHurt(false);
+    am.setScale(u.skalaModelu);          // Chowaniec-towarzysz jest mały pod jeźdźcem; na torze wygląda jak wierzchowiec
+    am.setHitboxScale(1.0);
     me.addModel(am, true);
     me.setBaseEntityVisible(false);
     dosiadzProba(k, am, 0);

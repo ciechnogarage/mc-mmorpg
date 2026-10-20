@@ -37,6 +37,7 @@ final class Kierowca {
   int karaDo;                   // "przegrzany" start: brak gazu do ticka
   int gazOd = -1;               // tick, od którego W jest trzymane (turbo startowe)
   boolean skokTrzymany, shiftTrzymany, podskok;
+  float yawPoprz = Float.NaN, obrotSr;
   int shiftPostoj;              // ticki Shift na postoju (wyjście)
   int[] poleOstatnio;
   double ostX = Double.NaN, ostZ, oczekiwane;
@@ -96,6 +97,10 @@ final class Kierowca {
     // --- skręt: kierunek goni wzrok gracza
     float cel = p.getLocation().getYaw();
     float roznica = zawin(cel - kierunek);
+    // Skręt gracza z ostatnich ~0,3 s (ruch myszy). Kierunek wierzchowca dogania wzrok w 1–2 tickach,
+    // więc sama różnica wzrok–kierunek prawie zawsze jest bliska zera i nie nadaje się do wykrycia zakrętu.
+    if (!Float.isNaN(yawPoprz)) obrotSr = obrotSr * 0.75f + zawin(cel - yawPoprz);
+    yawPoprz = cel;
     double udzial = Math.min(1, Math.abs(v) / vmaxBaza);
     double szybkoscSkretu = gatunek.skret() * (1 - u.skretPrzyPredkosci * udzial);
     if (Math.abs(v) < 0.04) szybkoscSkretu = gatunek.skret() * 0.7;   // obrót w miejscu
@@ -106,9 +111,13 @@ final class Kierowca {
 
     // --- poślizg i mini-turbo
     boolean nowyShift = shift && !shiftTrzymany;
-    if (!poslizg && shift && naZiemi && v > u.poslizgMinPredkosc * vmaxBaza && Math.abs(roznica) > u.poslizgMinKat && (nowyShift || ladowanie == 0)) {
+    int strona = Math.abs(side) > 0.1 ? (side > 0 ? -1 : 1)              // A = w lewo, D = w prawo
+        : Math.abs(obrotSr) > 3 ? (obrotSr > 0 ? 1 : -1)
+        : Math.abs(roznica) > u.poslizgMinKat ? (roznica > 0 ? 1 : -1) : 0;
+    if (!poslizg && shift && naZiemi && v > u.poslizgMinPredkosc * vmaxBaza && strona != 0 && (nowyShift || ladowanie == 0)) {
       poslizg = true;
-      stronaPoslizgu = roznica > 0 ? 1 : -1;
+      stronaPoslizgu = strona;
+      wyscig.plugin.debug(nick + " poslizg strona=" + strona + " v=" + String.format(java.util.Locale.ROOT, "%.2f", v));
       ladowanie = 0;
       podskok = true;                                                    // mały hop na wejściu w poślizg (nie pełny skok)
       mob.getWorld().playSound(mob.getLocation(), Sound.ENTITY_HORSE_LAND, 0.5f, 1.6f);
@@ -121,7 +130,9 @@ final class Kierowca {
         poslizg = false;
         ladowanie = 0;
       } else {
-        boolean wZakret = Math.signum(roznica) == stronaPoslizgu && Math.abs(roznica) > 12;
+        boolean wZakret = (Math.abs(side) > 0.1 && strona == stronaPoslizgu)
+            || (Math.signum(obrotSr) == stronaPoslizgu && Math.abs(obrotSr) > 2)
+            || (Math.signum(roznica) == stronaPoslizgu && Math.abs(roznica) > 12);
         ladowanie += wZakret ? 2 : 1;
         iskry();
       }

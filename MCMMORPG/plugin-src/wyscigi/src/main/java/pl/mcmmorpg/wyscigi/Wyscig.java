@@ -114,6 +114,8 @@ final class Wyscig {
       k.zamrozonyDo = teraz + 5;
       Player p = k.gracz();
       if (p == null) continue;
+      sprawdzWyjscie(k, p);
+      if (!kierowcy.contains(k)) continue;
       plugin.pasekBoss(p, "<gold>" + tor.nazwa + "</gold> <gray>· " + tor.okrazenia + " okrążenia · " + kierowcy.size() + (kierowcy.size() == 1 ? " jeździec" : " jeźdźców") + "</gray>", 0f);
       if (t == 0) tytul(p, "<gold>Gotowi?</gold>", "<gray>Wciśnij <white>W</white> tuż przed startem = turbo</gray>", Sound.BLOCK_NOTE_BLOCK_HAT, 1f);
       else if (t == 20) tytul(p, "<red>3</red>", "", Sound.BLOCK_NOTE_BLOCK_PLING, 0.8f);

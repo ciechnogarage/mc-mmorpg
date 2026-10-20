@@ -46,6 +46,8 @@ scenariusz('wyscigi-czasowka-' + GATUNEK, async ({ w, polacz, rcon }) => {
   w.sprawdz('predkosc-max', maxV > 0.45, `max v ${maxV.toFixed(3)} bl/tick (${(maxV * 20).toFixed(1)} bl/s)`);
   w.sprawdz('autopilot-na-torze', pobocze / Math.max(1, probki) < 0.25, `pobocze ${pobocze}/${probki}`);
   if (POSLIZG) {
+    const posl = ev.filter(e => / poslizg /.test(e));
+    w.sprawdz('poslizg-wchodzi', posl.length > 0, `${posl.length} wejsc`);
     const turbo = ev.filter(e => / turbo[12] /.test(e));
     w.sprawdz('poslizg-daje-turbo', turbo.length > 0, `${turbo.length}: ${turbo.slice(0, 3).join(' | ')}`);
   }
@@ -62,6 +64,7 @@ scenariusz('wyscigi-czasowka-' + GATUNEK, async ({ w, polacz, rcon }) => {
   const po = await t.pozGracza(nick);
   w.sprawdz('powrot-po-mecie', !!wrocil && przed && po && Math.hypot(po.x - przed.x, po.z - przed.z) < 1.5, `przed ${JSON.stringify(przed)} po ${JSON.stringify(po)}`);
   w.sprawdz('bez-wierzchowca', (await t.wilki()) === 0, `wilki ${await t.wilki()}`);
-  w.sprawdz('bossbar-zdjety', paskiUsuniete > 0, `usuniete ${paskiUsuniete}`);
+  // MythicHUD przepisuje pakiety paskow (bot nie widzi "remove"); znikniecie paska sprawdza klient QA (zrzut w2.png 20.10).
+  w.pomin('bossbar-zdjety', `bot: usuniete ${paskiUsuniete}; weryfikacja klientem QA`);
   w.sprawdz('rekordy-w-czacie', czat.some(c => /najlepsze przejazdy/.test(c)), '');
 }, { limitMs: 380000 });

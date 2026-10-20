@@ -19,7 +19,7 @@ final class Ustawienia {
   final int turbo1, turbo2, turbo1Czas, turbo2Czas;
   final int poleCzas; final double poleMnoznik;
   final int startOkno, startCzas, startZaWczesnie, startKara; final double startMnoznik;
-  final double zderzenieSciana;
+  final double zderzenieSciana, skalaModelu;
   final int poczekalnia, poczekalniaDokladka, poczekalniaMax, maxGraczy, poZwyciezcy, limit, poMecie, wyjscieShift;
   final String torId;
   final Tor tor;
@@ -56,6 +56,7 @@ final class Ustawienia {
     startZaWczesnie = c.getInt("jazda.start-turbo.za-wczesnie");
     startKara = c.getInt("jazda.start-turbo.kara");
     zderzenieSciana = c.getDouble("jazda.zderzenie-sciana");
+    skalaModelu = c.getDouble("wyscig.skala-modelu", 1.4);
     poczekalnia = c.getInt("wyscig.poczekalnia-sekundy");
     poczekalniaDokladka = c.getInt("wyscig.poczekalnia-dokladka");
     poczekalniaMax = c.getInt("wyscig.poczekalnia-max");

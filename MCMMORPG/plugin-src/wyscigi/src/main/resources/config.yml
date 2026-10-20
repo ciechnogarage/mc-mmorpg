@@ -47,6 +47,7 @@ wyscig:
   limit-sekundy: 420
   po-mecie-sekundy: 6          # ile stoi się na mecie przed powrotem
   wyjscie-shift-ticki: 40      # przytrzymaj Shift na postoju, żeby opuścić wyścig
+  skala-modelu: 1.4            # model Chowańca powiększony, żeby jeździec nie siedział "na psie"
 
 tor: sad
 tory:

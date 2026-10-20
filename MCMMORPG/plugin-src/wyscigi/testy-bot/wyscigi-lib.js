@@ -41,7 +41,7 @@ const zawin = k => { k %= 360; if (k >= 180) k -= 360; if (k < -180) k += 360; r
  * (Shift, gdy kierunek toru za chwile skreca o > `katPoslizgu`). Konczy, gdy `stop(poz)` zwroci true albo brak kierowcy.
  */
 async function autopilot(bot, t, nick, tor, opcje = {}) {
-  const { przod = 4, limitMs = 240000, stop = () => false, poslizg = false, katPoslizgu = 35, gaz = () => true, krok = 100 } = opcje;
+  const { przod = 4, limitMs = 240000, stop = () => false, poslizg = false, katPoslizgu = 20, gaz = () => true, krok = 100 } = opcje;
   const n = tor.pkt.length;
   let idx = -1, ost = null, shift = false;
   const start = Date.now();

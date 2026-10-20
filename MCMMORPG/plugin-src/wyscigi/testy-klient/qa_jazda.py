@@ -54,7 +54,7 @@ try:
         if poslizg:
             a, b, c = pkt[(idx + 2) % n], pkt[(idx + 4) % n], pkt[(idx + 9) % n]
             skret = abs(zawin(math.degrees(math.atan2(-(c[0] - b[0]), c[1] - b[1])) - math.degrees(math.atan2(-(b[0] - a[0]), b[1] - a[1]))))
-            chce = faza == 'JAZDA' and (skret > 35 or (shift and skret > 17))
+            chce = faza == 'JAZDA' and (skret > 20 or (shift and skret > 10))
             if chce != shift:
                 x('keydown' if chce else 'keyup', 'shift'); shift = chce
         dx = int(max(-400, min(400, roznica * 0.6 / STOPNI_NA_PIKSEL)))   # ~60% bledu na krok: plynnie jak reka
