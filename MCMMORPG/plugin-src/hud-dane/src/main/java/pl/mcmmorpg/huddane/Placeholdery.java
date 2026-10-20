@@ -13,6 +13,9 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
  *  slugi_liczba, slugi_limit, slugi_<n>_{nazwa,hp,hpmax,s}.
  *  towarzysze = 0|1|2 (ile wierszy panelu: Chowaniec, slugi) -> uklad kolumny HUD-a.
  *  uklad = e<0|1>t<0|1|2>: czy jest rzad efektow i ile wierszy towarzyszy -> przesuniecie paneli kolumny.
+ *  cel_{jest,nazwa,hp,hpmax,poziom,ranga}: ostatni cel walki (8 s); ranga = zwykly|mythic|boss (HP >= 200).
+ *  zdobycz_liczba, zdobycz_<n>_{tekst,rodzaj}: ostatnie 4 zdobycze (4,5 s); rodzaj = exp|profesja|przedmiot.
+ *  ostrzezenie = zuzycie|pelny|brak (bron w rece >= 85% zuzycia, pelny ekwipunek). loch = tak|nie (MythicDungeons).
  *  okno = pelne|przygaszone (walka MMOCore, walka Chowancow albo tryb kompakt) -> przygaszenie okna postaci.
  *  pet_typ = pierwszy typ aktywnego Chowanca.
  *  efekty_liczba, efekt_<n>_{id,czas}; czas = m:ss albo pusty dla efektu bez konca.
@@ -38,6 +41,40 @@ final class Placeholdery extends PlaceholderExpansion {
     if (k.equals("towarzysze")) {
       boolean pet = "tak".equals(PlaceholderAPI.setPlaceholders(p, "%chowance_aktywny_istnieje%"));
       return String.valueOf((pet ? 1 : 0) + (m.slugi.isEmpty() ? 0 : 1));
+    }
+    if (k.startsWith("cel_")) {
+      var le = pl.zdarzenia.cel(p);
+      var am = le == null ? null : Zdarzenia.mm(le);
+      return switch (k) {
+        case "cel_jest" -> le == null ? "nie" : "tak";
+        case "cel_nazwa" -> le == null ? "" : bezKolorow(am != null ? am.getDisplayName() : le.getName());
+        case "cel_hp" -> le == null ? "0" : liczba(le.getHealth());
+        case "cel_hpmax" -> le == null ? "1" : liczba(le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH) == null ? le.getHealth() : le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue());
+        case "cel_poziom" -> am == null ? "" : String.valueOf((int) am.getLevel());
+        case "cel_ranga" -> am == null ? "zwykly" : le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH) != null
+            && le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue() >= 200 ? "boss" : "mythic";
+        default -> null;
+      };
+    }
+    if (k.startsWith("zdobycz_")) {
+      var lista = pl.zdarzenia.swieza(p);
+      if (k.equals("zdobycz_liczba")) return String.valueOf(lista.size());
+      String[] z = k.split("_", 3);
+      if (z.length < 3) return null;
+      int i; try { i = Integer.parseInt(z[1]) - 1; } catch (NumberFormatException e) { return null; }
+      if (i < 0 || i >= lista.size()) return "";
+      return switch (z[2]) { case "tekst" -> lista.get(i).tekst(); case "rodzaj" -> lista.get(i).rodzaj(); default -> null; };
+    }
+    if (k.equals("ostrzezenie")) {
+      var reka = p.getInventory().getItemInMainHand();
+      if (reka.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable dm && reka.getType().getMaxDurability() > 0
+          && dm.getDamage() >= reka.getType().getMaxDurability() * 0.85) return "zuzycie";
+      if (p.getInventory().firstEmpty() < 0) return "pelny";
+      return "brak";
+    }
+    if (k.equals("loch")) {
+      String d = PlaceholderAPI.setPlaceholders(p, "%md_dungeon_name%");
+      return d == null || d.isBlank() || d.startsWith("%") ? "nie" : "tak";
     }
     if (k.equals("uklad")) {
       boolean pet = "tak".equals(PlaceholderAPI.setPlaceholders(p, "%chowance_aktywny_istnieje%"));
@@ -99,6 +136,11 @@ final class Placeholdery extends PlaceholderExpansion {
       }
       default -> { return null; }
     }
+  }
+
+  private static String bezKolorow(String s) {
+    if (s == null) return "";
+    return s.replaceAll("(?i)[&§][0-9a-fk-orx]", "").replaceAll("<[^>]+>", "");
   }
 
   private static String pusty(String pole) {
