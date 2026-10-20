@@ -225,9 +225,15 @@ final class ZRoslina {
     /** Czesc pod celownikiem swieci pelnym swiatlem (puls skali 7% byl niewidoczny na kadrach). */
     void podswietl(Czesc c, Color kolor) {
         if (c == podswietlona) return;
-        if (podswietlona != null) for (Klocek k : podswietlona.klocki) k.d.setBrightness(jasnosc);
         podswietlona = c;
-        if (c != null) for (Klocek k : c.klocki) k.d.setBrightness(PODSWIETLENIE);
+        // w sloncu pelne swiatlo niczego nie zmienialo: wskazana czesc jasna, reszta rosliny przygaszona
+        // lekki cien (-2): mocniejsze przygaszenie (-6) robilo z kwitnacej kepy brunatna (klient v6)
+        Display.Brightness przygas = new Display.Brightness(Math.max(0, jasnosc.getBlockLight() - 1), Math.max(0, jasnosc.getSkyLight() - 2));
+        for (Czesc x : czesci) {
+            if (x.typ.equals("gleba")) continue;
+            Display.Brightness b = c == null ? jasnosc : x == c ? PODSWIETLENIE : przygas;
+            for (Klocek k : x.klocki) k.d.setBrightness(b);
+        }
     }
 
     /** Linia ciecia: cienka kreska w poprzek pedu na wysokosci celownika, w kolorze strefy jakosci (null = schowaj). */
@@ -239,7 +245,7 @@ final class ZRoslina {
             if (linia != null) linia.d.setViewRange(0f);
             return;
         }
-        float sx = 0.34f, sy = 0.014f, sz = 0.014f;
+        float sx = 0.12f, sy = 0.012f, sz = 0.012f;   // na samej lodydze (0,34 przecinalo 3-4 pedy naraz)
         Vector3f t = new Vector3f(-sx / 2f - (float) c.kotwica.getX(), (float) y, -sz / 2f + (float) c.kotwica.getZ() - 0.05f);
         if (linia == null || kolor != liniaKolor) {
             if (linia != null) linia.d.remove();

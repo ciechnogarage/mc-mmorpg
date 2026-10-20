@@ -20,8 +20,8 @@ def trzymaj(s): X('mousedown','3'); czekaj(s); X('mouseup','3')
 def wstan(): X('keydown','shift'); czekaj(0.3); X('keyup','shift')
 def start(x,y,z,tp): R(f'minecraft:teleport QaZielarz {tp}'); czekaj(1.2); R(f'rzemioslo kepa-start QaZielarz {x} {y} {z}'); czekaj(1.8)
 
-def dziurawiec():
-    start(42,-59,42,'42.5 -59 38.6 0 18')
+def dziurawiec(kepa=(42,-59,42), tp='42.5 -59 39.9 0 30'):
+    start(*kepa,tp)
     cz,_=okaz(); pedy=[(nr,d) for (t,nr),d in cz.items() if t=='ped']
     dobre=[nr for nr,d in pedy if d.get('faza')=='kw' and d.get('chory')=='false']
     zle=[nr for nr,d in pedy if d.get('faza')!='kw' or d.get('chory')=='true']
@@ -34,7 +34,7 @@ def dziurawiec():
     if reszta: celuj('ped',reszta[0],0.08); czekaj(0.4); trzymaj(2.4); czekaj(1.6)      # trzymany dlugo: wyrwany
     wstan(); czekaj(2.5)
 
-def kozlek(dobrze=True, kepa=(57,-59,41), tp='54.4 -59 41.5 -90 22'):
+def kozlek(dobrze=True, kepa=(57,-59,41), tp='55.2 -59 41.5 -90 28'):
     start(*kepa,tp)
     _,bocz=okaz()
     if dobrze:
@@ -57,14 +57,32 @@ def kozlek(dobrze=True, kepa=(57,-59,41), tp='54.4 -59 41.5 -90 22'):
     if okaz()[0]: wstan()
     czekaj(2.5)
 
-def liscie(kepa=(42,-59,61), tp='42.5 -59 58.4 0 22'):
+def liscie(kepa=(42,-59,61), tp='42.5 -59 59.0 0 30'):
     start(*kepa,tp)
     celuj('lisc',-1); czekaj(0.3); ppm_klik(); czekaj(2.0)
     celuj('lisc',-1); czekaj(0.3); trzymaj(1.8); czekaj(2.2)
     celuj('lisc',-1); czekaj(0.3); ppm_klik(); czekaj(2.0)
     wstan(); czekaj(2.5)
 
-def kozlek_zle(): kozlek(False,(57,-59,44),'54.4 -59 44.5 -90 22')
+def kozlek_zle(): kozlek(False,(57,-59,44),'55.2 -59 44.5 -90 28')
+
+# wersja 6: inne kepy (poprzednie odrastaja, stan przezywa restart)
+def dziurawiec6(): dziurawiec((50,-59,46),'50.5 -59 43.6 0 30')
+def kozlek6(): kozlek(True,(57,-59,41),'55.2 -59 41.5 -90 28')
+def kozlek_zle6(): kozlek(False,(65,-59,42),'67.3 -59 42.5 90 28')   # od strony ladu (z drugiej strony staw)
+def liscie6(): liscie((49,-59,64),'49.5 -59 62.0 0 30')
+
+def proby():
+    """Bledy z recenzji v4, jak gracz: (1) PPM trzymany od klikniecia w kepe nie chwyta rosliny, (2) Q nie tnie."""
+    R('minecraft:teleport QaZielarz 45.5 -59 42.0 facing 45.5 -60.3 44.5')   # facing liczy od stop; czekaj(1.5)
+    X('mousedown','3'); czekaj(2.6)
+    cz,_=okaz(); print('PPM od wejscia: sesja', bool(cz), '| zabrane czesci', sum(1 for d in cz.values() if d['zabrana']))
+    X('mouseup','3'); czekaj(0.8)
+    cz,_=okaz(); pedy=[nr for (t,nr),d in cz.items() if t=='ped' and not d['zabrana']]
+    if pedy:
+        celuj('ped',pedy[0],0.3); czekaj(0.3); X('key','q'); czekaj(1.0)
+        cz2,_=okaz(); print('Q na pedzie: zabrany?', cz2.get(('ped',pedy[0]),{}).get('zabrana'))
+    wstan(); czekaj(1.5)
 
 def eq():
     """Sloty z przedmiotami MMOItems gracza: {slot: (id, ilosc, jakosc)} (RCON ucina dlugie odpowiedzi — pytamy slot po slocie)."""

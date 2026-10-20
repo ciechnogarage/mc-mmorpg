@@ -111,6 +111,24 @@ T['kozlek_korzen'] = [  # korzen kozlka: krotkie brazowe klacze + peczek cienkic
     "........k.......",
     "................",
 ]
+T['kozlek_korzonek'] = [  # odsloniety korzonek: cienki, kremowy, z brazowym konturem, rozgalezia sie ku koncowi
+    "................",
+    "......Z.........",
+    ".....ZKZ........",
+    ".....ZkZ........",
+    "......ZkZ.......",
+    "......ZkZ.......",
+    ".......ZkZ......",
+    ".......ZkZZ.....",
+    "......ZkZkZ.....",
+    ".....ZkZ.ZkZ....",
+    ".....ZkZ..ZkZ...",
+    "....ZkZ....ZkZ..",
+    "....Zk.......Zk.",
+    "...Zk.........Z.",
+    "...Z............",
+    "................",
+]
 T['kozlek_gleba'] = [  # placek luznej ziemi (lezy plasko), poszarpany brzeg
     "................",
     "....dd.de.......",

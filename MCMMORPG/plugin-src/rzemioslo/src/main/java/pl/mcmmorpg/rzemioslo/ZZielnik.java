@@ -61,6 +61,9 @@ final class ZZielnik {
 
     boolean ma(Player p, String wpis) { return dla(Zlecenia.profil(p)).contains(wpis); }
 
+    /** Ukryty wpis (bez ogloszenia): np. rozpoznany okaz kepy. */
+    void zapamietaj(Player p, String wpis) { if (dla(Zlecenia.profil(p)).add(wpis)) zapisz(Zlecenia.profil(p)); }
+
     /** Ile razy gracz widzial juz rade do gatunku (ukryte wpisy, zielnik ich nie pokazuje); zwraca nowa liczbe. */
     int rada(Player p, String gatunek) {
         Set<String> s = dla(Zlecenia.profil(p));

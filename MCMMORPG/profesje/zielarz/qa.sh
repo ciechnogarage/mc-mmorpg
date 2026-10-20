@@ -15,7 +15,7 @@ start)
         -e 's/^skipMultiplayerWarning:.*/skipMultiplayerWarning:true/' -e 's/^tutorialStep:.*/tutorialStep:none/' -e 's/^guiScale:.*/guiScale:2/' \
         -e 's/^rawMouseInput:.*/rawMouseInput:false/' /home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client/instance/options.txt > "$Q/instance/options.txt"
   fi
-  docker run -d --name $C --memory 2g --network klon-$N-net -u 1000:1000 -e MC_SERVER=klon-$N -e MC_PORT=25565 -e MC_USER=QaZielarz \
+  docker run -d --name $C --memory 2560m -e JAVA_TOOL_OPTIONS=-Xmx1800m --network klon-$N-net -u 1000:1000 -e MC_SERVER=klon-$N -e MC_PORT=25565 -e MC_USER=QaZielarz \
     -v /home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client:/mc:ro -v "$Q/instance:/mc/instance" -v "$Q/captures:/review" \
     mc-client-test:latest bash /mc/launch.sh >/dev/null
   L=/opt/docker/mc/klony/$N/data/logs/latest.log

@@ -12,7 +12,7 @@ KRZYZ = ['dziurawiec_dol', 'dziurawiec_srodek', 'dziurawiec_srodek_chory', 'dziu
          'dziurawiec_kwiat', 'dziurawiec_pak', 'dziurawiec_przekwit', 'kozlek_lodyga', 'kozlek_baldach',
          'czosnek_lodyzka']
 PRZEDMIOTY = ['rekawice']   # zwykly przedmiot (wyglad w dloni)
-PLASKIE = ['czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
+PLASKIE = ['kozlek_korzonek', 'czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
 
 KOMP = 0.85   # gamma rozjasnienia kart zblizenia (patrz main)
 NASYC = 1.08  # nasycenie kart (1,3 dawalo neonowa zielen, recenzja v4)

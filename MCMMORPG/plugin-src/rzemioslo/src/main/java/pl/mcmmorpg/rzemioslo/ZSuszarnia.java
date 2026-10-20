@@ -54,20 +54,21 @@ final class ZSuszarnia implements Listener {
         long start;
         int probki, slonce, deszcz;
         java.util.UUID wlasciciel;   // null = stary wpis, zdejmie kazdy
+        boolean zielarza;            // ze zbioru zielarza (ma jakosc); stare ziola z wezlow nie daja XP za suszenie
         ItemDisplay widok;
         org.bukkit.entity.BlockDisplay sznurek;
     }
 
     private final Rzemioslo plugin;
     private final Map<String, List<Pek>> suszarnie = new HashMap<>();
+    private final Map<String, Boolean> podNiebem = new HashMap<>();
     private final File plik;
-    private final NamespacedKey kJakosc, kGatunek;
+    private final NamespacedKey kJakosc;
 
     ZSuszarnia(Rzemioslo plugin) {
         this.plugin = plugin;
         this.plik = new File(plugin.getDataFolder(), "zielarz-suszarnie.yml");
         this.kJakosc = new NamespacedKey(plugin, "jakosc");
-        this.kGatunek = new NamespacedKey(plugin, "gatunek");
         wczytaj();
         Bukkit.getScheduler().runTaskTimer(plugin, this::probkuj, 200L, 200L);
     }
@@ -105,12 +106,14 @@ final class ZSuszarnia implements Listener {
         if (moich >= MAX_NA_GRACZA) { plugin.pasek(p, "§7Masz tu już " + moich + " pęczki. Zdejmij suche, zanim powiesisz następny."); return; }
         Integer kl = reka.getItemMeta().getPersistentDataContainer().get(kJakosc, PersistentDataType.INTEGER);
         Pek k = new Pek();
+        l.add(k);   // tymczasowo (wycofywane przy odmowie)
         k.id = id;
         k.ilosc = Math.min(MAX_W_PEKU, reka.getAmount());
         k.klasa = kl == null ? 1 : kl;
+        k.zielarza = kl != null;
+        if (k.klasa == 0) { l.remove(k); plugin.pasek(p, "§fSłabe ziele nie wyschnie na nic. §7Do suszenia tylko dobre i wyborne."); return; }
         k.start = System.currentTimeMillis();
         k.wlasciciel = Zlecenia.profil(p);   // per postac, nie per konto
-        l.add(k);
         if (reka.getAmount() > k.ilosc) reka.setAmount(reka.getAmount() - k.ilosc);
         else p.getInventory().setItemInMainHand(null);
         pokazPek(b, l, k);
@@ -136,14 +139,14 @@ final class ZSuszarnia implements Listener {
             int plesn = (int) Math.round(k.ilosc * Math.min(0.8, 0.12 * k.deszcz));
             if (plesn > 0) { daj(p, "PROF_SPLESNIALE_ZIELE", plesn, 0); opis.add("§c" + plesn + "× spleśniałe (zmokło)"); k.ilosc -= plesn; if (k.ilosc <= 0) continue; }
             if (k.probki > 0 && k.slonce * 2 > k.probki) { klasa = Math.max(0, klasa - 1); uw = "wypalone słońcem"; }
-            // jakosc = wydajnosc: wyborne schnie 1:1, dobre 2:1 (jak w alchemii), slabe 3:1 — reszta kruszy sie na proch
-            // zaokraglenie losowe: srednio dokladnie przelicznik (1 dobre ziele = 50% na 1 suszone), bez zysku z rozwieszania pojedynczo
-            double ile = k.ilosc * (klasa == 2 ? 1.0 : klasa == 1 ? 0.5 : 1.0 / 3);
+            // jakosc = wydajnosc: wyborne 2:1, dobre 3:1, slabe (np. wypalone) 4:1 — suszenie oplaca sie pod receptury, nie pod skup
+            // zaokraglenie losowe: srednio dokladnie przelicznik, bez zysku z rozwieszania pojedynczo
+            double ile = k.ilosc * (klasa == 2 ? 0.5 : klasa == 1 ? 1.0 / 3 : 0.25);
             int wyn = (int) ile + (ThreadLocalRandom.current().nextDouble() < ile - (int) ile ? 1 : 0);
             String z = " §8(z " + k.ilosc + ")";
             if (wyn == 0) { opis.add("§c" + k.ilosc + "× " + nazwa(k.id) + " " + (klasa == 0 ? "słabe" : "dobre") + ", pokruszyło się" + (uw != null ? " §7(" + uw + ")" : "")); continue; }
             daj(p, WYNIK.get(k.id), wyn, klasa);
-            plugin.profesje().daj(p, Zielarz.PROF, 1, plugin.dane().g(1) * 0.3 * wyn, b.getLocation().add(0.5, 0, 0.5));   // obrobka to tez zielarstwo
+            if (k.zielarza) plugin.profesje().daj(p, Zielarz.PROF, 1, plugin.dane().g(1) * (klasa == 2 ? 0.5 : 0.3) * wyn, b.getLocation().add(0.5, 0, 0.5));   // obrobka to tez zielarstwo
             opis.add((klasa == 2 ? "§6" : klasa == 1 ? "§a" : "§c") + wyn + "× " + nazwa(WYNIK.get(k.id)) + z + (uw != null ? " §7(" + uw + ")" : ""));
         }
         if (zdjete == 0) {
@@ -161,7 +164,8 @@ final class ZSuszarnia implements Listener {
     }
 
     private void przebierz(Player p, ItemStack reka) {
-        String gat = reka.getItemMeta().getPersistentDataContainer().get(kGatunek, PersistentDataType.STRING);
+        Integer partia = reka.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin, "partia"), PersistentDataType.INTEGER);
+        String gat = partia == null ? null : plugin.zielarz().gatunekPartii(partia);   // gatunek zna tylko serwer (dane przedmiotu widzi klient)
         if (gat == null) { plugin.pasek(p, "§7Nie wiesz, skąd te liście. Nie da się ich przebrać."); return; }
         Integer kl = reka.getItemMeta().getPersistentDataContainer().get(kJakosc, PersistentDataType.INTEGER);
         int n = reka.getAmount();
@@ -207,11 +211,10 @@ final class ZSuszarnia implements Listener {
             World w = Bukkit.getWorld(a[0]);
             if (w == null) continue;
             Block b = w.getBlockAt(Integer.parseInt(a[1]), Integer.parseInt(a[2]), Integer.parseInt(a[3]));
-            if (!w.isChunkLoaded(b.getX() >> 4, b.getZ() >> 4)) {   // nikt nie patrzy: czas schniecia stoi (odejscie nie chroni przed pogoda)
-                for (Pek k : e.getValue()) k.start += 10_000;
-                continue;
-            }
-            boolean niebo = b.getRelative(0, 1, 0).getLightFromSky() >= 15;
+            // czas schniecia plynie zawsze; bez zaladowanego chunka pogode liczymy z zapamietanego miejsca (pod dachem / pod niebem)
+            boolean zaladowany = w.isChunkLoaded(b.getX() >> 4, b.getZ() >> 4);
+            if (zaladowany) podNiebem.put(e.getKey(), b.getRelative(0, 1, 0).getLightFromSky() >= 15);
+            boolean niebo = podNiebem.getOrDefault(e.getKey(), false);
             long czas = w.getTime();
             boolean dzien = czas < 12300 || czas > 23850;
             long teraz = System.currentTimeMillis();
@@ -221,7 +224,7 @@ final class ZSuszarnia implements Listener {
                 if (niebo && dzien && !w.hasStorm()) k.slonce++;
                 if (niebo && w.hasStorm()) {
                     k.deszcz++;
-                    if (k.widok != null) w.spawnParticle(Particle.DRIPPING_WATER, k.widok.getLocation(), 2, 0.05, 0.05, 0.05);
+                    if (zaladowany && k.widok != null) w.spawnParticle(Particle.DRIPPING_WATER, k.widok.getLocation(), 2, 0.05, 0.05, 0.05);
                 }
             }
         }
@@ -297,7 +300,7 @@ final class ZSuszarnia implements Listener {
                 ConfigurationSection x = ps.getConfigurationSection(i);
                 Pek p = new Pek();
                 p.id = x.getString("id"); p.ilosc = x.getInt("ilosc"); p.klasa = x.getInt("klasa"); p.start = x.getLong("start");
-                p.probki = x.getInt("probki"); p.slonce = x.getInt("slonce"); p.deszcz = x.getInt("deszcz");
+                p.probki = x.getInt("probki"); p.slonce = x.getInt("slonce"); p.deszcz = x.getInt("deszcz"); p.zielarza = x.getBoolean("zielarza", true);
                 String w = x.getString("wlasciciel"); if (w != null) p.wlasciciel = java.util.UUID.fromString(w);
                 l.add(p);
             }
@@ -314,7 +317,7 @@ final class ZSuszarnia implements Listener {
             for (Pek p : e.getValue()) {
                 String b = k + "." + (i++);
                 y.set(b + ".id", p.id); y.set(b + ".ilosc", p.ilosc); y.set(b + ".klasa", p.klasa); y.set(b + ".start", p.start);
-                y.set(b + ".probki", p.probki); y.set(b + ".slonce", p.slonce); y.set(b + ".deszcz", p.deszcz);
+                y.set(b + ".probki", p.probki); y.set(b + ".slonce", p.slonce); y.set(b + ".deszcz", p.deszcz); y.set(b + ".zielarza", p.zielarza);
                 if (p.wlasciciel != null) y.set(b + ".wlasciciel", p.wlasciciel.toString());
             }
         }
