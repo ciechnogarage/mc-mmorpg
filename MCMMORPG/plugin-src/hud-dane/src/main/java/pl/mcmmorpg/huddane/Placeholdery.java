@@ -13,7 +13,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
  *  slugi_liczba, slugi_limit, slugi_<n>_{nazwa,hp,hpmax,s}.
  *  towarzysze = 0|1|2 (ile wierszy panelu: Chowaniec, slugi) -> uklad kolumny HUD-a.
  *  uklad = e<0|1>t<0|1|2>: czy jest rzad efektow i ile wierszy towarzyszy -> przesuniecie paneli kolumny.
- *  cel_{jest,nazwa,hp,hpmax,poziom,ranga}: ostatni cel walki (8 s); ranga = zwykly|mythic|boss (HP >= 200).
+ *  cel_{jest,nazwa,hp,hpmax,poziom,ranga}: ostatni cel walki (8 s); ranga = zwykly|mythic|boss (boss = mob MM z bossbarem).
  *  zdobycz_liczba, zdobycz_<n>_{tekst,rodzaj}: ostatnie 4 zdobycze (4,5 s); rodzaj = exp|profesja|przedmiot.
  *  ostrzezenie = zuzycie|pelny|brak (bron w rece >= 85% zuzycia, pelny ekwipunek). loch = tak|nie (MythicDungeons).
  *  okno = pelne|przygaszone (walka MMOCore, walka Chowancow albo tryb kompakt) -> przygaszenie okna postaci.
@@ -51,8 +51,8 @@ final class Placeholdery extends PlaceholderExpansion {
         case "cel_hp" -> le == null ? "0" : liczba(le.getHealth());
         case "cel_hpmax" -> le == null ? "1" : liczba(le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH) == null ? le.getHealth() : le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue());
         case "cel_poziom" -> am == null ? "" : String.valueOf((int) am.getLevel());
-        case "cel_ranga" -> am == null ? "zwykly" : le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH) != null
-            && le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue() >= 200 ? "boss" : "mythic";
+        // boss = mob MythicMobs z wlasnym bossbarem (u gory ekranu): HUD nie dubluje go ramka celu
+        case "cel_ranga" -> am == null ? "zwykly" : am.getType().usesBossBar() ? "boss" : "mythic";
         default -> null;
       };
     }
