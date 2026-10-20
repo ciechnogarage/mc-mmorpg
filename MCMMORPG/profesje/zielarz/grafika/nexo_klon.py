@@ -10,9 +10,9 @@ BLOKI = [  # id, tekstura, wariant stringblocka (v2 zajmuje 1-33)
 ]
 KRZYZ = ['dziurawiec_dol', 'dziurawiec_srodek', 'dziurawiec_srodek_chory', 'dziurawiec_gora', 'dziurawiec_gora_chory',
          'dziurawiec_kwiat', 'dziurawiec_pak', 'dziurawiec_przekwit', 'kozlek_lodyga', 'kozlek_baldach',
-         'czosnek_lodyzka']
+         'czosnek_lodyzka', 'wzora_dziurawiec']
 PRZEDMIOTY = ['rekawice']   # zwykly przedmiot (wyglad w dloni)
-PLASKIE = ['kozlek_korzonek', 'czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
+PLASKIE = ['wzorb_tyl', 'wzorb_srodek', 'wzorb_przod', 'wzor_ziemia', 'kozlek_korzonek', 'czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
 
 KOMP = 0.85   # gamma rozjasnienia kart zblizenia (patrz main)
 NASYC = 1.08  # nasycenie kart (1,3 dawalo neonowa zielen, recenzja v4)

@@ -1212,9 +1212,11 @@ final class Zielarz implements Listener {
     }
 
     private boolean wylaczanie;
+    final ZWzory wzory = new ZWzory();   // warianty wygladu do wyboru (test)
 
     void zatrzymajWszystko() {
         wylaczanie = true;   // zadania opoznione juz sie nie wykonaja — zakoncz sprzata od razu
+        wzory.usunWszystko();
         for (Sesja s : new ArrayList<>(sesje.values())) zakoncz(s, null);
         try { PacketEvents.getAPI().getEventManager().unregisterListener(pakiety); } catch (Throwable ignored) { }
         zielnik.zapiszWszystko();

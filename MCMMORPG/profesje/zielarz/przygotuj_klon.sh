@@ -9,7 +9,7 @@ J=$(ls "$P"/build/libs/rzemioslo-*.jar | head -1)
 rm -f "$D"/plugins/rzemioslo-*.jar; cp "$J" "$D/plugins/"
 # grafika zielarza: bloki kep i karty zblizenia (Nexo zbuduje pack przy starcie)
 G=$H/grafika; rm -rf "$G/tex" "$G/nexo"
-"$G/px.sh" "$G/dziurawiec.py" "$G/tex" >/dev/null && "$G/px.sh" "$G/reszta.py" "$G/tex" >/dev/null && "$G/px.sh" "$G/nexo_klon.py" "$G/tex" "$G/nexo" >/dev/null
+"$G/px.sh" "$G/dziurawiec.py" "$G/tex" >/dev/null && "$G/px.sh" "$G/reszta.py" "$G/tex" >/dev/null && "$G/px.sh" "$G/wzory.py" "$G/tex" >/dev/null && "$G/px.sh" "$G/nexo_klon.py" "$G/tex" "$G/nexo" >/dev/null
 cp "$G/nexo/items/zielarz.yml" "$D/plugins/Nexo/items/zielarz.yml"
 mkdir -p "$D/plugins/Nexo/pack/assets/nexo/textures/block/zielarz" "$D/plugins/Nexo/pack/assets/nexo/models/zielarz"
 cp "$G"/nexo/pack/assets/nexo/textures/block/zielarz/*.png "$D/plugins/Nexo/pack/assets/nexo/textures/block/zielarz/"

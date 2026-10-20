@@ -127,6 +127,13 @@ final class Komenda implements TabExecutor {
                 if (b == null) { s.sendMessage("Patrz na blok rosliny."); return true; }
                 s.sendMessage("[Rzemioslo] " + plugin.zielarz().ustawKepe(b, a[1].equalsIgnoreCase("usun") ? null : a[1].toLowerCase()));
             }
+            case "wzor" -> {               // wzor <A|B|C|usun> <swiat> <x> <y> <z> <skala> — warianty wygladu dziurawca (admin, test)
+                if (a.length >= 2 && a[1].equalsIgnoreCase("usun")) { plugin.zielarz().wzory.usunWszystko(); s.sendMessage("[Rzemioslo] wzory usuniete"); return true; }
+                if (a.length < 7) { s.sendMessage("wzor <A|B|C|usun> <swiat> <x> <y> <z> <skala>"); return true; }
+                var w = Bukkit.getWorld(a[2]);
+                if (w == null) { s.sendMessage("brak swiata"); return true; }
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().wzory.postaw(a[1].toUpperCase(), w, Double.parseDouble(a[3]), Double.parseDouble(a[4]), Double.parseDouble(a[5]), Float.parseFloat(a[6])));
+            }
             case "kepa-xyz" -> {           // kepa-xyz <gatunek> <swiat> <x> <y> <z> — z konsoli (skrypt terenu)
                 if (a.length < 6) { s.sendMessage("kepa-xyz <gatunek> <swiat> <x> <y> <z>"); return true; }
                 var w = Bukkit.getWorld(a[2]);
