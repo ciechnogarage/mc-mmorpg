@@ -295,6 +295,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
       ModelEngineAPI.removeModeledEntity(k.mob);
       k.mob.remove();
     }
+    ostatniTekst.remove(k.id);
     BossBar pasek = paski.remove(k.id);
     if (p != null && pasek != null) p.hideBossBar(pasek);
     if (p != null && powrot) odeslij(p);
@@ -406,9 +407,12 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
   void pasekBoss(Player p, String tekst, float postep) {
     BossBar b = paski.get(p.getUniqueId());
     if (b == null) return;
-    b.name(MM.deserialize(tekst));
-    b.progress(Math.max(0f, Math.min(1f, postep)));
+    // MythicHUD przestawia swoje 7 pasków przy każdej zmianie cudzego — wysyłamy tylko faktyczne zmiany.
+    float pr = Math.round(Math.max(0f, Math.min(1f, postep)) * 50f) / 50f;
+    if (!tekst.equals(ostatniTekst.put(p.getUniqueId(), tekst))) b.name(MM.deserialize(tekst));
+    if (Math.abs(b.progress() - pr) > 0.001f) b.progress(pr);
   }
+  private final Map<UUID, String> ostatniTekst = new HashMap<>();
 
   void pokazRekordy(Player p) {
     if (p == null || !p.isOnline()) return;

@@ -271,7 +271,7 @@ final class Wyscig {
     int okr = Math.max(1, Math.min(tor.okrazenia, (int) Math.floor(k.postep / tor.dlugosc) + 1));
     String poz = tryb == Tryb.WYSCIG ? " <gray>·</gray> <yellow>Pozycja " + k.pozycja + "/" + kierowcy.size() + "</yellow>" : "";
     float postep = (float) Math.max(0, Math.min(1, k.postep / (tor.okrazenia * tor.dlugosc)));
-    plugin.pasekBoss(p, "<gold>Okrążenie " + okr + "/" + tor.okrazenia + "</gold>" + poz + " <gray>·</gray> <white>" + czas((teraz - startTick) * 50L) + "</white>", postep);
+    plugin.pasekBoss(p, "<gold>Okrążenie " + okr + "/" + tor.okrazenia + "</gold>" + poz + " <gray>·</gray> <white>" + czasDziesietne((teraz - startTick) * 50L) + "</white>", postep);
     if (teraz % 4 == 0) {
       double bps = Math.abs(k.v) * 20;
       int kreski = (int) Math.round(Math.min(1.4, Math.abs(k.v) / k.gatunek.predkosc()) * 10);
@@ -294,6 +294,9 @@ final class Wyscig {
     if (ms == Long.MAX_VALUE || ms < 0) return "—";
     return String.format("%d:%02d.%03d", ms / 60000, (ms / 1000) % 60, ms % 1000);
   }
+
+  /** Zegar w HUD z dokładnością 0,1 s (pasek zmienia się 10×/s, nie 20×). */
+  static String czasDziesietne(long ms) { return String.format("%d:%02d.%d", ms / 60000, (ms / 1000) % 60, (ms % 1000) / 100); }
 
   private static double mod(double a, double m) { return ((a % m) + m) % m; }
 

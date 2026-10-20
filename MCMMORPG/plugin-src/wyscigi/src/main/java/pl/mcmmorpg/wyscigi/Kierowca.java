@@ -36,7 +36,7 @@ final class Kierowca {
   int zamrozonyDo;              // tick serwera, do którego wierzchowiec stoi (start, powrót na tor)
   int karaDo;                   // "przegrzany" start: brak gazu do ticka
   int gazOd = -1;               // tick, od którego W jest trzymane (turbo startowe)
-  boolean skokTrzymany, shiftTrzymany;
+  boolean skokTrzymany, shiftTrzymany, podskok;
   int shiftPostoj;              // ticki Shift na postoju (wyjście)
   int[] poleOstatnio;
   double ostX = Double.NaN, ostZ, oczekiwane;
@@ -110,7 +110,7 @@ final class Kierowca {
       poslizg = true;
       stronaPoslizgu = roznica > 0 ? 1 : -1;
       ladowanie = 0;
-      mc.jump();                                                         // podskok na wejściu w poślizg
+      podskok = true;                                                    // mały hop na wejściu w poślizg (nie pełny skok)
       mob.getWorld().playSound(mob.getLocation(), Sound.ENTITY_HORSE_LAND, 0.5f, 1.6f);
     }
     if (poslizg) {
@@ -162,7 +162,9 @@ final class Kierowca {
     }
     ostX = l.getX(); ostZ = l.getZ(); oczekiwane = Math.hypot(vx, vz);
 
-    mc.setVelocity(vx, mc.getVelocity().getY(), vz);
+    double vy = mc.getVelocity().getY();
+    if (podskok) { if (naZiemi) vy = 0.24; podskok = false; }          // ~0,3 bloku w górę
+    mc.setVelocity(vx, vy, vz);
     if (skok && !skokTrzymany && naZiemi && !poslizg) mc.jump();
     skokTrzymany = skok;
 
