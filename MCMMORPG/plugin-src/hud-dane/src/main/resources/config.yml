@@ -30,3 +30,25 @@ efekty:
   resistance: odpornosc
   speed: szybkosc
   fire_resistance: ognioodpornosc
+# Cel zadania w HUD-zie: krok przycinany do max-krok znakow; strzalka do miejsca, ktorego fragment wystepuje w tekscie kroku.
+zadania:
+  max-krok: 38
+  miejsca:
+    straznicza:
+      fragment: "Strażniczk"
+      swiat: stolica_odnowa
+      x: 32.5
+      y: 101
+      z: -48.5
+    trener:
+      fragment: "trenerem"
+      swiat: stolica_odnowa
+      x: 32.5
+      y: 101
+      z: -48.5
+    wybieg:
+      fragment: "dzikiego"
+      swiat: stolica_odnowa
+      x: 42
+      y: 102
+      z: -52

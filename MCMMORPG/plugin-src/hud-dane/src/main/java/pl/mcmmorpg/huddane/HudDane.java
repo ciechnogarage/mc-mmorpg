@@ -22,6 +22,7 @@ public final class HudDane extends JavaPlugin implements Listener {
 
   final Map<UUID, Migawka> migawki = new ConcurrentHashMap<>();
   final Zdarzenia zdarzenia = new Zdarzenia();
+  Nawigacja nawigacja;
   int zasieg;
   double niskieHp;
   int limitSlug;
@@ -39,6 +40,8 @@ public final class HudDane extends JavaPlugin implements Listener {
     if (ef != null) for (String k : ef.getKeys(false)) efekty.put(k, ef.getString(k));
     getServer().getPluginManager().registerEvents(this, this);
     getServer().getPluginManager().registerEvents(zdarzenia, this);
+    nawigacja = new Nawigacja(getConfig().getConfigurationSection("zadania"));
+    getServer().getPluginManager().registerEvents(nawigacja, this);
     new Placeholdery(this).register();
     getLogger().info("HudDane: druzyna zasieg " + zasieg + ", " + czasZycia.size() + " typow slug, " + efekty.size() + " efektow");
   }
