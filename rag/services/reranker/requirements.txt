@@ -1,0 +1,9 @@
+# Runtime dependencies for the reranker service.
+# torch is installed separately from the CPU wheel index in the Dockerfile.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+numpy==1.26.4
+transformers==4.44.2
+huggingface-hub==0.36.0
+FlagEmbedding==1.3.4

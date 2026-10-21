@@ -1,5 +1,15 @@
 # Reputation And Faction Foundation v0.0.1
 
+Status: `legacy_design_input`
+
+This document remains useful as design input for faction philosophy and anti-abuse guardrails, but it is not a runtime contract.
+
+Current contract owners:
+
+- `docs/contracts/organization-relationship-contract.yaml`
+- `docs/contracts/faction-definition-template.yaml`
+- `docs/contracts/religion-definition-template.yaml`
+
 ## Cel dokumentu
 
 Ten dokument definiuje fundament systemu reputacji i frakcji dla serwera

@@ -1,0 +1,5 @@
+name: LimboLogin
+version: ${version}
+main: pl.mcmmorpg.limbologin.LimboLoginPlugin
+api-version: '1.21'
+description: Ekran logowania na serwerze limbo — zamiast wpisywania hasla na czacie.

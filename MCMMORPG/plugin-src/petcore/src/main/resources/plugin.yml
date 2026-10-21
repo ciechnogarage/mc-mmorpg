@@ -1,0 +1,16 @@
+name: PetCore
+version: ${version}
+main: pl.mcmmorpg.petcore.PetCorePlugin
+api-version: "1.21"
+author: OpenAI Codex
+softdepend:
+  - MMOProfiles
+  - MMOCore
+  - MythicDungeons
+  - MythicMobs
+  - PlaceholderAPI
+libraries:
+  - org.mariadb.jdbc:mariadb-java-client:3.5.3
+permissions:
+  petcore.use:
+    default: true

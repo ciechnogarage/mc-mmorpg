@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nexo:item/dr001/item/cleansing_draught"
+  }
+}

@@ -1,0 +1,167 @@
+schema_version: 1
+snapshot_id: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+created_at: "2026-07-31"
+domain: 17
+status: complete
+source_of_truth_status: legacy_inputs_active_until_domain_17_cutover
+cutover_checklist_item: D17-CUTOVER-02
+scope:
+  execution_lane: docs-only
+  runtime_touched: false
+  staging_touched: false
+  lease_required: none
+  purpose: hash-pinned bridge from legacy evidence inputs into docs/qa registries
+legacy_sources:
+  - source_id: runtime_evidence_register_2026_07_13
+    path: docs/audits/2026-07-13/runtime-evidence-register.yaml
+    sha256: a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf
+    role: current P0 runtime audit input
+    relevant_contract:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+      verdicts:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - INSUFFICIENT_EVIDENCE
+  - source_id: vertical_slice_e2e_runtime_gate
+    path: docs/tests/vertical-slice-e2e.md
+    sha256: aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79
+    role: legacy vertical-slice scenario and result-verdict semantics
+    relevant_contract:
+      verdicts:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - INSUFFICIENT_EVIDENCE
+      blocker_rule: Docker access failure maps to BLOCKED with VAL-RUNTIME-001, not product FAIL.
+  - source_id: persistence_restart_matrix
+    path: docs/tests/persistence-restart-matrix.md
+    sha256: 87b9b8a1dc78db66ada1bb01dd7f5b378627cc2e5b19bd53f3e0f77d36326df9
+    role: legacy persistence restart evidence and metadata requirements
+    relevant_contract:
+      required_metadata:
+        - backend
+        - commit
+        - Paper/plugin JAR versions
+        - configuration hashes
+        - test account UUID
+        - timestamps
+        - pre/post snapshots
+        - log paths
+status_vocabulary_mapping:
+  - legacy_value: accepted
+    legacy_context: contract_status
+    docs_qa_field: contract_status
+    docs_qa_value: approved
+    note: accepted remains illegal in docs/qa schema; migrate it to approved.
+  - legacy_value: draft
+    legacy_context: contract_status
+    docs_qa_field: contract_status
+    docs_qa_value: draft
+  - legacy_value: proposed
+    legacy_context: contract_status
+    docs_qa_field: contract_status
+    docs_qa_value: proposed
+    note: transitional Domain 17 migration value allowed by the schema baseline.
+  - legacy_value: partial
+    legacy_context: runtime_status
+    docs_qa_field: runtime_status
+    docs_qa_value: partial
+  - legacy_value: not_tested
+    legacy_context: runtime_status
+    docs_qa_field: runtime_status
+    docs_qa_value: not_tested
+  - legacy_value: verified
+    legacy_context: runtime_status
+    docs_qa_field: runtime_status
+    docs_qa_value: verified
+  - legacy_value: blocked
+    legacy_context: runtime_status or release_status
+    docs_qa_field: runtime_status or release_status
+    docs_qa_value: blocked
+    note: Keep blocked in the field matching the legacy context; do not promote verdict BLOCKED directly.
+  - legacy_value: PASS
+    legacy_context: evidence.status or verdict rule
+    docs_qa_field: result.verdict
+    docs_qa_value: PASS
+  - legacy_value: FAIL
+    legacy_context: evidence.status or verdict rule
+    docs_qa_field: result.verdict
+    docs_qa_value: FAIL
+  - legacy_value: BLOCKED
+    legacy_context: evidence.status or verdict rule
+    docs_qa_field: result.verdict
+    docs_qa_value: BLOCKED
+  - legacy_value: INSUFFICIENT_EVIDENCE
+    legacy_context: evidence.status or verdict rule
+    docs_qa_field: result.verdict
+    docs_qa_value: INSUFFICIENT_EVIDENCE
+blocker_vocabulary_mapping:
+  - legacy_value: resolved_host_side
+    legacy_context: blockers[].status
+    docs_qa_field: blockers[].status or evidence result observation
+    docs_qa_value: resolved_host_side
+    note: Blocker-local status only; never promote to runtime_status or release_status.
+  - legacy_value: validation_blocker
+    legacy_context: blockers[].type
+    docs_qa_field: blockers[].type
+    docs_qa_value: validation_blocker
+  - legacy_value: P0
+    legacy_context: blockers[].severity
+    docs_qa_field: blockers[].severity
+    docs_qa_value: P0
+unmapped_blockers:
+  - blocker_id: STATIC-002-unresolved-non-mvp-blockers
+    source_id: runtime_evidence_register_2026_07_13
+    source_anchor: docs/audits/2026-07-13/runtime-evidence-register.yaml#STATIC-002
+    legacy_text: 16 contracts validated; 4 unresolved non-MVP blockers remain
+    mapping_status: unmapped_summary_requires_downstream_expansion
+    reason: Legacy source records only an aggregate count, not blocker ids or ownership.
+    downstream_requirement: Expand into blocker ids before creating normative docs/qa evidence records.
+  - blocker_id: REWARD-001-unresolved-transaction-id
+    source_id: runtime_evidence_register_2026_07_13
+    source_anchor: docs/audits/2026-07-13/runtime-evidence-register.yaml#REWARD-001
+    legacy_text: durable reward_transaction_id atomic retry_rule
+    mapping_status: mapped_as_evidence_gap
+    docs_qa_target:
+      scenario_id: reward_idempotency_boundary
+      result.verdict: INSUFFICIENT_EVIDENCE
+      release_effect: blocks_release
+    downstream_requirement: Runtime evidence must prove durable transaction id storage and retry idempotency.
+  - blocker_id: DUNGEON-001-reset-proof-missing
+    source_id: runtime_evidence_register_2026_07_13
+    source_anchor: docs/audits/2026-07-13/runtime-evidence-register.yaml#DUNGEON-001
+    legacy_text: unique_instance_id_mob_cleanup_variable_cleanup_reward_non_duplication_orphan_entity_check
+    mapping_status: mapped_as_evidence_gap
+    docs_qa_target:
+      scenario_id: dungeon_instance_reset
+      result.verdict: INSUFFICIENT_EVIDENCE
+      release_effect: blocks_release
+    downstream_requirement: Runtime evidence must prove reset cleanup, non-duplication, and orphan entity checks.
+  - blocker_id: VAL-RUNTIME-001-docker-access
+    source_id: runtime_evidence_register_2026_07_13
+    source_anchor: docs/audits/2026-07-13/runtime-evidence-register.yaml#VAL-RUNTIME-001
+    legacy_text: Agent audit environment cannot access /var/run/docker.sock.
+    mapping_status: mapped_as_environment_blocker
+    docs_qa_target:
+      result.verdict: BLOCKED
+      release_effect: blocks_release
+    downstream_requirement: Preserve as environment blocker when Docker access prevents runtime observation; do not convert to product FAIL.
+registry_cross_link_contract:
+  required_reference_field: migration_snapshot_ref
+  required_value: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+  applies_to:
+    - docs/qa/runtime-evidence-registry.yaml records migrated from these legacy inputs
+    - docs/qa/e2e-scenarios.yaml scenarios derived from these legacy inputs
+    - docs/qa/release-gates.yaml gates whose policy depends on these legacy inputs
+  minimum_record_fields:
+    - migration_snapshot_ref
+    - legacy_source_ids
+    - legacy_sha256
+    - legacy_status_mapping
+validation:
+  sha256_hashes_captured_for_all_listed_sources: true
+  unmapped_blockers_explicit: true
+  no_runtime_or_staging_state_touched: true

@@ -1,0 +1,200 @@
+schema_version: 1
+status: draft
+updated_at: "2026-07-31"
+owner_domain: "05-itemization"
+
+notes:
+  - "Draft planning file. Not runtime truth."
+  - "Relic slot semantics beyond slot identity live in docs/design/items/relic-contract.yaml."
+  - "Budget multipliers are unresolved until domain 03 publishes symbolic budget rules."
+  - "No concrete slot coefficient is authoritative here before domain-03 budget authority is published."
+  - "Affix-eligibility booleans below are slot-registry placeholders only; the authoritative slot-to-affix contract remains blocked on affix-taxonomy work."
+  - "Relic is modeled as a dedicated slot, not as a generic accessory alias."
+  - "Approved domain-05 v1 scope is conservative and excludes gloves, bracelet, and artifact1-3."
+  - "artifact1-3 remain legacy runtime slots only and are non-authoritative for domain-05 v1 rules."
+
+slots:
+  main_hand:
+    category: "weapon"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "weapon"
+    allows_offensive_affixes: true
+    allows_defensive_affixes: false
+    dual_wield_role: "primary"
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOItems/MMOInventory"
+    status: "supported_in_principle"
+
+  off_hand:
+    category: "offhand"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "shield"
+      - "focus"
+      - "offhand_weapon"
+    allowed_item_tag_contract_status:
+      shield: "v1_supported_slot_category"
+      focus: "v1_supported_slot_category"
+      offhand_weapon: "slot_category_allowed_but_fail_closed_until_domain_04_gate_is_published"
+    allows_offensive_affixes: true
+    allows_defensive_affixes: true
+    dual_wield_role: "secondary"
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOItems/MMOInventory"
+    status: "supported_in_principle"
+
+  head:
+    category: "armor"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "helmet"
+    allows_offensive_affixes: false
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOItems/MMOInventory"
+    status: "supported_in_principle"
+
+  chest:
+    category: "armor"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "chest_armor"
+    allows_offensive_affixes: false
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOItems/MMOInventory"
+    status: "supported_in_principle"
+
+  legs:
+    category: "armor"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "leg_armor"
+    allows_offensive_affixes: false
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOItems/MMOInventory"
+    status: "supported_in_principle"
+
+  feet:
+    category: "armor"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "boots"
+    allows_offensive_affixes: false
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOItems/MMOInventory"
+    status: "supported_in_principle"
+
+  ring_1:
+    category: "accessory"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "ring"
+    allows_offensive_affixes: true
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: "ring"
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOInventory"
+    status: "supported"
+
+  ring_2:
+    category: "accessory"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "ring"
+    allows_offensive_affixes: true
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: "ring"
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOInventory"
+    status: "supported"
+
+  amulet:
+    category: "accessory"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "amulet"
+    allows_offensive_affixes: true
+    allows_defensive_affixes: true
+    dual_wield_role: null
+    unique_equip_scope: null
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "MMOInventory"
+    status: "supported"
+
+  relic:
+    category: "relic"
+    budget_multiplier_contract: "pending_domain_03_symbolic_budget_authority"
+    allowed_item_tags:
+      - "relic"
+    allows_offensive_affixes: false
+    allows_defensive_affixes: false
+    affix_eligibility_status: "pending_affix_taxonomy_and_domain_03_stat_authority"
+    dual_wield_role: null
+    unique_equip_scope: "relic"
+    max_equipped: 1
+    dedicated_input_supported: true
+    contract_ref: "docs/design/items/relic-contract.yaml"
+    activation_input_owner: "04-classes"
+    consumes_combat_skill_slot: false
+    visible_in_equipment_ui: true
+    runtime_source:
+      plugin: "custom_or_adapter_required"
+    status: "contract_not_implemented"
+
+open_questions:
+  - "Whether off-hand weapons are globally allowed or class/proficiency-gated belongs to domain 04."
+  - "Final slot coefficient authority depends on domain-03 combat budget math."
+
+deferred_runtime_slots:
+  - slot_id: "gloves"
+    reason: "Outside approved domain-05 v1 scope."
+    note: "May continue to exist as runtime/plugin capability without creating domain-05 v1 requirements."
+  - slot_id: "bracelet"
+    reason: "Outside approved domain-05 v1 scope."
+    note: "May continue to exist as runtime/plugin capability without creating domain-05 v1 requirements."
+  - slot_id: "artifact1"
+    reason: "Outside approved domain-05 v1 scope."
+    note: "Legacy runtime slot only; not an authority for v1 equip legality, affix eligibility, semantics, or any Relic behavior."
+  - slot_id: "artifact2"
+    reason: "Outside approved domain-05 v1 scope."
+    note: "Legacy runtime slot only; not an authority for v1 equip legality, affix eligibility, semantics, or any Relic behavior."
+  - slot_id: "artifact3"
+    reason: "Outside approved domain-05 v1 scope."
+    note: "Legacy runtime slot only; not an authority for v1 equip legality, affix eligibility, semantics, or any Relic behavior."
+
+legacy_compatibility_rules:
+  artifact1_to_3:
+    v1_authority: "none"
+    load_behavior: "migrate_to_supported_v1_slot_or_reject"
+    silent_fallback_forbidden: true
+    note: "Legacy artifact slots may exist in runtime/plugin state, but they must not be interpreted as supported v1 slot authority."
+  offhand_weapon:
+    slot_category_authority: "05-itemization"
+    equip_gate_authority: "04-classes"
+    v1_runtime_behavior: "reject_or_disable_until_domain_04_gate_is_published"
+    silent_enable_forbidden: true

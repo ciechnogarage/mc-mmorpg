@@ -1,0 +1,88 @@
+contract:
+  id: petcore-identity-and-content-run-v1
+  contract_status: accepted
+  runtime_status: blocked
+  release_status: blocked
+  version: 1
+  owner: PetCore
+  supersedes_authority: [CompanionCore, MCPets]
+  evidence_register: docs/audits/2026-07-13/runtime-evidence-register.yaml
+  source_note: >
+    Repository-normative copy of the accepted Traycer planning artifact
+    petcore-unified-companion-runtime-tech-plan/identity-and-content-run-contract.
+    That artifact remains valid planning context, but ADR-003 and the pet
+    foundation must not depend on a Traycer-only path for normative rules;
+    this file is the source of truth inside the repository.
+
+identity:
+  pet_subject_id: MMOProfiles.profileId
+  rule: >
+    PetSubjectId is the sole durable identity for PetCore profiles,
+    progression, equipment, policy eligibility, owner x policy limits and
+    companion roster. A player UUID is an online session principal only and
+    never becomes a substitute durable key.
+  keys:
+    petcore_progression_and_roster: "PetSubjectId = MMOProfiles.profileId"
+    online_executor_ownership: "{playerUuid, PetSubjectId, sessionEpoch}"
+    active_executor_validity: "{petInstanceId, runtimeEpoch, PetSubjectId, playerUuid}"
+    class_skill_eligibility: "MMOCore state for the same PetSubjectId"
+    dungeon_lifecycle_and_run_identity: "MythicDungeons ContentRunId"
+  storage_rule: >
+    PetCore's MariaDB uniqueness locks are profile-scoped: PetSubjectId plus
+    policy/instance identity for durable rows, petInstanceId plus
+    runtimeEpoch for active leases. Character switching invalidates the old
+    session binding before a new profile may summon anything.
+
+legacy_claim_authority:
+  rule: >
+    Legacy MCPets records are read-only migration input; a player explicitly
+    claims eligible legacy data into the currently selected PetSubjectId
+    only. Never automatic, never dual-write with MCPets, never copied to a
+    second profile.
+  full_contract: docs/contracts/petcore-legacy-claim-contract.yaml
+
+content_run:
+  content_run_id:
+    source: MythicDungeons lifecycle for a live instance run
+    owns: the logical run boundary
+  social_run_state:
+    fields: [contentRunId, instanceId, socialRun, firstSocialAt, expiresAt, revision]
+    persistence: >
+      PetCore stores this companion-eligibility projection until runExited
+      or runReset, then deletes it under a bounded TTL.
+    rule: >
+      socialRun changes to true on the first authoritative party-size >=2
+      event and never reverts to false inside the same run; it survives
+      player leave/rejoin, reconnect and server restart. It controls
+      Adventurer eligibility only and never changes Beast/minion class
+      policy.
+  events:
+    "resolve(subject, playerSession)": returns mode, ContentRunId when instanced, party size and current revision
+    "partyChanged(run, partySize, revision)": advances socialRun at >=2; PetCore recalls Adventurer before further combat
+    "modeChanged(subject, mode, revision)": re-evaluates policy and fences forbidden executors
+    "runExited(run, revision)": releases the run projection and restores normal outside-run eligibility
+    "runReset(run, revision)": deletes the projection; a later run receives a new ContentRunId
+  revision_rule: >
+    Revisions are monotonic per run. PetCore ignores stale/duplicate events
+    and re-resolves on reconnect before allowing an Adventurer to appear.
+
+fail_closed:
+  trigger: >
+    PetCore cannot resolve profile, content mode, party state, run state, or
+    its own durable authority.
+  required_sequence:
+    - reject a new summon, Pet Duel request, or owner-commanded ability immediately
+    - stop autonomous ability authorization immediately
+    - recall/fence the affected executor on the next scheduler pass, bounded to five ticks
+    - show a recoverable "companion resting while state is verified" status; never fall back to an alternate/YAML/MCPets path
+  recovery_rule: >
+    After recovery, PetCore must freshly resolve PetSubjectId and
+    ContentRunId; it does not revive a previous active lease from memory
+    alone.
+
+required_evidence:
+  - Switching between two MMOProfiles characters on one player UUID leaks no roster, cap, active-executor or cooldown state across profiles.
+  - A legacy record can be claimed once by the selected profile and cannot be copied to another profile.
+  - A social dungeon run remains Adventurer-ineligible after party leave, reconnect and server restart, until exit/reset.
+  - An unknown/stale content revision, provider outage or database outage rejects new actions and recalls affected executors within five ticks.
+  - The superseding ADR and authority registry identify exactly one durable pet authority.

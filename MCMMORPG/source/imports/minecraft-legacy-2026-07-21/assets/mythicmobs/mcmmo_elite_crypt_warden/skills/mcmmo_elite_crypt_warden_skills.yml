@@ -1,0 +1,60 @@
+MCMMOEliteCryptWardenSpawn:
+  Cooldown: 60
+  Skills:
+    - state{mid=mcmmo_elite_crypt_warden;s=spawn;li=0;lo=3;force=true;loop=ONCE;override=true} @self
+    - effect:sound{s=entity.warden.emerge;volume=1.0;pitch=0.75} @PlayersInRadius{r=45}
+    - effect:particles{p=reverse_portal;amount=120;hSpread=2.5;ySpread=1.2;speed=0.03;yOffset=1.0} @self
+    - delay 18
+    - message{m="&5Elite Crypt Warden<&co> The sealed dead still stand."} @PlayersInRadius{r=45}
+
+MCMMOEliteCryptWardenAttack01:
+  Cooldown: 1.2
+  Skills:
+    - cancelevent
+    - state{mid=mcmmo_elite_crypt_warden;s=attack_01;li=2;lo=2;force=true;loop=ONCE;override=true} @self
+    - delay 8
+    - effect:sound{s=entity.iron_golem.attack;volume=1.0;pitch=0.65} @PlayersInRadius{r=24}
+    - damage{a=12;type=ATTACK} @trigger
+    - effect:particles{p=crit;amount=18;hSpread=0.5;ySpread=0.4;speed=0.1;yOffset=1.0} @trigger
+
+MCMMOEliteCryptWardenAttack02:
+  Cooldown: 9
+  Skills:
+    - message{cooldown=20;m="&5The crypt warden raises a stone fist."} @PlayersInRadius{r=34}
+    - state{mid=mcmmo_elite_crypt_warden;s=attack_02;li=2;lo=3;force=true;loop=ONCE;override=true} @self
+    - effect:particles{p=dust_color_transition;color=#5B4A6F;color2=#35D9FF;amount=80;hSpread=2.5;ySpread=0.2;speed=0;yOffset=0.1} @self
+    - delay 18
+    - effect:sound{s=entity.generic.explode;volume=0.8;pitch=0.55} @PlayersInRadius{r=34}
+    - damage{a=18;type=ATTACK} @PlayersInRadius{r=5}
+    - throw{velocity=1.0;velocityY=0.45} @PlayersInRadius{r=5}
+
+MCMMOEliteCryptWardenVoidCast:
+  Cooldown: 14
+  Skills:
+    - message{cooldown=28;m="&dVoid light gathers in the warden's chest."} @PlayersInRadius{r=38}
+    - state{mid=mcmmo_elite_crypt_warden;s=cast;li=3;lo=3;force=true;loop=ONCE;override=true} @self
+    - effect:particles{p=portal;amount=120;hSpread=1.5;ySpread=1.5;speed=0.05;yOffset=1.4} @self
+    - delay 26
+    - effect:sound{s=entity.warden.sonic_boom;volume=0.75;pitch=0.9} @PlayersInRadius{r=38}
+    - damage{a=16;type=MAGIC} @target
+    - potion{type=SLOW;duration=60;level=1} @target
+
+MCMMOEliteCryptWardenSpecial01:
+  Cooldown: 24
+  Skills:
+    - message{m="&5The warden brands the floor with a burial seal."} @PlayersInRadius{r=45}
+    - state{mid=mcmmo_elite_crypt_warden;s=special_01;li=3;lo=4;force=true;loop=ONCE;override=true} @self
+    - effect:particles{p=sonic_boom;amount=8;hSpread=3;ySpread=0.1;speed=0;yOffset=0.2} @self
+    - delay 38
+    - damage{a=14;type=MAGIC} @PlayersInRadius{r=7}
+    - potion{type=WEAKNESS;duration=80;level=1} @PlayersInRadius{r=7}
+    - throw{velocity=0.65;velocityY=0.25} @PlayersInRadius{r=7}
+
+MCMMOEliteCryptWardenDeath:
+  Cooldown: 2
+  Skills:
+    - state{mid=mcmmo_elite_crypt_warden;s=death;li=0;lo=4;force=true;loop=HOLD;override=true} @self
+    - effect:sound{s=entity.warden.death;volume=1.0;pitch=0.8} @PlayersInRadius{r=45}
+    - effect:particles{p=ash;amount=160;hSpread=2.5;ySpread=1.2;speed=0.03;yOffset=1.0} @self
+    - delay 44
+    - message{m="&7The crypt seal cracks. Record screenshot and latest.log before approval."} @PlayersInRadius{r=45}

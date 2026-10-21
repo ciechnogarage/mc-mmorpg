@@ -1,0 +1,816 @@
+# Superseded Domain 16 plugin review snapshot from 2026-07-22.
+# Do not use this file as current inventory truth. The one canonical manifest is
+# docs/plugin_manifest.yaml; this normalized snapshot remains only as historical
+# evidence for documents and audits that explicitly cite the 2026-07-22 baseline.
+
+manifest_version: 1
+document_status: superseded
+canonical_manifest_ref: docs/plugin_manifest.yaml
+snapshot_observed_at: "2026-07-22"
+contract_status: superseded
+runtime_status: partially_verified
+release_status: blocked
+document_owner: domain-16
+status_vocabulary_ref: docs/technical/status-and-evidence-vocabulary.md#canonical-status-and-evidence-rules
+
+server:
+  target_minecraft_version: "1.21.11"
+  paper_runtime: "Paper 1.21.11-127-main@bd74bf6"
+  java_runtime: "Temurin/OpenJDK 21.0.11+10 LTS"
+  environment: staging
+  server_folder: MCMMORPG
+  baseline_created_at: "2026-07-22"
+
+schema_rules:
+  required_plugin_fields:
+    - id
+    - name
+    - version
+    - release_channel
+    - source
+    - required
+    - dependencies
+    - paper_compatibility
+    - java_compatibility
+    - database_usage
+    - network_usage
+    - config_owner
+    - update_policy
+    - runtime_status
+  field_conventions:
+    release_channel:
+      - release
+      - snapshot
+      - unknown
+    source:
+      - internal
+      - vendor
+      - unknown
+    database_usage:
+      - none
+      - local_file
+      - shared_mariadb
+      - unknown
+    network_usage:
+      - true
+      - false
+      - unknown
+    update_policy:
+      - manual_approval
+      - staging_required
+      - blocked
+      - unknown
+  baseline_limits:
+    - "Dependencies are only populated when the current repository proves them."
+    - "Empty arrays mean 'not proven here', not 'guaranteed none'."
+    - "`required: true` means required for the current active staging inventory baseline."
+    - "`source: vendor` means a third-party plugin present in runtime inventory; it does not prove the upstream distributor."
+    - "`database_usage: local_file` means the currently observed runtime uses plugin-local h2 or sqlite, not shared MariaDB."
+    - "`database_usage: shared_mariadb` should only be used when the current repo proves active MariaDB usage, not merely exposed credentials or disabled MySQL blocks."
+    - "Top-level `evidence_refs` contains full evidence objects; plugin-level `evidence_ref_ids` only reuses named evidence IDs from that canonical list."
+
+evidence_refs:
+  - evidence_id: EVID-PLUGIN-DOC-2026-06-24
+    source_type: document
+    source_path: docs/plugin_manifest.yaml
+    observed_at: "2026-06-24"
+    scope: legacy plugin inventory, versions, roles, owners, and runtime notes
+    summary: Legacy plugin manifest is the source for prior names, roles, and selected notes.
+  - evidence_id: EVID-COMPAT-MATRIX-2026-06-24
+    source_type: document
+    source_path: docs/compatibility_matrix.md
+    observed_at: "2026-06-24"
+    scope: staging-observed compatibility subset for MMO/Mythic/packet stack
+    summary: Compatibility matrix confirms a subset of the stack on Paper 1.21.11 staging.
+  - evidence_id: EVID-PLUGIN-DIR-2026-07-22
+    source_type: inventory
+    source_path: MCMMORPG/plugins
+    observed_at: "2026-07-22"
+    scope: active plugin jar baseline
+    summary: Active jars present under MCMMORPG/plugins on 2026-07-22.
+  - evidence_id: EVID-DISABLED-PLUGIN-DIR-2026-07-22
+    source_type: inventory
+    source_path: MCMMORPG/disabled-runtime-blockers/plugins
+    observed_at: "2026-07-22"
+    scope: intentionally disabled runtime blockers
+    summary: Disabled runtime blockers inventory includes HuskSync outside the active baseline.
+
+plugins:
+  - id: chunky
+    name: Chunky-Bukkit
+    version: "1.4.40"
+    jar: Chunky-Bukkit-1.4.40.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: pregeneration
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: cmi
+    name: CMI
+    version: "9.8.4.14"
+    jar: CMI-9.8.4.14.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: admin_utility_economy_bridge
+    dependencies:
+      hard: [cmilib]
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: local_file
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: cmilib
+    name: CMILib
+    version: "1.5.9.5"
+    jar: CMILib1.5.9.5.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: dependency_library
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: character-stage
+    name: CharacterStage
+    version: 0.1.0-SNAPSHOT
+    jar: CharacterStage-0.1.0-SNAPSHOT.jar
+    release_channel: snapshot
+    source: internal
+    required: true
+    role: character_selection_profile_bridge
+    source_path: MCMMORPG/plugin-src/character-stage
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: false
+    config_owner: domain-16
+    update_policy: manual_approval
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: coretools
+    name: CoreTools
+    version: "1.4.2"
+    jar: CoreTools-1.4.2.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: tools_dependency
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    notes:
+      - Current active jar is 1.4.2, while the legacy manifest recorded 1.4.1.
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: decentholograms
+    name: DecentHolograms
+    version: "2.9.9"
+    jar: DecentHolograms-2.9.9.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: holograms
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: unknown
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: deluxe-menus
+    name: DeluxeMenus
+    version: 1.14.1-Release
+    jar: DeluxeMenus-1.14.1-Release.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: ui_menus
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: unknown
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: fastasyncworldedit
+    name: FastAsyncWorldEdit-Paper
+    version: 2.15.1-SNAPSHOT-1283
+    jar: FastAsyncWorldEdit-Paper-2.15.1-SNAPSHOT-1283.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: world_editing
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: guilds
+    name: Guilds
+    version: "2.0.10"
+    jar: Guilds-2.0.10.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: guilds_social
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: local_file
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: husksync
+    name: HuskSync-Bukkit
+    version: 3.8.8-0772f09+mc.1.21.11
+    jar: HuskSync-Bukkit-3.8.8-0772f09+mc.1.21.11.jar
+    release_channel: release
+    source: vendor
+    required: false
+    role: player_sync
+    runtime_location: MCMMORPG/disabled-runtime-blockers/plugins
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: blocked
+    runtime_status: blocked
+    notes:
+      - Plugin currently outside the active baseline.
+      - Legacy docs state staging MVP accepted it as moved out with missing local database baseline.
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-DISABLED-PLUGIN-DIR-2026-07-22]
+
+  - id: iris
+    name: Iris
+    version: 3.9.1-1.20.1-1.21.11
+    jar: Iris-3.9.1-1.20.1-1.21.11.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: world_generation
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    notes:
+      - Vendor content under `plugins/Iris/packs/overworld` may be git-ignored and requires separate restore handling outside repo-tracked configs.
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: libsdisguises
+    name: LibsDisguises
+    version: 11.0.15-Free
+    jar: LibsDisguises-11.0.15-Free.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: disguises
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: luckperms
+    name: LuckPerms-Bukkit
+    version: "5.5.36"
+    jar: LuckPerms-Bukkit-5.5.36.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: permissions
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: local_file
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: partially_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mcpets
+    name: MCPets
+    version: "4.1.6"
+    jar: "MCPets 4.1.6 (1.21.+).jar"
+    release_channel: release
+    source: vendor
+    required: false
+    role: pets
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    notes:
+      - Jar not present in the active baseline on 2026-07-22.
+      - Legacy docs still mention it as a fallback accepted for staging MVP.
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24]
+
+  - id: meg-molang
+    name: MEG-Molang
+    version: R1.0.0
+    jar: MEG-Molang-R1.0.0.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: modelengine_extension
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mmocore
+    name: MMOCore
+    version: 1.13.1-20260330.110342-58
+    jar: MMOCore-1.13.1-20260330.110342-58.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: classes_progression
+    dependencies:
+      hard: [mythiclib]
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mmoinventory
+    name: MMOInventory
+    version: 2.0-20260330.113858-32
+    jar: MMOInventory-2.0-20260330.113858-32.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: rpg_inventory
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mmoitems
+    name: MMOItems
+    version: 6.10.1-20260330.094756-58
+    jar: MMOItems-6.10.1-20260330.094756-58.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: itemization
+    dependencies:
+      hard: [mythiclib]
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mmoprofiles
+    name: MMOProfiles
+    version: 1.2-20260325.193503-28
+    jar: MMOProfiles-1.2-20260325.193503-28.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: character_profiles
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: unknown
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: modelengine
+    name: ModelEngine
+    version: "4.0.9"
+    jar: ModelEngine-4.0.9.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: models
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    notes:
+      - Compatibility matrix warns about current log/performance review decisions.
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: multiverse-core
+    name: multiverse-core
+    version: "5.5.3"
+    jar: multiverse-core-5.5.3.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: multiworld_management
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mythic-crucible
+    name: MythicCrucible
+    version: "2.2.0"
+    jar: MythicCrucible-2.2.0.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: item_asset_layer
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mythic-dungeons
+    name: MythicDungeons
+    version: 2.0.1-SNAPSHOT
+    jar: MythicDungeons-2.0.1-SNAPSHOT.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: dungeons
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: unknown
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mythic-hud
+    name: MythicHUD
+    version: 1.3.4-SNAPSHOT-all
+    jar: MythicHUD-1.3.4-SNAPSHOT-all.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: hud_ui
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mythiclib
+    name: MythicLib-dist
+    version: 1.7.1-20260330.110510-95
+    jar: MythicLib-dist-1.7.1-20260330.110510-95.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: mmo_shared_library
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: mythicmobs
+    name: MythicMobs
+    version: "5.11.2"
+    jar: MythicMobs-5.11.2.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: mobs_skills_encounters
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: nexo
+    name: nexo
+    version: "1.20"
+    jar: nexo-1.20.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: assets_resourcepack_layer
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: packetevents
+    name: packetevents-spigot
+    version: "2.11.2"
+    jar: packetevents-spigot-2.11.2.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: packet_api
+    dependencies:
+      hard: []
+      soft: [protocollib]
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: true
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: pixellibs
+    name: PixelLibs
+    version: "1.1.1"
+    jar: PixelLibs.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: dependency_library
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: placeholderapi
+    name: PlaceholderAPI
+    version: "2.12.2"
+    jar: PlaceholderAPI-2.12.2.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: placeholders
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: protocollib
+    name: ProtocolLib
+    version: 5.4.1-SNAPSHOT-f606cc9
+    jar: ProtocolLib.jar
+    release_channel: snapshot
+    source: vendor
+    required: true
+    role: packet_protocol_layer
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: true
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-COMPAT-MATRIX-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: vault
+    name: Vault
+    version: "1.7.4"
+    jar: Vault-1.7.4.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: economy_permissions_bridge
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: voicechat
+    name: voicechat-bukkit
+    version: "2.6.12"
+    jar: voicechat-bukkit-2.6.12.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: proximity_voice
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: true
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: voidgen
+    name: VoidGen
+    version: "2.3.4"
+    jar: VoidGen-2.3.4.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: void_worlds_lobby
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+  - id: worldguard
+    name: worldguard-bukkit
+    version: "7.0.15"
+    jar: worldguard-bukkit-7.0.15.jar
+    release_channel: release
+    source: vendor
+    required: true
+    role: region_protection
+    dependencies:
+      hard: []
+      soft: []
+    paper_compatibility: ["1.21.11"]
+    java_compatibility: [21]
+    database_usage: none
+    network_usage: false
+    config_owner: domain-16
+    update_policy: staging_required
+    runtime_status: not_verified
+    evidence_ref_ids: [EVID-PLUGIN-DOC-2026-06-24, EVID-PLUGIN-DIR-2026-07-22]
+
+inventory_gaps:
+  - Current directory jars are not fully described in docs/compatibility_matrix.md.
+  - Legacy docs still mention MCPets although it is not present in MCMMORPG/plugins on 2026-07-22.
+  - Dependency arrays remain intentionally conservative and do not imply that all soft/hard plugin links are fully enumerated.

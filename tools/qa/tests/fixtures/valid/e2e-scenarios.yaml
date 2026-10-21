@@ -1,0 +1,32 @@
+schema_version: 1
+scenarios:
+  - scenario_id: character_login_persistence
+    domain: character
+    system: login_persistence
+    class: restart_recovery
+    release_critical: true
+    contract_refs:
+      - docs/contracts/account-character-contract.yaml
+    acceptance_criteria:
+      - Character selection survives login restart.
+    required_evidence_types:
+      - server-log
+      - bot-transcript
+    environments:
+      - dev-qa
+      - staging
+    preconditions:
+      - Isolated backend has zero unrelated players.
+    steps:
+      - Create or load a character.
+      - Restart the backend.
+      - Log in again.
+    assertions:
+      - Selected character state is preserved.
+    failure_classification:
+      blocked_when:
+        - Backend unavailable.
+      fail_when:
+        - Character state is lost.
+      insufficient_evidence_when:
+        - Bot transcript is missing.

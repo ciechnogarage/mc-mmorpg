@@ -1,0 +1,283 @@
+contract:
+  id: profession-domain-handoff-v1
+  version: 1
+  contract_status: accepted
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "09"
+  contract_owner: "09"
+  purpose:
+    - close the Domain 09 to 05 crafted-output and item-identity boundary
+    - close the Domain 09 to 10 sink, fee, reward, and transaction-policy boundary
+    - close the Domain 09 to 11 PvP overlay boundary without mutating durable crafted items
+    - define durable profession progression and replay-safe craft commit semantics
+  resolves_product_question: PRODUCT-QUESTION-002
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/profession-list.yaml
+    - docs/contracts/item-instance-contract.yaml
+    - docs/contracts/stack-lot-contract.yaml
+    - docs/contracts/economy-currency-contract.yaml
+    - docs/contracts/reward-transaction-contract.yaml
+
+authority:
+  profession_catalog_and_progression: "09"
+  recipe_and_process_eligibility: "09"
+  process_result_and_quality_band: "09"
+  item_definition_and_instance_semantics: "05"
+  item_and_stack_lot_custody: "05"
+  economic_policy_and_valuation: "10"
+  transaction_coordination: "01"
+  competitive_legality_and_normalization: "11"
+  release_evidence: "17"
+  forbidden_authority_claims:
+    - Domain 09 must not mint item instances, mutate balances, or define final combat stats.
+    - Domain 05 must not award profession XP or reinterpret process success and quality.
+    - Domain 10 must not change profession eligibility, process score, or recipe completion.
+    - Domain 11 must not rewrite durable item, craft provenance, or profession progression state.
+
+identity:
+  subject:
+    key: character_id
+    contract_ref: docs/contracts/account-character-contract.yaml
+  profession:
+    key: profession_id
+    authority: docs/contracts/profession-list.yaml
+  recipe:
+    key: [recipe_id, recipe_version]
+    authority: Domain09ProfessionService
+  process:
+    key: profession_process_id
+    type: uuid
+    authority: Domain09ProfessionService
+    uniqueness_scope: one started gathering_crafting_or_salvage_process
+  craft_operation:
+    key: craft_operation_id
+    type: uuid
+    authority: Domain09ProfessionService
+    replay_fence: [character_id, profession_process_id, recipe_id, recipe_version]
+  transaction:
+    key: transaction_id
+    authority: Domain01RewardTransactionCoordinator
+
+profession_persistence:
+  writer: Domain09ProfessionService
+  durable_subject_scope: character_id
+  progression_record_shape:
+    character_id: string
+    profession_id: string
+    profession_level: non_negative_integer
+    profession_xp: non_negative_integer
+    common_profession_rank: string
+    active_organization_id: string_or_null
+    organization_ranks: {}
+    unlocked_method_ids: []
+    completed_exam_ids: []
+    revision: non_negative_integer
+  process_snapshot_shape:
+    profession_process_id: uuid
+    character_id: string
+    profession_id: string
+    recipe_id: string
+    recipe_version: integer
+    process_type: GATHER|CRAFT|SALVAGE
+    active_organization_id: string_or_null
+    selected_method_ids: []
+    progression_revision: non_negative_integer
+    input_refs: []
+    economy_policy_ref: string
+    started_at: iso8601
+    process_status: STARTED|RESOLVING|COMMIT_PENDING|COMMITTED|FAILED|ABANDONED|MANUAL_REVIEW
+  rules:
+    - Process eligibility and the active-organization snapshot are fixed at process start.
+    - Retry or reconnect reuses the same profession_process_id and snapshot.
+    - Profession XP and rank progress are awarded only after a committed process receipt.
+    - One committed craft_operation_id may advance profession progress at most once.
+    - Item, currency, and stack-lot state never lives in the profession progression record.
+
+process_result_handoff:
+  producer: Domain09ProfessionService
+  delivery_semantics: at_least_once
+  consumer_must_be_idempotent: true
+  process_result_shape:
+    craft_operation_id: uuid
+    profession_process_id: uuid
+    character_id: string
+    profession_id: string
+    recipe_id: string
+    recipe_version: integer
+    process_type: GATHER|CRAFT|SALVAGE
+    result_status: SUCCESS|FAILURE
+    quality_band: CRITICAL|POOR|STANDARD|STRONG|EXCELLENT
+    output_spec_refs: []
+    consumed_input_refs: []
+    economy_policy_ref: string
+    profession_progress_award_ref: string
+    source_revision: string
+  rules:
+    - Domain 09 owns process success, quality band, and the profession progress award reference.
+    - output_spec_refs point to Domain 05 definitions; they do not embed raw stats, lore, or runtime item identity.
+    - economy_policy_ref points to Domain 10 policy; it does not embed an authoritative price or balance mutation.
+    - Replaying a process result preserves the same craft_operation_id and source revision.
+
+itemization_handoff:
+  producer: Domain09ProfessionService
+  consumer: Domain05ItemService
+  item_contract_ref: docs/contracts/item-instance-contract.yaml
+  stack_lot_contract_ref: docs/contracts/stack-lot-contract.yaml
+  crafted_output_request_shape:
+    craft_operation_id: uuid
+    output_spec_ref: string
+    item_definition_id: string
+    requested_quantity: positive_integer
+    quality_band: CRITICAL|POOR|STANDARD|STRONG|EXCELLENT
+    allowed_variant_ref: string_or_null
+    bind_policy_ref: string
+    craft_provenance:
+      profession_id: string
+      recipe_id: string
+      recipe_version: integer
+      crafter_character_id: string
+      profession_process_id: uuid
+  domain_05_response_shape:
+    output_leg_id: string
+    validated_item_definition_id: string
+    item_instance_ids: []
+    stack_lot_ids: []
+    materialization_status: VALIDATED|REJECTED|RESERVED|COMMITTED
+    rejection_code: string_or_null
+  rules:
+    - Domain 05 validates definition existence, variant legality, bind policy, stack behavior, and instance identity.
+    - Domain 05 maps the Domain 09 quality band through a versioned item-definition policy; Domain 09 cannot set final combat stats.
+    - No item becomes player-visible before the coordinating transaction commits.
+    - Invalid output specs reject the operation before input consumption or profession progress award.
+    - Every committed durable output has item-instance or stack-lot identity required by its canonical contract.
+
+economy_handoff:
+  producer: Domain09ProfessionService
+  policy_consumer: Domain10EconomyPolicy
+  transaction_consumer: Domain01RewardTransactionCoordinator
+  currency_contract_ref: docs/contracts/economy-currency-contract.yaml
+  transaction_contract_ref: docs/contracts/reward-transaction-contract.yaml
+  transaction_type: CRAFT
+  idempotency_key_format: profession_process:{character_id}:{profession_process_id}:{recipe_id}:{recipe_version}
+  policy_request_shape:
+    craft_operation_id: uuid
+    economy_policy_ref: string
+    character_id: string
+    profession_id: string
+    recipe_id: string
+    recipe_version: integer
+    quality_band: string
+    requested_input_refs: []
+    requested_output_spec_refs: []
+  policy_response_shape:
+    policy_revision: string
+    item_consumption_legs: []
+    stack_lot_reservation_legs: []
+    operation_fuel_legs: []
+    currency_delta_legs: []
+    fee_legs: []
+    reward_legs: []
+  rules:
+    - Domain 10 owns price, currency scope, sink/source balance, fee, cap, and anti-inflation semantics.
+    - Domain 09 may select an economy_policy_ref but cannot override the resolved economic legs.
+    - Currency and itemized fuel mutations require one CRAFT transaction and durable receipts.
+    - Input reservation, output materialization, economic legs, and custody changes commit atomically or enter declared compensation/manual review.
+    - A failed, cancelled, or rolled-back transaction grants no profession progress and no player-visible output.
+    - Replaying the same craft operation returns the recorded transaction outcome and cannot consume inputs twice.
+
+commit_sequence:
+  - Domain 09 validates character, profession, recipe, method, organization, and process-result eligibility.
+  - Domain 10 resolves the versioned economic legs.
+  - Domain 05 validates output definitions and reservable input/output custody semantics.
+  - Domain 01 creates the durable CRAFT transaction before reservations or mutations.
+  - Domain 01 coordinates reservations and commits item, stack-lot, and economy effects.
+  - Domain 09 records the committed transaction receipt and awards profession progression exactly once.
+  - Domain 11 may later project competitive legality at equip, queue, or use time; it is not part of craft commit.
+
+pvp_overlay_handoff:
+  producers:
+    profession_provenance: Domain09ProfessionService
+    item_semantics: Domain05ItemService
+  consumer: Domain11CompetitiveRules
+  request_shape:
+    character_id: string
+    item_instance_id: uuid_or_null
+    item_definition_id: string
+    profession_provenance:
+      profession_id: string
+      recipe_id: string
+      recipe_version: integer
+      quality_band: string
+    item_competitive_tags: []
+    ruleset_id: string
+    ruleset_version: integer
+    competitive_context: ARENA|OPEN_WORLD_CONTESTED|GUILD_WAR|DUEL
+  response_shape:
+    decision: ALLOWED|NORMALIZED|DISALLOWED
+    normalized_projection_ref: string_or_null
+    reason_codes: []
+    ruleset_id: string
+    ruleset_version: integer
+  rules:
+    - Domain 11 owns competitive legality, normalization, queue restrictions, and anti-abuse rules.
+    - Domain 11 reads item semantics from Domain 05 and craft provenance from Domain 09.
+    - A normalization result is contextual and must not mutate durable affixes, quality, bind state, provenance, or profession progress.
+    - Profession or organization membership alone must not bypass a competitive restriction.
+    - Outside the named competitive context, the durable Domain 05 item remains unchanged.
+    - Unknown ruleset or missing required tags fails closed for ranked or guild-war contexts.
+
+failure_semantics:
+  duplicate_process_result: return_recorded_transaction_or_process_outcome
+  stale_progression_revision: reject_and_reload_before_process_start
+  unknown_profession_or_recipe: reject_without_reservation
+  invalid_output_spec: reject_without_input_consumption
+  economy_policy_unknown: reject_without_reservation_and_alert
+  reservation_conflict: retry_with_refreshed_revision_or_manual_review
+  restart_during_commit: replay_same_transaction_and_idempotency_key
+  ambiguous_partial_commit: manual_review_without_profession_progress_award
+  pvp_ruleset_unknown: fail_closed_in_ranked_and_guild_war
+  pvp_overlay_unavailable: deny_ranked_use_without_mutating_item
+
+invariants:
+  - Domain 09 is the only writer of profession progression and process results.
+  - Domain 05 is the only writer of durable item-definition, item-instance, and stack-lot semantics.
+  - Domain 10 is the only semantic authority for economic legs and valuation.
+  - Domain 11 PvP decisions are contextual projections, never durable item rewrites.
+  - One process commit cannot consume inputs, produce outputs, or award progress more than once.
+  - A runtime implementation must not claim release readiness until restart, replay, rollback, and PvP fail-closed evidence exists.
+
+validation_requirements:
+  static:
+    - every recipe references one profession_id, recipe_version, output spec, economy policy, and progress award policy
+    - every output spec resolves to a Domain 05 item definition and bind policy
+    - every PvP-eligible output exposes the Domain 05 competitive tags required by Domain 11
+  runtime:
+    - duplicate process-result replay consumes inputs and awards progress once
+    - restart during reservation or commit reaches one terminal transaction outcome
+    - invalid output definition leaves inputs, balances, outputs, and profession progress unchanged
+    - rolled-back craft returns exact reserved stack-lot quantities
+    - PvP normalization does not change the durable item outside competitive context
+    - missing PvP ruleset fails closed in ranked and guild-war contexts
+  evidence_owner: "17"
+
+release_gate:
+  contract_boundary_closed: true
+  runtime_verified: false
+  release_ready: false
+  blockers:
+    - Domain09ProfessionService_not_implemented_or_selected_as_runtime_adapter
+    - Domain05_output_materialization_handoff_not_runtime_verified
+    - Domain10_economic_policy_handoff_not_runtime_verified
+    - Domain01_CRAFT_transaction_restart_and_compensation_evidence_missing
+    - Domain11_contextual_overlay_not_runtime_verified
+    - Domain17_duplicate_rollback_and_fail_closed_evidence_missing
+
+non_goals:
+  - final recipe catalog or balance numbers
+  - implementation of a profession minigame
+  - selection of a vendor profession plugin
+  - final item stat formulas
+  - final PvP ruleset values
+  - UI layout or crafting animation

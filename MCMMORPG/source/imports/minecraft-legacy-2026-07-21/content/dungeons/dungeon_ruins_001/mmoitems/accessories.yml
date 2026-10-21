@@ -1,0 +1,32 @@
+DR001_CISTERN_RING:
+  base:
+    material: HEART_OF_THE_SEA
+    name: '&3Cistern Ring'
+    required-level: 20
+    tier: EPIC
+    mana-regeneration: 12.0
+    max-health: 6.0
+    lore:
+      - '&7Resists the oracle water curse.'
+
+DR001_CROWN_FRAGMENT_AMULET:
+  base:
+    material: ECHO_SHARD
+    name: '&5Crown Fragment Amulet'
+    required-level: 30
+    tier: EPIC
+    pve-damage: 7.0
+    cooldown-reduction: 4.0
+    lore:
+      - '&7A cracked piece of Aurelion''s crown.'
+
+DR001_VOIDWARD_SHIELD:
+  base:
+    material: SHIELD
+    name: '&5Voidward Shield'
+    required-level: 30
+    tier: EPIC
+    max-health: 8.0
+    damage-reduction: 4.0
+    lore:
+      - '&7Forged from a broken void anchor.'

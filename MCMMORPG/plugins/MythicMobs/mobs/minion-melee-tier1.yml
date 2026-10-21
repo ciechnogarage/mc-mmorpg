@@ -1,0 +1,15 @@
+# T3 technical definition. NoAI is intentionally retained until MinionCore has
+# committed PDC/index state and calls the direct MythicMobs adapter activation.
+# MinionCore canonical ID: minion.melee.tier1. MythicMobs IDs must not contain dots.
+minion_melee_tier1:
+  Type: ZOMBIE
+  Display: '&7Melee Minion'
+  Health: 20
+  Damage: 2
+  Options:
+    NoAI: true
+    PreventSunburn: true
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true

@@ -1,0 +1,58 @@
+{
+  "name": "Ashen Throne",
+  "derivative": "BASALT_DELTAS",
+  "vanillaDerivative": "BASALT_DELTAS",
+  "color": "#4a1f17",
+  "generators": [
+    {
+      "generator": "dungeon_ruins_001_ashen_floor",
+      "min": 122,
+      "max": 128
+    }
+  ],
+  "layers": [
+    {
+      "palette": [
+        { "block": "minecraft:blackstone", "weight": 4 },
+        { "block": "minecraft:basalt", "weight": 3 },
+        { "block": "minecraft:polished_basalt", "weight": 2 },
+        { "block": "minecraft:nether_bricks", "weight": 2 }
+      ],
+      "minHeight": 1,
+      "maxHeight": 1
+    },
+    {
+      "palette": [
+        { "block": "minecraft:gilded_blackstone", "weight": 1 },
+        { "block": "minecraft:magma_block", "weight": 1 },
+        { "block": "minecraft:chain", "weight": 1 }
+      ],
+      "minHeight": 2,
+      "maxHeight": 3
+    }
+  ],
+  "decorators": [
+    {
+      "chance": 0.08,
+      "palette": [
+        { "block": "minecraft:lava" },
+        { "block": "minecraft:fire" }
+      ]
+    }
+  ],
+  "notes": {
+    "mood": "Charcoal throne hall with ember orange, ancient gold, blood red, and lava lighting.",
+    "structures": [
+      "ashen_throne_entrance",
+      "burned_column_hall",
+      "ember_trial_ring",
+      "fallen_king_arena",
+      "reward_vault_end"
+    ],
+    "mobSpawnIntent": [
+      "dungeon_ruins_001_ashen_guard",
+      "dungeon_ruins_001_ember_wraith",
+      "dungeon_ruins_001_thronebound_knight"
+    ]
+  }
+}

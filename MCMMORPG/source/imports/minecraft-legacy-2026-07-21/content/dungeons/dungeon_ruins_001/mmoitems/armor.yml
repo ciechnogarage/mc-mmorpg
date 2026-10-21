@@ -1,0 +1,35 @@
+DR001_RUINED_CROWN_HELMET:
+  base:
+    material: NETHERITE_HELMET
+    name: '&6Ruined Crown Helmet'
+    required-level: 30
+    tier: EPIC
+    max-health: 8.0
+    armor: 4.0
+
+DR001_RUINED_CROWN_CHESTPLATE:
+  base:
+    material: NETHERITE_CHESTPLATE
+    name: '&6Ruined Crown Chestplate'
+    required-level: 30
+    tier: EPIC
+    armor: 9.0
+    damage-reduction: 4.0
+
+DR001_RUINED_CROWN_LEGGINGS:
+  base:
+    material: NETHERITE_LEGGINGS
+    name: '&6Ruined Crown Leggings'
+    required-level: 30
+    tier: EPIC
+    movement-speed: 0.02
+    armor: 7.0
+
+DR001_RUINED_CROWN_BOOTS:
+  base:
+    material: NETHERITE_BOOTS
+    name: '&6Ruined Crown Boots'
+    required-level: 30
+    tier: EPIC
+    armor: 4.0
+    knockback-resistance: 0.05

@@ -1,0 +1,11 @@
+{
+  "name": "@mmorpg-bots/bench",
+  "version": "0.1.0",
+  "main": "bench.js",
+  "dependencies": {
+    "@mmorpg-bots/bot-core": "*",
+    "@mmorpg-bots/safe-protocol": "*",
+    "@mmorpg-bots/mmo-bridge": "*",
+    "@mmorpg-bots/qa": "*"
+  }
+}

@@ -1,0 +1,457 @@
+{
+  "a53ee668-ffe3-48ad-8c32-38688b3679f4": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2e1e3127-83a3-2d1f-1a24-5259e902b101",
+    "cloned_at": "2026-07-09T08:30:28.103Z"
+  },
+  "0fc512e4-33d0-4f33-b829-382e1824ff53": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "65a09e37-1297-50b2-0c1f-c5378ce4d5e4",
+    "cloned_at": "2026-07-09T08:30:28.103Z"
+  },
+  "1379cb60-8f2c-4646-9af2-807e034a2aa6": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2159ba10-9ad7-23ac-b1f8-778f8ca79c92",
+    "cloned_at": "2026-07-09T08:30:28.103Z"
+  },
+  "5728a5da-7f5d-4e0e-bbb5-2fa33a24f6d1": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "f3ae63b6-a65e-f60a-4dfd-73ef0b88cbcc",
+    "cloned_at": "2026-07-09T08:30:28.103Z"
+  },
+  "3826babe-b9b2-41b4-b911-476e9ab7eb5b": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "78d8893d-7e2b-f47b-7b25-4da162228e2b",
+    "cloned_at": "2026-07-09T08:30:28.103Z"
+  },
+  "221956e9-09d9-45d8-ac7e-de8d9498a1a1": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "c75fe1fe-1b8f-e61b-5461-ca99ea0f9706",
+    "cloned_at": "2026-07-09T08:30:28.103Z"
+  },
+  "03a72106-b9fe-4e8a-9afb-271f6bc6cbb7": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2e1e3127-83a3-2d1f-1a24-5259e902b101",
+    "cloned_at": "2026-07-09T08:31:02.660Z"
+  },
+  "39b3eb69-a5b2-448e-b120-873132a089a0": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "65a09e37-1297-50b2-0c1f-c5378ce4d5e4",
+    "cloned_at": "2026-07-09T08:31:02.660Z"
+  },
+  "94b0c020-a538-44c5-9710-ad233abe711a": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2159ba10-9ad7-23ac-b1f8-778f8ca79c92",
+    "cloned_at": "2026-07-09T08:31:02.660Z"
+  },
+  "4a19eb5f-6365-4cf6-ac9a-e80ac0fbd4e7": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "f3ae63b6-a65e-f60a-4dfd-73ef0b88cbcc",
+    "cloned_at": "2026-07-09T08:31:02.660Z"
+  },
+  "d8796e6e-2f84-420b-b3d8-8e97783fe909": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "78d8893d-7e2b-f47b-7b25-4da162228e2b",
+    "cloned_at": "2026-07-09T08:31:02.660Z"
+  },
+  "07c97b05-95fd-443e-8344-1859f2004c6a": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "c75fe1fe-1b8f-e61b-5461-ca99ea0f9706",
+    "cloned_at": "2026-07-09T08:31:02.660Z"
+  },
+  "0027b42f-790c-422b-904e-dd500706d281": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "96bf822e-5f21-105c-3904-1d2341b891d1",
+    "cloned_at": "2026-07-09T08:31:02.661Z"
+  },
+  "a1f83572-d425-47f0-9748-eecf4d767c9f": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "b4b55ffd-f2b6-b758-37a9-fbe4426915e6",
+    "cloned_at": "2026-07-09T08:31:02.661Z"
+  },
+  "ab6f402b-0f63-4781-83de-1ed2fdc15ed0": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "d586c18b-178c-e56b-8e87-5090fd933316",
+    "cloned_at": "2026-07-09T08:31:02.661Z"
+  },
+  "2af34acd-8682-4ac8-9797-c9de201ca058": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3229a3c2-9e3e-4f66-4cd1-4a2e3f5304e9",
+    "cloned_at": "2026-07-09T08:31:02.661Z"
+  },
+  "a088307d-0afa-43a5-8321-6e13871e0312": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "a6f7d4ad-cbb7-2ae8-a912-bdf1bf82c419",
+    "cloned_at": "2026-07-09T08:31:02.661Z"
+  },
+  "16734d4d-e3a0-4221-9448-ed1ca5832bdb": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "6a2e977c-0e93-f20a-d57d-776dc81322ed",
+    "cloned_at": "2026-07-09T08:31:02.661Z"
+  },
+  "ffcf670d-9e16-4340-ab3e-a240b9423f51": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2bf52812-7bfb-88cf-22b8-a6e43706bf6e",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "53e49f3a-7fb6-4bb7-be07-cf3c02976b2c": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "24ff7fab-4cbd-5990-f04b-655d046d8d11",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "dbb6d5e9-9217-48aa-bc58-65d126198067": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "28c6ea28-6e42-e8ca-260d-4ea5d746b5cc",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "1916cf5c-4381-4d5b-bf81-bd0931661d84": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "d0600c2f-8a32-76c9-d27a-8130e384470d",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "75a5e0f0-cffe-4ab7-aa83-908b495ade43": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3b044f84-97c0-06e8-ca5d-c0653f9b9119",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "08969701-b7c5-4c98-a2e5-4322cbcd6754": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "c4a641a0-8a43-d466-2e3b-28c4a1c1f5c7",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "38033b91-be4f-48de-8887-8f6abac24376": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "e185d431-606e-064d-7a0e-8512778a7c1e",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "841278e8-4f65-4f08-a091-033ab69033c6": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3336e948-e45c-6857-774b-9315f740af42",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "8c068455-613c-43c7-b8ad-228d8c4182e4": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "d00d6165-237c-e2b7-525a-72c165db95ea",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "fabe9899-5778-44b4-ab91-d4e17551712e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "948b630a-0e11-271d-4304-f62a9ce7c92b",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "8e90dce4-784e-42e8-a4fe-33087092252f": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "4a352778-d3f2-3766-b752-e0ba3fb02309",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "db780c80-8da0-45ab-b1ab-9ac386518008": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "62a4833d-76a1-c592-63bf-ee06e2f603a3",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "1bbe07b4-1a85-468b-af00-e84a98c8c204": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "6535bc05-5da7-21ae-a500-c52ef9989981",
+    "cloned_at": "2026-07-09T08:31:02.666Z"
+  },
+  "edb64b01-3016-41ff-8588-a29591ac2b77": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "89f24ac8-26cd-b175-eb62-9d2ae4bbafae",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "5eb6b0ac-a70f-4bae-88e2-83ac3bce944d": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2cd99ae9-823e-6bc3-7e9f-37e2c472c03a",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "077a2258-47db-4ebb-b054-52c744c421cd": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3413e1c0-cbc4-25bb-d2b2-33ff4027d010",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "75e71066-cd48-4d73-8c37-5e6bf45df8a6": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "5d72b2bd-7467-c395-91dc-fef46929a71c",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "540912c5-1db8-4f29-9208-43bfc70be896": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "cc7c6531-805e-a18a-2c5c-a873b5de8fd1",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "fc7cacd9-1fac-4b91-8069-a101eda25eb3": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "a5307fc0-5ea4-685b-eb67-6381e0b183c6",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "738c3af9-8a04-4df8-8fb0-1a7df71b53b9": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "9ce12cc4-2c2a-6203-1328-6a54cc19c767",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "493123b6-8d4b-4ed5-9633-df53878f50ef": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "e760cefa-6552-d2df-6ab5-a699445b29a7",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "df0a35b6-1855-4fbc-b0b4-3837b3bb654e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "4a8d426c-7bb6-f36f-dede-1077dea1eca6",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "9b4b2747-ecd5-48f8-8f7e-396dc4d24655": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "9e8fc895-8323-db42-ddd7-1cbe86d3b9c3",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "11284d1c-42d3-4be6-8254-f0a6083fdd0b": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "8a854334-15cc-246b-8bbf-39084d15227d",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "000848ac-6845-4aae-af03-cd77067444a8": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "375ffa14-d0d9-7f59-098c-4e268a67aedd",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "0b2f1f0e-28d4-473d-8eeb-0594bd8ab35e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3e714879-91e4-bede-69aa-69da8b60a45a",
+    "cloned_at": "2026-07-09T08:31:02.668Z"
+  },
+  "94ffd1ff-0f01-485c-8506-95a1902210c7": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "291844e2-3f69-c92d-d17e-1eb53449fe78",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "7dec5988-874c-4a1f-abf1-176625991ab5": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "0826f6f2-08af-2d28-8e28-6cd528a666ad",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "7c846d8c-3fed-46d3-b279-7a2364ba85d2": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "577ddfec-8423-3a8a-503a-5c44eb0418c5",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "19b89ce6-9874-4feb-a2ea-ea90465e370a": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "fc519c39-e9a9-e76d-a08c-d31ae1d9a17b",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "bef5e45d-9962-41eb-ada3-71ea90f0a4ac": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "38c38c63-8333-673a-71d6-4bc0cd5217f4",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "cd8356bb-0678-4b65-b846-d903ad15d374": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3f87e016-c7bd-e171-3b59-d22d9832f2e6",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "dc1d02cc-dfcb-4568-a44f-cf91c3381a9f": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "147a5b18-eae6-d73d-782f-5d0cd32b9b65",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "afa1758e-9149-47c1-b65b-19bd2165b037": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "f03e20eb-e9d2-f757-ba5d-37850449da86",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "1f6a867d-6246-4a55-87b5-ac6d93c44d01": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "f8902cfc-559b-da4f-a161-62a95ca586e8",
+    "cloned_at": "2026-07-09T08:31:02.669Z"
+  },
+  "f2fb03c3-a8a9-476c-ba5e-4483a3e45b09": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2e1e3127-83a3-2d1f-1a24-5259e902b101",
+    "cloned_at": "2026-07-09T08:46:07.015Z"
+  },
+  "dce4c8e6-51d7-4f86-af9c-7f6a4836ac1e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "65a09e37-1297-50b2-0c1f-c5378ce4d5e4",
+    "cloned_at": "2026-07-09T08:46:07.015Z"
+  },
+  "970002cc-37d2-4817-81a5-00e20ac90c18": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2159ba10-9ad7-23ac-b1f8-778f8ca79c92",
+    "cloned_at": "2026-07-09T08:46:07.015Z"
+  },
+  "bb3225e3-f225-459a-a43c-3a1fb63e5bb4": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "f3ae63b6-a65e-f60a-4dfd-73ef0b88cbcc",
+    "cloned_at": "2026-07-09T08:46:07.015Z"
+  },
+  "9c17984e-9e42-4678-9b54-40451d354535": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "78d8893d-7e2b-f47b-7b25-4da162228e2b",
+    "cloned_at": "2026-07-09T08:46:07.015Z"
+  },
+  "35a0e9dc-b781-47d7-a05c-02be3a18732e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "c75fe1fe-1b8f-e61b-5461-ca99ea0f9706",
+    "cloned_at": "2026-07-09T08:46:07.015Z"
+  },
+  "59c115f7-5848-41d5-948c-ca9e8a36dbf2": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "96bf822e-5f21-105c-3904-1d2341b891d1",
+    "cloned_at": "2026-07-09T08:46:07.017Z"
+  },
+  "613da34d-c458-41a1-8a44-0b6eb5ccbe1c": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "b4b55ffd-f2b6-b758-37a9-fbe4426915e6",
+    "cloned_at": "2026-07-09T08:46:07.017Z"
+  },
+  "dce58d05-69a0-4c92-acc2-b66d57da716b": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "d586c18b-178c-e56b-8e87-5090fd933316",
+    "cloned_at": "2026-07-09T08:46:07.017Z"
+  },
+  "6f22c300-0535-4dec-8453-1bb20a0a44b5": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3229a3c2-9e3e-4f66-4cd1-4a2e3f5304e9",
+    "cloned_at": "2026-07-09T08:46:07.017Z"
+  },
+  "36bdb877-5282-48f3-8b7b-5b9d1b10aca8": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "a6f7d4ad-cbb7-2ae8-a912-bdf1bf82c419",
+    "cloned_at": "2026-07-09T08:46:07.017Z"
+  },
+  "009bd19c-cbe9-4a19-ac96-f36787b991ee": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "6a2e977c-0e93-f20a-d57d-776dc81322ed",
+    "cloned_at": "2026-07-09T08:46:07.017Z"
+  },
+  "f983fd2a-4074-4a6b-8bce-7a581c65e0a1": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2bf52812-7bfb-88cf-22b8-a6e43706bf6e",
+    "cloned_at": "2026-07-09T08:46:07.018Z"
+  },
+  "b0a2132b-96e9-4900-a99a-4e99a0659236": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "24ff7fab-4cbd-5990-f04b-655d046d8d11",
+    "cloned_at": "2026-07-09T08:46:07.018Z"
+  },
+  "f303ba9b-acde-4222-80ad-d432148c4c4b": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "28c6ea28-6e42-e8ca-260d-4ea5d746b5cc",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "7405e156-28ef-46c8-9831-acfaff5faca9": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "d0600c2f-8a32-76c9-d27a-8130e384470d",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "3592e410-6c96-4cdd-8c48-9f2394ffed68": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3b044f84-97c0-06e8-ca5d-c0653f9b9119",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "0c124efc-8fe5-4808-94e5-382cf17066db": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "c4a641a0-8a43-d466-2e3b-28c4a1c1f5c7",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "205f76b0-78ef-4e33-ace9-b4585a6a8b78": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "e185d431-606e-064d-7a0e-8512778a7c1e",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "dfa3aeb4-dd98-4381-bdb3-035ffc70b450": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3336e948-e45c-6857-774b-9315f740af42",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "623cc0b7-b642-4fa0-b130-63ecdc63865d": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "d00d6165-237c-e2b7-525a-72c165db95ea",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "717d22be-96d8-4102-8138-0f781b5a49f3": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "948b630a-0e11-271d-4304-f62a9ce7c92b",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "a3d2511b-6737-4ea0-8d9e-6293f15eee98": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "4a352778-d3f2-3766-b752-e0ba3fb02309",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "1d4d542c-98d6-4813-993c-c327ea6ab63c": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "62a4833d-76a1-c592-63bf-ee06e2f603a3",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "259025fd-3224-402e-a837-e90dcb2d0e6e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "6535bc05-5da7-21ae-a500-c52ef9989981",
+    "cloned_at": "2026-07-09T08:46:07.019Z"
+  },
+  "9dca6827-bfdd-4ff6-bb59-09a044f3a88a": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "89f24ac8-26cd-b175-eb62-9d2ae4bbafae",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "e538cad9-c241-4412-b9ee-c726aff331d8": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "2cd99ae9-823e-6bc3-7e9f-37e2c472c03a",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "6d48c36b-115a-47d9-8e97-ac601e090d76": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3413e1c0-cbc4-25bb-d2b2-33ff4027d010",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "bf6e2dbd-f906-41d5-af34-a16a55f8986a": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "5d72b2bd-7467-c395-91dc-fef46929a71c",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "810a2ddb-b53e-404b-ac1e-7ddb3f76b08e": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "cc7c6531-805e-a18a-2c5c-a873b5de8fd1",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "2b489fe5-a483-4a68-b4bb-46bd5dbfe802": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "a5307fc0-5ea4-685b-eb67-6381e0b183c6",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "45de6377-c3b1-4909-8308-7718d1c398ae": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "9ce12cc4-2c2a-6203-1328-6a54cc19c767",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "9e94f3ca-984f-4866-88e3-44769b01a939": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "e760cefa-6552-d2df-6ab5-a699445b29a7",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "36a93823-a288-4de0-85d9-6ae53b36f233": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "4a8d426c-7bb6-f36f-dede-1077dea1eca6",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "bf4d4140-9467-41e2-aa86-093513bb35b2": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "9e8fc895-8323-db42-ddd7-1cbe86d3b9c3",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "7b359ca1-8185-48b9-89fe-548decd1fad6": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "8a854334-15cc-246b-8bbf-39084d15227d",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "ff79fddf-efae-475a-a2cb-0a9133624b1c": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "375ffa14-d0d9-7f59-098c-4e268a67aedd",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  },
+  "f16f6a1a-4cdc-4107-81e2-c2a9b6eef9b3": {
+    "source_ref": "/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)/ModelEngine/blueprints/littleroom/direwolf/lrd_direwolf.bbmodel",
+    "source_uuid": "3e714879-91e4-bede-69aa-69da8b60a45a",
+    "cloned_at": "2026-07-09T08:46:07.021Z"
+  }
+}

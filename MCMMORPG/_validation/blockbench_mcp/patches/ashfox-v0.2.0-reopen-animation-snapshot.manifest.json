@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "patch_id": "ashfox-v0.2.0-reopen-animation-snapshot",
+  "description": "Read serialized Blockbench animation data_points objects and map animator UUID keys back to bone names after reopening a native .bbmodel.",
+  "scope": "local conformance follow-up required by export-reopen structural validation",
+  "upstream": {
+    "repository": "https://github.com/sigee-min/ashfox.git",
+    "version": "0.2.0",
+    "tag": "v0.2.0",
+    "commit": "232a712e8879d9ca3da3151d6491704a4e06ebb8"
+  },
+  "patch": {
+    "path": "MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-reopen-animation-snapshot.patch",
+    "sha256": "de2bb8bcc69dd3fdc3d40e3c032c6b9ba6de098c53be51ff00312834d64c20c9",
+    "strip": 1,
+    "affected_files": [
+      "packages/blockbench-runtime/src/adapters/blockbench/snapshot/animations.ts",
+      "packages/blockbench-runtime/tests/blockbenchSnapshot.test.ts"
+    ]
+  },
+  "artifact_policy": "This patch is applied after ashfox-v0.2.0-list-native-codecs-this and is covered by the combined local bundle hash in ashfox.lock.json."
+}

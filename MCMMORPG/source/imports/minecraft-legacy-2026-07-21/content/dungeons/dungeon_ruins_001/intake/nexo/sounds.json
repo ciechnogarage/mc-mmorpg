@@ -1,0 +1,26 @@
+{
+  "dr001.roots_whisper": {
+    "replace": true,
+    "sounds": [
+      "nexo:dr001/roots_whisper"
+    ]
+  },
+  "dr001.cistern_geyser": {
+    "replace": true,
+    "sounds": [
+      "nexo:dr001/cistern_geyser"
+    ]
+  },
+  "dr001.void_crown_pulse": {
+    "replace": true,
+    "sounds": [
+      "nexo:dr001/void_crown_pulse"
+    ]
+  },
+  "dr001.aurelion_enrage": {
+    "replace": true,
+    "sounds": [
+      "nexo:dr001/aurelion_enrage"
+    ]
+  }
+}

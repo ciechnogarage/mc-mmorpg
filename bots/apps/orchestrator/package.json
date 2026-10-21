@@ -1,0 +1,5 @@
+{
+  "name": "@mmorpg-bots/orchestrator",
+  "version": "0.1.0",
+  "main": "orchestrator.js"
+}

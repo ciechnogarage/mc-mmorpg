@@ -1,0 +1,216 @@
+meta:
+  document: domain-ownership
+  domain: "00"
+status: active
+purpose: Ownership registry for Domain 00 product domains, systems, data, and contracts.
+rules:
+  - Domain ownership records product-semantic authority, not plugin placement.
+  - Open questions stay attached where ownership depends on unresolved contracts or persistence boundaries.
+ownership:
+  - domain_id: "00"
+    domain_name: product_governance
+    domain_owner: "00"
+    owner_status: approved
+    contract_owner: "00"
+    release_owner: "00"
+    allowed_consumers: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]
+    open_question_ids: []
+  - domain_id: "01"
+    domain_name: data_contracts_and_integration
+    domain_owner: "01"
+    owner_status: proposed
+    contract_owner: "01"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]
+    open_question_ids: []
+  - domain_id: "02"
+    domain_name: account_character_and_persistence
+    domain_owner: "02"
+    owner_status: proposed
+    contract_owner: "02"
+    release_owner: "17"
+    allowed_consumers: ["00", "01", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "17", "18", "19"]
+    open_question_ids: []
+  - domain_id: "03"
+    domain_name: combat_core
+    domain_owner: "03"
+    owner_status: proposed
+    contract_owner: "03"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "04", "05", "07", "11", "14", "17", "18"]
+    open_question_ids: []
+  - domain_id: "04"
+    domain_name: classes_and_builds
+    domain_owner: "04"
+    owner_status: proposed
+    contract_owner: "04"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "03", "05", "07", "11", "14", "17"]
+    open_question_ids: []
+  - domain_id: "05"
+    domain_name: itemization
+    domain_owner: "05"
+    owner_status: proposed
+    contract_owner: "05"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "03", "04", "06", "07", "09", "10", "11", "12", "14", "15", "18", "19"]
+    open_question_ids: []
+    notes: >-
+      Domain 05 owns item stats, rarity, economy-facing item semantics, and
+      durable item identity. Domain 15 may consume those constraints in an
+      asset brief but does not redefine them.
+  - domain_id: "06"
+    domain_name: world_and_progression
+    domain_owner: "06"
+    owner_status: proposed
+    contract_owner: "06"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "18", "19"]
+    open_question_ids: []
+    notes: >-
+      Domain 06 owns region, world context, availability, and progression
+      constraints supplied to visual briefs; it does not own geometry, rig,
+      textures, or visual authoring sources.
+  - domain_id: "07"
+    domain_name: pve_and_endgame
+    domain_owner: "07"
+    owner_status: proposed
+    contract_owner: "07"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "03", "04", "05", "06", "08", "10", "12", "14", "15", "18", "19"]
+    open_question_ids: []
+    notes: >-
+      Domain 07 owns combat role, encounter behavior, telegraph intent, and
+      skill timing. Domain 15 owns their visual realization without changing
+      gameplay semantics.
+  - domain_id: "08"
+    domain_name: quests_and_narrative
+    domain_owner: "08"
+    owner_status: approved
+    contract_owner: "08"
+    release_owner: "17"
+    allowed_consumers: ["00", "06", "10", "14", "17", "18"]
+    open_question_ids: []
+  - domain_id: "09"
+    domain_name: professions_and_crafting
+    domain_owner: "09"
+    owner_status: approved
+    contract_owner: "09"
+    release_owner: "17"
+    allowed_consumers: ["00", "05", "10", "11", "12", "14", "18"]
+    open_question_ids: []
+  - domain_id: "10"
+    domain_name: economy
+    domain_owner: "10"
+    owner_status: proposed
+    contract_owner: "10"
+    release_owner: "17"
+    allowed_consumers: ["00", "04", "05", "06", "07", "08", "09", "11", "12", "13", "14", "18", "19"]
+    open_question_ids:
+      - PRODUCT-QUESTION-003
+  - domain_id: "11"
+    domain_name: pvp_and_seasons
+    domain_owner: "11"
+    owner_status: approved
+    contract_owner: "11"
+    release_owner: "17"
+    allowed_consumers: ["00", "01", "02", "03", "04", "05", "06", "07", "10", "13", "14", "17", "19"]
+    open_question_ids:
+      - PRODUCT-QUESTION-003
+      - PRODUCT-QUESTION-004
+    notes: >-
+      Domain 11 owns competitive-state, eligibility, reward-envelope, and
+      reset-matrix semantics only. It does not own season lifecycle policy or
+      title/prestige/cosmetic persistence-policy framing.
+  - domain_id: "12"
+    domain_name: companion_systems
+    domain_owner: "12"
+    owner_status: proposed_with_blocked_runtime
+    contract_owner: "12"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "03", "04", "05", "06", "07", "09", "10", "11", "14", "15", "18"]
+    open_question_ids:
+      - PRODUCT-QUESTION-005
+    notes: >-
+      Domain 12 owns companion behavior, persistence, eligibility, and pet or
+      mount rules. Domain 15 owns the visual source and delivery profile; an
+      asset contract cannot unblock Domain 12 runtime claims.
+  - domain_id: "13"
+    domain_name: liveops_monetization_and_season_programs
+    domain_owner: "13"
+    owner_status: approved
+    contract_owner: "13"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "10", "11", "14", "17", "19"]
+    open_question_ids:
+      - PRODUCT-QUESTION-004
+    notes: >-
+      Domain 13 owns season lifecycle policy, season-program packaging policy,
+      and title/prestige/cosmetic persistence-policy framing. It consumes
+      competitive-season outputs from Domain 11 but does not redefine ranking,
+      eligibility, or reward-envelope semantics.
+  - domain_id: "14"
+    domain_name: ux_and_onboarding
+    domain_owner: "14"
+    owner_status: proposed
+    contract_owner: "14"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "04", "08", "11", "13", "15", "19"]
+    open_question_ids: []
+    notes: >-
+      Domain 14 owns UI, icon, menu, onboarding, and presentation constraints.
+      It may request visual assets but does not own 3D source authoring.
+  - domain_id: "15"
+    domain_name: asset_pipeline
+    domain_owner: "15"
+    owner_status: proposed
+    contract_owner: "15"
+    release_owner: "17"
+    allowed_consumers: ["00", "05", "06", "07", "08", "09", "12", "14", "17", "18"]
+    open_question_ids: []
+    notes: >-
+      Domain 15 owns asset identifiers, AssetSpec normalization, asset/style/rig
+      and delivery profiles, editable visual sources, art direction, and the
+      integration contract. It does not own gameplay semantics, production-job
+      orchestration, or release approval.
+  - domain_id: "16"
+    domain_name: platform_security
+    domain_owner: "16"
+    owner_status: proposed
+    contract_owner: "16"
+    release_owner: "17"
+    allowed_consumers: ["00", "01", "02", "17"]
+    open_question_ids: []
+  - domain_id: "17"
+    domain_name: qa_and_release_gates
+    domain_owner: "17"
+    owner_status: proposed
+    contract_owner: "17"
+    release_owner: "17"
+    allowed_consumers: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "18", "19"]
+    open_question_ids: []
+    notes: >-
+      Domain 17 owns evidence formats, hash consistency, gate verdict rules,
+      rollback evidence, and release approval. Static integration, art, and
+      runtime verdicts remain separate and non-transitive.
+  - domain_id: "18"
+    domain_name: content_production_pipeline
+    domain_owner: "18"
+    owner_status: proposed
+    contract_owner: "18"
+    release_owner: "17"
+    allowed_consumers: ["00", "05", "06", "07", "08", "09", "14", "15", "17", "19"]
+    open_question_ids: []
+    notes: >-
+      Domain 18 owns production queues, job state, templates, retries, and
+      orchestration. It consumes Domain 15 asset contracts and emits evidence
+      for Domain 17 without redefining visual semantics or approving release.
+  - domain_id: "19"
+    domain_name: social_and_guilds
+    domain_owner: "19"
+    owner_status: approved
+    contract_owner: "19"
+    release_owner: "17"
+    allowed_consumers: ["00", "02", "10", "11", "13", "14", "17", "18"]
+    open_question_ids:
+      - PRODUCT-QUESTION-003

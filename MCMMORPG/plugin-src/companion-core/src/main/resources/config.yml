@@ -1,0 +1,5 @@
+cooldowns:
+  summon-seconds: 3
+  death-seconds: 30
+messages:
+  prefix: '&6Kompani &8» &f'

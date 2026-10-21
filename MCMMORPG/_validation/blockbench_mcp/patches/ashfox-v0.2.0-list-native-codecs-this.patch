@@ -1,0 +1,80 @@
+diff --git a/packages/blockbench-runtime/src/usecases/ExportService.ts b/packages/blockbench-runtime/src/usecases/ExportService.ts
+index c13ea87..7d3831b 100644
+--- a/packages/blockbench-runtime/src/usecases/ExportService.ts
++++ b/packages/blockbench-runtime/src/usecases/ExportService.ts
+@@ -225,7 +225,7 @@ export class ExportService {
+   private listNativeCodecs() {
+     const list = this.exporter.listNativeCodecs;
+     if (typeof list !== 'function') return [];
+-    return list();
++    return list.call(this.exporter);
+   }
+ 
+   private listNativeCodecsSafe() {
+@@ -351,4 +351,3 @@ const normalizeCodecToken = (value: string): string =>
+ const isNativeCompileAdapterMismatchMessage = (message: string): boolean =>
+   String(message).includes("reading 'compileAdapter'") || String(message).includes('compile_adapter');
+ 
+-
+diff --git a/packages/blockbench-runtime/tests/exportService.test.ts b/packages/blockbench-runtime/tests/exportService.test.ts
+index fd0222c..d451afd 100644
+--- a/packages/blockbench-runtime/tests/exportService.test.ts
++++ b/packages/blockbench-runtime/tests/exportService.test.ts
+@@ -57,31 +57,35 @@ const createHarness = (options: HarnessOptions = {}) => {
+       return null;
+     }
+   };
++  const exporter = {
++    nativeCodecs: options.nativeCodecs ?? [],
++    exportNative: () => {
++      calls.native += 1;
++      if (options.nativeThrow !== undefined) {
++        throw options.nativeThrow;
++      }
++      return options.nativeError ?? null;
++    },
++    exportGltf: () => {
++      calls.gltf += 1;
++      return options.gltfError ?? null;
++    },
++    ...(options.disableCodecExport
++      ? {}
++      : {
++          exportCodec: () => {
++            calls.codec += 1;
++            return options.codecError ?? null;
++          }
++        }),
++    listNativeCodecs() {
++      return this.nativeCodecs;
++    }
++  };
+   const service = new ExportService({
+     capabilities: options.capabilities ?? baseCapabilities(),
+     editor,
+-    exporter: {
+-      exportNative: () => {
+-        calls.native += 1;
+-        if (options.nativeThrow !== undefined) {
+-          throw options.nativeThrow;
+-        }
+-        return options.nativeError ?? null;
+-      },
+-      exportGltf: () => {
+-        calls.gltf += 1;
+-        return options.gltfError ?? null;
+-      },
+-      ...(options.disableCodecExport
+-        ? {}
+-        : {
+-            exportCodec: () => {
+-              calls.codec += 1;
+-              return options.codecError ?? null;
+-            }
+-          }),
+-      listNativeCodecs: () => options.nativeCodecs ?? []
+-    },
++    exporter,
+     formats:
+       options.listFormats === undefined
+         ? createFormatPortStub('geckolib_model', 'GeckoLib')

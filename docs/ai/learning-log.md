@@ -46,7 +46,5 @@ Review date:
 
 ## Current Learnings
 
-- The workspace baseline lives in `AGENTS.md` files at the workspace and project
-  levels.
-- Project folders may have their own `AGENTS.md`; those rules are additive and
-  should be read before project-specific edits.
+- The workspace baseline is maintained in focused project documentation,
+  configuration, and executable validation checks.

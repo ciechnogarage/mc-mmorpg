@@ -1,0 +1,83 @@
+DR001_GatewardenVaros:
+  Type: IRON_GOLEM
+  Display: '&6Varos, Strażnik Złamanej Bramy'
+  Health: 1850
+  Damage: 18
+  Faction: dr001_ruins
+  BossBar:
+    Enabled: true
+    Title: '&6Varos, Strażnik Złamanej Bramy'
+    Range: 45
+    Color: YELLOW
+    Style: SEGMENTED_10
+  Skills:
+    - model{mid=dr001_gatewarden_varos;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_VarosIntro} @self ~onSpawn
+    - skill{s=DR001_GateSlam} @target ~onTimer:160
+    - skill{s=DR001_VarosPhaseTwoRuntimeVerify} @self ~onDamaged
+    - skill{s=DR001_VarosPhaseThreeRuntimeVerify} @self ~onDamaged
+    - skill{s=DR001_VarosStandaloneDeath} @self ~onDeath
+  Drops:
+    - DR001_VarosDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.20
+    KnockbackResistance: 0.85
+    MaxCombatDistance: 45
+
+DR001_CisternOracleNhalruun:
+  Type: DROWNED
+  Display: '&3Nhal''Ruun, Wyrocznia Cystern'
+  Health: 3200
+  Damage: 22
+  Faction: dr001_ruins
+  BossBar:
+    Enabled: true
+    Title: '&3Nhal''Ruun, Wyrocznia Cystern'
+    Range: 52
+    Color: BLUE
+    Style: SEGMENTED_12
+  Skills:
+    - model{mid=dr001_nhalruun;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_NhalruunIntro} @self ~onSpawn
+    - skill{s=DR001_CursedGeyser} @target ~onTimer:130
+    - skill{s=DR001_NhalruunFloodPhaseRuntimeVerify} @self ~onDamaged
+    - skill{s=DR001_NhalruunMirrorRunesRuntimeVerify} @self ~onDamaged
+    - skill{s=DR001_TidalDrain} @self ~onTimer:300
+    - skill{s=DR001_NhalruunStandaloneDeath} @self ~onDeath
+  Drops:
+    - DR001_NhalruunDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.17
+    KnockbackResistance: 0.80
+    MaxCombatDistance: 52
+
+DR001_RuinedKingAurelion:
+  Type: WITHER_SKELETON
+  Display: '&6Aurelion, Król Ruin'
+  Health: 6200
+  Damage: 30
+  Faction: dr001_ruins
+  BossBar:
+    Enabled: true
+    Title: '&6Aurelion, Król Ruin'
+    Range: 68
+    Color: PURPLE
+    Style: SEGMENTED_12
+  Skills:
+    - model{mid=dr001_ruined_king;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_AurelionIntro} @self ~onSpawn
+    - skill{s=DR001_VoidImmunityCheck} @self ~onSpawn
+    - skill{s=DR001_CrownShockwave} @target ~onTimer:170
+    - skill{s=DR001_AurelionShadePhaseRuntimeVerify} @self ~onDamaged
+    - skill{s=DR001_AurelionCollapsePhaseRuntimeVerify} @self ~onDamaged
+    - skill{s=DR001_AurelionEnrage} @self ~onTimer:2400
+    - skill{s=DR001_AurelionStandaloneDeath} @self ~onDeath
+  Drops:
+    - DR001_AurelionDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.19
+    KnockbackResistance: 0.92
+    MaxCombatDistance: 68

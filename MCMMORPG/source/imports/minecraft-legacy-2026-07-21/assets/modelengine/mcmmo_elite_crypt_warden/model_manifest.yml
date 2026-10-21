@@ -1,0 +1,20 @@
+model_id: mcmmo_elite_crypt_warden
+display_name: Elite Crypt Warden
+asset_type: dungeon_boss
+status: prepared_for_modelengine_import
+source_bbmodel: assets/blockbench/source/mcmmo_elite_crypt_warden/mcmmo_elite_crypt_warden.bbmodel
+source_texture: assets/blockbench/source/mcmmo_elite_crypt_warden/textures/mcmmo_elite_crypt_warden.png
+blockbench_export_dir: assets/blockbench/export/mcmmo_elite_crypt_warden
+modelengine_packet_dir: assets/modelengine/mcmmo_elite_crypt_warden
+mythicmobs_mob_file: assets/mythicmobs/mcmmo_elite_crypt_warden/mobs/mcmmo_elite_crypt_warden.yml
+mythicmobs_skill_file: assets/mythicmobs/mcmmo_elite_crypt_warden/skills/mcmmo_elite_crypt_warden_skills.yml
+nexo_packet_dir: assets/nexo/mcmmo_elite_crypt_warden
+expected_runtime:
+  model_mechanic: "model{mid=mcmmo_elite_crypt_warden;usestatemachine=true;save=true;damagetint=true;showshadow=true}"
+  animation_mechanic: "state{mid=mcmmo_elite_crypt_warden;s=<animation>;li=<ticks>;lo=<ticks>;force=true;loop=ONCE;override=true}"
+pending:
+  - blockbench_gui_review
+  - modelengine_import
+  - generated_resource_pack
+  - staging_spawn_test
+approval: false

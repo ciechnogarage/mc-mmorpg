@@ -1,0 +1,49 @@
+DR001_CommonMobDrops:
+  Drops:
+    - mmoitems{type=MATERIAL;id=DR001_RUNE_DUST} 1-2 35%
+    - mmoitems{type=MATERIAL;id=DR001_ANCIENT_COIN} 1-3 30%
+    - experience 8-15 100%
+
+DR001_EliteMobDrops:
+  Drops:
+    - mmoitems{type=MATERIAL;id=DR001_RUNE_DUST} 3-6 60%
+    - mmoitems{type=MATERIAL;id=DR001_ANCIENT_COIN} 2-5 55%
+    - mmoitems{type=MATERIAL;id=DR001_RELIC_SHARD} 1 12%
+    - experience 35-60 100%
+
+DR001_MidMobDrops:
+  Drops:
+    - mmoitems{type=MATERIAL;id=DR001_RUNE_DUST} 2-5 50%
+    - mmoitems{type=MATERIAL;id=DR001_ANCIENT_COIN} 2-4 45%
+    - mmoitems{type=MATERIAL;id=DR001_AQUEDUCT_RUNE} 1 8%
+    - experience 15-30 100%
+
+DR001_EndMobDrops:
+  Drops:
+    - mmoitems{type=MATERIAL;id=DR001_RUNE_DUST} 4-8 70%
+    - mmoitems{type=MATERIAL;id=DR001_ANCIENT_COIN} 3-7 65%
+    - mmoitems{type=MATERIAL;id=DR001_VOID_ANCHOR_CORE} 1 4%
+    - experience 28-55 100%
+
+DR001_VarosDrops:
+  Drops:
+    - mmoitems{type=MATERIAL;id=DR001_RELIC_SHARD} 1-2 100%
+    - mmoitems{type=CONSUMABLE;id=DR001_CLEANSING_DRAUGHT} 1 20%
+    - mmoitems{type=SWORD;id=DR001_RELIC_BLADE} 1 4%
+    - experience 120 100%
+
+DR001_NhalruunDrops:
+  Drops:
+    - mmoitems{type=ACCESSORY;id=DR001_CISTERN_RING} 1 7%
+    - mmoitems{type=MATERIAL;id=DR001_AQUEDUCT_RUNE} 1 35%
+    - mmoitems{type=MATERIAL;id=DR001_RUNE_DUST} 6-12 100%
+    - experience 250 100%
+
+DR001_AurelionDrops:
+  Drops:
+    - mmoitems{type=SWORD;id=DR001_CROWNREAVER} 1 2.5%
+    - mmoitems{type=ACCESSORY;id=DR001_CROWN_FRAGMENT_AMULET} 1 6%
+    - mmoitems{type=ARMOR;id=DR001_RUINED_CROWN_HELMET} 1 5%
+    - mmoitems{type=MATERIAL;id=DR001_ANCIENT_COIN} 18-35 100%
+    - mmoitems{type=MATERIAL;id=DR001_CROWN_CORE} 1 100%
+    - experience 650 100%

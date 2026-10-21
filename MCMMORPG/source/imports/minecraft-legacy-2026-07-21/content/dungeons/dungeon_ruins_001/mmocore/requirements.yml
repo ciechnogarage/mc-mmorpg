@@ -1,0 +1,17 @@
+dungeon_ruins_001:
+  status: release_prep_hook_contract
+  requirements:
+    normal:
+      min_level: 12
+      recommended_item_power: 80
+      party: "1-3"
+    veteran:
+      min_level: 20
+      recommended_item_power: 145
+      party: "2-4"
+    mythic:
+      min_level: 30
+      recommended_item_power: 220
+      party: "4-5"
+  entry_key: DR001_RUINED_GATE_KEY
+  note: "Exact MMOCore gate syntax must be wired from local server hook pattern before runtime release."

@@ -1,0 +1,55 @@
+{
+  "schema_version": 2,
+  "ashfox": {
+    "version": "0.2.0",
+    "tag": "v0.2.0",
+    "commit": "232a712e8879d9ca3da3151d6491704a4e06ebb8",
+    "plugin_url": "https://github.com/sigee-min/ashfox/releases/download/v0.2.0/ashfox.js",
+    "plugin_sha256": "150942196d54385b499140ee21ac1e3f289f362584d0e0bb4537c61c4ff67bc9",
+    "sidecar_url": "https://github.com/sigee-min/ashfox/releases/download/v0.2.0/ashfox-sidecar.js",
+    "sidecar_sha256": "39cd5f1196b8938bde965777e5cd21e7bd6e37a3680f8f0e6be64797223013b6"
+  },
+  "blockbench": {
+    "version": "5.1.6",
+    "release": "v5.1.6",
+    "appimage_url": "https://github.com/JannisX11/blockbench/releases/download/v5.1.6/Blockbench_5.1.6.AppImage",
+    "appimage_sha256": "c6dd92036f3c10495df53911a74e5b00a1d557ea13e506084177ef55a5cd7c0e"
+  },
+  "local_patch": {
+    "id": "ashfox-v0.2.0-native-roundtrip+mc.2",
+    "base_commit": "232a712e8879d9ca3da3151d6491704a4e06ebb8",
+    "patches": [
+      {
+        "manifest_path": "MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-list-native-codecs-this.manifest.json",
+        "patch_path": "MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-list-native-codecs-this.patch",
+        "patch_sha256": "b782843ef44c5bbcf23d11fd14ea00db77e36fa88a9ab8d237629c5dad6f47fd"
+      },
+      {
+        "manifest_path": "MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-reopen-animation-snapshot.manifest.json",
+        "patch_path": "MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-reopen-animation-snapshot.patch",
+        "patch_sha256": "de2bb8bcc69dd3fdc3d40e3c032c6b9ba6de098c53be51ff00312834d64c20c9"
+      }
+    ],
+    "build": {
+      "node_version": "20.20.2",
+      "node_linux_x64_archive_sha256": "df770b2a6f130ed8627c9782c988fda9669fa23898329a61a871e32f965e007d",
+      "npm_version": "10.8.2",
+      "command": "npm run build:blockbench"
+    },
+    "plugin_path": "/home/przemek/.local/share/blockbench-plugins/ashfox/v0.2.0-mc.2/ashfox.js",
+    "plugin_sha256": "d94372676aa036a28e0d641ddf54b171d742469689029f47fd28f790f6adf473",
+    "sidecar_path": "/home/przemek/.local/share/blockbench-plugins/ashfox/v0.2.0-mc.2/ashfox-sidecar.js",
+    "sidecar_sha256": "39cd5f1196b8938bde965777e5cd21e7bd6e37a3680f8f0e6be64797223013b6",
+    "isolated_profile_loader_path": "/home/przemek/.local/share/blockbench-plugins/ashfox/v0.2.0/ashfox.js",
+    "isolated_profile_loader_target": "/home/przemek/.local/share/blockbench-plugins/ashfox/v0.2.0-mc.2/ashfox.js",
+    "cached_upstream_plugin_path": "/home/przemek/.local/share/blockbench-plugins/ashfox/v0.2.0/ashfox.upstream.js"
+  },
+  "endpoint": "http://127.0.0.1:8788/mcp",
+  "expected_tool_count": 27,
+  "expected_tool_registry_hash": "8043388b",
+  "policy": {
+    "loopback_only": true,
+    "profile": "isolated-local-conformance",
+    "server_or_staging_allowed": false
+  }
+}

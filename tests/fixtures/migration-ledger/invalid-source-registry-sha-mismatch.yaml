@@ -1,0 +1,21 @@
+schema_version: 1
+ledger_kind: config_authority_registry_migration_ledger
+source_registry:
+  path: docs/config_authority_registry.yaml
+  sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+  captured_at: "2026-07-21"
+source_snapshot:
+  path: docs/contracts/migration/config-authority-registry-v1-snapshot.yaml
+  captured_at: "2026-07-21"
+allowed_dispositions:
+  - keep_as_migration_source
+  - split_into_claims
+  - mapped_to_v2_contract
+  - blocked_pending_identity
+  - blocked_pending_runtime_evidence
+  - superseded_after_cutover
+  - legacy_only
+  - rejected
+notes:
+  - Fixture for source registry sha mismatch.
+entries: []

@@ -64,7 +64,21 @@ test('classifies generated server artifacts as runtime data', () => {
     'MCMMORPG/plugins/MythicDungeons/maps/level_1/iris/pack/.iris/schema/biomes-schema.json',
     'MCMMORPG/plugins/Nexo/pack/pack.zip',
     'MCMMORPG/plugins/Nexo/pack/.deobfCachedPacks/cache.zip',
-    'MCMMORPG/_validation/archive/legacy-probes/probe.js'
+    'MCMMORPG/_validation/archive/legacy-probes/probe.js',
+    'bots/node_modules/mineflayer/index.js',
+    'bots/runs/2026-08-12/report.json',
+    'bots/probe_companion_tmp.js',
+    'scripts/__pycache__/audit.cpython-313.pyc',
+    'rag/.pytest_cache/CACHEDIR.TAG',
+    'docs/Plugins-wiki-local/Home.md',
+    'docs.zip',
+    'modele/OUTPUT — kopia (2)/model.bbmodel',
+    'modele/OUTPUT — kopia (2).zip',
+    'MCMMORPG/source/environments/dev/minioncore/paper.jar',
+    'MCMMORPG/source/environments/dev/minioncore/server.properties',
+    'MCMMORPG/source/environments/dev/minioncore/plugins/MythicMobs/MythicMobs.jar',
+    'MCMMORPG/source/environments/dev/minioncore/plugins/MythicMobs/data/players/uuid.json',
+    'MCMMORPG/source/environments/dev/minioncore/plugins/WorldGuard/cache/profiles.sqlite'
   ]) {
     assert.equal(classifyRepositoryPath(path), 'runtime', path);
   }
@@ -76,7 +90,12 @@ test('preserves authored game content as source', () => {
     'MCMMORPG/plugins/ModelEngine/blueprints/level_1_grove_guardian.bbmodel',
     'MCMMORPG/plugins/Nexo/pack/assets/mcmmorpg/items/pet_treat.json',
     'MCMMORPG/plugin-src/character-stage/src/main/java/CharacterStagePlugin.java',
-    'docs/pvp-foundation-v0.0.1.md'
+    'docs/pvp-foundation-v0.0.1.md',
+    'bots/apps/smoke/smoke.js',
+    'docs/imports/minecraft-legacy-2026-07-21/README.md',
+    'MCMMORPG/source/imports/minecraft-legacy-2026-07-21/README.md',
+    'MCMMORPG/source/environments/dev/minioncore/plugins/MythicMobs/mobs/minion.yml',
+    'modele/authored/model.bbmodel'
   ]) {
     assert.equal(classifyRepositoryPath(path), 'source', path);
   }
@@ -84,6 +103,17 @@ test('preserves authored game content as source', () => {
 
 test('requires ignore coverage for generated artifacts', () => {
   assert.deepEqual(REQUIRED_IGNORE_RULES, [
+    '**/node_modules/',
+    '**/__pycache__/',
+    '**/.pytest_cache/',
+    '*.py[cod]',
+    '.tmp-contract-fix/',
+    'bots/runs/',
+    'bots/probe_*_tmp.js',
+    'docs/Plugins-wiki-local/',
+    'docs.zip',
+    'modele/OUTPUT — kopia (2)/',
+    'modele/OUTPUT — kopia (2).zip',
     '.mcp.json',
     'MCMMORPG/.console_history',
     'MCMMORPG/_coord/briefs/',
@@ -111,6 +141,16 @@ test('requires ignore coverage for generated artifacts', () => {
     'MCMMORPG/docker/velocity/*.jar',
     'MCMMORPG/docker/velocity/lang/',
     'MCMMORPG/docker/velocity/plugins/',
+    'MCMMORPG/source/environments/**/paper.jar',
+    'MCMMORPG/source/environments/**/server.properties',
+    'MCMMORPG/source/environments/**/plugins/**/*.jar',
+    'MCMMORPG/source/environments/**/plugins/**/*.db',
+    'MCMMORPG/source/environments/**/plugins/**/*.sqlite',
+    'MCMMORPG/source/environments/**/plugins/**/*.mv.db',
+    'MCMMORPG/source/environments/**/plugins/MythicMobs/data/',
+    'MCMMORPG/source/environments/**/plugins/**/userdata/',
+    'MCMMORPG/source/environments/**/plugins/**/playerdata/',
+    'MCMMORPG/source/environments/**/plugins/**/cache/',
     'MCMMORPG/plugins/**/userdata/',
     'MCMMORPG/plugins/MythicDungeons/maps/level_1/data/',
     'MCMMORPG/plugins/MythicDungeons/maps/level_1/entities/',
@@ -162,7 +202,7 @@ test('separates untracked runtime output from source candidates', () => {
 test('groups source candidates by ownership bucket', () => {
   assert.deepEqual(
     countPathsByBucket([
-      '.agents/skills/minecraft-rpg-systems/SKILL.md',
+      '.agents/skills/minecraft-dungeon-artistry/SKILL.md',
       'docs/pvp-foundation-v0.0.1.md',
       'MCMMORPG/plugins/MythicMobs/Packs/level_1/mobs/grove_guardian.mob.yml',
       'MCMMORPG/plugins/MMOItems/item/sword.yml',

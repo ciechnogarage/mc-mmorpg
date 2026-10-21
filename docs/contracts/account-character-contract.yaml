@@ -1,0 +1,376 @@
+schema_version: 2
+contract_id: account-character-contract
+contract_version: 2
+contract_status: proposed
+runtime_status: blocked
+release_status: blocked
+contract_owner: "02"
+domain_owner: "02"
+semantic_owner: "02"
+
+runtime_authority:
+  account_id: Domain01AccountService
+  character_id: Domain01CharacterRegistry
+  profile_id: MMOProfiles.profileId
+  lifecycle_state: Domain02CharacterService
+  active_session_state: Domain02CharacterService
+
+persistence_owner:
+  account_record: domain02_account_store
+  character_record: domain02_character_store
+  active_session_record: domain02_active_session_store
+  mmoprofiles_profile_mapping_record: domain02_mmoprofiles_profile_mapping_store
+
+integration_coordinator: "02"
+
+data_scope:
+  - account_id
+  - character_id
+  - profile_id
+  - account_record
+  - character_record
+  - active_session_record
+  - mmoprofiles_profile_mapping_record
+
+canonical_key:
+  account_id:
+    issuer: mcmmorpg-dev-offline
+    namespace: mcmmorpg:account:dev-offline:v1
+    assurance_level: dev_offline_unverified
+    source_principal: velocity_forwarded_profile
+    production_online_namespace: mcmmorpg:account:online:v1
+  character_id:
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    source: MMOProfiles.getCurrent().getUniqueId()
+    value_equal_to_profile_id_in_v1: true
+  profile_id:
+    namespace: mcmmorpg:mmoprofiles:profile:v1
+    source: MMOProfiles.profileId
+    technical_key_only: true
+
+identity_namespace:
+  account: mcmmorpg:account:dev-offline:v1
+  character: mcmmorpg:character:mmoprofiles-profile:v1
+  profile: mcmmorpg:mmoprofiles:profile:v1
+
+writers:
+  - system: Domain01AccountService
+    writes:
+      - account_id
+      - account.identity.velocity_forwarded_profile
+  - system: Domain01CharacterRegistry
+    writes:
+      - character_id
+  - system: Domain02CharacterService
+    writes:
+      - account_record
+      - character_record
+      - active_session_record
+      - mmoprofiles_profile_mapping_record
+  - system: MMOProfiles
+    writes:
+      - profile_id
+
+consumers:
+  - CharacterStage
+  - MMOProfilesAdapter
+  - MMOCoreAdapter
+  - MMOInventory
+  - PetCore
+  - UXDomain
+
+commands:
+  - create_character_record
+  - activate_character_session
+  - soft_delete_character
+  - restore_deleted_character
+  - bind_mmoprofiles_profile_to_character
+
+api:
+  account_identity_policy:
+    namespace: mcmmorpg:account:dev-offline:v1
+    issuer: mcmmorpg-dev-offline
+    assurance_level: dev_offline_unverified
+    source_principal: velocity_forwarded_profile
+    production_online_namespace: mcmmorpg:account:online:v1
+    offline_to_online_policy: explicit_mapping_required
+    silent_key_rewrite: forbidden
+  character_identity_policy:
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    issuer: Domain01CharacterRegistry
+    derives_from_minecraft_uuid: false
+    derives_from_profile_id: false
+    profile_id_value_equivalent_in_v1: true
+    forbidden_sources:
+      - player_uuid
+      - minecraft_uuid
+      - display_name
+    mutable: false
+  profile_mapping_policy:
+    namespace: mcmmorpg:mmoprofiles:profile:v1
+    issuer: MMOProfiles
+    technical_key_only: true
+    semantic_character_identity: forbidden
+  activation_session_policy:
+    lifecycle_status_required: PLAYABLE
+    creator_stage_required: READY
+    required_flags:
+      - schema_version_supported
+      - all_required_profiles_loaded
+      - session_lock_acquired
+      - no_concurrent_activation
+      - session_epoch_current
+    unsupported_schema_policy: reject_activation
+    lock_conflict_policy: reject_concurrent_activation
+    stale_session_epoch_policy: fail_closed_and_require_reactivation
+    activation_allowed_session_states:
+      - INACTIVE
+      - EXPIRED
+    activation_rejected_session_states:
+      - ACTIVE
+
+domain_events:
+  - character_record_created
+  - character_became_playable
+  - character_soft_deleted
+  - character_restored
+  - active_character_session_started
+  - active_character_session_cleared
+  - profile_mapping_bound
+  - character_activation_rejected
+  - stale_session_epoch_rejected
+
+permissions:
+  - domain02.character.read
+  - domain02.character.write
+  - domain02.session.write
+  - domain02.profile-mapping.write
+
+pdc_keys:
+  - domain02.account.active_character_id
+  - domain02.character.active_session_id
+  - domain02.character.session_epoch
+
+migration_policy:
+  current_phase: phase_1_contract_only
+  soft_delete_default: true
+  immediate_purge_default: false
+  runtime_migration_owned_by_future_ticket: true
+  legacy_profile_equals_character_id_contract: rejected
+  petcore_profile_uuid_grandfathered_for_v1: true
+
+backward_compatibility:
+  read_through_petcore_phase_1_only: true
+  resolver_behavior_in_this_contract: false
+  characterstage_gui_behavior_in_this_contract: false
+
+dependencies:
+  - docs/contracts/account-character-model.md
+  - docs/contracts/character-scope-registry.yaml
+  - docs/contracts/petcore-identity-and-content-run-contract.yaml
+  - docs/config_authority_registry.yaml
+
+affected_systems:
+  - Domain01AccountService
+  - Domain01CharacterRegistry
+  - Domain02CharacterService
+  - MMOProfiles
+  - CharacterStage
+  - MMOCore
+  - MMOInventory
+  - PetCore
+
+evidence:
+  planning_artifact: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-02-account-character-tech-plan/index.md
+  ticket_artifact: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-02-account-character-ticket-breakdown/tickets/domain-02-slot-and-activation-guards/index.md
+  repository_contracts:
+    - docs/contracts/account-character-model.md
+    - docs/contracts/character-scope-registry.yaml
+
+open_questions:
+  - Which physical database tables or collections own each record family remains intentionally deferred to runtime tickets.
+  - Purge retention timing and tombstone retention policy still need leased-backend validation later.
+
+supersedes:
+  - config_authority_registry:player_profile
+  - config_authority_registry:character_stage
+
+superseded_by: []
+
+state_vocabularies:
+  lifecycle_status:
+    - CREATING
+    - PLAYABLE
+    - DELETE_PENDING
+    - DELETED
+    - PURGED
+  creator_stage:
+    - CREATED
+    - IDENTITY_SELECTED
+    - RACE_SELECTED
+    - CLASS_SELECTED
+    - APPEARANCE_SELECTED
+    - VALIDATING
+    - READY
+  profile_binding_status:
+    - RESERVED
+    - BOUND
+    - REPAIR_REQUIRED
+    - QUARANTINED
+    - RELEASED
+
+store_records:
+  account_record:
+    persistence_boundary: domain02_account_store
+    primary_key: account_id
+    fields:
+      account_id:
+        type: string
+        namespace: mcmmorpg:account:dev-offline:v1
+      velocity_forwarded_profile:
+        type: string
+        source: Domain01AccountService
+      active_character_id:
+        type: string|null
+        namespace: mcmmorpg:character:mmoprofiles-profile:v1
+      slot_counters:
+        type: object
+        fields:
+          base_character_slots: int
+          purchased_character_slots: int
+          granted_character_slots: int
+          temporary_character_slots: int
+          total_character_slots: int
+          occupied_character_count: int
+          reserved_character_count: int
+          available_character_slots: int
+        derivation:
+          total_character_slots: "base_character_slots + purchased_character_slots + granted_character_slots + temporary_character_slots"
+          available_character_slots: "total_character_slots - occupied_character_count - reserved_character_count"
+      schema_version:
+        type: int
+
+  character_record:
+    persistence_boundary: domain02_character_store
+    primary_key: character_id
+    foreign_keys:
+      - account_id
+    fields:
+      character_id:
+        type: string
+        namespace: mcmmorpg:character:mmoprofiles-profile:v1
+      account_id:
+        type: string
+        namespace: mcmmorpg:account:dev-offline:v1
+      lifecycle_status:
+        type: enum
+        values_ref: state_vocabularies.lifecycle_status
+      creator_stage:
+        type: enum
+        values_ref: state_vocabularies.creator_stage
+      domain04_character_state:
+        type: object
+        semantic_owner_domain: "04"
+        persistence_owner_domain: "02"
+        canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+        fields:
+          identity:
+            type: object
+            fields:
+              race_id: string
+              class_id: string
+              subclass_id: string|null
+          progression:
+            type: object
+            fields:
+              learned_skill_ids: list[string]
+              weapon_school_unlock_ids: list[string]
+              talent_allocations: list[object]
+              respec_state: object
+              legacy_technique_ids: list[string]
+              faith_scar_ids: list[string]
+          loadout:
+            type: object
+            fields:
+              active_loadout_id: string
+              equipped_skill_ids:
+                type: object
+                fields:
+                  active_skill: list[object]
+                  mobility_skill: object|null
+                  utility_skill: object|null
+                  passive_skill: list[object]
+                  relic_ref: string|null
+      schema_version:
+        type: int
+      soft_delete:
+        type: object
+        fields:
+          delete_requested_at: timestamp|null
+          deleted_at: timestamp|null
+          purge_eligible_at: timestamp|null
+          purge_completed_at: timestamp|null
+
+  active_session_record:
+    persistence_boundary: domain02_active_session_store
+    primary_key: character_id
+    foreign_keys:
+      - account_id
+      - character_id
+    fields:
+      account_id:
+        type: string
+        namespace: mcmmorpg:account:dev-offline:v1
+      character_id:
+        type: string
+        namespace: mcmmorpg:character:mmoprofiles-profile:v1
+      active_session_id:
+        type: string|null
+      session_epoch:
+        type: int
+      session_state:
+        type: enum
+        values:
+          - INACTIVE
+          - ACTIVE
+          - EXPIRED
+    activation_concurrency:
+      lock_conflict_policy: reject_concurrent_activation
+      stale_session_epoch_policy: fail_closed_and_require_reactivation
+      activation_allowed_session_states:
+        - INACTIVE
+        - EXPIRED
+      activation_rejected_session_states:
+        - ACTIVE
+
+  mmoprofiles_profile_mapping_record:
+    persistence_boundary: domain02_mmoprofiles_profile_mapping_store
+    primary_key: profile_id
+    mapping_invariants:
+      one_active_profile_per_character: true
+      one_character_per_active_profile: true
+      unresolved_mapping_policy: fail_closed
+      ambiguous_mapping_policy: fail_closed
+      profile_id_is_technical_key_only: true
+    foreign_keys:
+      - account_id
+      - character_id
+    fields:
+      profile_id:
+        type: string
+        namespace: mcmmorpg:mmoprofiles:profile:v1
+        technical_key_only: true
+      character_id:
+        type: string
+        namespace: mcmmorpg:character:mmoprofiles-profile:v1
+      account_id:
+        type: string
+        namespace: mcmmorpg:account:dev-offline:v1
+      binding_status:
+        type: enum
+        values_ref: state_vocabularies.profile_binding_status
+      lifecycle_status_snapshot:
+        type: enum
+        values_ref: state_vocabularies.lifecycle_status
+      mapping_schema_version:
+        type: int

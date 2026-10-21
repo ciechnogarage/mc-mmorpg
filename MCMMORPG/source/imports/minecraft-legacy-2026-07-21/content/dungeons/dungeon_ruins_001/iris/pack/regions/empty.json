@@ -1,0 +1,6 @@
+{
+  "name": "Empty",
+  "landBiomes": [ "empty" ],
+  "seaBiomes": [ "empty" ],
+  "shoreBiomes": [ "empty" ]
+}

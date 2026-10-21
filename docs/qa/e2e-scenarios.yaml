@@ -1,0 +1,150 @@
+schema_version: 1
+metadata:
+  registry_id: domain-17-e2e-scenarios
+  domain: 17
+  stage: 1
+  authority: normative_shape_non_authoritative_until_cutover
+  source_of_truth_status: inactive_until_cutover
+  validator: tools/qa/validate-schemas.mjs
+  migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+  migration_snapshot_path: docs/qa/legacy-evidence-migration-snapshot.yaml
+  runtime_registry_path: docs/qa/runtime-evidence-registry.yaml
+  baseline_note: >
+    These scenarios define the Stage 1 release-gated contract only. They do not
+    claim runtime verification until matching runtime evidence records exist and
+    DOMAIN_17_QA_SOURCE_OF_TRUTH_CUTOVER is complete.
+scenarios:
+  - scenario_id: character_creator_login_persistence
+    domain: character
+    system: character_creator_login_persistence
+    class: persistence_restart_recovery
+    release_critical: true
+    migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+    legacy_source_ids:
+      - runtime_evidence_register_2026_07_13
+      - vertical_slice_e2e_runtime_gate
+      - persistence_restart_matrix
+    contract_refs:
+      - docs/contracts/account-character-contract.yaml
+    acceptance_criteria:
+      - Velocity login reaches profile selection and creator completion without hidden manual setup.
+      - The selected character becomes playable and has a captured before snapshot.
+      - Disconnect, restart/recovery, and reconnect preserve the same character identity.
+      - Profile, class, stage, inventory, and progression snapshots compare field by field after reconnect.
+      - Storage failure or fallback authority is auditable and cannot silently create a second mutable authority.
+    required_evidence_types:
+      - server-log
+      - bot-transcript
+      - before-after-snapshot
+      - restart-recovery-proof
+      - rollback-proof
+    environments:
+      - dev-qa
+      - staging
+    preconditions:
+      - docs/contracts/account-character-contract.yaml has contract_status approved or a documented blocker.
+      - Authority for account_id, character_id, profile_id, and character_stage is explicit and non-conflicting.
+      - Persistence storage owner is identified before runtime_status can become verified.
+      - Test account UUID and before/after snapshot schema are available before runtime_status can become verified.
+      - Rollback proof exists for any restart/recovery mutation before release_status can become candidate.
+    steps:
+      - Log in through Velocity with a stable disposable offline account UUID.
+      - Select or create a profile and complete the character creator path.
+      - Capture pre-restart snapshots for account, profile, character stage, class, level, selected slot, inventory, and balance.
+      - Disconnect and execute controlled restart/recovery on the isolated backend.
+      - Reconnect the same account and capture post-restart snapshots.
+      - Compare snapshots field by field and capture logs plus bot transcript artifacts.
+      - Restore or prove rollback for every temporary mutation made during the test.
+    assertions:
+      - The same character_id returns after reconnect and restart.
+      - character_stage does not regress or advance without an explicit observed cause.
+      - Repeated login does not duplicate profile or player state.
+      - Storage failure is visible in logs or structured evidence and does not silently fall back to another authority.
+      - Runtime evidence contains build context, log paths, account UUID, rollback proof, and migration snapshot provenance.
+    recovery_points:
+      - before_profile_write
+      - after_creator_completion
+      - before_backend_restart
+      - after_backend_restart
+      - after_reconnect
+    failure_classification:
+      blocked_when:
+        - Isolated backend lease or Docker access is unavailable before product behavior can be observed.
+        - Required account-character contract status or ownership prerequisites are missing.
+        - Rollback proof for runtime mutation is missing.
+      fail_when:
+        - Character, profile, class, inventory, or progression state is lost or duplicated.
+        - Reconnect observes a product behavior contradiction against the snapshot assertions.
+        - Storage fallback creates a second mutable authority silently.
+      insufficient_evidence_when:
+        - Before/after snapshots are missing or cannot be compared field by field.
+        - Log paths, bot transcript, build context, account UUID, or rollback proof are missing.
+        - Evidence is stale against the release gate build context.
+
+  - scenario_id: reward_restart_recovery
+    domain: economy
+    system: quest_reward
+    class: idempotency_restart_recovery
+    release_critical: true
+    migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+    legacy_source_ids:
+      - runtime_evidence_register_2026_07_13
+      - vertical_slice_e2e_runtime_gate
+    contract_refs:
+      - docs/contracts/reward-contract.yaml
+      - docs/contracts/reward-transaction-contract.yaml
+    acceptance_criteria:
+      - The same business reward operation executed more than once has exactly one final outcome.
+      - Reward application cannot grant the reward a second time during interruption or retry.
+      - Reconnect cannot bypass reward transaction state.
+      - Database timeout or interruption leaves an auditable state, not unknown success.
+      - Inventory and economy snapshots show no duplicate reward, currency, or item instance.
+    required_evidence_types:
+      - server-log
+      - bot-transcript
+      - transaction-ledger-snapshot
+      - inventory-snapshot
+      - economy-snapshot
+      - restart-recovery-proof
+      - rollback-proof
+    environments:
+      - dev-qa
+      - staging
+    preconditions:
+      - docs/contracts/reward-contract.yaml has contract_status approved or a documented blocker.
+      - docs/contracts/reward-transaction-contract.yaml has contract_status approved or a documented blocker.
+      - Owners are explicit for reward_transaction_id, idempotency_key, currency_provider, and inventory_storage.
+      - Runtime API path can prove durable duplicate rejection, or a bridge/coordinator blocker is recorded.
+      - Rollback policy exists for interrupted reward recovery paths before runtime_status can become verified.
+    steps:
+      - Start from a known account, inventory, economy, and transaction baseline snapshot.
+      - Trigger a deterministic reward with an explicit transaction or idempotency key.
+      - Interrupt or restart during the recovery-sensitive reward path.
+      - Reconnect and retry the same transaction or trigger path.
+      - Capture transaction ledger, inventory, economy, logs, and bot transcript artifacts.
+      - Verify the final outcome and rollback proof.
+    assertions:
+      - Exactly one committed reward outcome exists for the transaction or idempotency key.
+      - Retry does not create a second reward, item instance, currency grant, or audit-success record.
+      - Failed or interrupted storage state is auditable and classified without unknown success.
+      - Runtime evidence contains build context, snapshots, rollback proof, and migration snapshot provenance.
+    recovery_points:
+      - before_reward_trigger
+      - during_transaction_record
+      - during_reward_apply
+      - after_backend_restart
+      - after_retry
+    failure_classification:
+      blocked_when:
+        - Isolated backend lease or Docker access is unavailable before product behavior can be observed.
+        - Reward or reward-transaction contract prerequisites are not approved or explicitly blocked.
+        - Required idempotency ownership is missing.
+        - Runtime APIs cannot prove durable duplicate rejection and no bridge/coordinator exists.
+      fail_when:
+        - Duplicate reward, item, currency, transaction success, or player-visible outcome is observed.
+        - Reconnect bypasses transaction state.
+        - Database timeout or interruption is silently treated as success.
+      insufficient_evidence_when:
+        - Transaction, inventory, economy, log, bot transcript, or rollback artifacts are missing.
+        - Build context or migration snapshot provenance is missing.
+        - Evidence is stale against the release gate build context.

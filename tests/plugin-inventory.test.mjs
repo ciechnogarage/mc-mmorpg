@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import test from 'node:test';
 
 import {
@@ -52,6 +53,15 @@ test('parses the constrained plugin manifest format', () => {
       runtime_location: 'MCMMORPG/disabled-runtime-blockers/plugins'
     }
   ]);
+});
+
+test('keeps the canonical repository manifest parseable by inventory tooling', () => {
+  const canonicalManifest = fs.readFileSync(
+    new URL('../docs/plugin_manifest.yaml', import.meta.url),
+    'utf8'
+  );
+
+  assert.ok(parsePluginManifest(canonicalManifest).length > 0);
 });
 
 test('rejects a plugin field outside its list item', () => {

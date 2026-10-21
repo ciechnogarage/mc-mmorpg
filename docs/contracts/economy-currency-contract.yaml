@@ -1,0 +1,194 @@
+contract:
+  id: economy-currency-scope-contract-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "01"
+  semantic_owner: "10"
+  purpose:
+    - define currency scope boundaries across account, character, and seasonal domains
+    - separate economy policy ownership from provider bridge concerns such as Vault or CMI
+    - give reward, craft, and trade contracts one shared vocabulary for currency ownership and transfer rules
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/reward-transaction-contract.yaml
+    - docs/contracts/stack-lot-contract.yaml
+    - docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  upstream_dependencies:
+    domain_10:
+      required:
+        - primary_currency_policy
+        - sink_source_balance_policy
+        - trade_restriction_policy
+    domain_17:
+      required:
+        - anti_alt_farming_evidence
+        - cross_scope_currency_transfer_regression_tests
+
+currency_scope_vocabulary:
+  - ACCOUNT
+  - CHARACTER
+  - SEASONAL_CHARACTER
+  - STACK_LOT
+  - CONTENT_TOKEN
+  - FACTION
+  - PVP
+
+currency_settlement_role_vocabulary:
+  - PRIMARY_MONEY
+  - PREMIUM_ONLY
+  - ITEM_OPERATION_ONLY
+
+v1_currency_authority:
+  gold:
+    scope: ACCOUNT
+    settlement_role: PRIMARY_MONEY
+    service_tender: true
+    operation_fuel: false
+    settlement_tender: true
+    ordinary_player_market_tender: true
+    notes:
+      - Gold is the only primary money in v1 and remains account-wide.
+      - Service, market, tax, and escrow settlement default to gold.
+  premium_shop_balance:
+    scope: ACCOUNT
+    settlement_role: PREMIUM_ONLY
+    service_tender: false
+    operation_fuel: false
+    settlement_tender: false
+    ordinary_player_market_tender: false
+    notes:
+      - Premium balance remains outside the ordinary player economy.
+  itemized_currency:
+    scope: STACK_LOT
+    settlement_role: ITEM_OPERATION_ONLY
+    service_tender: false
+    operation_fuel: true
+    settlement_tender: false
+    ordinary_player_market_tender: false
+    notes:
+      - Itemized currency is operation fuel, not default service tender.
+      - Stack-lot identity is required for reservation, consumption, return, and rollback.
+
+currency_catalog_shape:
+  currency_id: string
+  scope: ACCOUNT|CHARACTER|SEASONAL_CHARACTER|STACK_LOT|CONTENT_TOKEN|FACTION|PVP
+  authority: domain_policy_owner
+  runtime_provider: plugin_or_service_name
+  settlement_role: PRIMARY_MONEY|PREMIUM_ONLY|ITEM_OPERATION_ONLY
+  service_tender: true_or_false
+  operation_fuel: true_or_false
+  stack_lot_contract_ref: docs/contracts/stack-lot-contract.yaml
+  settlement_tender: true_or_false
+  transferability:
+    player_to_player: true_or_false
+    account_to_character: true_or_false
+    season_rollover: true_or_false
+  sinks: []
+  sources: []
+
+runtime_authority:
+  policy_owner: Domain10EconomyPolicy
+  provider_bridge: Vault
+  current_runtime_provider: CMI
+  transaction_coordinator: Domain01RewardTransactionCoordinator
+
+scope_rules:
+  account_scope:
+    allowed_for:
+      - shared_account_wallets
+      - monetization_adjacent_non_combat_balances
+      - account_wide_service_fees
+    forbidden_for:
+      - per_character_story_progress_spend
+      - character_bound_boss_tokens
+  character_scope:
+    allowed_for:
+      - character_bound_progression_wallets
+      - craft_inputs_bound_to_one_character
+      - dungeon_or_boss_tokens_if_non_tradeable
+    forbidden_for:
+      - shared_alt_safe_storage_by_default
+  seasonal_character_scope:
+    allowed_for:
+      - pvp_season_points
+      - season_reset_competitive_balances
+      - temporary_event_limited_balances
+    required_rules:
+      - explicit_reset_policy
+      - explicit_rollover_policy
+      - anti_alt_farming_controls
+
+currency_classes:
+  primary_gold_like_currency:
+    scope: ACCOUNT
+    settlement_role: PRIMARY_MONEY
+    service_tender: true
+    operation_fuel: false
+    provider: CMI
+    bridge: Vault
+    notes:
+      - v1 authority is the account-wide gold balance defined by Domain 10.
+      - provider and bridge remain implementation surfaces, not semantic owners.
+  dungeon_or_boss_token:
+    tentative_scope: CHARACTER
+    provider: Domain10TokenService
+    notes:
+      - token may remain character-bound to prevent market flooding
+  pvp_currency:
+    tentative_scope: SEASONAL_CHARACTER
+    provider: Domain10SeasonalEconomyService
+    notes:
+      - seasonal reset and anti-alt controls required
+  faction_currency:
+    tentative_scope: CHARACTER
+    provider: Domain10FactionEconomyService
+    notes:
+      - final account-vs-character choice remains open if faction systems become account-wide
+
+transfer_rules:
+  account_to_character_transfer_requires_explicit_contract: true
+  character_to_character_transfer_requires_trade_or_mail_policy: true
+  seasonal_to_persistent_transfer_default: forbidden
+  cross_scope_exchange_requires_transaction_coordinator: true
+  provider_bridge_must_not_be_treated_as_semantic_owner: true
+
+invariants:
+  Vault_is_bridge_not_semantic_owner: true
+  CMI_is_runtime_provider_not_policy_owner: true
+  every_currency_must_declare_exactly_one_scope: true
+  currency_scope_must_be_known_before_reward_or_trade_cutover: true
+  cross_scope_mutation_without_transaction_reference: forbidden
+  season_reset_without_explicit_rollover_policy: forbidden
+
+integration_with_transactions:
+  transaction_contract_ref: docs/contracts/reward-transaction-contract.yaml
+  required_context_fields:
+    - transaction_id
+    - currency_id
+    - currency_scope
+    - settlement_role
+    - owner_subject_id
+    - delta
+  rules:
+    - reward_grant_must_reference_currency_scope_before_commit
+    - trade_settlement_must_reject_cross_scope_currency_without_explicit_policy
+    - craft_commit_must_not_consume_currency_from_ambiguous_scope
+    - service_settlement_must_reference_gold_as_tender
+    - operation_fuel_must_reference_itemized_stack_lot_identity
+
+migration_requirements:
+  migration_ledger_ref: docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  relevant_legacy_claims:
+    - currency_and_economy
+  current_phase: shell_only_no_cutover
+  cutover_blockers:
+    - provider_bridge_vs_policy_owner_boundary_not_runtime_verified
+    - seasonal_reset_and_rollover_contract_missing
+    - anti_alt_farming_evidence_missing
+
+open_questions:
+  - Which currencies are definitively account-scoped versus character-scoped in production, not just tentatively.
+  - How faction currency behaves if organizations become account-level rather than character-level participation.
+  - Which provider beyond CMI and Vault owns durable receipts needed for rollback and audit.

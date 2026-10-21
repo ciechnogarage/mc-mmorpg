@@ -1,0 +1,74 @@
+menu_title: '&8✦ &b&lKOLEKCJA PETÓW &8✦'
+size: 54
+
+items:
+  filler:
+    material: BLUE_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  global_wolf:
+    material: WOLF_SPAWN_EGG
+    slot: 20
+    display_name: '&6Global Pet: Wilk'
+    lore:
+      - '&7Pierwszy aktywny pet vertical slice.'
+      - '&7Status: &f%petcore_active_pet%'
+      - '&7Recall: &f%petcore_can_recall%'
+      - ''
+      - '&eLewy klik: &fprzywołaj'
+      - '&ePrawy klik: &fodwołaj'
+    left_click_commands:
+      - '[player] petcore summon'
+      - '[sound] ENTITY_WOLF_AMBIENT'
+    right_click_commands:
+      - '[player] petcore recall'
+      - '[sound] ENTITY_WOLF_WHINE'
+
+  locked_fairy:
+    material: LIGHT_BLUE_DYE
+    slot: 22
+    display_name: '&bWróżka &8[LOCKED]'
+    lore:
+      - '&7Przyszły pet: heal / fly.'
+      - '&cZablokowane: &fcollection backend.'
+      - '&7Authority: &f%petcore_authority%'
+
+  locked_dragon:
+    material: DRAGON_BREATH
+    slot: 24
+    display_name: '&5Smok &8[LOCKED]'
+    lore:
+      - '&7Przyszły pet: fly / ranged / buff.'
+      - '&cZablokowane: &fprogression + model.'
+      - '&7Content: &f%petcore_content%'
+
+  source_hint:
+    material: MAP
+    slot: 31
+    display_name: '&eŹródła i odblokowania'
+    lore:
+      - '&7Ten ekran będzie czytał PetCore DB.'
+      - '&7Menu nie skanuje świata ani legacy pluginów.'
+      - ''
+      - '&8%petcore_summary%'
+
+  back:
+    material: ARROW
+    slot: 48
+    display_name: '&ePowrót'
+    lore:
+      - '&7Wróć do PetCore Main Menu.'
+    left_click_commands:
+      - '[openguimenu] petcore_main'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 50
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

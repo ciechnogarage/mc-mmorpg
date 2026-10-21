@@ -1,0 +1,892 @@
+{
+  "pack_id": "dungeon_ruins_001",
+  "generated_at": "2026-05-30T00:00:00Z",
+  "final_namespace": "dr001",
+  "approval_status": "human_review_required",
+  "summary": {
+    "total_required": 55,
+    "found": 55,
+    "missing": 0,
+    "source_audio_prepared": 4,
+    "blocked_quality_review": 38,
+    "missing_authoring_tool": 0,
+    "archived_legacy_candidates": 53,
+    "final_audio_ready": 4
+  },
+  "assets": [
+    {
+      "required_asset_id": "gatehouse_broken_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/gatehouse_broken_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/gatehouse_broken_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "bee1c5b43b449f1f270d0a0b50ce3037112e746f05833253573118cbce72fc3c",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/gatehouse_broken_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "rooted_courtyard_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/rooted_courtyard_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/rooted_courtyard_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "be2d9daf24819202ee76b80b7d16371fabe8efde080ad0dbd50c1282d7f0df90",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/rooted_courtyard_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "varos_gate_arena_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/varos_gate_arena_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/varos_gate_arena_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "c6709ac9e7054f22f122c6e3959a587910221362b4529c4c48343350931e5449",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/varos_gate_arena_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "collapsed_stairwell_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/collapsed_stairwell_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/collapsed_stairwell_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "e75d8b0d204ccd8e725780f5f842048a130c6dca5195716a2d1854239ae3bee7",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/collapsed_stairwell_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "cistern_puzzle_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/cistern_puzzle_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/cistern_puzzle_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "30fefe78cf2e3a1b1ca30bfc0e56510ab137a780172783505ab7cd8daa888b9d",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/cistern_puzzle_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "nhalruun_oracle_chamber_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/nhalruun_oracle_chamber_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/nhalruun_oracle_chamber_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "7b4185d1abff832d6ae9f7d9e10433f9259cefe4b5a81850493ef8a0d1f2abf2",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/nhalruun_oracle_chamber_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "crown_bridge_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/crown_bridge_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/crown_bridge_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "1a9b72f7992117324f8cf068ff4cd495e4d0c5cfb9c0c7728eae58adeb5e726e",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/crown_bridge_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "void_anchor_hall_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/void_anchor_hall_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/void_anchor_hall_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "7d705f4914bcfedf627759d74fff546cc23a91acf4afe6e1911f47b1fc24c93a",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/void_anchor_hall_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "void_sanctum_arena_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/void_sanctum_arena_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/void_sanctum_arena_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "893c1330ad858fa8b2691b8e142098aa774ce3b38ee7896e161791f6e2d68602",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/void_sanctum_arena_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "loot_shrine_exit_01.schem",
+      "category": "schematic",
+      "expected_source_path": "intake/schematics/loot_shrine_exit_01.schem",
+      "found": true,
+      "candidate_source": "intake/schematics/loot_shrine_exit_01.schem",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "425c733eef24ebc46744bc4f3ddd5ae3f3ee6306605631bd9b7954f499cf835f",
+      "target_path": "plugins/Iris/packs/dungeon_ruins_001/schematics/loot_shrine_exit_01.schem",
+      "notes": "Valid gzipped schematic candidate generated locally; needs builder review before final approval."
+    },
+    {
+      "required_asset_id": "dr001_ruin_thrall.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_ruin_thrall.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_ruin_thrall.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "e0af5ba79fdd7c6803f5443320cf1933211fb277b5d0d33276606e2c6fdfadef",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_ruin_thrall.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_mossbound_archer.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_mossbound_archer.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_mossbound_archer.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "007810c1d0b388bd4fae9d68508f5b220a71292c358f1c5ef832da369969168f",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_mossbound_archer.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_rootling.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_rootling.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_rootling.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "41f2ebbc88041822dcae01cce8ad550ac19231c24e69db7cf1c1d4453902abc8",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_rootling.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_animated_rubble.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_animated_rubble.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_animated_rubble.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "86a6262a7776cf254ef874ceb879fab09179c4f61a1cf3f2cc67be9725630f40",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_animated_rubble.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_gatewarden_varos.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_gatewarden_varos.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_gatewarden_varos.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "bc4905bf9232942980e2b0e4268befd7589c1c33b488096abd4f299b034c5f1d",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_gatewarden_varos.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_drowned_tombguard.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_drowned_tombguard.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_drowned_tombguard.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "2031e27a18f3cccf5bbfea303ffd1d83d573bccc68b7a9da45c311cc7571dedd",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_drowned_tombguard.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_plague_acolyte.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_plague_acolyte.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_plague_acolyte.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "992df59a1d112536b6e703b1ab6b84644bc4d0ab33a12a202bf5c7e6e9563c93",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_plague_acolyte.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_cistern_leech.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_cistern_leech.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_cistern_leech.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "4500ddc6614edebf09663ba485555c706eb557707959e65c8c7dc89881bfe681",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_cistern_leech.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_bone_mason.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_bone_mason.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_bone_mason.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "c95cbdbe1b020b0b4cf6189f9299e4b071475608f437f50974132ce19099558b",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_bone_mason.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_nhalruun.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_nhalruun.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_nhalruun.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "906578b052aece0644fb62d71d3fa4295872b84ee923a4050bdf937300944c34",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_nhalruun.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_voidbound_knight.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_voidbound_knight.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_voidbound_knight.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "cecafa5797535dbf0dec789c99b1d2433f54b3d1ddc0ff9ed4310d3a91fb6e6d",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_voidbound_knight.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_rune_sentinel.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_rune_sentinel.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_rune_sentinel.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "116c8fe42a6a389342ea6d428ec6ea0bc3c6cd4176afa406dfac9157fae9511b",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_rune_sentinel.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_crown_shade.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_crown_shade.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_crown_shade.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "cffdfba9b53666deed0b6cc91287b641b2ff9220b7baebc87339f13e01ede3a3",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_crown_shade.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_anchor_warden.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_anchor_warden.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_anchor_warden.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "307c36cd59c77a951ee1fcdba526383ecfeca448b93e2641864bd6571f02104c",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_anchor_warden.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_ruined_king.bbmodel",
+      "category": "modelengine",
+      "expected_source_path": "intake/modelengine/dr001_ruined_king.bbmodel",
+      "found": true,
+      "candidate_source": "intake/modelengine/dr001_ruined_king.bbmodel",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "abbab2598f0ce54a56647e3828f9f63d4cc96c862baeb3c40a4b96f40bdec4b6",
+      "target_path": "plugins/ModelEngine/blueprints/dr001_ruined_king.bbmodel",
+      "notes": "ModelEngine technical candidate has required aliases and hitbox data; silhouette/art pass is not final."
+    },
+    {
+      "required_asset_id": "dr001_rune_cracked_stone.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/block/rune_cracked_stone.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/block/rune_cracked_stone.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "12b584a9517980c0ff2a7ed98657ca4cf06c65df53d3517164ae6ee08ac0a038",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/block/rune_cracked_stone.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_rune_cracked_stone.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/block/rune_cracked_stone.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/block/rune_cracked_stone.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "2bdc692e7a690614567a459c381995748695e6fc9ca5333288c86110ee51cbd2",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/rune_cracked_stone.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_ancient_moss_panel.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/block/ancient_moss_panel.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/block/ancient_moss_panel.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "82f46cd9436686979ef9b888bac8a62260a4dc7604df6260209b70544b5e3345",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/block/ancient_moss_panel.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_ancient_moss_panel.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/block/ancient_moss_panel.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/block/ancient_moss_panel.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "37a24fb2fd797b7d7e95b92ca16eb36204cbae283c0360ecca9e9481a6983083",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/ancient_moss_panel.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_cursed_water_grate.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/block/cursed_water_grate.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/block/cursed_water_grate.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "70b1ff839832d819e9e709259bf0bab1f8245cb4ac169f5fe087c23ed9e8356a",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/block/cursed_water_grate.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_cursed_water_grate.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/block/cursed_water_grate.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/block/cursed_water_grate.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "f55d6524321d0251683995cdbac08649702cba244a61ba95f71a28818b0a40ae",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/cursed_water_grate.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_void_rune_block.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/block/void_rune_block.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/block/void_rune_block.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "b88eaf8b18853cb0037f724ddd1928a9b8307752992565e3c259042d16a6b9ca",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/block/void_rune_block.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_void_rune_block.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/block/void_rune_block.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/block/void_rune_block.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "0f5b7ffdbab2fffd76655f0e900a281cc822b0ee31cdb7ec7b917c1d8e3a7ff1",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/void_rune_block.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_broken_crown_ornament.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/block/broken_crown_ornament.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/block/broken_crown_ornament.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "072a18b9a13689bdb414bbe49449f6dd8b655ce9471907eda27a20fc907a5637",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/block/broken_crown_ornament.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_broken_crown_ornament.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/block/broken_crown_ornament.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/block/broken_crown_ornament.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "880867a52348a60f2b68335b387792dd59b2d2747aa8a8e1eba6dc643915177c",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/broken_crown_ornament.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_void_anchor.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/furniture/void_anchor.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/furniture/void_anchor.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "f4d0e69729ef01701bfbde171d1db81a220a6731887c3a0c734ff3eb078e6155",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/void_anchor.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_void_anchor.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/furniture/void_anchor.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/furniture/void_anchor.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "bb6910dd338afe62019afce9140137bdfc3e45691ea80e4a226a5ac897c0fbc6",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/void_anchor.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_rune_pedestal.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/furniture/rune_pedestal.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/furniture/rune_pedestal.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "0e983beb434a2af4d8b6b951ef498c1ab5a072c5ba4644416e5516b5df975b76",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/rune_pedestal.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_rune_pedestal.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/furniture/rune_pedestal.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/furniture/rune_pedestal.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "ed3b66c444d56785a8525b48cc9be16a3185bf1fa097aa11359a5f418600dff9",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/rune_pedestal.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_broken_king_statue.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/furniture/broken_king_statue.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/furniture/broken_king_statue.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "940c244d118ab0a71b75a4e5d7fe8caf8a49e4776658151310e7b4e86a4667b2",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/broken_king_statue.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_broken_king_statue.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/furniture/broken_king_statue.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/furniture/broken_king_statue.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "b2992c46d1959a0210e46a2744049edec34fa5e99b743a70ed0aace9fb657eef",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/broken_king_statue.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_soul_censer.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/furniture/soul_censer.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/furniture/soul_censer.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "ef6a85f0647be25d117affef324c3d0113f2150360373ce8627eae9d117dae5e",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/soul_censer.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_soul_censer.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/furniture/soul_censer.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/furniture/soul_censer.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "162014ab7e9b3b6e16731760b0be51341b7ba2b2fc69935073a3618e230811b1",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/soul_censer.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_loot_shrine.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/furniture/loot_shrine.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/furniture/loot_shrine.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "fa5d8a45fa5900e254bf8762470a5b4a3e4eb226abe2ae94b89ff6c23f832b19",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/loot_shrine.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_loot_shrine.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/furniture/loot_shrine.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/furniture/loot_shrine.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "ace15f8c2963b6020864889d9484b742962c72568e324448e03277f9197826d4",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/loot_shrine.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_ruined_gate_key.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/item/ruined_gate_key.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/item/ruined_gate_key.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "feccf1910a9f5d21f2e250424540f074f9f5bff4567869459e05bc19ae159d96",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/item/ruined_gate_key.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_ruined_gate_key.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/item/ruined_gate_key.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/item/ruined_gate_key.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "bb95b076482fd50c1bfac1c7aede39f7a62b89444e85894582fe01156f6ba9a5",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/item/ruined_gate_key.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_relic_shard.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/item/relic_shard.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/item/relic_shard.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "e940799e76c3bd9f43b7126d9a40f0a429a684e4f5d8224f7d731ee5cdc94e2c",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/item/relic_shard.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_relic_shard.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/item/relic_shard.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/item/relic_shard.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "d428fd350ff47aa09847dd5877c3e9f2ad394ed376acd4916fce19a453bf5263",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/item/relic_shard.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_cleansing_draught.json",
+      "category": "nexo_model",
+      "expected_source_path": "intake/nexo/models/item/dr001/item/cleansing_draught.json",
+      "found": true,
+      "candidate_source": "intake/nexo/models/item/dr001/item/cleansing_draught.json",
+      "quality_status": "review_ready",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "8fc3fc2ab09a3ec849bedd3b8c57a94e2888562a0c8d861361b176b4bd169b2d",
+      "target_path": "plugins/Nexo/pack/assets/nexo/models/item/dr001/item/cleansing_draught.json",
+      "notes": "JSON parses and references final dr001 texture namespace."
+    },
+    {
+      "required_asset_id": "dr001_cleansing_draught.png",
+      "category": "nexo_texture",
+      "expected_source_path": "intake/nexo/textures/item/dr001/item/cleansing_draught.png",
+      "found": true,
+      "candidate_source": "intake/nexo/textures/item/dr001/item/cleansing_draught.png",
+      "quality_status": "blocked_quality_review",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "f27afbe8346f5d3d34aeadb3ea488f8546dd178b6627917d8c1ffc67a09f47dd",
+      "target_path": "plugins/Nexo/pack/assets/nexo/textures/item/dr001/item/cleansing_draught.png",
+      "notes": "Valid PNG texture candidate generated locally; needs art review."
+    },
+    {
+      "required_asset_id": "dr001_roots_whisper.ogg",
+      "category": "sound",
+      "expected_source_path": "intake/sounds/dr001/roots_whisper.ogg",
+      "found": true,
+      "candidate_source": "intake/sounds/dr001/roots_whisper.ogg",
+      "quality_status": "human_review_required",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "72b4d529fb9ada26e1534e6a5946bc58f5e60cf6c654e174ce9108b5a897bfb7",
+      "target_path": "plugins/Nexo/pack/assets/nexo/sounds/dr001/roots_whisper.ogg",
+      "notes": "Valid Ogg Vorbis converted from local synthetic WAV source with ffmpeg/libvorbis q5; requires human audio review before approved_final."
+    },
+    {
+      "required_asset_id": "dr001_cistern_geyser.ogg",
+      "category": "sound",
+      "expected_source_path": "intake/sounds/dr001/cistern_geyser.ogg",
+      "found": true,
+      "candidate_source": "intake/sounds/dr001/cistern_geyser.ogg",
+      "quality_status": "human_review_required",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "8eaaa41cf605e990946469cc93b5cc20da7ae6958b3797ce213a477edcfcc770",
+      "target_path": "plugins/Nexo/pack/assets/nexo/sounds/dr001/cistern_geyser.ogg",
+      "notes": "Valid Ogg Vorbis converted from local synthetic WAV source with ffmpeg/libvorbis q5; requires human audio review before approved_final."
+    },
+    {
+      "required_asset_id": "dr001_void_crown_pulse.ogg",
+      "category": "sound",
+      "expected_source_path": "intake/sounds/dr001/void_crown_pulse.ogg",
+      "found": true,
+      "candidate_source": "intake/sounds/dr001/void_crown_pulse.ogg",
+      "quality_status": "human_review_required",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "7eb930eb3619d17b9fc6ea7694e0430af535d3bfe3353c21f766f679499989c6",
+      "target_path": "plugins/Nexo/pack/assets/nexo/sounds/dr001/void_crown_pulse.ogg",
+      "notes": "Valid Ogg Vorbis converted from local synthetic WAV source with ffmpeg/libvorbis q5; requires human audio review before approved_final."
+    },
+    {
+      "required_asset_id": "dr001_aurelion_enrage.ogg",
+      "category": "sound",
+      "expected_source_path": "intake/sounds/dr001/aurelion_enrage.ogg",
+      "found": true,
+      "candidate_source": "intake/sounds/dr001/aurelion_enrage.ogg",
+      "quality_status": "human_review_required",
+      "namespace_status": "dr001_or_validator_final_name",
+      "checksum": "c2378d98bcb7bf4446ee11a724f49350ad03e741ca301e1fd895bb4552da0be5",
+      "target_path": "plugins/Nexo/pack/assets/nexo/sounds/dr001/aurelion_enrage.ogg",
+      "notes": "Valid Ogg Vorbis converted from local synthetic WAV source with ffmpeg/libvorbis q5; requires human audio review before approved_final."
+    }
+  ],
+  "rejected_legacy_candidates": [
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_arcane_shardling.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_ashen_guard.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_crystal_acolyte.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_crystal_warden.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_ember_wraith.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_fallen_root_king.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_mossbone_sentinel.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_reliquary_guardian.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_root_thrall.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_swamp_spore_caster.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/modelengine/dungeon_ruins_001_thronebound_knight.bbmodel",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/block/ashen_throne_brick.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/block/cracked_reliquary_tile.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/block/ember_rune_block.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/block/overgrown_rune_stone.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/furniture/broken_root_altar.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/furniture/crystal_pylon.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/furniture/fallen_king_throne.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/furniture/reward_vault_chest.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/item/ashen_crown_fragment.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/item/cracked_crystal_core.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/item/fallen_king_sigil.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/models/item/dungeon_ruins_001/item/mossbound_relic.json",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/block/ashen_throne_brick.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/block/cracked_reliquary_tile.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/block/ember_rune_block.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/block/overgrown_rune_stone.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/furniture/broken_root_altar.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/furniture/crystal_pylon.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/furniture/fallen_king_throne.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/furniture/reward_vault_chest.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/item/ashen_crown_fragment.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/item/cracked_crystal_core.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/item/fallen_king_sigil.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/nexo/textures/item/dungeon_ruins_001/item/mossbound_relic.png",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/arcane_lock_room.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/ashen_throne_entrance.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/broken_archive_room.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/burned_column_hall.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/collapsed_gate_start.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/crystal_bridge_gap.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/ember_trial_ring.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/fallen_king_arena.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/flooded_hallway_01.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/fractured_rune_pylon.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/moss_chapel_small.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/reliquary_archive_mid.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/reward_vault_end.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/root_overgrown_courtyard.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/schematics/suspended_crystal_chamber.schem",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/sounds/dungeon_ruins_001/crystal_chime.ogg",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/sounds/dungeon_ruins_001/ember_trial.ogg",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    },
+    {
+      "asset": "legacy_candidate_archive/sounds/dungeon_ruins_001/root_ambient.ogg",
+      "reason": "Legacy/candidate namespace or old intake shape; archived as reference only, not final evidence."
+    }
+  ]
+}

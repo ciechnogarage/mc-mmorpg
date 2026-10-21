@@ -1,0 +1,22 @@
+# DeluxeMenus config for dev-petcore-menu-phase2.
+# Menu YAML is presentation-only; PetCore remains the authority for state/actions.
+check_updates: true
+debug: LOW
+use_admin_commands_in_menus_list: false
+menus_list_page_size: 10
+metas_list_page_size: 15
+gui_menus:
+  petcore_main:
+    file: petcore_main.yml
+  petcore_collection:
+    file: petcore_collection.yml
+  petcore_capture:
+    file: petcore_capture.yml
+  petcore_evolution:
+    file: petcore_evolution.yml
+  petcore_upgrades:
+    file: petcore_upgrades.yml
+  petcore_skills:
+    file: petcore_skills.yml
+  petcore_duel:
+    file: petcore_duel.yml

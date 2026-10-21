@@ -1,0 +1,707 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-07-20",
+  "generatedBy": "_validation/check_modelengine_baseline_matrix.js",
+  "scope": {
+    "primaryModels": [
+      "level_1_briarwolf",
+      "level_1_glimmer_wisp",
+      "level_1_moss_stalker"
+    ],
+    "strictQualityReferences": [
+      "level_1_grove_guardian"
+    ]
+  },
+  "verdict": "FAIL",
+  "models": [
+    {
+      "modelId": "level_1_briarwolf",
+      "role": "ticket_target",
+      "verdict": "FAIL",
+      "gates": {
+        "yaml": {
+          "verdict": "PASS",
+          "reason": "one active MythicMobs model declaration",
+          "evidence": {
+            "path": "plugins/MythicMobs/Packs/level_1/mobs/briarwolf.mob.yml",
+            "sha256": "546185f0c9c4c49c3b065c5a5e0f73b048d0c0102a78bab019b17068dfe18bd8",
+            "modifiedAt": "2026-07-07T08:21:51.962Z",
+            "bytes": 498
+          }
+        },
+        "blueprint": {
+          "verdict": "FAIL",
+          "reason": "BLUEPRINT_MISSING"
+        },
+        "resourceOutput": {
+          "verdict": "FAIL",
+          "reason": "RESOURCE_PACK_ASSETS_MISSING"
+        },
+        "cache": {
+          "verdict": "FAIL",
+          "reason": "CACHE_ENTRIES_MISSING",
+          "evidence": {
+            "cache": {
+              "path": "plugins/ModelEngine/.data/cache.json",
+              "sha256": "35b1fd14f2683e034463944312c49cc762fe801fc7734c965aea07fc5f0bf43d",
+              "modifiedAt": "2026-07-20T09:20:38.271Z",
+              "bytes": 10584
+            },
+            "targetedSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "compiledEntries": []
+          }
+        },
+        "bindingChecker": {
+          "verdict": "FAIL",
+          "reason": "check_modelengine_binding.js result",
+          "evidence": {
+            "command": "node _validation/check_modelengine_binding.js",
+            "exitCode": 1
+          }
+        },
+        "quality": {
+          "verdict": "FAIL",
+          "reason": "BLUEPRINT_MISSING",
+          "evidence": {
+            "command": "node _validation/check_modelengine_quality.js --model level_1_briarwolf",
+            "exitCode": 1
+          }
+        },
+        "ecosystem": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "ECOSYSTEM_MANIFEST_MISSING",
+          "evidence": {
+            "command": "node _validation/check_modelengine_ecosystem.js --model level_1_briarwolf",
+            "exitCode": 0
+          }
+        },
+        "liveSpawn": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "reload": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "restart": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        }
+      }
+    },
+    {
+      "modelId": "level_1_glimmer_wisp",
+      "role": "ticket_target",
+      "verdict": "FAIL",
+      "gates": {
+        "yaml": {
+          "verdict": "PASS",
+          "reason": "one active MythicMobs model declaration",
+          "evidence": {
+            "path": "plugins/MythicMobs/Packs/level_1/mobs/glimmer_wisp.mob.yml",
+            "sha256": "cfe762f970c4bc561987a3d2cc34a437181cca65d91cc0e6f0567508c5f5eb58",
+            "modifiedAt": "2026-07-09T14:19:08.592Z",
+            "bytes": 498
+          }
+        },
+        "blueprint": {
+          "verdict": "PASS",
+          "reason": "blueprint present",
+          "evidence": {
+            "path": "plugins/ModelEngine/blueprints/level_1_glimmer_wisp/level_1_glimmer_wisp.bbmodel",
+            "sha256": "5ac21c08bd2af1226808e8958f2c29e865380d510806d51dc8759ec0ff4a7161",
+            "modifiedAt": "2026-07-09T18:59:45.657Z",
+            "bytes": 44350
+          }
+        },
+        "resourceOutput": {
+          "verdict": "PASS",
+          "reason": "18 generated file(s)",
+          "evidence": {
+            "path": "plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_glimmer_wisp",
+            "sha256": "974abbaaa49e220aa06edb17a5f37b0f894d88271ab349e4a794c1ee786d1457",
+            "files": [
+              "body.json",
+              "body/1.json",
+              "body/10.json",
+              "body/11.json",
+              "body/12.json",
+              "body/13.json",
+              "body/2.json",
+              "body/3.json",
+              "body/4.json",
+              "body/5.json",
+              "body/6.json",
+              "body/7.json",
+              "body/8.json",
+              "body/9.json",
+              "left_wisp.json",
+              "left_wisp/1.json",
+              "right_wisp.json",
+              "right_wisp/1.json"
+            ]
+          }
+        },
+        "cache": {
+          "verdict": "PASS",
+          "reason": "18 compiled model_id entries",
+          "evidence": {
+            "cache": {
+              "path": "plugins/ModelEngine/.data/cache.json",
+              "sha256": "35b1fd14f2683e034463944312c49cc762fe801fc7734c965aea07fc5f0bf43d",
+              "modifiedAt": "2026-07-20T09:20:38.271Z",
+              "bytes": 10584
+            },
+            "targetedSha256": "823e98a7791eb3111fab12526382b1c6217e5824f51ee7c2eb5898eec0861ade",
+            "compiledEntries": [
+              "level_1_glimmer_wisp:body",
+              "level_1_glimmer_wisp:body/1",
+              "level_1_glimmer_wisp:body/10",
+              "level_1_glimmer_wisp:body/11",
+              "level_1_glimmer_wisp:body/12",
+              "level_1_glimmer_wisp:body/13",
+              "level_1_glimmer_wisp:body/2",
+              "level_1_glimmer_wisp:body/3",
+              "level_1_glimmer_wisp:body/4",
+              "level_1_glimmer_wisp:body/5",
+              "level_1_glimmer_wisp:body/6",
+              "level_1_glimmer_wisp:body/7",
+              "level_1_glimmer_wisp:body/8",
+              "level_1_glimmer_wisp:body/9",
+              "level_1_glimmer_wisp:left_wisp",
+              "level_1_glimmer_wisp:left_wisp/1",
+              "level_1_glimmer_wisp:right_wisp",
+              "level_1_glimmer_wisp:right_wisp/1"
+            ]
+          }
+        },
+        "bindingChecker": {
+          "verdict": "PASS",
+          "reason": "check_modelengine_binding.js result",
+          "evidence": {
+            "command": "node _validation/check_modelengine_binding.js",
+            "exitCode": 1
+          }
+        },
+        "quality": {
+          "verdict": "FAIL",
+          "reason": "UV_OUT_OF_BOUNDS:core,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sr",
+          "evidence": {
+            "command": "node _validation/check_modelengine_quality.js --model level_1_glimmer_wisp",
+            "exitCode": 1
+          }
+        },
+        "ecosystem": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "ECOSYSTEM_MANIFEST_MISSING",
+          "evidence": {
+            "command": "node _validation/check_modelengine_ecosystem.js --model level_1_glimmer_wisp",
+            "exitCode": 0
+          }
+        },
+        "liveSpawn": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "reload": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "restart": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        }
+      }
+    },
+    {
+      "modelId": "level_1_grove_guardian",
+      "role": "strict_quality_reference",
+      "verdict": "FAIL",
+      "gates": {
+        "yaml": {
+          "verdict": "PASS",
+          "reason": "one active MythicMobs model declaration",
+          "evidence": {
+            "path": "plugins/MythicMobs/Packs/level_1/mobs/grove_guardian.mob.yml",
+            "sha256": "c14ba954970ab5b213c0a791cf2944326ccccd59df0e4d384ca303e58c05eb84",
+            "modifiedAt": "2026-07-05T19:21:52.073Z",
+            "bytes": 3510
+          }
+        },
+        "blueprint": {
+          "verdict": "PASS",
+          "reason": "blueprint present",
+          "evidence": {
+            "path": "plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel",
+            "sha256": "ac28278e56e7aecf669b0b8849436798bf4108d51c57ad86c38ec5a59d51877f",
+            "modifiedAt": "2026-07-07T19:39:55.450Z",
+            "bytes": 755616
+          }
+        },
+        "resourceOutput": {
+          "verdict": "PASS",
+          "reason": "68 generated file(s)",
+          "evidence": {
+            "path": "plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_grove_guardian",
+            "sha256": "03773815aeb6f6a9fe18335bcc4f3bdfdfd450138bf312a97fd82425b093efaf",
+            "files": [
+              "back_anchor_root_1.json",
+              "back_anchor_root_2.json",
+              "back_crown.json",
+              "back_crown/1.json",
+              "body.json",
+              "body/1.json",
+              "chest.json",
+              "chest/1.json",
+              "chest/2.json",
+              "chest/3.json",
+              "chest/4.json",
+              "chest/5.json",
+              "crown.json",
+              "head.json",
+              "head/1.json",
+              "head/2.json",
+              "head/3.json",
+              "head/4.json",
+              "jaw.json",
+              "jaw/1.json",
+              "left_anchor_root_1.json",
+              "left_anchor_root_2.json",
+              "left_arm.json",
+              "left_arm/1.json",
+              "left_crown_1.json",
+              "left_crown_1/1.json",
+              "left_crown_2.json",
+              "left_crown_2/1.json",
+              "left_fingers.json",
+              "left_fingers/1.json",
+              "left_fingers/2.json",
+              "left_foot.json",
+              "left_foot/1.json",
+              "left_forearm.json",
+              "left_forearm/1.json",
+              "left_hand.json",
+              "left_hand/1.json",
+              "left_leg.json",
+              "left_leg/1.json",
+              "left_leg/2.json",
+              "left_root_toes.json",
+              "left_shin.json",
+              "left_vine_1.json",
+              "left_vine_2.json",
+              "right_anchor_root_1.json",
+              "right_anchor_root_2.json",
+              "right_arm.json",
+              "right_arm/1.json",
+              "right_crown_1.json",
+              "right_crown_1/1.json",
+              "right_crown_2.json",
+              "right_crown_2/1.json",
+              "right_fingers.json",
+              "right_fingers/1.json",
+              "right_fingers/2.json",
+              "right_foot.json",
+              "right_foot/1.json",
+              "right_forearm.json",
+              "right_forearm/1.json",
+              "right_hand.json",
+              "right_hand/1.json",
+              "right_leg.json",
+              "right_leg/1.json",
+              "right_leg/2.json",
+              "right_root_toes.json",
+              "right_shin.json",
+              "right_vine_1.json",
+              "right_vine_2.json"
+            ]
+          }
+        },
+        "cache": {
+          "verdict": "PASS",
+          "reason": "68 compiled model_id entries",
+          "evidence": {
+            "cache": {
+              "path": "plugins/ModelEngine/.data/cache.json",
+              "sha256": "35b1fd14f2683e034463944312c49cc762fe801fc7734c965aea07fc5f0bf43d",
+              "modifiedAt": "2026-07-20T09:20:38.271Z",
+              "bytes": 10584
+            },
+            "targetedSha256": "d8c6067661037244d8401e67c153bc30ea0cdc78e753cb87a5ee60ff3070d4d6",
+            "compiledEntries": [
+              "level_1_grove_guardian:back_anchor_root_1",
+              "level_1_grove_guardian:back_anchor_root_2",
+              "level_1_grove_guardian:back_crown",
+              "level_1_grove_guardian:back_crown/1",
+              "level_1_grove_guardian:body",
+              "level_1_grove_guardian:body/1",
+              "level_1_grove_guardian:chest",
+              "level_1_grove_guardian:chest/1",
+              "level_1_grove_guardian:chest/2",
+              "level_1_grove_guardian:chest/3",
+              "level_1_grove_guardian:chest/4",
+              "level_1_grove_guardian:chest/5",
+              "level_1_grove_guardian:crown",
+              "level_1_grove_guardian:head",
+              "level_1_grove_guardian:head/1",
+              "level_1_grove_guardian:head/2",
+              "level_1_grove_guardian:head/3",
+              "level_1_grove_guardian:head/4",
+              "level_1_grove_guardian:jaw",
+              "level_1_grove_guardian:jaw/1",
+              "level_1_grove_guardian:left_anchor_root_1",
+              "level_1_grove_guardian:left_anchor_root_2",
+              "level_1_grove_guardian:left_arm",
+              "level_1_grove_guardian:left_arm/1",
+              "level_1_grove_guardian:left_crown_1",
+              "level_1_grove_guardian:left_crown_1/1",
+              "level_1_grove_guardian:left_crown_2",
+              "level_1_grove_guardian:left_crown_2/1",
+              "level_1_grove_guardian:left_fingers",
+              "level_1_grove_guardian:left_fingers/1",
+              "level_1_grove_guardian:left_fingers/2",
+              "level_1_grove_guardian:left_foot",
+              "level_1_grove_guardian:left_foot/1",
+              "level_1_grove_guardian:left_forearm",
+              "level_1_grove_guardian:left_forearm/1",
+              "level_1_grove_guardian:left_hand",
+              "level_1_grove_guardian:left_hand/1",
+              "level_1_grove_guardian:left_leg",
+              "level_1_grove_guardian:left_leg/1",
+              "level_1_grove_guardian:left_leg/2",
+              "level_1_grove_guardian:left_root_toes",
+              "level_1_grove_guardian:left_shin",
+              "level_1_grove_guardian:left_vine_1",
+              "level_1_grove_guardian:left_vine_2",
+              "level_1_grove_guardian:right_anchor_root_1",
+              "level_1_grove_guardian:right_anchor_root_2",
+              "level_1_grove_guardian:right_arm",
+              "level_1_grove_guardian:right_arm/1",
+              "level_1_grove_guardian:right_crown_1",
+              "level_1_grove_guardian:right_crown_1/1",
+              "level_1_grove_guardian:right_crown_2",
+              "level_1_grove_guardian:right_crown_2/1",
+              "level_1_grove_guardian:right_fingers",
+              "level_1_grove_guardian:right_fingers/1",
+              "level_1_grove_guardian:right_fingers/2",
+              "level_1_grove_guardian:right_foot",
+              "level_1_grove_guardian:right_foot/1",
+              "level_1_grove_guardian:right_forearm",
+              "level_1_grove_guardian:right_forearm/1",
+              "level_1_grove_guardian:right_hand",
+              "level_1_grove_guardian:right_hand/1",
+              "level_1_grove_guardian:right_leg",
+              "level_1_grove_guardian:right_leg/1",
+              "level_1_grove_guardian:right_leg/2",
+              "level_1_grove_guardian:right_root_toes",
+              "level_1_grove_guardian:right_shin",
+              "level_1_grove_guardian:right_vine_1",
+              "level_1_grove_guardian:right_vine_2"
+            ]
+          }
+        },
+        "bindingChecker": {
+          "verdict": "PASS",
+          "reason": "check_modelengine_binding.js result",
+          "evidence": {
+            "command": "node _validation/check_modelengine_binding.js",
+            "exitCode": 1
+          }
+        },
+        "quality": {
+          "verdict": "FAIL",
+          "reason": "QUALITY_MANIFEST_MISSING",
+          "evidence": {
+            "command": "node _validation/check_modelengine_quality.js --model level_1_grove_guardian",
+            "exitCode": 1
+          }
+        },
+        "ecosystem": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "ECOSYSTEM_MANIFEST_MISSING",
+          "evidence": {
+            "command": "node _validation/check_modelengine_ecosystem.js --model level_1_grove_guardian",
+            "exitCode": 0
+          }
+        },
+        "liveSpawn": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "reload": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "restart": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        }
+      }
+    },
+    {
+      "modelId": "level_1_moss_stalker",
+      "role": "ticket_target",
+      "verdict": "INSUFFICIENT_EVIDENCE",
+      "gates": {
+        "yaml": {
+          "verdict": "PASS",
+          "reason": "one active MythicMobs model declaration",
+          "evidence": {
+            "path": "plugins/MythicMobs/Packs/level_1/mobs/moss_stalker.mob.yml",
+            "sha256": "ded2b2a04f6a4b8bafe37d48d5be82f693604fb1fd9e438a48cc742c7416e607",
+            "modifiedAt": "2026-07-08T12:16:27.438Z",
+            "bytes": 566
+          }
+        },
+        "blueprint": {
+          "verdict": "PASS",
+          "reason": "blueprint present",
+          "evidence": {
+            "path": "plugins/ModelEngine/blueprints/level_1_moss_stalker/level_1_moss_stalker.bbmodel",
+            "sha256": "aa07eb1c16a7d17e5d3265faa96489a767c44daf5f901d6057dff9d2e31feca4",
+            "modifiedAt": "2026-07-09T10:46:34.749Z",
+            "bytes": 234644
+          }
+        },
+        "resourceOutput": {
+          "verdict": "PASS",
+          "reason": "61 generated file(s)",
+          "evidence": {
+            "path": "plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_moss_stalker",
+            "sha256": "753bde18766b6eb58a346fad282adc6585031ce68253de397f36f7efd76a2fbd",
+            "files": [
+              "attack_side.json",
+              "attack_side/1.json",
+              "chest.json",
+              "chest/1.json",
+              "chest/10.json",
+              "chest/11.json",
+              "chest/12.json",
+              "chest/2.json",
+              "chest/3.json",
+              "chest/4.json",
+              "chest/5.json",
+              "chest/6.json",
+              "chest/7.json",
+              "chest/8.json",
+              "chest/9.json",
+              "head.json",
+              "head/1.json",
+              "head/2.json",
+              "head/3.json",
+              "head/4.json",
+              "head/5.json",
+              "lb_foot.json",
+              "lb_foot/1.json",
+              "lb_lower.json",
+              "lb_lower/1.json",
+              "lb_upper.json",
+              "lb_upper/1.json",
+              "lf_foot.json",
+              "lf_foot/1.json",
+              "lf_foot/2.json",
+              "lf_lower.json",
+              "lf_lower/1.json",
+              "lf_upper.json",
+              "lf_upper/1.json",
+              "lower_back.json",
+              "lower_back/1.json",
+              "lower_back/2.json",
+              "lower_back/3.json",
+              "lower_back/4.json",
+              "rb_foot.json",
+              "rb_foot/1.json",
+              "rb_lower.json",
+              "rb_lower/1.json",
+              "rb_upper.json",
+              "rb_upper/1.json",
+              "rf_foot.json",
+              "rf_foot/1.json",
+              "rf_foot/2.json",
+              "rf_lower.json",
+              "rf_lower/1.json",
+              "rf_upper.json",
+              "rf_upper/1.json",
+              "root.json",
+              "root/1.json",
+              "root/2.json",
+              "root/3.json",
+              "tail_base.json",
+              "tail_base/1.json",
+              "tail_mid.json",
+              "tail_tip.json",
+              "tail_tip/1.json"
+            ]
+          }
+        },
+        "cache": {
+          "verdict": "PASS",
+          "reason": "61 compiled model_id entries",
+          "evidence": {
+            "cache": {
+              "path": "plugins/ModelEngine/.data/cache.json",
+              "sha256": "35b1fd14f2683e034463944312c49cc762fe801fc7734c965aea07fc5f0bf43d",
+              "modifiedAt": "2026-07-20T09:20:38.271Z",
+              "bytes": 10584
+            },
+            "targetedSha256": "ce40f5d09313b3f50e269b2cedde09d3c9bfe377a16d574516266c8bdd0c0b6e",
+            "compiledEntries": [
+              "level_1_moss_stalker:attack_side",
+              "level_1_moss_stalker:attack_side/1",
+              "level_1_moss_stalker:chest",
+              "level_1_moss_stalker:chest/1",
+              "level_1_moss_stalker:chest/10",
+              "level_1_moss_stalker:chest/11",
+              "level_1_moss_stalker:chest/12",
+              "level_1_moss_stalker:chest/2",
+              "level_1_moss_stalker:chest/3",
+              "level_1_moss_stalker:chest/4",
+              "level_1_moss_stalker:chest/5",
+              "level_1_moss_stalker:chest/6",
+              "level_1_moss_stalker:chest/7",
+              "level_1_moss_stalker:chest/8",
+              "level_1_moss_stalker:chest/9",
+              "level_1_moss_stalker:head",
+              "level_1_moss_stalker:head/1",
+              "level_1_moss_stalker:head/2",
+              "level_1_moss_stalker:head/3",
+              "level_1_moss_stalker:head/4",
+              "level_1_moss_stalker:head/5",
+              "level_1_moss_stalker:lb_foot",
+              "level_1_moss_stalker:lb_foot/1",
+              "level_1_moss_stalker:lb_lower",
+              "level_1_moss_stalker:lb_lower/1",
+              "level_1_moss_stalker:lb_upper",
+              "level_1_moss_stalker:lb_upper/1",
+              "level_1_moss_stalker:lf_foot",
+              "level_1_moss_stalker:lf_foot/1",
+              "level_1_moss_stalker:lf_foot/2",
+              "level_1_moss_stalker:lf_lower",
+              "level_1_moss_stalker:lf_lower/1",
+              "level_1_moss_stalker:lf_upper",
+              "level_1_moss_stalker:lf_upper/1",
+              "level_1_moss_stalker:lower_back",
+              "level_1_moss_stalker:lower_back/1",
+              "level_1_moss_stalker:lower_back/2",
+              "level_1_moss_stalker:lower_back/3",
+              "level_1_moss_stalker:lower_back/4",
+              "level_1_moss_stalker:rb_foot",
+              "level_1_moss_stalker:rb_foot/1",
+              "level_1_moss_stalker:rb_lower",
+              "level_1_moss_stalker:rb_lower/1",
+              "level_1_moss_stalker:rb_upper",
+              "level_1_moss_stalker:rb_upper/1",
+              "level_1_moss_stalker:rf_foot",
+              "level_1_moss_stalker:rf_foot/1",
+              "level_1_moss_stalker:rf_foot/2",
+              "level_1_moss_stalker:rf_lower",
+              "level_1_moss_stalker:rf_lower/1",
+              "level_1_moss_stalker:rf_upper",
+              "level_1_moss_stalker:rf_upper/1",
+              "level_1_moss_stalker:root",
+              "level_1_moss_stalker:root/1",
+              "level_1_moss_stalker:root/2",
+              "level_1_moss_stalker:root/3",
+              "level_1_moss_stalker:tail_base",
+              "level_1_moss_stalker:tail_base/1",
+              "level_1_moss_stalker:tail_mid",
+              "level_1_moss_stalker:tail_tip",
+              "level_1_moss_stalker:tail_tip/1"
+            ]
+          }
+        },
+        "bindingChecker": {
+          "verdict": "PASS",
+          "reason": "check_modelengine_binding.js result",
+          "evidence": {
+            "command": "node _validation/check_modelengine_binding.js",
+            "exitCode": 1
+          }
+        },
+        "quality": {
+          "verdict": "PASS",
+          "reason": "ok",
+          "evidence": {
+            "command": "node _validation/check_modelengine_quality.js --model level_1_moss_stalker",
+            "exitCode": 0
+          }
+        },
+        "ecosystem": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "ECOSYSTEM_MANIFEST_MISSING",
+          "evidence": {
+            "command": "node _validation/check_modelengine_ecosystem.js --model level_1_moss_stalker",
+            "exitCode": 0
+          }
+        },
+        "liveSpawn": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "reload": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        },
+        "restart": {
+          "verdict": "INSUFFICIENT_EVIDENCE",
+          "reason": "SHA_BOUND_RUNTIME_EVIDENCE_MISSING"
+        }
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "node _validation/check_modelengine_binding.js",
+      "exitCode": 1,
+      "stdout": "FAIL mob=level_1_briarwolf model=level_1_briarwolf\n  yaml=plugins/MythicMobs/Packs/level_1/mobs/briarwolf.mob.yml\n  blueprint=missing\n  cache=0 compiled entries for 0 rendered bone(s)\n  resource_pack=missing generated model assets\nPASS mob=level_1_corrupted_sprout model=level_1_corrupted_sprout\n  yaml=plugins/MythicMobs/Packs/level_1/mobs/corrupted_sprout.mob.yml\n  blueprint=plugins/ModelEngine/blueprints/level_1_corrupted_sprout/level_1_corrupted_sprout.bbmodel\n  cache=6 compiled entries for 2 rendered bone(s)\n  resource_pack=plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_corrupted_sprout\nPASS mob=level_1_glimmer_wisp model=level_1_glimmer_wisp\n  yaml=plugins/MythicMobs/Packs/level_1/mobs/glimmer_wisp.mob.yml\n  blueprint=plugins/ModelEngine/blueprints/level_1_glimmer_wisp/level_1_glimmer_wisp.bbmodel\n  cache=18 compiled entries for 4 rendered bone(s)\n  resource_pack=plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_glimmer_wisp\nPASS mob=level_1_grove_ambience model=level_1_grove_ambience\n  yaml=plugins/MythicMobs/Packs/level_1/mobs/grove_ambience.mob.yml\n  blueprint=plugins/ModelEngine/blueprints/level_1_grove_ambience/level_1_grove_ambience.bbmodel\n  cache=5 compiled entries for 2 rendered bone(s)\n  resource_pack=plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_grove_ambience\nPASS mob=level_1_grove_guardian model=level_1_grove_guardian\n  yaml=plugins/MythicMobs/Packs/level_1/mobs/grove_guardian.mob.yml\n  blueprint=plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel\n  cache=68 compiled entries for 36 rendered bone(s)\n  resource_pack=plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_grove_guardian\nPASS mob=level_1_moss_stalker model=level_1_moss_stalker\n  yaml=plugins/MythicMobs/Packs/level_1/mobs/moss_stalker.mob.yml\n  blueprint=plugins/ModelEngine/blueprints/level_1_moss_stalker/level_1_moss_stalker.bbmodel\n  cache=61 compiled entries for 20 rendered bone(s)\n  resource_pack=plugins/ModelEngine/resource pack/assets/modelengine/models/level_1_moss_stalker",
+      "stderr": "MODELENGINE_BINDING_FAIL: 1 model binding issue(s) found."
+    },
+    {
+      "command": "node _validation/check_modelengine_quality.js --model level_1_briarwolf",
+      "exitCode": 1,
+      "stdout": "FAIL mob=level_1_briarwolf model=level_1_briarwolf\n  blueprint=plugins/ModelEngine/blueprints/level_1_briarwolf/level_1_briarwolf.bbmodel\n  manifest=_validation/model_quality/level_1_briarwolf.quality.json\n  quality=BLUEPRINT_MISSING",
+      "stderr": "MODELENGINE_QUALITY_FAIL: 1 model quality issue(s) found."
+    },
+    {
+      "command": "node _validation/check_modelengine_ecosystem.js --model level_1_briarwolf",
+      "exitCode": 0,
+      "stdout": "MODELENGINE_ECOSYSTEM_PASS: manifest v2 model, animation, bone, skill, timing, and integration references resolve.",
+      "stderr": ""
+    },
+    {
+      "command": "node _validation/check_modelengine_quality.js --model level_1_glimmer_wisp",
+      "exitCode": 1,
+      "stdout": "FAIL mob=level_1_glimmer_wisp model=level_1_glimmer_wisp\n  blueprint=plugins/ModelEngine/blueprints/level_1_glimmer_wisp/level_1_glimmer_wisp.bbmodel\n  manifest=_validation/model_quality/level_1_glimmer_wisp.quality.json\n  stats=elements:19 bones:4 depth:1 animations:4\n  animation=idle coverage:0.75 keyed:3 frames:12\n  animation=walk coverage:0.75 keyed:3 frames:12\n  animation=attack coverage:0.75 keyed:3 frames:10\n  animation=death coverage:0.75 keyed:3 frames:17\n  quality=UV_OUT_OF_BOUNDS:core,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nl,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_nr,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_e,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:plate_w,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:cap,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l1,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_l2,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:antler_r1,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sl,UV_OUT_OF_BOUNDS:plate_sr,UV_OUT_OF_BOUNDS:plate_sr,UV_OUT_OF_BOUNDS:plate_sr,UV_OUT_OF_BOUNDS:plate_sr,UV_OUT_OF_BOUNDS:plate_sr,UV_OUT_OF_BOUNDS:plate_sr",
+      "stderr": "MODELENGINE_QUALITY_FAIL: 1 model quality issue(s) found."
+    },
+    {
+      "command": "node _validation/check_modelengine_ecosystem.js --model level_1_glimmer_wisp",
+      "exitCode": 0,
+      "stdout": "MODELENGINE_ECOSYSTEM_PASS: manifest v2 model, animation, bone, skill, timing, and integration references resolve.",
+      "stderr": ""
+    },
+    {
+      "command": "node _validation/check_modelengine_quality.js --model level_1_grove_guardian",
+      "exitCode": 1,
+      "stdout": "FAIL mob=level_1_grove_guardian model=level_1_grove_guardian\n  blueprint=plugins/ModelEngine/blueprints/level_1_grove_guardian/level_1_grove_guardian.bbmodel\n  manifest=_validation/model_quality/level_1_grove_guardian.quality.json\n  stats=elements:73 bones:41 depth:5 animations:11\n  animation=passive coverage:0.98 keyed:40 frames:120\n  animation=awaken coverage:1.00 keyed:41 frames:123\n  animation=idle coverage:1.00 keyed:41 frames:123\n  animation=walk coverage:1.00 keyed:41 frames:136\n  animation=attack coverage:1.00 keyed:41 frames:123\n  animation=root_smash coverage:1.00 keyed:41 frames:123\n  animation=thorn_nova coverage:1.00 keyed:41 frames:137\n  animation=summon coverage:1.00 keyed:41 frames:141\n  animation=enrage coverage:1.00 keyed:41 frames:123\n  animation=hit coverage:1.00 keyed:41 frames:123\n  animation=death coverage:1.00 keyed:41 frames:123\n  quality=QUALITY_MANIFEST_MISSING",
+      "stderr": "MODELENGINE_QUALITY_FAIL: 1 model quality issue(s) found."
+    },
+    {
+      "command": "node _validation/check_modelengine_ecosystem.js --model level_1_grove_guardian",
+      "exitCode": 0,
+      "stdout": "MODELENGINE_ECOSYSTEM_PASS: manifest v2 model, animation, bone, skill, timing, and integration references resolve.",
+      "stderr": ""
+    },
+    {
+      "command": "node _validation/check_modelengine_quality.js --model level_1_moss_stalker",
+      "exitCode": 0,
+      "stdout": "PASS mob=level_1_moss_stalker model=level_1_moss_stalker\n  blueprint=plugins/ModelEngine/blueprints/level_1_moss_stalker/level_1_moss_stalker.bbmodel\n  manifest=_validation/model_quality/level_1_moss_stalker.quality.json\n  stats=elements:66 bones:20 depth:4 animations:7\n  animation=idle coverage:0.25 keyed:5 frames:17\n  animation=walk coverage:0.50 keyed:10 frames:32\n  animation=run coverage:0.55 keyed:11 frames:35\n  animation=attack_1 coverage:0.20 keyed:4 frames:14\n  animation=attack_2 coverage:0.20 keyed:4 frames:16\n  animation=hit coverage:0.10 keyed:2 frames:7\n  animation=death coverage:0.30 keyed:6 frames:18\n  quality=ok\nMODELENGINE_QUALITY_PASS: structure, rig, animation, hitbox, texture, and current evidence gates passed.",
+      "stderr": ""
+    },
+    {
+      "command": "node _validation/check_modelengine_ecosystem.js --model level_1_moss_stalker",
+      "exitCode": 0,
+      "stdout": "MODELENGINE_ECOSYSTEM_PASS: manifest v2 model, animation, bone, skill, timing, and integration references resolve.",
+      "stderr": ""
+    }
+  ]
+}

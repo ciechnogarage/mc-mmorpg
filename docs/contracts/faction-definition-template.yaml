@@ -1,0 +1,33 @@
+template:
+  kind: faction_definition
+  version: 1
+  owner_domain: "08"
+  production_status: draft
+
+required_fields:
+  faction_id: faction.example
+  role_in_progression: ""
+  theme: ""
+  conflict: ""
+  participants: []
+  activities: []
+  reward_categories: []
+  dependencies: []
+  consequences: []
+  performance_budget: ""
+  test_criteria: []
+  values_and_doctrine: []
+  membership_requirements: []
+  available_ranks: []
+  departure_procedure: ""
+  betrayal_definition: []
+  reconciliation_rules: []
+  permanent_exile_conditions: []
+  legacy_technique_links: []
+  treaties_and_conflicts: []
+
+portfolio_guardrails:
+  recommended_initial_global_factions: 3-4
+  recommended_initial_local_organizations_per_island: 1-3
+  not_every_organization_is_primary_allegiance: true
+  no_objectively_best_power_path: true

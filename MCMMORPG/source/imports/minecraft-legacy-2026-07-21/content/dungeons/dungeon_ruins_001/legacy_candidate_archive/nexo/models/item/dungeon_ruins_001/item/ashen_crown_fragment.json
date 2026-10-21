@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "nexo:item/dungeon_ruins_001/item/ashen_crown_fragment"
+  }
+}

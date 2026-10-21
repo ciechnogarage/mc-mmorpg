@@ -1,0 +1,18 @@
+Character persistence runtime admission check
+Collected: 2026-08-06T10:04:14Z
+
+Command: MCMMORPG/infra/bin/mcenv ps dev qa
+Exit code: 0
+Output:
+mcenv: secret env not found at /home/przemek/projects/MC/MCMMORPG/runtime/dev-qa/secrets/runtime.env; continuing in read-only mode
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+
+Read-only checks:
+- `MCMMORPG/runtime/dev-qa` is absent.
+- No Docker container carrying `com.docker.compose.project=mc-dev-qa` exists.
+- No Docker volume carrying `com.docker.compose.project=mc-dev-qa` exists.
+- `MCMMORPG/runtime/dev-qa/secrets/runtime.env` is absent; its contents were not inspected.
+
+`mcenv up dev qa` requires this secret environment before it can start the isolated
+backend. Therefore no RCON session, Mineflayer bot, test account, restart, snapshot,
+or backend log exists for this run.

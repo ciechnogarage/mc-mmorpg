@@ -1,0 +1,391 @@
+schema_version: 1
+registry_id: profession-list
+domain: domain-09
+profession_count: 8
+organization_count_per_profession: 3
+active_profession_limit_per_character: 2
+
+professions:
+  - profession_id: prof.miner
+    display_name: Miner
+    category: gathering
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.gathering
+    minigame_profile_ref: minigame.extraction
+    rng_profile_ref: rng.gathering-standard
+    salvage_profile_ref: none
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: false
+      supports_salvage_basic: false
+      supports_salvage_professional: false
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.miner.deep-vein-guild
+        display_name: Deep Vein Guild
+        profession_id: prof.miner
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.miner.deep-vein-guild
+        signature_scope_ref: methods.signature.miner.deep-vein-guild
+        minigame_delta_ref: minigame-delta.miner.deep-vein-guild
+        salvage_delta_ref: none
+        status: framework_ready
+      - organization_id: org.miner.stoneward-union
+        display_name: Stoneward Union
+        profession_id: prof.miner
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.miner.stoneward-union
+        signature_scope_ref: methods.signature.miner.stoneward-union
+        minigame_delta_ref: minigame-delta.miner.stoneward-union
+        salvage_delta_ref: none
+        status: framework_ready
+      - organization_id: org.miner.blackcore-order
+        display_name: Blackcore Order
+        profession_id: prof.miner
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.miner.blackcore-order
+        signature_scope_ref: methods.signature.miner.blackcore-order
+        minigame_delta_ref: minigame-delta.miner.blackcore-order
+        salvage_delta_ref: none
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.lumberjack
+    display_name: Lumberjack
+    category: gathering
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.gathering
+    minigame_profile_ref: minigame.harvest
+    rng_profile_ref: rng.gathering-standard
+    salvage_profile_ref: none
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: false
+      supports_salvage_basic: false
+      supports_salvage_professional: false
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.lumberjack.ironbark-compact
+        display_name: Ironbark Compact
+        profession_id: prof.lumberjack
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.lumberjack.ironbark-compact
+        signature_scope_ref: methods.signature.lumberjack.ironbark-compact
+        minigame_delta_ref: minigame-delta.lumberjack.ironbark-compact
+        salvage_delta_ref: none
+        status: framework_ready
+      - organization_id: org.lumberjack.greenring-lodge
+        display_name: Greenring Lodge
+        profession_id: prof.lumberjack
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.lumberjack.greenring-lodge
+        signature_scope_ref: methods.signature.lumberjack.greenring-lodge
+        minigame_delta_ref: minigame-delta.lumberjack.greenring-lodge
+        salvage_delta_ref: none
+        status: framework_ready
+      - organization_id: org.lumberjack.embergrain-circles
+        display_name: Embergrain Circles
+        profession_id: prof.lumberjack
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.lumberjack.embergrain-circles
+        signature_scope_ref: methods.signature.lumberjack.embergrain-circles
+        minigame_delta_ref: minigame-delta.lumberjack.embergrain-circles
+        salvage_delta_ref: none
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.harvester
+    display_name: Harvester
+    category: gathering
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.gathering
+    minigame_profile_ref: minigame.precision-harvest
+    rng_profile_ref: rng.gathering-standard
+    salvage_profile_ref: none
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: false
+      supports_salvage_basic: false
+      supports_salvage_professional: false
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.harvester.golden-sheaf-guild
+        display_name: Golden Sheaf Guild
+        profession_id: prof.harvester
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.harvester.golden-sheaf-guild
+        signature_scope_ref: methods.signature.harvester.golden-sheaf-guild
+        minigame_delta_ref: minigame-delta.harvester.golden-sheaf-guild
+        salvage_delta_ref: none
+        status: framework_ready
+      - organization_id: org.harvester.rootwake-conclave
+        display_name: Rootwake Conclave
+        profession_id: prof.harvester
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.harvester.rootwake-conclave
+        signature_scope_ref: methods.signature.harvester.rootwake-conclave
+        minigame_delta_ref: minigame-delta.harvester.rootwake-conclave
+        salvage_delta_ref: none
+        status: framework_ready
+      - organization_id: org.harvester.cinderfield-cooperative
+        display_name: Cinderfield Cooperative
+        profession_id: prof.harvester
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.harvester.cinderfield-cooperative
+        signature_scope_ref: methods.signature.harvester.cinderfield-cooperative
+        minigame_delta_ref: minigame-delta.harvester.cinderfield-cooperative
+        salvage_delta_ref: none
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.blacksmith
+    display_name: Blacksmith
+    category: production_service
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.crafting
+    minigame_profile_ref: minigame.precision-crafting
+    rng_profile_ref: rng.standard-crafting
+    salvage_profile_ref: salvage.metalwork
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: true
+      supports_salvage_basic: true
+      supports_salvage_professional: true
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.blacksmith.forge-covenant
+        display_name: Forge Covenant
+        profession_id: prof.blacksmith
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.blacksmith.forge-covenant
+        signature_scope_ref: methods.signature.blacksmith.forge-covenant
+        minigame_delta_ref: minigame-delta.blacksmith.forge-covenant
+        salvage_delta_ref: salvage-delta.blacksmith.forge-covenant
+        status: framework_ready
+      - organization_id: org.blacksmith.red-anvil-syndicate
+        display_name: Red Anvil Syndicate
+        profession_id: prof.blacksmith
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.blacksmith.red-anvil-syndicate
+        signature_scope_ref: methods.signature.blacksmith.red-anvil-syndicate
+        minigame_delta_ref: minigame-delta.blacksmith.red-anvil-syndicate
+        salvage_delta_ref: salvage-delta.blacksmith.red-anvil-syndicate
+        status: framework_ready
+      - organization_id: org.blacksmith.ashen-hammer-league
+        display_name: Ashen Hammer League
+        profession_id: prof.blacksmith
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.blacksmith.ashen-hammer-league
+        signature_scope_ref: methods.signature.blacksmith.ashen-hammer-league
+        minigame_delta_ref: minigame-delta.blacksmith.ashen-hammer-league
+        salvage_delta_ref: salvage-delta.blacksmith.ashen-hammer-league
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.armorer
+    display_name: Armorer
+    category: production_service
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.crafting
+    minigame_profile_ref: minigame.precision-crafting
+    rng_profile_ref: rng.standard-crafting
+    salvage_profile_ref: salvage.defensive-gear
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: true
+      supports_salvage_basic: true
+      supports_salvage_professional: true
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.armorer.bastion-craft
+        display_name: Bastion Craft
+        profession_id: prof.armorer
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.armorer.bastion-craft
+        signature_scope_ref: methods.signature.armorer.bastion-craft
+        minigame_delta_ref: minigame-delta.armorer.bastion-craft
+        salvage_delta_ref: salvage-delta.armorer.bastion-craft
+        status: framework_ready
+      - organization_id: org.armorer.wardsteel-assembly
+        display_name: Wardsteel Assembly
+        profession_id: prof.armorer
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.armorer.wardsteel-assembly
+        signature_scope_ref: methods.signature.armorer.wardsteel-assembly
+        minigame_delta_ref: minigame-delta.armorer.wardsteel-assembly
+        salvage_delta_ref: salvage-delta.armorer.wardsteel-assembly
+        status: framework_ready
+      - organization_id: org.armorer.silver-rivet-circle
+        display_name: Silver Rivet Circle
+        profession_id: prof.armorer
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.armorer.silver-rivet-circle
+        signature_scope_ref: methods.signature.armorer.silver-rivet-circle
+        minigame_delta_ref: minigame-delta.armorer.silver-rivet-circle
+        salvage_delta_ref: salvage-delta.armorer.silver-rivet-circle
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.alchemist
+    display_name: Alchemist
+    category: production_service
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.crafting
+    minigame_profile_ref: minigame.reaction-crafting
+    rng_profile_ref: rng.reactive-crafting
+    salvage_profile_ref: salvage.alchemical
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: true
+      supports_salvage_basic: true
+      supports_salvage_professional: true
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.alchemist.glass-circle
+        display_name: Glass Circle
+        profession_id: prof.alchemist
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.alchemist.glass-circle
+        signature_scope_ref: methods.signature.alchemist.glass-circle
+        minigame_delta_ref: minigame-delta.alchemist.glass-circle
+        salvage_delta_ref: salvage-delta.alchemist.glass-circle
+        status: framework_ready
+      - organization_id: org.alchemist.mercury-accord
+        display_name: Mercury Accord
+        profession_id: prof.alchemist
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.alchemist.mercury-accord
+        signature_scope_ref: methods.signature.alchemist.mercury-accord
+        minigame_delta_ref: minigame-delta.alchemist.mercury-accord
+        salvage_delta_ref: salvage-delta.alchemist.mercury-accord
+        status: framework_ready
+      - organization_id: org.alchemist.verdant-retort
+        display_name: Verdant Retort
+        profession_id: prof.alchemist
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.alchemist.verdant-retort
+        signature_scope_ref: methods.signature.alchemist.verdant-retort
+        minigame_delta_ref: minigame-delta.alchemist.verdant-retort
+        salvage_delta_ref: salvage-delta.alchemist.verdant-retort
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.artificer
+    display_name: Artificer
+    category: production_service
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.crafting
+    minigame_profile_ref: minigame.precision-assembly
+    rng_profile_ref: rng.precision-crafting
+    salvage_profile_ref: salvage.composite
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: true
+      supports_salvage_basic: true
+      supports_salvage_professional: true
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.artificer.clockwork-forum
+        display_name: Clockwork Forum
+        profession_id: prof.artificer
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.artificer.clockwork-forum
+        signature_scope_ref: methods.signature.artificer.clockwork-forum
+        minigame_delta_ref: minigame-delta.artificer.clockwork-forum
+        salvage_delta_ref: salvage-delta.artificer.clockwork-forum
+        status: framework_ready
+      - organization_id: org.artificer.lattice-union
+        display_name: Lattice Union
+        profession_id: prof.artificer
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.artificer.lattice-union
+        signature_scope_ref: methods.signature.artificer.lattice-union
+        minigame_delta_ref: minigame-delta.artificer.lattice-union
+        salvage_delta_ref: salvage-delta.artificer.lattice-union
+        status: framework_ready
+      - organization_id: org.artificer.sparkwright-compact
+        display_name: Sparkwright Compact
+        profession_id: prof.artificer
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.artificer.sparkwright-compact
+        signature_scope_ref: methods.signature.artificer.sparkwright-compact
+        minigame_delta_ref: minigame-delta.artificer.sparkwright-compact
+        salvage_delta_ref: salvage-delta.artificer.sparkwright-compact
+        status: framework_ready
+    status: framework_ready
+
+  - profession_id: prof.cook
+    display_name: Cook
+    category: production_service
+    active_selectable: true
+    progression_profile_ref: progression.default
+    organization_profile_ref: organization.default
+    method_profile_ref: methods.crafting
+    minigame_profile_ref: minigame.timing-crafting
+    rng_profile_ref: rng.taste-crafting
+    salvage_profile_ref: salvage.culinary
+    capabilities:
+      supports_routine_work: true
+      supports_valuable_work: true
+      supports_workshop_queue: true
+      supports_salvage_basic: true
+      supports_salvage_professional: false
+      supports_active_minigame: true
+      supports_signature_methods: true
+    organizations:
+      - organization_id: org.cook.hearth-guild
+        display_name: Hearth Guild
+        profession_id: prof.cook
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.cook.hearth-guild
+        signature_scope_ref: methods.signature.cook.hearth-guild
+        minigame_delta_ref: minigame-delta.cook.hearth-guild
+        salvage_delta_ref: salvage-delta.cook.hearth-guild
+        status: framework_ready
+      - organization_id: org.cook.salt-covenant
+        display_name: Salt Covenant
+        profession_id: prof.cook
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.cook.salt-covenant
+        signature_scope_ref: methods.signature.cook.salt-covenant
+        minigame_delta_ref: minigame-delta.cook.salt-covenant
+        salvage_delta_ref: salvage-delta.cook.salt-covenant
+        status: framework_ready
+      - organization_id: org.cook.cinder-ladle-society
+        display_name: Cinder Ladle Society
+        profession_id: prof.cook
+        organization_rank_profile_ref: organization-rank.default
+        method_scope_ref: methods.org.cook.cinder-ladle-society
+        signature_scope_ref: methods.signature.cook.cinder-ladle-society
+        minigame_delta_ref: minigame-delta.cook.cinder-ladle-society
+        salvage_delta_ref: salvage-delta.cook.cinder-ladle-society
+        status: framework_ready
+    status: framework_ready

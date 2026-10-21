@@ -1,0 +1,6 @@
+# MythicDungeons 2.0.1 local examples keep the runtime flow graph editor-owned.
+# Wire this dungeon in staging with /md edit dungeon_ruins_001 after importing
+# config.yml and the world/Iris pack. Do not treat this source file as a full
+# runtime objective graph.
+Version: 1
+Functions: []

@@ -1,0 +1,34 @@
+dungeon_ruins_001:
+  status: release_prep_hook_contract
+  experience:
+    trash:
+      normal: "8-15"
+      veteran: "15-30"
+      mythic: "28-55"
+    elite:
+      normal: "35-60"
+      veteran: "70-110"
+      mythic: "130-190"
+    bosses:
+      varos:
+        normal: 120
+        veteran: 210
+        mythic: 360
+      nhalruun:
+        normal: 250
+        veteran: 420
+        mythic: 700
+      aurelion:
+        normal: 650
+        veteran: 1100
+        mythic: 1900
+    completion:
+      first_daily:
+        normal: 500
+        veteran: 900
+        mythic: 1600
+      first_weekly_mythic: 3500
+  command_hooks_to_verify:
+    - "mmocore admin exp give <player> main <amount>"
+    - "mi give MATERIAL DR001_RUNE_DUST <player> <amount>"
+    - "lp user <player> permission settemp dungeon.dr001.weekly.claimed true 7d"

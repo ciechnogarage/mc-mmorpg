@@ -1,0 +1,94 @@
+schema_version: 1
+decision_id: domain-17-reward-idempotency-prerequisite-checkpoint-2026-07-31
+ticket_id: domain-17-reward-idempotency-prerequisite-checkpoint
+created_at: "2026-07-31T13:47:55Z"
+scenario_id: reward_restart_recovery
+gate_id: reward_restart_recovery_prerequisites
+decision: blocked
+result:
+  verdict: BLOCKED
+  release_effect: blocks_release
+  failure_family: prerequisite_blocked
+workspace_root: /home/przemek/projects/MC
+allowed_paths:
+  - /home/przemek/projects/MC/docs/qa
+  - /home/przemek/projects/MC/tools/qa
+  - /home/przemek/projects/MC/MCMMORPG/_validation
+  - /home/przemek/projects/MC/MCMMORPG/plugins
+runtime_control:
+  lease_required: dev-qa
+  lease_status: unavailable
+  lease: none
+  runtime_touched: false
+  staging_touched: false
+  lease_proof_path: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/lease-proof.txt
+inspection:
+  mode: static_allowed_paths_only
+  runtime_inspection_performed: false
+  forbidden_data_paths_inspected: false
+  inspected_paths:
+    - docs/qa/e2e-scenarios.yaml
+    - docs/qa/release-gates.yaml
+    - docs/qa/legacy-evidence-migration-snapshot.yaml
+    - docs/qa/regression-matrix.yaml
+    - docs/qa/foundation-runtime-adapter-contract.md
+    - tools/qa
+    - MCMMORPG/_validation
+    - MCMMORPG/plugins/CMI/config.yml
+    - MCMMORPG/plugins/CMI/Settings/DataBaseInfo.yml
+    - MCMMORPG/plugins/MMOInventory/config.yml
+    - MCMMORPG/plugins/MMOCore
+    - MCMMORPG/plugins/MMOItems
+  summary_path: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/static-inspection-summary.txt
+capability_findings:
+  - required_field: reward_transaction_id
+    status: missing
+    proof_capability: not_proven
+    notes:
+      - Static scan found Domain 17 docs requiring this owner and transaction-ledger snapshots.
+      - Static scan did not find a plugin, tool, or validation runner source defining a durable reward_transaction_id source.
+  - required_field: idempotency_key
+    status: missing
+    proof_capability: not_proven
+    notes:
+      - Static scan found Domain 17 docs requiring this owner.
+      - Static scan did not find a plugin, tool, or validation runner source defining an idempotency key or duplicate-rejection proof path.
+  - required_field: currency_provider
+    status: partial_static_signal
+    proof_capability: not_proven
+    candidate_sources:
+      - MCMMORPG/plugins/CMI/config.yml:10
+      - MCMMORPG/plugins/CMI/config.yml:16
+      - MCMMORPG/plugins/CMI/Settings/DataBaseInfo.yml:4
+      - MCMMORPG/_validation/server.log:178
+    notes:
+      - Static config/log evidence indicates CMI economy and Vault are present.
+      - This does not prove the authoritative reward currency provider or duplicate-rejection semantics.
+  - required_field: inventory_storage
+    status: partial_static_signal
+    proof_capability: not_proven
+    candidate_sources:
+      - MCMMORPG/plugins/MMOInventory/config.yml:22
+      - MCMMORPG/plugins/MMOInventory/config.yml:28
+      - MCMMORPG/plugins/MMOInventory/config.yml:44
+    notes:
+      - Static config indicates MMOInventory autosave and configured user-data table naming.
+      - This does not prove the authoritative reward inventory storage owner or transaction coupling.
+blockers:
+  - blocker_id: D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE
+    severity: blocking
+    reason: No active dev-qa lease is available, so runtime-safe inspection and gameplay validation were not performed.
+    transfer_to: domain-17 reward/economy runtime owner
+  - blocker_id: D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING
+    severity: blocking
+    reason: No static source identifies durable reward_transaction_id or idempotency_key ownership.
+    transfer_to: domain-17 reward/economy runtime owner
+  - blocker_id: D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING
+    severity: blocking
+    reason: No static source names a runner or API path that can prove durable duplicate rejection across restart recovery.
+    transfer_to: domain-17 reward/economy runtime owner
+evaluator_input:
+  normalized_blocker_input: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json
+  release_gate_effect: reward_restart_recovery_prerequisites remains blocked
+next_owner: domain-17 reward/economy runtime owner
+why_not_pass: Runtime PASS cannot be claimed because prerequisite proof ownership and duplicate-rejection evidence source are missing, and no dev-qa lease exists for safe runtime inspection.

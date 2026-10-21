@@ -1,67 +1,67 @@
 open_race_selector_if_needed:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - Script{script=creator_resume_or_start} @Self
 
 creator_resume_or_start:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
-    - Comparator{value1="{class_selected}";operator="=";value2="false"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
+    - Comparator{value1="{class_selected}";operator="==";value2="false"} true
   Mechanics:
     - Script{script=creator_resume_profile_created} @Self
 
 creator_resume_profile_created:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="PROFILE_CREATED"} falseElse creator_resume_intro
+    - Comparator{value1="{character_stage}";operator="==";value2="PROFILE_CREATED"} falseElse creator_resume_intro
   Mechanics:
     - Script{script=creator_open_intro} @Self
 
 creator_resume_intro:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="CREATOR_INTRO"} falseElse creator_resume_race_gallery
+    - Comparator{value1="{character_stage}";operator="==";value2="CREATOR_INTRO"} falseElse creator_resume_race_gallery
   Mechanics:
     - Script{script=creator_open_intro} @Self
 
 creator_resume_race_gallery:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="RACE_GALLERY"} falseElse creator_resume_race_spotlight
+    - Comparator{value1="{character_stage}";operator="==";value2="RACE_GALLERY"} falseElse creator_resume_race_spotlight
   Mechanics:
     - Script{script=creator_open_race_gallery} @Self
 
 creator_resume_race_spotlight:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="RACE_SPOTLIGHT"} falseElse creator_resume_race_selected
+    - Comparator{value1="{character_stage}";operator="==";value2="RACE_SPOTLIGHT"} falseElse creator_resume_race_selected
   Mechanics:
     - Script{script=creator_resume_race_spotlight_dispatch} @Self
 
 creator_resume_race_spotlight_dispatch:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="CZLOWIEK"} falseElse creator_resume_race_spotlight_ork
+    - Comparator{value1="{race_id}";operator="==";value2="CZLOWIEK"} falseElse creator_resume_race_spotlight_ork
   Mechanics:
     - Script{script=creator_open_race_spotlight_czlowiek} @Self
 
 creator_resume_race_spotlight_ork:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="ORK"} falseElse creator_resume_race_spotlight_elf
+    - Comparator{value1="{race_id}";operator="==";value2="ORK"} falseElse creator_resume_race_spotlight_elf
   Mechanics:
     - Script{script=creator_open_race_spotlight_ork} @Self
 
 creator_resume_race_spotlight_elf:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="ELF"} falseElse creator_resume_race_spotlight_krasnolud
+    - Comparator{value1="{race_id}";operator="==";value2="ELF"} falseElse creator_resume_race_spotlight_krasnolud
   Mechanics:
     - Script{script=creator_open_race_spotlight_elf} @Self
 
 creator_resume_race_spotlight_krasnolud:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="KRASNOLUD"} falseElse creator_resume_race_spotlight_nieumarly
+    - Comparator{value1="{race_id}";operator="==";value2="KRASNOLUD"} falseElse creator_resume_race_spotlight_nieumarly
   Mechanics:
     - Script{script=creator_open_race_spotlight_krasnolud} @Self
 
 creator_resume_race_spotlight_nieumarly:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="NIEUMARLY"} falseElse creator_resume_race_gallery_fallback
+    - Comparator{value1="{race_id}";operator="==";value2="NIEUMARLY"} falseElse creator_resume_race_gallery_fallback
   Mechanics:
     - Script{script=creator_open_race_spotlight_nieumarly} @Self
 
@@ -72,91 +72,91 @@ creator_resume_race_gallery_fallback:
 
 creator_resume_race_selected:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="RACE_SELECTED"} falseElse creator_resume_class_ready
+    - Comparator{value1="{character_stage}";operator="==";value2="RACE_SELECTED"} falseElse creator_resume_class_ready
   Mechanics:
     - Script{script=creator_open_class_selector} @Self
 
 creator_resume_class_ready:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_READY"} falseElse creator_resume_class_spotlight
+    - Comparator{value1="{character_stage}";operator="==";value2="CLASS_READY"} falseElse creator_resume_class_spotlight
   Mechanics:
     - Script{script=creator_resume_class_spotlight_dispatch} @Self
 
 creator_resume_class_spotlight:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_SPOTLIGHT"} falseElse creator_resume_starter_phase
+    - Comparator{value1="{character_stage}";operator="==";value2="CLASS_SPOTLIGHT"} falseElse creator_resume_starter_phase
   Mechanics:
     - Script{script=creator_resume_class_spotlight_dispatch} @Self
 
 creator_resume_starter_phase:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="STARTER_PHASE"} falseElse creator_resume_class_confirm
+    - Comparator{value1="{character_stage}";operator="==";value2="STARTER_PHASE"} falseElse creator_resume_class_confirm
   Mechanics:
     - Script{script=creator_open_class_selector} @Self
 
 creator_resume_class_confirm:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_CONFIRM"} falseElse creator_resume_class_selected
+    - Comparator{value1="{character_stage}";operator="==";value2="CLASS_CONFIRM"} falseElse creator_resume_class_selected
   Mechanics:
     - Script{script=creator_resume_class_confirm_dispatch} @Self
 
 creator_resume_class_confirm_dispatch:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_resume_class_confirm_rogue
+    - Comparator{value1="{pending_class_id}";operator="==";value2="WARRIOR"} falseElse creator_resume_class_confirm_rogue
   Mechanics:
     - Script{script=creator_open_class_confirm_warrior} @Self
 
 creator_resume_class_confirm_rogue:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_resume_class_confirm_marksman
+    - Comparator{value1="{pending_class_id}";operator="==";value2="ROGUE"} falseElse creator_resume_class_confirm_marksman
   Mechanics:
     - Script{script=creator_open_class_confirm_rogue} @Self
 
 creator_resume_class_confirm_marksman:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_resume_class_confirm_mage
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MARKSMAN"} falseElse creator_resume_class_confirm_mage
   Mechanics:
     - Script{script=creator_open_class_confirm_marksman} @Self
 
 creator_resume_class_confirm_mage:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_resume_class_confirm_paladin
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MAGE"} falseElse creator_resume_class_confirm_paladin
   Mechanics:
     - Script{script=creator_open_class_confirm_mage} @Self
 
 creator_resume_class_confirm_paladin:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_resume_class_selector_fallback
+    - Comparator{value1="{pending_class_id}";operator="==";value2="PALADIN"} falseElse creator_resume_class_selector_fallback
   Mechanics:
     - Script{script=creator_open_class_confirm_paladin} @Self
 
 creator_resume_class_spotlight_dispatch:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_resume_class_spotlight_rogue
+    - Comparator{value1="{pending_class_id}";operator="==";value2="WARRIOR"} falseElse creator_resume_class_spotlight_rogue
   Mechanics:
     - Script{script=creator_open_class_spotlight_warrior} @Self
 
 creator_resume_class_spotlight_rogue:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_resume_class_spotlight_marksman
+    - Comparator{value1="{pending_class_id}";operator="==";value2="ROGUE"} falseElse creator_resume_class_spotlight_marksman
   Mechanics:
     - Script{script=creator_open_class_spotlight_rogue} @Self
 
 creator_resume_class_spotlight_marksman:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_resume_class_spotlight_mage
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MARKSMAN"} falseElse creator_resume_class_spotlight_mage
   Mechanics:
     - Script{script=creator_open_class_spotlight_marksman} @Self
 
 creator_resume_class_spotlight_mage:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_resume_class_spotlight_paladin
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MAGE"} falseElse creator_resume_class_spotlight_paladin
   Mechanics:
     - Script{script=creator_open_class_spotlight_mage} @Self
 
 creator_resume_class_spotlight_paladin:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_resume_class_selector_fallback
+    - Comparator{value1="{pending_class_id}";operator="==";value2="PALADIN"} falseElse creator_resume_class_selector_fallback
   Mechanics:
     - Script{script=creator_open_class_spotlight_paladin} @Self
 
@@ -167,25 +167,25 @@ creator_resume_class_selector_fallback:
 
 creator_resume_class_selected:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="CLASS_SELECTED"} falseElse creator_resume_city_onboarding
+    - Comparator{value1="{character_stage}";operator="==";value2="CLASS_SELECTED"} falseElse creator_resume_city_onboarding
   Mechanics:
     - Script{script=creator_open_class_mentor_roster} @Self
 
 creator_resume_city_onboarding:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="CITY_ONBOARDING"} falseElse creator_resume_subclass_ready
+    - Comparator{value1="{character_stage}";operator="==";value2="CITY_ONBOARDING"} falseElse creator_resume_subclass_ready
   Mechanics:
     - Script{script=creator_open_class_mentor_roster} @Self
 
 creator_resume_subclass_ready:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="SUBCLASS_READY"} falseElse creator_resume_subclass_selected
+    - Comparator{value1="{character_stage}";operator="==";value2="SUBCLASS_READY"} falseElse creator_resume_subclass_selected
   Mechanics:
     - Script{script=creator_open_class_mentor_roster} @Self
 
 creator_resume_subclass_selected:
   Conditions:
-    - Comparator{value1="{character_stage}";operator="=";value2="SUBCLASS_SELECTED"} falseElse creator_resume_default
+    - Comparator{value1="{character_stage}";operator="==";value2="SUBCLASS_SELECTED"} falseElse creator_resume_default
   Mechanics:
     - Script{script=creator_open_city_roster} @Self
 
@@ -200,7 +200,7 @@ creator_close_menu:
 
 creator_reset_selection:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - variable{action="set";variable="pending_race_id";value="UNSET";profile=true} @Self
     - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
@@ -247,7 +247,7 @@ creator_reset_selection:
 
 creator_open_intro:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - variable{action="set";variable="creator_intro_seen";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CREATOR_INTRO";profile=true} @Self
@@ -257,7 +257,7 @@ creator_open_intro:
 
 creator_open_race_gallery:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - variable{action="set";variable="character_stage";value="RACE_GALLERY";profile=true} @Self
     - message{m="<gold>Galeria Rodów &8> &fNajpierw obejrzyj fantasy każdej pieczęci. Decyzja następuje dopiero w spotlightcie rasy."} @Self
@@ -491,37 +491,37 @@ creator_accept_recommendation:
 
 creator_accept_recommendation_dispatch:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_accept_recommendation_rogue
+    - Comparator{value1="{pending_class_id}";operator="==";value2="WARRIOR"} falseElse creator_accept_recommendation_rogue
   Mechanics:
     - Script{script=creator_open_class_spotlight_warrior} @Self
 
 creator_accept_recommendation_rogue:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_accept_recommendation_marksman
+    - Comparator{value1="{pending_class_id}";operator="==";value2="ROGUE"} falseElse creator_accept_recommendation_marksman
   Mechanics:
     - Script{script=creator_open_class_spotlight_rogue} @Self
 
 creator_accept_recommendation_marksman:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_accept_recommendation_mage
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MARKSMAN"} falseElse creator_accept_recommendation_mage
   Mechanics:
     - Script{script=creator_open_class_spotlight_marksman} @Self
 
 creator_accept_recommendation_mage:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_accept_recommendation_paladin
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MAGE"} falseElse creator_accept_recommendation_paladin
   Mechanics:
     - Script{script=creator_open_class_spotlight_mage} @Self
 
 creator_accept_recommendation_paladin:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="PALADIN"} falseElse creator_open_class_selector
+    - Comparator{value1="{pending_class_id}";operator="==";value2="PALADIN"} falseElse creator_open_class_selector
   Mechanics:
     - Script{script=creator_open_class_spotlight_paladin} @Self
 
 creator_open_class_selector:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - variable{action="set";variable="character_stage";value="CLASS_READY";profile=true} @Self
     - message{m="<gold>Galeria Archetypów &8> &fTeraz wybierasz klasę świadomie. Żadnej kartki z werdyktem, tylko spotlight, koszt i oath."} @Self
@@ -529,7 +529,7 @@ creator_open_class_selector:
 
 creator_open_class_confirm_warrior:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="pending_class_id";value="WARRIOR";profile=true} @Self
     - variable{action="set";variable="class_id";value="WARRIOR";profile=true} @Self
@@ -538,7 +538,7 @@ creator_open_class_confirm_warrior:
 
 creator_open_class_confirm_rogue:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="pending_class_id";value="ROGUE";profile=true} @Self
     - variable{action="set";variable="class_id";value="ROGUE";profile=true} @Self
@@ -547,7 +547,7 @@ creator_open_class_confirm_rogue:
 
 creator_open_class_confirm_marksman:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="pending_class_id";value="MARKSMAN";profile=true} @Self
     - variable{action="set";variable="class_id";value="MARKSMAN";profile=true} @Self
@@ -556,7 +556,7 @@ creator_open_class_confirm_marksman:
 
 creator_open_class_confirm_mage:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="pending_class_id";value="MAGE";profile=true} @Self
     - variable{action="set";variable="class_id";value="MAGE";profile=true} @Self
@@ -565,7 +565,7 @@ creator_open_class_confirm_mage:
 
 creator_open_class_confirm_paladin:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="pending_class_id";value="PALADIN";profile=true} @Self
     - variable{action="set";variable="class_id";value="PALADIN";profile=true} @Self
@@ -574,7 +574,7 @@ creator_open_class_confirm_paladin:
 
 creator_open_class_spotlight_warrior:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="class_spotlight_warrior";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
@@ -584,7 +584,7 @@ creator_open_class_spotlight_warrior:
 
 creator_open_class_spotlight_rogue:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="class_spotlight_rogue";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
@@ -594,7 +594,7 @@ creator_open_class_spotlight_rogue:
 
 creator_open_class_spotlight_marksman:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="class_spotlight_marksman";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
@@ -604,7 +604,7 @@ creator_open_class_spotlight_marksman:
 
 creator_open_class_spotlight_mage:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="class_spotlight_mage";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
@@ -614,7 +614,7 @@ creator_open_class_spotlight_mage:
 
 creator_open_class_spotlight_paladin:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - variable{action="set";variable="class_spotlight_paladin";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SPOTLIGHT";profile=true} @Self
@@ -656,7 +656,7 @@ creator_open_profession_roster:
 
 creator_open_first_contract:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} falseElse creator_pick_class_first
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} falseElse creator_pick_class_first
   Mechanics:
     - variable{action="set";variable="first_contract_started";value="true";profile=true} @Self
     - message{m="<yellow>Kwatermistrz &8> &fPierwszy ekwipunek odbierasz w mieście po przysiędze, nie z automatu klasy."} @Self
@@ -781,7 +781,7 @@ creator_open_account_vault:
 
 creator_back_to_race_menu:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - message{m="<yellow>Księga wróciła do rodowodu. Zmień pieczęć, zanim złożysz przysięgę."} @Self
     - playsound{sound="minecraft:ui.button.click";volume=1;pitch=0.8} @Self
@@ -789,43 +789,43 @@ creator_back_to_race_menu:
 
 creator_select_class_warrior:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - Script{script=creator_open_class_spotlight_warrior} @Self
 
 creator_select_class_rogue:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - Script{script=creator_open_class_spotlight_rogue} @Self
 
 creator_select_class_marksman:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - Script{script=creator_open_class_spotlight_marksman} @Self
 
 creator_select_class_mage:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - Script{script=creator_open_class_spotlight_mage} @Self
 
 creator_select_class_paladin:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_pick_race_first
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_pick_race_first
   Mechanics:
     - Script{script=creator_open_class_spotlight_paladin} @Self
 
 creator_confirm_character:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - Script{script=creator_finalize_character} @Self
 
 creator_cancel_class_choice:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} true
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} true
   Mechanics:
     - variable{action="set";variable="pending_class_id";value="UNSET";profile=true} @Self
     - variable{action="set";variable="class_id";value="UNSET";profile=true} @Self
@@ -840,7 +840,7 @@ creator_confirm_warrior:
     - variable{action="set";variable="pending_class_id";value="WARRIOR";profile=true} @Self
     - variable{action="set";variable="class_id";value="WARRIOR";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
-    - command{c="mmocore admin force-class {caster_name} warrior";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} warrior";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_confirm_rogue:
@@ -849,7 +849,7 @@ creator_confirm_rogue:
     - variable{action="set";variable="pending_class_id";value="ROGUE";profile=true} @Self
     - variable{action="set";variable="class_id";value="ROGUE";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
-    - command{c="mmocore admin force-class {caster_name} rogue";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} rogue";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_confirm_marksman:
@@ -858,7 +858,7 @@ creator_confirm_marksman:
     - variable{action="set";variable="pending_class_id";value="MARKSMAN";profile=true} @Self
     - variable{action="set";variable="class_id";value="MARKSMAN";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
-    - command{c="mmocore admin force-class {caster_name} marksman";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} marksman";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_confirm_mage:
@@ -867,7 +867,7 @@ creator_confirm_mage:
     - variable{action="set";variable="pending_class_id";value="MAGE";profile=true} @Self
     - variable{action="set";variable="class_id";value="MAGE";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
-    - command{c="mmocore admin force-class {caster_name} mage";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} mage";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_confirm_paladin:
@@ -876,19 +876,19 @@ creator_confirm_paladin:
     - variable{action="set";variable="pending_class_id";value="PALADIN";profile=true} @Self
     - variable{action="set";variable="class_id";value="PALADIN";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CLASS_SELECTED";profile=true} @Self
-    - command{c="mmocore admin force-class {caster_name} paladin";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} paladin";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_finalize_character:
   Conditions:
-    - Comparator{value1="%mmocore_class%";operator="=";value2="Origin"} falseElse creator_already_finalized
-    - Comparator{value1="{pending_race_id}";operator="=";value2="UNSET"} falseElse creator_finalize_check_class
+    - Comparator{value1="%mmocore_class%";operator="==";value2="Origin"} falseElse creator_already_finalized
+    - Comparator{value1="{pending_race_id}";operator="==";value2="UNSET"} falseElse creator_finalize_check_class
   Mechanics:
     - Script{script=creator_pick_race_first} @Self
 
 creator_finalize_check_class:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="UNSET"} falseElse creator_finalize_race_dispatch
+    - Comparator{value1="{pending_class_id}";operator="==";value2="UNSET"} falseElse creator_finalize_race_dispatch
   Mechanics:
     - Script{script=creator_pick_class_first} @Self
 
@@ -912,75 +912,108 @@ creator_pick_class_first:
 
 creator_finalize_race_dispatch:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="CZLOWIEK"} falseElse creator_finalize_race_ork
+    - Comparator{value1="{pending_race_id}";operator="==";value2="CZLOWIEK"} falseElse creator_finalize_race_ork
   Mechanics:
     - variable{action="set";variable="race_id";value="CZLOWIEK";profile=true} @Self
+    - command{c="lp user {caster_name} permission unset race.czlowiek";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.ork";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.elf";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.krasnolud";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.nieumarly";runas=console} @Self
+    - command{c="lp user {caster_name} permission set race.czlowiek true";runas=console} @Self
     - Script{script=creator_finalize_class_dispatch} @Self
 
 creator_finalize_race_ork:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="ORK"} falseElse creator_finalize_race_elf
+    - Comparator{value1="{pending_race_id}";operator="==";value2="ORK"} falseElse creator_finalize_race_elf
   Mechanics:
     - variable{action="set";variable="race_id";value="ORK";profile=true} @Self
+    - command{c="lp user {caster_name} permission unset race.czlowiek";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.ork";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.elf";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.krasnolud";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.nieumarly";runas=console} @Self
+    - command{c="lp user {caster_name} permission set race.ork true";runas=console} @Self
     - Script{script=creator_finalize_class_dispatch} @Self
 
 creator_finalize_race_elf:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="ELF"} falseElse creator_finalize_race_krasnolud
+    - Comparator{value1="{pending_race_id}";operator="==";value2="ELF"} falseElse creator_finalize_race_krasnolud
   Mechanics:
     - variable{action="set";variable="race_id";value="ELF";profile=true} @Self
+    - command{c="lp user {caster_name} permission unset race.czlowiek";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.ork";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.elf";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.krasnolud";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.nieumarly";runas=console} @Self
+    - command{c="lp user {caster_name} permission set race.elf true";runas=console} @Self
     - Script{script=creator_finalize_class_dispatch} @Self
 
 creator_finalize_race_krasnolud:
   Conditions:
-    - Comparator{value1="{pending_race_id}";operator="=";value2="KRASNOLUD"} falseElse creator_finalize_race_nieumarly
+    - Comparator{value1="{pending_race_id}";operator="==";value2="KRASNOLUD"} falseElse creator_finalize_race_nieumarly
   Mechanics:
     - variable{action="set";variable="race_id";value="KRASNOLUD";profile=true} @Self
+    - command{c="lp user {caster_name} permission unset race.czlowiek";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.ork";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.elf";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.krasnolud";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.nieumarly";runas=console} @Self
+    - command{c="lp user {caster_name} permission set race.krasnolud true";runas=console} @Self
     - Script{script=creator_finalize_class_dispatch} @Self
 
 creator_finalize_race_nieumarly:
   Conditions: []
   Mechanics:
     - variable{action="set";variable="race_id";value="NIEUMARLY";profile=true} @Self
+    - command{c="lp user {caster_name} permission unset race.czlowiek";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.ork";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.elf";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.krasnolud";runas=console} @Self
+    - command{c="lp user {caster_name} permission unset race.nieumarly";runas=console} @Self
+    - command{c="lp user {caster_name} permission set race.nieumarly true";runas=console} @Self
     - Script{script=creator_finalize_class_dispatch} @Self
 
 creator_finalize_class_dispatch:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="WARRIOR"} falseElse creator_finalize_class_rogue
+    - Comparator{value1="{pending_class_id}";operator="==";value2="WARRIOR"} falseElse creator_finalize_class_rogue
   Mechanics:
-    - command{c="mmocore admin force-class {caster_name} warrior";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} warrior";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_finalize_class_rogue:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="ROGUE"} falseElse creator_finalize_class_marksman
+    - Comparator{value1="{pending_class_id}";operator="==";value2="ROGUE"} falseElse creator_finalize_class_marksman
   Mechanics:
-    - command{c="mmocore admin force-class {caster_name} rogue";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} rogue";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_finalize_class_marksman:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MARKSMAN"} falseElse creator_finalize_class_mage
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MARKSMAN"} falseElse creator_finalize_class_mage
   Mechanics:
-    - command{c="mmocore admin force-class {caster_name} marksman";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} marksman";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_finalize_class_mage:
   Conditions:
-    - Comparator{value1="{pending_class_id}";operator="=";value2="MAGE"} falseElse creator_finalize_class_paladin
+    - Comparator{value1="{pending_class_id}";operator="==";value2="MAGE"} falseElse creator_finalize_class_paladin
   Mechanics:
-    - command{c="mmocore admin force-class {caster_name} mage";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} mage";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_finalize_class_paladin:
   Conditions: []
   Mechanics:
-    - command{c="mmocore admin force-class {caster_name} paladin";runas=console} @Self
+    - command{c="mmocore admin class {caster_name} paladin";runas=console} @Self
     - Script{script=creator_finalize_common} @Self
 
 creator_finalize_common:
   Conditions: []
   Mechanics:
+    - message{m="CREATOR_DISPATCH_TARGET=creator_finalize_common"} @Self
+    - message{m="CREATOR_DISPATCH_EXECUTOR=console"} @Self
+    - message{m="CREATOR_DISPATCH_RESULT=success"} @Self
     - variable{action="set";variable="race_selected";value="true";profile=true} @Self
     - variable{action="set";variable="class_selected";value="true";profile=true} @Self
     - variable{action="set";variable="character_stage";value="CITY_ONBOARDING";profile=true} @Self
@@ -993,8 +1026,8 @@ creator_finalize_common:
 
 npc_quartermaster_claim_warrior:
   Conditions:
-    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
-    - Comparator{value1="%mmocore_class%";operator="=";value2="warrior"} falseElse npc_quartermaster_wrong_class
+    - Comparator{value1="{first_weapon_claimed}";operator="==";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="==";value2="warrior"} falseElse npc_quartermaster_wrong_class
   Mechanics:
     - command{c="mi give SWORD WOJOWNIK_INITIATE_BLADE {caster_name} 1";runas=console} @Self
     - command{c="mi give SHIELD WOJOWNIK_INITIATE_SHIELD {caster_name} 1";runas=console} @Self
@@ -1004,8 +1037,8 @@ npc_quartermaster_claim_warrior:
 
 npc_quartermaster_claim_rogue:
   Conditions:
-    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
-    - Comparator{value1="%mmocore_class%";operator="=";value2="rogue"} falseElse npc_quartermaster_wrong_class
+    - Comparator{value1="{first_weapon_claimed}";operator="==";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="==";value2="rogue"} falseElse npc_quartermaster_wrong_class
   Mechanics:
     - command{c="mi give DAGGER LOTRZYK_INITIATE_DAGGER {caster_name} 1";runas=console} @Self
     - command{c="mi give ARMOR LOTRZYK_INITIATE_CHESTPIECE {caster_name} 1";runas=console} @Self
@@ -1014,8 +1047,8 @@ npc_quartermaster_claim_rogue:
 
 npc_quartermaster_claim_marksman:
   Conditions:
-    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
-    - Comparator{value1="%mmocore_class%";operator="=";value2="marksman"} falseElse npc_quartermaster_wrong_class
+    - Comparator{value1="{first_weapon_claimed}";operator="==";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="==";value2="marksman"} falseElse npc_quartermaster_wrong_class
   Mechanics:
     - command{c="mi give BOW LOWCA_INITIATE_BOW {caster_name} 1";runas=console} @Self
     - command{c="mi give ARMOR LOWCA_INITIATE_CHESTPIECE {caster_name} 1";runas=console} @Self
@@ -1024,8 +1057,8 @@ npc_quartermaster_claim_marksman:
 
 npc_quartermaster_claim_mage:
   Conditions:
-    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
-    - Comparator{value1="%mmocore_class%";operator="=";value2="mage"} falseElse npc_quartermaster_wrong_class
+    - Comparator{value1="{first_weapon_claimed}";operator="==";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="==";value2="mage"} falseElse npc_quartermaster_wrong_class
   Mechanics:
     - command{c="mi give WAND MAG_INITIATE_WAND {caster_name} 1";runas=console} @Self
     - command{c="mi give ARMOR MAG_INITIATE_ROBE {caster_name} 1";runas=console} @Self
@@ -1034,8 +1067,8 @@ npc_quartermaster_claim_mage:
 
 npc_quartermaster_claim_paladin:
   Conditions:
-    - Comparator{value1="{first_weapon_claimed}";operator="=";value2="false"} falseElse npc_quartermaster_already_claimed
-    - Comparator{value1="%mmocore_class%";operator="=";value2="paladin"} falseElse npc_quartermaster_wrong_class
+    - Comparator{value1="{first_weapon_claimed}";operator="==";value2="false"} falseElse npc_quartermaster_already_claimed
+    - Comparator{value1="%mmocore_class%";operator="==";value2="paladin"} falseElse npc_quartermaster_wrong_class
   Mechanics:
     - command{c="mi give STAFF AKOLITA_INITIATE_STAFF {caster_name} 1";runas=console} @Self
     - command{c="mi give ARMOR AKOLITA_INITIATE_VESTMENT {caster_name} 1";runas=console} @Self
@@ -1054,28 +1087,28 @@ npc_quartermaster_claim_common:
 
 npc_quartermaster_race_bonus_dispatch:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="CZLOWIEK"} falseElse npc_quartermaster_race_bonus_ork
+    - Comparator{value1="{race_id}";operator="==";value2="CZLOWIEK"} falseElse npc_quartermaster_race_bonus_ork
   Mechanics:
     - command{c="mi give MATERIAL SILVER_COIN {caster_name} 3";runas=console} @Self
     - message{m="<white>Pieczęć Człowieka &8> &fMiasto dorzuca kontraktowy start: 3 Srebrne Monety na pierwszą drogę."} @Self
 
 npc_quartermaster_race_bonus_ork:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="ORK"} falseElse npc_quartermaster_race_bonus_elf
+    - Comparator{value1="{race_id}";operator="==";value2="ORK"} falseElse npc_quartermaster_race_bonus_elf
   Mechanics:
     - command{c="mi give MATERIAL MALA_KOSC {caster_name} 2";runas=console} @Self
     - message{m="<red>Pieczęć Orka &8> &fDostajesz surowy bonus wyprawowy: 2 Małe Kości pod pierwsze brutalne ulepszenia."} @Self
 
 npc_quartermaster_race_bonus_elf:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="ELF"} falseElse npc_quartermaster_race_bonus_krasnolud
+    - Comparator{value1="{race_id}";operator="==";value2="ELF"} falseElse npc_quartermaster_race_bonus_krasnolud
   Mechanics:
     - command{c="mi give MATERIAL DZIKIE_ZIOLO {caster_name} 2";runas=console} @Self
     - message{m="<aqua>Pieczęć Elfa &8> &fDostajesz zwiadowczy bonus startowy: 2 Dzikie Zioła pod pierwszy utility loop."} @Self
 
 npc_quartermaster_race_bonus_krasnolud:
   Conditions:
-    - Comparator{value1="{race_id}";operator="=";value2="KRASNOLUD"} falseElse npc_quartermaster_race_bonus_nieumarly
+    - Comparator{value1="{race_id}";operator="==";value2="KRASNOLUD"} falseElse npc_quartermaster_race_bonus_nieumarly
   Mechanics:
     - command{c="mi give MATERIAL ZLOM_ZELAZNY {caster_name} 2";runas=console} @Self
     - message{m="<gold>Pieczęć Krasnoluda &8> &fDostajesz kuźniczy bonus startowy: 2 Żelazne Złomy pod forge i pierwszy odzysk."} @Self

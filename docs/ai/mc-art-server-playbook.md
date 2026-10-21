@@ -13,18 +13,12 @@ Use this when the asset should be created against the real MC staging stack, not
 
 ## Execution Order
 
-1. Run `art` as primary with `workspace-write`.
-2. Route gameplay review to the owning secondary domain if the asset changes mechanic context.
-3. Run `qa` as validation before calling the asset ready.
+1. Implement the asset in its owning workspace and runtime scope.
+2. Review gameplay impact in the owning secondary domain when mechanic context changes.
+3. Run independent QA before calling the asset ready.
 4. Start only the affected backend containers.
 
 ## Task Template
-
-Run from `$HOME`:
-
-```bash
-npm run mc:agent -- art --write-policy workspace-write --role primary "<task>"
-```
 
 Task body should always include:
 
@@ -63,11 +57,8 @@ stworz visual package dla [mob_or_pet_id] w $MC_ROOT; backend world; dostarcz so
 
 ## Validation Handoff
 
-After `art` finishes, validate with:
-
-```bash
-npm run mc:agent -- qa --write-policy read-only --role validation "<same task plus: validate runtime evidence on backend world/items/hub>"
-```
+After implementation, perform an independent read-only validation of the same
+task and its runtime evidence.
 
 Minimum evidence expected:
 

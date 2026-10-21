@@ -1,0 +1,140 @@
+schema_version: 1
+artifact_id: content-evidence-envelope
+artifact_version: 1
+scope: content-production-pipeline
+
+identity_axes:
+  subject:
+    required_fields:
+      - subject_id
+      - content_type
+      - source_path
+      - subject_digest
+      - dependency_digest
+  runtime:
+    required_fields:
+      - runtime_plugin
+      - target_file
+      - section_key
+      - generated_projection_digest
+      - committed_target_digest
+      - effective_runtime_digest
+  build:
+    required_fields:
+      - environment
+      - build_id
+
+evidence_record:
+  required_fields:
+    - evidence_id
+    - gate
+    - producer_domain
+    - producer_tool
+    - verdict
+    - environment
+    - build_id
+    - subject_id
+    - content_type
+    - source_path
+    - subject_digest
+    - dependency_digest
+    - runtime_plugin
+    - target_file
+    - section_key
+    - generated_projection_digest
+    - committed_target_digest
+    - effective_runtime_digest
+    - assertions
+    - captured_at
+    - artifact_path
+  field_notes:
+    verdict:
+      allowed_values:
+        - pass
+        - fail
+        - stale
+        - blocked
+    assertions:
+      type: list[string]
+      min_items: 1
+    artifact_path:
+      type: relative-path
+
+gate_requirements:
+  schema_validated:
+    required_digests:
+      - subject_digest
+    invalidation_triggers:
+      - source_path_changed
+      - subject_digest_changed
+      - schema_version_changed
+      - template_version_changed
+  contract_approved:
+    required_digests:
+      - subject_digest
+      - dependency_digest
+    invalidation_triggers:
+      - source_path_changed
+      - subject_digest_changed
+      - dependency_digest_changed
+      - governing_contract_changed
+  runtime_loaded:
+    required_digests:
+      - subject_digest
+      - dependency_digest
+      - generated_projection_digest
+      - committed_target_digest
+      - effective_runtime_digest
+    invalidation_triggers:
+      - source_path_changed
+      - subject_digest_changed
+      - dependency_digest_changed
+      - generated_projection_digest_changed
+      - committed_target_digest_changed
+      - effective_runtime_digest_changed
+      - build_id_changed
+      - allowed_normalization_contract_changed
+  runtime_verified:
+    required_digests:
+      - subject_digest
+      - dependency_digest
+      - effective_runtime_digest
+    invalidation_triggers:
+      - source_path_changed
+      - subject_digest_changed
+      - dependency_digest_changed
+      - effective_runtime_digest_changed
+      - build_id_changed
+      - e2e_scenario_changed
+  release_candidate:
+    required_digests:
+      - subject_digest
+      - dependency_digest
+      - effective_runtime_digest
+    invalidation_triggers:
+      - subject_digest_changed
+      - dependency_digest_changed
+      - effective_runtime_digest_changed
+      - rollback_target_changed
+      - migration_record_changed
+      - performance_budget_contract_changed
+  released:
+    required_digests:
+      - subject_digest
+      - dependency_digest
+      - effective_runtime_digest
+    invalidation_triggers:
+      - release_manifest_changed
+      - deploy_evidence_changed
+      - rollback_to_prior_release
+
+stale_evidence_policy:
+  preserve_history: true
+  overwrite_previous_records: false
+  promotion_blocking: true
+  stale_transition:
+    on_any_invalidation_trigger: verdict_becomes_stale
+  notes:
+    - stale evidence remains valid audit history but is invalid for promotion
+    - runtime_loaded cannot rely on generated_projection_digest alone
+
