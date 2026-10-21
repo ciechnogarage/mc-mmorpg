@@ -138,7 +138,9 @@ final class Placeholdery extends PlaceholderExpansion {
     try { n = Integer.parseInt(c[1]) - 1; } catch (NumberFormatException e) { return null; }
     switch (c[0]) {
       case "druzyna" -> {
-        if (n < 0 || n >= m.druzyna.size()) return pusty(c[2]);
+        // Pusty slot: "nazwa" to cel warstwy head, ktora MythicHUD odswieza takze w ukrytym elemencie;
+        // "" = wyjatek co odswiezenie (20.10: 3 mln stack trace'ow, 15 GB logu). Wlasny nick jest juz w cache glow.
+        if (n < 0 || n >= m.druzyna.size()) return c[2].equals("nazwa") ? p.getName() : pusty(c[2]);
         Migawka.Czlonek x = m.druzyna.get(n);
         String stan = x.martwy() ? "martwy" : x.daleko() ? "daleko" : x.hp() / Math.max(1, x.hpMax()) < pl.niskieHp ? "nisko" : "ok";
         return switch (c[2]) {
