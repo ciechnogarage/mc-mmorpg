@@ -1,0 +1,57 @@
+package pl.mcmmorpg.zaklecia;
+
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+/**
+ * %zaklecia_ulubione_<id>% → "★" albo "☆"; %zaklecia_prawa% / %zaklecia_lewa% → nazwa zaklecia w dloni albo "pusta".
+ * %zaklecia_prawa_model% / %zaklecia_lewa_model% → model ikony w Ksiedze albo istniejacy pusty model.
+ * Uzywane w Ksiedze zaklec (DeluxeMenus).
+ */
+final class Placeholdery extends PlaceholderExpansion {
+  private final Ksiega ksiega;
+  private final Ulubione ulubione;
+  private final Rzucanie rzucanie;
+
+  Placeholdery(Ksiega ksiega, Ulubione ulubione, Rzucanie rzucanie) {
+    this.ksiega = ksiega; this.ulubione = ulubione; this.rzucanie = rzucanie;
+  }
+
+  @Override public String getIdentifier() { return "zaklecia"; }
+  @Override public String getAuthor() { return "mcmmorpg"; }
+  @Override public String getVersion() { return "1"; }
+  @Override public boolean persist() { return true; }
+
+  @Override
+  public String onRequest(OfflinePlayer op, String param) {
+    if (!(op instanceof Player p)) return "";
+    if (param.equals("tryb")) return rzucanie.trybHud(p) ? "tak" : "nie";
+    if (param.equals("lewa_stan")) return rzucanie.stanDloni(p, false);
+    if (param.equals("prawa_stan")) return rzucanie.stanDloni(p, true);
+    if (param.equals("lewa_postep")) return String.valueOf(rzucanie.postepDloni(p, false));
+    if (param.equals("prawa_postep")) return String.valueOf(rzucanie.postepDloni(p, true));
+    if (param.equals("lewa_pasek")) return pasek(rzucanie.postepDloni(p, false));
+    if (param.equals("prawa_pasek")) return pasek(rzucanie.postepDloni(p, true));
+    if (param.equals("lewa_pozostalo")) return rzucanie.pozostaloDloni(p, false);
+    if (param.equals("prawa_pozostalo")) return rzucanie.pozostaloDloni(p, true);
+    if (param.equals("lewa_koszt")) return rzucanie.kosztDloni(p, false);
+    if (param.equals("prawa_koszt")) return rzucanie.kosztDloni(p, true);
+    if (param.equals("prawa_przelacznik")) return rzucanie.przelacznikPrawej(p) ? "tak" : "nie";
+    if (param.startsWith("ulubione_")) return ulubione.jest(p, param.substring(9)) ? "★" : "☆";
+    if (param.equals("prawa_model") || param.equals("lewa_model")) {
+      Ksiega.Zaklecie z = ksiega.w(param.equals("prawa_model") ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand());
+      return "zaklecia:" + (z == null ? "pusta" : z.id());
+    }
+    if (param.equals("prawa") || param.equals("lewa")) {
+      Ksiega.Zaklecie z = ksiega.w(param.equals("prawa") ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand());
+      return z == null ? "pusta" : z.nazwa();
+    }
+    return null;
+  }
+
+  private static String pasek(int postep) {
+    int pelne = Math.max(0, Math.min(8, (postep * 8 + 50) / 100));
+    return "█".repeat(pelne) + "░".repeat(8 - pelne);
+  }
+}
