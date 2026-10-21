@@ -1,0 +1,76 @@
+# Moby poziomu 1 - SAMODZIELNE (bez Template). Dziedziczenie z Bestiariusza LACZYLO skille i dropy:
+# nie dalo sie usunac vanilli (schab, orby XP), a boss bral wadliwy skok Wilka Alfy (AoE ranil jego
+# wlasne wilki). Balans pod swieza postac z Kijem Nowicjusza (4 obr.) na trudnosci EASY serwera.
+WIEZA_P01_ODYNIEC:
+  Type: PIG
+  Display: '&6Dziki Odyniec'
+  Health: 20
+  Damage: 3
+  Armor: 0
+  Faction: bestie
+  Options:
+    MovementSpeed: 0.25
+    PreventOtherDrops: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_SCRAP} 1 0.5
+  Skills:
+  - command{c="mmocore admin exp give <trigger.name> hunting 8"} @trigger ~onDeath ?~isplayer
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+
+WIEZA_P01_WILK:
+  Type: WOLF
+  Display: '&6Wilk Gajowy'
+  Health: 24
+  Damage: 3
+  Armor: 0
+  Faction: bestie
+  Options:
+    MovementSpeed: 0.32
+    PreventOtherDrops: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_BONE} 1 0.4
+  Skills:
+  - command{c="mmocore admin exp give <trigger.name> hunting 10"} @trigger ~onDeath ?~isplayer
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+
+WIEZA_P01_ALPHA:
+  Type: WOLF
+  Display: '&d&lStrażnik Polany'
+  Health: 100
+  Damage: 3
+  Armor: 2
+  Faction: bestie
+  Options:
+    MovementSpeed: 0.3
+    AlwaysShowName: true
+    KnockbackResistance: 0.4
+    PreventOtherDrops: true
+  BossBar:
+    Enabled: true
+    Title: '&d&lStrażnik Polany'
+    Range: 45
+    Color: PINK
+    Style: SEGMENTED_10
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_BONE} 2-3 1
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_SCRAP} 2-3 1
+  Skills:
+  - addtag{tag=wieza_boss} @self ~onSpawn
+  - command{c="mmocore admin exp give <trigger.name> hunting 40"} @trigger ~onDeath ?~isplayer
+  - skill{s=WIEZA_P01_SZARZA} @target ~onTimer:60
+  - skill{s=WIEZA_P01_WYCIE} @self ~onCombat
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players

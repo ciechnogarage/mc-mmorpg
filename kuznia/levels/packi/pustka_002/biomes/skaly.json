@@ -1,0 +1,67 @@
+{
+ "name": "Skaly",
+ "derivative": "WINDSWEPT_HILLS",
+ "vanillaDerivative": "WINDSWEPT_HILLS",
+ "color": "#828287",
+ "layers": [
+  {
+   "palette": [
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:mossy_cobblestone"
+    },
+    {
+     "block": "minecraft:mossy_cobblestone"
+    },
+    {
+     "block": "minecraft:andesite"
+    },
+    {
+     "block": "minecraft:tuff"
+    },
+    {
+     "block": "minecraft:moss_block"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 2
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:andesite"
+    },
+    {
+     "block": "minecraft:tuff"
+    },
+    {
+     "block": "minecraft:cobblestone"
+    }
+   ],
+   "minHeight": 20,
+   "maxHeight": 30
+  }
+ ],
+ "decorators": [],
+ "generators": [
+  {
+   "generator": "wyspa_fale",
+   "min": 107,
+   "max": 116
+  }
+ ]
+}

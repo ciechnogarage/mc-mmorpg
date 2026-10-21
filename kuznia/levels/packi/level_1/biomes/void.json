@@ -1,0 +1,24 @@
+{
+    "name": "Void",
+    "derivative": "THE_VOID",
+    "vanillaDerivative": "THE_VOID",
+    "color": "#101015",
+    "layers": [
+        {
+            "palette": [
+                {
+                    "block": "minecraft:bedrock"
+                }
+            ],
+            "minHeight": 1,
+            "maxHeight": 1
+        }
+    ],
+    "generators": [
+        {
+            "generator": "flat",
+            "min": 1,
+            "max": 1
+        }
+    ]
+}

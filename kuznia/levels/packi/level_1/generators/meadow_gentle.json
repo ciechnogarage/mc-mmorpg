@@ -1,0 +1,1 @@
+{"interpolator":{"function":"BILINEAR_STARCAST_9","horizontalScale":24},"seed":81273,"composite":[{"seed":81273,"style":{"style":"IRIS_DOUBLE","zoom":0.12,"fracture":{"style":"NOWHERE","zoom":0.18,"multiplier":5}}},{"seed":81274,"style":{"style":"FRACTAL_BILLOW_SIMPLEX","zoom":0.32},"opacity":0.18,"negative":true}]}

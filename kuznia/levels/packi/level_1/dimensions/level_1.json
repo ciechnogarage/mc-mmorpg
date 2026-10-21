@@ -1,0 +1,1 @@
+{"name":"Level 1 - Kwietna Polana","fluidHeight":0,"regions":["void","dunstart","dunmid","dunend"],"bedrock":false,"landChance":1,"continentalStyle":{"style":"SIMPLEX"},"regionStyle":{"imageMap":{"image":"level1_map","coordinateScale":1,"interpolationMethod":"NONE","channel":"BLUE","tiled":false,"centered":true}},"rockPalette":{"palette":[{"block":"minecraft:stone"}]}}

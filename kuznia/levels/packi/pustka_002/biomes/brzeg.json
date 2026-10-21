@@ -1,0 +1,124 @@
+{
+ "name": "Brzeg",
+ "derivative": "FOREST",
+ "vanillaDerivative": "FOREST",
+ "color": "#7a6e5a",
+ "layers": [
+  {
+   "palette": [
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:moss_block"
+    },
+    {
+     "block": "minecraft:moss_block"
+    },
+    {
+     "block": "minecraft:coarse_dirt"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 1
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:dirt"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 2
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:andesite"
+    },
+    {
+     "block": "minecraft:tuff"
+    },
+    {
+     "block": "minecraft:mossy_cobblestone"
+    }
+   ],
+   "minHeight": 3,
+   "maxHeight": 7
+  }
+ ],
+ "decorators": [
+  {
+   "chance": 0.02,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:tall_grass"
+    }
+   ]
+  },
+  {
+   "chance": 0.5,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:short_grass"
+    }
+   ]
+  }
+ ],
+ "generators": [
+  {
+   "generator": "wyspa_fale",
+   "min": 98,
+   "max": 102
+  }
+ ],
+ "objects": [
+  {
+   "chance": 0.03,
+   "density": 1,
+   "place": [
+    "trees/birch/antioch3",
+    "trees/birch/antioch4",
+    "trees/birch/antioch5"
+   ],
+   "rotation": {
+    "enabled": true,
+    "yAxis": {
+     "enabled": true,
+     "interval": 90,
+     "min": 0,
+     "max": 360
+    }
+   }
+  }
+ ]
+}

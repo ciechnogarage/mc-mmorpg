@@ -1,0 +1,209 @@
+[
+ {
+  "nazwa": "oboz_przybycia",
+  "cel": [
+   -4,
+   99,
+   112
+  ],
+  "blokow": 82
+ },
+ {
+  "nazwa": "palisada",
+  "cel": [
+   28,
+   101,
+   4
+  ],
+  "blokow": 242
+ },
+ {
+  "nazwa": "wieza",
+  "cel": [
+   53,
+   102,
+   5
+  ],
+  "blokow": 216
+ },
+ {
+  "nazwa": "ognisko_wroga",
+  "cel": [
+   44,
+   100,
+   12
+  ],
+  "blokow": 26
+ },
+ {
+  "nazwa": "glaz_0",
+  "cel": [
+   37,
+   101,
+   6
+  ],
+  "blokow": 117
+ },
+ {
+  "nazwa": "glaz_1",
+  "cel": [
+   62,
+   100,
+   21
+  ],
+  "blokow": 98
+ },
+ {
+  "nazwa": "glaz_2",
+  "cel": [
+   63,
+   99,
+   33
+  ],
+  "blokow": 148
+ },
+ {
+  "nazwa": "pien_0",
+  "cel": [
+   49,
+   100,
+   28
+  ],
+  "blokow": 15
+ },
+ {
+  "nazwa": "pien_1",
+  "cel": [
+   37,
+   100,
+   26
+  ],
+  "blokow": 16
+ },
+ {
+  "nazwa": "obelisk_0",
+  "cel": [
+   13,
+   100,
+   -11
+  ],
+  "blokow": 89
+ },
+ {
+  "nazwa": "obelisk_1",
+  "cel": [
+   4,
+   100,
+   -6
+  ],
+  "blokow": 109
+ },
+ {
+  "nazwa": "obelisk_2",
+  "cel": [
+   -4,
+   99,
+   -10
+  ],
+  "blokow": 80
+ },
+ {
+  "nazwa": "obelisk_3",
+  "cel": [
+   -4,
+   99,
+   -20
+  ],
+  "blokow": 41
+ },
+ {
+  "nazwa": "obelisk_4",
+  "cel": [
+   4,
+   99,
+   -25
+  ],
+  "blokow": 68
+ },
+ {
+  "nazwa": "obelisk_5",
+  "cel": [
+   13,
+   100,
+   -20
+  ],
+  "blokow": 61
+ },
+ {
+  "nazwa": "brama_ruina",
+  "cel": [
+   -11,
+   99,
+   -56
+  ],
+  "blokow": 951
+ },
+ {
+  "nazwa": "brama_mur_w",
+  "cel": [
+   -22,
+   100,
+   -48
+  ],
+  "blokow": 186
+ },
+ {
+  "nazwa": "brama_mur_e",
+  "cel": [
+   4,
+   100,
+   -48
+  ],
+  "blokow": 258
+ },
+ {
+  "nazwa": "ognisko_odpoczynku",
+  "cel": [
+   -15,
+   100,
+   -89
+  ],
+  "blokow": 37
+ },
+ {
+  "nazwa": "serce_gaju",
+  "cel": [
+   -22,
+   100,
+   -187
+  ],
+  "blokow": 5642
+ },
+ {
+  "nazwa": "kwiat_A",
+  "cel": [
+   61,
+   101,
+   69
+  ],
+  "blokow": 15
+ },
+ {
+  "nazwa": "kwiat_B",
+  "cel": [
+   -81,
+   100,
+   13
+  ],
+  "blokow": 15
+ },
+ {
+  "nazwa": "kwiat_C",
+  "cel": [
+   -37,
+   101,
+   -101
+  ],
+  "blokow": 15
+ }
+]

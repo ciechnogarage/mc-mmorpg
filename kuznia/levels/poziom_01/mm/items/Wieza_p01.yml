@@ -1,0 +1,9 @@
+# Bron startowa: nowa postac nie ma ZADNEGO przedmiotu (CharacterCreator config.yml:181, klasy MMOCore
+# tez nic nie daja). Docelowo zestaw startowy powinien dawac kreator postaci - to jest zaslepka poziomu 1.
+WIEZA_KIJ_NOWICJUSZA:
+  Id: WOODEN_SWORD
+  Display: '<gray>Kij Nowicjusza</gray>'
+  Lore:
+  - '<dark_gray>Pierwsza broń każdego, kto wchodzi do Wieży.</dark_gray>'
+  NBT:
+    Unbreakable: boolean/true

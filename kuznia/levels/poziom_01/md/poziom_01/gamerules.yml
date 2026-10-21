@@ -1,0 +1,14 @@
+Version: 2
+Gamerule:
+  minecraft:
+    fall_damage: false
+    keep_inventory: true
+    advance_time: false
+    advance_weather: false
+    random_tick_speed: 0
+    mob_griefing: false
+    spawn_phantoms: false
+    show_death_messages: true
+Difficulty: NORMAL
+WorldTime: 1000
+WorldWeather: CLEAR

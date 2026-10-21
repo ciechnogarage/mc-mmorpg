@@ -1,0 +1,439 @@
+# Loch 001 - moby fragmentu 1. WYGLAD ZASTEPCZY (vanilla Type) do czasu wdrozenia modeli ModelEngine.
+# Liczby pod swieza postac z Kijem Nowicjusza (4 obr.): zwykly mob 4-6 ciosow, Pniaczek 1 cios (spec §4, horda = chwila mocy).
+L001_PNIACZEK:
+  Type: HUSK
+  Display: '&2Pniaczek'
+  Health: 4
+  Damage: 1
+  Faction: gaj
+  Options:
+    Baby: true
+    PreventItemPickup: true
+    Despawn: persistent        # bez tego vanilla usuwa moby >32 bl. od gracza - rozstawione grupy znikaly (zmierzone)
+    FollowRange: 10
+    MovementSpeed: 0.3
+    PreventOtherDrops: true
+    Silent: false
+  Equipment:
+  - OAK_LEAVES HEAD
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_RAW_TIMBER} 1 0.25
+  # stoi w miejscu (bez randomstroll) do czasu, az gracz podejdzie na FollowRange - inaczej rozchodzi sie po mapie (zmierzone)
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  Skills:
+  - sound{s=entity.bat.hurt;v=0.6;p=1.8} @self ~onDamaged
+  - sound{s=entity.fox.squeak;v=0.8;p=1.6} @self ~onDeath
+  - particles{p=block;m=OAK_LOG;a=12;hs=0.3;vs=0.3;s=0.05} @self ~onDeath
+  - skill{s=L001_PNIACZEK_SMIERC} @self ~onDeath
+  - command{c="mmocore admin exp give <trigger.name> hunting 2"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> main 6"} @trigger ~onDeath ?~isplayer
+
+L001_WILK:
+  Type: WOLF
+  Display: '&6Wilk Gajowy'
+  Health: 20
+  Damage: 3
+  Faction: gaj
+  Options:
+    Despawn: persistent        # bez tego vanilla usuwa moby >32 bl. od gracza - rozstawione grupy znikaly (zmierzone)
+    FollowRange: 14
+    MovementSpeed: 0.3
+    PreventOtherDrops: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_SCRAP} 1 0.5
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_BONE} 1 0.3
+  Skills:
+  - skill{s=L001_WILK_WSCIEKLY} @self ~onSpawn
+  - skill{s=L001_WILK_SKOK} @target ~onTimer:80
+  - command{c="mmocore admin exp give <trigger.name> hunting 8"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> main 15"} @trigger ~onDeath ?~isplayer
+  # wataha trzyma sie razem i czeka (bez randomstroll) - wilki rozchodzily sie z polany (zmierzone na world1)
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+
+L001_WILK_WATAHA:
+  Type: WOLF
+  Display: '&6Wilk Gajowy'
+  Health: 20
+  Damage: 3
+  Faction: gaj
+  Options:
+    Despawn: persistent        # bez tego vanilla usuwa moby >32 bl. od gracza - rozstawione grupy znikaly (zmierzone)
+    FollowRange: 14
+    MovementSpeed: 0.3
+    PreventOtherDrops: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_SCRAP} 1 0.5
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_BONE} 1 0.3
+  Skills:
+  - skill{s=L001_WILK_WSCIEKLY} @self ~onSpawn
+  - addtag{tag=l001_wataha} @self ~onSpawn
+  # POMINIETA walka ma konsekwencje: wataha z polany dobiega do Starego Korzenia, gdy ten wezwie pomocy
+  - skill{s=L001_WATAHA_WEZWANIE} @self ~onSignal:wataha
+  - skill{s=L001_WILK_SKOK} @target ~onTimer:80
+  - command{c="mmocore admin exp give <trigger.name> hunting 8"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> main 15"} @trigger ~onDeath ?~isplayer
+  # wataha trzyma sie razem i czeka (bez randomstroll) - wilki rozchodzily sie z polany (zmierzone na world1)
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+
+L001_STARY_KORZEN:
+  Type: ZOMBIE
+  Display: '&2&lStary Korzeń'
+  # 80 -> 140 (krytyka: z blogoslawienstwami nie mial szans); do strojenia po pomiarze sonda_dps
+  Health: 140
+  Damage: 5
+  Armor: 2
+  Faction: gaj
+  Options:
+    Despawn: persistent
+    FollowRange: 12
+    MovementSpeed: 0.23
+    KnockbackResistance: 0.8
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+    AlwaysShowName: true
+  BossBar:
+    Enabled: true
+    Title: '&2&lStary Korzeń'
+    Range: 40
+    Color: GREEN
+    Style: SEGMENTED_10
+  Equipment:
+  - MOSS_BLOCK HEAD
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_RAW_TIMBER} 3 1
+  - mmoitem{type=MATERIAL;id=PROF_MEDICINAL_HERB} 1-2 0.7
+  - mmoitem{type=MATERIAL;id=PROF_ROUGH_CRYSTAL} 1 0.3
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # olbrzym: skala 2.2 (atrybut vanilli, widac go z daleka nad laka)
+  # skala od razu w onSpawn (<caster.uuid>): wersja z delay nie dzialala - boss stoi ~100 bl. od startu, jego chunk
+  # przestaje tykac, opozniony skill nie znajduje moba (zmierzone w kuzni, simulation-distance 4)
+  - command{c="attribute <caster.uuid> minecraft:scale base set 2.2"} @self ~onSpawn
+  - addtag{tag=l001_boss} @self ~onSpawn
+  - skill{s=L001_KORZEN_SLAM} @target ~onTimer:50
+  # przeciw kitowaniu: korzenie wyrywaja sie pod graczem na dystans (zapowiedz 1.2 s)
+  - skill{s=L001_KORZEN_WYRWA} @target ~onTimer:70
+  # KORA: przerywalny kanal leczenia (+30 HP) - 3 ciosy w trakcie kanalu kruszą kore
+  - skill{s=L001_KORA} @self ~onTimer:100
+  - variableadd{var=caster.kora_ciosy;amount=1} @self ~onDamaged
+  - skill{s=L001_KORA_PEKA} @self ~onTimer:5 ?variableequals{var=caster.kora;value=1} ?variableequals{var=caster.kora_ciosy;value=3}
+  - skill{s=L001_KORA_PEKA} @self ~onTimer:5 ?variableequals{var=caster.kora;value=1} ?variableequals{var=caster.kora_ciosy;value=4}
+  - skill{s=L001_KORA_PEKA} @self ~onTimer:5 ?variableequals{var=caster.kora;value=1} ?variableequals{var=caster.kora_ciosy;value=5}
+  - skill{s=L001_KORZEN_STREFA} @self ~onTimer:40
+  # co sekunde sprawdza HP (onDamaged z warunkiem nie odpalal sie ani z h=, ani z p= - zmierzone); raz dzieki Cooldown 9999
+  - skill{s=L001_KORZEN_DZIATWA} @self ~onTimer:20 ?healthpercent{p=<50%}
+  - sound{s=entity.ravager.roar;v=1.2;p=0.6} @self ~onDeath
+  - particles{p=block;m=OAK_LOG;a=120;hs=1.5;vs=2;s=0.1;y=1.5} @self ~onDeath
+  - command{c="mmocore admin exp give <trigger.name> hunting 40"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <target.name> main 150"} @PlayersInWorld ~onDeath
+
+L001_WILCZYCA:
+  Type: WOLF
+  Display: '&6Wilczyca'
+  Health: 22
+  Damage: 3
+  Faction: gaj
+  Options:
+    Despawn: persistent
+    FollowRange: 10
+    MovementSpeed: 0.3
+    PreventOtherDrops: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_SCRAP} 1 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  - skill{s=L001_WILK_WSCIEKLY} @self ~onSpawn
+  - command{c="mmocore admin exp give <trigger.name> main 15"} @trigger ~onDeath ?~isplayer
+  # szczenieta nie stoja przy ciele matki - uciekaja w gaszcz
+  - particles{p=poof;a=20;hs=1.5;vs=0.5} @MobsInRadius{r=10;types=L001_WILCZE} ~onDeath
+  - message{m="<gray>Szczenięta z piskiem uciekają w gąszcz.</gray>"} @PlayersInRadius{r=16} ~onDeath
+  - remove @MobsInRadius{r=10;types=L001_WILCZE} ~onDeath
+
+L001_LATARNIA_KNOT:
+  Type: ZOMBIE
+  Display: '<gold>Latarnia Gaju</gold> <gray>(PPM)</gray>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - SOUL_LANTERN HEAD
+  Skills:
+  - particles{p=glow;a=3;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:15
+  - skill{s=loch_001_latarnia_1} @trigger ~onInteract
+
+L001_WILCZE:
+  Type: WOLF
+  Display: '&7Wilczę'
+  Health: 8
+  Faction: gaj
+  Options:
+    Baby: true
+    Despawn: persistent
+    PreventOtherDrops: true
+  AIGoalSelectors:
+  - clear
+  - lookatplayers
+  - randomlookaround
+
+# niewidzialne zrodla klimatu: czasteczki i dzwieki w stalych miejscach (bez AI, trwale)
+L001_KLIMAT_LAS:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - particles{p=spore_blossom_air;a=12;hs=9;vs=3;s=0;y=2} @self ~onTimer:20
+  - particles{p=glow;a=10;hs=10;vs=3;s=0.01;y=2} @self ~onTimer:10 ?variableequals{var=world.l001_mod;value=1}
+  - particles{p=falling_spore_blossom;a=4;hs=7;vs=1;s=0;y=6} @self ~onTimer:30
+  - sound{s=block.azalea_leaves.step;v=0.5;p=0.6} @self ~onTimer:140
+  - sound{s=entity.fox.ambient;v=0.4;p=1.3} @self ~onTimer:420
+L001_KLIMAT_LAKA:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - particles{p=cherry_leaves;a=6;hs=10;vs=2;s=0;y=3} @self ~onTimer:25
+  - sound{s=entity.bee.loop;v=0.3;p=1.1} @self ~onTimer:200
+
+# BLOGOSLAWIENSTWA GAJU: premie za sekrety do konca przejscia, odnawiane co 5 s (przezywaja smierc gracza)
+L001_BLOGOSLAWIENSTWA:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - potion{type=REGENERATION;duration=140;level=0;hasParticles=false} @PlayersInRadius{r=200} ~onTimer:100 ?variableequals{var=world.l001_bl_kwiat;value=1}
+  - potion{type=RESISTANCE;duration=140;level=0;hasParticles=false} @PlayersInRadius{r=200} ~onTimer:100 ?variableequals{var=world.l001_bl_kora;value=1}
+# swietliki: slad od szczatkow poszukiwacza do latarni (po przeczytaniu dziennika)
+L001_SWIETLIK:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - addtag{tag=l001_swietlik} @self ~onSpawn
+  - particles{p=glow;a=6;hs=0.8;vs=0.8;s=0.01;y=1.5} @self ~onTimer:10
+  - particles{p=end_rod;a=1;hs=0.6;vs=0.6;s=0.01;y=1.5} @self ~onTimer:20
+# klimat po zwyciestwie: platki i blask zamiast zarodnikow
+L001_KLIMAT_SWIT:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - particles{p=cherry_leaves;a=14;hs=9;vs=3;s=0;y=4} @self ~onTimer:15
+  - particles{p=end_rod;a=2;hs=8;vs=3;s=0.01;y=2} @self ~onTimer:30
+
+# bebny Plemienia Ciernia po smierci Starego Korzenia: sekwencja z delay (caster = ten mob, nie funkcja MD)
+L001_BEBNY:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - skill{s=L001_BEBNY_SEKWENCJA} @self ~onSpawn
+
+L001_KORZENIAK:
+  Type: ZOMBIE
+  Display: '&aKorzeniak'
+  Health: 24
+  Damage: 3
+  Faction: gaj
+  Options:
+    Despawn: persistent        # bez tego vanilla usuwa moby >32 bl. od gracza - rozstawione grupy znikaly (zmierzone)
+    FollowRange: 12
+    MovementSpeed: 0.18
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+  Equipment:
+  - OAK_LEAVES HEAD
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_RAW_TIMBER} 1 0.6
+  - mmoitem{type=MATERIAL;id=PROF_MEDICINAL_HERB} 1 0.2
+  # stoi w miejscu (bez randomstroll) do czasu, az gracz podejdzie na FollowRange - inaczej rozchodzi sie po mapie (zmierzone)
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  Skills:
+  # sprawdza co 2 s, strefa gdy gracz blisko (cooldown 7 s w skillu) - lekcja ma przyjsc, gdy gracz stoi obok
+  - skill{s=L001_KORZENIAK_STREFA} @self ~onTimer:40
+  - command{c="mmocore admin exp give <trigger.name> hunting 8"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> main 15"} @trigger ~onDeath ?~isplayer
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+
+# Ranny druid przy ognisku - prosi o Ziele Gaju, za 2 garscie parzy napar (oslona na Starego Korzenia)
+L001_DRUID:
+  Type: VILLAGER
+  Display: '<green>Ranny druid</green>'
+  Health: 20
+  Options:
+    NoAI: true
+    Invincible: true
+    Despawn: persistent
+    AlwaysShowName: true
+    PreventOtherDrops: true
+  Skills:
+  - skill{s=L001_DRUID_ROZMOWA} @trigger ~onInteract
+
+# Ziele Gaju - swiecace kepy przy trasie (klik prawym, znika po zebraniu)
+L001_ZIELE:
+  Type: ZOMBIE
+  Display: '<green>Ziele Gaju</green>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - FLOWERING_AZALEA HEAD
+  Skills:
+  - particles{p=glow;a=3;hs=0.4;vs=0.4;s=0.01;y=1.7} @self ~onTimer:15
+
+# Krysztal na slupku zagadki (1 bl.) - dotknac od najnizszego slupka do najwyzszego
+L001_KAMIEN_1:
+  Type: ZOMBIE
+  Display: '<light_purple>Kamień Gaju</light_purple>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - AMETHYST_CLUSTER HEAD
+  Skills:
+  - particles{p=glow;a=2;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:20
+  - skill{s=L001_ZAGADKA_1} @trigger ~onInteract
+
+# Krysztal na slupku zagadki (2 bl.) - dotknac od najnizszego slupka do najwyzszego
+L001_KAMIEN_2:
+  Type: ZOMBIE
+  Display: '<light_purple>Kamień Gaju</light_purple>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - AMETHYST_CLUSTER HEAD
+  Skills:
+  - particles{p=glow;a=2;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:20
+  - skill{s=L001_ZAGADKA_2} @trigger ~onInteract
+
+# Krysztal na slupku zagadki (3 bl.) - dotknac od najnizszego slupka do najwyzszego
+L001_KAMIEN_3:
+  Type: ZOMBIE
+  Display: '<light_purple>Kamień Gaju</light_purple>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - AMETHYST_CLUSTER HEAD
+  Skills:
+  - particles{p=glow;a=2;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:20
+  - skill{s=L001_ZAGADKA_3} @trigger ~onInteract

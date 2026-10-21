@@ -1,0 +1,29 @@
+{
+ "name": "Pustka (podklad Lochu 002)",
+ "fluidHeight": 0,
+ "bedrock": false,
+ "landChance": 1,
+ "regions": [
+  "pustka"
+ ],
+ "continentalStyle": {
+  "style": "SIMPLEX"
+ },
+ "regionStyle": {
+  "imageMap": {
+   "image": "loch_001_mapa",
+   "coordinateScale": 1,
+   "interpolationMethod": "NONE",
+   "channel": "BLUE",
+   "tiled": false,
+   "centered": true
+  }
+ },
+ "rockPalette": {
+  "palette": [
+   {
+    "block": "minecraft:air"
+   }
+  ]
+ }
+}

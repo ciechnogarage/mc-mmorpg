@@ -1,0 +1,201 @@
+{
+ "id": "loch_001",
+ "size": 352,
+ "zones": [
+  "pustka",
+  "brzeg",
+  "laka",
+  "las",
+  "gaj",
+  "polana",
+  "sciezka",
+  "pobocze",
+  "skaly",
+  "zasoby"
+ ],
+ "blue": {
+  "pustka": 13,
+  "brzeg": 38,
+  "laka": 64,
+  "las": 90,
+  "gaj": 115,
+  "polana": 141,
+  "sciezka": 166,
+  "pobocze": 192,
+  "skaly": 218,
+  "zasoby": 243
+ },
+ "derivative": {
+  "pustka": "THE_VOID",
+  "brzeg": "FOREST",
+  "laka": "FLOWER_FOREST",
+  "las": "DARK_FOREST",
+  "gaj": "CHERRY_GROVE",
+  "polana": "MEADOW",
+  "sciezka": "PLAINS",
+  "pobocze": "BIRCH_FOREST",
+  "skaly": "WINDSWEPT_HILLS",
+  "zasoby": "OLD_GROWTH_BIRCH_FOREST"
+ },
+ "y_polan": 100,
+ "sekcje": [
+  {
+   "id": "oboz",
+   "nazwa": "Oboz Przybycia",
+   "xz": [
+    0,
+    118
+   ],
+   "r": 13
+  },
+  {
+   "id": "sciezka",
+   "nazwa": "Lesna Sciezka",
+   "xz": [
+    38,
+    74
+   ],
+   "r": 12
+  },
+  {
+   "id": "lucznicy",
+   "nazwa": "Zakret Lucznikow",
+   "xz": [
+    46,
+    22
+   ],
+   "r": 16
+  },
+  {
+   "id": "rytual",
+   "nazwa": "Polana Rytualu",
+   "xz": [
+    6,
+    -14
+   ],
+   "r": 13
+  },
+  {
+   "id": "zasoby",
+   "nazwa": "Strefa Zasobow",
+   "xz": [
+    -62,
+    4
+   ],
+   "r": 12
+  },
+  {
+   "id": "brama",
+   "nazwa": "Zlamana Brama",
+   "xz": [
+    0,
+    -48
+   ],
+   "r": 3
+  },
+  {
+   "id": "elita",
+   "nazwa": "Legowisko Elity",
+   "xz": [
+    0,
+    -72
+   ],
+   "r": 13
+  },
+  {
+   "id": "arena",
+   "nazwa": "Serce Gaju",
+   "xz": [
+    0,
+    -112
+   ],
+   "r": 30
+  },
+  {
+   "id": "wyjscie",
+   "nazwa": "Wyjscie z Nagroda",
+   "xz": [
+    0,
+    -150
+   ],
+   "r": 8
+  }
+ ],
+ "trasa": [
+  [
+   0,
+   118
+  ],
+  [
+   14,
+   100
+  ],
+  [
+   38,
+   74
+  ],
+  [
+   58,
+   48
+  ],
+  [
+   46,
+   22
+  ],
+  [
+   26,
+   2
+  ],
+  [
+   6,
+   -14
+  ],
+  [
+   2,
+   -32
+  ],
+  [
+   0,
+   -48
+  ],
+  [
+   0,
+   -72
+  ],
+  [
+   0,
+   -112
+  ],
+  [
+   0,
+   -150
+  ]
+ ],
+ "odnoga": [
+  [
+   -6,
+   -8
+  ],
+  [
+   -34,
+   -2
+  ],
+  [
+   -62,
+   4
+  ]
+ ],
+ "skaly": [],
+ "pixels_per_zone": {
+  "pustka": 97154,
+  "brzeg": 4673,
+  "laka": 6112,
+  "las": 2719,
+  "gaj": 2468,
+  "polana": 5822,
+  "sciezka": 971,
+  "pobocze": 2998,
+  "skaly": 0,
+  "zasoby": 987
+ }
+}

@@ -1,0 +1,38 @@
+  [czat] WalkBot joined the game
+  [czat] You do not have permission to do that. (dungeons.play)
+  [czat] You do not have permission to do that. (dungeons.play.send)
+23.1s swiat null
+26.1s wyladowal (0.5, 200, 0.5) hp 20
+  [czat] An unexpected error occurred trying to execute that command
+  [czat] --------- Help: Index (1/6) ---------------------------
+  [czat] Use /help [n] to get page n of help.
+  [czat] Aliases: Lists command aliases
+  [czat] Bukkit: All commands for Bukkit
+  [czat] FastAsyncWorldEdit: All commands for FastAsyncWo...
+  [czat] Iris: All commands for Iris
+  [czat] Minecraft: All commands for Minecraft
+  [czat] MythicDungeons: All commands for MythicDungeons
+  [czat] MythicMobs: All commands for MythicMobs
+  [czat] Paper: All commands for Paper
+  [czat] * WalkBot test_komendy
+36.6s   NIE DOSZEDL do (-7.8,57) (-6.626264598863412, -60, 49.0625164157689)
+54.4s   NIE DOSZEDL do (8.3,9) (8.567598875843586, -62, 10.31542202918503)
+63.4s   NIE DOSZEDL do (7.6,6) (8.567598875843586, -62, 10.31542202918503)
+72.4s   NIE DOSZEDL do (6.5,3) (8.567598875843586, -62, 10.31542202918503)
+81.5s   NIE DOSZEDL do (5.3,0) (8.567598875843586, -62, 10.31542202918503)
+90.5s   NIE DOSZEDL do (3.8,-3) (8.567598875843586, -62, 10.31542202918503)
+99.5s   NIE DOSZEDL do (2.2,-6) (8.567598875843586, -62, 10.31542202918503)
+108.5s   NIE DOSZEDL do (0.6,-9) (8.567598875843586, -62, 10.31542202918503)
+117.6s   NIE DOSZEDL do (-1.1,-12) (8.567598875843586, -62, 10.31542202918503)
+126.6s   NIE DOSZEDL do (-2.8,-15) (8.567598875843586, -62, 10.31542202918503)
+135.6s   NIE DOSZEDL do (-4.3,-18) (8.567598875843586, -62, 10.31542202918503)
+144.6s   NIE DOSZEDL do (-5.7,-21) (8.567598875843586, -62, 10.31542202918503)
+153.7s   NIE DOSZEDL do (-6.9,-24) (8.567598875843586, -62, 10.31542202918503)
+162.7s   NIE DOSZEDL do (-7.9,-27) (8.567598875843586, -62, 10.31542202918503)
+171.7s   NIE DOSZEDL do (-8.5,-30) (8.567598875843586, -62, 10.31542202918503)
+180.7s   NIE DOSZEDL do (-8.9,-33) (8.567598875843586, -62, 10.31542202918503)
+189.8s   NIE DOSZEDL do (-9.0,-36) (8.567598875843586, -62, 10.31542202918503)
+189.8s marsz spawn->arena: 162.2 s, nieosiagniete punkty=17, pozycja (8.567598875843586, -62, 10.31542202918503), hp 20
+193.8s moby w 30: {"slime":5}
+tytuly: 
+  [czat] [Dungeons] You are not currently in a dungeon!

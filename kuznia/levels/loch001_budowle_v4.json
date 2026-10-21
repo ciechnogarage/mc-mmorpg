@@ -1,0 +1,146 @@
+[
+ {
+  "nazwa": "oboz_a",
+  "cel": [
+   -14,
+   99,
+   105
+  ],
+  "blokow": 153
+ },
+ {
+  "nazwa": "oboz_b",
+  "cel": [
+   6,
+   100,
+   121
+  ],
+  "blokow": 35
+ },
+ {
+  "nazwa": "glaz_0",
+  "cel": [
+   51,
+   98,
+   7
+  ],
+  "blokow": 163
+ },
+ {
+  "nazwa": "glaz_1",
+  "cel": [
+   37,
+   98,
+   6
+  ],
+  "blokow": 120
+ },
+ {
+  "nazwa": "glaz_2",
+  "cel": [
+   59,
+   98,
+   18
+  ],
+  "blokow": 105
+ },
+ {
+  "nazwa": "pien_0",
+  "cel": [
+   49,
+   100,
+   28
+  ],
+  "blokow": 15
+ },
+ {
+  "nazwa": "pien_1",
+  "cel": [
+   37,
+   100,
+   26
+  ],
+  "blokow": 16
+ },
+ {
+  "nazwa": "obelisk_0",
+  "cel": [
+   13,
+   97,
+   -11
+  ],
+  "blokow": 97
+ },
+ {
+  "nazwa": "obelisk_1",
+  "cel": [
+   4,
+   95,
+   -6
+  ],
+  "blokow": 119
+ },
+ {
+  "nazwa": "obelisk_2",
+  "cel": [
+   -4,
+   97,
+   -10
+  ],
+  "blokow": 82
+ },
+ {
+  "nazwa": "obelisk_3",
+  "cel": [
+   -4,
+   99,
+   -20
+  ],
+  "blokow": 41
+ },
+ {
+  "nazwa": "obelisk_4",
+  "cel": [
+   4,
+   99,
+   -25
+  ],
+  "blokow": 68
+ },
+ {
+  "nazwa": "obelisk_5",
+  "cel": [
+   13,
+   100,
+   -20
+  ],
+  "blokow": 61
+ },
+ {
+  "nazwa": "brama_ruina",
+  "cel": [
+   -11,
+   88,
+   -56
+  ],
+  "blokow": 1660
+ },
+ {
+  "nazwa": "brama_mur_w",
+  "cel": [
+   -22,
+   100,
+   -48
+  ],
+  "blokow": 186
+ },
+ {
+  "nazwa": "brama_mur_e",
+  "cel": [
+   4,
+   100,
+   -48
+  ],
+  "blokow": 258
+ }
+]

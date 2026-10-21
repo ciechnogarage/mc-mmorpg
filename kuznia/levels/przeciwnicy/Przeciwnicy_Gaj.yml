@@ -1,0 +1,72 @@
+# Przeciwnicy Gaju v1 - generowane przez forge/tools/przeciwnicy/przeciwnicy.py (nie edytowac recznie)
+GAJ_WILK:
+  Type: WOLF
+  Display: '&6Wilk Gajowy'
+  Health: 40
+  Damage: 3
+  Options:
+    Despawn: persistent
+    FollowRange: 20
+    MovementSpeed: 0.34
+    PreventOtherDrops: true
+    KnockbackResistance: 0.3
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # SKOK: zapowiedz 0.9 s (warkniecie + przysiad), potem doskok i ugryzienie 6; po skoku 1 s odslony (wolny)
+  - skill{s=GAJ_WILK_SKOK} @target ~onTimer:20
+
+GAJ_KORZENIAK:
+  Type: ZOMBIE
+  Display: '&aKorzeniak'
+  Health: 40
+  Damage: 4
+  Options:
+    Despawn: persistent
+    FollowRange: 20
+    MovementSpeed: 0.17
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+    KnockbackResistance: 0.6
+  Equipment:
+  - OAK_LEAVES HEAD
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # WYRWA: pod GRACZEM krag korzeni 1.2 s, potem 6 obr. + unieruchomienie; Korzeniak w tym czasie zakorzeniony (bij go)
+  # USCISK: przysiad 1 s (dzwiek korzeni + krag wokol siebie), potem korzenie r3: 8 obr. + unieruchomienie -> odskocz
+  - skill{s=GAJ_KORZEN_USCISK} @self ~onTimer:10
+  # WYRWA tylko gdy gracz dalej niz 5 (przeciw kitowaniu)
+  - skill{s=GAJ_KORZEN_WYRWA} @target ~onTimer:20
+
+GAJ_LUCZNIK:
+  Type: SKELETON
+  Display: '&2Cierniowy Łucznik'
+  Health: 26
+  Damage: 2
+  Options:
+    Despawn: persistent
+    FollowRange: 24
+    MovementSpeed: 0.26
+    PreventOtherDrops: true
+    PreventSunburn: true
+  Equipment:
+  - BOW HAND
+  AIGoalSelectors:
+  - clear
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # trzyma dystans: gracz blizej niz 5 -> odskok
+  - skill{s=GAJ_LUCZNIK_ODSKOK} @target ~onTimer:15
+  # NACIAG 0.8 s (dzwiek kuszy + blysk), potem strzal prosto w miejsce gracza sprzed naciagu -> unik w bok
+  - skill{s=GAJ_LUCZNIK_STRZAL} @target ~onTimer:20
