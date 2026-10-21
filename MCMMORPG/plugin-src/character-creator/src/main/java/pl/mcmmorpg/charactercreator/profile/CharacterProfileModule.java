@@ -1,12 +1,15 @@
 package pl.mcmmorpg.charactercreator.profile;
 
+import pl.mcmmorpg.charactercreator.Teksty;
 import fr.phoenixdevt.profiles.PlayerProfile;
 import fr.phoenixdevt.profiles.ProfileDataModule;
 import fr.phoenixdevt.profiles.event.ProfileCreateEvent;
 import fr.phoenixdevt.profiles.event.ProfileRemoveEvent;
 import fr.phoenixdevt.profiles.event.ProfileSelectEvent;
 import fr.phoenixdevt.profiles.event.ProfileUnloadEvent;
+import java.time.Instant;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,9 +63,24 @@ public final class CharacterProfileModule implements ProfileDataModule {
    *
    * <p>Trzymamy ja sami, bo model rasy trzeba zalozyc PONOWNIE po kazdym przeniesieniu
    * gracza (patrz {@link ConfirmService#applyRaceModel}), a w tamtym momencie nie mamy pod
-   * reka zadnego eventu MMOProfiles — tylko gracza.
+   * reka zadnego eventu MMOProfiles — tylko gracza. Przy okazji tego samego zadania wraca
+   * skorka postaci ({@link ConfirmService#applySkin}) — tez idempotentnie.
    */
   private final Map<UUID, CharacterRecord> activeCharacters = new ConcurrentHashMap<>();
+
+  /**
+   * Profile, ktorych rekord wlasnie powstaje — patrz {@link #onConfirm} i {@link #onSelect}.
+   *
+   * <p>{@code ProfileCreateEvent#validate()} powoduje NATYCHMIASTOWY {@code ProfileSelectEvent},
+   * a rekord zapisujemy dopiero po nim (kolejnosc jest celowa — patrz javadoc onConfirm).
+   * Bez tego znacznika onSelect widzi profil bez rekordu i przy KAZDEJ nowo tworzonej postaci
+   * krzyczy do logu o utracie danych, a graczowi wysyla czerwone "zglos to administracji" —
+   * tuz po tym, jak wszystko sie udalo. Znacznik zyje dokladnie tyle, co to jedno okno.
+   */
+  private final Set<UUID> profilesBeingCreated = ConcurrentHashMap.newKeySet();
+
+  /** Stary kreator: czy po zatwierdzeniu oddac ekwipunek sprzed tworzenia (per profil). */
+  private final Map<UUID, Boolean> keepEntryInventory = new ConcurrentHashMap<>();
 
   /**
    * Opoznienie zalozenia modelu. Teleport MMOProfiles po {@code validate()} i nasz wlasny
@@ -77,6 +95,243 @@ public final class CharacterProfileModule implements ProfileDataModule {
    * ekwipunek profilu — inaczej oddane rzeczy zostana nim nadpisane.
    */
   private static final long INVENTORY_RESTORE_DELAY_TICKS = 20L;
+
+  /**
+   * Kiedy po wejsciu na serwer nakladamy skorke ostatnio granej postaci.
+   *
+   * <p>Dwa razy, i to nie jest ostroznosc na wyrost: pierwsze podejscie ma trafic jak
+   * najwczesniej (gracz patrzy na siebie od pierwszej klatki), drugie jest po to, zeby
+   * przezyc plugin, ktory naklada swoja skorke PO nas — CMI robi to ~1 s po wejsciu, z
+   * wlasnego cache'u. Nalozenie jest idempotentne (SkinService#applyTo porownuje teksture
+   * przed podmiana), wiec drugie wywolanie przy niezmienionej skorce nie kosztuje nic
+   * i nie miga graczowi encja.
+   */
+  private static final long[] JOIN_SKIN_DELAYS_TICKS = { 10L, 40L };
+
+  // --- scena kreatora (etap 2) -----------------------------------------------------------
+
+  private pl.mcmmorpg.charactercreator.scene.SceneManager scenes;
+  private java.util.function.Function<pl.mcmmorpg.charactercreator.scene.CreatorFlow.Outcome,
+      pl.mcmmorpg.charactercreator.scene.CreatorFlow> flows;
+  private pl.mcmmorpg.charactercreator.scene.NewCharacterBook book;
+
+  /**
+   * Scena zamiast sali kreatora przy tworzeniu postaci ({@code scene.replace-creator: true}).
+   * Bez wywolania tej metody modul dziala dokladnie jak wczesniej.
+   */
+  public void enableScene(pl.mcmmorpg.charactercreator.scene.SceneManager scenes,
+      java.util.function.Function<pl.mcmmorpg.charactercreator.scene.CreatorFlow.Outcome,
+          pl.mcmmorpg.charactercreator.scene.CreatorFlow> flows,
+      pl.mcmmorpg.charactercreator.scene.NewCharacterBook book) {
+    this.scenes = scenes;
+    this.flows = flows;
+    this.book = book;
+  }
+
+  /** Ekwipunek sprzed tworzenia — oddawany po zatwierdzeniu, jak w starym kreatorze. */
+  private record Snapshot(org.bukkit.inventory.ItemStack[] storage,
+      org.bukkit.inventory.ItemStack[] armor, org.bukkit.inventory.ItemStack offHand) {
+
+    static Snapshot of(Player player) {
+      var inv = player.getInventory();
+      return new Snapshot(copy(inv.getStorageContents()), copy(inv.getArmorContents()),
+          inv.getItemInOffHand() == null ? null : inv.getItemInOffHand().clone());
+    }
+
+    private static org.bukkit.inventory.ItemStack[] copy(org.bukkit.inventory.ItemStack[] src) {
+      org.bukkit.inventory.ItemStack[] out = new org.bukkit.inventory.ItemStack[src.length];
+      for (int i = 0; i < src.length; i++) {
+        out[i] = src[i] == null ? null : src[i].clone();
+      }
+      return out;
+    }
+
+    void restore(Player player) {
+      var inv = player.getInventory();
+      inv.setStorageContents(storage);
+      inv.setArmorContents(armor);
+      inv.setItemInOffHand(offHand);
+    }
+  }
+
+  /**
+   * Tworzenie postaci w scenie. Zwraca false, gdy scena sie nie otworzyla — wtedy
+   * wolajacy idzie stara droga (sala kreatora), zeby gracz nigdy nie zostal bez kreatora.
+   */
+  private boolean startInScene(Player player, UUID profileId, PendingCreation pending) {
+    if (scenes == null || sessions.isActive(player) || scenes.inScene(player.getUniqueId())) {
+      return false;
+    }
+    boolean firstCharacter = mayKeepEntryInventory(player, profileId);
+    Snapshot snapshot = firstCharacter ? Snapshot.of(player) : null;
+    // Imie startowe: null = ksiega wylosuje imie rasy (dawniej nick konta — tak powstala postac "Miau").
+    String[] draft = {null, pl.mcmmorpg.charactercreator.scene.NewCharacterBook.DEFAULT_COLOR};
+    pl.mcmmorpg.charactercreator.scene.CreatorFlow[] flow = new pl.mcmmorpg.charactercreator.scene.CreatorFlow[1];
+    flow[0] = flows.apply(new pl.mcmmorpg.charactercreator.scene.CreatorFlow.Outcome() {
+      @Override
+      public void chosen(pl.mcmmorpg.charactercreator.scene.SceneView view,
+          CreatorConfig.RaceOption race, CreatorConfig.ClassOption clazz) {
+        String initialName = draft[0] != null ? draft[0]
+            : pl.mcmmorpg.charactercreator.scene.NameGenerator.generate(
+                plugin.getConfig().getConfigurationSection("names"), race.id(),
+                candidate -> store.isNameTaken(candidate, profileId));
+        book.open(player, flow[0].summary(race, clazz), initialName == null ? "" : initialName, draft[1],
+            new pl.mcmmorpg.charactercreator.scene.NewCharacterBook.Handler() {
+              @Override
+              public String create(Player p, String name, String color) {
+                draft[0] = name;
+                draft[1] = color;
+                if (store.isNameTaken(name, profileId)) {
+                  return pl.mcmmorpg.charactercreator.creator.NameRules.Rejection.DUPLICATE.message();
+                }
+                view.uiSound("create");
+                // Przelot nad swiatem (D6), dopiero potem zatwierdzenie: gracz nie ma jeszcze
+                // wybranego profilu, wiec nic (okno startera Chowancow, zestaw) nie wskoczy
+                // w srodek ujecia. Bez przelotu w configu done wykonuje sie od razu.
+                org.bukkit.Location exit = sessions.configuredExit();
+                pl.mcmmorpg.charactercreator.scene.SceneSettings.Flyover fly = view.settings().flyover();
+                if (fly != null) {
+                  fly = new pl.mcmmorpg.charactercreator.scene.SceneSettings.Flyover(fly.worldName(),
+                      fly.path(), fly.look(), fly.title().replace("{imie}", name),
+                      fly.subtitle().replace("{imie}", name), fly.time(), fly.holdTicks());
+                }
+                view.flyover(fly, () -> {
+                  view.close(exit);
+                  if (p.isOnline()) {
+                    confirmFromScene(p, profileId, pending, snapshot, race.id(), clazz.id(), name, color);
+                  }
+                });
+                return null;
+              }
+
+              @Override
+              public String randomName(Player p) {
+                return pl.mcmmorpg.charactercreator.scene.NameGenerator.generate(
+                    plugin.getConfig().getConfigurationSection("names"), race.id(),
+                    candidate -> store.isNameTaken(candidate, profileId));
+              }
+
+              @Override
+              public void back(Player p) {
+                // Scena stoi dalej pod oknem — gracz wraca do wyboru bez zadnego ruchu.
+              }
+            });
+      }
+
+      @Override
+      public void cancelled(pl.mcmmorpg.charactercreator.scene.SceneView view) {
+        view.close();
+        cancelFromScene(player, profileId);
+      }
+
+      @Override
+      public boolean mustCreate(pl.mcmmorpg.charactercreator.scene.SceneView view) {
+        return firstCharacter;
+      }
+    });
+    // Okno MMOProfiles jest jeszcze otwarte (gracz kliknal w nim "nowa postac") — przykryloby scene.
+    player.closeInventory();
+    return scenes.open(player, flow[0].start());
+  }
+
+  /**
+   * Zatwierdzenie z ksiegi. Ta sama kolejnosc co {@link #onConfirm}: validate -> klasa i rasa
+   * na graczu -> zapis -> wyjscie do swiata -> wyglad -> oddanie ekwipunku (z opoznieniem,
+   * po tym, jak MMOProfiles nalozy ekwipunek swiezego profilu).
+   */
+  private void confirmFromScene(Player player, UUID profileId, PendingCreation pending,
+      Snapshot snapshot, String raceId, String classId, String name, String color) {
+    profilesBeingCreated.add(profileId);
+    try {
+      CharacterRecord record = confirmService.buildRecord(player, raceId, classId, name, color,
+          profileId);
+      if (record == null) {
+        abort(player, "Nie udało się utworzyć postaci — zgłoś to administracji.");
+        return;
+      }
+      pending.complete();
+      confirmService.applyToRealPlayer(player, record);
+      CharacterRecord stored = store.put(record);
+      if (stored == null) {
+        stored = storeWithFallbackName(record, player);
+      }
+      sendToWorld(player);
+      trackAndApplyAppearance(player, stored);
+      UUID playerId = player.getUniqueId();
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        Player online = Bukkit.getPlayer(playerId);
+        if (online != null && online.isOnline() && snapshot != null) {
+          snapshot.restore(online);
+          AccessoryIcons.refresh(online, logger);
+        }
+      }, INVENTORY_RESTORE_DELAY_TICKS);
+      logger.info("Scena: " + player.getName() + " utworzyl postac " + stored.name() + " ("
+          + raceId + " + " + classId + ", kolor " + color + ", profil " + profileId + ")");
+      player.sendMessage(Teksty.t("kreator.utworzona", "&aPostać utworzona: {imie}", "imie", stored.name()));
+    } catch (RuntimeException ex) {
+      logger.log(Level.SEVERE, "Awaria przy tworzeniu postaci ze sceny dla " + player.getName(), ex);
+      abort(player, "Coś poszło nie tak przy tworzeniu postaci — zgłoś to administracji.");
+    } finally {
+      profilesBeingCreated.remove(profileId);
+    }
+  }
+
+  /**
+   * Czy wolno oddac nowej postaci ekwipunek sprzed tworzenia.
+   *
+   * <p>Tylko wtedy, gdy gracz NIE MA zadnej innej postaci. Zmierzone na klonie 27.09: przy
+   * tworzeniu postaci z poziomu gry (gracz gral Grokthar, otworzyl wybor, kliknal "nowa")
+   * w plecaku byly rzeczy Grokthara — MMOProfiles ma je juz zapisane w jego profilu, a
+   * oddanie ich nowej postaci je DUPLIKOWALO (rozdzka i kosc u obu postaci). Przy
+   * pierwszej postaci na koncie rzeczy nie naleza do zadnego profilu i zostaja jak dotad.
+   */
+  private boolean mayKeepEntryInventory(Player player, UUID creatingProfileId) {
+    try {
+      fr.phoenixdevt.profiles.ProfileList list =
+          fr.phoenixdevt.mmoprofiles.bukkit.MMOProfiles.plugin.getPlayerData(player.getUniqueId());
+      if (list == null) {
+        return false;
+      }
+      for (PlayerProfile other : list.getProfiles()) {
+        if (!other.getUniqueId().equals(creatingProfileId)) {
+          return false;
+        }
+      }
+      return true;
+    } catch (RuntimeException ex) {
+      logger.log(Level.WARNING, "Nie udalo sie sprawdzic profili " + player.getName()
+          + " — ekwipunek sprzed tworzenia NIE zostanie oddany (bezpieczniej niz duplikat).", ex);
+      return false;
+    }
+  }
+
+  /** Wejscie testowe botow ({@code /cc testpostac}); null = brak. */
+  private pl.mcmmorpg.charactercreator.command.TestEntry testEntry;
+
+  public void setTestEntry(pl.mcmmorpg.charactercreator.command.TestEntry testEntry) {
+    this.testEntry = testEntry;
+  }
+
+  /** Po rezygnacji z kreatora: scena wyboru postaci (etap 3) albo, bez niej, okno MMOProfiles. */
+  private java.util.function.Predicate<Player> selectOpener = p -> false;
+
+  public void setSelectOpener(java.util.function.Predicate<Player> selectOpener) {
+    this.selectOpener = selectOpener;
+  }
+
+  /** PPM w scenie: jak "Wyjdz" w starym kreatorze — profil nie powstaje, wraca ekran wyboru. */
+  private void cancelFromScene(Player player, UUID profileId) {
+    logger.info("Gracz " + player.getName() + " zrezygnowal z tworzenia postaci w scenie (profil "
+        + profileId + ") — profil NIE zostal utworzony.");
+    player.sendMessage(Teksty.t("kreator.przerwane", "&eTworzenie postaci przerwane."));
+    UUID playerId = player.getUniqueId();
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      Player online = Bukkit.getPlayer(playerId);
+      if (online != null && online.isOnline() && !selectOpener.test(online)) {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoprofiles open " + online.getName());
+      }
+    });
+  }
 
   public CharacterProfileModule(JavaPlugin plugin, CreatorConfig config, CharacterStore store,
       CreatorSessionManager sessions, ConfirmService confirmService) {
@@ -130,6 +385,21 @@ public final class CharacterProfileModule implements ProfileDataModule {
     };
 
     try {
+      // /cc testpostac (bot na klonie testowym): to samo zatwierdzenie co ksiega sceny, bez klikania.
+      // Zlecenie powstaje tylko za trzema zamkami — patrz TestEntry.
+      pl.mcmmorpg.charactercreator.command.TestEntry.Request test =
+          testEntry == null ? null : testEntry.take(player.getUniqueId());
+      if (test != null) {
+        if (scenes != null && scenes.inScene(player.getUniqueId())) {
+          scenes.close(player.getUniqueId());
+        }
+        confirmFromScene(player, profileId, pending, null, test.raceId(), test.classId(),
+            test.name(), pl.mcmmorpg.charactercreator.scene.NewCharacterBook.DEFAULT_COLOR);
+        return;
+      }
+      if (startInScene(player, profileId, pending)) {
+        return;
+      }
       Location room = config.roomSpawn();
       if (room == null || room.getWorld() == null) {
         throw new IllegalStateException("Swiat kreatora '" + config.roomWorldName()
@@ -139,6 +409,8 @@ public final class CharacterProfileModule implements ProfileDataModule {
       // sama, juz po przeniesieniu gracza do sali — wiec kazdy wpis w sessions.yml mial
       // origin == spawn kreatora, a cala sciezka powrotu "tam, skad przyszedl" byla martwa.
       Location origin = player.getLocation().clone();
+      // Decyzja PRZED wejsciem do sali: w trakcie tworzenia lista profili sie zmienia.
+      keepEntryInventory.put(profileId, mayKeepEntryInventory(player, profileId));
       player.teleport(room);
       CreatorSession session = sessions.start(player, profileId, pending, origin);
       if (session == null) {
@@ -177,6 +449,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
    * moment, w ktorym cokolwiek trafia na dysk, jest juz PO tym, jak profil naprawde istnieje.
    */
   public void onConfirm(Player player, CreatorSession session) {
+    profilesBeingCreated.add(session.profileId());
     try {
       CharacterRecord record = confirmService.buildRecord(player, session, session.profileId());
       if (record == null) {
@@ -198,24 +471,63 @@ public final class CharacterProfileModule implements ProfileDataModule {
       // MMOProfiles does not relocate the player once ProfileCreateEvent#validate()
       // completes — it only unblocks the profile — so we still own leaving creator_limbo.
       sendToWorld(player);
-      trackAndApplyRaceModel(player, stored);
+      trackAndApplyAppearance(player, stored);
       // Ekwipunek oddajemy DOPIERO TERAZ i jeszcze z opoznieniem. MMOProfiles naklada na
       // gracza ekwipunek swiezo zatwierdzonego profilu ('synced-data.inventory: true') w
       // jednym z kolejnych tickow po validate() — oddanie rzeczy wczesniej (tak bylo)
       // konczy sie tym, ze zostaja nadpisane pustka. Zmierzone evalem 40-ekwipunek:
       // bot wchodzil ze 100 przedmiotami, a po utworzeniu postaci mial zero.
+      boolean keepEntry = keepEntryInventory.getOrDefault(session.profileId(), false);
+      keepEntryInventory.remove(session.profileId());
       Bukkit.getScheduler().runTaskLater(plugin, () -> {
         Player online = Bukkit.getPlayer(player.getUniqueId());
-        if (online != null && online.isOnline()) {
+        if (online != null && online.isOnline() && keepEntry) {
           sessions.restoreEntryInventory(online, session);
+          AccessoryIcons.refresh(online, logger);
         }
       }, INVENTORY_RESTORE_DELAY_TICKS);
-      player.sendMessage(Component.text("Postać utworzona: " + stored.name(),
-          NamedTextColor.GREEN));
+      player.sendMessage(Teksty.t("kreator.utworzona", "&aPostać utworzona: {imie}", "imie", stored.name()));
     } catch (RuntimeException ex) {
       logger.log(Level.SEVERE, "Awaria przy potwierdzaniu postaci dla " + player.getName(), ex);
       abort(player, "Coś poszło nie tak przy tworzeniu postaci — zgłoś to administracji.");
+    } finally {
+      profilesBeingCreated.remove(session.profileId());
     }
+  }
+
+  /**
+   * Implements CreatorRoomListener.CancelHandler — gracz kliknal "Wyjdz".
+   *
+   * <p><b>Zawieszonego {@code ProfileCreateEvent} po prostu NIE zatwierdzamy</b> i na tym
+   * polega cala rezygnacja. Sprawdzone w bajtkodzie {@code ProfileListImpl#createProfile}:
+   * nowy {@code PlayerProfileImpl} powstaje jako zwykly obiekt, a do listy profili gracza
+   * trafia dopiero w callbacku, ktory odpala {@code validate()}. Bez niego profil nie
+   * powstaje i nic nie zostaje zawieszone — {@code hasProfilePending()} patrzy na sesje
+   * MythicLib, a nie na ten event, a {@code createProfile} nie czyta nawet
+   * {@code isCancelled()}. Sam obiekt profilu jest smieciem do zebrania.
+   *
+   * <p>Sciezka jest wiec ta sama, ktora onCreate wybiera przy odmowie drugiej sesji —
+   * tyle ze teraz wybiera ja gracz.
+   */
+  public void onCancel(Player player, CreatorSession session) {
+    keepEntryInventory.remove(session.profileId());
+    sessions.end(player, CreatorSessionManager.EndReason.CANCELLED);
+    logger.info("Gracz " + player.getName() + " zrezygnowal z tworzenia postaci (profil "
+        + session.profileId() + ") — profil NIE zostal utworzony.");
+    player.sendMessage(Teksty.t("kreator.przerwane", "&eTworzenie postaci przerwane."));
+    // Ekran wyboru postaci otwieramy W NASTEPNYM TICKU, z tego samego powodu, dla ktorego
+    // robi to CreatorRoomListener#reopenMenuNextTick: Paper nie obsluguje niezawodnie
+    // otwarcia nowego inventory prosto z obslugi zamkniecia poprzedniego, a end() wlasnie
+    // zamknelo nasze. Bez tego gracz zostawalby w swiecie bez postaci, az straznik
+    // otworzylby mu ten ekran sam — do 10 s pozniej.
+    UUID playerId = player.getUniqueId();
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      Player online = Bukkit.getPlayer(playerId);
+      if (online == null || !online.isOnline()) {
+        return;
+      }
+      Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mmoprofiles open " + online.getName());
+    });
   }
 
   /**
@@ -236,26 +548,39 @@ public final class CharacterProfileModule implements ProfileDataModule {
     }
     UUID playerId = player.getUniqueId();
     player.setInvulnerable(true);
-    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+    // Ochrona trwa co najmniej 'exit-invulnerability-ticks', a potem az gracz ruszy sie
+    // z miejsca ladowania (najdluzej 3 min). Zlapane na klonie 30.09: nowa postac w nocy
+    // czytala okno startera Chowancow i po 50 s zginela od zombie, nie zrobiwszy kroku.
+    org.bukkit.Location landing = player.getLocation().clone();
+    long[] elapsed = {0};
+    Bukkit.getScheduler().runTaskTimer(plugin, task -> {
       Player online = Bukkit.getPlayer(playerId);
-      if (online != null && online.isOnline()) {
-        online.setInvulnerable(false);
+      if (online == null || !online.isOnline()) {
+        task.cancel();
+        return;
       }
-    }, ticks);
+      elapsed[0] += 20;
+      boolean moved = online.getWorld() != landing.getWorld()
+          || online.getLocation().distanceSquared(landing) > LANDING_LEAVE_DISTANCE_SQ;
+      if (elapsed[0] >= ticks && (moved || elapsed[0] >= LANDING_PROTECTION_MAX_TICKS)) {
+        online.setInvulnerable(false);
+        task.cancel();
+      }
+    }, 20L, 20L);
   }
+
+  private static final double LANDING_LEAVE_DISTANCE_SQ = 3.0 * 3.0;
+  private static final long LANDING_PROTECTION_MAX_TICKS = 3600L;
 
   private CharacterRecord storeWithFallbackName(CharacterRecord record, Player player) {
     for (int suffix = 2; suffix < 100; suffix++) {
       String candidate = record.name() + suffix;
-      CharacterRecord attempt = new CharacterRecord(record.characterId(), candidate,
-          record.raceId(), record.classId(), record.skinSource(), record.ownerUuid(),
-          record.ownerName(), record.createdAt());
+      CharacterRecord attempt = record.withName(candidate);
       CharacterRecord stored = store.put(attempt);
       if (stored != null) {
         logger.warning("Imie '" + record.name() + "' zostalo zajete w trakcie tworzenia "
             + "postaci dla " + player.getName() + " — zapisano jako '" + candidate + "'.");
-        player.sendMessage(Component.text("Imię było już zajęte — twoja postać nazywa się "
-            + candidate + ".", NamedTextColor.YELLOW));
+        player.sendMessage(Teksty.t("kreator.imie-zajete-zmienione", "&eImię było już zajęte — twoja postać nazywa się {imie}.", "imie", candidate));
         return stored;
       }
     }
@@ -292,8 +617,17 @@ public final class CharacterProfileModule implements ProfileDataModule {
     // own data (race/class/model) here, before validating.
     CharacterRecord record = store.get(event.getProfile().getUniqueId());
     if (record != null) {
-      confirmService.applyToRealPlayer(event.getPlayer(), record);
-      backfillOwner(record, event.getPlayer());
+      // false: istniejaca postac — klasa MMOCore przychodzi z profilu, nie wymuszamy archetypu.
+      confirmService.applyToRealPlayer(event.getPlayer(), record, false);
+      record = touch(record, event.getPlayer());
+    } else if (profilesBeingCreated.contains(event.getProfile().getUniqueId())) {
+      // To jest select, ktory MMOProfiles odpala W SRODKU naszego wlasnego tworzenia postaci:
+      // validate() -> select -> zapis rekordu. Rekord powstanie za chwile, w tej samej
+      // sekwencji, a caly wyglad i klase zaklada onConfirm zaraz po niej. Nie ma tu ani
+      // utraty danych, ani czego szukac w /cc prune — i nie ma o czym mowic graczowi.
+      logger.fine("ProfileSelectEvent dla profilu " + event.getProfile().getUniqueId()
+          + " w trakcie tworzenia postaci przez " + event.getPlayer().getName()
+          + " — rekord zostanie zapisany w tej samej sekwencji.");
     } else {
       // Profil ISTNIEJE, ale nie ma do niego naszego rekordu. Dotad konczylo sie to cicha
       // galezia else — gracz wchodzil do gry bez rasy, bez klasy i bez imienia, a w logu
@@ -313,7 +647,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
       // PO validate: to dopiero ono pozwala MMOProfiles zastosowac profil, czyli m.in.
       // postawic gracza na zapisanej pozycji (synced-data.location: true). Model zalozony
       // przed tym teleportem nie dozylby konca przenosin.
-      trackAndApplyRaceModel(event.getPlayer(), record);
+      trackAndApplyAppearance(event.getPlayer(), record);
     }
   }
 
@@ -323,13 +657,13 @@ public final class CharacterProfileModule implements ProfileDataModule {
    * <p>Publiczne, bo wola to tez {@link RaceModelListener} po kazdej zmianie swiata
    * i po respawnie — model nie przezywa ani jednego, ani drugiego.
    */
-  public void trackAndApplyRaceModel(Player player, CharacterRecord record) {
+  public void trackAndApplyAppearance(Player player, CharacterRecord record) {
     activeCharacters.put(player.getUniqueId(), record);
-    scheduleRaceModel(player);
+    scheduleAppearance(player);
   }
 
-  /** Zaklada model aktywnej postaci gracza, jesli taka zna. */
-  public void scheduleRaceModel(Player player) {
+  /** Zaklada model i skorke aktywnej postaci gracza, jesli taka zna. */
+  public void scheduleAppearance(Player player) {
     UUID playerId = player.getUniqueId();
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
       Player online = Bukkit.getPlayer(playerId);
@@ -343,9 +677,64 @@ public final class CharacterProfileModule implements ProfileDataModule {
       }
       CharacterRecord active = activeCharacters.get(playerId);
       if (active != null) {
-        confirmService.applyRaceModel(online, active);
+        confirmService.applyDeferredAppearance(online, active);
       }
     }, MODEL_APPLY_DELAY_TICKS);
+  }
+
+  /**
+   * Skorka ostatnio granej postaci — nakladana przy WEJSCIU, zanim gracz cokolwiek wybierze.
+   *
+   * <p><b>Po co.</b> Skorka postaci wchodzila dotad dopiero przy wyborze postaci, a do tego
+   * momentu gracz chodzil w skorce swojego KONTA (u wlasciciela serwera doklada to jeszcze
+   * CMI, ktore nakladalo mu zapisana skorke sekunde po wejsciu). Kilkanascie sekund ekranu
+   * wyboru to dokladnie ten czas, w ktorym czlowiek patrzy na swoja postac.
+   *
+   * <p><b>Dlaczego to bezpieczne, gdy zgadniemy zle.</b> Zgadujemy tylko postac: bierzemy te
+   * o najswiezszym {@code last-used}. Jesli gracz wybierze inna, {@link #onSelect} nalozy
+   * skorke tej wybranej — ta sama sciezka, co zawsze. Najgorszy mozliwy skutek to skorka
+   * poprzedniej postaci przez chwile, zamiast skorki konta.
+   *
+   * <p>Model rasy NIE jest tu zakladany. Model nalezy do konkretnej, WYBRANEJ postaci
+   * i przezywa teleporty gorzej niz skorka — zakladanie go komus, kto jeszcze nie wybral,
+   * skonczyloby sie modelem wiszacym na graczu w kreatorze.
+   */
+  public void scheduleJoinSkin(Player player) {
+    if (!config.applySkinToPlayer() || !config.applySkinOnJoin()) {
+      return;
+    }
+    UUID playerId = player.getUniqueId();
+    CharacterRecord last = store.lastUsedBy(playerId);
+    if (last == null) {
+      // Pierwsze wejscie na serwer albo same rekordy sprzed schematu 2 (bez wlasciciela) —
+      // nie ma czego nalozyc i nie ma o czym mowic.
+      return;
+    }
+    for (long delay : JOIN_SKIN_DELAYS_TICKS) {
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        Player online = Bukkit.getPlayer(playerId);
+        if (online == null || !online.isOnline()) {
+          return;
+        }
+        // Gracz zdazyl juz wybrac postac: jego skorka nalezy teraz do TAMTEJ postaci,
+        // a nie do naszego typowania. Nie dotykamy.
+        if (activeCharacters.containsKey(playerId)) {
+          return;
+        }
+        confirmService.applySkin(online, last);
+      }, delay);
+    }
+  }
+
+  /**
+   * Postac, ktora gracz ma TERAZ wybrana — albo {@code null}, gdy jeszcze nie wybral.
+   *
+   * <p>Do raportu {@code /cc skin <gracz>}: bez tego nie da sie powiedziec, ktora skorke
+   * gracz POWINIEN miec w tej chwili, a to jedyne pytanie, ktore rozstrzyga zgloszenie
+   * "mam nie te skorke".
+   */
+  public CharacterRecord activeCharacter(UUID playerId) {
+    return activeCharacters.get(playerId);
   }
 
   /** Gracz wyszedl albo przelaczyl profil — przestajemy mu zakladac model tej postaci. */
@@ -353,14 +742,21 @@ public final class CharacterProfileModule implements ProfileDataModule {
     activeCharacters.remove(player.getUniqueId());
   }
 
-  /** Uzupelnia wlasciciela w rekordach ze schematu 1 — jedyny moment, gdy go znamy. */
-  private void backfillOwner(CharacterRecord record, Player player) {
-    if (record.hasOwner() && player.getName().equals(record.ownerName())) {
-      return;
-    }
-    store.put(new CharacterRecord(record.characterId(), record.name(), record.raceId(),
-        record.classId(), record.skinSource(), player.getUniqueId(), player.getName(),
-        record.createdAt()));
+  /**
+   * Znaczy postac jako ostatnio graną i przy okazji uzupelnia wlasciciela.
+   *
+   * <p>Jeden zapis zamiast dwoch: wybor postaci to jedyny moment, w ktorym znamy i jedno,
+   * i drugie. {@code last-used} jest tu po to, zeby przy NASTEPNYM wejsciu gracza bylo
+   * wiadomo, czyja skorke nalozyc przed ekranem wyboru — patrz {@link #scheduleJoinSkin}.
+   *
+   * @return rekord po aktualizacji (albo wejsciowy, gdy zapis odpadl na zajetym imieniu)
+   */
+  private CharacterRecord touch(CharacterRecord record, Player player) {
+    CharacterRecord updated = record
+        .withOwner(player.getUniqueId(), player.getName())
+        .withLastUsed(Instant.now());
+    CharacterRecord stored = store.put(updated);
+    return stored != null ? stored : record;
   }
 
   @EventHandler

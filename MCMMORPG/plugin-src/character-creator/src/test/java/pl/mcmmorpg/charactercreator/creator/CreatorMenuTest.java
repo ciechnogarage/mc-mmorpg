@@ -32,6 +32,17 @@ class CreatorMenuTest {
   }
 
   /**
+   * Wyjscie i zatwierdzenie stoja w tym samym rzedzie, wiec ich rozjazd bylby kliknieciem
+   * "STWORZ POSTAC", ktore wyrzuca z kreatora. Odstep trzymamy testem, a nie pamiecia.
+   */
+  @Test
+  void exitSlotIsRecognisedAndFarFromConfirm() {
+    assertEquals("exit", CreatorMenu.actionOf(CreatorMenu.SLOT_EXIT));
+    assertTrue(Math.abs(CreatorMenu.SLOT_EXIT - CreatorMenu.SLOT_CONFIRM) >= 3,
+        "przycisk wyjscia sasiaduje z przyciskiem tworzenia postaci");
+  }
+
+  /**
    * Regresja: akcja "random_name" byla obslugiwana w listenerze, ale {@code actionOf} nigdy
    * jej nie zwracala — losowanie imienia dziala wylacznie prawym przyciskiem na slocie imienia.
    */
@@ -80,5 +91,6 @@ class CreatorMenuTest {
       }
     }
     assertTrue(CreatorMenu.PLAYER_SLOTS_IN_USE.contains(CreatorMenu.playerIndex(CreatorMenu.SLOT_CONFIRM)));
+    assertTrue(CreatorMenu.PLAYER_SLOTS_IN_USE.contains(CreatorMenu.playerIndex(CreatorMenu.SLOT_EXIT)));
   }
 }

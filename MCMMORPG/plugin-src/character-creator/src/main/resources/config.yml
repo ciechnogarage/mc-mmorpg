@@ -27,10 +27,18 @@ creator-room:
   # Brak sekcji 'exit' = zachowanie sprzed poprawki (spawn swiata glownego).
   exit:
     world: 'world'
-    x: 239.5
-    y: 63.0
-    z: 208.5
-    yaw: 0.0
+    # 2026-09-20: przeniesione z 239.5 / 63 / 208.5, bo TAMTO MIEJSCE JEST POD WODA — konto
+    # QA utonelo tam kilkanascie sekund po utworzeniu postaci, a boty evali wychodzily stamtad
+    # z ubytkiem zycia. Nowe wspolrzedne to najblizszy PLASKI, suchy kawalek ladu (kamienny
+    # plaskowyz ~88 m na zachod): sprawdzone w heightmapach regionu (najwyzszy blok nie jest
+    # ciecza, deniwelacja 5x5 <= 1) i potwierdzone w grze — blok 149/98/197 to kamien,
+    # a 99..101 nad nim to powietrze w calym kwadracie 3x3.
+    # Te same wspolrzedne siedza w 'new-profile-spawn-point' i 'profile-selection-location'
+    # w plugins/MMOProfiles/config.yml. Przy zmianie poprawic OBA pliki.
+    x: 149.5
+    y: 99.0
+    z: 197.5
+    yaw: -90.0
     pitch: 0.0
 
   # Nietykalnosc po wyjsciu z kreatora, w tickach. Gracz laduje w swiecie bez ekwipunku
@@ -40,6 +48,34 @@ creator-room:
   # 0 = wylaczone.
   exit-invulnerability-ticks: 100
 
+  # SPRZATANIE SALI PRZY STARCIE SERWERA.
+  #
+  # Podglad postaci nalezy do sesji i powstaje dopiero, gdy gracz wejdzie do kreatora.
+  # Cokolwiek innego stoi w tej sali, stoi w kadrze: na produkcji byl to recznie
+  # wsummonowany armor stand i mannequin DOKLADNIE w punkcie 'dummy-anchor' (pozostalosc
+  # po porownywaniu tej wersji z prototypem config-only) — armor stand wystawal zza ramion
+  # postaci, a mannequin bylo widac przez ulamek sekundy przy kazdej zmianie rasy.
+  #
+  # true = przy kazdym starcie plugin usuwa z tego swiata WSZYSTKIE encje poza graczami
+  # i melduje w logu, co usunal. false = nie rusza niczego (wtedy sprzatanie recznie:
+  # /execute in minecraft:creator_limbo run minecraft:kill @e[type=!player] — uwaga,
+  # samo 'kill' przechwytuje CMI i po cichu nic nie robi).
+  sweep-stray-entities: true
+
+  # RESPONSYWNOSC WEJSCIA DO SALI.
+  #
+  # Sala jest osobnym swiatem, wiec wejscie to zmiana wymiaru i klient zawsze pokaze
+  # "Loading terrain..." — tego sie nie obejdzie. Mozna za to skrocic czekanie:
+  #
+  # view-distance: ile chunkow sali wysylac. Sala ma kilkanascie blokow, a globalny zasieg
+  #   (server.properties, view-distance=10) kazal klientowi czekac na 21x21 = 441 chunkow
+  #   pustki. 4 daje 81. 0 = nie ruszaj, zostaje globalny.
+  # keep-loaded: trzymaj chunki sali w pamieci na stale (3x3 wokol 'spawn' i 'dummy-anchor').
+  #   Bez tego serwer wczytuje je z dysku przy KAZDYM wejsciu, bo po wyjsciu ostatniego
+  #   gracza sala sie wyladowuje.
+  view-distance: 4
+  keep-loaded: true
+
 # Interfejs kreatora nie ma juz sekcji 'creator-menu'. Trzymala ona przesuniecia glifu
 # ramy okna (title-shift / name-shift) i tryb pomiarowy probe-advance — a ramy nie ma:
 # minimalistyczne UI rysuje wylacznie ikony i imie, zeby odslonic postac. Grafika ramy
@@ -47,8 +83,78 @@ creator-room:
 # Wartosci przesuniec zostaly w jarze 0.2.0 (deploy-backups/) — zrodla pluginu nie sa
 # w gicie, wiec to jedyna kopia starego ukladu.
 
+# SCENA W STYLU WYNNCRAFTA (etap 1: szkielet, projekt: claude.ai/artifact/7Le7N9VeAKLc2JfdjZYwWq).
+#
+# Gracz patrzy przez nieruchoma kamere (SPECTATOR na encji). Jeden ekran wyboru:
+# A/D = rasa (pod sciemnieniem), W/S = klasa, LPM = dalej, PPM = wyjdz. Q/E nie wchodza
+# w gre: w spectatorze serwer ich nie dostaje (E jest w ogole po stronie klienta).
+# Na razie wchodzi sie tu tylko komenda admina '/cc scena' — stary kreator dziala dalej.
+#
+# points: kadry. 'default' jest obowiazkowy; kadr o id rasy (np. 'ork') przenosi kamere
+#   w scenerie tej rasy — bez niego rasa pokazuje sie w kadrze domyslnym.
+#   camera  — oko kamery (katy liczone same: kamera patrzy na 'look'),
+#   subject — gdzie stoi postac (obraca sie przodem do kamery),
+#   card    — karta klasy po prawej (tekst na scenie, widoczny tylko dla gracza; rosnie w gore
+#             od punktu, wiec dlugie karty stawiac nizej),
+#   list    — opcjonalnie: panel listy klas po lewej; bez klucza = lustro karty wzgledem postaci,
+#   look    — opcjonalnie: punkt, w ktory patrzy kamera (domyslnie piers postaci);
+#             przesuniety w bok ustawia postac poza srodkiem kadru.
+#   KLIMAT kadru (tylko dla patrzacego gracza, opcjonalnie):
+#   time      — pora dnia 0..24000 (1000 ranek, 6000 poludnie, 12300 zachod, 18000 polnoc),
+#   rain      — deszcz,
+#   particles — lista { type, at?, dx, dy, dz, y, count, speed, every }; bez 'at' wokol postaci
+#               (y = wysokosc nad stopami), every = co ile tickow; tylko czastki bez danych,
+#   idle      — { swing-every: ticki, look-every: ticki, look-yaw: stopnie } — machniecie bronia,
+#               obrot glowy na boki (tulow zostaje przodem do kamery).
+#   Kadry ras + klimat na klonie: patrz tools/scenerie-ras.sh (buduje scenerie).
+# fade.glyph: pelnoekranowy czarny glif Nexo (font minecraft:default). Pusty = bez sciemnien.
+scene:
+  # true = nowa postac (MMOProfiles "utworz") przechodzi przez scene zamiast sali kreatora.
+  # false = scena tylko pod /cc scena (podglad dla admina), gracze ida stara droga.
+  replace-creator: false
+  # true = po wejsciu na serwer (i z "Zmien postac") scena wyboru postaci zamiast okna MMOProfiles.
+  # WYMAGA w plugins/MMOProfiles/config.yml 'no-gui-on-login: true', inaczej wyskocza oba ekrany.
+  # Przycisk "Zmien postac" w DeluxeMenus: '[console] cc wybor %player_name%'.
+  replace-selector: false
+  world: 'creator_limbo'
+  shield-distance: 1.4
+  target-delay-ticks: 5
+  fade:
+    glyph: ''
+    in-ticks: 5
+    stay-ticks: 5
+    out-ticks: 10
+  # HUD innych pluginow na czas sceny (komendy z konsoli, %player% = gracz).
+  # Spectator chowa vanillowy HUD, ale nie paski MythicHUD ani action bara MMOCore
+  # (zycie/mana), ktory nadpisywal podpowiedz sterowania. Po zamknieciu — on-close.
+  hud:
+    on-open:
+      - 'hud layout %player% remove default-layout -s'
+      - 'hud layout %player% remove sword-layout -s'
+      - 'hud layout %player% remove chowance-layout -s'
+    repeat:
+      - 'mmocore admin hideab %player% 60'
+    repeat-ticks: 40
+    on-close:
+      - 'hud layout %player% add default-layout -s'
+      - 'hud layout %player% add sword-layout -s'
+      - 'hud layout %player% add chowance-layout -s'
+  points:
+    default:
+      camera:  { x: 0.5, y: 101.62, z: 0.5 }
+      subject: { x: 0.5, y: 100.0, z: -2.2 }
+      card:    { x: 2.0, y: 100.9, z: -2.0 }
+      look:    { x: 1.0, y: 101.0, z: -2.2 }
+
 preview:
   rotation-interval-ticks: 2
+
+  # ROZGRZEWKA SKOREK ZNIKNELA razem z kluczem 'skin-warmup-ticks' i to jest zmiana
+  # zachowania, a nie porzadkowa. Podglad to teraz STAJNIA nosicieli: po jednym na skorke,
+  # wszyscy stoja od poczatku sesji 20 blokow pod sala, a klikniecie rasy albo klasy tylko
+  # wystawia wlasciwego na kotwice. Nie ma wiec czego rozgrzewac ani na co czekac — i, co
+  # wazniejsze, klient nie dostaje przy kliknieciu NOWEJ encji, wiec nie ma tez chwili,
+  # w ktorej rysuje skorke domyslna. Szczegoly: javadoc PreviewDummyManager.
 
 # WYMUSZENIE WYBORU POSTACI PRZY WEJSCIU.
 #
@@ -93,10 +199,10 @@ races:
     helmet-color: '#C8B48C'
     display: '&fCzłowiek'
     permission: 'race.czlowiek'
-    # 'none' = rasa ŚWIADOMIE bez modelu 3D. Blueprintu race_czlowiek nie ma w
-    # plugins/ModelEngine/blueprints/ i config nie ma prawa go obiecywać: dopóki tak jest,
-    # podgląd używa przebrania zastępczego (skórka patrzącego gracza), a plugin mówi o tym
-    # raz przy starcie zamiast 177 razy w logu. Po dodaniu blueprintu wpisać 'race_czlowiek'.
+    # 'none' = rasa ŚWIADOMIE bez modelu 3D i tak zostaje dla wszystkich ras: rasę pokazuje
+    # SKÓRKA, nie ModelEngine. Którą skórkę — skins.yml, klucz '<rasa>_<klasa>' (patrz sekcja
+    # 'skins' na końcu pliku). Podgląd w kreatorze nosi dokładnie tę samą teksturę, którą
+    # gracz dostanie po zatwierdzeniu.
     model-id: 'none'
   ork:
     icon: 'cc:race_ork'
@@ -105,7 +211,7 @@ races:
     helmet-color: '#6E9B4E'
     display: '&2Ork'
     permission: 'race.ork'
-    # Patrz komentarz przy rasie 'czlowiek'. Po dodaniu blueprintu wpisać 'race_ork'.
+    # Patrz komentarz przy rasie 'czlowiek'.
     model-id: 'none'
   elf:
     icon: 'cc:race_elf'
@@ -114,7 +220,7 @@ races:
     helmet-color: '#E8DCA8'
     display: '&bElf'
     permission: 'race.elf'
-    # Patrz komentarz przy rasie 'czlowiek'. Po dodaniu blueprintu wpisać 'race_elf'.
+    # Patrz komentarz przy rasie 'czlowiek'.
     model-id: 'none'
   nieumarly:
     icon: 'cc:race_nieumarly'
@@ -123,12 +229,18 @@ races:
     helmet-color: '#8FA0A0'
     display: '&8Nieumarły'
     permission: 'race.nieumarly'
-    # JEDYNA rasa z realnym blueprintem w plugins/ModelEngine/blueprints/.
-    model-id: 'race_nieumarly'
+    # Blueprint race_nieumarly leży w plugins/ModelEngine/blueprints/, ale NIE jest używany:
+    # rasę pokazuje skórka. Model wróciłby tu tylko wtedy, gdyby powstał komplet blueprintów
+    # dla wszystkich ras — jedna rasa z modelem i trzy bez wyglądały w kadrze jak błąd.
+    model-id: 'none'
 
-# UWAGA co do 'gear': to jest WYŁĄCZNIE strój dummy'ego w podglądzie — żeby wybór klasy
-# było widać na postaci. Gracz po utworzeniu postaci NIE dostaje z tego ani jednego
-# przedmiotu; ekwipunku startowego w tym pluginie nie ma (README kiedyś twierdził inaczej).
+# UWAGA co do 'gear': to jest WYŁĄCZNIE strój dummy'ego w podglądzie. Gracz po utworzeniu
+# postaci NIE dostaje z tego ani jednego przedmiotu; ekwipunku startowego w tym pluginie nie ma
+# (README kiedyś twierdził inaczej).
+#
+# Odkąd para rasa+klasa ma własną skórkę, z tej sekcji używany jest tylko 'hand': zbroja
+# zakrywała strój klasy wypalony w skórce, a barwiony helm rasy — głowę. Pozostałe sloty
+# wracają do gry tylko dla par BEZ skórki w skins.yml (podgląd używa wtedy skórki gracza).
 classes:
   wojownik:
     icon: 'cc:class_wojownik'
@@ -159,9 +271,228 @@ classes:
     display: '&7Ninja'
     mmocore-id: 'rogue'
 
-# SKÓRKI: sekcji 'skin' już nie ma i nie wróci, dopóki nie powstanie prawdziwy wybór
-# skórki per postać. Poprzednia wersja odsyłała do klasy SkinProvider, której NIGDY nie było
-# w źródłach, a cała "abstrakcja" sprowadzała się do jednego `if` wywołującego
-# `cmi skin <gracz> <gracz> -s` — czyli nakładającego graczowi jego własną skórkę. Przy
-# online-mode=false i limicie Mojanga 600 zapytań / 10 min / IP było to bezużyteczne
-# i potencjalnie szkodliwe. Patrz ConfirmService#applyToRealPlayer.
+# HISTORIA (zostaje, żeby nikt nie wrócił tą drogą): poprzednia wersja miała sekcję 'skin'
+# odsyłającą do klasy SkinProvider, której NIGDY nie było w źródłach — cała "abstrakcja"
+# sprowadzała się do `cmi skin <gracz> <gracz> -s`, czyli nakładania graczowi jego WŁASNEJ
+# skórki przy każdym wyborze profilu. Dzisiejsze skórki nie pytają Mojanga o nic: gotowe,
+# podpisane tekstury leżą w skins.yml i idą prosto do profilu gracza.
+# SKÓRKI POSTACI
+#
+# Skórka jest JEDNĄ teksturą na parę RASA x KLASA — protokół nie ma drugiej warstwy, którą
+# serwer mógłby podmienić osobno, więc "podskin klasy" jest wypalony w tę samą teksturę:
+# rasa trzyma głowę i karnację, klasa tors, ręce, nogi i warstwę zewnętrzną (kaptur, maska,
+# naramienniki, tabard). Same tekstury leżą w skins.yml (obok tego pliku) i są czytane
+# Z DYSKU — poprawka skórki to podmiana tamtego pliku i '/cc reload', bez przebudowy jara.
+#
+# Skąd biorą się pliki: tools/gen_race_skins.py generuje 16 PNG, tools/upload_skins.sh wgrywa
+# je na mineskin.org (wprost przez jego API) i zapisuje stamtąd podpisane tekstury do
+# skins.yml. Własny hosting PNG odpada: klient Javy pobiera skórki wyłącznie
+# z textures.minecraft.net, także przy online-mode=false.
+skins:
+  # false = kreator nadal pokazuje skórkę rasy i klasy na podglądzie, ale gracz zostaje
+  # w skórce swojego konta. To JEDYNA rzecz w tym pluginie, która zmienia profil gracza —
+  # wyłącznik jest po to, żeby przy sporze z innym pluginem od skórek (CMI, SkinsRestorer)
+  # dało się to rozdzielić bez przebudowy jara.
+  apply-to-player: true
+
+  # SKORKA JUZ PRZY WEJSCIU, a nie dopiero przy wyborze postaci.
+  #
+  # Bez tego gracz od wejscia do kliknięcia postaci chodzi w skorce swojego KONTA —
+  # kilkanascie sekund, w ktorych patrzy na ekran wyboru i widzi za nim siebie. Z tym
+  # wlacznikiem plugin naklada mu skorke postaci granej OSTATNIO (pole 'last-used'
+  # w characters.yml), a po wyborze i tak poprawia ja na skorke wybranej postaci.
+  # Najgorszy mozliwy skutek pomylki: skorka poprzedniej postaci przez chwile.
+  #
+  # Nakladamy dwa razy (10 i 40 tickow po wejsciu), bo plugin od skorek moze nalozyc swoja
+  # PO nas — CMI robilo to ~1 s po wejsciu. Nalozenie jest idempotentne, wiec drugie
+  # podejscie przy niezmienionej skorce nie kosztuje nic.
+  #
+  # false = zachowanie sprzed 2026-09-20: skorka wchodzi dopiero przy wyborze postaci.
+  apply-on-join: true
+
+  # Głowy na ekranie wyboru postaci (MMOProfiles) — bez tego każda postać ma tam głowę
+  # Steve'a, bo MMOProfiles rysuje PLAYER_HEAD bez tekstury i nie ma placeholdera, którym
+  # dałoby się to ustawić z jego configu. Dopisujemy je już po zbudowaniu okna, czyli
+  # wchodzimy w CUDZE okno — dlatego osobny wyłącznik. Mapowanie slot -> postać bierzemy
+  # z jego własnego pliku language/gui/profile-list.yml; przy stronicowaniu (więcej postaci
+  # niż slotów) nie ruszamy niczego, żeby nie wstawić komuś cudzej głowy.
+  profile-heads: true
+
+
+# /cc testpostac <gracz> <rasa> <archetyp> [imie] — wejscie botow testowych z prawdziwa postacia.
+# Dziala TYLKO gdy naraz: (1) wola konsola/RCON (nigdy gracz, nawet OP), (2) enabled: true tutaj,
+# (3) zmienna srodowiskowa CC_TEST_WEJSCIE=1 (ustawiana wylacznie przy klonach testowych).
+# Na world1 ZAWSZE false. Bez ktoregos zamka komenda udaje, ze nie istnieje.
+test-wejscie:
+  enabled: false
+
+# ---------------------------------------------------------------------------------------------
+# WYBOR POSTACI (scena wyboru, lista pod PPM i w menu Q, zarzadzanie) — 2026-09-30; kosz usuniety 2026-10-01
+# ---------------------------------------------------------------------------------------------
+wybor-postaci:
+  # Od ilu aktywnych postaci lista (kafelki, klik = graj) otwiera sie sama po wejsciu do sceny.
+  # 0 = nigdy (lista zawsze pod PPM).
+  lista-od: 6
+  # Od ktorego poziomu usuniecie (zawsze ostateczne) wymaga wpisania imienia postaci.
+  imie-od-poziomu: 10
+  # Napis "Miejsce" na karcie. Najpierw region WorldGuard z greeting-title, potem nazwa mapy
+  # MythicDungeons (swiat <mapa>_<n>), na koncu te wpisy: nazwa swiata (regex) -> napis.
+  miejsca:
+    - { swiat: 'world', nazwa: 'Kraina' }
+  # Pliki postaci, ktore inne pluginy zostawiaja po trwalym usunieciu ({id} = UUID profilu).
+  # Przenoszone (nie kasowane) do CharacterCreator/usuniete/<id>/ — cofniecie = przeniesc z powrotem.
+  po-usunieciu:
+    - 'CoreTools/userdata/{id}.yml'
+    - 'MMOCore/userdata/{id}.yml'
+    - 'MMOItems/userdata/{id}.yml'
+    - 'MMOInventory/userdata/{id}.yml'
+
+# TEKSTY DLA GRACZA (2026-09-30). Zmiana tutaj + /cc reload — bez nowego jara.
+# Kolory kodami & (&6 zloty, &a zielony, &c czerwony, &7 szary, &f bialy, &l pogrubienie, &r reset).
+# {nazwa} to wstawki podmieniane przez plugin (np. {imie}, {dni}, {ile}) — zostaw je w tekscie.
+# \n = nowa linia. Brak wpisu = tekst domyslny z kodu.
+teksty:
+  imie:
+    duplicate: "Postać o tym imieniu już istnieje — wybierz inne."
+    empty: "Imię nie może być puste."
+    illegal-chars: "Dozwolone są tylko litery (w tym polskie), cyfry i podkreślnik."
+    no-letter: "Imię musi zawierać przynajmniej jedną literę."
+    offensive: "To imię jest niedozwolone — wybierz inne."
+    reserved-prefix: "To imię jest zarezerwowane dla obsługi serwera."
+    too-long: "Imię może mieć najwyżej 16 znaków."
+    too-short: "Imię musi mieć co najmniej 3 znaki."
+  kreator:
+    imie-zajete-zmienione: "&eImię było już zajęte — twoja postać nazywa się {imie}."
+    karta:
+      bron: "&7Broń: "
+      na-start: "&7Na start: "
+      od-poziomu: "&7Od {poziom}. poz.: "
+      rola: "&7Rola: "
+      specjalizacje: "&6Od 10. poziomu jedna z dwóch:"
+      trudnosc: "&7Trudność: "
+      zbroja: "&7Zbroja: "
+    ksiega:
+      albo: "&7 albo "
+      od-10: "&7Od 10. poziomu: "
+    najpierw-stworz: "&eNajpierw stwórz postać  &6[LPM] &fDalej"
+    panel:
+      klasy: "&fKlasy  &6[W/S]"
+    przerwane: "&eTworzenie postaci przerwane."
+    przerwij:
+      nie: "&aNie, tworzę dalej"
+      opis: "&fWybrana rasa i klasa nie zostaną zapisane."
+      tak: "&cTak, przerwij"
+      tytul: "&6Przerwać tworzenie postaci?"
+    utworzona: "&aPostać utworzona: {imie}"
+  ksiega:
+    kolor:
+      czerwony: "Czerwony"
+      fioletowy: "Fioletowy"
+      niebieski: "Niebieski"
+      pomaranczowy: "Pomarańczowy"
+      rozowy: "Różowy"
+      szary: "Szary"
+      turkusowy: "Turkusowy"
+      zielony: "Zielony"
+      zolty: "Żółty"
+    losuj: "&e⚄ Losuj imię"
+    losuj-dymek: "Imię pasujące do rasy — możesz je potem zmienić"
+    pole-imie: "Imię postaci"
+    pole-kolor: "Kolor ikony"
+    stworz: "&a✔ Stwórz postać"
+    stworz-dymek: "Tworzy postać i wpuszcza cię do gry"
+    tytul: "&6Nowa postać"
+    wroc: "Wróć"
+    wroc-dymek: "Z powrotem do wyboru rasy i klasy"
+  podpowiedz:
+    usun-postac: "Usuń postać"
+    dalej: "Dalej"
+    graj: "Graj"
+    klasa: "Klasa"
+    lista: "Lista i zarządzanie"
+    postac: "Postać {nr}"
+    przegladaj: "Przeglądaj"
+    rasa: "Rasa"
+    stworz: "Stwórz postać"
+    wroc: "Wróć"
+  wybor:
+    brak-miejsc-licznik: "&eLimit postaci: {zajete}/{wszystkie} — usuń postać, żeby stworzyć nową."
+    grasz-teraz: "&7Grasz teraz postacią {imie}&7."
+    juz-grasz: "&eJuż grasz postacią {imie}."
+    karta:
+      czas-gry: "&7Czas gry: "
+      grasz-teraz: "&a  ▶ grasz teraz"
+      miejsce: "&7Miejsce: "
+      ostatnio: "&7Ostatnio: "
+      ostatnio-grana: "&6  ★ ostatnio grana"
+      poziom: "&7Poziom: "
+      specjalizacja: "&7Specjalizacja: "
+      teraz: "teraz"
+    kosz:
+      blad-usuwania: "&cNie udało się usunąć: {imiona} — zgłoś to administracji."
+      usunieto: "&aUsunięto na zawsze: {imiona}."
+    lista:
+      zarzadzaj-dymek-usun: "Usuń jedną albo kilka postaci naraz"
+      brak-miejsc-licznik: "&8Limit postaci {zajete}/{wszystkie}"
+      brak-miejsc-dymek: "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."
+      brak-postaci: "&fNie masz jeszcze postaci — stwórz pierwszą."
+      nowa: "&a+ Nowa postać"
+      opis: "&fKliknij postać, żeby grać. &6★&f = ostatnio grana."
+      opis-w-grze: "&fKliknij postać, żeby od razu nią grać. &a▶&f = grasz teraz."
+      tytul: "&6Twoje postacie  &7{zajete}/{wszystkie}"
+      wolne-miejsca: "Wolne miejsca: {ile}"
+      zarzadzaj: "&6Zarządzaj postaciami"
+    nic-nie-zaznaczono: "&eNic nie zaznaczono — kliknij postać na liście."
+    nowa:
+      karta-limit: "&c&lLimit postaci: {zajete}/{wszystkie}\n\n&r&fMasz już wszystkie miejsca na postacie. Usuń którąś, żeby stworzyć nową."
+      karta: "&a&l+ Nowa postać\n\n&r&fWybierz rasę i klasę, nadaj imię i ruszaj w drogę."
+    panel:
+      nowa-limit: "+ Nowa postać (limit)"
+      naglowek-licznik: "&fTwoje postacie &7{zajete}/{wszystkie}  &6[A/D]"
+      nowa: "+ Nowa postać"
+      usun: "✖ Usuń postacie"
+    potwierdz:
+      na-zawsze: "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć."
+      przycisk-na-zawsze: "&cUsuń na zawsze"
+      tytul-na-zawsze: "&cUsunąć na zawsze?"
+      wpisz-imie: "Wpisz imię „{imie}” (poziom {poziom})"
+      zle-imie: "&cImię „{imie}” się nie zgadza — nic nie usunięto."
+    przycisk:
+      anuluj: "Anuluj"
+      wroc: "Wróć"
+      wroc-do-sceny: "Wróć do sceny"
+      zamknij: "Zamknij"
+    pyta-o-potwierdzenie: "Pyta o potwierdzenie"
+    tytul: "&6&lWybierz postać"
+    usun:
+      karta-na-zawsze: "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Usunięcie jest ostateczne — postać znika razem z ekwipunkiem i postępem."
+    zarzadzaj:
+      opis-na-zawsze: "&fKliknij postacie, żeby je zaznaczyć. Usunięcie jest ostateczne ({zajete}/{wszystkie} miejsc zajętych)."
+      brak-postaci: "&fNie masz aktywnych postaci."
+      tytul: "&6Zarządzaj postaciami"
+      usun-zaznaczone: "Usuń zaznaczone ({ile})"
+
+# POKRETLA (2026-09-30). Zmiana + /cc reload. Ticki: 20 = 1 s. Brak wpisu = wartosc z kodu.
+#  wybor.kafelek-szerokosc   szerokosc kafelka listy postaci (2 kolumny; >200 wyjezdza przy GUI 3-4)
+#  wybor.scena-po-ticki      po ilu tickach od ostatniego A/D dochodzi sceneria i podglad
+#  wybor.lista-sama-po-ticki opoznienie automatycznej listy po wejsciu (od wybor-postaci.lista-od postaci)
+#  wybor.ad-nowa-postac / ad-usun-postacie  pozycje "+ Nowa postac" / "Usun postacie" pod A/D
+#  kreator.scena-po-ticki    to samo dla zmiany rasy w kreatorze
+#  scena.panel-szerokosc / panel-skala  panele z tekstem w scenie (karta i lista)
+#  scena.podpowiedz-co-ticki  odswiezanie podpowiedzi na pasku akcji
+#  scena.cisza-na-czacie     czat wyciszony w wyborze postaci i kreatorze
+ustawienia:
+  kreator:
+    scena-po-ticki: 6
+  scena:
+    cisza-na-czacie: true
+    panel-skala: 0.5
+    panel-szerokosc: 230
+    podpowiedz-co-ticki: 30
+  wybor:
+    ad-nowa-postac: true
+    ad-usun-postacie: true
+    kafelek-szerokosc: 150
+    lista-sama-po-ticki: 30
+    scena-po-ticki: 6
+    schowaj-podglad-bloki: 6.0
