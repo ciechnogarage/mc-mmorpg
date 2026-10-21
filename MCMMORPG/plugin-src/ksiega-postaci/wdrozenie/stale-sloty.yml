@@ -1,0 +1,77 @@
+# Sakwa w wyniku craftingu należy do KsiegaPostaci. CoreTools utrzymuje tylko Dziennik.
+stale_sloty_wstaw:
+  Delay: 10
+  Conditions:
+    - WorldName{w="creator_limbo"} false
+  Mechanics:
+    - script{s=stale_sloty_wstaw_dziennik} @Self
+
+stale_sloty_wstaw_dziennik:
+  Conditions:
+    - Checkitem{p=vanilla;slot=8;id=air} trueElse stale_sloty_wstaw_dziennik_teraz
+  Mechanics: []
+
+stale_sloty_wstaw_dziennik_teraz:
+  Mechanics:
+    - SetSlots{slots="8";source="mmoitems";type="MISCELLANEOUS";id="UI_DZIENNIK"} @Self
+
+stale_sloty_klik:
+  Conditions:
+    - WorldName{w="creator_limbo"} false
+    - Comparator{v1="{click_inventory}-{slot}";v2="PLAYER-8";op="=="} trueElse stale_sloty_klik_dziennik
+    - Comparator{v1="{action}-{hotbar}";v2="HOTBAR_SWAP-8";op="=="} trueElse stale_sloty_klawisz_9
+  Mechanics: []
+
+stale_sloty_klik_dziennik:
+  Conditions:
+    - Checkitem{p=vanilla;slot=8;id=air} false
+    - Comparator{v1="{item_first_id}";v2="UI_DZIENNIK";op="=="} true
+    - Comparator{v1="{top_inventory}";v2="CRAFTING";op="=="} falseElse stale_sloty_anuluj
+  Mechanics:
+    - cancelevent{}
+    - command{c="dm open hub_glowne %player_name%";runas=console;delay=1} @Self
+
+stale_sloty_klawisz_9:
+  Conditions:
+    - Checkitem{p=vanilla;slot=8;id=air} false
+    - Checkitem{p=mi;slot=8;type=MISCELLANEOUS;id=UI_DZIENNIK} true
+  Mechanics:
+    - cancelevent{}
+
+stale_sloty_anuluj:
+  Mechanics:
+    - cancelevent{}
+
+stale_sloty_reka:
+  Conditions:
+    - WorldName{w="creator_limbo"} false
+    - Comparator{v1="{slot}";v2="HAND";op="=="} true
+    - Checkitem{p=vanilla;slot=main;id=air} false
+    - Comparator{v1="{item_first_id}";v2="UI_DZIENNIK";op="=="} true
+  Mechanics:
+    - cancelevent{}
+    - command{c="dm open hub_glowne %player_name%";runas=console;delay=1} @Self
+
+stale_sloty_drop:
+  Conditions:
+    - Comparator{v1="{item_first_id}";v2="UI_DZIENNIK";op="=="} true
+  Mechanics:
+    - cancelevent{}
+
+stale_sloty_druga_reka:
+  Conditions:
+    - Comparator{v1="{item_second_id}";v2="UI_DZIENNIK";op="=="} true
+  Mechanics:
+    - cancelevent{}
+
+stale_sloty_spawn_przedmiotu:
+  Conditions:
+    - Comparator{v1="{item_first_id}";v2="UI_DZIENNIK";op="=="} true
+  Mechanics:
+    - cancelevent{}
+
+sakwa_tylko_surowce:
+  Conditions:
+    - Checkitem{p=mi;slot=clicked;type=material} false
+  Mechanics:
+    - cancelevent{}

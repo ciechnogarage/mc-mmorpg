@@ -1,0 +1,177 @@
+karta-komenda: player
+ukryj-ekwipunek:
+  wlaczone: true
+  znaki-tytulu: ['䅠', '䅨', '䅬']
+# Slot 0 = lewy gorny slot dolnego ekwipunku w oknie 54-slotowym (raw 54).
+# 0-8 = rzad A, 9-17 = B, 18-26 = C, 27-35 = hotbar.
+panel-dolny:
+  znak-tytulu: '䅨'
+  przedmioty:
+    - slot: 0
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&ePomoc'
+      lore: ['&7Otwórz informacje o menu.']
+      komendy: ['[menu] hub_pomoc']
+    - slot: 1
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eUstawienia'
+      lore: ['&7Otwórz ustawienia gry.']
+      komendy: ['[menu] hub_ustawienia']
+    - slot: 3
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eZmień postać'
+      lore: ['&7Otwórz listę postaci.']
+      komendy: ['[console] cc wybor %player_name% lista']
+    - slot: 4
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eZmień postać'
+      lore: ['&7Otwórz listę postaci.']
+      komendy: ['[console] cc wybor %player_name% lista']
+    - slot: 5
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&eZmień postać'
+      lore: ['&7Otwórz listę postaci.']
+      komendy: ['[console] cc wybor %player_name% lista']
+    - slot: 8
+      material: GOLD_NUGGET
+      nexo: mmo_icon_blank
+      item-model: nexo:mmo_icon_blank
+      nazwa: '&cZamknij'
+      lore: ['&7Zamknij księgę.']
+      komendy: ['[close]']
+    - slot: 10
+      material: WRITABLE_BOOK
+      nazwa: '&eAktywne zadanie'
+      lore: ['&f%mmocore_quest%', '&7Postęp: &f%mmocore_quest_progress%%', '&7Otwórz zadania.']
+      warunek-brak-zadania: '%mmocore_quest%'
+      lore-gdy-brak: ['&7Brak aktywnego zadania', '&7Otwórz zadania.']
+      komendy: ['[player] quests']
+    - slot: 11
+      material: MAP
+      nazwa: '&ePunkty atrybutów'
+      lore: ['&7Dostępne: &f%mmocore_attribute_points%', '&7Otwórz atrybuty.']
+      ilosc: '%mmocore_attribute_points%'
+      ukryj-gdy-zero: true
+      komendy: ['[player] attributes']
+    - slot: 12
+      material: EXPERIENCE_BOTTLE
+      nazwa: '&bPunkty umiejętności'
+      lore: ['&7Dostępne: &f%mmocore_skill_points%', '&7Otwórz umiejętności.']
+      ilosc: '%mmocore_skill_points%'
+      ukryj-gdy-zero: true
+      komendy: ['[menu] hub_umiejetnosci']
+    - slot: 13
+      material: ENDER_PEARL
+      nazwa: '&bPodróże'
+      lore: ['&7Otwórz cele podróży.', '&7Na razie Loch 001.']
+      komendy: ['[menu] stolica_podroze']
+    - slot: 14
+      material: NAME_TAG
+      nazwa: '&ePoziom %mmocore_level%'
+      lore: ['&7EXP: &f%mmocore_experience% &7/ &f%mmocore_next_level%', '&7Otwórz statystyki.']
+      komendy: ['[player] player']
+    - slot: 15
+      material: GOLD_NUGGET
+      nazwa: '&6Złoto: &f%coretools_eco_dollar%'
+      lore: ['&7Otwórz menu handlu.']
+      komendy: ['[menu] hub_ekonomia']
+    - slot: 16
+      material: LEAD
+      nazwa: '&aChowaniec'
+      lore: ['&7Aktywny: &f%chowance_aktywny_nazwa%', '&7Otwórz menażerię.']
+      komendy: ['[menu] chowance_menazeria']
+typy-broni:
+  - SWORD
+  - DAGGER
+  - SPEAR
+  - HAMMER
+  - GAUNTLET
+  - WHIP
+  - STAFF
+  - BOW
+  - CROSSBOW
+  - MUSKET
+  - LUTE
+  - CATALYST
+  - MAIN_CATALYST
+  - OFF_CATALYST
+  - SHIELD
+  - AXE
+  - LONG_SWORD
+  - KATANA
+  - THRUSTING_SWORD
+  - GREATAXE
+  - HALBERD
+  - GREATHAMMER
+  - SIERP
+  - KOSA
+  - FILAKTERIUM
+  - GREATSWORD
+  - GREATSTAFF
+  - STAVE
+  - TOME
+  - TALISMAN
+  - WAND
+  - GREATBOW
+  - LANCE
+# Reguly rak (12.10): dwurecznosc z typu (flaga MMOItems TWO_HANDED jest niespojna) + przedmioty tylko do lewej.
+typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAMMER, HALBERD, LANCE, KOSA, GREATSTAFF, STAFF, SPEAR]
+typy-tylko-lewa: [OFF_CATALYST]
+# tarcza: w obu rekach (Nosiciel Relikwii ma ja jako bron startowa), nigdy dwureczna mimo flagi przedmiotu
+typy-zawsze-jednoreczne: [SHIELD]
+typy-mikstur-i-uzytkowych:
+  - CONSUMABLE
+staty-mikstur:
+  zycie: RESTORE_HEALTH
+  mana: RESTORE_MANA
+ikony:
+  necklace: nexo:mmo_icon_necklace
+  ring: nexo:mmo_icon_ring
+  charm: nexo:mmo_icon_charm
+  pusta-prawa: nexo:mmo_icon_right_hand
+  pusta-lewa: nexo:mmo_icon_left_hand
+  zapas-prawa: nexo:mmo_icon_spare_right
+  zapas-lewa: nexo:mmo_icon_spare_left
+  zajeta-lewa: nexo:mmo_icon_left_occupied
+  zajety-zapas-lewa: nexo:mmo_icon_spare_left_occupied
+  mikstura-zycia: nexo:mmo_icon_health_potion
+  mikstura-many: nexo:mmo_icon_mana_potion
+  przedmiot-uzytkowy: nexo:mmo_icon_utility
+nazwy-ikon:
+  necklace: '§6Naszyjnik'
+  ring-1: '§6Pierścień 1'
+  ring-2: '§6Pierścień 2'
+  charm: '§6Talizman'
+  pusta-prawa: '§7Prawa ręka – aktywna'
+  pusta-lewa: '§7Lewa ręka – aktywna'
+  zapas-prawa: '§7Prawa ręka – zapas'
+  zapas-lewa: '§7Lewa ręka – zapas'
+  zajeta-lewa: '§7Lewa ręka – zajęta (broń dwuręczna)'
+  zajety-zapas-lewa: '§7Zapasowa lewa – zajęta (broń dwuręczna)'
+  mikstura-zycia: '§cMikstura życia'
+  mikstura-many: '§9Mikstura many'
+  przedmiot-uzytkowy: '§ePrzedmiot użytkowy'
+opisy-ikon:
+  mikstura-zycia: '§7Włóż miksturę życia'
+  mikstura-many: '§7Włóż miksturę many'
+  przedmiot-uzytkowy: '§7Włóż przedmiot użytkowy'
+komunikaty:
+  zly-typ: '&cTen przedmiot nie pasuje do tego slotu.'
+  wymagania: '&cTa postac nie spelnia wymagan przedmiotu.'
+  dwureczna: '&cBroń dwuręczna zajmuje obie ręce.'
+  dwureczna-do-prawej: '&cBroń dwuręczną zakładasz do prawej ręki.'
+  tylko-lewa: '&cTo trzyma się w lewej ręce.'
+  brak-zapasu-lewej: '&cZapasowa lewa ręka jest zajęta; nie można zmienić prawej.'
+  brak-miejsca-lewej: '&cBrak miejsca na broń z lewej ręki.'
+  okno: '&cZamknij inne okno przed zmiana zestawu.'
+  migracja-blad: '&cNie udalo sie zapisac bizuterii; zglos to administracji.'

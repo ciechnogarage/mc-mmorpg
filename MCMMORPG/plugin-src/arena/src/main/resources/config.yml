@@ -1,0 +1,60 @@
+world: arena
+pvp-tylko-w-ringu: true
+sonda-pvp: false
+entry-worlds: [world, stolica_odnowa, stolica]
+fallback-worlds: [stolica_odnowa, stolica, world]
+blocked-player-commands: [/md, /ksiegaportal, /spawn, /home, /warp, /tpa, /tp, /teleport, /minecraft:teleport, /mmo, /mmoprofiles, /profile, /character, /kill, /minecraft:kill, /execute, /minecraft:execute, /summon, /minecraft:summon, /setblock, /minecraft:setblock, /fill, /minecraft:fill, /data, /minecraft:data]
+service:
+  startup-delay-ticks: 40
+  player-check-ticks: 20
+  number-cleanup-delay-ticks: 80
+  exp-restore-delay-ticks: 1
+ring:
+  x: 0
+  z: 0
+  pvp-radius: 19.5
+  min-y: 63
+  max-y: 74
+spawn:
+  x: 0.5
+  y: 65
+  z: -28.5
+  yaw: 0
+  pitch: 0
+  invulnerable-seconds: 3
+boundary:
+  radius: 64
+  min-y: 45
+entry:
+  max-fall-distance: 0.1
+menu-gracza:
+  podpowiedz: true
+  zasieg: 4.5
+  zwykle: 'dm open hub_glowne %gracz%'
+  cooldown: 15
+  waznosc-pojedynku: 30
+  ring:
+    pierwszy: {x: 0.5, y: 64, z: -8.5, yaw: 0, pitch: 0}
+    drugi: {x: 0.5, y: 64, z: 9.5, yaw: 180, pitch: 0}
+combat:
+  seconds: 10
+  logout-penalty-seconds: 60
+ui:
+  actionbar-ticks: 60
+  series-reset-seconds: 6
+  number-cooldown-ms: 120
+  max-numbers: 80
+  number-height: 2.3
+  number-lifetime-ticks: 20
+dummy:
+  mob-id: ARENA_MANEKIN
+  check-ticks: 100
+  owner-window-seconds: 5
+  max-fire-seconds: 5
+  search-radius-xz: 2
+  search-radius-y: 3
+  max-displacement: 1.5
+  positions:
+    one: {x: 35.5, y: 65, z: -5.5, yaw: 90, pitch: 0}
+    two: {x: 35.5, y: 65, z: 0.5, yaw: 90, pitch: 0}
+    three: {x: 35.5, y: 65, z: 6.5, yaw: 90, pitch: 0}
