@@ -1,0 +1,154 @@
+name: 'Warsztat: Jubilera'
+max-queue-size: 10
+command:
+  name: 'warsztat-jewelcrafting'
+  description: 'Otwiera warsztat profesji jewelcrafting'
+  usage: '/warsztat-jewelcrafting'
+  permission: ''
+  aliases: []
+recipes:
+  # >>> PRZEDMIOTY (tools/przedmioty/generuj.py — nie edytuj recznie)
+  'prz_prz_pyl_jubilerski':
+    output: 'mmoitems{type=CONSUMABLE,id=PRZ_PYL_JUBILERSKI}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=jewelcrafting,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_ENCHANT_DUST,amount=1}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=10}'
+  # <<< PRZEDMIOTY
+  'prof_cut_gem':
+    output: 'mmoitems{type=MATERIAL,id=PROF_CUT_GEM}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=jewelcrafting,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ROUGH_CRYSTAL,amount=2}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=12}'
+  'prof_silver_setting':
+    output: 'mmoitems{type=MATERIAL,id=PROF_SILVER_SETTING}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=jewelcrafting,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_SILVER_ORE,amount=3}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=28}'
+  'prof_pearl_setting':
+    output: 'mmoitems{type=MATERIAL,id=PROF_PEARL_SETTING}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=jewelcrafting,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_PEARL,amount=1}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=55}'
+  'prof_empty_socket':
+    output: 'mmoitems{type=MATERIAL,id=PROF_EMPTY_SOCKET}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=jewelcrafting,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_GEM,amount=2}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=95}'
+  'prof_master_charm':
+    output: 'mmoitems{type=MATERIAL,id=PROF_MASTER_CHARM}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=jewelcrafting,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_PEARL_SETTING,amount=2}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=120}'
+  'prof_silver_signet':
+    output: 'mmoitems{type=RING,id=PROF_SILVER_SIGNET}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=jewelcrafting,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_GEM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_SILVER_SETTING,amount=1}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=40}'
+  'prof_moonleaf_amulet':
+    output: 'mmoitems{type=NECKLACE,id=PROF_MOONLEAF_AMULET}'
+    crafting-time: 6
+    conditions:
+      - 'profession{profession=jewelcrafting,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_PEARL_SETTING,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_MOONLEAF,amount=2}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=75}'
+  'prof_luck_charm':
+    output: 'mmoitems{type=CHARM,id=PROF_LUCK_CHARM}'
+    crafting-time: 8
+    conditions:
+      - 'profession{profession=jewelcrafting,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MASTER_CHARM,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_MONSTER_TROPHY,amount=1}'
+    triggers:
+      - 'exp{profession=jewelcrafting,amount=140}'
+gui-layout:
+  name: '&f䬰䬱䬲䬳'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [46]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [47]
+
+    queued_item:
+      slots: [36, 37, 38, 39]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: AIR
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35]

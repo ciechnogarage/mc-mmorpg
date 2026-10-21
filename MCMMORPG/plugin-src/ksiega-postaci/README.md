@@ -8,7 +8,8 @@ Wynik craftingu jest przyciskiem Sakwy (`MISCELLANEOUS/UI_SAKWA`); klik wykonuje
 
 `ukryj-ekwipunek.wlaczone: true` w `config.yml` włącza maskowanie dolnych 36 slotów
 gracza w oknie DeluxeMenus. Plugin rozpoznaje okno po dowolnym znaku z listy
-`ukryj-ekwipunek.znaki-tytulu` w tytule widoku (domyślnie `䅠`, `䅨`). Tytuł menu
+`ukryj-ekwipunek.znaki-tytulu` lub kluczy `podstrony.strony` w tytule widoku
+(domyślnie `䅠`, `䅨` oraz glify podstron). Tytuł menu
 DeluxeMenus musi zawierać jeden z tych glifów. Dla tego okna ProtocolLib zamienia wyłącznie
 wychodzące `WINDOW_ITEMS` i `SET_SLOT` na puste sloty gracza (lub przyciski panelu Q); nie zmienia
 ekwipunku serwera ani kursora. Kliknięcia dolnej części, przeciąganie,
@@ -33,7 +34,7 @@ podziału/wgrania do paczki jako `nexo:gui/kb_1..4` i definicji glifów z
 `nexo-mmo_icon_blank` musi być dostępny w Nexo. Skróty Q/MenuKey i komendy
 `menu`, `menuglowne` pozostają wejściami do `hub_glowne`.
 
-`panel-dolny` w `config.yml` działa tylko dla 54-slotowego okna z glifem `䅨`.
+`panel-dolny` w `config.yml` działa dla 54-slotowego okna z glifem `䅨` lub glifem podstrony.
 Sloty panelu 0–8 to pierwszy widoczny rząd dolnego ekwipunku (raw 54–62),
 9–17 to drugi, 18–26 trzeci, 27–35 hotbar (raw 81–89). Wiersz A ma Pomoc,
 Ustawienia, Zmień postać i Zamknij; wiersz B ma siedem ikon stanu. Przedmioty
@@ -41,6 +42,19 @@ są tworzone na głównym wątku przy otwarciu i odświeżane co 20 ticków;
 ProtocolLib podmienia tylko pakiety. Lewy/prawy klik w aktywny przycisk jest
 anulowany i uruchamia komendę w następnym ticku. Shift, cyfry, F, Q, przeciąganie,
 podwójny klik i kursor z przedmiotem nie przenoszą wyposażenia.
+
+## Podstrony Księgi
+
+Każda podstrona DeluxeMenus ma 54 sloty i cztery własne glify tła w tytule.
+Dodaj pierwszy glif jako klucz w `podstrony.strony` w `config.yml`, a jako wartość
+podaj nazwę menu powrotu, np. `"䨀": hub_glowne`. Pozostałe trzy glify nie wymagają
+wpisów. Wszystkie glify podstron są automatycznie dodawane do maskowania ekwipunku;
+nie dopisuj ich do `ukryj-ekwipunek.znaki-tytulu`. Gdy tytuł zawiera kilka
+skonfigurowanych glifów panelu, decyduje pierwszy w tytule. Sloty 3–5 na
+podstronie używają ikon panelu Q, lecz pokazują `podstrony.wstecz-nazwa` i
+`podstrony.wstecz-lore` oraz otwierają wskazane menu. Pozostałe przyciski
+działają jak w Q. Na istniejącym serwerze dopisz sekcję `podstrony` ręcznie,
+ponieważ `saveDefaultConfig()` nie uzupełnia istniejącego pliku.
 
 Do kompilacji potrzeba także `PlaceholderAPI-2.12.2.jar` i `nexo-1.20.jar` z
 `/opt/docker/mc/data/world1/plugins/` (zależności `compileOnly`); runtime ma

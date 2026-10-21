@@ -1,0 +1,48 @@
+# Wygenerowane przez strony/poczta-dziennik/generuj.py.
+menu_title: '&f䬄䬅䬆䬇'
+size: 54
+update_interval: 20
+items:
+  koperta:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&e&lPoczta'
+    lore:
+      - '&7Listy w skrzynce: &f%cmi_user_mail_count%'
+  stan:
+    material: PAPER
+    slot: 38
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eListy w skrzynce'
+    lore:
+      - '&7Listy w skrzynce: &f%cmi_user_mail_count%'
+      - '&7Otwórz odebrane na czacie.'
+    left_click_commands:
+      - '[player] cmi mail read'
+      - '[close]'
+  napisz:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eNapisz list'
+    lore:
+      - '&7Wpisz odbiorcę i treść w oknach.'
+      - '&eKliknij, aby napisać list.'
+    left_click_commands:
+      - '[console] cmi dialogs poczta_napisz %player_name%'
+  odebrane:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eOdebrane'
+    lore:
+      - '&7Listy pojawią się na czacie.'
+      - '&7[X] przy liście go usuwa.'
+    left_click_commands:
+      - '[player] cmi mail read'
+      - '[close]'

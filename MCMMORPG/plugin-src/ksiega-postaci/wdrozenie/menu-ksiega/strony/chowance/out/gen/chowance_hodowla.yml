@@ -1,0 +1,111 @@
+# Wygenerowane przez strony/chowance/generuj_menu.py.
+menu_title: '&f䫄䫅䫆䫇'
+size: 54
+update_interval: 2
+items:
+  'rodzic_1':
+    material: 'nexo-hub_chw_druzyna'
+    slot: 37
+    priority: 1
+    update: true
+    display_name: '&eRodzic 1: &f%chowance_hodowla_1_nazwa%'
+    lore:
+      - '&eKliknij &7— wyjmij do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_hodowla_1_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw hodowla wyjmij 1'
+      - '[refresh]'
+  'rodzic_1_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 37
+    priority: 2
+    display_name: '&7Rodzic 1: &8puste'
+    lore:
+      - '&eKliknij &7— wybierz z drużyny'
+    left_click_commands:
+      - '[player] chw hodowla wybierz'
+  'rodzic_2':
+    material: 'nexo-hub_chw_druzyna'
+    slot: 38
+    priority: 1
+    update: true
+    display_name: '&eRodzic 2: &f%chowance_hodowla_2_nazwa%'
+    lore:
+      - '&eKliknij &7— wyjmij do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_hodowla_2_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw hodowla wyjmij 2'
+      - '[refresh]'
+  'rodzic_2_pusty':
+    material: 'GRAY_STAINED_GLASS_PANE'
+    slot: 38
+    priority: 2
+    display_name: '&7Rodzic 2: &8puste'
+    lore:
+      - '&eKliknij &7— wybierz z drużyny'
+    left_click_commands:
+      - '[player] chw hodowla wybierz'
+  'postep':
+    material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    update: true
+    display_name: '&fPara: &e%chowance_hodowla_postep_procent%%'
+    lore:
+      - '&7%chowance_hodowla_uwaga%'
+      - ''
+      - '&7Dwa stwory tej samej grupy jaj'
+      - '&7składają jajo po czasie.'
+      - '&7Jajo wykluwa się po przejściu drogi.'
+  'jajo_1':
+    material: 'nexo-chw_jajo_chowanca'
+    slot: 14
+    priority: 1
+    update: true
+    display_name: '&fJajo 1: &e%chowance_jajo_1_postep_procent%%'
+    lore:
+      - '&7Wykluwa się po przejściu dystansu.'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_jajo_1_istnieje%'
+          output: 'tak'
+  'jajo_2':
+    material: 'nexo-chw_jajo_chowanca'
+    slot: 15
+    priority: 1
+    update: true
+    display_name: '&fJajo 2: &e%chowance_jajo_2_postep_procent%%'
+    lore:
+      - '&7Wykluwa się po przejściu dystansu.'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_jajo_2_istnieje%'
+          output: 'tak'
+  'jajo_3':
+    material: 'nexo-chw_jajo_chowanca'
+    slot: 16
+    priority: 1
+    update: true
+    display_name: '&fJajo 3: &e%chowance_jajo_3_postep_procent%%'
+    lore:
+      - '&7Wykluwa się po przejściu dystansu.'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_jajo_3_istnieje%'
+          output: 'tak'

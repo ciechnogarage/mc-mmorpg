@@ -1,0 +1,40 @@
+# Lobby sieci - wyspa w pustce.
+#
+# Swiat (pusty, bez mobow) ustawia docker-compose (LEVEL, LEVEL_TYPE, GENERATOR_SETTINGS);
+# wyspe buduje ten plugin RAZ, przy pierwszym starcie na pustym swiecie
+# (znacznik w danych swiata). /lobby przebuduj stawia ja od nowa.
+
+nazwa-sieci: "<gradient:#f6d365:#fda085><b>MMORPG</b></gradient>"
+
+# Pora dnia zatrzymana na stale (0 = swit, 6000 = poludnie, 12000 = zachod slonca).
+czas-dnia: 12600
+
+# Po wejsciu do lobby, jesli ten serwer akurat nie dziala (restart), gracz trafia
+# od razu do kolejki i zostanie przeniesiony, gdy serwer wstanie. "" = wylaczone.
+auto-kolejka: world1
+
+# Ile kolejnych udanych pingow uznaje serwer za gotowy (ping co 2 s). Paper odpowiada
+# na ping, zanim wczyta pluginy, wiec jeden udany ping to za malo.
+gotowy-po-pingach: 3
+
+# Trzy miejsca na portale: polnoc (glowny, na wprost spawnu), wschod, zachod.
+# serwer: nazwa z velocity.toml; pusty = luk "Wkrotce" bez tafli portalu.
+portale:
+  polnoc:
+    serwer: world1
+    host: world1
+    nazwa: "<gold><b>Świat MMORPG</b></gold>"
+    opis: "Główny świat gry"
+    ikona: GRASS_BLOCK
+  wschod:
+    serwer: ""
+    host: ""
+    nazwa: "<aqua><b>Wyspa Aktu I</b></aqua>"
+    opis: "Wkrótce"
+    ikona: HEART_OF_THE_SEA
+  zachod:
+    serwer: ""
+    host: ""
+    nazwa: "<light_purple><b>???</b></light_purple>"
+    opis: "Wkrótce"
+    ikona: ENDER_EYE

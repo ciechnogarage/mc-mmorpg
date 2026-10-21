@@ -1,0 +1,936 @@
+# DOM AUKCYJNY world1 — WYGENEROWANE przez tools/handel/generuj.py. Nie poprawiac recznie.
+# Otwiera go konsola z menu Handel (DeluxeMenus hub_ekonomia):  ah mmoitems_example stolica <gracz>
+# Komenda /ah ma w commands.yml permission OP — gracz nie otwiera okna z czatu (i nie otworzy go
+# INNEMU graczowi, bo AuctionHouseCommand bierze nick z 3. argumentu bez sprawdzenia nadawcy).
+#
+# DECYZJE BEZPIECZENSTWA (dowody: bajtkod CoreTools 1.4.2, patrz raport w tools/handel/README.md):
+#  disable_partial_purchase: true — PurchaseItem sprawdza ilosc tylko dla statusu "" (a oferta ma
+#    status "active"), wiec przy zakupach czesciowych dwoch kupcow moglo kupic wiecej niz bylo.
+#  default_sales_mode: fixed, brak przyciskow licytacji — odbior wygranej licytacji nie ma locka.
+#  delivery.purchase_mode: 1, playervault: [] — pelny plecak = zakup odrzucony i zwrot pieniedzy
+#    (skarbcow graczy nie ma; tryb 3 szukalby nieistniejacego skarbca).
+#  kategorie = BIALA LISTA: przedmiot spoza list nie wejdzie w slot wystawiania (vanilla, ikony
+#    GUI Nexo, przedmioty Chowancow, esencje, questowe) — AuctionUtils.restriction().
+#
+# ID "mmoitems_example" JEST CELOWE (nazwa techniczna, gracz jej nie widzi). CoreTools 1.4.2 zaklada
+# tabele SQL, laduje oferty do pamieci i uruchamia harmonogram wygasania TYLKO przy starcie pluginu
+# (AuctionHouse.enableAuctionHouse) — dla ID dopisanego po starcie /ct reload wczytuje sam config i
+# pierwsze otwarcie konczy sie NPE. Ten dom aukcyjny wszedl bez restartu, wiec dostal ID, ktore
+# istnialo przy starcie. Zmiana ID po restarcie jest mozliwa, ale PORZUCA aktywne oferty w starych
+# tabelach — nie zmieniac, gdy sa oferty. Pliki przykladow producenta sa w backups (katalog
+# AuctionHouse/ istnieje, wiec CoreTools ich nie odtworzy — FileFolder.saveDefaultFile).
+mmoitems_example:
+  permission: ''
+  multi_server: single
+  bottom_inventory: false
+  fill_material: 'AIR'
+  name: "&f䩰䩱䩲䩳"
+  size: 6
+  default_category: all
+  default_regions: [stolica]
+  default_minimum_bid_increment: 5
+  default_sales_mode: 'fixed'
+  default_currency: 'dollar'
+  # Domyslnie 3 dni: dzieki temu przycisk potwierdzenia liczy oplaty na zywo od pierwszej cyfry.
+  default_days: 3
+  # Limit aktywnych ofert na postac.
+  player_max_item:
+    default: 12
+  disable_partial_purchase: true
+  start_script: []
+  close_script: []
+  player_input:
+    signgui: {material: OAK_WALL_SIGN, dye_color: BLACK, line1: "", line2: "Wpisz cenę", line3: "", line4: "", input_line: 1, max_try: 3, regex: "\\d+(\\.\\d+)?"}
+    anvilgui:
+      title: "Wpisz cenę"
+      text: "0"
+      slots: [2]
+      left_item: {source: vanilla, name: " ", material: paper, flags: [HIDE_ATTRIBUTES]}
+      right_item: {source: vanilla, name: " ", material: paper, flags: [HIDE_ATTRIBUTES]}
+      result_item: {source: vanilla, name: "Zatwierdź", material: paper, flags: [HIDE_ATTRIBUTES]}
+      max_try: 3
+      regex: "\\d+(\\.\\d+)?"
+  messages:
+    item-listed: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Wystawiono {amount}x <white>{item_name}</white> po <gold>{unit_price}{currency_symbol}</gold>/szt."
+    item-listed-bid: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Wystawiono {amount}x <white>{item_name}</white>."
+    item-listed-not-enough-money: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Nie masz {total}{currency_symbol} na opłatę za wystawienie."
+    item-listed-max-limit: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Masz już maksymalną liczbę ofert. Zdejmij którąś w „Moje oferty”."
+    item-purchased-online-seller: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Sprzedano {amount}x <white>{item_name}</white> za {total}{currency_symbol}. Po podatku: <gold>{total_after_tax}{currency_symbol}</gold>."
+    item-purchased-online-buyer: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Kupiono {amount}x <white>{item_name}</white> za <gold>{total}{currency_symbol}</gold>."
+    item-won-offline-buyer: ""
+    item-won-buyer-online: ""
+    expired-bid-item-success-online-seller: ""
+    expired-bid-item-fail-online-seller: ""
+    expired-fixed-item-online-seller: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <yellow>Oferta {amount}x <white>{item_name}</white> wygasła. Odbierz przedmiot w „Moje oferty”."
+    expired-fixed-item-offline-seller: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <yellow>Część Twoich ofert wygasła. Odbierz przedmioty w „Moje oferty”."
+    already-sold: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Ktoś kupił tę ofertę przed Tobą."
+    expired: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Ta oferta właśnie wygasła."
+    cancelled: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Sprzedawca zdjął tę ofertę."
+    not-enough-amount: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Tej oferty zostało za mało."
+    not-enough-money: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Nie masz {total}{currency_symbol}."
+    money-player-join: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Gdy Cię nie było, sprzedałeś przedmioty za <gold>{total}{currency_symbol}</gold>. Pieniądze są już na Twoim koncie."
+    collect-money-from-tax-system: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Zebrano {total}{currency_symbol} podatku."
+    bid-cancel-new-bid: ""
+    bid-place: ""
+    player-cancel-item: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <green>Zdjęto ofertę {amount}x <white>{item_name}</white>. Przedmiot wrócił do plecaka."
+    player-take-expired-item: ""
+    player-take-won-item: ""
+    delivery-successful-inventory: ""
+    delivery-successful-playervault: ""
+    delivery-fail-inventory: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Nie masz miejsca w plecaku — nic nie pobrano, zwolnij miejsce i spróbuj jeszcze raz."
+    delivery-fail-playervault: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Brak miejsca."
+    delivery-fail-inventory-playervault: "<gold><bold>Dom aukcyjny</bold></gold> <dark_gray>»</dark_gray> <red>Nie masz miejsca w plecaku — nic nie pobrano."
+  broadcast:
+    item-listed: ''
+    item-listed-bid: ''
+    item-purchased-online-buyer: ''
+    bid-place: ''
+  sound:
+    item-listed: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    item-listed-bid: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    item-listed-not-enough-money: [ minecraft:entity.villager.no,master,0.8,1 ]
+    item-listed-max-limit: [ minecraft:entity.villager.no,master,0.8,1 ]
+    item-purchased-online-seller: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    item-purchased-online-buyer: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    item-won-offline-buyer: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    item-won-buyer-online: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    expired-bid-item-success-online-seller: [ minecraft:entity.villager.no,master,0.8,1 ]
+    expired-bid-item-fail-online-seller: [ minecraft:entity.villager.no,master,0.8,1 ]
+    expired-fixed-item-online-seller: [ minecraft:entity.villager.no,master,0.8,1 ]
+    expired-fixed-item-offline-seller: [ minecraft:entity.villager.no,master,0.8,1 ]
+    already-sold: [ minecraft:entity.villager.no,master,0.8,1 ]
+    expired: [ minecraft:entity.villager.no,master,0.8,1 ]
+    cancelled: [ minecraft:entity.villager.no,master,0.8,1 ]
+    not-enough-amount: [ minecraft:entity.villager.no,master,0.8,1 ]
+    not-enough-money: [ minecraft:entity.villager.no,master,0.8,1 ]
+    money-player-join: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    collect-money-from-tax-system: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    bid-cancel-new-bid: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    bid-place: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    player-cancel-item: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    player-take-expired-item: [ minecraft:entity.villager.no,master,0.8,1 ]
+    player-take-won-item: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    delivery-successful-inventory: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    delivery-successful-playervault: [ minecraft:entity.experience_orb.pickup,master,0.6,1.2 ]
+    delivery-fail-inventory: [ minecraft:entity.villager.no,master,0.8,1 ]
+    delivery-fail-playervault: [ minecraft:entity.villager.no,master,0.8,1 ]
+    delivery-fail-inventory-playervault: [ minecraft:entity.villager.no,master,0.8,1 ]
+  discord:
+    webhookurl: ''
+    regex: "[^a-zA-Z0-9/■\\s]"
+    contain: []
+    item-listed: ''
+    item-purchased: ''
+    item-expired: ''
+    item-expired-taken: ''
+    bid-place: ''
+    player-cancel-item: ''
+    player-take-expired-item: ''
+    player-take-won-item: ''
+  sorting:
+    default_ascending: ["<gray>▷ Najstarsze", "<green><bold>▶ Najstarsze"]
+    default_descending: ["<gray>▷ Najnowsze", "<green><bold>▶ Najnowsze"]
+    price_ascending: ["<gray>▷ Najtańsze", "<green><bold>▶ Najtańsze"]
+    price_descending: ["<gray>▷ Najdroższe", "<green><bold>▶ Najdroższe"]
+    expire_ascending: ["<gray>▷ Najkrócej do końca", "<green><bold>▶ Najkrócej do końca"]
+  sorting_custom:
+    stats: []
+    priority: {}
+  delivery:
+    deliver_offline_items_on_join: true
+    purchase_mode: 1
+    playervault: []
+  event_actions:
+    purchase_successful: category
+    purchase_failed: category
+    sell_successful: category
+  display_lore:
+    - ""
+    - "<dark_gray>─────────────────"
+    - "<gray>Sprzedawca: <white>{seller}"
+    - "<gray>Cena: <gold>{price} {currency_symbol}</gold><gray> za sztukę"
+    - "<gray>Kupujesz cały stos — sumę pokaże potwierdzenie."
+    - "<gray>Do końca: <white>{days} d {hours} h {minutes} min"
+    - ""
+    - "<yellow>Kliknij, aby kupić."
+  display_lore_bid:
+    - ''
+  category_switcher:
+    all: ["<gray>▷ Wszystko", "<green><bold>▶ Wszystko"]
+    surowce: ["<gray>▷ Surowce", "<green><bold>▶ Surowce"]
+    polprodukty: ["<gray>▷ Półprodukty", "<green><bold>▶ Półprodukty"]
+    narzedzia: ["<gray>▷ Narzędzia", "<green><bold>▶ Narzędzia"]
+    sprzet: ["<gray>▷ Sprzęt", "<green><bold>▶ Sprzęt"]
+    potrawy: ["<gray>▷ Potrawy i mikstury", "<green><bold>▶ Potrawy i mikstury"]
+  buttons:
+    category_all:
+      location: top
+      slots: [27]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Wszystko"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_handel_aukcje
+      lore:
+        - ""
+        - "<gray>Wszystkie oferty graczy."
+        - ""
+        - "<yellow>Kliknij, aby pokazać."
+    category_surowce:
+      location: top
+      slots: [28]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Surowce"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:prof_oak_timber
+      lore:
+        - ""
+        - "<gray>Drewno, zioła, ruda, połów, łupy z bestii."
+        - ""
+        - "<yellow>Kliknij, aby pokazać."
+    category_polprodukty:
+      location: top
+      slots: [29]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Półprodukty"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:prof_metal_plate
+      lore:
+        - ""
+        - "<gray>Przetworzone materiały z warsztatów."
+        - ""
+        - "<yellow>Kliknij, aby pokazać."
+    category_narzedzia:
+      location: top
+      slots: [30]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Narzędzia"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:prof_lumber_axe
+      lore:
+        - ""
+        - "<gray>Narzędzia profesji."
+        - ""
+        - "<yellow>Kliknij, aby pokazać."
+    category_sprzet:
+      location: top
+      slots: [36]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Sprzęt"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:prof_leather_gloves
+      lore:
+        - ""
+        - "<gray>Broń, zbroje, akcesoria, klejnoty."
+        - ""
+        - "<yellow>Kliknij, aby pokazać."
+    category_potrawy:
+      location: top
+      slots: [37]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Potrawy i mikstury"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:prof_harvest_feast
+      lore:
+        - ""
+        - "<gray>Jedzenie, antidota, toniki, oleje."
+        - ""
+        - "<yellow>Kliknij, aby pokazać."
+    pusty_gora:
+      location: top
+      slots: [0, 2, 4, 6, 8, 10, 12, 18, 20, 22, 40]
+      source: vanilla
+      material: paper
+      name: " "
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:mmo_icon_blank
+      hide_tooltip: true
+      lore: []
+    saldo:
+      location: top
+      slots: [14]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Twoje złoto"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_ekonomia
+      lore:
+        - ""
+        - "<gray>Na koncie: <gold>%coretools_eco_dollar% $"
+        - ""
+        - "<gray>Pieniądze za sprzedane przedmioty trafiają"
+        - "<gray>tu same — także gdy jesteś offline."
+    previous:
+      location: top
+      slots: [38]
+      source: vanilla
+      material: paper
+      name: "<gray>Poprzednia strona"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_handel_strona_wstecz
+      lore: []
+    sorting:
+      location: top
+      slots: [39]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Sortowanie"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_statystyki
+      lore:
+        - ""
+        - "{sorting}"
+        - ""
+        - "<yellow>LPM: dalej  <gray>·  <yellow>PPM: wstecz"
+    player_items_all:
+      location: top
+      slots: [45]
+      source: vanilla
+      material: paper
+      name: "<gold><bold>Moje oferty"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_zadania
+      lore:
+        - ""
+        - "<gray>Aktywne oferty, zakupy, historia"
+        - "<gray>i odbiór przedmiotów z wygasłych ofert."
+        - ""
+        - "<yellow>Kliknij, aby otworzyć."
+    sell:
+      location: top
+      slots: [46]
+      source: vanilla
+      material: paper
+      name: "<green><bold>Wystaw przedmiot"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_handel_wystaw
+      lore:
+        - ""
+        - "<gray>Połóż przedmiot, wpisz cenę za sztukę"
+        - "<gray>i wybierz czas wystawienia."
+        - ""
+        - "<gray>Opłata za wystawienie: <white>1,5% / 2,5% / 4,5%"
+        - "<gray>wartości (1 / 3 / 7 dni), min. 0,10 $ — nie wraca."
+        - "<gray>Podatek od sprzedaży: <white>6%"
+        - "<gray>Limit: <white>12 ofert naraz"
+        - ""
+        - "<yellow>Kliknij, aby wystawić."
+    next:
+      location: top
+      slots: [47]
+      source: vanilla
+      material: paper
+      name: "<gray>Następna strona"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_handel_strona_dalej
+      lore: []
+    pusty_dol:
+      location: top
+      slots: [1, 3, 5, 7, 9, 11, 13, 19, 21, 31, 49]
+      source: vanilla
+      material: paper
+      name: " "
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:mmo_icon_blank
+      hide_tooltip: true
+      lore: []
+    pomoc:
+      location: top
+      slots: [48]
+      source: vanilla
+      material: paper
+      name: "<yellow><bold>Jak działa dom aukcyjny"
+      flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+      item_model: nexo:hub_pomoc
+      lore:
+        - ""
+        - "<gray>• Kupujesz od graczy cały wystawiony stos."
+        - "<gray>• Sprzedajesz po swojej cenie za sztukę."
+        - "<gray>• Oferta wisi 1, 3 albo 7 dni; niesprzedany"
+        - "<gray>  przedmiot odbierasz w „Moje oferty”."
+        - "<gray>• Pieniądze ze sprzedaży wpływają same,"
+        - "<gray>  także gdy jesteś offline."
+        - "<gray>• Skup NPC płaci mniej niż gracze —"
+        - "<gray>  tu zwykle dostaniesz więcej."
+  player_items:
+    name: "&f䩴䩵䩶䩷"
+    size: 6
+    bottom_inventory: false
+    bottom_inventory_use_default: false
+    active_display_lore:
+      - ""
+      - "<yellow>Kliknij, aby zdjąć ofertę."
+      - "<gray>Przedmiot wróci do plecaka,"
+      - "<gray>opłata za wystawienie nie wraca."
+    expired_display_lore:
+      - ""
+      - "<red>Oferta wygasła."
+      - "<yellow>Kliknij, aby odebrać przedmiot."
+    buttons:
+      player_items_all:
+        location: top
+        slots: [27]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Wszystkie"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_zadania
+        lore:
+          - ""
+          - "<gray>Wszystko, co wystawiłeś i kupiłeś."
+      player_items_active:
+        location: top
+        slots: [28]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Aktywne"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_wystaw
+        lore:
+          - ""
+          - "<gray>Oferty, które wiszą. Kliknij ofertę, aby ją zdjąć."
+      player_items_expired_not_taken:
+        location: top
+        slots: [29]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Do odbioru"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_skup
+        lore:
+          - ""
+          - "<gray>Wygasłe oferty. Kliknij, aby odebrać przedmiot."
+      player_items_purchased:
+        location: top
+        slots: [30]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Kupione"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_sklep
+        lore:
+          - ""
+          - "<gray>Twoje zakupy."
+      player_items_old:
+        location: top
+        slots: [36]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Historia"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_statystyki
+        lore:
+          - ""
+          - "<gray>Oferty zakończone."
+      pusty_gora:
+        location: top
+        slots: [0, 2, 4, 6, 8, 10, 12, 18, 20, 22, 40, 46, 48]
+        source: vanilla
+        material: paper
+        name: " "
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        hide_tooltip: true
+        lore: []
+      home:
+        location: top
+        slots: [37]
+        source: vanilla
+        material: paper
+        name: "<gray>Wróć do domu aukcyjnego"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_wstecz
+        lore: []
+      player_items_previous:
+        location: top
+        slots: [38]
+        source: vanilla
+        material: paper
+        name: "<gray>Poprzednia strona"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_strona_wstecz
+        lore: []
+      pusty_dol:
+        location: top
+        slots: [1, 3, 5, 7, 9, 11, 13, 19, 21, 31, 45, 47, 49]
+        source: vanilla
+        material: paper
+        name: " "
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        hide_tooltip: true
+        lore: []
+      player_items_next:
+        location: top
+        slots: [39]
+        source: vanilla
+        material: paper
+        name: "<gray>Następna strona"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_strona_dalej
+        lore: []
+  purchase:
+    name: "&f䩸䩹䩺䩻"
+    size: 6
+    bottom_inventory: false
+    bottom_inventory_use_default: false
+    buttons:
+      fill:
+        location: top
+        slots: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 31, 34, 35, 40, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]
+        source: vanilla
+        material: paper
+        name: " "
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        hide_tooltip: true
+        lore: []
+      purchase_item:
+        location: top
+        slots: [23]
+        source: vanilla
+        material: air
+      purchase_confirm:
+        location: top
+        slots: [27, 28, 36, 37]
+        source: vanilla
+        material: paper
+        name: "<green><bold>Kup"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        lore:
+          - ""
+          - "<gray>Ilość: <white>{amount}"
+          - "<gray>Cena za sztukę: <white>{unit_price} $"
+          - "<gold><bold>Razem: {total} $"
+          - ""
+          - "<yellow>Kliknij, aby przygotować zakup."
+        name2: "<gold><bold>Kliknij ponownie, aby kupić"
+        material2: paper
+        item_model2: nexo:mmo_icon_blank
+        empty_slot_material: paper
+        lore2:
+          - ""
+          - "<gray>Ilość: <white>{amount}"
+          - "<gray>Cena za sztukę: <white>{unit_price} $"
+          - "<gold><bold>Razem: {total} $"
+          - ""
+          - "<gold>Drugie kliknięcie kupuje. Bez zwrotów."
+      info:
+        location: top
+        slots: [32, 33, 41, 42]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Kupno oferty"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        lore:
+          - ""
+          - "<gray>Kupujesz cały stos widoczny niżej."
+          - "<gray>Przedmiot trafi do plecaka."
+          - "<gray>Brak miejsca = zakup się nie uda"
+          - "<gray>i nic nie zostanie pobrane."
+      home:
+        location: top
+        slots: [29, 30, 38, 39]
+        source: vanilla
+        material: paper
+        name: "<gray>Wróć do domu aukcyjnego"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        lore: []
+      saldo:
+        location: top
+        slots: [43]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Twoje złoto"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_ekonomia
+        lore:
+          - ""
+          - "<gray>Na koncie: <gold>%coretools_eco_dollar% $"
+  sell:
+    name: "&f䩼䩽䩾䩿"
+    size: 6
+    buttons:
+      fill:
+        location: top
+        slots: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 18, 19, 20, 21, 22, 24, 31, 40, 49, 50, 51]
+        source: vanilla
+        material: paper
+        name: " "
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        hide_tooltip: true
+        lore: []
+      sell_player_item:
+        location: top
+        slots: [23]
+        source: vanilla
+        material: air
+      info:
+        location: top
+        slots: [17]
+        source: vanilla
+        material: paper
+        name: "<gold><bold>Jak wystawić"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_pomoc
+        lore:
+          - ""
+          - "<gray>1. Połóż przedmiot w polu obok"
+          - "<gray>   (albo shift+klik w plecaku)."
+          - "<gray>2. Wpisz cenę ZA SZTUKĘ klawiszami."
+          - "<gray>3. Wybierz czas: 1, 3 albo 7 dni."
+          - "<gray>4. Kliknij „Wystaw” dwa razy."
+          - ""
+          - "<gray>Wystawić można surowce, półprodukty,"
+          - "<gray>narzędzia, sprzęt, potrawy i mikstury."
+          - "<gray>Cena najmniej 1 $ (pierwsza cyfra nie 0)."
+      sell_day_1:
+        location: top
+        slots: [14]
+        source: vanilla
+        material: paper
+        name: "<white>1 dzień"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_dni
+        lore:
+          - ""
+          - "<gray>Opłata: 1,5% wartości."
+        name2: "<green><bold>1 dzień ✔"
+        material2: paper
+        item_model2: nexo:hub_handel_dni_wybrane
+        empty_slot_material: paper
+        lore2:
+          - ""
+          - "<gray>Opłata: 1,5% wartości."
+      sell_day_3:
+        location: top
+        slots: [15]
+        source: vanilla
+        material: paper
+        name: "<white>3 dni"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_dni
+        lore:
+          - ""
+          - "<gray>Opłata: 2,5% wartości."
+        name2: "<green><bold>3 dni ✔"
+        material2: paper
+        item_model2: nexo:hub_handel_dni_wybrane
+        empty_slot_material: paper
+        lore2:
+          - ""
+          - "<gray>Opłata: 2,5% wartości."
+      sell_day_7:
+        location: top
+        slots: [16]
+        source: vanilla
+        material: paper
+        name: "<white>7 dni"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_dni
+        lore:
+          - ""
+          - "<gray>Opłata: 4,5% wartości."
+        name2: "<green><bold>7 dni ✔"
+        material2: paper
+        item_model2: nexo:hub_handel_dni_wybrane
+        empty_slot_material: paper
+        lore2:
+          - ""
+          - "<gray>Opłata: 4,5% wartości."
+      sell_confirm:
+        location: top
+        slots: [32, 33, 41, 42]
+        source: vanilla
+        material: paper
+        name: "<green><bold>Wystaw"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        lore:
+          - ""
+          - "<gray>Ilość: <white>{amount}"
+          - "<gray>Cena za sztukę: <white>{unit_price} $"
+          - "<gray>Opłata za wystawienie: <red>{listing_fee} $ <dark_gray>(pobierana teraz)"
+          - "<gray>Podatek od sprzedaży: <red>{tax_per_unit} $/szt. <dark_gray>({tax_percent}%)"
+          - "<gray>Dostaniesz za sztukę: <green>{earning_per_unit} $"
+          - "<gold><bold>Za cały stos: {amount} × {earning_per_unit} $"
+          - ""
+          - "<yellow>Kliknij, aby przygotować."
+        name2: "<gold><bold>Kliknij ponownie, aby wystawić"
+        material2: paper
+        item_model2: nexo:mmo_icon_blank
+        empty_slot_material: paper
+        lore2:
+          - ""
+          - "<gray>Ilość: <white>{amount}"
+          - "<gray>Cena za sztukę: <white>{unit_price} $"
+          - "<gray>Opłata za wystawienie: <red>{listing_fee} $ <dark_gray>(pobierana teraz)"
+          - "<gray>Podatek od sprzedaży: <red>{tax_per_unit} $/szt. <dark_gray>({tax_percent}%)"
+          - "<gray>Dostaniesz za sztukę: <green>{earning_per_unit} $"
+          - "<gold><bold>Za cały stos: {amount} × {earning_per_unit} $"
+          - ""
+          - "<gold>Drugie kliknięcie wystawia i pobiera opłatę."
+      home:
+        location: top
+        slots: [43, 44, 52, 53]
+        source: vanilla
+        material: paper
+        name: "<gray>Wróć do domu aukcyjnego"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        lore:
+          - ""
+          - "<gray>Przedmiot wróci do plecaka."
+      zamknij:
+        location: top
+        slots: [25, 26, 34, 35]
+        source: vanilla
+        material: paper
+        name: "<red><bold>Zamknij"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:mmo_icon_blank
+        lore:
+          - ""
+          - "<gray>Przedmiot wróci do plecaka."
+        Conditions:
+          - "Comparator{v1=\"0\";v2=\"1\";op=\"==\"} falseElse handel_zamknij"
+      sell_7:
+        location: top
+        slots: [27]
+        source: vanilla
+        material: paper
+        name: "<white><bold>7"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_7
+        lore: []
+      sell_8:
+        location: top
+        slots: [28]
+        source: vanilla
+        material: paper
+        name: "<white><bold>8"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_8
+        lore: []
+      sell_9:
+        location: top
+        slots: [29]
+        source: vanilla
+        material: paper
+        name: "<white><bold>9"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_9
+        lore: []
+      sell_4:
+        location: top
+        slots: [30]
+        source: vanilla
+        material: paper
+        name: "<white><bold>4"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_4
+        lore: []
+      sell_5:
+        location: top
+        slots: [36]
+        source: vanilla
+        material: paper
+        name: "<white><bold>5"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_5
+        lore: []
+      sell_6:
+        location: top
+        slots: [37]
+        source: vanilla
+        material: paper
+        name: "<white><bold>6"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_6
+        lore: []
+      sell_1:
+        location: top
+        slots: [38]
+        source: vanilla
+        material: paper
+        name: "<white><bold>1"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_1
+        lore: []
+      sell_2:
+        location: top
+        slots: [39]
+        source: vanilla
+        material: paper
+        name: "<white><bold>2"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_2
+        lore: []
+      sell_3:
+        location: top
+        slots: [45]
+        source: vanilla
+        material: paper
+        name: "<white><bold>3"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_3
+        lore: []
+      sell_dot:
+        location: top
+        slots: [46]
+        source: vanilla
+        material: paper
+        name: "<white>Kropka  <gray>( , )"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_kropka
+        lore: []
+      sell_0:
+        location: top
+        slots: [47]
+        source: vanilla
+        material: paper
+        name: "<white><bold>0"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cyfra_0
+        lore: []
+      sell_backspace:
+        location: top
+        slots: [48]
+        source: vanilla
+        material: paper
+        name: "<white>Cofnij"
+        flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+        item_model: nexo:hub_handel_cofnij
+        lore: []
+  tax_system:
+    name: "Podatki"
+    size: 6
+    bottom_inventory: false
+    bottom_inventory_use_default: false
+    tax_mode: 1
+    default:
+      listing_fee: "clamp({unit_price} * {amount} * (0.01 + 0.005 * {day}), 0.1, 1000000)"
+      sell_tax: "{unit_price} * 0.06"
+    buttons:
+      collect_tax: {location: top, slots: [45], source: vanilla, material: paper, name: "Zbierz podatek"}
+      reset_tax: {location: top, slots: [36], source: vanilla, material: paper, name: "Resetuj podatki"}
+      next: {location: top, slots: [50], source: vanilla, material: paper, name: "Dalej"}
+      previous: {location: top, slots: [48], source: vanilla, material: paper, name: "Wstecz"}
+    categories:
+      surowce:
+        name: "{name=\"Surowce\";material=paper}"
+        listing_fee: ["{formula=\"clamp({unit_price} * {amount} * (0.01 + 0.005 * {day}), 0.1, 1000000)\";name=\"Op\\u0142ata\";material=paper}"]
+        sell_tax: ["{formula=\"{unit_price} * 0.06\";name=\"Podatek 6%\";material=paper}"]
+      polprodukty:
+        name: "{name=\"P\\u00f3\\u0142produkty\";material=paper}"
+        listing_fee: ["{formula=\"clamp({unit_price} * {amount} * (0.01 + 0.005 * {day}), 0.1, 1000000)\";name=\"Op\\u0142ata\";material=paper}"]
+        sell_tax: ["{formula=\"{unit_price} * 0.06\";name=\"Podatek 6%\";material=paper}"]
+      narzedzia:
+        name: "{name=\"Narz\\u0119dzia\";material=paper}"
+        listing_fee: ["{formula=\"clamp({unit_price} * {amount} * (0.01 + 0.005 * {day}), 0.1, 1000000)\";name=\"Op\\u0142ata\";material=paper}"]
+        sell_tax: ["{formula=\"{unit_price} * 0.06\";name=\"Podatek 6%\";material=paper}"]
+      sprzet:
+        name: "{name=\"Sprz\\u0119t\";material=paper}"
+        listing_fee: ["{formula=\"clamp({unit_price} * {amount} * (0.01 + 0.005 * {day}), 0.1, 1000000)\";name=\"Op\\u0142ata\";material=paper}"]
+        sell_tax: ["{formula=\"{unit_price} * 0.06\";name=\"Podatek 6%\";material=paper}"]
+      potrawy:
+        name: "{name=\"Potrawy i mikstury\";material=paper}"
+        listing_fee: ["{formula=\"clamp({unit_price} * {amount} * (0.01 + 0.005 * {day}), 0.1, 1000000)\";name=\"Op\\u0142ata\";material=paper}"]
+        sell_tax: ["{formula=\"{unit_price} * 0.06\";name=\"Podatek 6%\";material=paper}"]
+  categories:
+    all:
+      name: "&f䩰䩱䩲䩳"
+    surowce:
+      minimum_bid_increment: -1
+      name: "&f䩰䩱䩲䩳"
+      restriction_advanced:
+        allow:
+          source: [mmoitems]
+          id: ["prof_oak_timber", "prof_spruce_resin", "prof_birch_lath", "prof_medicinal_herb", "prof_moonleaf", "prof_redcap", "prof_fresh_harvest", "prof_rough_crystal", "prof_rough_stone", "prof_clay_lump", "prof_wild_spice", "prof_raw_catch", "prof_clam", "prof_rare_fish", "prof_water_essence", "prof_pearl", "prof_ore_chunk", "prof_silver_ore", "prof_raw_gem", "prof_arcane_crystal", "prof_beast_scrap", "prof_beast_bone", "prof_raw_fleece", "prof_venom_sac", "prof_monster_trophy"]
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+        block:
+          id: []
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+    polprodukty:
+      minimum_bid_increment: -1
+      name: "&f䩰䩱䩲䩳"
+      restriction_advanced:
+        allow:
+          source: [mmoitems]
+          id: ["prof_alchemical_base", "prof_alchemical_crop", "prof_alchemical_solvent", "prof_arrowheads", "prof_awakening_seal", "prof_axe_head", "prof_bait_mix", "prof_bowstring", "prof_bow_limb", "prof_carved_fitting", "prof_carved_stone", "prof_charged_rune", "prof_cloth_bolt", "prof_cured_hide", "prof_cut_gem", "prof_cut_stone", "prof_decorative_fitting", "prof_dried_herbs", "prof_empty_socket", "prof_enchant_dust", "prof_fabric_repair_kit", "prof_fine_wool", "prof_fish_oil", "prof_flax_fiber", "prof_herbal_extract", "prof_leather_panel", "prof_master_blade_blank", "prof_master_charm", "prof_metal_plate", "prof_metal_repair_kit", "prof_mortar", "prof_pearl_setting", "prof_quality_grain", "prof_refined_iron", "prof_reinforced_block", "prof_robe_lining", "prof_rune_blank", "prof_seasoned_timber", "prof_silver_setting", "prof_sinew", "prof_staff_core", "prof_staff_focus", "prof_steel_mechanism", "prof_support_beam", "prof_weapon_handle"]
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+        block:
+          id: []
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+    narzedzia:
+      minimum_bid_increment: -1
+      name: "&f䩰䩱䩲䩳"
+      restriction_advanced:
+        allow:
+          source: [mmoitems]
+          id: ["prof_farmer_hoe", "prof_fishing_rod", "prof_herb_sickle", "prof_hunter_knife", "prof_lumber_axe", "prof_master_farmer_hoe", "prof_master_fishing_rod", "prof_master_herb_sickle", "prof_master_hunter_knife", "prof_master_lumber_axe"]
+          type: ["tool"]
+          tier: []
+          material: []
+          vanilla_material: []
+        block:
+          id: []
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+    sprzet:
+      minimum_bid_increment: -1
+      name: "&f䩰䩱䩲䩳"
+      restriction_advanced:
+        allow:
+          source: [mmoitems]
+          id: []
+          type: ["armor", "axe", "belt", "bow", "catalyst", "charm", "crossbow", "dagger", "gauntlet", "gloves", "greataxe", "greathammer", "greatstaff", "greatsword", "halberd", "hammer", "katana", "lance", "long_sword", "musket", "necklace", "off_catalyst", "ornament", "ring", "shield", "spear", "staff", "sword", "talisman", "thrusting_sword", "tome", "wand", "whip", "gem_stone"]
+          tier: []
+          material: []
+          vanilla_material: []
+        block:
+          id: []
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+    potrawy:
+      minimum_bid_increment: -1
+      name: "&f䩰䩱䩲䩳"
+      restriction_advanced:
+        allow:
+          source: [mmoitems]
+          id: ["prof_fisher_stew", "prof_harvest_feast", "prof_hunter_roast", "prof_master_banquet", "prof_trail_ration", "prof_antidote", "prof_combat_tonic", "prof_weapon_oil"]
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []
+        block:
+          id: []
+          type: []
+          tier: []
+          material: []
+          vanilla_material: []

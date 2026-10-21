@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/mace",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    -90,
+    0,
+    45
+   ],
+   "translation": [
+    0,
+    6,
+    0
+   ],
+   "scale": [
+    1.196,
+    1.196,
+    1.196
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    -90,
+    0,
+    -45
+   ],
+   "translation": [
+    0,
+    6,
+    0
+   ],
+   "scale": [
+    1.196,
+    1.196,
+    1.196
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    -15,
+    0,
+    -12
+   ],
+   "translation": [
+    -2,
+    8,
+    -4
+   ],
+   "scale": [
+    0.936,
+    0.936,
+    0.936
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    -15,
+    0,
+    12
+   ],
+   "translation": [
+    -2,
+    8,
+    -4
+   ],
+   "scale": [
+    0.936,
+    0.936,
+    0.936
+   ]
+  }
+ }
+}

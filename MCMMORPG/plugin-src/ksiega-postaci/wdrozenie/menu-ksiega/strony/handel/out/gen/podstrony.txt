@@ -1,0 +1,7 @@
+U+4A60 hub_ekonomia  # sklep
+U+4A64 hub_ekonomia  # sklep_ilosc
+U+4A68 hub_ekonomia  # skup
+U+4A6C hub_ekonomia  # skup_ilosc
+U+4A70 hub_ekonomia  # rynek
+U+4A74 hub_ekonomia  # moje_oferty
+U+4A78 hub_ekonomia  # kupno

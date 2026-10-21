@@ -1,0 +1,95 @@
+# Wygenerowane przez strony/poczta-dziennik/generuj.py.
+menu_title: '&f䬀䬁䬂䬃'
+size: 54
+update_interval: 20
+items:
+  kronika:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&6&lDziennik przygód'
+    lore:
+      - '&7Klasa: &f%mmocore_class%'
+      - '&7Poziom: &f%mmocore_level%'
+      - '&7EXP: &f%mmocore_experience% &7/ &f%mmocore_next_level%'
+  postep:
+    material: WRITABLE_BOOK
+    slot: 38
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&ePostęp zadania'
+    lore:
+      - '&7Zadanie: &f%mmocore_quest%'
+      - '&7Postęp: &f%mmocore_quest_progress%%'
+      - '&eKliknij, aby otworzyć zadania.'
+    left_click_commands:
+      - '[player] quests'
+  zadanie:
+    material: PAPER
+    slot: 23
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eAktywne zadanie'
+    lore:
+      - '&f%mmocore_quest%'
+      - '&7Postęp: &f%mmocore_quest_progress%%'
+      - '&eKliknij, aby otworzyć zadania.'
+    left_click_commands:
+      - '[player] quests'
+  chowaniec:
+    material: LEAD
+    slot: 24
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&aAktywny chowaniec'
+    lore:
+      - '&7Imię: &f%chowance_aktywny_nazwa%'
+      - '&7Poziom: &f%chowance_aktywny_poziom%'
+    left_click_commands:
+      - '[openguimenu] chowance_menazeria'
+  bestiariusz:
+    material: BOOK
+    slot: 25
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&bBestiariusz'
+    lore:
+      - '&7Widziane: &f%chowance_bestiariusz_widziane%'
+      - '&7Złapane: &f%chowance_bestiariusz_zlapane%&7/&f%chowance_bestiariusz_wszystkie%'
+      - '&7Ukończono: &f%chowance_bestiariusz_procent%%'
+    left_click_commands:
+      - '[openguimenu] chowance_bestiariusz'
+  odznaki:
+    material: GOLD_NUGGET
+    slot: 32
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&6Odznaki mistrzów'
+    lore:
+      - '&7Zdobyte: &f%chowance_odznaki_liczba%'
+    left_click_commands:
+      - '[openguimenu] chowance_lochy'
+  wieza:
+    material: LADDER
+    slot: 33
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&6Rekord wieży'
+    lore:
+      - '&7Piętro: &f%chowance_wieza_WIEZA_CHOWANCOW_rekord%'
+    left_click_commands:
+      - '[openguimenu] chowance_lochy'
+  wiara:
+    material: LANTERN
+    slot: 34
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eWiara i patron'
+    lore:
+      - '&7Patron: &f%wiary_patron_imie%'
+      - '&7Wiara: &f%wiary_wiara%'
+      - '&7Łaska: &f%wiary_laska%'
+      - '&7Pozostało: &f%wiary_laska_czas%'
+    left_click_commands:
+      - '[openguimenu] wiara'

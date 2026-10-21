@@ -1,0 +1,113 @@
+name: 'Warsztat: Górnika'
+max-queue-size: 10
+command:
+  name: 'warsztat-mining'
+  description: 'Otwiera warsztat profesji mining'
+  usage: '/warsztat-mining'
+  permission: ''
+  aliases: []
+recipes:
+  'prof_refined_iron':
+    output: 'mmoitems{type=MATERIAL,id=PROF_REFINED_IRON}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=mining,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ORE_CHUNK,amount=3}'
+    triggers:
+      - 'exp{profession=mining,amount=12}'
+  'prof_silver_ore':
+    output: 'mmoitems{type=MATERIAL,id=PROF_SILVER_ORE}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=mining,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ORE_CHUNK,amount=6}'
+    triggers:
+      - 'exp{profession=mining,amount=28}'
+  'prof_raw_gem':
+    output: 'mmoitems{type=MATERIAL,id=PROF_RAW_GEM}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=mining,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ROUGH_STONE,amount=6}'
+    triggers:
+      - 'exp{profession=mining,amount=55}'
+  'prof_cut_stone':
+    output: 'mmoitems{type=MATERIAL,id=PROF_CUT_STONE}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=mining,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ROUGH_STONE,amount=8}'
+    triggers:
+      - 'exp{profession=mining,amount=95}'
+  'prof_arcane_crystal':
+    output: 'mmoitems{type=MATERIAL,id=PROF_ARCANE_CRYSTAL}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=mining,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_GEM,amount=3}'
+    triggers:
+      - 'exp{profession=mining,amount=120}'
+gui-layout:
+  name: '&f䬴䬵䬶䬷'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [46]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [47]
+
+    queued_item:
+      slots: [36, 37, 38, 39]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7&oW kolejce.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: AIR
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26]

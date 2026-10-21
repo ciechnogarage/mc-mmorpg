@@ -1,0 +1,54 @@
+menu_title: '&f䨀䨁䨂䨃'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eTwoja postać'
+    lore:
+      - '&7Klasa: &f%mmocore_class%'
+      - '&7Poziom: &f%mmocore_level%'
+      - '&7EXP: &f%mmocore_experience% &7/ &f%mmocore_next_level%'
+  statystyki:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eStatystyki'
+    lore:
+      - '&7Poziom, doświadczenie i zasoby.'
+    left_click_commands:
+      - '[close]'
+      - '[player] player<delay=5>'
+  atrybuty:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bAtrybuty'
+    lore:
+      - '&7Rozdaj punkty atrybutów.'
+    left_click_commands:
+      - '[player] attributes'
+  wiara:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&6Wiara'
+    lore:
+      - '&7Patron: %wiary_patron_imie%'
+      - '&7Sprawdź jego łaskę.'
+    left_click_commands:
+      - '[openguimenu] wiara'
+  zmien_postac:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Zmień postać'
+    lore:
+      - '&7Wybierz inną postać.'
+      - '&7Twórz i zarządzaj postaciami.'
+    left_click_commands:
+      - '[console] cc wybor %player_name% lista'

@@ -1,0 +1,38 @@
+## Werdykt
+
+Architektura ma sensowne ograniczenia kosztu: osobne `MapView` dla graczy, ograniczenie przerysowań i sprzątanie większości sesji. **Dostarczone pomiary nie potwierdzają jednak gotowości na około 100 graczy**: test 30 botów najpewniej omija właściwy renderer mapy w ręce i w ogóle nie obciąża pełnego ekranu. Najpierw poprawiłbym scenariusz pomiarowy oraz ryzyka danych i wątków.
+
+## Mocne strony
+
+- [MapaPlugin.java:293](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/MapaPlugin.java:293): osobne ID mapy na gracza usuwa wcześniejsze współdzielenie obrazu; kod rezerwuje ID mapy wspólnej i NMinimap.
+- [HandMapRenderer.java:61](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/HandMapRenderer.java:61): szybkie wyjście dla mapy poza ręką, pamięć pikseli i kursorów oraz próg ponownego centrowania ograniczają pracę w typowym przypadku.
+- [PelnaMapa.java:312](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/PelnaMapa.java:312): są ścieżki zamknięcia pełnej mapy po ruchu, teleportacji, zmianie świata, śmierci i wyjściu. Testy jednostkowe obejmują matematykę mapy i serializację.
+
+## Problemy
+
+- **KRYTYCZNY — [przebieg.sh:12](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/tools/mapa/obciazenie/przebieg.sh:12), [boty.js:12](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/tools/mapa/obciazenie/boty.js:12), [MapaPlugin.java:240](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/MapaPlugin.java:240):** bot wybiera slot przed włożeniem `map_id=30000`, któremu plugin przypisuje pusty renderer. Późniejszej migracji przedmiotu skrypt nie wymusza ani nie sprawdza. Wynik „mapa w ręce” może nie zawierać kosztu jej rysowania; wariant „pełne” nie otwiera MapEngine.
+- **WAŻNY — [przebieg.sh:11](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/tools/mapa/obciazenie/przebieg.sh:11), [obciazenie-30botow.txt:4](/home/dev/.claude/jobs/952bf420/tmp/codex-ocena/obciazenie-30botow.txt:4):** przebieg `nic` nie usuwa map z ekwipunku po poprzednich próbach. Sześć krótkich odczytów MSPT i transfer całego kontenera obejmują także chunki; rozrzut CPU i pogorszenie prób `radar20` nie pozwalają przypisać różnic mapie ani ekstrapolować ich do 100 graczy.
+- **WAŻNY — [HandMapRenderer.java:79](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/HandMapRenderer.java:79), [HandMapRenderer.java:149](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/HandMapRenderer.java:149):** przerysowanie 128×128 pikseli pozostaje na wątku głównym. Przy zoomie 0,25 próg przesunięcia to 10 bloków; synchronizacja wielu poruszających się graczy może dać skoki MSPT, których obecny test nie mierzy.
+- **WAŻNY — [PelnaMapa.java:256](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/PelnaMapa.java:256):** pełny ekran uruchamia osobne zadanie async na każdą zajętą sesję. Obraz 512×384 zajmuje około 0,75 MB; podstawa i obraz roboczy to co najmniej około 150 MB przy 100 jednoczesnych sesjach, przed buforami MapEngine. Brak limitu łącznej liczby renderów i pomiaru GC.
+- **WAŻNY — [MinimapaZnaczniki.java:25](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/MinimapaZnaczniki.java:25):** w zdarzeniu async kod czyta żywe `Player.getWorld()` i `getLocation()`. Migawki znaczników są bezpieczniejsze, lecz pozycja i świat mogą zmienić się w trakcie renderu; grożą błędne znaczniki i problemy przy teleportacji.
+- **WAŻNY — [WlasneZnaczniki.java:41](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/WlasneZnaczniki.java:41), [MinimapaZnaczniki.java:32](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/MinimapaZnaczniki.java:32):** klucz postaci MMOProfiles odświeża się przy wywołaniu `ownerKey`, ale sama minimapa korzysta ze starej migawki. Po zmianie postaci może nadal pokazywać znaczniki poprzedniej, aż gracz wykona inną akcję mapy.
+- **WAŻNY — [MapaPlugin.java:316](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/MapaPlugin.java:316):** migracja rozpoznaje przedmiot wyłącznie po ID i skanuje tylko bieżący ekwipunek gracza. Może przejąć cudzą mapę o tym ID; mapy w skrzyniach i przedmioty poza ekwipunkiem pozostaną stare.
+- **WAŻNY — [WlasneZnaczniki.java:53](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/WlasneZnaczniki.java:53), [MapaPlugin.java:244](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/MapaPlugin.java:244):** wyjście usuwa klucz gracza, lecz pozostawia w pamięci wpisy wszystkich odwiedzonych postaci; start i przeładowanie konfigurują mapy całej historii graczy synchronicznie. Koszt rośnie z liczbą dawnych kont, nie tylko z liczbą online.
+- **KRYTYCZNY — [wdroz10.sh:42](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/tools/mapa/wdrozenie/wdroz10.sh:42):** wygenerowany rollback usuwa MapEngine i zasoby mapy, a przywrócenie starego katalogu `Mapa` cofa również znaczniki zapisane od wdrożenia. Może więc utracić dane graczy; nie jest bezpiecznym cofnięciem samej wersji kodu.
+- **DROBNY — [PanelPakiety.java:75](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/plugin-src/mapa/src/main/java/pl/mcmmorpg/mapa/PanelPakiety.java:75):** panel zależy od tytułu okna, numeru kontenera i układu 90 slotów w pakietach. To wrażliwy punkt przy aktualizacji Paper/PacketEvents, a istniejące testy nie obejmują tej integracji.
+
+## Warto zrobić
+
+1. **P0:** powtórzyć test przez Velocity z potwierdzonym osobistym `map_id`, osobno dla mapy w ręce, minimapy i rzeczywiście otwartego pełnego ekranu; przy 30 i około 100 graczach zebrać p95/p99 MSPT, GC, heap, ruch pakietów i profil wątku głównego.
+2. **P0:** przygotować rollback zachowujący nowe znaczniki oraz kopie wszystkich usuwanych zasobów; przećwiczyć cofnięcie na klonie.
+3. **P1:** przekazywać do renderera minimapy migawkę świata i pozycji z wątku głównego; odświeżać klucz po zmianie profilu i usuwać nieaktywne wpisy z pamięci.
+4. **P1:** dodać testy integracyjne migracji ID, zmiany postaci, teleportacji/śmierci podczas renderu oraz panelu pakietowego. Ograniczyć równoczesne rendery pełnego ekranu, jeśli poprawny test wykaże skoki GC lub kolejki.
+
+## Nie warto
+
+- Wdrażać teraz `latka7.py`: zmienia radar z 10 na 20 ticków, ale dostarczone przebiegi `radar20` mają **gorsze**, choć zakłócone MSPT ([wyniki:7](/home/dev/.claude/jobs/952bf420/tmp/codex-ocena/obciazenie-30botow.txt:7)). Zysk rzędu 1,57 s próbek radaru na 103 s profilu nie uzasadnia tej zmiany bez czystego testu A/B; łata nie jest też włączona do [wdroz10.sh:57](/home/dev/Desktop/Przemek/MC/.claude/worktrees/mapa/MCMMORPG/tools/mapa/wdrozenie/wdroz10.sh:57).
+- Optymalizować dalej samych kursorów lub przepisywać generator kafelków na podstawie obecnych profili. Najpierw trzeba zmierzyć rzeczywisty renderer i pełny ekran.
+
+## Czego nie da się ocenić bez testu na żywo
+
+Nie da się potwierdzić stabilnych 50 ms przy około 100 graczach, poprawności obrazu i pakietów po rzeczywistych zmianach świata/profilu ani zachowania MapEngine pod równoczesnym otwieraniem i zamykaniem. To przegląd wyłącznie do odczytu: nie uruchamiałem builda, serwera ani testów.

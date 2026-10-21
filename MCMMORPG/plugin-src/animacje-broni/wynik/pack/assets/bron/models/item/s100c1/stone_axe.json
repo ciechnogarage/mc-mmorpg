@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/stone_axe",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    -22,
+    16,
+    17
+   ],
+   "translation": [
+    0,
+    2.5,
+    -2.1
+   ],
+   "scale": [
+    0.95,
+    0.95,
+    0.95
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    -22,
+    -16,
+    -17
+   ],
+   "translation": [
+    0,
+    2.5,
+    -2.1
+   ],
+   "scale": [
+    0.95,
+    0.95,
+    0.95
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    -18,
+    17,
+    10
+   ],
+   "translation": [
+    -0.7,
+    2.5,
+    -2.8
+   ],
+   "scale": [
+    0.8,
+    0.8,
+    0.8
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    -18,
+    -17,
+    -10
+   ],
+   "translation": [
+    -0.7,
+    2.5,
+    -2.8
+   ],
+   "scale": [
+    0.8,
+    0.8,
+    0.8
+   ]
+  }
+ }
+}

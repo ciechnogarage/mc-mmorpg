@@ -1,0 +1,21 @@
+  dziennik:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Dziennik przygód'
+    lore:
+      - '&7Sprawdź zadanie i chowańca.'
+      - '&7Zobacz postęp przygody.'
+    left_click_commands:
+      - '[openguimenu] dziennik_przygod'
+
+  poczta:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&ePoczta'
+    lore:
+      - '&7Napisz list do gracza.'
+      - '&7Odczytaj listy na czacie.'
+    left_click_commands:
+      - '[openguimenu] poczta'

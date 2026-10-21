@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,11 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,7 +55,6 @@ final class UkrywanieEkwipunku implements Listener {
   private final KsiegaPostaci plugin;
   private final List<String> titleSigns;
   private final Map<String, String> pageIds;
-  private final Map<String, String> parents;
   private final Map<UUID, Deque<String>> history = new HashMap<>();
   private final Map<UUID, String> currentPage = new HashMap<>();
   private final Set<UUID> returning = ConcurrentHashMap.newKeySet();
@@ -65,18 +65,21 @@ final class UkrywanieEkwipunku implements Listener {
 
   UkrywanieEkwipunku(KsiegaPostaci plugin) {
     this.plugin = plugin;
+    // Identyfikator strony (np. dziennik_przygod, profession-mining) po glifie tytulu:
+    // historia podstron (przycisk Wroc) i wylaczenie stacji MMOItems.
     ConfigurationSection ids = plugin.getConfig().getConfigurationSection("podstrony.identyfikatory");
-    ConfigurationSection configuredParents = plugin.getConfig().getConfigurationSection("podstrony.strony");
-    pageIds = new HashMap<>();
-    parents = new HashMap<>();
-    if (ids != null) for (String sign : ids.getKeys(false)) pageIds.put(sign, ids.getString(sign, ""));
-    if (configuredParents != null) for (String sign : configuredParents.getKeys(false))
-      parents.put(sign, configuredParents.getString(sign, "hub_glowne"));
-    List<String> configuredSigns = plugin.getConfig().getStringList("ukryj-ekwipunek.znaki-tytulu");
-    titleSigns = java.util.stream.Stream.concat(pageIds.keySet().stream(), configuredSigns.stream())
-        .filter(sign -> sign != null && !sign.isEmpty()).distinct().toList();
+    Map<String, String> configuredIds = new HashMap<>();
+    if (ids != null) for (String sign : ids.getKeys(false)) {
+      String id = ids.getString(sign, "");
+      if (sign != null && !sign.isEmpty() && id != null && !id.isBlank()) configuredIds.put(sign, id.trim());
+    }
+    pageIds = Map.copyOf(configuredIds);
     if (plugin.getConfig().getBoolean("ukryj-ekwipunek.wlaczone", true)) {
       panel = new PanelDolny(plugin);
+      Set<String> signs = new LinkedHashSet<>(plugin.getConfig().getStringList("ukryj-ekwipunek.znaki-tytulu"));
+      signs.addAll(panel.pageSigns());
+      signs.addAll(pageIds.keySet());
+      titleSigns = signs.stream().filter(sign -> sign != null && !sign.isEmpty()).toList();
       packets = new PacketAdapter(plugin, ListenerPriority.HIGHEST,
           PacketType.Play.Server.OPEN_WINDOW,
           PacketType.Play.Server.WINDOW_ITEMS,
@@ -86,6 +89,7 @@ final class UkrywanieEkwipunku implements Listener {
       ProtocolLibrary.getProtocolManager().addPacketListener(packets);
       refreshTask = Bukkit.getScheduler().runTaskTimer(plugin, this::refresh, 20L, 20L);
     } else {
+      titleSigns = List.of();
       packets = null;
       panel = null;
       refreshTask = null;
@@ -111,47 +115,45 @@ final class UkrywanieEkwipunku implements Listener {
       returning.remove(uuid);
       return;
     }
-    boolean panelEnabled = event.getView().getTopInventory().getSize() == 54
-        && panel.matches(plain, legacy);
-    boolean portalEnabled = event.getView().getTopInventory().getSize() == 54
+    PanelDolny.Page page = event.getView().getTopInventory().getSize() == 54
+        ? panel.match(plain, legacy) : null;
+    boolean portalEnabled = page == null && event.getView().getTopInventory().getSize() == 54
         && (plain.contains(Portal.titleSign()) || legacy.contains(Portal.titleSign()));
-    String sign = pageIds.keySet().stream()
-        .filter(key -> plain.contains(key) || legacy.contains(key)).findFirst().orElse("");
-    String page = pageIds.getOrDefault(sign, "");
+    String pageId = pageId(plain, legacy);
     // Stacje MMOItems pobieraja skladniki z prawdziwego ekwipunku gracza.
     // Ich dolnych slotow nie wolno zastapic panelem Ksiegi ani blokowac klikniec.
-    if (page.startsWith("profession-")) {
+    if (pageId.startsWith("profession-")) {
       views.remove(uuid);
       history.remove(uuid);
       currentPage.remove(uuid);
       returning.remove(uuid);
       return;
     }
-    boolean subpageEnabled = event.getView().getTopInventory().getSize() == 54
-        && !panelEnabled && !portalEnabled && parents.containsKey(sign);
-    if (panelEnabled) history.remove(uuid);
-    else if (!returning.remove(uuid) && !page.isEmpty()) {
+    boolean mainPanel = page != null && page.backMenu() == null;
+    boolean subpage = page != null && page.backMenu() != null;
+    if (mainPanel) history.remove(uuid);
+    else if (!returning.remove(uuid) && !pageId.isEmpty()) {
       String previous = currentPage.get(uuid);
-      if (previous != null && !previous.equals(page) && RETURNABLE.contains(previous))
+      if (previous != null && !previous.equals(pageId) && RETURNABLE.contains(previous))
         history.computeIfAbsent(uuid, unused -> new ArrayDeque<>()).push(previous);
     }
-    if (!page.isEmpty()) currentPage.put(uuid, page);
-    String previous = history.getOrDefault(uuid, new ArrayDeque<>()).peek();
-    String target = previous != null ? previous : parents.getOrDefault(sign, "hub_glowne");
-    ItemStack[] items = portalEnabled ? plugin.portal.panelItems(player)
-        : panelEnabled || subpageEnabled ? panel.render(player) : new ItemStack[36];
-    if (subpageEnabled) addBack(items, target);
-    views.put(uuid, new BookView(event.getView(), panelEnabled, portalEnabled,
-        subpageEnabled, target, items));
+    if (!pageId.isEmpty()) currentPage.put(uuid, pageId);
+    Deque<String> stack = history.get(uuid);
+    String previous = stack == null ? null : stack.peek();
+    String target = !subpage ? null : previous != null ? previous : page.backMenu();
+    ItemStack[] items = page != null ? panel.render(player, page)
+        : portalEnabled ? plugin.portal.panelItems(player) : new ItemStack[36];
+    if (subpage) relabelBack(items, target);
+    views.put(uuid, new BookView(event.getView(), page, portalEnabled, target, items));
   }
 
   private void refresh() {
     for (Player player : Bukkit.getOnlinePlayers()) {
       BookView state = views.get(player.getUniqueId());
-      if (state == null || (!state.panelEnabled && !state.portalEnabled && !state.subpageEnabled)
+      if (state == null || (state.page == null && !state.portalEnabled)
           || state.view.getTopInventory() != player.getOpenInventory().getTopInventory()) continue;
-      ItemStack[] next = state.portalEnabled ? plugin.portal.panelItems(player) : panel.render(player);
-      if (state.subpageEnabled) addBack(next, state.backTarget);
+      ItemStack[] next = state.portalEnabled ? plugin.portal.panelItems(player) : panel.render(player, state.page);
+      if (state.backTarget != null) relabelBack(next, state.backTarget);
       if (Arrays.equals(state.panelItems, next)) continue;
       state.panelItems = next;
       player.updateInventory();
@@ -209,14 +211,15 @@ final class UkrywanieEkwipunku implements Listener {
         || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
         || !Przedmioty.empty(event.getCursor());
     if (blocked) event.setCancelled(true);
-    if (!bottom || state == null || (!state.panelEnabled && !state.portalEnabled && !state.subpageEnabled)
+    if (!bottom || state == null || (state.page == null && !state.portalEnabled)
         || !Przedmioty.empty(event.getCursor())
         || click != ClickType.LEFT && click != ClickType.RIGHT) return;
     int panelSlot = raw - first;
     boolean portalAction = state.portalEnabled && (panelSlot == 1 || panelSlot == 4);
-    boolean backAction = state.subpageEnabled && panelSlot >= 3 && panelSlot <= 5;
+    boolean backAction = !state.portalEnabled && state.backTarget != null
+        && panelSlot >= 3 && panelSlot <= 5 && !Przedmioty.empty(state.panelItems[panelSlot]);
     boolean panelAction = !state.portalEnabled && !backAction
-        && panel.hasAction(panelSlot, state.panelItems[panelSlot]);
+        && panel.hasAction(panelSlot, state.panelItems[panelSlot], state.page);
     if (!portalAction && !backAction && !panelAction) return;
     Player player = (Player) event.getWhoClicked();
     Bukkit.getScheduler().runTask(plugin, () -> {
@@ -224,9 +227,8 @@ final class UkrywanieEkwipunku implements Listener {
           && player.getOpenInventory().getTopInventory() == state.view.getTopInventory()
           && (portalAction || backAction || panelAction)) {
         if (portalAction) plugin.portal.panelClick(player, panelSlot);
-        else if (backAction)
-          back(player, state.backTarget);
-        else panel.run(player, panelSlot);
+        else if (backAction) back(player, state.backTarget);
+        else panel.run(player, panelSlot, state.page);
       }
     });
   }
@@ -254,23 +256,42 @@ final class UkrywanieEkwipunku implements Listener {
     if (state == null || state.view != event.getView()
         || !views.remove(player.getUniqueId(), state)) return;
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-      if (!player.isOnline()) return;
-      if (!views.containsKey(player.getUniqueId())) {
-        history.remove(player.getUniqueId());
-        currentPage.remove(player.getUniqueId());
-        returning.remove(player.getUniqueId());
-      }
+      // 3 ticki: DeluxeMenus otwiera nastepna strone z opoznieniem; historia ginie dopiero,
+      // gdy po zamknieciu nie otworzyla sie zadna strona Ksiegi.
+      if (!player.isOnline() || views.containsKey(player.getUniqueId())) return;
+      history.remove(player.getUniqueId());
+      currentPage.remove(player.getUniqueId());
+      returning.remove(player.getUniqueId());
       player.updateInventory();
       plugin.refreshLater(player);
     }, 3L);
   }
 
-  private static void addBack(ItemStack[] items, String target) {
-    ItemStack back = new ItemStack(Material.GOLD_NUGGET);
-    ItemMeta meta = back.getItemMeta();
-    meta.setItemModel(NamespacedKey.fromString("nexo:mmo_icon_blank"));
+  /** Glif tytulu wystepujacy najwczesniej decyduje o identyfikatorze strony. */
+  private String pageId(String plain, String legacy) {
+    String id = earliestId(plain);
+    return id != null ? id : java.util.Objects.requireNonNullElse(earliestId(legacy), "");
+  }
+
+  private String earliestId(String title) {
+    int earliest = Integer.MAX_VALUE;
+    String found = null;
+    for (Map.Entry<String, String> candidate : pageIds.entrySet()) {
+      int at = title.indexOf(candidate.getKey());
+      if (at >= 0 && at < earliest) {
+        earliest = at;
+        found = candidate.getValue();
+      }
+    }
+    return found;
+  }
+
+  /**
+   * Przycisk Wroc (sloty 3-5) rysuje PanelDolny w stylu MENU; tu tylko podpis mowi,
+   * dokad naprawde wroci gracz, gdy historia prowadzi gdzie indziej niz menu glowne.
+   */
+  private static void relabelBack(ItemStack[] items, String target) {
     String label = switch (target) {
-      case "hub_glowne" -> "menu głównego";
       case "dziennik_przygod" -> "Dziennika";
       case "chowance_menazeria" -> "Menażerii";
       case "hub_postac" -> "menu Postaci";
@@ -278,12 +299,20 @@ final class UkrywanieEkwipunku implements Listener {
       case "hub_ekonomia" -> "menu Handlu";
       case "hub_spolecznosc" -> "menu Społeczności";
       case "profession_main" -> "menu Profesji";
-      default -> "poprzedniej strony";
+      case "portal" -> "Portalu";
+      default -> null; // hub_glowne i reszta: podpis z konfiguracji (podstrony.wstecz-nazwa)
     };
-    meta.displayName(Component.text("Wróć do " + label, NamedTextColor.GOLD));
-    meta.lore(List.of(Component.text("Kliknij, aby wrócić.", NamedTextColor.GRAY)));
-    back.setItemMeta(meta);
-    for (int slot = 3; slot <= 5; slot++) items[slot] = back;
+    if (label == null) return;
+    for (int slot = 3; slot <= 5; slot++) {
+      ItemStack item = items[slot];
+      if (Przedmioty.empty(item)) continue;
+      ItemStack copy = item.clone();
+      ItemMeta meta = copy.getItemMeta();
+      meta.displayName(Component.text("Wróć do " + label, NamedTextColor.YELLOW)
+          .decoration(TextDecoration.ITALIC, false));
+      copy.setItemMeta(meta);
+      items[slot] = copy;
+    }
   }
 
   private void back(Player player, String target) {
@@ -319,20 +348,19 @@ final class UkrywanieEkwipunku implements Listener {
   private static final class BookView {
     final InventoryView view;
     final int topSize;
-    final boolean panelEnabled;
+    final PanelDolny.Page page;
     final boolean portalEnabled;
-    final boolean subpageEnabled;
+    /** Menu otwierane przyciskiem Wroc; null poza podstronami. */
     final String backTarget;
     volatile ItemStack[] panelItems;
     volatile int windowId = -1;
 
-    BookView(InventoryView view, boolean panelEnabled, boolean portalEnabled,
-        boolean subpageEnabled, String backTarget, ItemStack[] panelItems) {
+    BookView(InventoryView view, PanelDolny.Page page, boolean portalEnabled,
+        String backTarget, ItemStack[] panelItems) {
       this.view = view;
       topSize = view.getTopInventory().getSize();
-      this.panelEnabled = panelEnabled;
+      this.page = page;
       this.portalEnabled = portalEnabled;
-      this.subpageEnabled = subpageEnabled;
       this.backTarget = backTarget;
       this.panelItems = panelItems;
     }

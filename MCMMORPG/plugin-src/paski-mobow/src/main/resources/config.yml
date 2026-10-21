@@ -1,0 +1,67 @@
+# PaskiMobow - pasek nad glowa moba: ikona rzadkosci + nazwa w jej kolorze, plakietka poziomu, HP z "duchem"
+# obrazen, ikony statusow. Pasek istnieje tylko u klientow (pakietowy text_display) - serwer
+# go nie widzi, wiec nie psuje teleportow MM ani AI. Po zmianie: /paskimobow przeladuj.
+
+wyglad:
+  skala: 0.7              # 1.0 = rozmiar vanillowej nazwy (pasek ~1,6 bloku szerokosci)
+  wysokosc: 0.3           # blokow nad punktem pasazera moba (zwykle czubek glowy)
+  zasieg: 24              # z ilu blokow widac pasek
+  liczby-hp: true         # "36/40" na pasku
+  kolor-hp: stopnie       # stopnie (>60% zielony, >35% zolty, >15% pomaranczowy, reszta czerwony) | czerwony
+  poza-walka: nazwa       # wszystko | nazwa (statusy + nazwa + poziom) | nic
+  walka-sekundy: 8        # czas od ostatnich obrazen; celowanie w gracza tez oznacza walke
+  ukryj-nazwe-vanilla: true   # bez tego nazwa MM wisi drugi raz po najechaniu celownikiem
+
+modelengine:
+  wlaczone: true          # moby z aktywnym modelem podlegaja tym samym regułom frakcji/wzorcow
+  tryb: pasazer           # pasazer (SET_PASSENGERS) | podazanie (teleport wyswietlacza co 2 ticki)
+
+rzadkosci:              # kolejnosc = drabina; ikona: brak | klejnot | korona | gwiazda
+  pospolity:  {nazwa: Pospolity,  kolor: '#d8d8d8', ikona: brak}
+  magiczny:   {nazwa: Magiczny,   kolor: '#6aa8ff', ikona: klejnot}
+  rzadki:     {nazwa: Rzadki,     kolor: '#ffd84a', ikona: klejnot}
+  epicki:     {nazwa: Epicki,     kolor: '#d27bff', ikona: korona, pogrubiona: true}
+  legendarny: {nazwa: Legendarny, kolor: '#ff9a2e', ikona: gwiazda, pogrubiona: true}
+
+# Ktore moby MythicMobs dostaja pasek: frakcja z listy ALBO id pasujace do `wzorce`; `pomin` wygrywa.
+# Bez paska: NPC (brak frakcji), wezly zasobow, pieczecie, slugi Akolity i Chowance (maja wlasny HUD areny),
+# moby z modelem ModelEngine przechodza te same reguly, gdy modelengine.wlaczone=true.
+frakcje: [bestie, nieumarli, humanoidy, magiczne, gaj]
+wzorce: ['WIEZA_P01_*']
+pomin: []
+pomin-swiaty: [creator_limbo]   # swiaty bez paskow (sala kreatora postaci)
+vanilla-potwory: true     # zwykle wrogie moby bez MM (nazwa z jezyka klienta); niesmiertelne/bez AI pomijane
+vanilla-poziom: 1
+poziom-z-mm: true         # do poziomu z tabeli dochodzi (poziom MM - 1), gdy spawner MM nada wyzszy
+
+# Poziom i rzadkosc wg id MM (glob *, pierwszy pasujacy wpis wygrywa). Brak wpisu = automat:
+# BossBar -> legendarny, pogrubiona nazwa (&l / <bold>) -> rzadki, reszta pospolity; poziom 1.
+moby:
+  # Loch 001 Kwietna Polana (Akt 1, start)
+  L001_PNIACZEK: {poziom: 1, rzadkosc: pospolity}
+  L001_WILCZE: {poziom: 1, rzadkosc: pospolity}
+  L001_WILK*: {poziom: 2, rzadkosc: pospolity}
+  L001_WILCZYCA: {poziom: 2, rzadkosc: magiczny}
+  L001_KORZENIAK: {poziom: 2, rzadkosc: magiczny}
+  L001_STARY_KORZEN: {poziom: 3, rzadkosc: legendarny}
+  # Wieza, pietro 1
+  WIEZA_P01_WILK: {poziom: 2, rzadkosc: pospolity}
+  WIEZA_P01_ALPHA: {poziom: 3, rzadkosc: epicki}
+  # Bestiariusz: T1 pospolite, T2 srednie bestie, T3 elity, T4 bossy
+  BEAST_FOREST_HARE: {poziom: 1, rzadkosc: pospolity}
+  BEAST_MOOR_SHEEP: {poziom: 1, rzadkosc: pospolity}
+  BEAST_WILD_BOAR: {poziom: 2, rzadkosc: pospolity}
+  UNDEAD_GRAVE_CRAWLER: {poziom: 3, rzadkosc: pospolity}
+  UNDEAD_BONE_ARCHER: {poziom: 3, rzadkosc: pospolity}
+  BEAST_CAVE_SPIDERLING: {poziom: 2, rzadkosc: pospolity}
+  BEAST_DIRE_WOLF: {poziom: 4, rzadkosc: magiczny}
+  BEAST_MARSH_LURKER: {poziom: 5, rzadkosc: magiczny}
+  UNDEAD_PLAGUE_BEARER: {poziom: 5, rzadkosc: magiczny}
+  BEAST_FROST_BEAR: {poziom: 6, rzadkosc: magiczny}
+  UNDEAD_CRYPT_GUARD: {poziom: 6, rzadkosc: magiczny}
+  BEAST_VENOM_STALKER: {poziom: 5, rzadkosc: magiczny}
+  HUMANOID_ROAD_BANDIT: {poziom: 6, rzadkosc: magiczny}
+  MAGIC_WANDERING_WISP: {poziom: 4, rzadkosc: magiczny}
+  ELITE_TROLL_MAULER: {poziom: 9, rzadkosc: rzadki}
+  ELITE_*: {poziom: 8, rzadkosc: rzadki}
+  BOSS_*: {poziom: 10, rzadkosc: legendarny}

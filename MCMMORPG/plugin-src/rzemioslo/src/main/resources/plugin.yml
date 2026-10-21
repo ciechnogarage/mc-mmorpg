@@ -1,0 +1,16 @@
+name: Rzemioslo
+main: pl.mcmmorpg.rzemioslo.Rzemioslo
+version: '${version}'
+api-version: '1.21'
+description: Profesje v2 - zbieranie z narzedziem (wezly Nexo, lowiska, oprawianie), buffy, XP rzemiosla, perki, zlecenia.
+depend: [MMOCore, MythicLib, MMOItems, Nexo, MythicMobs, packetevents]
+softdepend: [PlaceholderAPI, Vault, Mistrzostwa]
+commands:
+  rzemioslo:
+    description: Profesje v2 (menu wola z konsoli; admin).
+    usage: /rzemioslo <reload|info|zlecenie|start|przeprawa|narzedzie|wezel>
+    permission: rzemioslo.admin
+permissions:
+  rzemioslo.admin:
+    description: Komendy /rzemioslo (menu wywoluja je z konsoli).
+    default: op

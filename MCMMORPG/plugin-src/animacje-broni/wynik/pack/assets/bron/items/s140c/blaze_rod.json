@@ -1,0 +1,77 @@
+{
+ "model": {
+  "type": "minecraft:condition",
+  "property": "minecraft:using_item",
+  "on_true": {
+   "type": "minecraft:range_dispatch",
+   "property": "minecraft:use_duration",
+   "scale": 0.05,
+   "entries": [
+    {
+     "threshold": 0.4,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140c1/blaze_rod"
+     }
+    },
+    {
+     "threshold": 0.8,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140c2/blaze_rod"
+     }
+    },
+    {
+     "threshold": 1.2,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140c3/blaze_rod"
+     }
+    }
+   ],
+   "fallback": {
+    "type": "minecraft:model",
+    "model": "bron:item/s140c/blaze_rod"
+   }
+  },
+  "on_false": {
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s140kl/blaze_rod"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140kp/blaze_rod"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s140kt/blaze_rod"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s140/blaze_rod"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s140/blaze_rod"
+   }
+  }
+ }
+}

@@ -1,0 +1,113 @@
+name: 'Warsztat: Zielarza'
+max-queue-size: 10
+command:
+  name: 'warsztat-herbalism'
+  description: 'Otwiera warsztat profesji herbalism'
+  usage: '/warsztat-herbalism'
+  permission: ''
+  aliases: []
+recipes:
+  'prof_dried_herbs':
+    output: 'mmoitems{type=MATERIAL,id=PROF_DRIED_HERBS}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=herbalism,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MEDICINAL_HERB,amount=3}'
+    triggers:
+      - 'exp{profession=herbalism,amount=12}'
+  'prof_herbal_extract':
+    output: 'mmoitems{type=MATERIAL,id=PROF_HERBAL_EXTRACT}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=herbalism,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MOONLEAF,amount=3}'
+    triggers:
+      - 'exp{profession=herbalism,amount=28}'
+  'prof_alchemical_crop':
+    output: 'mmoitems{type=MATERIAL,id=PROF_ALCHEMICAL_CROP}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=herbalism,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_REDCAP,amount=4}'
+    triggers:
+      - 'exp{profession=herbalism,amount=55}'
+  'prof_refined_moonleaf':
+    output: 'mmoitems{type=MATERIAL,id=PROF_MOONLEAF}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=herbalism,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MEDICINAL_HERB,amount=5}'
+    triggers:
+      - 'exp{profession=herbalism,amount=95}'
+  'prof_rich_extract':
+    output: 'mmoitems{type=MATERIAL,id=PROF_HERBAL_EXTRACT,amount=2}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=herbalism,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_DRIED_HERBS,amount=2}'
+      - 'mmoitem{type=MATERIAL,id=PROF_REDCAP,amount=2}'
+    triggers:
+      - 'exp{profession=herbalism,amount=120}'
+gui-layout:
+  name: '&f䬨䬩䬪䬫'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [46]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [47]
+
+    queued_item:
+      slots: [36, 37, 38, 39]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: AIR
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26]

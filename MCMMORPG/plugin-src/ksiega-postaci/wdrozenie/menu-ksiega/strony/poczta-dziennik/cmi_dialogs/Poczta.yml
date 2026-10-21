@@ -1,0 +1,54 @@
+# Dwa kroki, SPRAWDZONE w grze na klonie 03.10: odbiorca idzie przez meta DeluxeMenus (pocztado, bez podkreslnika),
+# bo [zmienna] z "cmi dialogs X [k]:v" NIE jest podmieniana w Commands pola, tylko w opisie. delay! potrzebne, inaczej zamkniecie po Save zjada nowe okno.
+poczta_napisz:
+  Enabled: true
+  Label: '{#yellow}Napisz list — odbiorca'
+  Description:
+    Width: 350
+    Lines:
+    - '{#gray}Podaj dokładny nick odbiorcy.'
+  Inputs:
+  - Type: Text
+    Label: '{#white}Odbiorca (nick)'
+    Width: 300
+    MaxLength: 16
+    MaxLines: 1
+    Commands:
+    - 'asConsole! dm meta [playerName] set pocztado STRING [value]'
+    - 'delay! 0.25'
+    - 'asConsole! cmi dialogs poczta_tresc [playerName] [odbiorca]:[value]'
+  Buttons:
+    Columns: 1
+    List:
+    - Label: '{#green}Dalej'
+      Width: 150
+      Save: true
+  Close:
+    Label: '{#red}Anuluj'
+    Width: 150
+
+poczta_tresc:
+  Enabled: true
+  Label: '{#yellow}Napisz list — treść'
+  Description:
+    Width: 350
+    Lines:
+    - '{#gray}Odbiorca: {#white}[odbiorca]'
+    - '{#gray}List zostanie podpisany Twoim nickiem.'
+  Inputs:
+  - Type: Text
+    Label: '{#white}Treść'
+    Width: 350
+    MaxLength: 256
+    MaxLines: 1
+    Commands:
+    - 'asPlayer! cmi mail send %deluxemenus_meta_pocztado_STRING_brak% [value]'
+  Buttons:
+    Columns: 1
+    List:
+    - Label: '{#green}Wyślij'
+      Width: 150
+      Save: true
+  Close:
+    Label: '{#red}Anuluj'
+    Width: 150

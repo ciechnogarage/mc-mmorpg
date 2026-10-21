@@ -1,0 +1,1008 @@
+# WYGENEROWANE przez tools/mapa/okno.py (repo MC) - poprawiac TAM.
+# Mapa swiata pod Q (Przygoda -> Mapa swiata). Tlo = glif Nexo 'mapa_swiata_bg' (obraz terenu).
+menu_title: '&f䆀&fMapa świata'
+size: 54
+update_interval: 1
+items:
+  'z_0':
+    material: PAPER
+    item_model: 'minecraft:campfire'
+    slot: 30
+    priority: 2
+    display_name: '&f&lStart'
+    lore:
+      - ''
+      - '&7Tu zaczyna każda nowa postać.'
+      - ''
+      - '&8x 149, z 197'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_1':
+    material: PAPER
+    item_model: 'nexo:chw_gromowladca'
+    slot: 3
+    priority: 2
+    display_name: '&c&lGromowładca'
+    lore:
+      - ''
+      - '&7Legendarny Chowaniec.'
+      - '&7Walka dla zaprawionych drużyn.'
+      - ''
+      - '&8x 28, z -188'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_2':
+    material: PAPER
+    item_model: 'nexo:chw_zelaznorog'
+    slot: 42
+    priority: 2
+    display_name: '&c&lŻelaznoróg'
+    lore:
+      - ''
+      - '&7Legendarny Chowaniec.'
+      - '&7Walka dla zaprawionych drużyn.'
+      - ''
+      - '&8x 580, z 364'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_3':
+    material: PAPER
+    item_model: 'nexo:chw_pedzik'
+    slot: 1
+    priority: 2
+    display_name: '&a&lSzepczący Gaj'
+    lore:
+      - ''
+      - '&7Tu żyje: Pędzik.'
+      - ''
+      - '&8x -236, z -284'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_4':
+    material: PAPER
+    item_model: 'nexo:chw_wilkor'
+    slot: 19
+    priority: 2
+    display_name: '&a&lWilcze Ostępy'
+    lore:
+      - ''
+      - '&7Tu żyje: Wilkor.'
+      - ''
+      - '&8x -188, z 28'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_5':
+    material: PAPER
+    item_model: 'nexo:chw_promiennik'
+    slot: 28
+    priority: 2
+    display_name: '&a&lŚwietlisty Gąszcz'
+    lore:
+      - ''
+      - '&7Tu żyje: Promiennik.'
+      - ''
+      - '&8x -188, z 196'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_6':
+    material: PAPER
+    item_model: 'nexo:chw_wichrzan'
+    slot: 21
+    priority: 2
+    display_name: '&a&lWietrzne Turnie'
+    lore:
+      - ''
+      - '&7Tu żyje: Wichrzan.'
+      - ''
+      - '&8x 28, z 28'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_7':
+    material: PAPER
+    item_model: 'nexo:chw_muszlik'
+    slot: 40
+    priority: 2
+    display_name: '&a&lPerłowa Zatoka'
+    lore:
+      - ''
+      - '&7Tu żyje: Muszlik.'
+      - ''
+      - '&8x 196, z 364'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_8':
+    material: PAPER
+    item_model: 'nexo:chw_glazogrzbiet'
+    slot: 50
+    priority: 2
+    display_name: '&a&lRdzawe Wąwozy'
+    lore:
+      - ''
+      - '&7Tu żyje: Głazogrzbiet.'
+      - ''
+      - '&8x 412, z 460'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'z_9':
+    material: PAPER
+    item_model: 'nexo:chw_iskrzyk'
+    slot: 49
+    priority: 2
+    display_name: '&a&lWygasłe Palenisko'
+    lore:
+      - ''
+      - '&7Tu żyje: Iskrzyk.'
+      - ''
+      - '&8x 292, z 580'
+    item_flags: [HIDE_ATTRIBUTES, HIDE_ADDITIONAL_TOOLTIP]
+  'wstecz':
+    material: PAPER
+    item_model: 'nexo:hub_wstecz'
+    slot: 45
+    priority: 0
+    display_name: '&7Wstecz'
+    left_click_commands:
+      - '[openguimenu] hub_przygoda'
+  'zamknij':
+    material: PAPER
+    item_model: 'nexo:hub_zamknij'
+    slot: 53
+    priority: 0
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+  'gracz_0':
+    material: COMPASS
+    slot: 0
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-422'}
+        x2: {type: '<', input: '%player_x%', output: '-274'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_1':
+    material: COMPASS
+    slot: 1
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-274'}
+        x2: {type: '<', input: '%player_x%', output: '-126'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_2':
+    material: COMPASS
+    slot: 2
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-126'}
+        x2: {type: '<', input: '%player_x%', output: '22'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_3':
+    material: COMPASS
+    slot: 3
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '22'}
+        x2: {type: '<', input: '%player_x%', output: '170'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_4':
+    material: COMPASS
+    slot: 4
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '170'}
+        x2: {type: '<', input: '%player_x%', output: '318'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_5':
+    material: COMPASS
+    slot: 5
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '318'}
+        x2: {type: '<', input: '%player_x%', output: '466'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_6':
+    material: COMPASS
+    slot: 6
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '466'}
+        x2: {type: '<', input: '%player_x%', output: '614'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_7':
+    material: COMPASS
+    slot: 7
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '614'}
+        x2: {type: '<', input: '%player_x%', output: '762'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_8':
+    material: COMPASS
+    slot: 8
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '762'}
+        x2: {type: '<', input: '%player_x%', output: '910'}
+        z1: {type: '>=', input: '%player_z%', output: '-300'}
+        z2: {type: '<', input: '%player_z%', output: '-152'}
+  'gracz_9':
+    material: COMPASS
+    slot: 9
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-422'}
+        x2: {type: '<', input: '%player_x%', output: '-274'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_10':
+    material: COMPASS
+    slot: 10
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-274'}
+        x2: {type: '<', input: '%player_x%', output: '-126'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_11':
+    material: COMPASS
+    slot: 11
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-126'}
+        x2: {type: '<', input: '%player_x%', output: '22'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_12':
+    material: COMPASS
+    slot: 12
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '22'}
+        x2: {type: '<', input: '%player_x%', output: '170'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_13':
+    material: COMPASS
+    slot: 13
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '170'}
+        x2: {type: '<', input: '%player_x%', output: '318'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_14':
+    material: COMPASS
+    slot: 14
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '318'}
+        x2: {type: '<', input: '%player_x%', output: '466'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_15':
+    material: COMPASS
+    slot: 15
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '466'}
+        x2: {type: '<', input: '%player_x%', output: '614'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_16':
+    material: COMPASS
+    slot: 16
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '614'}
+        x2: {type: '<', input: '%player_x%', output: '762'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_17':
+    material: COMPASS
+    slot: 17
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '762'}
+        x2: {type: '<', input: '%player_x%', output: '910'}
+        z1: {type: '>=', input: '%player_z%', output: '-152'}
+        z2: {type: '<', input: '%player_z%', output: '-4'}
+  'gracz_18':
+    material: COMPASS
+    slot: 18
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-422'}
+        x2: {type: '<', input: '%player_x%', output: '-274'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_19':
+    material: COMPASS
+    slot: 19
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-274'}
+        x2: {type: '<', input: '%player_x%', output: '-126'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_20':
+    material: COMPASS
+    slot: 20
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-126'}
+        x2: {type: '<', input: '%player_x%', output: '22'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_21':
+    material: COMPASS
+    slot: 21
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '22'}
+        x2: {type: '<', input: '%player_x%', output: '170'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_22':
+    material: COMPASS
+    slot: 22
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '170'}
+        x2: {type: '<', input: '%player_x%', output: '318'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_23':
+    material: COMPASS
+    slot: 23
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '318'}
+        x2: {type: '<', input: '%player_x%', output: '466'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_24':
+    material: COMPASS
+    slot: 24
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '466'}
+        x2: {type: '<', input: '%player_x%', output: '614'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_25':
+    material: COMPASS
+    slot: 25
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '614'}
+        x2: {type: '<', input: '%player_x%', output: '762'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_26':
+    material: COMPASS
+    slot: 26
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '762'}
+        x2: {type: '<', input: '%player_x%', output: '910'}
+        z1: {type: '>=', input: '%player_z%', output: '-4'}
+        z2: {type: '<', input: '%player_z%', output: '144'}
+  'gracz_27':
+    material: COMPASS
+    slot: 27
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-422'}
+        x2: {type: '<', input: '%player_x%', output: '-274'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_28':
+    material: COMPASS
+    slot: 28
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-274'}
+        x2: {type: '<', input: '%player_x%', output: '-126'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_29':
+    material: COMPASS
+    slot: 29
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-126'}
+        x2: {type: '<', input: '%player_x%', output: '22'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_30':
+    material: COMPASS
+    slot: 30
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '22'}
+        x2: {type: '<', input: '%player_x%', output: '170'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_31':
+    material: COMPASS
+    slot: 31
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '170'}
+        x2: {type: '<', input: '%player_x%', output: '318'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_32':
+    material: COMPASS
+    slot: 32
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '318'}
+        x2: {type: '<', input: '%player_x%', output: '466'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_33':
+    material: COMPASS
+    slot: 33
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '466'}
+        x2: {type: '<', input: '%player_x%', output: '614'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_34':
+    material: COMPASS
+    slot: 34
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '614'}
+        x2: {type: '<', input: '%player_x%', output: '762'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_35':
+    material: COMPASS
+    slot: 35
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '762'}
+        x2: {type: '<', input: '%player_x%', output: '910'}
+        z1: {type: '>=', input: '%player_z%', output: '144'}
+        z2: {type: '<', input: '%player_z%', output: '292'}
+  'gracz_36':
+    material: COMPASS
+    slot: 36
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-422'}
+        x2: {type: '<', input: '%player_x%', output: '-274'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_37':
+    material: COMPASS
+    slot: 37
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-274'}
+        x2: {type: '<', input: '%player_x%', output: '-126'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_38':
+    material: COMPASS
+    slot: 38
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-126'}
+        x2: {type: '<', input: '%player_x%', output: '22'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_39':
+    material: COMPASS
+    slot: 39
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '22'}
+        x2: {type: '<', input: '%player_x%', output: '170'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_40':
+    material: COMPASS
+    slot: 40
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '170'}
+        x2: {type: '<', input: '%player_x%', output: '318'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_41':
+    material: COMPASS
+    slot: 41
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '318'}
+        x2: {type: '<', input: '%player_x%', output: '466'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_42':
+    material: COMPASS
+    slot: 42
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '466'}
+        x2: {type: '<', input: '%player_x%', output: '614'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_43':
+    material: COMPASS
+    slot: 43
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '614'}
+        x2: {type: '<', input: '%player_x%', output: '762'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_44':
+    material: COMPASS
+    slot: 44
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '762'}
+        x2: {type: '<', input: '%player_x%', output: '910'}
+        z1: {type: '>=', input: '%player_z%', output: '292'}
+        z2: {type: '<', input: '%player_z%', output: '440'}
+  'gracz_45':
+    material: COMPASS
+    slot: 45
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-422'}
+        x2: {type: '<', input: '%player_x%', output: '-274'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_46':
+    material: COMPASS
+    slot: 46
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-274'}
+        x2: {type: '<', input: '%player_x%', output: '-126'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_47':
+    material: COMPASS
+    slot: 47
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '-126'}
+        x2: {type: '<', input: '%player_x%', output: '22'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_48':
+    material: COMPASS
+    slot: 48
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '22'}
+        x2: {type: '<', input: '%player_x%', output: '170'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_49':
+    material: COMPASS
+    slot: 49
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '170'}
+        x2: {type: '<', input: '%player_x%', output: '318'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_50':
+    material: COMPASS
+    slot: 50
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '318'}
+        x2: {type: '<', input: '%player_x%', output: '466'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_51':
+    material: COMPASS
+    slot: 51
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '466'}
+        x2: {type: '<', input: '%player_x%', output: '614'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_52':
+    material: COMPASS
+    slot: 52
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '614'}
+        x2: {type: '<', input: '%player_x%', output: '762'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}
+  'gracz_53':
+    material: COMPASS
+    slot: 53
+    priority: 1
+    update: true
+    display_name: '&e&lTu jesteś'
+    lore:
+      - ''
+      - '&7x %player_x%, z %player_z%'
+    view_requirement:
+      requirements:
+        swiat: {type: string equals, input: '%player_world%', output: 'world'}
+        x1: {type: '>=', input: '%player_x%', output: '762'}
+        x2: {type: '<', input: '%player_x%', output: '910'}
+        z1: {type: '>=', input: '%player_z%', output: '440'}
+        z2: {type: '<', input: '%player_z%', output: '588'}

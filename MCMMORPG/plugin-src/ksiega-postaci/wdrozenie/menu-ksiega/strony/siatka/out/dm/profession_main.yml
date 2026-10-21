@@ -1,0 +1,241 @@
+# Wygenerowane przez strony/siatka/siatka.py; źródłowe pozycje zachowane.
+menu_title: '&f䩈䩉䩊䩋'
+open_command: profesje
+size: 54
+update_interval: 20
+items:
+
+  'mining':
+    material: IRON_PICKAXE
+    slot: 23
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lGórnictwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_mining%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_mining%%'
+      - ''
+      - '&7Rozbijaj złoża rud, srebra'
+      - '&7i kryształów w świecie.'
+      - '&7Skąd XP: &fzłoża (zwykły kamień nie daje nic)'
+      - ''
+      - '&eKliknij: warsztat Górnika'
+    left_click_commands:
+      - '[console] mi stations open profession-mining %player_name%'
+
+  'woodworking':
+    material: IRON_AXE
+    slot: 24
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lDrwalstwo i stolarstwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_woodworking%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_woodworking%%'
+      - ''
+      - '&7Ścinaj dęby, świerki i brzozy'
+      - '&7— kilka cięć na drzewo.'
+      - '&7Skąd XP: &fdrzewa-węzły, warsztat'
+      - ''
+      - '&eKliknij: warsztat Drwala-stolarza'
+    left_click_commands:
+      - '[console] mi stations open profession-woodworking %player_name%'
+
+  'herbalism':
+    material: FERN
+    slot: 25
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lZielarstwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_herbalism%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_herbalism%%'
+      - ''
+      - '&7Zrywaj kępy ziół, liście'
+      - '&7księżycowe i kręgi grzybów.'
+      - '&7Skąd XP: &fkępy ziół i grzybów, warsztat'
+      - ''
+      - '&eKliknij: warsztat Zielarza'
+    left_click_commands:
+      - '[console] mi stations open profession-herbalism %player_name%'
+
+  'farming':
+    material: WHEAT
+    slot: 32
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lFarmerstwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_farming%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_farming%%'
+      - ''
+      - '&7Zbieraj plon z poletek'
+      - '&7— długo, ale dużo naraz.'
+      - '&7Skąd XP: &fpoletka, warsztat'
+      - ''
+      - '&eKliknij: warsztat Farmera'
+    left_click_commands:
+      - '[console] mi stations open profession-farming %player_name%'
+
+  'fishing':
+    material: FISHING_ROD
+    slot: 33
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lRybactwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_fishing%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_fishing%%'
+      - ''
+      - '&7Łów wędką: z wody wyciągasz'
+      - '&7surowce, perły i esencje.'
+      - '&7Skąd XP: &fłowienie, warsztat'
+      - ''
+      - '&eKliknij: warsztat Rybaka'
+    left_click_commands:
+      - '[console] mi stations open profession-fishing %player_name%'
+
+  'hunting':
+    material: BOW
+    slot: 34
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lMyślistwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_hunting%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_hunting%%'
+      - ''
+      - '&7Poluj na bestie regionu.'
+      - '&7Zwykłe potwory nie dają XP.'
+      - '&7Skąd XP: &fbestie regionu, warsztat'
+      - ''
+      - '&eKliknij: warsztat Myśliwego'
+    left_click_commands:
+      - '[console] mi stations open profession-hunting %player_name%'
+
+  'jewelcrafting':
+    material: AMETHYST_SHARD
+    slot: 41
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lJubilerstwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_jewelcrafting%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_jewelcrafting%%'
+      - ''
+      - '&7Wyłuskuj kryształy z druz'
+      - '&7— druza może pęknąć.'
+      - '&7Skąd XP: &fdruzy, warsztat'
+      - ''
+      - '&eKliknij: warsztat Jubilera'
+    left_click_commands:
+      - '[console] mi stations open profession-jewelcrafting %player_name%'
+
+  'smithing':
+    material: ANVIL
+    slot: 37
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lKowalstwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_smithing%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_smithing%%'
+      - ''
+      - '&7Kuj metal w warsztacie.'
+      - '&7Skąd XP: &fwarsztat, naprawa na kowadle'
+      - ''
+      - '&eKliknij: warsztat Kowala'
+    left_click_commands:
+      - '[console] mi stations open profession-smithing %player_name%'
+
+  'tailoring':
+    material: LEATHER_CHESTPLATE
+    slot: 38
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lKrawiectwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_tailoring%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_tailoring%%'
+      - ''
+      - '&7Szyj tkaniny, skóry'
+      - '&7i odzież w warsztacie.'
+      - '&7Skąd XP: &ftylko warsztat'
+      - ''
+      - '&eKliknij: warsztat Krawca'
+    left_click_commands:
+      - '[console] mi stations open profession-tailoring %player_name%'
+
+  'alchemy':
+    material: BREWING_STAND
+    slot: 46
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lAlchemia'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_alchemy%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_alchemy%%'
+      - ''
+      - '&7Warz mikstury i wywary.'
+      - '&7Skąd XP: &fwarsztat, warzenie na statywie'
+      - ''
+      - '&eKliknij: warsztat Alchemika'
+    left_click_commands:
+      - '[console] mi stations open profession-alchemy %player_name%'
+
+  'enchanting':
+    material: ENCHANTING_TABLE
+    slot: 47
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lZaklinanie'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_enchanting%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_enchanting%%'
+      - ''
+      - '&7Twórz runy i zaklinaj.'
+      - '&7Skąd XP: &fwarsztat, stół zaklęć'
+      - ''
+      - '&eKliknij: warsztat Zaklinacza'
+    left_click_commands:
+      - '[console] mi stations open profession-enchanting %player_name%'
+
+  'cooking':
+    material: SMOKER
+    slot: 42
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lGotowanie'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_cooking%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_cooking%%'
+      - ''
+      - '&7Zbieraj dzikie przyprawy,'
+      - '&7gotuj racje i dania.'
+      - '&7Skąd XP: &fkępy przypraw, warsztat'
+      - ''
+      - '&eKliknij: warsztat Kucharza'
+    left_click_commands:
+      - '[console] mi stations open profession-cooking %player_name%'
+
+  'building':
+    material: BRICKS
+    slot: 43
+    item_flags: [HIDE_ATTRIBUTES]
+    display_name: '&6&lBudownictwo'
+    lore:
+      - '&7Poziom: &f%mmocore_profession_building%&7/50'
+      - '&7Postęp poziomu: &f%mmocore_profession_percent_building%%'
+      - ''
+      - '&7Kop glinę, twórz materiały'
+      - '&7budowlane w warsztacie.'
+      - '&7Skąd XP: &fzłoża gliny, warsztat'
+      - ''
+      - '&eKliknij: warsztat Budowniczego'
+    left_click_commands:
+      - '[console] mi stations open profession-building %player_name%'
+
+  'zasady':
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    display_name: '&e&lJak działają profesje'
+    lore:
+      - ''
+      - '&7Każda postać rozwija &fwszystkie 13&7 profesji.'
+      - '&7Nic nie wybierasz i nic nie tracisz —'
+      - '&7postęp każdej profesji zostaje na zawsze.'
+      - ''
+      - '&7Zbieractwo daje surowce, warsztaty je'
+      - '&7przerabiają. Wiele receptur potrzebuje'
+      - '&7surowców z &fkilku&7 profesji naraz.'
+      - ''
+      - '&7Nowe receptury: poziom &f15&7, &f30&7 i &f45&7.'
+      - '&7Najwyższy poziom: &f50&7.'
