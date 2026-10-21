@@ -1,5 +1,8 @@
 world: arena
 pvp-tylko-w-ringu: true
+# Poza swiatem areny: "domyslnie" = wg pvp-tylko-w-ringu; "strefy" = PvP tylko gdy region WorldGuard
+# w miejscu ofiary I atakujacego ma jawnie `pvp: allow` (brak flagi = zakaz). Ring bez zmian.
+pvp-poza-ringiem: domyslnie
 sonda-pvp: false
 entry-worlds: [world, stolica_odnowa, stolica]
 fallback-worlds: [stolica_odnowa, stolica, world]
