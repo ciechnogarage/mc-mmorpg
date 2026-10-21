@@ -34,19 +34,26 @@ final class ZZielnik {
         d.put("dziurawiec_widziany", "Krzaczek o żółtych gwiazdkach kwiatów, na słonecznej łące.");
         d.put("dziurawiec_zbior", "Ścięty pęd daje ziele lecznicze.");
         d.put("dziurawiec_wyborny", "Najlepsze ziele: ścinać tuż pod kwiatami, póki kwitnie.");
-        d.put("dziurawiec_chory", "Pędów z ciemnymi plamkami nie brać: ziele z nich do niczego.");
+        d.put("dziurawiec_chory", "Pędów z ciemnymi plamkami nie brać: ziele z nich do niczego. Plamki widać dopiero z bliska.");
+        d.put("dziurawiec_faza", "Kępa kwitnie kilka dni: najpierw pąki, potem pełnia, potem przekwita. Ziele bierze się w pełni.");
+        d.put("dziurawiec_chciwosc", "Rada zielarzy: kto zetnie więcej niż pół kępy, ten długo czeka, a odrastają cienkie pędy.");
+        d.put("dziurawiec_rosa", "Przesąd zielarzy: ziele cięte w deszczu albo rannej rosie pleśnieje w suszarni.");
         STRONY.put("dziurawiec", new Strona("Dziurawiec", d));
         Map<String, String> k = new java.util.LinkedHashMap<>();
         k.put("kozlek_widziany", "Wysoka łodyga z różowym baldachem, przy wodzie.");
         k.put("kozlek_zbior", "Cenny jest korzeń. Siedzi głęboko.");
         k.put("kozlek_wyborny", "Korzeń z korzonkami: najpierw rozluźnić ziemię tam, gdzie biegną. Ciągnąć zrywami: napiąć, popuścić, gdy trzeszczy, napiąć znowu.");
         k.put("kozlek_urwany", "Ciągnięty na siłę urywa się w ziemi.");
+        k.put("kozlek_sonda", "Ziemię najpierw opukać łopatką: nad korzonkiem odgłos głuchy, nad pustym miejscem sypki. Kopać tylko tam, gdzie głucho.");
+        k.put("kozlek_woda", "Przy wodzie korzeń idzie łatwo, ale jest kruchy. W suchej ziemi trzyma mocno.");
         STRONY.put("kozlek", new Strona("Kozłek", k));
         Map<String, String> s = new java.util.LinkedHashMap<>();
         s.put("szerokolistna_widziana", "W cieniu drzew rosną rośliny o szerokich liściach. Z daleka wszystkie wyglądają tak samo.");
         s.put("czosnek_zapach", "Czosnek niedźwiedzi: roztarty liść pachnie czosnkiem. Każdy liść na własnym ogonku.");
         s.put("konwalia_zapach", "Konwalia: roztarty liść nie pachnie, gorzki sok. Liście wyrastają z jednej pochwy. Trująca.");
         s.put("czosnek_wyborny", "Liście czosnku najlepsze młode, zanim zakwitnie.");
+        s.put("czosnek_rozcieranie", "Rada zielarzy: kto każdy liść rozciera, ten gniecie zbiór. Pewny czosnek bierze się od razu.");
+        s.put("konwalia_skaza", "Konwalia wmieszana w czosnek: skup nie weźmie partii, a wyrób z niej szkodzi. Przebierz liście w suszarni.");
         STRONY.put("szerokolistna", new Strona("Rośliny szerokolistne", s));
     }
 
@@ -88,11 +95,38 @@ final class ZZielnik {
     private Set<String> dla(UUID u) {
         return odkrycia.computeIfAbsent(u, k -> {
             Set<String> s = new LinkedHashSet<>();
+            Map<String, Integer> l = new HashMap<>();
             File f = new File(katalog, k + ".yml");
-            if (f.exists()) s.addAll(YamlConfiguration.loadConfiguration(f).getStringList("odkrycia"));
+            if (f.exists()) {
+                YamlConfiguration y = YamlConfiguration.loadConfiguration(f);
+                s.addAll(y.getStringList("odkrycia"));
+                var sek = y.getConfigurationSection("liczniki");
+                if (sek != null) for (String x : sek.getKeys(false)) l.put(x, sek.getInt(x));
+            }
+            liczniki.put(k, l);
             return s;
         });
     }
+
+    /** Ukryte liczniki postaci (wprawa, rady, skaza partii): zielnik ich nie pokazuje. */
+    private final Map<UUID, Map<String, Integer>> liczniki = new HashMap<>();
+
+    private Map<String, Integer> lic(UUID u) { dla(u); return liczniki.computeIfAbsent(u, k -> new HashMap<>()); }
+
+    int licznik(Player p, String k) { return lic(Zlecenia.profil(p)).getOrDefault(k, 0); }
+
+    /** Dodaje d (moze byc ujemne, dol 0) i zwraca nowa wartosc; zapis od razu, gdy zapisz=true (skaza, wprawa). */
+    int dolicz(Player p, String k, int d, boolean zapisz) {
+        UUID u = Zlecenia.profil(p);
+        Map<String, Integer> m = lic(u);
+        int v = Math.max(0, m.getOrDefault(k, 0) + d);
+        if (v == 0) m.remove(k); else m.put(k, v);
+        if (zapisz) zapisz(u);
+        return v;
+    }
+
+    /** Rada po ruchu: tylko 3 pierwsze razy na postac i rodzaj. */
+    boolean rada3(Player p, String rodzaj) { return dolicz(p, "_r_" + rodzaj, 1, false) <= 3; }
 
     void zapisz(UUID u) {
         Set<String> s = odkrycia.get(u);
@@ -100,6 +134,8 @@ final class ZZielnik {
         katalog.mkdirs();
         YamlConfiguration y = new YamlConfiguration();
         y.set("odkrycia", new ArrayList<>(s));
+        Map<String, Integer> l = liczniki.get(u);
+        if (l != null) for (Map.Entry<String, Integer> e : l.entrySet()) y.set("liczniki." + e.getKey(), e.getValue());
         try { y.save(new File(katalog, u + ".yml")); } catch (IOException e) { plugin.getLogger().warning("zielnik: " + e); }
     }
 

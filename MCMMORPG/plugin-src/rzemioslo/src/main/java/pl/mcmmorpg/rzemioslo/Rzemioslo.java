@@ -89,6 +89,7 @@ public final class Rzemioslo extends JavaPlugin implements Listener {
         pm.registerEvents(new Stacje(this), this);
         zielarz = new Zielarz(this);
         pm.registerEvents(zielarz, this);
+        pm.registerEvents(new ZSkaza(this), this);
         pm.registerEvents(this, this);
         Komenda k = new Komenda(this);
         getCommand("rzemioslo").setExecutor(k);

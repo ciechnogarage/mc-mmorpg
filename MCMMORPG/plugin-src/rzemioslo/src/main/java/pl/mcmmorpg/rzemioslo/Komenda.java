@@ -159,6 +159,11 @@ final class Komenda implements TabExecutor {
                 Block b = p.getWorld().getBlockAt(Integer.parseInt(a[2]), Integer.parseInt(a[3]), Integer.parseInt(a[4]));
                 s.sendMessage("[Rzemioslo] " + plugin.zielarz().startTest(p, b));
             }
+            case "skaza" -> {              // skaza <gracz> <wyrobId> <n> — test: n skazonych sztuk wyrobu (kara konwalii bez stolu)
+                Player p = a.length > 3 ? Bukkit.getPlayerExact(a[1]) : null;
+                if (p == null) return true;
+                s.sendMessage("[Rzemioslo] _skazone_" + a[2] + "=" + plugin.zielarz().zielnik.dolicz(p, "_skazone_" + a[2], Integer.parseInt(a[3]), true));
+            }
             case "karty" -> {              // karty przedmiot|blok — test wygladu kart zblizenia
                 ZRoslina.JAKO_PRZEDMIOT = a.length < 2 || a[1].equalsIgnoreCase("przedmiot");
                 s.sendMessage("karty jako przedmiot=" + ZRoslina.JAKO_PRZEDMIOT);
@@ -168,9 +173,19 @@ final class Komenda implements TabExecutor {
                 if (p == null) return true;
                 s.sendMessage(plugin.zielarz().celuj(p, a[2], Integer.parseInt(a[3]), a.length > 4 ? Double.parseDouble(a[4]) : 0.5));
             }
-            case "okaz" -> {               // okaz <gracz> — test: czesci okazu i ich cechy
+            case "okaz" -> {               // okaz <gracz> [pelny] — test: to, co gracz widzi; "pelny" = takze cechy ukryte
                 Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
-                if (p != null) s.sendMessage(plugin.zielarz().opis(p));
+                if (p != null) s.sendMessage(a.length > 2 && a[2].equals("pelny") ? plugin.zielarz().opisPelny(p) : plugin.zielarz().opis(p));
+            }
+            case "pomiar" -> {             // pomiar on|off|ppm — test: linie [pomiar] po kazdym zbiorze, histogram odstepow PPM
+                String w = a.length > 1 ? a[1] : "ppm";
+                if (w.equals("on")) { Zielarz.pomiar = true; java.util.Arrays.fill(Zielarz.ODSTEPY_PPM, 0); }
+                else if (w.equals("off")) Zielarz.pomiar = false;
+                s.sendMessage("pomiar=" + Zielarz.pomiar + " odstepyPPM(t:n)=" + Zielarz.histogramPpm());
+            }
+            case "odrost" -> {             // odrost <gracz> — test: kepy gracza odrastaja od razu (pomiar wielu kep); chciwosc/slabosc zostaja
+                Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
+                if (p != null) s.sendMessage("odrost: " + plugin.zielarz().odrostTeraz(p) + " kep");
             }
             case "zielnik" -> {            // zielnik <gracz> — okno zielnika (menu Q wola z konsoli)
                 Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : (s instanceof Player pp ? pp : null);

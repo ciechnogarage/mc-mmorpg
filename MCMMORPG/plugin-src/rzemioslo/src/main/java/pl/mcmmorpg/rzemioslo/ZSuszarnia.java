@@ -46,13 +46,16 @@ final class ZSuszarnia implements Listener {
     /** Co z czego powstaje przy suszeniu. */
     static final Map<String, String> WYNIK = Map.of(
             "PROF_MEDICINAL_HERB", "PROF_DRIED_HERBS",
-            "PROF_KORZEN_KOZLKA", "PROF_SUSZONY_KORZEN_KOZLKA");
+            "PROF_MEDICINAL_HERB_WYBORNE", "PROF_DRIED_HERBS",
+            "PROF_KORZEN_KOZLKA", "PROF_SUSZONY_KORZEN_KOZLKA",
+            "PROF_KORZEN_KOZLKA_WYBORNE", "PROF_SUSZONY_KORZEN_KOZLKA");
 
     static final class Pek {
         String id;
         int ilosc, klasa;
         long start;
         int probki, slonce, deszcz;
+        int mokre;                   // sztuki zebrane mokre (deszcz/rosa) — przesad zielarzy: plesnieja
         java.util.UUID wlasciciel;   // null = stary wpis, zdejmie kazdy
         boolean zielarza;            // ze zbioru zielarza (ma jakosc); stare ziola z wezlow nie daja XP za suszenie
         ItemDisplay widok;
@@ -95,7 +98,8 @@ final class ZSuszarnia implements Listener {
         Block b = e.getClickedBlock();
         ItemStack reka = p.getInventory().getItemInMainHand();
         String id = Przedmioty.id(reka);
-        if ("PROF_SZEROKIE_LISCIE".equals(id)) { przebierz(p, reka); return; }
+        if ("PROF_SZEROKIE_LISCIE".equals(id)) { przebierz(p, reka); return; }   // stare liscie sprzed v7 (partia w PDC)
+        if ("PROF_WILD_SPICE".equals(id) || "PROF_WILD_SPICE_WYBORNE".equals(id)) { przebierzCzosnek(p, reka, id); return; }
         if (id != null && WYNIK.containsKey(id)) { powies(p, b, l, reka, id); return; }
         zdejmij(p, b, l);
     }
@@ -109,9 +113,14 @@ final class ZSuszarnia implements Listener {
         l.add(k);   // tymczasowo (wycofywane przy odmowie)
         k.id = id;
         k.ilosc = Math.min(MAX_W_PEKU, reka.getAmount());
-        k.klasa = kl == null ? 1 : kl;
-        k.zielarza = kl != null;
-        if (k.klasa == 0) { l.remove(k); plugin.pasek(p, "§fSłabe ziele nie wyschnie na nic. §7Do suszenia tylko dobre i wyborne."); return; }
+        // jakosc wedlug ID (v7: wyborne to osobny przedmiot); stare sztuki z PDC jakosci: 2 = wyborne, 0 = slabe (4:1)
+        k.klasa = id.endsWith("_WYBORNE") ? 2 : kl == null ? 1 : Math.max(0, Math.min(2, kl));
+        k.zielarza = true;
+        if (id.startsWith("PROF_MEDICINAL_HERB")) {
+            var zn = plugin.zielarz().zielnik;
+            k.mokre = Math.min(k.ilosc, zn.licznik(p, "_mokre_ziele"));
+            if (k.mokre > 0) zn.dolicz(p, "_mokre_ziele", -k.mokre, true);
+        }
         k.start = System.currentTimeMillis();
         k.wlasciciel = Zlecenia.profil(p);   // per postac, nie per konto
         if (reka.getAmount() > k.ilosc) reka.setAmount(reka.getAmount() - k.ilosc);
@@ -137,7 +146,14 @@ final class ZSuszarnia implements Listener {
             String uw = null;
             // plesn stopniowo: kazda mokra probka psuje ~12% peczka (wczesniej jedna kropla = 60% na caly stos)
             int plesn = (int) Math.round(k.ilosc * Math.min(0.8, 0.12 * k.deszcz));
-            if (plesn > 0) { daj(p, "PROF_SPLESNIALE_ZIELE", plesn, 0); opis.add("§c" + plesn + "× spleśniałe (zmokło)"); k.ilosc -= plesn; if (k.ilosc <= 0) continue; }
+            // ziele zebrane mokre: wiekszosc tych sztuk plesnieje (przesad zielarzy, w grze tak dziala)
+            int zMokrego = Math.min(k.ilosc - plesn, (int) Math.round(k.mokre * 0.6));
+            if (plesn + zMokrego > 0) {
+                daj(p, "PROF_SPLESNIALE_ZIELE", plesn + zMokrego, 0);
+                opis.add("§c" + (plesn + zMokrego) + "× spleśniałe (" + (plesn > 0 && zMokrego > 0 ? "zmokło i zebrane mokre" : plesn > 0 ? "zmokło" : "zebrane mokre") + ")");
+                k.ilosc -= plesn + zMokrego;
+                if (k.ilosc <= 0) continue;
+            }
             if (k.probki > 0 && k.slonce * 2 > k.probki) { klasa = Math.max(0, klasa - 1); uw = "wypalone słońcem"; }
             // jakosc = wydajnosc: wyborne 2:1, dobre 3:1, slabe (np. wypalone) 4:1 — suszenie oplaca sie pod receptury, nie pod skup
             // zaokraglenie losowe: srednio dokladnie przelicznik, bez zysku z rozwieszania pojedynczo
@@ -172,11 +188,26 @@ final class ZSuszarnia implements Listener {
         p.getInventory().setItemInMainHand(null);
         boolean czosnek = "czosnek".equals(gat);
         // rozcieranie kazdego liscia po fakcie gniecie je: jakosc o klase nizej (rozpoznanie przy zbiorze jest lepsze)
-        daj(p, czosnek ? "PROF_WILD_SPICE" : "PROF_LISC_KONWALII", n, Math.max(0, (kl == null ? 1 : kl) - 1));
+        daj(p, czosnek ? "PROF_WILD_SPICE" : "PROF_LISC_KONWALII", n, Math.max(0, (kl == null ? 1 : kl) - 1));   // bez wybornych: pogniecione
         p.playSound(p.getLocation(), Sound.ITEM_BRUSH_BRUSHING_GENERIC, SoundCategory.PLAYERS, 0.7f, 1.2f);
         p.sendMessage(czosnek ? "§2Rozcierasz liście po kolei: pachną czosnkiem. §7(" + n + "× czosnek niedźwiedzi, pogniecione)"
                 : "§6Rozcierasz liście po kolei: bez zapachu, gorzkie. To konwalia. §7(" + n + "× liść konwalii, trujący)");
         plugin.zielarz().zielnik.odkryj(p, czosnek ? "czosnek_zapach" : "konwalia_zapach");
+    }
+
+    /** Przebieranie czosnku po fakcie: rozcierasz kazdy lisc. Konwalie (skaza z pomylki przy zbiorze) odchodza,
+     *  a wyborne przestaja nimi byc (pogniecione) — pewnosc kosztuje premie, tak samo jak przy zbiorze. */
+    private void przebierzCzosnek(Player p, ItemStack reka, String id) {
+        var zn = plugin.zielarz().zielnik;
+        int n = reka.getAmount();
+        int skaz = Math.min(n, zn.licznik(p, "_skaza"));
+        p.getInventory().setItemInMainHand(null);
+        if (n - skaz > 0) daj(p, "PROF_WILD_SPICE", n - skaz, 1);
+        if (skaz > 0) { daj(p, "PROF_LISC_KONWALII", skaz, 1); zn.dolicz(p, "_skaza", -skaz, true); zn.odkryj(p, "konwalia_skaza"); }
+        p.playSound(p.getLocation(), Sound.ITEM_BRUSH_BRUSHING_GENERIC, SoundCategory.PLAYERS, 0.7f, 1.2f);
+        p.sendMessage(skaz > 0
+                ? "§6Przebierasz liście: " + skaz + " bez zapachu, gorzkie. To konwalia! §7(" + (n - skaz) + "× czosnek niedźwiedzi, " + skaz + "× liść konwalii)"
+                : "§2Przebierasz liście: wszystkie pachną czosnkiem. §7(" + n + "× czosnek niedźwiedzi" + (id.endsWith("_WYBORNE") ? ", pogniecione: już nie wyborne)" : ")"));
     }
 
     private String nazwa(String id) {
@@ -192,14 +223,7 @@ final class ZSuszarnia implements Listener {
     private void daj(Player p, String id, int ile, int klasa) {
         ItemStack it = plugin.przedmioty().zrob(id, ile);
         if (it == null) { plugin.getLogger().warning("Suszarnia: brak przedmiotu " + id); return; }
-        ItemMeta m = it.getItemMeta();
-        if (!id.equals("PROF_SPLESNIALE_ZIELE")) {
-            List<Component> lore = m.lore() == null ? new ArrayList<>() : new ArrayList<>(m.lore());
-            lore.add(Component.text(klasa == 2 ? "§6Jakość: wyborna" : klasa == 1 ? "§aJakość: dobra" : "§cJakość: słaba"));
-            m.lore(lore);
-            m.getPersistentDataContainer().set(kJakosc, PersistentDataType.INTEGER, klasa);
-        }
-        it.setItemMeta(m);
+        // v7: wynik bez PDC i dopisku jakosci — zwykly przedmiot stackuje sie z kazdym innym (jakosc poszla w wydajnosc)
         for (ItemStack nad : p.getInventory().addItem(it).values()) p.getWorld().dropItemNaturally(p.getLocation(), nad);
     }
 
@@ -300,7 +324,7 @@ final class ZSuszarnia implements Listener {
                 ConfigurationSection x = ps.getConfigurationSection(i);
                 Pek p = new Pek();
                 p.id = x.getString("id"); p.ilosc = x.getInt("ilosc"); p.klasa = x.getInt("klasa"); p.start = x.getLong("start");
-                p.probki = x.getInt("probki"); p.slonce = x.getInt("slonce"); p.deszcz = x.getInt("deszcz"); p.zielarza = x.getBoolean("zielarza", true);
+                p.probki = x.getInt("probki"); p.slonce = x.getInt("slonce"); p.deszcz = x.getInt("deszcz"); p.mokre = x.getInt("mokre"); p.zielarza = x.getBoolean("zielarza", true);
                 String w = x.getString("wlasciciel"); if (w != null) p.wlasciciel = java.util.UUID.fromString(w);
                 l.add(p);
             }
@@ -317,7 +341,7 @@ final class ZSuszarnia implements Listener {
             for (Pek p : e.getValue()) {
                 String b = k + "." + (i++);
                 y.set(b + ".id", p.id); y.set(b + ".ilosc", p.ilosc); y.set(b + ".klasa", p.klasa); y.set(b + ".start", p.start);
-                y.set(b + ".probki", p.probki); y.set(b + ".slonce", p.slonce); y.set(b + ".deszcz", p.deszcz); y.set(b + ".zielarza", p.zielarza);
+                y.set(b + ".probki", p.probki); y.set(b + ".slonce", p.slonce); y.set(b + ".deszcz", p.deszcz); y.set(b + ".mokre", p.mokre); y.set(b + ".zielarza", p.zielarza);
                 if (p.wlasciciel != null) y.set(b + ".wlasciciel", p.wlasciciel.toString());
             }
         }

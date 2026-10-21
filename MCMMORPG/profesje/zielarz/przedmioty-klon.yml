@@ -43,4 +43,37 @@ PROF_SPLESNIALE_ZIELE:
     - '&7Zmokło na suszarni. Do wyrzucenia.'
     disable-crafting: true
     disable-smelting: true
+# v7: jakosc w dwoch stosach — wyborne to osobny przedmiot (zwykly = dobra jakosc, bez PDC)
+PROF_MEDICINAL_HERB_WYBORNE:
+  base:
+    model: nexo:prof_medicinal_herb
+    material: DANDELION
+    name: '&6Zioło lecznicze (wyborne)'
+    lore:
+    - '&7Surowiec: &fZielarstwo'
+    - '&6Wyborne: &7ścięte czysto, pod samymi kwiatami.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_WILD_SPICE_WYBORNE:
+  base:
+    model: nexo:prof_wild_spice
+    material: FERN
+    name: '&6Dzikie ziele przyprawowe (wyborne)'
+    lore:
+    - '&7Surowiec: &fZielarstwo'
+    - '&6Wyborne: &7młode liście, nie gniecione.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_KORZEN_KOZLKA_WYBORNE:
+  base:
+    material: HANGING_ROOTS
+    name: '&6Korzeń kozłka (wyborny)'
+    lore:
+    - '&7Surowiec: &fZielarstwo'
+    - '&6Wyborny: &7cały, z korzonkami.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
 # <<< ZIELARZ wycinek
