@@ -1,6 +1,7 @@
 package pl.mcmmorpg.ksiega;
 
 import io.lumine.mythic.lib.api.item.NBTItem;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import java.io.IOException;
@@ -67,6 +68,7 @@ final class Bron implements Listener {
   private final NamespacedKey consumableKey;
   // Nośnik zaklęcia (i pusta dłoń) z pluginu Zaklecia - nie broń, ale ma zostać w ręce.
   private final NamespacedKey spellKey = new NamespacedKey("zaklecia", "nosnik");
+  private final NamespacedKey leftSpellKey = new NamespacedKey("zaklecia", "lewa_zaklec");
   // Nakładki z wdrozenie/klon/generuj.py: klon widać w slocie, w dłoni nic (właściciel 03.10).
   private final Set<String> hiddenModels = new HashSet<>();
 
@@ -106,6 +108,17 @@ final class Bron implements Listener {
   }
 
   private boolean spell(ItemStack item) { return Przedmioty.marked(item, spellKey); }
+
+  private void putAwayLeftSpell(Player player) {
+    PlayerInventory inventory = player.getInventory();
+    if (!spell(inventory.getItemInOffHand())) return;
+    inventory.setItemInOffHand(null);
+    player.getPersistentDataContainer().remove(leftSpellKey);
+    String message = "§7Odłożono zaklęcie z lewej ręki";
+    try { MMOPlayerData.get(player).getActionBar().show(40, 40L, message); }
+    catch (Throwable ignored) { player.sendActionBar(net.kyori.adventure.text.Component.text(
+        "Odłożono zaklęcie z lewej ręki")); }
+  }
 
   private boolean consumableSlot(int slot) { return slot >= HEALTH && slot <= UTILITY; }
 
@@ -203,14 +216,17 @@ final class Bron implements Listener {
     return -2;
   }
 
-  private void moveSpareLeft(PlayerInventory inventory, int destination) {
-    if (destination == LEFT) inventory.setItem(LEFT, real(inventory, LEFT_SPARE));
+  private void moveSpareLeft(Player player, PlayerInventory inventory, int destination) {
+    if (destination == LEFT) {
+      putAwayLeftSpell(player);
+      inventory.setItem(LEFT, real(inventory, LEFT_SPARE));
+    }
     else if (destination == 14) store(inventory, real(inventory, LEFT_SPARE), 14, 35);
     if (destination >= 0) inventory.setItem(LEFT_SPARE, null);
   }
 
   private boolean validPair(Player player, ItemStack right, ItemStack left) {
-    if (!weapon(right) || !weapon(left)) {
+    if (!(weapon(right) || spell(right)) || !(weapon(left) || spell(left))) {
       plugin.message(player, "zly-typ"); return false;
     }
     if (!rightAllowed(right)) { plugin.message(player, "tylko-lewa"); return false; }
@@ -403,7 +419,7 @@ final class Bron implements Listener {
 
   private ItemStack real(PlayerInventory inventory, int slot) {
     ItemStack item = inventory.getItem(slot);
-    return virtual(item) ? null : item;
+    return virtual(item) || slot == LEFT && spell(item) ? null : item;
   }
 
   private boolean allowed(Player player, int slot, ItemStack incoming) {
@@ -424,7 +440,8 @@ final class Bron implements Listener {
     PlayerInventory inventory = player.getInventory();
     ItemStack old = real(inventory, slot);
     if (slot == RIGHT) moveLeft(inventory, leftDestination(player, cursor, false));
-    if (slot == RIGHT_SPARE) moveSpareLeft(inventory, spareLeftDestination(player, cursor));
+    if (slot == RIGHT_SPARE) moveSpareLeft(player, inventory, spareLeftDestination(player, cursor));
+    if (slot == LEFT && weapon(cursor) && !Przedmioty.empty(cursor)) putAwayLeftSpell(player);
     inventory.setItem(slot, Przedmioty.empty(cursor) ? null : cursor);
     player.setItemOnCursor(Przedmioty.empty(old) ? null : old);
     refreshLater(player);
@@ -469,7 +486,8 @@ final class Bron implements Listener {
       plugin.message(player, "zly-typ"); return;
     }
     if (slot == RIGHT) moveLeft(inventory, leftDestination(player, incoming, false));
-    if (slot == RIGHT_SPARE) moveSpareLeft(inventory, spareLeftDestination(player, incoming));
+    if (slot == RIGHT_SPARE) moveSpareLeft(player, inventory, spareLeftDestination(player, incoming));
+    if (slot == LEFT && !Przedmioty.empty(incoming)) putAwayLeftSpell(player);
     inventory.setItem(slot, incoming);
     inventory.setItem(button, outgoing);
     refreshLater(player);
@@ -513,7 +531,7 @@ final class Bron implements Listener {
       else { plugin.message(player, "brak-miejsca-lewej"); return; }
     }
     moveLeft(inventory, destination);
-    moveSpareLeft(inventory, spareDestination);
+    moveSpareLeft(player, inventory, spareDestination);
     inventory.setItem(RIGHT, incoming);
     inventory.setItem(RIGHT_SPARE, outgoing);
     refreshLater(player);
@@ -527,10 +545,13 @@ final class Bron implements Listener {
     }
     ItemStack active = real(inventory, LEFT), spare = real(inventory, LEFT_SPARE);
     if (!weapon(active) || !weapon(spare)) { plugin.message(player, "zly-typ"); return; }
+    boolean spellLeft = spell(inventory.getItemInOffHand());
+    if (spellLeft && Przedmioty.empty(spare)) return;
+    if (!Przedmioty.empty(spare)) putAwayLeftSpell(player);
     inventory.setItem(LEFT, spare);
     inventory.setItem(LEFT_SPARE, active);
     refreshLater(player);
-    swapMessage(player, "Lewa ręka", spare);
+    if (!spellLeft) swapMessage(player, "Lewa ręka", spare);
   }
 
   // Zwraca resztę stosu. Źródło jest aktualizowane dopiero po zapisie celu.
@@ -603,6 +624,7 @@ final class Bron implements Listener {
               store(inventory, left, 14, 35);
             }
           } else event.setCurrentItem(null);
+          if (target == LEFT) putAwayLeftSpell(player);
           inventory.setItem(target, source);
           refreshLater(player);
           return;
@@ -650,6 +672,17 @@ final class Bron implements Listener {
       event.setCancelled(true); refreshLater(player); return;
     }
     if (!player.isSneaking()) {
+      if (spell(inventory.getItemInOffHand()) && inventory.getHeldItemSlot() == RIGHT
+          && !Przedmioty.empty(inventory.getItem(RIGHT))
+          && weapon(inventory.getItem(RIGHT)) && leftAllowed(inventory.getItem(RIGHT))) {
+        event.setCancelled(true);
+        ItemStack incoming = inventory.getItem(RIGHT);
+        putAwayLeftSpell(player);
+        inventory.setItem(RIGHT, null);
+        inventory.setItemInOffHand(incoming);
+        refreshLater(player);
+        return;
+      }
       if (inventory.getHeldItemSlot() != RIGHT
           || !validPair(player, event.getMainHandItem(), event.getOffHandItem())) {
         event.setCancelled(true); return;
@@ -665,6 +698,10 @@ final class Bron implements Listener {
     ItemStack spareRight = real(inventory, RIGHT_SPARE), spareLeft = real(inventory, LEFT_SPARE);
     if (!validPair(player, activeRight, activeLeft)
         || !validPair(player, spareRight, spareLeft)) return;
+    if (spell(inventory.getItemInOffHand())) {
+      if (Przedmioty.empty(spareLeft)) return;
+      putAwayLeftSpell(player);
+    }
     inventory.setItem(RIGHT, spareRight);
     inventory.setItem(LEFT, spareLeft);
     inventory.setItem(RIGHT_SPARE, activeRight);
@@ -794,7 +831,8 @@ final class Bron implements Listener {
               && event.getView().getType() == InventoryType.CRAFTING) return;
       if (virtual(inventory.getItemInOffHand())) return;
       if (!allowed(player, LEFT, current)) return;
-      ItemStack active = inventory.getItemInOffHand();
+      ItemStack active = real(inventory, LEFT);
+      if (!Przedmioty.empty(current)) putAwayLeftSpell(player);
       clicked.setItem(slot, active);
       inventory.setItemInOffHand(current);
       refreshLater(player);
