@@ -1,0 +1,16 @@
+# Swiat toru: pustka (VoidGen), bez mobow, pogody i cyklu dnia. Tor buduje plugin: `wyscigi zbuduj`.
+mv create wyscigi normal --generator VoidGen --world-type flat
+mv gamerule set minecraft:keep_inventory true wyscigi
+mv gamerule set minecraft:fall_damage false wyscigi
+mv gamerule set minecraft:pvp false wyscigi
+mv gamerule set minecraft:spawn_mobs false wyscigi
+mv gamerule set minecraft:spawn_monsters false wyscigi
+mv gamerule set minecraft:spawn_phantoms false wyscigi
+mv gamerule set minecraft:spawn_patrols false wyscigi
+mv gamerule set minecraft:spawn_wandering_traders false wyscigi
+mv gamerule set minecraft:spawn_wardens false wyscigi
+mv gamerule set minecraft:mob_griefing false wyscigi
+mv gamerule set minecraft:advance_time false wyscigi
+mv gamerule set minecraft:advance_weather false wyscigi
+mv gamerule set minecraft:show_death_messages false wyscigi
+mv gamerule set minecraft:spawn_chunk_radius 0 wyscigi
