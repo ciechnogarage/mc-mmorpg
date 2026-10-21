@@ -876,11 +876,11 @@ L002_NURT:
   - sound{s=entity.player.splash.high_speed;v=1.5;p=0.6} @PlayersInRadius{r=30}
   - particles{p=splash;a=80;hs=1.2;vs=1.5} @self
   - potion{type=INVISIBILITY;duration=45;level=0;hasParticles=false} @self
-  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> as @e[tag=l002_boss,distance=..3,limit=1] at @e[tag=l002_studnia,distance=..60,sort=random,limit=1] run tp @s ~ ~-4 ~"}
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> as @e[tag=l002_boss,distance=..3,limit=1] at @e[tag=l002_studnia,distance=..60,sort=random,limit=1] run minecraft:tp @s ~ ~-4 ~"}
   - delay 2
   - skill{s=L002_BABLE} @selflocation
   - delay 30
-  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> as @e[tag=l002_boss,distance=..3,limit=1] run tp @s ~ ~4 ~"}
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> as @e[tag=l002_boss,distance=..3,limit=1] run minecraft:tp @s ~ ~4 ~"}
   - command{c="effect clear <caster.uuid> minecraft:invisibility"}
   - sound{s=entity.generic.splash;v=2;p=0.5} @PlayersInRadius{r=30}
   - particles{p=splash;a=120;hs=2;vs=2;y=1} @self
@@ -993,7 +993,8 @@ os.makedirs(md)
 open(f"{md}/config.yml", "w").write(cfg)
 open(f"{md}/gamerules.yml", "w").write(GRL)
 open(f"{md}/functions.yml", "w").write(FUN)
-for d in ("region", "entities", "poi"):
+# bez entities/: przy wypieku odpadaja trzcina/grzyby/lilie -> 819 przedmiotow na ziemi w KAZDEJ instancji (21.10); moby rozstawiaja skille
+for d in ("region", "poi"):
     src = f"{KUZNIA}/{SWIAT}/{d}"
     if os.path.isdir(src):
         shutil.copytree(src, f"{md}/{d}")

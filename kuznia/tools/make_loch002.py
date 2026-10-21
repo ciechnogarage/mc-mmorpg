@@ -436,6 +436,12 @@ def przyroda():
     r = random.Random(7)
     r.shuffle(punkty)
     ile = 0
+    # dojscia do schodow basenow wolne od mangrowcow: korzenie zarastaly przejscie b1 (15,8) -> trasa, bot utknal (trasa.js, 21.10)
+    dojscia = []
+    for k, bok in (("b1", "wschod"), ("b2", "polnoc"), ("b3", "polnoc")):
+        x0, x1, z0, z1 = BASENY[k]
+        p = (x1 + 1, z0 + 1) if bok == "wschod" else (x0 + 1, z0 - 1)
+        dojscia.append([p, min(TRASA + [q for o in ODNOGI for q in o], key=lambda q: math.hypot(q[0] - p[0], q[1] - p[1]))])
     for (x, z) in punkty:
         c = W.kol[(x, z)]
         if c["typ"] not in ("lad", "woda") or c.get("plasko") or c["dtr"] < 5 or c["e"] < 6:
@@ -447,8 +453,13 @@ def przyroda():
         gesto = d_sek(x, z, "kokoniarnia") < 26
         if not gesto and _h(x, z, 13) > (0.8 if c["typ"] == "lad" else 0.6):
             continue
-        obiekt(r.choice(mangrowce), x, YW - 2, z, obrot=r.choice([0, 90, 180, 270]))
-        zajete.append((x, z)); ile += 1
+        sc, ob = r.choice(mangrowce), r.choice([0, 90, 180, 270])
+        zajete.append((x, z))
+        # pomijamy PO losowaniu: reszta rozstawienia zostaje jak byla (wczesniej przesuniecie wsadzilo drzewo na kladki)
+        if any(d_line((x, z), d) < 10 for d in dojscia):
+            continue
+        obiekt(sc, x, YW - 2, z, obrot=ob)
+        ile += 1
     # olbrzymie "ramie bagna" za Topiela - znak orientacyjny widoczny z calej mapy
     obiekt("structures/swampforearm2.iob", RAMIE[0], YW - 6, RAMIE[1], obrot=90)
     # martwe drzewa: wysepka (oslony przed lucznikiem) + rozrzucone

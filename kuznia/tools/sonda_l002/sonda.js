@@ -43,13 +43,17 @@ scenariusz('sonda-l002', async ({ w, polacz, rcon }) => {
   ok('tytul_loch002', await czeka(async () => tyt(/Loch 002/), 6000));
   await R.cmd(`effect give ${NICK} minecraft:resistance infinite 4 true`);
   await R.cmd(`effect give ${NICK} minecraft:regeneration infinite 3 true`);
-  // ---- 2. populacja
+  // MD czysci efekty po smierci -> ochrona odnawiana co 5 s (jak trasa.js)
+  const zegar = setInterval(async () => { try { await R.cmd(`effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`effect give ${NICK} minecraft:regeneration infinite 3 true`); } catch {} }, 5000);
+  // ---- 2. populacja (@e widzi tylko zaladowane chunki; klon ma view-distance 6 -> moby >96 bl. od wejscia niewidoczne; 140 chunkow < limit 256)
+  await R.cmd(`execute in minecraft:${inst} run forceload add -64 -112 95 111`);
   await sleep(2000);
   const pop = { endermite: await cnt('@e[type=minecraft:endermite,distance=..400]'), drowned: await cnt('@e[type=minecraft:drowned,distance=..400]'),
     bogged: await cnt('@e[type=minecraft:bogged,distance=..400]'), witch: await cnt('@e[type=minecraft:witch,distance=..400]'),
     spider: await cnt('@e[type=minecraft:spider,distance=..400]'), villager: await cnt('@e[type=minecraft:villager,distance=..400]'),
     frog: await cnt('@e[type=minecraft:frog,distance=..400]'), stand: await cnt('@e[type=minecraft:armor_stand,distance=..400]') };
   ok('populacja', pop.endermite >= 8 && pop.drowned >= 5 && pop.bogged >= 4 && pop.witch >= 2 && pop.spider >= 1 && pop.villager >= 1, JSON.stringify(pop));
+  await R.cmd(`execute in minecraft:${inst} run forceload remove all`);
   // ---- 3a. na ladzie (koniec pomostu, z dala od mobow) nie truje
   await tp(-55.5, 102, 102.5); await sleep(3000);
   const trujeLad = !!Object.values(bot.entity.effects || {}).find(e => bot.registry.effectsByName.poison && e.id === bot.registry.effectsByName.poison.id);
@@ -79,6 +83,8 @@ scenariusz('sonda-l002', async ({ w, polacz, rcon }) => {
   ok('sekret_wrak', await czeka(async () => tyt(/Wrak Rybak/), 5000));
   // ---- 7. sluza 2 + skrzynia
   await tp(-29.5, 102, -5.5); await sleep(1200); await tp(-35.5, 102, -4.5);
+  // Pijawki przy kolowrocie 2 zabijaly bota mimo resistance IV (3/4 przebiegow 21.10) -> smierc = brak korby; sonda mierzy mechanike, nie walke
+  await R.cmd(`execute in minecraft:${inst} positioned -35 102 -4 run minecraft:kill @e[type=minecraft:endermite,distance=..12]`);
   let k2 = await czeka(async () => !!blisko(/Kołowrót/, 5), 5000);
   if (k2) await klik(blisko(/Kołowrót/, 5));
   ok('sluza2_basen_osuszony', await czeka(() => blok(-52, 97, -10, 'minecraft:air'), 14000), `korba=${k2}`);
@@ -145,4 +151,5 @@ scenariusz('sonda-l002', async ({ w, polacz, rcon }) => {
   ok('wyjscie_po_finale', await czeka(async () => !(await R.cmd(`execute in minecraft:${inst} positioned 0 100 0 if entity @a[name=${NICK},distance=..2000]`)).includes('passed'), 30000));
   console.log('TYTULY', JSON.stringify(tytuly.slice(-30)));
   console.log('CZAT', JSON.stringify(czat.slice(-40)));
+  clearInterval(zegar);
 }, { limitMs: 420000 });

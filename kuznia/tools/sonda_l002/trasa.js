@@ -31,9 +31,11 @@ scenariusz('trasa-l002', async ({ w, polacz, rcon }) => {
   const idz = async (x, y, z, nazwa, r = 2, ms = 70000) => {
     const t0 = Date.now(); zdarz.length = 0;
     bot.pathfinder.setGoal(new goals.GoalNear(x, y, z, r));
-    while (Date.now() - t0 < ms && bot.entity.position.distanceTo({ x, y, z }) > r + 0.5) await sleep(250);
+    // odleglosc w poziomie: bot stoi blok nizej niz Y celu, 3D zawyzala odleglosc
+    const odl = () => { const p = bot.entity.position; return Math.hypot(p.x - x, p.z - z) + Math.max(0, Math.abs(p.y - y) - 2); };
+    while (Date.now() - t0 < ms && odl() > r + 1.5) await sleep(250);
     bot.pathfinder.setGoal(null); await sleep(300);
-    const d = bot.entity.position.distanceTo({ x, y, z });
+    const d = odl();
     const zd = [...new Set(zdarz)].slice(0, 4).join('; ');
     ok(`trasa_${nazwa}`, d <= r + 1.5, `odl=${d.toFixed(1)} t=${((Date.now() - t0) / 1000).toFixed(0)}s poz=${bot.entity.position.floored()} ${zd}`);
     return d <= r + 1.5;

@@ -547,12 +547,12 @@ SKILLS = f"""# Loch 001, fragment 1. Skille wolane przez funkcje MD (caster = pu
 {PID}_przybycie:
   Skills:
   # gamerules.yml nie jest stosowany do recznego szablonu (zmierzone) - reguly z konsoli na swiecie instancji
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule fall_damage false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule keep_inventory true"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule advance_time false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule advance_weather false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule mob_griefing false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run weather clear"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule fall_damage false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule keep_inventory true"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule advance_time false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule advance_weather false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule mob_griefing false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:weather clear"}}
   - setvariable{{var=world.l001_sekrety;val=0;type=INTEGER}} @self
   - setvariable{{var=world.l001_bl_kwiat;val=0;type=INTEGER}} @self
   - setvariable{{var=world.l001_bl_kora;val=0;type=INTEGER}} @self
@@ -593,7 +593,7 @@ SKILLS = f"""# Loch 001, fragment 1. Skille wolane przez funkcje MD (caster = pu
   - setvariable{{var=world.l001_kora_ok;val=0;type=INTEGER}} @self
   - setvariable{{var=world.l001_ocena;val=0;type=INTEGER}} @self
   # pora dnia TU, przed nastrojem: w przybyciu nadpisywala "Noc Swietlikow" (oba skille startuja w dowolnej kolejnosci)
-  - command{{c="execute in minecraft:<caster.l.w> run time set 12000"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 12000"}}
   - randomskill{{skills=L001_MOD_1,L001_MOD_2,L001_MOD_3,L001_MOD_4}} @self
   - randomskill{{skills=L001_ZAG_0,L001_ZAG_1}} @self
   - randomskill{{skills=L001_SKR_1,L001_SKR_2}} @self
@@ -940,20 +940,20 @@ L001_WATAHA_WEZWANIE:
 L001_BEBNY_SEKWENCJA:
   Skills:
   # --- swit: niebo przechodzi w poranek, zarodniki ustepuja platkom
-  - command{{c="execute in minecraft:<caster.l.w> run time set 22800"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 22800"}}
   - sound{{s=block.amethyst_block.resonate;v=2;p=0.7}} @PlayersInRadius{{r=120}}
   - delay 6
-  - command{{c="execute in minecraft:<caster.l.w> run time set 23400"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 23400"}}
   - delay 6
-  - command{{c="execute in minecraft:<caster.l.w> run time set 0"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 0"}}
   - remove @MobsInRadius{{r=200;types=L001_KLIMAT_LAS}}
   - summon{{m=L001_KLIMAT_SWIT;level=1;a=1;r=0}} @Location{{c=30,103,90}}
   - summon{{m=L001_KLIMAT_SWIT;level=1;a=1;r=0}} @Location{{c=44,103,78}}
   - summon{{m=L001_KLIMAT_SWIT;level=1;a=1;r=0}} @Location{{c=56,103,52}}
   - delay 6
-  - command{{c="execute in minecraft:<caster.l.w> run time set 600"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 600"}}
   - delay 6
-  - command{{c="execute in minecraft:<caster.l.w> run time set 1200"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 1200"}}
   - title{{title="<yellow>Świt nad Kwietną Polaną</yellow>";subtitle="<gray>Gaj odzyskał oddech</gray>";fadein=10;duration=50;fadeout=15}} @PlayersInRadius{{r=120}}
   - delay 70
   # --- cliffhanger: Plemie Ciernia
@@ -1077,7 +1077,7 @@ L001_DRUID_JUZ:
 loch_001_ziele_zbior:
   Skills:
   - variableadd{{var=world.l001_ziola;amount=1}} @self
-  - command{{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run kill @e[type=zombie,distance=..2.5,limit=1,sort=nearest]"}}
+  - command{{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:kill @e[type=zombie,distance=..2.5,limit=1,sort=nearest]"}}
   - sound{{s=block.azalea_leaves.break;v=1;p=1.2}} @PlayersInRadius{{r=4}}
   - particles{{p=happy_villager;a=12;hs=0.4;vs=0.4;y=1}} @self
   - message{{m="<green>Ziele Gaju</green> <gray>(1/2) - druid potrzebuje jeszcze jednej garści.</gray>"}} @PlayersInRadius{{r=4}} ?variableequals{{var=world.l001_ziola;value=1}}
@@ -1153,7 +1153,7 @@ SKILLS += """
 L001_MOD_1:
   Skills:
   - setvariable{var=world.l001_mod;val=1;type=INTEGER} @self
-  - command{c="execute in minecraft:<caster.l.w> run time set 18000"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:time set 18000"}
   - sound{s=entity.allay.ambient_without_item;v=1;p=0.6} @PlayersInWorld
   - message{m="<gold>✦ Dziś w Gaju</gold> <aqua>Noc Świetlików</aqua> <gray>- ciemno, las lśni. W finale nocny łup (Księżycowy liść).</gray>"} @PlayersInWorld
 L001_MOD_2:

@@ -23,7 +23,7 @@ def main():
     w = f"loch_002_{time.strftime('%H%M%S')}"        # swiezy prefiks: Iris cicho odmawia create na nazwie usunietego swiata
     rc(f"iris create {w} dimension=pustka_002 seed=2002")
     for _ in range(60):
-        if os.path.isdir(f"{D}/{w}") and w.lower() in rc("minecraft:execute in minecraft:" + w.lower() + " run time query gametime").lower() + w.lower():
+        if os.path.isdir(f"{D}/{w}") and w.lower() in rc("minecraft:execute in minecraft:" + w.lower() + " run minecraft:time query gametime").lower() + w.lower():
             break
         time.sleep(2)
     time.sleep(4)

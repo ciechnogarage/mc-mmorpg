@@ -11,7 +11,7 @@ docker run -d --name mc-client-wieza --network forge_default -u 1000:1000 \
   -v $K/instance:/mc/instance -v $K/captures:/review mc-client-test:latest bash /mc/launch.sh >/dev/null
 for i in $(seq 1 60); do docker logs --since "$S" mc-forge 2>&1 | grep -q 'KlientQA joined' && break; sleep 3; done
 sleep 3; r "op KlientQA" >/dev/null; r "gamemode adventure KlientQA" >/dev/null
-r "execute in minecraft:overworld run tp KlientQA 0 -59 0" >/dev/null; sleep 2
+r "execute in minecraft:overworld run minecraft:tp KlientQA 0 -59 0" >/dev/null; sleep 2
 r "md play $DUN KlientQA" >/dev/null
 for i in $(seq 1 30); do W=$(docker logs --since "$S" mc-forge 2>&1 | grep -oE "Loading world into memory ${DUN}_[0-9]+" | tail -1 | awk '{print $NF}'); [ -n "$W" ] && break; sleep 2; done
 echo "$W"

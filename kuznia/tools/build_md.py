@@ -203,12 +203,12 @@ SKILLS = f"""# Skille poziomu 1 wiezy - wolane przez funkcje MythicDungeons (cas
 {PID}_przybycie:
   Skills:
   # Reguly swiata z KONSOLI na swiecie instancji (<caster.l.w>) - gamerules.yml nie jest stosowany.
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule fall_damage false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule keep_inventory true"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule advance_time false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run gamerule advance_weather false"}}
-  - command{{c="execute in minecraft:<caster.l.w> run time set 1000"}}
-  - command{{c="execute in minecraft:<caster.l.w> run weather clear"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule fall_damage false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule keep_inventory true"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule advance_time false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:gamerule advance_weather false"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:time set 1000"}}
+  - command{{c="execute in minecraft:<caster.l.w> run minecraft:weather clear"}}
   - potion{{type=SLOW_FALLING;duration=80;level=0;hasParticles=false}} @PlayersInRadius{{r=30}}
   - sound{{s=block.amethyst_block.resonate;v=0.8;p=1.4}} @PlayersInRadius{{r=30}}
   # Kij tylko dla gracza z pusta reka (swieza postac); kto ma bron, nie dostaje smiecia.

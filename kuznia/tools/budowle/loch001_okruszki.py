@@ -61,7 +61,7 @@ def disp(x, z, item, rot, skala, tag, dy=0.0):
        f'transformation:{{left_rotation:{rot},right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[{skala}f,{skala}f,{skala}f]}}}}')
     return (x, g + 1, z)
 PLASKO = "[0.7071f,0f,0f,0.7071f]"; SKOS = "[0f,0f,0.3827f,0.9239f]"
-rc('run kill @e[tag=l001_okruszek]')
+rc('run minecraft:kill @e[tag=l001_okruszek]')
 OUT["okruszki"] = {
     "strzaly": [disp(16, 98, "arrow", SKOS, 1.0, "strzala", 0.3), disp(17, 99, "arrow", "[0.2706f,0.2706f,0.6533f,0.6533f]", 1.0, "strzala", 0.3),
                 disp(15, 96, "arrow", SKOS, 1.0, "strzala", 0.3)],
