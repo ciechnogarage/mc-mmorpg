@@ -1,0 +1,538 @@
+meta:
+  document: first-class-path-registry
+  domain: "00"
+  status: active
+  registry_revision: path-registry-r1
+  tier_0_norm_revision: tier0-r2
+  authority_decision_id: PRODUCT-GOV-010
+  effective_at: "2026-08-12"
+  approved_by: project_owner
+purpose: >-
+  Define the exact owner-approved set of first-class player paths for Tier 0,
+  distinguish them from candidates and supporting capabilities, and prevent
+  scope approval from being mistaken for runtime or release readiness.
+
+primary_segment:
+  segment_id: segment.self_directed_persistent_world_inhabitant
+  canonical_ref: docs/product/00-tier-0-product-identity.md
+
+status_vocabulary:
+  scope_status:
+    - approved_first_class
+    - candidate
+    - supporting
+  delivery_status:
+    - cannot_judge
+    - blocked
+    - runtime_partial
+    - runtime_verified
+    - release_ready
+
+claim_rules:
+  - A path is a durable player fantasy with its own entry, mastery horizon, lasting accomplishment, and ecosystem role; a feature, mode, recipe, organization, or menu is not automatically a path.
+  - Scope approval proves only that the path belongs to the product promise. It does not prove design completeness, runtime behaviour, player value, balance, operability, or release readiness.
+  - Missing or incomplete delivery evidence yields cannot_judge, never PASS.
+  - The unqualified claim that Tier 0 path scope is delivered requires all thirteen approved first-class paths to be release_ready against the same declared release envelope.
+  - A bounded pilot, alpha, or release may cover fewer paths only when it names the included path_ids and required surfaces explicitly and does not claim full Tier 0 coverage.
+  - A family cannot inherit a positive delivery status from only one child. Every child path retains an independent delivery status.
+  - A candidate cannot become first-class without a new explicit Domain 00 decision and registry revision.
+  - Supporting capabilities are required where referenced by a path, but they are not separate progression fantasies and must not be counted as additional first-class paths.
+
+families:
+  - family_id: family.pve
+    display_name: PvE world and instance mastery
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    child_path_ids:
+      - path.islands
+      - path.dungeons
+    rollup_rule: Both child paths retain separate status; neither may require completion of the other as a universal entry gate.
+  - family_id: family.competitive
+    display_name: Competitive play
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    child_path_ids:
+      - path.pvp
+    rollup_rule: Duel, arena/ranked, open-world/contested, and guild-war are required reportable surfaces of one PvP path, not four separate paths.
+  - family_id: family.social
+    display_name: Durable social organization
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    child_path_ids:
+      - path.guild
+    rollup_rule: Guild identity alone is insufficient; projects, headquarters, roles, history, influence, and goals are part of the path contract.
+  - family_id: family.companions
+    display_name: Pets
+    scope_status: approved_first_class
+    delivery_status: blocked
+    child_path_ids:
+      - path.pets
+    rollup_rule: Acquisition, breeding, training, collection, and pet battles are parts of one Pets path; mounts and class summons remain supporting applications.
+  - family_id: family.professions
+    display_name: Professions
+    scope_status: approved_first_class
+    delivery_status: blocked
+    child_path_ids:
+      - path.profession.miner
+      - path.profession.lumberjack
+      - path.profession.harvester
+      - path.profession.blacksmith
+      - path.profession.armorer
+      - path.profession.alchemist
+      - path.profession.artificer
+      - path.profession.cook
+    rollup_rule: All eight professions have independent status; one working profession, recipe set, or organization cannot make the family green.
+
+paths:
+  - path_id: path.islands
+    display_name: Islands
+    family_id: family.pve
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    product_owner_domain: "06"
+    contributing_domains: ["01", "02", "03", "04", "05", "08", "10", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Explore, understand, and master authored regions and islands as a complete open-world PvE path.
+      first_session_entry: Begin a real island or regional objective without first completing a dungeon or an unrelated profession ladder.
+      mastery_horizon: Master increasingly dangerous regions through knowledge, execution, access, and path-specific challenges rather than flat stat inflation alone.
+      lasting_accomplishment: Preserve legible regional discoveries, access, trophies, reputation, and history worth returning to.
+      ecosystem_role: Supply discoveries, materials, public-event participation, and world knowledge to the shared ecosystem.
+      minecraft_world_expression: Progress is embodied in authored places, routes, encounters, unlocks, and visible world consequences rather than only menus.
+    required_surfaces:
+      - islands.entry_and_orientation
+      - islands.regional_progression
+      - islands.exploration_and_discovery
+      - islands.encounters_and_challenge
+      - islands.rewards_and_persistence
+      - islands.return_path
+    scope_authority_refs:
+      - PRODUCT-GOV-010
+    downstream_context_refs:
+      - docs/contracts/world-progression-model.md
+      - docs/contracts/world-progression-contract.yaml
+    blocking_refs: []
+    missing_delivery_evidence:
+      - complete path contract against all required surfaces
+      - isolated runtime evidence
+      - player-value evidence
+      - release-gate evidence
+
+  - path_id: path.dungeons
+    display_name: Dungeons
+    family_id: family.pve
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    product_owner_domain: "07"
+    contributing_domains: ["01", "02", "03", "04", "05", "06", "08", "10", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Learn, overcome, and repeatedly master authored dungeon challenges as a complete instanced PvE path.
+      first_session_entry: Enter and complete a meaningful first dungeon objective without prior completion of the Islands path.
+      mastery_horizon: Advance through encounter knowledge, execution, selectable difficulty, build decisions, and increasingly demanding dungeon tiers.
+      lasting_accomplishment: Preserve dungeon access, completions, trophies, equipment, and a credible history of conquered challenges.
+      ecosystem_role: Generate group goals, sought-after rewards, knowledge, and demand for other player specializations.
+      minecraft_world_expression: Mastery is visible through dungeon spaces, encounter states, trophies, equipment, and completion history.
+    required_surfaces:
+      - dungeons.entry_exit_and_reset
+      - dungeons.encounter_progression
+      - dungeons.boss_and_failure_recovery
+      - dungeons.selectable_difficulty
+      - dungeons.rewards_and_persistence
+      - dungeons.replay_and_duplicate_safety
+    scope_authority_refs:
+      - PRODUCT-GOV-010
+    downstream_context_refs:
+      - docs/contracts/dungeon-floor-contract.yaml
+      - docs/design/pve/dungeon-framework.md
+    blocking_refs: []
+    missing_delivery_evidence:
+      - complete path contract against all required surfaces
+      - isolated runtime evidence
+      - player-value evidence
+      - release-gate evidence
+
+  - path_id: path.pvp
+    display_name: PvP
+    family_id: family.competitive
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    product_owner_domain: "11"
+    contributing_domains: ["01", "02", "03", "04", "05", "06", "10", "13", "14", "16", "17", "19"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Build competitive identity through skill, counterplay, progression, and victories across clearly differentiated PvP contexts.
+      first_session_entry: Access a legible first competitive interaction without completing an unrelated PvE or profession path.
+      mastery_horizon: Improve execution, decisions, builds, rating, contested-world performance, and coordinated guild warfare under context-appropriate fairness rules.
+      lasting_accomplishment: Preserve credible rating history, titles, trophies, records, and guild-war contribution without selling competitive outcome.
+      ecosystem_role: Create competition, demand for legal equipment and services, social rivalry, and public history.
+      minecraft_world_expression: PvP identity appears through arenas, contested regions, guild conflicts, equipment, titles, trophies, and match history.
+    required_surfaces:
+      - pvp.duel
+      - pvp.arena_ranked
+      - pvp.open_world_contested
+      - pvp.guild_war
+    scope_authority_refs:
+      - PRODUCT-GOV-010
+    downstream_context_refs:
+      - docs/pvp-foundation-v0.0.1.md
+    blocking_refs:
+      - PRODUCT-QUESTION-003
+      - PRODUCT-QUESTION-004
+      - CONFLICT-005
+    missing_delivery_evidence:
+      - authoritative mode and fairness contracts for every required surface
+      - isolated runtime evidence for every required surface
+      - player-value and competitive-integrity evidence
+      - release-gate evidence
+
+  - path_id: path.guild
+    display_name: Guild
+    family_id: family.social
+    scope_status: approved_first_class
+    delivery_status: cannot_judge
+    product_owner_domain: "19"
+    contributing_domains: ["01", "02", "06", "08", "10", "11", "13", "14", "16", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Create, join, and help grow a durable player organization with shared identity, goals, place, and history.
+      first_session_entry: Join, create, or make a meaningful contribution to a guild without guild membership becoming a universal gate for other paths.
+      mastery_horizon: Develop roles, coordination, projects, headquarters, influence, and organizational competence.
+      lasting_accomplishment: Preserve guild history, headquarters, completed projects, identity, influence, and member contributions.
+      ecosystem_role: Coordinate players, create shared projects and demand, enable guild conflict, and give social accomplishments durable form.
+      minecraft_world_expression: Guild progress is embodied in headquarters, projects, heraldry, controlled public influence, and visible history.
+    required_surfaces:
+      - guild.identity_roster_and_roles
+      - guild.projects_and_headquarters
+      - guild.coordination_and_goals
+      - guild.treasury_and_economic_boundaries
+      - guild.history_and_influence
+      - guild.war_integration
+      - guild.audit_recovery_and_anti_abuse
+    scope_authority_refs:
+      - PRODUCT-GOV-010
+    downstream_context_refs:
+      - docs/guilds-foundation-v0.0.1.md
+    blocking_refs:
+      - PRODUCT-QUESTION-003
+      - PRODUCT-QUESTION-004
+      - CONFLICT-005
+    missing_delivery_evidence:
+      - complete guild path and economy handoff contracts
+      - isolated runtime evidence
+      - social-health and player-value evidence
+      - release-gate evidence
+
+  - path_id: path.pets
+    display_name: Pets
+    family_id: family.companions
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "12"
+    contributing_domains: ["01", "02", "03", "05", "06", "09", "10", "14", "15", "16", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Acquire, breed, train, collect, and battle durable pets as a deep path rather than a combat add-on.
+      first_session_entry: Acquire or begin developing a real persistent pet without completing an unrelated combat ladder.
+      mastery_horizon: Build knowledge and mastery through acquisition, lineage, breeding, training, development, collection, and pet battles.
+      lasting_accomplishment: Preserve pet identity, lineage, development, collection records, battle history, and chosen displays.
+      ecosystem_role: Create breeding, training, collecting, battling, and trade relationships with other systems and players.
+      minecraft_world_expression: Pets exist as persistent recognizable companions and collections with appropriate in-world presence and history.
+    required_surfaces:
+      - pets.acquisition_and_ownership
+      - pets.identity_lineage_and_persistence
+      - pets.breeding
+      - pets.training_and_development
+      - pets.collection
+      - pets.battles
+      - pets.display_and_world_presence
+    scope_authority_refs:
+      - PRODUCT-GOV-010
+    downstream_context_refs:
+      - docs/design/companions/pet-core-system.md
+      - docs/adr/ADR-003-petcore-companion-authority.md
+      - docs/contracts/petcore-legacy-claim-contract.yaml
+    blocking_refs:
+      - PRODUCT-QUESTION-005
+      - CONFLICT-006
+    missing_delivery_evidence:
+      - resolved companion runtime authority
+      - complete path contract against all required surfaces
+      - isolated runtime evidence
+      - player-value and release-gate evidence
+
+  - path_id: path.profession.miner
+    display_name: Miner
+    family_id: family.professions
+    profession_id: prof.miner
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "05", "06", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy: &profession_miner_fantasy
+      player_promise: Become a master of extraction, deposits, and valuable underground resources through meaningful mining practice and choices.
+      first_session_entry: Complete a real mining process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen extraction methods, resource knowledge, risk handling, specialization, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, organization history, rare finds, tools, and workshop or display outcomes.
+      ecosystem_role: Supply ores, stone, rare materials, and specialist services to crafting, building, and trade.
+      minecraft_world_expression: Progress appears through resource regions, tools, extraction sites, workshops, rare finds, and visible outputs.
+    required_surfaces: &profession_required_surfaces
+      - profession.entry_and_onboarding
+      - profession.gather_craft_or_salvage_process
+      - profession.progression_and_specialization
+      - profession.organizations_and_reputation
+      - profession.outputs_quality_and_economy_handoffs
+      - profession.persistence_replay_and_anti_abuse
+      - profession.workshop_projects_or_display
+    scope_authority_refs: &profession_scope_authority_refs
+      - PRODUCT-GOV-005
+      - PRODUCT-GOV-010
+    downstream_context_refs: &profession_downstream_context_refs
+      - docs/contracts/profession-list.yaml
+      - docs/contracts/profession-domain-handoff-contract.yaml
+    blocking_refs: &profession_blocking_refs
+      - profession-domain-handoff-v1:runtime_status=not_tested
+      - profession-domain-handoff-v1:release_status=blocked
+    missing_delivery_evidence: &profession_missing_evidence
+      - profession-specific complete path contract
+      - isolated runtime evidence
+      - profession-specific player-value evidence
+      - release-gate evidence
+
+  - path_id: path.profession.lumberjack
+    display_name: Lumberjack
+    family_id: family.professions
+    profession_id: prof.lumberjack
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "05", "06", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a master of forests, timber, and responsible high-value harvesting through meaningful lumber work and choices.
+      first_session_entry: Complete a real lumber process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen species knowledge, harvesting methods, route planning, risk handling, specialization, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, organization history, rare timber, tools, and workshop or display outcomes.
+      ecosystem_role: Supply timber, plant resources, and specialist services to crafting, building, and trade.
+      minecraft_world_expression: Progress appears through managed forest regions, tools, harvesting sites, workshops, rare finds, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+  - path_id: path.profession.harvester
+    display_name: Harvester
+    family_id: family.professions
+    profession_id: prof.harvester
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "05", "06", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a master of cultivation, gathering, and valuable natural yields through meaningful harvest practice and choices.
+      first_session_entry: Complete a real harvest process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen crop and resource knowledge, cultivation methods, timing, specialization, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, organization history, rare yields, farms, and workshop or display outcomes.
+      ecosystem_role: Supply crops, herbs, ingredients, and specialist services to cooking, alchemy, crafting, and trade.
+      minecraft_world_expression: Progress appears through farms, cultivation sites, tools, workshops, rare yields, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+  - path_id: path.profession.blacksmith
+    display_name: Blacksmith
+    family_id: family.professions
+    profession_id: prof.blacksmith
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "03", "05", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a recognized weapon and metalwork craftsperson through execution, material judgment, quality, and specialization.
+      first_session_entry: Complete a real smithing process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen process execution, material selection, methods, quality control, specialization, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, organization history, signature works, workshop, and provenance-bearing outputs.
+      ecosystem_role: Convert materials into sought-after weapons, metal goods, repairs, and specialist services.
+      minecraft_world_expression: Progress appears through forges, tools, workshops, projects, signature works, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+  - path_id: path.profession.armorer
+    display_name: Armorer
+    family_id: family.professions
+    profession_id: prof.armorer
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "03", "05", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a recognized armor craftsperson through protection design, material judgment, quality, and specialization.
+      first_session_entry: Complete a real armoring process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen process execution, protection trade-offs, material selection, methods, quality control, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, organization history, signature sets, workshop, and provenance-bearing outputs.
+      ecosystem_role: Convert materials into sought-after armor, defensive equipment, repairs, and specialist services.
+      minecraft_world_expression: Progress appears through forges, tools, workshops, projects, signature sets, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+  - path_id: path.profession.alchemist
+    display_name: Alchemist
+    family_id: family.professions
+    profession_id: prof.alchemist
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "05", "06", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a master of reagents, experimentation, and reliable alchemical effects through knowledge, execution, and specialization.
+      first_session_entry: Complete a real alchemical process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen reagent knowledge, experimentation, methods, quality control, risk handling, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, discoveries, organization history, laboratory, and signature formulations.
+      ecosystem_role: Convert ingredients into sought-after consumables, reagents, research, and specialist services.
+      minecraft_world_expression: Progress appears through laboratories, tools, experiments, projects, discoveries, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+  - path_id: path.profession.artificer
+    display_name: Artificer
+    family_id: family.professions
+    profession_id: prof.artificer
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "05", "06", "10", "11", "14", "15", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a master maker of specialized devices and magical-technical works through design, assembly, and experimentation.
+      first_session_entry: Complete a real artificing process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen design knowledge, assembly methods, experimentation, quality control, specialization, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, inventions, organization history, workshop, and signature devices.
+      ecosystem_role: Convert materials into specialized devices, components, utility works, and expert services.
+      minecraft_world_expression: Progress appears through workshops, tools, prototypes, projects, inventions, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+  - path_id: path.profession.cook
+    display_name: Cook
+    family_id: family.professions
+    profession_id: prof.cook
+    scope_status: approved_first_class
+    delivery_status: blocked
+    product_owner_domain: "09"
+    contributing_domains: ["01", "02", "05", "06", "10", "11", "14", "17", "18"]
+    primary_segment_ids: [segment.self_directed_persistent_world_inhabitant]
+    progression_fantasy:
+      player_promise: Become a recognized cook through ingredient knowledge, timing, execution, quality, and distinctive recipes.
+      first_session_entry: Complete a real cooking process and receive profession progress without mandatory combat-first progression.
+      mastery_horizon: Deepen ingredient knowledge, preparation methods, timing, quality control, specialization, and professional standing.
+      lasting_accomplishment: Preserve profession mastery, methods, recipes, organization history, kitchen, and signature dishes.
+      ecosystem_role: Convert ingredients into sought-after food, preparations, hospitality, and specialist services.
+      minecraft_world_expression: Progress appears through kitchens, tools, farms and suppliers, projects, feasts, and visible outputs.
+    required_surfaces: *profession_required_surfaces
+    scope_authority_refs: *profession_scope_authority_refs
+    downstream_context_refs: *profession_downstream_context_refs
+    blocking_refs: *profession_blocking_refs
+    missing_delivery_evidence: *profession_missing_evidence
+
+candidate_paths:
+  - candidate_id: candidate.builder_architect
+    display_name: Builder / Architect
+    scope_status: candidate
+    coordinating_owner_domain: "06"
+    contributing_domains: ["00", "09", "10", "14", "16", "18", "19"]
+    current_boundary: >-
+      Building is an approved supported playstyle through protected private
+      plots or estates, profession farms and workshops, guild headquarters, and
+      controlled public projects. It is not yet a separate first-class path.
+    promotion_requirements:
+      - explicit player promise, entry, mastery, accomplishment, and ecosystem card
+      - authoritative plot, protection, ownership, persistence, and rollback contracts
+      - builder-specific contracts, jobs, project economy, and mastery progression
+      - runtime, abuse-resistance, player-value, and operability evidence
+      - new Domain 00 approval and registry revision
+
+supporting_capabilities:
+  - capability_id: support.trade_market
+    display_name: Trade and market
+    scope_status: supporting
+    coordinating_owner_domain: "10"
+    boundary: A healthy market is required ecosystem infrastructure; a separate merchant level or career is not required for product completeness.
+  - capability_id: support.collection
+    display_name: Collection catalog and display
+    scope_status: supporting
+    coordinating_owner_domain: "00"
+    contributing_domains: ["05", "06", "07", "09", "11", "12", "14", "18"]
+    boundary: Collection is a cross-cutting supported playstyle sourced by many paths, not an artificial universal collector progression.
+  - capability_id: support.hybrid_building
+    display_name: Hybrid plots, estates, workshops, and public projects
+    scope_status: supporting
+    coordinating_owner_domain: "06"
+    contributing_domains: ["09", "14", "16", "18", "19"]
+    boundary: The common world stays authored and protected while bounded private and organizational building gives accomplishment a real place.
+  - capability_id: support.quests_narrative
+    display_name: Quests and narrative
+    scope_status: supporting
+    coordinating_owner_domain: "08"
+    boundary: Narrative is a layer across paths, not a mandatory separate progression fantasy.
+  - capability_id: support.classes_builds
+    display_name: Classes and builds
+    scope_status: supporting
+    coordinating_owner_domain: "04"
+    boundary: Classes and builds enable combat expression across relevant paths but are not a separate path in this registry.
+  - capability_id: support.itemization
+    display_name: Itemization
+    scope_status: supporting
+    coordinating_owner_domain: "05"
+    boundary: Items carry progression and interdependence across paths but are not a standalone path.
+  - capability_id: support.economy
+    display_name: Economy
+    scope_status: supporting
+    coordinating_owner_domain: "10"
+    boundary: Economic policy connects paths and protects ecosystem health but is not itself a progression fantasy.
+  - capability_id: support.social_basics
+    display_name: Party, chat, and friends
+    scope_status: supporting
+    coordinating_owner_domain: "19"
+    boundary: Basic social tools support all paths and do not replace the deeper first-class Guild path.
+  - capability_id: support.public_events
+    display_name: Public events
+    scope_status: supporting
+    coordinating_owner_domain: "06"
+    contributing_domains: ["07", "08", "10", "14", "18"]
+    boundary: Public events may serve multiple paths but do not form a separate durable progression fantasy by default.
+  - capability_id: support.raids
+    display_name: Raids
+    scope_status: supporting
+    coordinating_owner_domain: "07"
+    boundary: Raids are high-coordination PvE content and may serve Dungeon, Guild, and other paths without becoming a separate Tier 0 path.
+
+components_that_are_not_separate_paths:
+  - component_group: pvp_modes
+    parent_path_id: path.pvp
+    component_ids: [pvp.duel, pvp.arena_ranked, pvp.open_world_contested, pvp.guild_war]
+  - component_group: pet_systems
+    parent_path_id: path.pets
+    component_ids: [pets.acquisition_and_ownership, pets.breeding, pets.training_and_development, pets.collection, pets.battles]
+  - component_group: profession_recipes_and_organizations
+    parent_family_id: family.professions
+    rule: Recipes, methods, exams, and organizations belong to their profession path and do not create additional first-class paths.

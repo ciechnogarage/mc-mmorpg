@@ -1,0 +1,103 @@
+contract:
+  id: quest-state-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_implemented
+  release_status: blocked
+  owner_domain: "08"
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/reward-contract.yaml
+  upstream_dependencies:
+    domain_02:
+      required:
+        - stable_character_id
+        - character_lifecycle
+        - deletion_restore_rules
+        - transactional_persistence
+    domain_06:
+      required:
+        - island_id
+        - region_id
+        - regional_milestone_id
+    domain_14:
+      required:
+        - journal_and_consequence_feedback_boundary
+    domain_17:
+      required:
+        - branching_and_migration_test_coverage
+    domain_18:
+      required:
+        - quest_templates_and_validators
+
+identity:
+  quest_definition_key:
+    quest_id: string
+    quest_version: integer
+  runtime_subject_key:
+    character_id:
+      contract_ref: docs/contracts/account-character-contract.yaml
+
+quest_status_vocabulary:
+  - LOCKED
+  - AVAILABLE
+  - ACTIVE
+  - SUSPENDED
+  - COMPLETED
+  - FAILED
+  - ABANDONED
+  - OBSOLETE
+
+rules:
+  failed_is_not_automatically_permanent: true
+  permanent_lockout_requires_explicit_consequence: true
+  reward_grant_must_be_idempotent: true
+  quest_definition_and_character_state_must_be_separate: true
+  migration_must_be_version_aware: true
+
+runtime_state_shape:
+  character_id: string
+  quest_id: string
+  quest_version: integer
+  quest_status: LOCKED
+  active_branch_id: string
+  current_step_id: string
+  completed_objectives: []
+  recorded_decisions: []
+  granted_consequences: []
+  local_story_phase_ids: []
+  known_evidence_ids: []
+  known_claim_ids: []
+  knowledge_level_overrides: {}
+  reward_grants:
+    - reward_transaction_id: string
+      idempotency_key: string
+      grant_status: pending
+  migration:
+    last_migrated_from_version: 0
+    migration_policy: explicit
+
+objective_vocabulary:
+  - GO_TO_LOCATION
+  - OBSERVE
+  - ESCORT
+  - DEFEND
+  - SURVIVE
+  - USE_OBJECT
+  - DELIVER_EVIDENCE
+  - PERSUADE_WITNESS
+  - KEEP_SECRET
+  - REACH_ENCOUNTER_STATE
+  - MAKE_DECISION
+  - COMPLETE_WITH_OPTIONAL_ACTION_SKIPPED
+
+migration_requirements:
+  definition_change_requires:
+    - quest_version_bump
+    - migration_rule
+    - compatibility_assessment
+  obsolete_definition_behavior:
+    allowed_target_statuses:
+      - OBSOLETE
+      - COMPLETED
+      - FAILED

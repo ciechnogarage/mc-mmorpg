@@ -1,0 +1,198 @@
+DR001_RuinThrall:
+  Type: ZOMBIE
+  Display: '&7Ruin Thrall &8[Lv.12]'
+  Health: 85
+  Damage: 8
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_ruin_thrall;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_CrumblingStrike} @target ~onAttack 0.28
+  Drops:
+    - DR001_CommonMobDrops
+  Options:
+    PreventOtherDrops: true
+    Silent: true
+    MovementSpeed: 0.24
+    MaxCombatDistance: 24
+
+DR001_MossboundArcher:
+  Type: SKELETON
+  Display: '&aMossbound Archer &8[Lv.13]'
+  Health: 70
+  Damage: 7
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_mossbound_archer;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_RootArrow} @target ~onShoot 0.35
+  Drops:
+    - DR001_CommonMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.21
+    MaxCombatDistance: 32
+
+DR001_RootlingSwarmer:
+  Type: SILVERFISH
+  Display: '&2Rootling Swarmer &8[Lv.12]'
+  Health: 38
+  Damage: 5
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_rootling;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_RootlingLeap} @target ~onTimer:80 0.45
+  Drops:
+    - DR001_CommonMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.32
+    MaxCombatDistance: 20
+
+DR001_AnimatedRubble:
+  Type: IRON_GOLEM
+  Display: '&6Animated Rubble &8[Lv.14]'
+  Health: 180
+  Damage: 12
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_animated_rubble;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_RubbleSlam} @target ~onTimer:140 0.5
+  Drops:
+    - DR001_EliteMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.16
+    KnockbackResistance: 0.75
+    MaxCombatDistance: 26
+
+DR001_DrownedTombguard:
+  Type: DROWNED
+  Display: '&3Drowned Tombguard &8[Lv.20]'
+  Health: 260
+  Damage: 16
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_drowned_tombguard;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_TombguardShieldBash} @target ~onAttack 0.25
+  Drops:
+    - DR001_MidMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.20
+    KnockbackResistance: 0.65
+    MaxCombatDistance: 30
+
+DR001_PlagueAcolyte:
+  Type: WITCH
+  Display: '&ePlague Acolyte &8[Lv.20]'
+  Health: 145
+  Damage: 12
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_plague_acolyte;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_PoisonCloud} @target ~onTimer:120 0.45
+    - skill{s=DR001_AcolyteHeal} @MobsInRadius{r=10;types=DR001_RuinThrall,DR001_MossboundArcher,DR001_RootlingSwarmer,DR001_AnimatedRubble,DR001_DrownedTombguard,DR001_PlagueAcolyte,DR001_CisternLeech,DR001_BoneMason,DR001_VoidboundKnight,DR001_RuneSentinel,DR001_CrownShade,DR001_AnchorWarden} ~onTimer:180 0.35
+  Drops:
+    - DR001_MidMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.20
+    MaxCombatDistance: 34
+
+DR001_CisternLeech:
+  Type: SILVERFISH
+  Display: '&3Cistern Leech &8[Lv.19]'
+  Health: 90
+  Damage: 10
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_cistern_leech;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_LeechDrain} @target ~onAttack 0.3
+  Drops:
+    - DR001_MidMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.34
+    MaxCombatDistance: 24
+
+DR001_BoneMason:
+  Type: STRAY
+  Display: '&fBone Mason &8[Lv.21]'
+  Health: 180
+  Damage: 12
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_bone_mason;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_BoneWallSummon} @self ~onTimer:220 0.4
+  Drops:
+    - DR001_EliteMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.18
+    MaxCombatDistance: 34
+
+DR001_VoidboundKnight:
+  Type: WITHER_SKELETON
+  Display: '&5Voidbound Knight &8[Lv.30]'
+  Health: 420
+  Damage: 24
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_voidbound_knight;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_VoidCleave} @target ~onAttack 0.3
+    - skill{s=DR001_KnightEnrageRuntimeVerify} @self ~onDamaged
+  Drops:
+    - DR001_EndMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.75
+    MaxCombatDistance: 34
+
+DR001_RuneSentinel:
+  Type: SHULKER
+  Display: '&dRune Sentinel &8[Lv.29]'
+  Health: 260
+  Damage: 20
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_rune_sentinel;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_RuneBeam} @target ~onTimer:150 0.5
+  Drops:
+    - DR001_EndMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.0
+    MaxCombatDistance: 42
+
+DR001_CrownShade:
+  Type: ENDERMAN
+  Display: '&8Crown Shade &8[Lv.30]'
+  Health: 160
+  Damage: 18
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_crown_shade;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_ShadeBlink} @target ~onTimer:120 0.45
+  Drops:
+    - DR001_EndMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.30
+    MaxCombatDistance: 40
+
+DR001_AnchorWarden:
+  Type: PIGLIN_BRUTE
+  Display: '&5Anchor Warden &8[Lv.31]'
+  Health: 520
+  Damage: 22
+  Faction: dr001_ruins
+  Skills:
+    - model{mid=dr001_anchor_warden;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - skill{s=DR001_AnchorShieldPulse} @self ~onTimer:160 0.5
+  Drops:
+    - DR001_EliteMobDrops
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.18
+    KnockbackResistance: 0.85
+    MaxCombatDistance: 36

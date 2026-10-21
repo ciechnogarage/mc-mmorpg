@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC Asset Integration"
+  short_description: "Validate Minecraft asset delivery and plugins"
+  default_prompt: "Use $mc-asset-integration to validate asset delivery across ModelEngine, MythicMobs, Nexo, and related repository contracts."

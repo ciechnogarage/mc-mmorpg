@@ -1,0 +1,17 @@
+# Platform kernel only. Do not enable until a MariaDB namespace and the
+# installed MMOProfiles/MythicDungeons adapters have been verified.
+database:
+  enabled: false
+  jdbc-url: "jdbc:mariadb://mariadb:3306/petcore"
+  username: "petcore"
+  password: "CHANGE_ME"
+  table-prefix: "petcore_"
+content:
+  # Explicit staging-only opt-in. Unknown/off remains fail-closed.
+  staging-enabled: false
+  mode: UNKNOWN
+  party-size: 1
+  revision: 1
+
+debug:
+  duel-damage: false

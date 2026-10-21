@@ -1,0 +1,126 @@
+schema_version: 1
+register_kind: domain_06_difficulty_alias_migration_register
+status: proposed
+domain: "06"
+captured_at: "2026-07-22"
+source_contracts:
+  semantic_owner:
+    - docs/contracts/world-progression-model.md
+    - docs/contracts/dungeon-floor-contract.yaml
+  related_rules:
+    - docs/contracts/unlock-rules.yaml
+purpose:
+  - map legacy difficulty identifiers to canonical domain 06 identifiers
+  - preserve semantic migration intent while replacing old labels
+  - identify non-trivial migration surfaces before runtime cutover
+non_goals:
+  - define runtime adapter implementation
+  - prove stored data already migrated
+  - claim semantic parity of old and new difficulty behavior
+canonical_difficulty_ids:
+  - story
+  - standard
+  - veteran
+  - mythic
+legacy_aliases:
+  - canonical_id: story
+    legacy_ids:
+      - easy
+      - latwy
+    alias_status: accepted_for_migration
+    semantic_notes:
+      - preserve onboarding and lower-pressure intent
+      - do_not_interpret_as_removal_of_all_mechanics
+  - canonical_id: standard
+    legacy_ids:
+      - normal
+      - classic
+      - klasyczny
+    alias_status: accepted_for_migration
+    semantic_notes:
+      - preserve primary progression and reference-tier intent
+      - this_is_the_default_encounter_design_baseline
+  - canonical_id: veteran
+    legacy_ids:
+      - hard
+      - trudny
+    alias_status: accepted_for_migration
+    semantic_notes:
+      - preserve mastery-check and execution-pressure intent
+      - do_not_reduce_to_numeric_scaling_only
+  - canonical_id: mythic
+    legacy_ids:
+      - very_hard
+      - bardzo_trudny
+    alias_status: accepted_for_migration
+    semantic_notes:
+      - preserve repeatable endgame challenge intent
+      - do_not_treat_as_only_hp_or_damage_increase
+alias_resolution_rules:
+  case_sensitive: false
+  whitespace_normalization: trim
+  separator_normalization:
+    underscores_and_spaces_are_equivalent: true
+  unknown_legacy_id_policy: reject_and_audit
+  multi_match_policy: reject_and_audit
+semantic_guardrails:
+  - alias_mapping_is_for_identifier_cutover_not_forcing_runtime_parity_claims
+  - mythic_must_not_become_the_only_source_of_mandatory_power
+  - standard_remains_the_reference_tier_even_if_legacy_normal_was_implemented_inconsistently
+  - story_aliases_must_not_be_used_to_strip_out_core_mechanics
+migration_surfaces:
+  content_completion:
+    included:
+      - floor_completion_records
+      - sector_completion_records
+      - first_clear_flags
+    migration_requirement: rewrite_or_resolve_legacy_difficulty_keys
+  leaderboards:
+    included:
+      - run_time_boards
+      - prestige_boards
+      - challenge_boards
+    migration_requirement: preserve_board_segmentation_per_canonical_difficulty
+  quests_and_objectives:
+    included:
+      - difficulty_gated_objectives
+      - completion_conditions
+      - npc_board_requirements
+    migration_requirement: replace_legacy_ids_and_recheck_semantic_thresholds
+  rewards:
+    included:
+      - reward_tables
+      - cosmetic_drop_paths
+      - collection_progress
+      - replay_material_sources
+    migration_requirement: replace_legacy_ids_and_validate_no_mythic_only_core_power_dependency
+  telemetry_and_analytics:
+    included:
+      - event_names
+      - dashboard_filters
+      - historical_reports
+    migration_requirement: introduce_canonical_keys_and_define_legacy_report_handling
+  docs_and_templates:
+    included:
+      - foundation_docs
+      - isl_templates
+      - dng_templates
+      - authoring_guides
+    migration_requirement: remove_old_names_from_active_authoring_surfaces
+required_checks_before_cutover:
+  - no_active_source_of_truth_document_uses_easy_normal_hard_or_very_hard_as_canonical_domain_06_ids
+  - all_domain_06_contracts_reference_story_standard_veteran_mythic
+  - any_stored_completion_or_leaderboard_keys_have_an_explicit_alias_resolution_path
+  - reward_and_quest_conditions_using_legacy_ids_are_identified
+cutover_policy:
+  docs_cutover:
+    status: ready_before_runtime
+    rule: update_source_of_truth_docs_first
+  runtime_cutover:
+    status: blocked_pending_inventory
+    rule: do_not_cut_runtime_until_legacy_surfaces_are_inventoried
+  rollback_policy:
+    rule: retain_alias_register_even_after_cutover_for_historical_data_resolution
+notes:
+  - legacy aliases are accepted as migration inputs, not as future authoring vocabulary
+  - if a legacy surface mixes identifier and semantic assumptions, review semantic meaning before mechanical translation

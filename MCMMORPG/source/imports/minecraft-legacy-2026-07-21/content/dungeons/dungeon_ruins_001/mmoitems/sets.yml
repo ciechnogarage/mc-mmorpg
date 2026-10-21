@@ -1,0 +1,12 @@
+DR001_RUINED_CROWN:
+  display: "Ruined Crown"
+  pieces:
+    - DR001_RUINED_CROWN_HELMET
+    - DR001_RUINED_CROWN_CHESTPLATE
+    - DR001_RUINED_CROWN_LEGGINGS
+    - DR001_RUINED_CROWN_BOOTS
+  bonuses:
+    two_piece: "+8% damage against DR001 tagged mobs"
+    three_piece: "-15% poison/slow duration in DR001"
+    four_piece: "Crown Resolve for 10s after elite kill"
+  status: design_contract_requires_plugin_specific_set_implementation

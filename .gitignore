@@ -8,6 +8,21 @@
 # sensitive (player UUIDs, IPs, tokens, world/region data, *.db) is staged.
 # Tighten this file if anything leaks in.
 
+# ---- Language / package-manager output (regenerable) ----
+**/node_modules/
+**/__pycache__/
+**/.pytest_cache/
+*.py[cod]
+
+# ---- Local scratch, run output, and non-canonical copies ----
+.tmp-contract-fix/
+bots/runs/
+bots/probe_*_tmp.js
+docs/Plugins-wiki-local/
+docs.zip
+modele/OUTPUT — kopia (2)/
+modele/OUTPUT — kopia (2).zip
+
 # ---- Server runtime / binaries (regenerable, large) ----
 MCMMORPG/paper.jar
 MCMMORPG/libraries/
@@ -44,6 +59,20 @@ MCMMORPG/banned-players.json
 # ---- Plugin binaries ----
 MCMMORPG/plugins/**/*.jar
 MCMMORPG/plugins/.paper-remapped/
+
+# ---- Isolated environment runtime payloads ----
+# Keep environment definitions and authored plugin config/content visible, but
+# exclude server binaries, local secrets, databases, caches, and player data.
+MCMMORPG/source/environments/**/paper.jar
+MCMMORPG/source/environments/**/server.properties
+MCMMORPG/source/environments/**/plugins/**/*.jar
+MCMMORPG/source/environments/**/plugins/**/*.db
+MCMMORPG/source/environments/**/plugins/**/*.sqlite
+MCMMORPG/source/environments/**/plugins/**/*.mv.db
+MCMMORPG/source/environments/**/plugins/MythicMobs/data/
+MCMMORPG/source/environments/**/plugins/**/userdata/
+MCMMORPG/source/environments/**/plugins/**/playerdata/
+MCMMORPG/source/environments/**/plugins/**/cache/
 
 # ---- Plugin databases / runtime stores ----
 MCMMORPG/plugins/**/*.db
@@ -139,3 +168,7 @@ Thumbs.db
 *.bak.*
 *.bak-*
 *.code-workspace
+
+# wyniki buildu i pliki tymczasowe narzedzi
+**/build/classes/
+.ashfox/tmp/

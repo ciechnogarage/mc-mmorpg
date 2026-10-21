@@ -8,11 +8,14 @@ LeftClickToOpenMenu: true
 DisableInventoryWhileHoldingSignalStick: true
 DismountOnDamaged: true
 DismountOnDamagedExcludePlayers: false
-SpawnPetOnReconnect: true
+# Legacy-only per ADR-003 (docs/adr/ADR-003-petcore-companion-authority.md):
+# MCPets must not auto-spawn, mount or teleport an entity even if its jar is
+# ever restored to a plugins directory by mistake.
+SpawnPetOnReconnect: false
 SneakMode: false
 Nameable: true
-Mountable: true
-DistanceTeleport: 30
+Mountable: false
+DistanceTeleport: 0
 MaxNameLenght: 16
 InventorySize: -1
 PercentHealthOnRespawn: 0.2

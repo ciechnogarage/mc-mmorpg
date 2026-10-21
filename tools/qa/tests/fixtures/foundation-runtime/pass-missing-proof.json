@@ -1,0 +1,41 @@
+{
+  "report_id": "foundation-pass-missing-proof",
+  "verdict": "PASS",
+  "domain": "character",
+  "system": "character_creator_login_persistence",
+  "environment": "dev-qa",
+  "test_type": "foundation_runtime_adapter_fixture",
+  "contract_status": "approved",
+  "requiredProof": ["STATIC_CONTRACT", "RUNTIME_PROOF", "INTEGRATION_PROOF", "PLAYER_PROOF"],
+  "achievedProof": ["STATIC_CONTRACT", "RUNTIME_PROOF"],
+  "proofArtifacts": [
+    {
+      "kind": "adapter-input",
+      "path": "tools/qa/tests/fixtures/foundation-runtime/pass-missing-proof.json",
+      "sha256": "fixture-pass-missing-proof"
+    }
+  ],
+  "build": {
+    "commit": "baseline-no-runtime",
+    "paper": "baseline-no-runtime",
+    "plugin_manifest_hash": "baseline-no-runtime"
+  },
+  "execution": {
+    "runner": "MCMMORPG/_validation/foundation_runtime.js",
+    "started_at": "2026-07-31T00:00:00Z",
+    "finished_at": "2026-07-31T00:01:00Z",
+    "executed_by": "foundation-runtime-adapter-fixture",
+    "log_paths": ["tools/qa/tests/fixtures/foundation-runtime/pass-missing-proof.json"],
+    "environment_control": {
+      "lease": "none",
+      "workspace_root": "/home/przemek/projects/MC",
+      "runtime_touched": false,
+      "staging_touched": false,
+      "rollback": {
+        "method": "not_required_fixture",
+        "proof_paths": ["tools/qa/tests/fixtures/foundation-runtime/pass-missing-proof.json"]
+      }
+    }
+  },
+  "observations": ["Fixture reports PASS but lacks required proof."]
+}

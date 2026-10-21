@@ -1,0 +1,212 @@
+schema_version: 1
+status: proposed
+updated_at: "2026-08-03"
+owner_domain: "10-economy"
+source_plan: "docs/design/economy/binding-policy.md"
+notes:
+  - "Draft planning matrix. Not runtime truth."
+  - "This file is the category-level authority for direct trade, Auction House, and escrow eligibility in Domain 10."
+  - "It resolves prior narrative ambiguity for every downstream admission surface."
+
+admission_policy:
+  authority: "categories"
+  unknown_category: forbidden
+  unknown_binding_state: forbidden
+  ordinary_market_surfaces:
+    auction_house: "category.auction_house == allowed and binding state is not service_locked"
+    direct_trade: "category.direct_trade == allowed and binding state is not account_bound, character_bound, or service_locked"
+  escrow_surfaces:
+    general: "category.escrow == allowed"
+    contract_input: "category.escrow in [allowed, input_only]"
+    contract_output: "category.escrow in [allowed, output_only]"
+    owning_contract_only: "category.escrow in [allowed, input_only, output_only] and service_locked assets remain in their owning contract"
+  service_input: "category.service_input == allowed"
+  forbidden_values: [forbidden]
+  contract_only_values:
+    direct_trade: forbidden
+    auction_house: forbidden
+    general_escrow: forbidden
+    owning_contract: allowed
+  validator_requirements:
+    - "Resolve an exact category key before evaluating any surface."
+    - "Reject missing, unknown, or invalid eligibility values; do not infer from binding state, item lore, UI labels, or defaults."
+    - "Evaluate category admission before reserving custody or accepting a listing/trade/service input."
+
+binding_state_vocabulary:
+  - unbound
+  - account_bound
+  - character_bound
+  - service_locked
+  - non_tradeable_economy_item
+
+eligibility_vocabulary:
+  - allowed
+  - forbidden
+  - input_only
+  - output_only
+  - contract_only
+
+speculation_vocabulary:
+  - allowed
+  - limited
+  - forbidden
+
+categories:
+  ordinary_materials:
+    default_binding_state: unbound
+    direct_trade: allowed
+    auction_house: allowed
+    escrow: allowed
+    service_input: allowed
+    service_output_transfer: allowed
+    material_bank: allowed
+    speculation: allowed
+    notes:
+      - "Baseline commodity category."
+
+  progression_bottleneck_materials:
+    default_binding_state: account_bound
+    direct_trade: forbidden
+    auction_house: forbidden
+    escrow: input_only
+    service_input: allowed
+    service_output_transfer: forbidden
+    material_bank: allowed
+    speculation: forbidden
+    notes:
+      - "Protected to prevent progression denial and market cornering."
+
+  reroll_currency_items:
+    default_binding_state: unbound
+    direct_trade: allowed
+    auction_house: allowed
+    escrow: input_only
+    service_input: allowed
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: allowed
+    notes:
+      - "Tradeable stack-lot operation fuel, not service tender."
+
+  upgrade_currency_items:
+    default_binding_state: unbound
+    direct_trade: allowed
+    auction_house: allowed
+    escrow: input_only
+    service_input: allowed
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: allowed
+    notes:
+      - "Tradeable stack-lot upgrade fuel, not service tender."
+
+  craft_modifier_currency_items:
+    default_binding_state: unbound
+    direct_trade: allowed
+    auction_house: allowed
+    escrow: input_only
+    service_input: allowed
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: limited
+    notes:
+      - "Allowed on market, but category is more tightly monitored for bottleneck abuse."
+
+  market_gear_bases:
+    default_binding_state: unbound
+    direct_trade: allowed
+    auction_house: allowed
+    escrow: allowed
+    service_input: allowed
+    service_output_transfer: allowed
+    material_bank: forbidden
+    speculation: limited
+    notes:
+      - "Lower or mid-tier bases intended to circulate."
+
+  intermediate_crafted_outputs:
+    default_binding_state: unbound
+    direct_trade: allowed
+    auction_house: allowed
+    escrow: allowed
+    service_input: allowed
+    service_output_transfer: allowed
+    material_bank: forbidden
+    speculation: limited
+    notes:
+      - "Craft outputs intended as tradable intermediates, not final personal progression."
+
+  final_progression_gear:
+    default_binding_state: character_bound
+    direct_trade: forbidden
+    auction_house: forbidden
+    escrow: input_only
+    service_input: allowed
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: forbidden
+    notes:
+      - "May enter service as input, but final settled output stays with rightful owner."
+
+  account_progression_unlock_goods:
+    default_binding_state: account_bound
+    direct_trade: forbidden
+    auction_house: forbidden
+    escrow: forbidden
+    service_input: forbidden
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: forbidden
+    notes:
+      - "Account-scope progression or convenience goods outside ordinary market."
+
+  service_input_items:
+    default_binding_state: service_locked
+    direct_trade: contract_only
+    auction_house: forbidden
+    escrow: allowed
+    service_input: allowed
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: forbidden
+    notes:
+      - "Reserved only inside the owning active contract."
+
+  service_bound_outputs:
+    default_binding_state: character_bound
+    direct_trade: forbidden
+    auction_house: forbidden
+    escrow: output_only
+    service_input: forbidden
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: forbidden
+    notes:
+      - "Output may be delivered to rightful owner, never released into general market."
+
+  recovery_or_compensation_items:
+    default_binding_state: non_tradeable_economy_item
+    direct_trade: forbidden
+    auction_house: forbidden
+    escrow: forbidden
+    service_input: forbidden
+    service_output_transfer: forbidden
+    material_bank: forbidden
+    speculation: forbidden
+    notes:
+      - "Anti-abuse and support-oriented category, never market-facing."
+
+invariants:
+  - id: ELIG-INV-001
+    rule: "No category marked forbidden for Auction House may be listed through a UI-only exception."
+  - id: ELIG-INV-002
+    rule: "Input-only escrow categories may enter a contract but may not become free-transfer deliverables."
+  - id: ELIG-INV-003
+    rule: "Service-locked assets are portable only inside their owning active contract."
+  - id: ELIG-INV-004
+    rule: "Any new market-facing category requires an explicit row here before marketplace rules may use it."
+
+non_goals:
+  - "Exact item-by-item mapping from runtime ids into these categories."
+  - "Plugin field names."
+  - "Numeric fee policy."

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "placeholderapi-modrinth",
+      "plugin_id": "placeholderapi",
+      "plugin_name": "PlaceholderAPI",
+      "adapter": "pinned-https-release",
+      "project": "modrinth/placeholderapi",
+      "discovery": {
+        "adapter": "modrinth-project-versions",
+        "host": "api.modrinth.com",
+        "project_path": "/v2/project/lKEzGugV",
+        "path_prefix": "/v2/project/lKEzGugV/version",
+        "max_bytes": 1048576
+      },
+      "artifact": {
+        "host": "cdn.modrinth.com",
+        "project_path": "/data/lKEzGugV",
+        "path_prefix": "/data/lKEzGugV/versions/",
+        "max_bytes": 16777216
+      },
+      "manifest": null,
+      "redirects": {
+        "max": 0,
+        "same_host_only": true
+      },
+      "signature_keys": {}
+    }
+  ]
+}

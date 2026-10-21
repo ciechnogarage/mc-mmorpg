@@ -1,0 +1,329 @@
+schema_version: 2
+contract_id: reputation-standing-contract
+contract_version: 1
+contract_status: proposed
+runtime_status: blocked
+release_status: blocked
+contract_owner: "01"
+domain_owner: "01"
+semantic_owner: "08"
+
+purpose:
+  - separate durable per-character reputation standing from organization membership, rank, trust, exile, and UI projection
+  - define one shared standing vocabulary for faction-aligned narrative access, unlock, and hostility checks without claiming runtime implementation
+  - forbid loose placeholders such as menu cache, scoreboard tags, display names, or generic plugin labels from acting as durable reputation authority
+
+runtime_authority:
+  standing_record_writer: blocked_pending_domain08_reputation_service
+  standing_delta_coordinator: blocked_pending_domain08_business_reference_journal
+  organization_relationship_reader: docs/contracts/organization-relationship-contract.yaml
+  faction_definition_reader: docs/contracts/faction-definition-template.yaml
+  account_character_identity: docs/contracts/account-character-contract.yaml
+
+persistence_owner:
+  standing_record: blocked_pending_domain08_standing_store
+  standing_delta_journal: blocked_pending_domain08_delta_journal
+  projection_cache: projection_only_not_authoritative
+
+integration_coordinator: "01"
+
+data_scope:
+  - reputation_record_id
+  - character_id
+  - organization_category
+  - organization_id
+  - standing_value
+  - standing_tier
+  - hostility_state
+  - source_counters
+  - last_delta_reason
+  - last_delta_reference
+  - first_earned_at
+  - last_modified_at
+  - season_scope
+
+canonical_key:
+  reputation_record_id:
+    namespace: mcmmorpg:reputation:standing:v1
+    issuer: blocked_pending_domain08_reputation_service
+    composite_of:
+      - character_id
+      - organization_category
+      - organization_id
+    mutable: false
+    duplicates_allowed: false
+  character_id:
+    contract_ref: docs/contracts/account-character-contract.yaml
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    v1_value_equivalent_to_mmoprofiles_profile_uuid: true
+    durable_scope: per_character
+  organization_subject_id:
+    kind: composite
+    components:
+      - organization_category
+      - organization_id
+    mutable: false
+    duplicates_allowed: true
+  runtime_projection_id:
+    issuer: menu_or_adapter_layer
+    scope: runtime_or_ui_only
+    forbidden_as_durable_identity: true
+
+identity_namespace:
+  standing: mcmmorpg:reputation:standing:v1
+  character: mcmmorpg:character:mmoprofiles-profile:v1
+
+writers:
+  - system: blocked_pending_domain08_reputation_service
+    writes:
+      - reputation_record
+      - standing_delta_journal
+
+consumers:
+  - Domain08ReputationService
+  - Domain08NarrativeAccessPolicy
+  - Domain10RewardAndUnlockPolicy
+  - Domain14ProjectionAdapters
+  - AdminMigrationTools
+
+commands:
+  - create_reputation_record
+  - apply_reputation_delta
+  - project_reputation_view
+  - migrate_legacy_reputation_state
+
+api:
+  owner_subject_policy:
+    contract_ref: docs/contracts/account-character-contract.yaml
+    semantic_owner_subject: character_id
+    account_scope_aliasing_without_explicit_revision: forbidden
+  organization_subject_policy:
+    required_components:
+      - organization_category
+      - organization_id
+    allowed_categories_ref: docs/contracts/organization-relationship-contract.yaml
+    faction_definition_template_ref: docs/contracts/faction-definition-template.yaml
+  authority_resolution_policy:
+    accepted_durable_writers:
+      - named_service_with_business_reference_journal
+      - named_store_with_restart_recovery_plan
+    forbidden_placeholder_authorities:
+      - plugin_tbd
+      - cache_tbd
+      - menu_projection
+      - scoreboard_tag
+      - placeholderapi_value
+      - display_name
+    unresolved_authority_release_behavior: remain_blocked
+  boundary_policy:
+    reputation_is_not_membership: true
+    reputation_is_not_stored_rank: true
+    reputation_is_not_effective_rank: true
+    reputation_is_not_trust_or_trust_debt: true
+    ui_badges_colors_and_tooltips_are_projection_only: true
+    runtime_event_presence_without_confirmed_write: forbidden
+
+domain_events:
+  - reputation_record_created
+  - reputation_delta_applied
+  - reputation_delta_rejected_duplicate_reference
+  - reputation_projection_requested
+  - reputation_migration_adjustment_applied
+
+permissions:
+  - domain01.reputation.read
+  - domain01.reputation.write
+  - domain01.reputation.migrate
+
+pdc_keys:
+  - domain08.reputation.{organization_category}.{organization_id}.standing_tier
+  - domain08.reputation.{organization_category}.{organization_id}.hostility_state
+  - domain08.reputation.last_delta_reference
+
+migration_requirements:
+  migration_ledger_ref: docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  relevant_legacy_claims:
+    - organization_membership_and_access
+    - economy_crafting_loot
+  current_phase: shell_only_no_cutover
+  cutover_blockers:
+    - REPUTATION-001_domain08_runtime_authority_not_implemented
+    - REPUTATION-002_legacy_reputation_sources_not_mapped_to_business_references
+    - REPUTATION-003_cross_faction_penalty_policy_unsettled
+    - REPUTATION-004_reward_and_unlock_idempotency_evidence_missing
+    - REPUTATION-005_account_vs_character_scope_finalization_missing
+
+migration_policy:
+  current_phase: shell_only_no_cutover
+  v1_character_scope_assumption: character_id_value_equivalent_to_mmoprofiles_profile_uuid_only_for_v1_boundary
+  unresolved_runtime_authority_behavior: blocked
+  legacy_projection_backfill_allowed: false
+  runtime_migration_owned_by_future_ticket: true
+
+backward_compatibility:
+  legacy_access_logic_may_continue_outside_this_contract_until_cutover: true
+  menu_projection_compatibility_behavior_in_this_contract: false
+  quest_runtime_binding_behavior_in_this_contract: false
+
+dependencies:
+  - docs/contracts/account-character-contract.yaml
+  - docs/contracts/organization-relationship-contract.yaml
+  - docs/contracts/faction-definition-template.yaml
+  - docs/contracts/narrative-choice-consequence-contract.yaml
+  - docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+
+affected_systems:
+  - Domain08ReputationService
+  - Domain08NarrativeAccessPolicy
+  - Domain10RewardAndUnlockPolicy
+  - Domain14ProjectionAdapters
+  - MMOProfiles
+  - CharacterStage
+
+evidence:
+  planning_artifact: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-01-data-contracts-tech-plan/index.md
+  ticket_artifact: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/tickets/domain-01-reputation-contract-shell/index.md
+  required_runtime_evidence:
+    - leased_backend_reputation_write_replay
+    - duplicate_business_reference_rejection
+    - reward_unlock_reads_durable_reputation_not_projection_cache
+    - cross_faction_penalty_policy_verification
+  repository_contracts:
+    - docs/contracts/reputation-standing-contract.yaml
+    - docs/contracts/organization-relationship-contract.yaml
+
+open_questions:
+  - Which standing tier vocabulary is canonical and whether it remains global across factions, religions, and other organization categories.
+  - Whether hostility_state is fully derived from standing_tier or may be independently overridden by narrative flags.
+  - How seasonal or event-only organizations coexist with permanent faction standing without mixing reset policies.
+  - Which exact business references are canonical for quest, dungeon, delivery, and faction-event standing deltas.
+
+supersedes: []
+
+superseded_by: []
+
+state_vocabularies:
+  standing_tier:
+    - HOSTILE
+    - UNTRUSTED
+    - NEUTRAL
+    - RESPECTED
+    - HONORED
+    - EXALTED
+  hostility_state:
+    - HOSTILE
+    - RESTRICTED
+    - ALLOWED
+  delta_reason:
+    - REPUTATION_QUEST
+    - FACTION_EVENT
+    - REGIONAL_ACTIVITY
+    - FACTION_DUNGEON
+    - DELIVERY
+    - ADMIN_MIGRATION
+
+store_records:
+  reputation_record:
+    persistence_boundary: blocked_pending_domain08_standing_store
+    primary_key: reputation_record_id
+    foreign_keys:
+      - character_id
+    fields:
+      reputation_record_id:
+        type: string
+        namespace: mcmmorpg:reputation:standing:v1
+      character_id:
+        type: string
+        namespace: mcmmorpg:character:mmoprofiles-profile:v1
+      organization_category:
+        type: enum
+        values:
+          - FACTION
+          - RELIGION
+          - PROFESSIONAL
+          - TRADE
+          - INFORMATION
+          - MILITARY
+          - ANTAGONIST
+      organization_id:
+        type: string
+      standing_value:
+        type: integer_or_decimal_policy_defined
+      standing_tier:
+        type: enum
+        values:
+          - HOSTILE
+          - UNTRUSTED
+          - NEUTRAL
+          - RESPECTED
+          - HONORED
+          - EXALTED
+      hostility_state:
+        type: enum
+        values:
+          - HOSTILE
+          - RESTRICTED
+          - ALLOWED
+      source_counters:
+        type: object
+        fields:
+          quests: int
+          events: int
+          dungeon_runs: int
+          deliveries: int
+          manual_adjustments: int
+      last_delta_reason:
+        type: enum
+        values:
+          - REPUTATION_QUEST
+          - FACTION_EVENT
+          - REGIONAL_ACTIVITY
+          - FACTION_DUNGEON
+          - DELIVERY
+          - ADMIN_MIGRATION
+      last_delta_reference:
+        type: string
+      first_earned_at:
+        type: iso8601
+      last_modified_at:
+        type: iso8601
+      season_scope:
+        type: string|null
+        meaning: permanent_or_season_identifier
+
+  standing_delta_journal:
+    persistence_boundary: blocked_pending_domain08_delta_journal
+    primary_key: business_reference
+    fields:
+      business_reference:
+        type: string
+      character_id:
+        type: string
+        namespace: mcmmorpg:character:domain01:v1
+      organization_id:
+        type: string
+      delta_reason:
+        type: enum
+        values:
+          - REPUTATION_QUEST
+          - FACTION_EVENT
+          - REGIONAL_ACTIVITY
+          - FACTION_DUNGEON
+          - DELIVERY
+          - ADMIN_MIGRATION
+      delta_amount:
+        type: integer_or_decimal_policy_defined
+      duplicate_policy:
+        type: string
+        fixed_value: reject_and_audit
+      applied_at:
+        type: iso8601
+
+rules:
+  reputation_record_identity_requires_character_and_organization_subject: true
+  reward_and_unlock_checks_must_read_durable_reputation_not_projection_cache: true
+  membership_rank_trust_and_exile_require_organization_relationship_contract: true
+  negative_standing_allowed_only_via_explicit_policy: true
+  cross_faction_penalty_requires_policy_reference: true
+  duplicate_business_reference_must_not_duplicate_standing_gain_or_loss: true
+  direct_use_of_player_uuid_or_profile_id_as_reputation_primary_key: forbidden

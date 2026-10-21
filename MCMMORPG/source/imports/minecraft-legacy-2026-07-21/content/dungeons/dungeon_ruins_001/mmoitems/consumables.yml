@@ -1,0 +1,10 @@
+DR001_CLEANSING_DRAUGHT:
+  base:
+    material: HONEY_BOTTLE
+    name: '&bCleansing Draught'
+    required-level: 12
+    tier: UNCOMMON
+    disable-crafting: true
+    lore:
+      - '&7Design hook: removes poison/slow during Nhal''Ruun flood phase.'
+      - '&8Command or custom ability must be verified in staging before release.'

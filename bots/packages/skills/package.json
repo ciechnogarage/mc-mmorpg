@@ -1,0 +1,12 @@
+{
+  "name": "@mmorpg-bots/skills",
+  "version": "0.1.0",
+  "main": "index.js",
+  "dependencies": {
+    "prismarine-nbt": "^2.0.0",
+    "mineflayer-pathfinder": "^2.4.5",
+    "vec3": "^0.1.10",
+    "@mmorpg-bots/bot-core": "*",
+    "@mmorpg-bots/state-machine": "*"
+  }
+}

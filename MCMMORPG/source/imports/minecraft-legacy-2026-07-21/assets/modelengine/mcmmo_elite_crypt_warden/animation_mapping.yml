@@ -1,0 +1,35 @@
+model_id: mcmmo_elite_crypt_warden
+animation_source: assets/blockbench/source/mcmmo_elite_crypt_warden/mcmmo_elite_crypt_warden.bbmodel
+mythicmobs_skill_file: assets/mythicmobs/mcmmo_elite_crypt_warden/skills/mcmmo_elite_crypt_warden_skills.yml
+states:
+  spawn:
+    trigger: "~onSpawn"
+    skill: MCMMOEliteCryptWardenSpawn
+    notes: intro rise/tell, staging must verify timing
+  attack_01:
+    trigger: "~onAttack"
+    skill: MCMMOEliteCryptWardenAttack01
+    suggested_damage_delay_ticks: 8
+  attack_02:
+    trigger: "~onTimer:140"
+    skill: MCMMOEliteCryptWardenAttack02
+    suggested_damage_delay_ticks: 18
+  cast:
+    trigger: "~onTimer:220"
+    skill: MCMMOEliteCryptWardenVoidCast
+    suggested_damage_delay_ticks: 26
+  special_01:
+    trigger: "~onTimer:320"
+    skill: MCMMOEliteCryptWardenSpecial01
+    suggested_damage_delay_ticks: 38
+  hurt:
+    trigger: "~onDamaged"
+    skill: inline state hook in mob file
+  death:
+    trigger: "~onDeath"
+    skill: MCMMOEliteCryptWardenDeath
+pending_verification:
+  - animation names after ModelEngine import
+  - hitbox scale
+  - damage frame timing
+  - particle origin offsets

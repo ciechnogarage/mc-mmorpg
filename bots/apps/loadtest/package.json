@@ -1,0 +1,9 @@
+{
+  "name": "@mmorpg-bots/loadtest",
+  "version": "0.1.0",
+  "main": "loadtest.js",
+  "dependencies": {
+    "@mmorpg-bots/mmo-bridge": "*",
+    "@mmorpg-bots/qa": "*"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schemas/items/item.schema.json",
+  "title": "Domain-18 item pilot schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "display_name",
+    "content_type",
+    "item_family",
+    "item_subfamily",
+    "template_id",
+    "runtime",
+    "stats"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "const": "item.weapon.sword.ashen_vanguard"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_type": {
+      "const": "item"
+    },
+    "item_family": {
+      "const": "weapon"
+    },
+    "item_subfamily": {
+      "const": "sword"
+    },
+    "template_id": {
+      "const": "item.weapon.sword"
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin",
+        "target_file",
+        "section_key"
+      ],
+      "properties": {
+        "plugin": {
+          "const": "MMOItems"
+        },
+        "target_file": {
+          "const": "MCMMORPG/plugins/MMOItems/item/sword.yml"
+        },
+        "section_key": {
+          "const": "ASHEN_VANGUARD"
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base",
+        "name",
+        "lore",
+        "attack-damage",
+        "attack-speed",
+        "required-level"
+      ],
+      "properties": {
+        "base": {
+          "const": "SWORD"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lore": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "string"
+          }
+        },
+        "attack-damage": {
+          "type": "number",
+          "minimum": 0
+        },
+        "attack-speed": {
+          "type": "number"
+        },
+        "required-level": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

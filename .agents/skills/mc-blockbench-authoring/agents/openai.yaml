@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC Blockbench Authoring"
+  short_description: "Author Minecraft assets safely in Blockbench"
+  default_prompt: "Use $mc-blockbench-authoring to build a Minecraft asset through the approved Blockbench MCP without directly editing .bbmodel JSON."

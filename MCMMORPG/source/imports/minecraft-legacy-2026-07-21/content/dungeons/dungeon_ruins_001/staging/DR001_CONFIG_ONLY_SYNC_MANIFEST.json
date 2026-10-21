@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "packet_id": "DR001_CONFIG_ONLY_SYNC",
+  "dungeon_id": "dungeon_ruins_001",
+  "display_name": "Ruiny Zlamanej Korony",
+  "target_environment": "staging",
+  "target_root": "Server \u2014 kopia/1.21.11",
+  "active_namespace": {
+    "upper": "DR001_",
+    "lower": "dr001_",
+    "legacy_prefix": "dungeon_ruins_001_"
+  },
+  "final_asset_gate_policy": "config-only sync does not copy assets; validate_final_assets.mjs must still block until approved_final intake exists",
+  "apply_policy": "dry-run by default; real copy requires -Apply and -ApproveConfigOnlyStagingSync and separate operator approval",
+  "operations": [
+    {
+      "source": "content/dungeons/dungeon_ruins_001/mythicmobs/mobs.yml",
+      "target": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/mobs/DR001_Mobs.yml",
+      "plugin_owner": "MythicMobs",
+      "config_type": "mob_config",
+      "active_namespace": "DR001_",
+      "binary_assets_required": true,
+      "safe_for_config_only_sync": true,
+      "rollback_delete_path": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/mobs/DR001_Mobs.yml",
+      "notes": "Contains active trash/add mob IDs. Runtime spawn may fail until final dr001_ ModelEngine blueprints exist."
+    },
+    {
+      "source": "content/dungeons/dungeon_ruins_001/mythicmobs/bosses.yml",
+      "target": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/mobs/DR001_Bosses.yml",
+      "plugin_owner": "MythicMobs",
+      "config_type": "boss_config",
+      "active_namespace": "DR001_",
+      "binary_assets_required": true,
+      "safe_for_config_only_sync": true,
+      "rollback_delete_path": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/mobs/DR001_Bosses.yml",
+      "notes": "Contains active boss IDs and HP phase wrapper calls. Runtime verification still required after approved sync."
+    },
+    {
+      "source": "content/dungeons/dungeon_ruins_001/mythicmobs/skills.yml",
+      "target": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/skills/DR001_Skills.yml",
+      "plugin_owner": "MythicMobs",
+      "config_type": "skill_config",
+      "active_namespace": "DR001_",
+      "binary_assets_required": false,
+      "safe_for_config_only_sync": true,
+      "rollback_delete_path": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/skills/DR001_Skills.yml",
+      "notes": "Includes RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION wrappers using documented healthpercent conditions."
+    },
+    {
+      "source": "content/dungeons/dungeon_ruins_001/mythicmobs/drops.yml",
+      "target": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/droptables/DR001_Drops.yml",
+      "plugin_owner": "MythicMobs",
+      "config_type": "drop_table_config",
+      "active_namespace": "DR001_",
+      "binary_assets_required": false,
+      "safe_for_config_only_sync": true,
+      "rollback_delete_path": "Server \u2014 kopia/1.21.11/plugins/MythicMobs/droptables/DR001_Drops.yml",
+      "notes": "References DR001 MMOItems IDs. Reward smoke remains blocked until MMOItems import/merge is separately reviewed."
+    },
+    {
+      "source": "content/dungeons/dungeon_ruins_001/mythicdungeons/dungeon_ruins_001/config.yml",
+      "target": "Server \u2014 kopia/1.21.11/plugins/MythicDungeons/maps/dungeon_ruins_001/config.yml",
+      "plugin_owner": "MythicDungeons",
+      "config_type": "map_config",
+      "active_namespace": "dungeon_ruins_001 map id with DR001_/dr001_ references",
+      "binary_assets_required": true,
+      "safe_for_config_only_sync": true,
+      "rollback_delete_path": "Server \u2014 kopia/1.21.11/plugins/MythicDungeons/maps/dungeon_ruins_001",
+      "notes": "Creates the staging map config only. Iris world/assets and editor wiring are still required before playtest."
+    },
+    {
+      "source": "content/dungeons/dungeon_ruins_001/mythicdungeons/dungeon_ruins_001/functions.yml",
+      "target": "Server \u2014 kopia/1.21.11/plugins/MythicDungeons/maps/dungeon_ruins_001/functions.yml",
+      "plugin_owner": "MythicDungeons",
+      "config_type": "editor_owned_functions_placeholder",
+      "active_namespace": "dungeon_ruins_001 map id",
+      "binary_assets_required": false,
+      "safe_for_config_only_sync": true,
+      "rollback_delete_path": "Server \u2014 kopia/1.21.11/plugins/MythicDungeons/maps/dungeon_ruins_001",
+      "notes": "Functions are intentionally empty/editor-owned. START->MID->END runtime flow cannot pass until editor wiring exists."
+    }
+  ],
+  "excluded_sources": [
+    {
+      "path": "content/dungeons/dungeon_ruins_001/modelengine",
+      "reason": "binary .bbmodel assets excluded; final dr001_* blueprints are missing"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/nexo",
+      "reason": "Nexo config/resource-pack layer excluded from config-only smoke packet"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/resourcepack",
+      "reason": "textures, models, sounds, pack metadata and legacy scaffold assets excluded"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/iris",
+      "reason": "Iris schematics/images/world assets excluded; no final asset gate bypass"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/intake",
+      "reason": "final asset intake remains pending and must not be copied by this packet"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/mythicdungeons/stages",
+      "reason": "source contract only; not a confirmed MythicDungeons plugin-native folder"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/mmoitems",
+      "reason": "MMOItems import/merge into plugin item type files needs separate review; not required for MythicMobs reload smoke"
+    },
+    {
+      "path": "content/dungeons/dungeon_ruins_001/mmocore",
+      "reason": "MMOCore reward/objective hooks need separate syntax/runtime review"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+schema_version: 1
+snapshot_kind: domain_03_combat_mechanic_authority_snapshot
+snapshot_id: d03-authority-revoked-direct-damage-v1
+authority_id: domain_03_combat_core
+authority_contract_ref: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-03-combat-core-revision/index.md@33b076efb539dc5b0007c372d939ed447be6216116f975d95b20c76bf42e32e4
+scope_mechanic_ids:
+  - combat:direct_damage
+bindings:
+  - mechanic_id: combat:direct_damage
+    mechanic_contract_version: 1
+    readiness: RUNTIME_VERIFIED
+    mechanic_contract_ref: contracts/combat:direct_damage@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    gate_transition_envelope_ref: evidence/combat:direct_damage@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    contract_bundle_digest: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    build_digest: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    revoked: true

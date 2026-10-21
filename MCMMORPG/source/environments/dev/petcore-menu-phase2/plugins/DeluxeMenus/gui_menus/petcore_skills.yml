@@ -1,0 +1,65 @@
+menu_title: '&8✦ &9&lSKILLE / LOADOUT &8✦'
+size: 54
+
+items:
+  filler:
+    material: BLUE_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  active_skill:
+    material: ENCHANTED_BOOK
+    slot: 20
+    display_name: '&9PetCore GlobalPetPulse'
+    lore:
+      - '&7Jedyny allow-listed skill w obecnym slice.'
+      - '&7Aktywny pet: &f%petcore_active_pet%'
+      - '&7Authority: &f%petcore_authority%'
+      - ''
+      - '&eKliknij: &fużyj istniejącego skilla'
+    left_click_commands:
+      - '[player] petcore skill PetCore_GlobalPetPulse'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+
+  locked_slot_1:
+    material: GRAY_DYE
+    slot: 22
+    display_name: '&7Slot Loadoutu &8[LOCKED]'
+    lore:
+      - '&7Nauka, wymiana i cooldowny'
+      - '&7wymagają backendu skill profile.'
+
+  locked_slot_2:
+    material: GRAY_DYE
+    slot: 24
+    display_name: '&7Slot Loadoutu &8[LOCKED]'
+    lore:
+      - '&7Nie ma zmyślonych pasywek.'
+      - '&7Menu czeka na PetCore skill DB.'
+
+  guard:
+    material: SHIELD
+    slot: 31
+    display_name: '&bGuard'
+    lore:
+      - '&7Komenda przechodzi przez PetCore allow-list.'
+      - '&7Jeśli pet/profil/authority blokuje akcję,'
+      - '&7backend odpowie odmową.'
+
+  back:
+    material: ARROW
+    slot: 48
+    display_name: '&ePowrót'
+    left_click_commands:
+      - '[openguimenu] petcore_main'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 50
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

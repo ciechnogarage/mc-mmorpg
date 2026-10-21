@@ -1,0 +1,127 @@
+Version: 1
+Functions:
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionStartDungeon
+  namespace: Start Dungeon
+  displayName: Start Dungeon
+  location:
+    ==: org.bukkit.Location
+    x: 0.5
+    y: 125.0
+    z: -150.5
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDungeonStart
+    namespace: Dungeon Start
+    displayName: Dungeon Start
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PLAYER
+  category: DUNGEON
+  requiresTarget: true
+  allowRetriggerByDefault: true
+  requiresTrigger: true
+  initialized: true
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  namespace: Mythic Skill
+  displayName: Dungeon001StartRelicPulse
+  mythicSkill: Dungeon001StartRelicPulse
+  location:
+    ==: org.bukkit.Location
+    x: 1.5
+    y: 125.0
+    z: -150.5
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDungeonStart
+    namespace: Dungeon Start
+    displayName: Dungeon Start
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: NONE
+  category: META
+  requiresTarget: false
+  allowRetriggerByDefault: true
+  requiresTrigger: true
+  initialized: true
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  namespace: Mythic Skill
+  displayName: Dungeon001MidWaveStart
+  mythicSkill: Dungeon001MidWaveStart
+  location:
+    ==: org.bukkit.Location
+    x: 2.5
+    y: 125.0
+    z: -150.5
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerRemote
+    namespace: Signal Receiver
+    displayName: dungeon_001_start_objective_complete
+    triggerName: dungeon_001_start_objective_complete
+    awaitConditions: false
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: NONE
+  category: META
+  requiresTarget: false
+  allowRetriggerByDefault: true
+  requiresTrigger: true
+  initialized: true
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionSpawnMythicMob
+  namespace: Mob Spawner
+  displayName: Spawn Warden
+  mob: Dungeon001Warden
+  levelString: '1'
+  maxCount: 1
+  delay: 0
+  interval: 0
+  yaw: 0.0
+  location:
+    ==: org.bukkit.Location
+    x: 3.5
+    y: 125.0
+    z: -150.5
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerRemote
+    namespace: Signal Receiver
+    displayName: dungeon_001_mid_objective_complete
+    triggerName: dungeon_001_mid_objective_complete
+    awaitConditions: false
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: NONE
+  category: META
+  requiresTarget: false
+  allowRetriggerByDefault: true
+  requiresTrigger: true
+  initialized: true
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionFinishDungeon
+  namespace: Finish Dungeon
+  displayName: Finish Dungeon
+  location:
+    ==: org.bukkit.Location
+    x: 4.5
+    y: 125.0
+    z: -150.5
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerRemote
+    namespace: Signal Receiver
+    displayName: dungeon_001_end_boss_defeated
+    triggerName: dungeon_001_end_boss_defeated
+    awaitConditions: false
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  category: DUNGEON
+  requiresTarget: false
+  allowRetriggerByDefault: false
+  requiresTrigger: true
+  leave: false
+  initialized: true

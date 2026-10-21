@@ -1,0 +1,63 @@
+contract:
+  id: evidence-knowledge-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_implemented
+  release_status: blocked
+  owner_domain: "08"
+  upstream_dependencies:
+    domain_13:
+      required:
+        - global_canon_boundary
+    domain_14:
+      required:
+        - journal_visibility_and_tracking
+    domain_17:
+      required:
+        - evidence_state_migration_tests
+    domain_18:
+      required:
+        - validators_for_evidence_and_knowledge_graphs
+
+knowledge_confidence_vocabulary:
+  - UNKNOWN
+  - SUSPECTED
+  - CREDIBLE
+  - CONFIRMED
+  - PUBLIC
+
+transfer_mode_vocabulary:
+  - PHYSICAL_ITEM
+  - DOCUMENT_COPY
+  - NPC_TESTIMONY
+  - PARTY_SHARED_DISCOVERY
+  - NON_TRANSFERABLE
+
+evidence_shape:
+  evidence_id: evidence.example.placeholder
+  relates_to:
+    historical_events: []
+    claims: []
+  reliability: HIGH
+  integrity: INTACT
+  transfer_mode: PHYSICAL_ITEM
+  consumable_on_submission: false
+  forgery_possible: true
+  reveals:
+    organization_knowledge: {}
+    character_knowledge: {}
+    public_knowledge: {}
+
+model_boundaries:
+  historical_event: what_actually_happened
+  evidence: trace_that_can_support_or_refute
+  testimony: witness_report
+  claim: assertion_by_npc_or_organization
+  character_knowledge: what_character_knows
+  organization_knowledge: what_organization_believes
+  public_knowledge: what_is_broadly_available
+
+rules:
+  most_knowledge_must_not_be_modeled_only_as_items: true
+  organization_confirmed_is_perspective_not_absolute_truth: true
+  evidence_transfer_mode_must_be_explicit: true

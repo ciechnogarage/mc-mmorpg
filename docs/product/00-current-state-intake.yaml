@@ -1,0 +1,475 @@
+meta:
+  document: current-state-intake
+  domain: "00"
+  status: active
+  purpose: >
+    Intake queue for claims imported from legacy docs, ADRs, registries, plans,
+    research, owner-approved planning artifacts, and other sources entering
+    Domain 00 product truth.
+  constraints:
+    - Imported claims are observed input, not approved Domain 00 truth.
+    - Observed source statuses such as accepted, partial, and blocked stay source-only metadata.
+    - Default handling is conservative until owner review, evidence review, and conflict review complete.
+
+status_axes:
+  intake_state:
+    description: Position of the record inside the intake workflow.
+    allowed:
+      - collected
+      - normalized
+      - under_review
+      - awaiting_owner
+      - awaiting_evidence
+      - conflict_open
+      - quarantined
+      - promoted
+      - rejected
+  source_truth_mode:
+    description: How Domain 00 treats the imported statement right now.
+    allowed:
+      - observed_only
+      - proposed_target_state
+      - approved_target_state
+    rules:
+      - All new imported records start as observed_only.
+      - approved_target_state is valid only after promotion and a separate target artifact update.
+  review_state:
+    description: Completion state of the required review package.
+    allowed:
+      - not_started
+      - source_checked
+      - owner_reviewed
+      - evidence_reviewed
+      - conflict_checked
+      - ready_for_promotion
+      - closed
+
+source_reliability:
+  allowed_classifications:
+    - decision_registry_candidate
+    - contract_candidate
+    - advisory_or_mixed
+    - runtime_contradicted
+    - legacy_only
+    - unknown
+    - suspect_registry
+  normalization_rules:
+    - accepted in a source artifact means the source marked itself accepted; it is not Domain 00 approval.
+    - partial in a source artifact means partial implementation or partial confidence in source context; it is not a target-state disposition.
+    - blocked in a source artifact means the source observed a blocker; it is not by itself a rejection or a closed conflict.
+    - suspect_registry is used when a registry asserts strong truth without current owner review or current evidence.
+    - runtime_contradicted requires conflict review before a claim can inform target state.
+
+dispositions:
+  allowed:
+    - carry_as_approved
+    - carry_as_proposed
+    - quarantine
+    - split_into_claims
+    - supersede
+    - reject
+    - needs_runtime_evidence
+    - needs_owner_decision
+  defaults:
+    imported_claim_default: quarantine
+  notes:
+    - carry_as_approved is exceptional and requires explicit owner review, conflict clearance, and a target-state destination.
+    - carry_as_proposed may preserve candidate direction but still does not assert approved truth.
+    - split_into_claims is required when a source statement mixes decision, runtime fact, and intent.
+
+review_requirements:
+  always_required:
+    - intake_id
+    - claim
+    - source_files
+    - source_type
+    - observed_source_statuses
+    - classification
+    - confidence
+    - disposition
+    - owner_to_review
+    - required_evidence
+  conditional_requirements:
+    - If classification is runtime_contradicted, at least one conflict_id is required.
+    - If disposition is carry_as_approved, target_artifact is required and review_state must reach ready_for_promotion first.
+    - If disposition is split_into_claims, notes must explain the decomposition boundary.
+    - If disposition is needs_owner_decision, owner_to_review cannot be empty.
+    - If disposition is needs_runtime_evidence, required_evidence must name the missing runtime proof.
+
+quarantine_promotion_rules:
+  invariant_rules:
+    - Quarantined claims cannot become approved truth directly from intake.
+    - Quarantined claims cannot be used as release-gate facts.
+    - Quarantined claims cannot be copied into accepted contracts or approved decisions without conflict closure.
+    - Work may reference quarantined claims only as observed context or unresolved blockers.
+  promotion_preconditions:
+    - intake_state is under_review, awaiting_owner, or quarantined before promotion work starts.
+    - Owner review is explicitly recorded.
+    - Required evidence is collected and cited.
+    - All linked conflicts are resolved or explicitly found non-blocking in the target artifact.
+    - disposition is updated away from quarantine before rewriting approved truth.
+    - The target artifact is updated in the same change that records promotion.
+
+workflow:
+  sequence:
+    - Collect the imported statement exactly as observed, without rewriting it into approved truth.
+    - Normalize source statuses and classify source reliability.
+    - Split mixed statements into separate claims when one source sentence contains multiple governance meanings.
+    - Check contradiction, ownership gaps, and stale assertions, then open conflicts when needed.
+    - Assign disposition and review owner.
+    - Gather evidence required by the disposition.
+    - Promote only when a destination Domain 00 artifact is updated with explicit target-state wording.
+
+intake:
+  records:
+    - intake_id: INTAKE-001
+      claim: >
+        docs/config_authority_registry.yaml contains observed and proposed technical
+        implementation statuses that require per-contract evidence before promotion. Its
+        authority field does not define product-semantic ownership.
+      source_files:
+        - docs/config_authority_registry.yaml
+      source_type: registry
+      observed_source_statuses:
+        - accepted
+        - proposed
+        - partial
+        - blocked
+      classification: advisory_or_mixed
+      confidence: high
+      intake_state: awaiting_evidence
+      source_truth_mode: observed_only
+      review_state: conflict_checked
+      disposition: split_into_claims
+      target_artifact: docs/config_authority_registry.yaml
+      conflict_ids:
+        - CONFLICT-001
+      required_evidence:
+        - authority-layer rules in docs/config_authority_registry.yaml
+        - per-contract owner confirmation and implementation evidence before promotion
+      owner_to_review: "00"
+      notes: >
+        The authority-layer decision is now recorded. Individual implementation statuses
+        remain observed or proposed metadata until their own evidence gates are satisfied.
+    - intake_id: INTAKE-002
+      claim: >
+        docs/foundation-index.md explicitly says foundation documents are design inputs, not
+        runtime truth, but the same file also preserves broad product claims that can be
+        misread as already-approved target-state truth unless quarantined.
+      source_files:
+        - docs/foundation-index.md
+      source_type: foundation_index
+      observed_source_statuses:
+        - consolidation_map
+        - merge
+        - content-candidate
+        - blocked
+      classification: advisory_or_mixed
+      confidence: high
+      intake_state: quarantined
+      source_truth_mode: observed_only
+      review_state: conflict_checked
+      disposition: split_into_claims
+      target_artifact: ""
+      conflict_ids:
+        - CONFLICT-002
+      required_evidence:
+        - Domain 00 decision on which surviving product statements remain in target-state scope
+        - per-domain contract extraction for any statement promoted beyond advisory input
+      owner_to_review: "00"
+      notes: >
+        The foundation index is useful input, but the file itself warns that durable product
+        truth must be copied into current domain contracts with evidence.
+    - intake_id: INTAKE-003
+      claim: >
+        Earlier source wording mixed an unresolved quest implementation authority with
+        unresolved objective-credit handoffs and incorrectly presented both as a product
+        owner gap. Domain 08 product ownership is approved; handoffs remain unresolved.
+      source_files:
+        - docs/current-server-plan.md
+        - docs/config_authority_registry.yaml
+      source_type: plan_plus_registry
+      observed_source_statuses:
+        - current_coordination_plan
+        - proposed
+        - blocked
+      classification: advisory_or_mixed
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: split_into_claims
+      target_artifact: docs/contracts/quest-domain-handoff-contract.yaml
+      conflict_ids:
+        - CONFLICT-003
+      required_evidence:
+        - PRODUCT-GOV-004
+        - accepted quest-domain-handoff-v1 contract
+        - explicit runtime and release blockers preserved in the contract
+      owner_to_review: "00"
+      notes: >
+        Ownership and semantic handoffs were split from runtime truth and promoted
+        through PRODUCT-GOV-004. Runtime and release claims remain blocked by the
+        accepted contract's evidence gates.
+    - intake_id: INTAKE-004
+      claim: >
+        Earlier source wording mixed an unresolved profession implementation authority with
+        unresolved progression, output, and persistence contracts and incorrectly presented
+        both as a product owner gap. Domain 09 product ownership is approved.
+      source_files:
+        - docs/current-server-plan.md
+        - docs/config_authority_registry.yaml
+      source_type: plan_plus_registry
+      observed_source_statuses:
+        - current_coordination_plan
+        - proposed
+        - blocked
+      classification: advisory_or_mixed
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: split_into_claims
+      target_artifact: docs/contracts/profession-domain-handoff-contract.yaml
+      conflict_ids:
+        - CONFLICT-004
+      required_evidence:
+        - PRODUCT-GOV-005
+        - accepted profession-domain-handoff-v1 contract
+        - explicit runtime and release blockers preserved in the contract
+      owner_to_review: "00"
+      notes: >
+        Ownership and semantic handoffs were split from runtime truth and promoted
+        through PRODUCT-GOV-005. Runtime and release claims remain blocked by the
+        accepted contract's evidence gates.
+    - intake_id: INTAKE-005
+      claim: >
+        Earlier source wording mixed unresolved implementation and reset boundaries with
+        product ownership. Domains 11, 13, and 19 now have approved semantic ownership, while
+        seasonal reward, guild payout, persistence, and reset contracts remain unresolved.
+      source_files:
+        - docs/current-server-plan.md
+        - docs/config_authority_registry.yaml
+        - docs/foundation-index.md
+      source_type: mixed_plan_registry_foundation
+      observed_source_statuses:
+        - current_coordination_plan
+        - proposed
+        - blocked
+        - merge
+      classification: advisory_or_mixed
+      confidence: high
+      intake_state: quarantined
+      source_truth_mode: observed_only
+      review_state: conflict_checked
+      disposition: split_into_claims
+      target_artifact: docs/product/00-domain-ownership.yaml
+      conflict_ids:
+        - CONFLICT-005
+      required_evidence:
+        - PRODUCT-GOV-003 and approved Domain 11, 13, and 19 ownership
+        - reward-envelope and guild projection/treasury payout contracts
+        - explicit decision on reset scope across seasons, prestige, cosmetics, and durable player state
+      owner_to_review: "00"
+      notes: >
+        Ownership is no longer quarantined. Foundation guidance remains advisory until the
+        reward, payout, persistence, and reset boundaries are contracted and evidenced.
+    - intake_id: INTAKE-006
+      claim: >
+        ADR-003 and the PetCore legacy claim contract establish a documented companion
+        authority direction, but companion runtime remains blocked, so Domain 00 cannot treat
+        that direction as verified product truth or release-gate evidence yet.
+      source_files:
+        - docs/adr/ADR-003-petcore-companion-authority.md
+        - docs/contracts/petcore-legacy-claim-contract.yaml
+        - docs/config_authority_registry.yaml
+      source_type: adr_plus_contract_plus_registry
+      observed_source_statuses:
+        - accepted
+        - not_tested
+        - blocked
+        - partial
+      classification: advisory_or_mixed
+      confidence: high
+      intake_state: quarantined
+      source_truth_mode: observed_only
+      review_state: conflict_checked
+      disposition: needs_runtime_evidence
+      target_artifact: ""
+      conflict_ids:
+        - CONFLICT-006
+      required_evidence:
+        - runtime verification path for companion authority on an allocated backend
+        - reconciliation of documented direction with blocked runtime and release status
+        - release-gate statement for companion-dependent slices
+      owner_to_review: "00"
+      notes: >
+        This record intentionally keeps direction and runtime proof separate. The ADR is a
+        source-backed governance input, but blocked runtime prevents promotion to approved truth.
+    - intake_id: INTAKE-007
+      claim: >
+        The project owner approved the Tier 0.1 audience hierarchy: self-directed
+        inhabitants of a persistent MMO world are primary, with multiple meaningful
+        activity families, varied play rhythms, explicit secondary segments, and explicit
+        deliberately-not-primary expectations.
+      source_files:
+        - docs/product/00-tier-0-owner-approval-record.md
+      source_type: owner_approved_product_norm
+      observed_source_statuses:
+        - approved_by_owner
+        - market_unvalidated
+        - runtime_not_evaluated
+      classification: decision_registry_candidate
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: carry_as_approved
+      target_artifact: docs/product/00-tier-0-product-identity.md
+      conflict_ids: []
+      required_evidence:
+        - explicit owner approval recorded on 2026-08-12
+        - PRODUCT-GOV-006
+        - exact authority and evidence-axis boundaries in the target artifact
+      owner_to_review: "00"
+      notes: >
+        Promotion is claim-specific. It does not promote the remaining broad claims in
+        docs/foundation-index.md and does not define the canonical first-class-path set.
+    - intake_id: INTAKE-008
+      claim: >
+        The project owner approved the Tier 0.2 jobs-to-be-done and unmet-needs
+        hypothesis: autonomous progress now, lasting accomplishment over time, and a real
+        place in the shared player ecosystem without mandatory foreign-path play.
+      source_files:
+        - docs/product/00-tier-0-owner-approval-record.md
+      source_type: owner_approved_product_norm
+      observed_source_statuses:
+        - approved_by_owner
+        - market_unvalidated
+        - runtime_not_evaluated
+      classification: decision_registry_candidate
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: carry_as_approved
+      target_artifact: docs/product/00-tier-0-product-identity.md
+      conflict_ids: []
+      required_evidence:
+        - explicit owner approval recorded on 2026-08-12
+        - PRODUCT-GOV-007
+        - market and runtime claims remain outside the promoted truth
+      owner_to_review: "00"
+      notes: >
+        The owner intent is approved. Demand, differentiation, and actual player outcomes
+        remain unvalidated and cannot inherit approved status from this record.
+    - intake_id: INTAKE-009
+      claim: >
+        The project owner approved the Tier 0.3 distinctive promise and progression
+        grammar: earned identity, multiple meaningful paths, player interdependence,
+        remembered accomplishment, and path-appropriate embodiment in the Minecraft world,
+        with no universal endgame peak.
+      source_files:
+        - docs/product/00-tier-0-owner-approval-record.md
+      source_type: owner_approved_product_norm
+      observed_source_statuses:
+        - approved_by_owner
+        - market_unvalidated
+        - runtime_not_evaluated
+      classification: decision_registry_candidate
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: carry_as_approved
+      target_artifact: docs/product/00-tier-0-product-identity.md
+      conflict_ids: []
+      required_evidence:
+        - explicit owner approval recorded on 2026-08-12
+        - PRODUCT-GOV-008
+        - exact first-class-path set remains outside this promotion
+      owner_to_review: "00"
+      notes: >
+        This promotes the promise and progression grammar as intent. It does not promote
+        companion runtime readiness, prove market differentiation, or classify candidate
+        activity families as release-ready first-class paths.
+    - intake_id: INTAKE-010
+      claim: >
+        The project owner approved AG-01 through AG-10 as binding Tier 0 product
+        boundaries that cannot be bypassed by a local waiver, retention, revenue,
+        schedule, or a player-facing experiment.
+      source_files:
+        - docs/product/00-tier-0-owner-approval-record.md
+      source_type: owner_approved_product_norm
+      observed_source_statuses:
+        - approved_by_owner
+        - thresholds_incomplete
+        - runtime_not_evaluated
+      classification: decision_registry_candidate
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: carry_as_approved
+      target_artifact: docs/product/00-tier-0-product-identity.md
+      conflict_ids: []
+      required_evidence:
+        - explicit owner approval recorded on 2026-08-12
+        - PRODUCT-GOV-009
+        - B-T0-OPERABILITY remains a blocker to repeatable automated verdicts
+      owner_to_review: "00"
+      notes: >
+        The anti-goal intent is binding. Exact thresholds, claim decision tables,
+        account-wide enforcement, and runtime fulfilment remain unresolved.
+    - intake_id: INTAKE-011
+      claim: >
+        The project owner approved an exact set of thirteen first-class paths:
+        Islands, Dungeons, PvP, Guild, Pets, and eight independently reported
+        professions from docs/contracts/profession-list.yaml. Builder / Architect
+        remains a candidate; trade, collection, hybrid building, quests and
+        narrative, classes and builds, itemization, economy, social basics,
+        public events, and raids remain supporting capabilities rather than
+        additional first-class paths.
+      source_files:
+        - docs/product/00-tier-0-owner-approval-record.md
+      source_type: owner_approved_product_norm
+      observed_source_statuses:
+        - approved_by_owner
+        - exact_scope_defined
+        - runtime_not_evaluated
+      classification: decision_registry_candidate
+      confidence: high
+      intake_state: promoted
+      source_truth_mode: approved_target_state
+      review_state: closed
+      disposition: carry_as_approved
+      target_artifact: docs/product/00-first-class-path-registry.yaml
+      conflict_ids: []
+      required_evidence:
+        - explicit owner approval recorded on 2026-08-12
+        - PRODUCT-GOV-010
+        - exact path, candidate, supporting-capability, and claim-rule records
+        - delivery status remains separated from scope status
+      owner_to_review: "00"
+      notes: >
+        This promotion closes only the exact Tier 0 path classification. It does
+        not promote any path to runtime_verified or release_ready and does not
+        resolve existing companion, guild, PvP, persistence, or operability
+        blockers.
+  entry_template:
+    intake_id: INTAKE-000
+    claim: ""
+    source_files: []
+    source_type: ""
+    observed_source_statuses: []
+    classification: unknown
+    confidence: unknown
+    intake_state: collected
+    source_truth_mode: observed_only
+    review_state: not_started
+    disposition: quarantine
+    target_artifact: ""
+    conflict_ids: []
+    required_evidence: []
+    owner_to_review: ""
+    notes: ""

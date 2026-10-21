@@ -1,0 +1,19 @@
+schema_version: 1
+gate_policy:
+  evidence_max_age_hours: 168
+  required_build_context_fields:
+    - commit
+    - paper
+    - plugin_manifest_hash
+build_context:
+  commit: fixture-commit
+  paper: paper-1.21.x
+  plugin_manifest_hash: sha256:fixture-plugin-manifest
+gates:
+  - gate_id: dangling_scenario_gate
+    release_status: candidate
+    release_effect: supports_candidate
+    required_scenarios:
+      - missing_scenario
+    required_evidence_ids:
+      - character_login_persistence_001

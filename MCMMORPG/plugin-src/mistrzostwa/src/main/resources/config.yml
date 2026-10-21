@@ -1,0 +1,85 @@
+# Mistrzostwa profesji — model wlasciciela z 2026-09-23.
+#  - do poziomu `prog` kazda postac rozwija wszystkie profesje swobodnie,
+#  - powyzej rosna tylko profesje z mistrzostwem (max `limit` naraz) oraz profesje `ogolne`,
+#  - wybor/zmiana mistrzostwa NIGDY nie zmienia poziomu ani XP (plugin nie dotyka poziomow).
+#
+# Blokada dziala na PlayerExperienceGainEvent (MMOCore) — jedyny punkt, przez ktory przechodzi
+# kazde zrodlo XP profesji: wezly MythicMobs (mmocore admin exp give), bloki Nexo, receptury
+# MMOItems exp{}, natywne on-fish/repair/enchant/alchemy, admin exp/level give, Chowance.
+# NIE przechodza przez nie tylko jawne setery admina: 'mmocore admin level set', 'exp set',
+# 'reset levels' — to swiadome nadpisanie stanu przez administratora.
+
+prog: 50
+limit: 2
+
+# rozwijaja sie do max-level bez wyboru i nie zajmuja limitu
+ogolne: [cooking, building]
+
+# podlegaja blokadzie na `prog`; profesje spoza obu list (np. poskramiacz) plugin ignoruje
+mistrzowskie:
+  - mining
+  - woodworking
+  - herbalism
+  - farming
+  - fishing
+  - hunting
+  - jewelcrafting
+  - smithing
+  - tailoring
+  - alchemy
+  - enchanting
+
+# Zmiana mistrzostwa (porzucenie jednego na rzecz innego). Pierwsze `limit` wyborow sa darmowe.
+zmiana:
+  koszt: 2500          # waluta Vault = CoreTools 'dollar' (per profil, maxBalance 10000)
+  cooldown-godziny: 168
+
+# Stan mistrzostw zyje w LuckPerms jako wezly z kontekstem profilu postaci:
+#   prof.master.<id>        true   profil=<uuid profilu MythicLib/MMOProfiles>
+#   mistrzostwa.cooldown    true   profil=<uuid>   (wezel TYMCZASOWY, wygasa z koncem cooldownu)
+# Kontekst rejestruje ten plugin (ContextCalculator), wiec hasPermission w innych pluginach
+# tez widzi mistrzostwa tylko biezacej postaci. Wezly BEZ kontekstu profilu sa IGNOROWANE.
+kontekst: profil
+
+komunikaty:
+  prefiks: '&6&l✦ &6Mistrzostwa &8» &7'
+  # pasek akcji przy zablokowanym XP; {profesja} {prog}
+  blokada: '&6✦ &f{profesja} &7stoi na &f{prog}&7 — bez mistrzostwa nie rośnie. &eQ → Profesje'
+  blokada-co-sekund: 20
+
+# Tytuly mistrza — wyprowadzane z POZIOMU (nic nie trzeba zapisywac, nic nie znika).
+# Widoczne w menu profesji (%mistrz_tytul_<id>%) i w ogloszeniu kamienia milowego.
+# Integracja z czatem (CMI {prefix} = rangi) — do decyzji wlasciciela.
+tytuly:
+  60: Biegły
+  75: Mistrz
+  90: Arcymistrz
+  100: Legenda
+dopelniacz:
+  mining: Górnictwa
+  woodworking: Drwalstwa
+  herbalism: Zielarstwa
+  farming: Farmerstwa
+  fishing: Rybactwa
+  hunting: Myślistwa
+  jewelcrafting: Jubilerstwa
+  smithing: Kowalstwa
+  tailoring: Krawiectwa
+  alchemy: Alchemii
+  enchanting: Zaklinania
+  cooking: Gotowania
+  building: Budownictwa
+# poziomy, przy ktorych kamien milowy (exp-table -> command) oglasza tytul calemu serwerowi
+ogloszenie-od: 75
+
+# okna DeluxeMenus otwierane przez plugin
+menu:
+  glowne: profession_main
+  wybor: mistrz_wybor
+  zmiana: mistrz_zmiana
+
+# TYLKO DO KONTROLI NEGATYWNYCH testu regresji (tools/eval-wezly/sloty-regresja/mistrzostwa.js).
+# Kazda pozycja celowo psuje jedna regule, zeby udowodnic, ze test ja wykrywa:
+#   blokada | limit | koszt | cooldown | klikniecia | kontekst
+# Na produkcji MUSI byc pusta lista — plugin krzyczy SEVERE przy kazdym starcie/reloadzie.
+sabotaz-testowy: []

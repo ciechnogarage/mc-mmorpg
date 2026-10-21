@@ -1,0 +1,1411 @@
+<title>Kodeks MCMMORPG</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#efeee0;
+    --surface:#e7e4d2;
+    --surface-2:#ddd9c2;
+    --line:rgba(32,36,28,.16);
+    --ink:#20241c;
+    --ink-soft:#454a3c;
+    --muted:#6b6f5c;
+    --accent:#4f7a34;
+    --accent-ink:#fbfaf3;
+    --accent-2:#93701c;
+    --flag:#a8452c;
+    --font-display:'Fraunces',ui-serif,Georgia,serif;
+    --font-body:'Source Sans 3',ui-sans-serif,system-ui,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14170f; --surface:#1b1f15; --surface-2:#232919; --line:rgba(233,231,214,.14);
+      --ink:#eae7d5; --ink-soft:#c7c4ac; --muted:#93987f;
+      --accent:#86b559; --accent-ink:#12150d; --accent-2:#d3ab52; --flag:#d9764f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14170f; --surface:#1b1f15; --surface-2:#232919; --line:rgba(233,231,214,.14);
+    --ink:#eae7d5; --ink-soft:#c7c4ac; --muted:#93987f;
+    --accent:#86b559; --accent-ink:#12150d; --accent-2:#d3ab52; --flag:#d9764f;
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4,h5{font-family:var(--font-display);font-weight:600;text-wrap:balance;margin:0;}
+  code,.mono{font-family:var(--font-mono);}
+  a{color:var(--accent);}
+  ::selection{background:var(--accent);color:var(--accent-ink);}
+
+  .shell{display:grid;grid-template-columns:236px minmax(0,1fr);max-width:1260px;margin:0 auto;padding-inline:20px;gap:40px;}
+  @media (max-width:860px){.shell{grid-template-columns:1fr;gap:0;padding-inline:16px;}}
+
+  nav.toc{position:sticky;top:0;align-self:start;padding-block:28px 40px;max-height:100vh;overflow-y:auto;}
+  nav.toc .brand{font-family:var(--font-display);font-size:1.05rem;font-weight:700;margin-bottom:2px;}
+  nav.toc .brand small{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;color:var(--muted);font-weight:400;margin-top:2px;}
+  nav.toc ul{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:1px;}
+  nav.toc a{display:block;color:var(--ink-soft);text-decoration:none;font-size:.85rem;padding:5px 10px;border-radius:3px;border-left:2px solid transparent;}
+  nav.toc a:hover{border-left-color:var(--accent);color:var(--ink);background:var(--surface);}
+  @media (max-width:860px){
+    nav.toc{position:static;max-height:none;padding-block:18px;border-bottom:1px solid var(--line);}
+    nav.toc ul{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding-bottom:4px;}
+    nav.toc a{white-space:nowrap;padding:6px 10px;border-left:none;border-bottom:2px solid transparent;}
+    nav.toc a:hover{border-bottom-color:var(--accent);border-left-color:transparent;}
+  }
+
+  main{padding-block:32px 80px;min-width:0;}
+
+  .lede{max-width:68ch;margin-bottom:10px;}
+  .lede h1{font-size:clamp(1.9rem,4vw,2.6rem);}
+  .lede .kicker{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:10px;display:block;}
+  .lede p{color:var(--ink-soft);max-width:64ch;}
+
+  .callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:18px 20px;margin:22px 0 8px;max-width:76ch;}
+  .callout h3{font-size:1rem;margin-bottom:8px;}
+  .callout p{margin:0 0 8px;color:var(--ink-soft);font-size:.95rem;}
+  .callout p:last-child{margin-bottom:0;}
+
+  section.block{padding-top:52px;margin-top:8px;border-top:1px solid var(--line);scroll-margin-top:20px;}
+  section.block:first-of-type{border-top:none;}
+  section.sub-block{padding-top:34px;margin-top:6px;}
+  .block-head{max-width:76ch;margin-bottom:22px;}
+  .block-head .kicker{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+  .block-head h2{font-size:clamp(1.5rem,3vw,1.9rem);}
+  .block-head h3{font-size:1.25rem;margin-top:2px;}
+  .block-head p{color:var(--ink-soft);margin-top:10px;max-width:72ch;}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.03em;padding:2px 8px;border-radius:20px;border:1px solid currentColor;white-space:nowrap;}
+  .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .badge.canonical{color:var(--accent);}
+  .badge.merge{color:var(--accent);opacity:.75;}
+  .badge.candidate{color:var(--accent-2);}
+  .badge.legacy{color:var(--muted);}
+  .badge.draft{color:var(--accent-2);opacity:.8;}
+  .badge.blocked{color:var(--flag);}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:6px;max-width:76ch;margin:18px 0 26px;font-size:.82rem;color:var(--ink-soft);}
+
+  ol.pillars{list-style:none;counter-reset:p;margin:0;padding:0;display:grid;gap:10px;max-width:76ch;}
+  ol.pillars li{counter-increment:p;display:grid;grid-template-columns:34px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);}
+  ol.pillars li:last-child{border-bottom:none;}
+  ol.pillars li::before{content:counter(p,decimal-leading-zero);font-family:var(--font-mono);color:var(--accent-2);font-size:.85rem;padding-top:2px;}
+  ol.pillars li span{color:var(--ink-soft);font-size:.95rem;}
+  ol.pillars li b{color:var(--ink);}
+
+  .table-wrap{overflow-x:auto;max-width:100%;}
+  table{border-collapse:collapse;width:100%;font-size:.85rem;}
+  table th{text-align:left;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--line);}
+  table td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top;}
+  table td.id, table td.strong{font-family:var(--font-mono);color:var(--ink);}
+  table.domains{min-width:560px;}
+  table.currencies{min-width:640px;}
+  table.counterplay{min-width:640px;}
+  table.sources td.path{font-family:var(--font-mono);font-size:.76rem;color:var(--ink);}
+
+  .diagram-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px;max-width:760px;}
+  .diagram-card svg{width:100%;height:auto;display:block;}
+  .diagram-card figcaption{margin-top:10px;font-size:.82rem;color:var(--muted);}
+
+  .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0;max-width:900px;}
+  @media (max-width:700px){.tier-grid{grid-template-columns:repeat(2,1fr);}}
+  .tier{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;}
+  .tier .name{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);display:block;}
+  .tier .legacy{font-size:.72rem;color:var(--muted);margin-top:4px;display:block;}
+  .tier p{font-size:.82rem;color:var(--ink-soft);margin:8px 0 0;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:8px;}
+  .info-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
+  .info-card h4{font-size:1rem;}
+  .info-card .role{font-size:.7rem;color:var(--accent-2);font-family:var(--font-mono);text-transform:uppercase;}
+  .info-card p{font-size:.83rem;color:var(--ink-soft);margin:0;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0;max-width:900px;}
+  @media (max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .stat-chip{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;}
+  .stat-chip b{font-family:var(--font-mono);color:var(--accent);font-size:.82rem;display:block;}
+  .stat-chip span{font-size:.78rem;color:var(--ink-soft);}
+
+  .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:8px;}
+  .class-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px;}
+  .class-card .ch{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+  .class-card h3{font-size:1.25rem;}
+  .class-card .role{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-2);text-transform:uppercase;letter-spacing:.05em;}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:.83rem;}
+  .kv dt{color:var(--muted);}
+  .kv dd{margin:0;color:var(--ink-soft);}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;}
+  .tag{font-family:var(--font-mono);font-size:.68rem;padding:2px 7px;border-radius:4px;background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line);}
+  .loop{font-size:.85rem;color:var(--ink-soft);}
+  .loop b{color:var(--ink);font-weight:600;}
+  details.sub{border-top:1px solid var(--line);padding-top:10px;margin-top:2px;}
+  details.sub summary{cursor:pointer;font-family:var(--font-mono);font-size:.78rem;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px;}
+  details.sub summary::-webkit-details-marker{display:none;}
+  details.sub summary::before{content:"▸";display:inline-block;transition:transform .15s;}
+  details.sub[open] summary::before{transform:rotate(90deg);}
+  .subclass{padding:10px 0 4px 16px;border-left:2px solid var(--line);margin-top:8px;font-size:.84rem;}
+  .subclass + .subclass{margin-top:4px;}
+  .subclass h4{font-size:.95rem;margin-bottom:4px;}
+  .subclass .kv{margin-bottom:4px;}
+  .subclass .strong-weak{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+  .subclass .strong-weak div{font-size:.8rem;}
+  .subclass .strong-weak span{display:block;font-family:var(--font-mono);font-size:.65rem;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+  .subclass .upgrade{margin-top:6px;font-size:.78rem;color:var(--ink-soft);}
+  .subclass .upgrade b{color:var(--accent-2);font-weight:600;}
+
+  details.kit{border-top:1px dashed var(--line);padding-top:10px;margin-top:4px;}
+  details.kit summary{cursor:pointer;font-family:var(--font-mono);font-size:.74rem;color:var(--muted);list-style:none;}
+  details.kit summary::-webkit-details-marker{display:none;}
+  details.kit summary::before{content:"skill kit ▸ ";}
+  details.kit[open] summary::before{content:"skill kit ▾ ";}
+  table.skillkit{margin-top:10px;font-size:.78rem;}
+  table.skillkit td{padding:5px 8px;}
+  table.skillkit td.sname{color:var(--ink);font-weight:600;white-space:nowrap;}
+
+  .defense-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:6px;}
+  .defense-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;}
+  .defense-card h4{font-size:1rem;color:var(--accent);margin-bottom:6px;}
+  .defense-card p{font-size:.83rem;color:var(--ink-soft);margin:0;}
+
+  .bestiary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:8px;}
+  .mob-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .mob-card h4{font-size:1.02rem;}
+  .mob-card .role{font-size:.72rem;color:var(--accent-2);font-family:var(--font-mono);text-transform:uppercase;}
+  .mob-card p{font-size:.82rem;color:var(--ink-soft);margin:0;}
+  .mob-card .drop{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);}
+
+  .boss-panel{background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:22px 24px;margin-top:22px;}
+  .boss-panel .bh{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .boss-panel h3{font-size:1.4rem;}
+  .boss-panel .subtitle{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);}
+  .phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:16px;}
+  .phase{border-top:2px solid var(--accent);padding-top:10px;}
+  .phase .pn{font-family:var(--font-mono);font-size:.68rem;color:var(--accent-2);text-transform:uppercase;letter-spacing:.05em;}
+  .phase h5{font-size:.95rem;margin:4px 0 6px;}
+  .phase ul{margin:0;padding-left:18px;font-size:.82rem;color:var(--ink-soft);}
+  .phase ul li{margin-bottom:2px;}
+
+  .macro-note{margin-top:26px;padding:16px 18px;border:1px dashed var(--line);border-radius:6px;font-size:.85rem;color:var(--ink-soft);max-width:76ch;}
+  .macro-note b{color:var(--ink);}
+  .boss-class-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+
+  .zone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:10px;}
+  .zone-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:15px 17px;display:flex;flex-direction:column;gap:7px;}
+  .zone-card .zn{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}
+  .zone-card .zid{font-family:var(--font-mono);font-size:.68rem;color:var(--accent-2);}
+  .zone-card h4{font-size:1.02rem;}
+  .zone-card .climate{font-size:.8rem;color:var(--ink-soft);font-style:italic;}
+  .zone-card .boss{font-size:.82rem;color:var(--ink);}
+  .zone-card .boss b{color:var(--accent);}
+  .zone-card .mats{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);}
+
+  .layer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:8px;}
+  .layer-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;}
+  .layer-card .step{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-2);}
+  .layer-card h4{font-size:1.05rem;margin:4px 0 8px;}
+  .layer-card p{font-size:.85rem;color:var(--ink-soft);margin:0;}
+
+  .pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:10px;}
+  .pet-chip{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;}
+  .pet-chip b{display:block;font-size:.9rem;color:var(--ink);}
+  .pet-chip span{font-size:.78rem;color:var(--ink-soft);}
+
+  .timeline{display:flex;flex-direction:column;gap:0;margin-top:16px;max-width:78ch;}
+  .tl-step{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line);}
+  .tl-step:first-child{border-top:none;}
+  .tl-step .lvl{font-family:var(--font-mono);font-size:.8rem;color:var(--accent);white-space:nowrap;padding-top:2px;}
+  .tl-step h5{font-size:1rem;margin-bottom:4px;}
+  .tl-step p{margin:0;font-size:.85rem;color:var(--ink-soft);}
+
+  footer{max-width:76ch;margin-top:60px;padding-top:20px;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted);}
+</style>
+
+<div class="shell">
+  <nav class="toc">
+    <div class="brand">Kodeks MCMMORPG<small>PEŁNY WYCIĄG TREŚCI · 2026-09-13</small></div>
+    <ul>
+      <li><a href="#przeglad">Przegląd</a></li>
+      <li><a href="#swiat">Świat i progresja</a></li>
+      <li><a href="#hub">Stolica Wyspy i bóstwa</a></li>
+      <li><a href="#postac">Postać i walka</a></li>
+      <li><a href="#klasy">Klasy i skille</a></li>
+      <li><a href="#ekonomia">Itemizacja i ekonomia</a></li>
+      <li><a href="#potwory">Potwory i lochy</a></li>
+      <li><a href="#mvp">Co realnie działa</a></li>
+      <li><a href="#zycie">Życie świata</a></li>
+      <li><a href="#towarzysze">Towarzysze</a></li>
+      <li><a href="#podroz">Podróż gracza</a></li>
+      <li><a href="#mapa">Mapa źródeł</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="lede">
+      <span class="kicker">MC / MCMMORPG — pełny destylat dokumentacji projektowej</span>
+      <h1>Fundamenty serwera, w jednym miejscu</h1>
+      <p>Piąta, kompletna wersja. Przeszedłem przez ponad 70 dokumentów w <code class="mono">docs/</code>,
+      <code class="mono">docs/design/</code>, <code class="mono">docs/contracts/</code> i <code class="mono">docs/ai/</code> —
+      całą oś: świat, postać, walkę, itemizację, ekonomię, profesje, loch po lochu przez cały pierwszy akt, questy,
+      PvP, gildie, sezony, reputację, towarzyszy, pełną ścieżkę gracza od poziomu 1 do endgame, a na końcu też
+      realne wartości ze skonfigurowanych pluginów — czyli to, co faktycznie stoi na serwerze dzisiaj, nie tylko
+      to, co ktoś zaprojektował.</p>
+    </div>
+
+    <div class="legend">
+      <span class="badge canonical">canonical</span> aktualne źródło prawdy
+      <span class="badge merge">merge</span> wartościowy input, nie scalony
+      <span class="badge candidate">content-candidate</span> konkretna treść, nie reguła globalna
+      <span class="badge legacy">legacy</span> zastąpione, tylko jako inspiracja
+      <span class="badge draft">draft-schema</span> kontrakt/format bez konkretnej treści
+      <span class="badge blocked">blocked</span> czeka na dowód z runtime
+    </div>
+
+    <div class="callout">
+      <h3>Ustalenie porządkujące ten bałagan</h3>
+      <p>W repo współistnieją <b>dwie warstwy</b>. Pierwsza to konkretny, kreatywny fundament (polskie
+      <code class="mono">*-foundation-v0.0.1.md</code>, ok. 40 plików w <code class="mono">docs/</code>) — ma nazwy
+      klas, nazwy skilli, nazwy potworów i bossów w 10 lochach, konkretne materiały, konkretne waluty. Druga to
+      nowsza warstwa <b>formalnych kontraktów</b> (<code class="mono">docs/design/</code>,
+      <code class="mono">docs/contracts/</code>) — angielska, wersjonowana, ale w większości to kształt schematu
+      (pola, ID, enumy) bez treści: sprawdziłem np. <code class="mono">act-map.yaml</code> — ma dwa placeholdery
+      (<code class="mono">ACT-01</code>, <code class="mono">ACT-02</code>) i status <code class="mono">concept</code>,
+      żadnych nazw. To samo dotyczy <code class="mono">race-framework.md</code> — zero konkretnych ras.</p>
+      <p>Realna treść kreatywna leży więc niemal w całości w starszych, „legacy” plikach. Ta strona czyta obie
+      warstwy i pokazuje realny materiał, oznaczając status każdego źródła.</p>
+      <p><b>Poprawka po dokładniejszym przejściu:</b> ten podział nie jest czarno-biały. Dwa formalne dokumenty —
+      <code class="mono">docs/design/economy/economy-model.md</code> i
+      <code class="mono">docs/design/items/itemization-framework.md</code> — mają realne, rozwinięte decyzje
+      (nie tylko schemat pól), po prostu innego rodzaju: architektura ekonomiczna i techniczna, nie fantazja.
+      Jest tam nawet cichy konflikt: stary plik <code class="mono">foundation-sloty-i-ekwipunek</code> pokazuje, że
+      w pluginach realnie istnieje 14 slotów (z bransoletą, rękawicami, 3 artefaktami), a nowszy formalny kontrakt
+      celuje w 10 slotów + jeden slot Relic, jawnie nazywając bransoletę/rękawice/artefakty „legacy, poza v1”.
+      Pełne zestawienie w sekcji „Itemizacja i ekonomia” niżej.</p>
+    </div>
+
+    <!-- ============ PRZEGLĄD ============ -->
+    <section class="block" id="przeglad">
+      <div class="block-head">
+        <span class="kicker">docs/product/00-master-product-bible.md</span>
+        <h2>Co to za serwer</h2>
+        <p>MCMMORPG to trwałe, persystentne MMORPG PvE/PvP na Minecrafcie — nie demo jednego starterowego lochu.
+        Postacie, progresja i kosmetyki przechodzą między sezonami testowymi; resetuje się tylko ranking PvP,
+        waluta sezonowa i ladder.</p>
+      </div>
+
+      <div class="callout" style="border-left-color:var(--accent-2);">
+        <p style="font-style:italic;">„Wybierz swoją pełną ścieżkę w trwałym MMORPG-świecie na Minecrafcie. Stań się tym,
+        co ćwiczysz, zbuduj dokonanie, które istnieje w świecie, i zajmij własne miejsce w ekosystemie graczy."</p>
+        <p style="margin-bottom:0;font-size:.85rem;">— deklarowana obietnica produktu (<code class="mono">00-tier-0-product-identity.md</code>), złożona z pięciu elementów: zarobiona tożsamość, wiele równoprawnych ścieżek, realna współzależność graczy, trwałe (nie tylko liczbowe) dokonania, i wyraz postępu widoczny w samym świecie, nie tylko w menu.</p>
+      </div>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">13 równoprawnych ścieżek</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Żadna nie jest obowiązkowa; gracz nie
+      musi być samowystarczalny we wszystkich naraz. Budowniczy/Architekt to na razie tylko kandydat, nie pełna
+      ścieżka.</p>
+      <div class="tags" style="margin-top:8px;">
+        <span class="tag">Wyspy</span><span class="tag">Lochy</span><span class="tag">PvP</span><span class="tag">Gildia</span><span class="tag">Pety</span>
+        <span class="tag">Górnik</span><span class="tag">Drwal</span><span class="tag">Zbieracz</span><span class="tag">Kowal</span><span class="tag">Płatnerz</span><span class="tag">Alchemik</span><span class="tag">Artefaktor</span><span class="tag">Kucharz</span>
+      </div>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">10 rzeczy, których serwer świadomie nie zrobi</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">To najtwardsze założenia w całym repo —
+      wiążące granice, których nie omija retencja, przychód ani harmonogram. Jeśli którekolwiek z poniższych
+      pojawi się w przyszłej treści, to błąd względem własnych założeń projektu, nie interpretacja.</p>
+      <ol class="pillars">
+        <li><span><b>Retencja przez przymus</b> — brak systemów daily/streak/FOMO jako dominującej ścieżki progresji.</span></li>
+        <li><span><b>Sztuczna brama społeczna</b> — gildia nie może być uniwersalnym warunkiem długoterminowej progresji.</span></li>
+        <li><span><b>Kupiony wynik</b> — płatność nigdy nie kupuje mocy bojowej, przewagi PvP, mistrzostwa ani prestiżu.</span></li>
+        <li><span><b>Arbitralne unieważnienie dokonań</b> — trwała tożsamość i mistrzostwo nie resetują się po cichu; resetuje się tylko to, co jawnie sezonowe.</span></li>
+        <li><span><b>Pusty grind jako najlepsza strategia</b> — AFK i boto-podobne powtarzanie nie mogą przebijać świadomej gry.</span></li>
+        <li><span><b>Fałszywa kompletność</b> — istnienie menu, XP-bara czy dokumentu roadmapy nie oznacza, że ścieżka jest gotowa.</span></li>
+        <li><span><b>Fałszywa trudność</b> — trudność nie może wynikać z laga, niestabilnego tick rate'u czy nieczytelnego chaosu.</span></li>
+        <li><span><b>Jedna obowiązkowa fantazja dla wszystkich</b> — brak wymuszonego combat-first, jednego uniwersalnego endgame'u czy rankingu.</span></li>
+        <li><span><b>Trwałe wykluczenie przez sam czas</b> — przewaga aktywnych graczy nie może stać się permanentnym monopolem bez kontrgry.</span></li>
+        <li><span><b>Wieczne utrzymanie każdej mechaniki</b> — martwe albo szkodliwe systemy wolno uprościć, scalić albo wycofać.</span></li>
+      </ol>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;"><b>Doktryna PvP doprecyzowuje
+      punkt „kupiony wynik" w drugą stronę:</b> poziom, build i gear dają realną przewagę — dobrze rozwinięta postać
+      poziomu 60 <i>powinna</i> normalnie pokonać znacznie słabszą, niżej-poziomową postać. Umiejętność i timing mogą
+      przełamać rozsądną różnicę w progresji, ale nie kasują dowolnie dużej przepaści. To koryguje uproszczenie z
+      sekcji „Postać i walka" niżej — tam liczy się głównie skill w ramach porównywalnego poziomu, nie że gear w
+      ogóle nie ma znaczenia.</p>
+
+      <div class="macro-note">
+        <b>Stan realny (z <code class="mono">current-server-plan.md</code>, aktualizacja 2026-08-12):</b>
+        nic z tego jeszcze nie ma dowodu z runtime. Priorytet numer 0 to nie nowa treść, tylko dowód, że
+        logowanie/restart/reconnect i własność danych postaci w ogóle działają na wybranym backendzie. HuskSync
+        wyłączony, MCPets wycofany z aktywnego inwentarza. Dopóki to się nie domknie, dokumenty poniżej są
+        materiałem projektowym, nie stanem serwera.
+      </div>
+    </section>
+
+    <!-- ============ ŚWIAT ============ -->
+    <section class="block" id="swiat">
+      <div class="block-head">
+        <span class="kicker">docs/contracts/world-progression-model.md · canonical</span>
+        <h2>Świat i progresja</h2>
+        <p>Jedna hierarchia opisuje zarówno otwarty świat, jak i lochy instancyjne. Gracz może iść głównie przez
+        wyspy, głównie przez sektory lochu, albo oboma naraz — żadna droga nie daje wyłącznego dostępu do mocy.</p>
+      </div>
+
+      <figure class="diagram-card">
+        <svg viewBox="0 0 640 190" role="img" aria-label="Hierarchia ACT, ISL, DNG, FLOOR">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"></path>
+            </marker>
+          </defs>
+          <g font-family="IBM Plex Mono, monospace" font-size="13">
+            <rect x="270" y="10" width="100" height="34" rx="4" fill="none" stroke="var(--accent)" stroke-width="1.5"></rect>
+            <text x="320" y="31" text-anchor="middle" fill="var(--ink)">ACT-01</text>
+            <line x1="300" y1="44" x2="170" y2="80" stroke="var(--muted)" marker-end="url(#arrow)"></line>
+            <line x1="340" y1="44" x2="470" y2="80" stroke="var(--muted)" marker-end="url(#arrow)"></line>
+            <rect x="110" y="82" width="120" height="34" rx="4" fill="none" stroke="var(--ink-soft)" stroke-width="1.2"></rect>
+            <text x="170" y="103" text-anchor="middle" fill="var(--ink)">ISL-01</text>
+            <text x="170" y="132" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--muted)">otwarty region</text>
+            <rect x="410" y="82" width="120" height="34" rx="4" fill="none" stroke="var(--ink-soft)" stroke-width="1.2"></rect>
+            <text x="470" y="103" text-anchor="middle" fill="var(--ink)">DNG-01</text>
+            <text x="470" y="132" font-family="Source Sans 3, sans-serif" text-anchor="middle" font-size="11" fill="var(--muted)">sektor instancyjny</text>
+            <line x1="470" y1="116" x2="470" y2="146" stroke="var(--muted)" marker-end="url(#arrow)"></line>
+            <g font-family="Source Sans 3, sans-serif" font-size="11" fill="var(--ink-soft)">
+              <rect x="350" y="148" width="60" height="26" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+              <text x="380" y="165" text-anchor="middle" font-family="IBM Plex Mono, monospace">F-001</text>
+              <rect x="415" y="148" width="60" height="26" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+              <text x="445" y="165" text-anchor="middle" font-family="IBM Plex Mono, monospace">…</text>
+              <rect x="480" y="148" width="70" height="26" rx="3" fill="var(--surface-2)" stroke="var(--accent)"></rect>
+              <text x="515" y="165" text-anchor="middle" font-family="IBM Plex Mono, monospace" fill="var(--accent)">F-010</text>
+            </g>
+          </g>
+        </svg>
+        <figcaption>Każdy <code class="mono">ACT</code> ma dokładnie jedną parę <code class="mono">ISL</code> +
+        <code class="mono">DNG</code>. Sektor lochu = 10 kolejno odblokowywanych pięter;
+        <code class="mono">FLOOR-010</code> to finał sektora (nie rajd). <code class="mono">act-map.yaml</code>
+        aktualnie zna tylko <code class="mono">ACT-01</code> (status <i>contracting</i>) i placeholder
+        <code class="mono">ACT-02</code> (status <i>concept</i>) — reszta świata nie ma jeszcze nazw.</figcaption>
+      </figure>
+
+      <h3 style="margin-top:30px;font-size:1.1rem;">Poziomy trudności — nazwa formalna vs. nazwa w treści lochów</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Te same cztery poziomy trudności występują
+      w dokumentach pod dwiema różnymi nazwami naraz — nowszy kontrakt świata przeszedł na angielskie nazwy
+      semantyczne, ale wszystkie opisy lochów (sekcja „Potwory i lochy” niżej) nadal używają polskich, roboczych
+      nazw. Zestawione obok siebie:</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Nazwa formalna</th><th>Nazwa w lochach (polska)</th><th>Rola</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">story</td><td>Łatwy</td><td>nauka layoutu i mechanik bazowych — nie może usuwać całej mechaniki</td></tr>
+            <tr><td class="strong">standard</td><td>Normalny / Klasyczny</td><td>referencyjny baseline projektowania encounterów</td></tr>
+            <tr><td class="strong">veteran</td><td>Trudny</td><td>test mistrzostwa mechanik i stabilności builda — nie tylko wyższe liczby</td></tr>
+            <tr><td class="strong">mythic</td><td>Bardzo Trudny</td><td>powtarzalny endgame — musi rozszerzać mechaniki, nie być jedynym źródłem mocy</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.9rem;">
+      Wyspy: 70–80% regionu dostępne bez ukończenia kampanii, 20–30% za kamieniami milowymi — i <b>bez menu
+      trudności</b>, trudność wynika z geografii i presji frakcji. Lochy: piętra odblokowują się sekwencyjnie, ale
+      zostają powtarzalne na stałe. Trudność nigdy nie jest tylko skalowaniem HP/obrażeń — musi dodawać zachowania.</p>
+
+      <h3 style="margin-top:30px;font-size:1.1rem;">Typy regionów</h3>
+      <div class="card-grid">
+        <div class="info-card"><h4>Safe Zone</h4><p>PvP wyłączone, brak agresywnych mobów, respec, bank, market. Hub startowy.</p></div>
+        <div class="info-card"><h4>PvE Zone</h4><p>Podstawowa progresja: moby, questy, farming, world eventy PvE.</p></div>
+        <div class="info-card"><h4>Contested Zone</h4><p>Most PvE/PvP — lepsze materiały i eventy za ryzyko, combat timer aktywny.</p></div>
+        <div class="info-card"><h4>PvP Zone</h4><p>Jawna walka gracz-gracz, wyższe rewardy, loot risk, combat timer i anti-logout.</p></div>
+        <div class="info-card"><h4>Dungeon Zone</h4><p>Instancje PvE, jasny party size, lepszy loot, własny death penalty i reset.</p></div>
+        <div class="info-card"><h4>Boss Arena</h4><p>Telegraphed attacks, fazy, czytelne resist profile, target farming unikatów.</p></div>
+        <div class="info-card"><h4>Guild Territory</h4><p>Region kontrolowany przez gildię — walka o objective w oknach siege, nie 24/7 grief.</p></div>
+      </div>
+    </section>
+
+    <!-- ============ STOLICA WYSPY ============ -->
+    <section class="block" id="hub">
+      <div class="block-head">
+        <span class="kicker">docs/stolica-wyspy-hub + docs/discovery-npc-board-loop-001 · merge</span>
+        <h2>Stolica Wyspy — hub i bóstwa</h2>
+        <p>13 dzielnic w jednym mieście MMO: Spawn Plaza, Training Grounds, Class District, Subclass Hall,
+        Profession District, Market District, Bank/Stash, Portal Nexus, Quest Board, PvP Arena, Guild District,
+        Respec Shrine, Event Board — i <b>Temple District</b>. Filozofia: miasto do zwiedzania, nie korytarz
+        tutorialowy — gracz ma prawo trochę poszukać, krytyczne systemy są widoczne przez layout, nie przez NPC
+        tłumaczącego każdy krok.</p>
+      </div>
+
+      <h3 style="font-size:1.1rem;">System bóstw (Temple District)</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Jedno główne aktywne błogosławieństwo
+      naraz. Nie jest przypisane do klas — każde bóstwo ma sens dla kilku stylów gry. Zmiana bóstwa jest możliwa,
+      ale rzadka i bolesna: utrata reputacji u poprzedniego, blokada blessingów na okres pokuty, quest pokutny,
+      koszt ofiary — nie taktyczny swap przed dungeonem.</p>
+      <div class="pet-grid">
+        <div class="pet-chip"><b>Bóstwo Przysięgi</b><span>konsekwencja, ochrona, trzymanie roli — słabsze przy chaotycznej zmianie taktyki</span></div>
+        <div class="pet-chip"><b>Bóstwo Próby</b><span>ryzyko, walka z silniejszym celem — słabe na farmieniu łatwych mobów</span></div>
+        <div class="pet-chip"><b>Bóstwo Głębi</b><span>sustain, ward, długie walki — niższy burst i mobilność</span></div>
+        <div class="pet-chip"><b>Bóstwo Zmierzchu</b><span>stealth, reposition, debuff — słabe we frontalnym starciu</span></div>
+        <div class="pet-chip"><b>Bóstwo Echa</b><span>rotacja, combo, dyscyplina cooldownów — kara za panic spam</span></div>
+        <div class="pet-chip"><b>Bóstwo Plagi</b><span>DoT, poison, curse, anti-heal — kontrowane cleanse/resistem</span></div>
+        <div class="pet-chip"><b>Bóstwo Żaru</b><span>agresja, mocne okna ofensywne — kosztem defensywy i sustainu</span></div>
+        <div class="pet-chip"><b>Bóstwo Ładu</b><span>kontrola pola, block, anti-CC — niższy damage i mobilność</span></div>
+        <div class="pet-chip"><b>Bóstwo Rzemiosła</b><span>crafting, quality, salvage — bonus ekonomiczny, nie combat</span></div>
+        <div class="pet-chip"><b>Bóstwo Handlu</b><span>trading, market, reputacja — nie drukuje waluty ani mocy</span></div>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Odblokowania progresywne</h3>
+      <div class="timeline">
+        <div class="tl-step"><span class="lvl">Lvl 1</span><div><h5>Spawn Plaza, Training Grounds, podstawowe profesje</h5><p>Temple District widoczny jako lore/tutorial, bez mocnego power.</p></div></div>
+        <div class="tl-step"><span class="lvl">Lvl 5</span><div><h5>Basic crafting, pierwszy salvage/repair</h5><p>Pierwsze słabe, czasowe błogosławieństwo.</p></div></div>
+        <div class="tl-step"><span class="lvl">Lvl 10</span><div><h5>Class District</h5><p>Mentorzy, trial, wybór klasy; pierwsze sensowne blessing dopasowane do stylu gry, nie klasy.</p></div></div>
+        <div class="tl-step"><span class="lvl">Lvl 25</span><div><h5>Subclass Hall</h5><p>Trial podklasy, signature skill, głębszy dostęp do profesji, questy bóstw powiązane ze specjalizacją.</p></div></div>
+        <div class="tl-step"><span class="lvl">Lvl 50+</span><div><h5>Endgame boards</h5><p>Upgrade podklasy, guild/PvP/endgame boardy, zaawansowany crafting, mocniejsze blessingi.</p></div></div>
+      </div>
+
+      <div class="macro-note">
+        <b>Filozofia odkrywania</b> (<code class="mono">discovery-npc-board-loop-001</code>): minimalna liczba NPC
+        potrzebna do funkcji, komunikaty rzadkie i mechaniczne (<code class="mono">Accepted / Progress / Complete /
+        Locked / Warning / Reward</code>), zero „narratora tłumaczącego oczywistości”. Wyjaśnienia tylko dla
+        krytycznych momentów: wejście do lochu, wybór klasy na lvl 10, repair/salvage/stash/upgrade, ważne
+        ostrzeżenia (PvP risk, nieodwracalne wybory).
+      </div>
+    </section>
+
+    <!-- ============ POSTAĆ I WALKA ============ -->
+    <section class="block" id="postac">
+      <div class="block-head">
+        <span class="kicker">docs/combat-foundation, docs/damage-defense-foundation, docs/skill-ability-system · merge</span>
+        <h2>Postać i walka</h2>
+        <p>Rytm walki: <i>atak → reakcja przeciwnika → unik/blok/parry → counter → okno na skill</i>. Inspiracja
+        Skyrim, cel: multiplayer/PvP lepszy niż singleplayer. Gracz wygrywa przez timing i zarządzanie zasobem,
+        nie sam gear score.</p>
+      </div>
+
+      <h3 style="font-size:1.1rem;">Pięć statystyk z levelowania</h3>
+      <div class="stat-grid">
+        <div class="stat-chip"><b>Strength</b><span>melee physical dmg, armor scaling, poise, stamina</span></div>
+        <div class="stat-chip"><b>Dexterity</b><span>projectile dmg, attack speed, crit, evasion, stealth</span></div>
+        <div class="stat-chip"><b>Intelligence</b><span>spell dmg, max mana, mana regen, ward</span></div>
+        <div class="stat-chip"><b>Faith</b><span>healing power, buff/debuff, Fire/Faith Akolity, cleanse</span></div>
+        <div class="stat-chip"><b>Vitality</b><span>max HP, odporność na burst, tenacity</span></div>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">1 punkt/poziom + milestone co 10 poziomów.
+      Build = <code class="mono">staty z levelowania + itemy + skille/podklasa</code> — żadna warstwa sama nie
+      robi postaci.</p>
+
+      <h3 style="margin-top:28px;font-size:1.1rem;">Aktywne defensywy</h3>
+      <div class="defense-grid">
+        <div class="defense-card"><h4>Dash / Dodge</h4><p>Krótki zasięg, koszt staminy/cooldown. Kontruje wolne ataki, ale nie kasuje decyzji przeciwnika za darmo — da się zabaitować.</p></div>
+        <div class="defense-card"><h4>Block</h4><p>Najlepszy z tarczą, chroni głównie Physical. Ataki od tyłu i tagi „Guard Break” przełamują blok.</p></div>
+        <div class="defense-card"><h4>Parry</h4><p>Okno 0.25–0.4s. Udane otwiera countera, nieudane zostawia podatnym — nie może być łatwym spamem.</p></div>
+        <div class="defense-card"><h4>Counter</h4><p>Bonus dmg, stagger, guard break, reset cooldownu — nagroda wymagająca realnego zagrania.</p></div>
+      </div>
+
+      <h3 style="margin-top:28px;font-size:1.1rem;">Typy obrażeń i warstwy obrony</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Zamknięty zestaw: <span class="tags" style="display:inline-flex;"><span class="tag">Physical</span><span class="tag">Fire</span><span class="tag">Cold</span><span class="tag">Lightning</span><span class="tag">Chaos</span><span class="tag">Poison</span></span> — celowo bez Holy/Arcane/Psychic/Illusion; klimat klasy mapuje się na te typy.</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Warstwa</th><th>Kontruje</th><th>Kontra na nią</th></tr></thead>
+          <tbody>
+            <tr><td>Armor</td><td>Physical</td><td>magia, poison, chaos, penetracja, DoT, flanking</td></tr>
+            <tr><td>Evasion</td><td>fizyczne / projectile</td><td>AoE, DoT, reveal/tracking</td></tr>
+            <tr><td>Ward</td><td>spell burst</td><td>silence, interrupt, chaos dmg, ward break, melee pressure</td></tr>
+            <tr><td>Block / Guard</td><td>front, physical</td><td>guard break, flank, DoT</td></tr>
+            <tr><td>Resistances</td><td>Fire/Cold/Lightning/Chaos/Poison %</td><td>penetracja (z capem w PvP)</td></tr>
+            <tr><td>Tenacity</td><td>czas trwania CC</td><td>ma limit — nie usuwa kontroli całkowicie</td></tr>
+            <tr><td>Poise</td><td>stagger/interrupt</td><td>heavy attack, guard break</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:28px;font-size:1.1rem;">Statusy</h3>
+      <table class="statuses">
+        <thead><tr><th>Efekt</th><th>Typ</th><th>Charakter</th></tr></thead>
+        <tbody>
+          <tr><td>Bleed</td><td>Physical DoT</td><td>mocniejszy, gdy cel się rusza</td></tr>
+          <tr><td>Burn</td><td>Fire DoT</td><td>stały tick w czasie</td></tr>
+          <tr><td>Poison</td><td>DoT</td><td>stackujący, dobry w długich walkach</td></tr>
+          <tr><td>Shock</td><td>Lightning</td><td>zwiększone obrażenia przez krótki czas</td></tr>
+          <tr><td>Chill / Freeze</td><td>Cold</td><td>spowolnienie ruchu/ataku; Freeze to krótka, silna kontrola</td></tr>
+          <tr><td>Curse</td><td>Chaos</td><td>mniej healingu, resistu albo większy koszt zasobów</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:28px;font-size:1.1rem;">Zasoby i skill bar</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Stamina (fizyczne/aktywna obrona), Mana
+      (casterzy), Rage (Berserker), Focus (Łowca/Łotrzyk), Faith (Akolita). Startowy skill bar: basic attack,
+      heavy attack, 1 akcja defensywna, 3 skille aktywne, 1 skill ruchu/utility, 1 signature skill z długim
+      cooldownem — gracz nigdy nie ma dostępu do całego zestawu naraz.</p>
+
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.9rem;margin-top:18px;">
+      Stealth to pełna mechanika walki i eksploracji: cichszy ruch, ukryty nametag, bonus do crita za atak z
+      ukrycia (największy przy trafieniu w plecy). Kontry: reveal, tracking, AoE, DoT, hałas ciężkiej zbroi,
+      poziom światła, combat timer. CC (slow/root/stun/silence/disarm/knockback/pull/stagger) ma diminishing
+      returns i zakaz perma-controlu — parry/dodge/interrupt mają wybaczalne okna, bo to serwer Minecraft, nie
+      singleplayer.
+      </p>
+    </section>
+
+    <!-- ============ KLASY ============ -->
+    <section class="block" id="klasy">
+      <div class="block-head">
+        <span class="kicker">docs/class-subclass-foundation + docs/class-skill-kits-foundation + docs/skill-trees-passives-upgrades · legacy_design_input, ale najbardziej konkretne źródło</span>
+        <h2>Pięć klas bazowych, po trzy podklasy</h2>
+        <p>Klasa bazowa na <b>poziomie 10</b> (4 core skille + class passive), podklasa na <b>poziomie 25</b>
+        (signature skill + subclass passive, wymaga staty + mastery + subclass trial), upgrade podklasy na
+        <b>poziomie 50</b> — dwie nazwane ścieżki rozwoju, nie druga podklasa. Rozwiń każdą kartę po skill kit.</p>
+      </div>
+
+      <div class="class-grid">
+
+        <article class="class-card">
+          <div class="ch"><h3>Wojownik</h3><span class="role">frontline / tank-bruiser</span></div>
+          <dl class="kv">
+            <dt>Bronie</dt><dd>miecz 1H/2H, topór, młot, tarcza</dd>
+            <dt>Staty</dt><dd>Strength, Vitality</dd>
+            <dt>Obrażenia</dt><dd>Physical</dd>
+            <dt>Obrona</dt><dd>Armor, Poise, Guard, Tenacity</dd>
+          </dl>
+          <p class="loop"><b>PvE:</b> wejście w melee → block/parry mocnego ataku → counter → heavy attack na guard break.</p>
+          <p class="loop"><b>PvP:</b> wymusza dodge/block, karze błąd counterem, trzyma objective.</p>
+          <div class="tags"><span class="tag">kite</span><span class="tag">DoT</span><span class="tag">guard break</span><span class="tag">flanking</span></div>
+
+          <details class="sub"><summary>Strażnik — tank tarczowy</summary>
+            <div class="subclass"><p>Ochrona sojuszników, objective holder. Sygnatura: <i>Guardian Bulwark</i> — okno wzmacniające block, częściowo chroni sojuszników za plecami.</p>
+              <div class="strong-weak"><div><span>Mocne</span>przeżywalność, block, ochrona party</div><div><span>Słabe</span>niski kill pressure, DoT, ataki z flanki</div></div>
+              <p class="upgrade">Lvl 50: <b>Bastion</b> (mocniejsza ochrona objective/party) albo <b>Protector</b> (więcej peel, mniej personal pressure).</p>
+            </div></details>
+          <details class="sub"><summary>Berserker — agresywny bruiser 2H</summary>
+            <div class="subclass"><p>Rage, burst physical, wysokie ryzyko. Sygnatura: <i>Rage Breaker</i> — okno presji fizycznej, po nim słabsza defensywa.</p>
+              <div class="strong-weak"><div><span>Mocne</span>burst, guard break, cleave</div><div><span>Słabe</span>defensywa po nieudanym engage, kite</div></div>
+              <p class="upgrade">Lvl 50: <b>Ravager</b> (więcej guard break/cleave) albo <b>Bloodrager</b> (sustain przez agresję, ryzyko przy low HP).</p>
+            </div></details>
+          <details class="sub"><summary>Gladiator — duelista</summary>
+            <div class="subclass"><p>Parry/counter specialist, mobilność. Sygnatura: <i>Perfect Riposte</i> — po udanym parry mocne uderzenie.</p>
+              <div class="strong-weak"><div><span>Mocne</span>1v1, timing, mobilność</div><div><span>Słabe</span>mniej tanky, słaby w dużym AoE</div></div>
+              <p class="upgrade">Lvl 50: <b>Duelmaster</b> (lepsze 1v1, marking celu) albo <b>Blademaster</b> (płynniejsze combo, słabsza defensywa).</p>
+            </div></details>
+
+          <details class="kit"><summary>Cleaving Strike · Guard Brace · Breaker Blow · Battle Momentum</summary>
+            <table class="skillkit">
+              <tr><td class="sname">Cleaving Strike</td><td>Melee/Physical, Stamina — melee pressure, lekki cleave. Kontra: dodge, block, parry, kite.</td></tr>
+              <tr><td class="sname">Guard Brace</td><td>Defensive, Stamina — wzmacnia block/guard na krótko. Kontra: guard break, flank, DoT, magic pressure.</td></tr>
+              <tr><td class="sname">Breaker Blow</td><td>Melee/Physical/Guard Break, Stamina — wolniejszy, przełamuje gardę. Kontra: dodge windup, parry, interrupt.</td></tr>
+              <tr><td class="sname">Battle Momentum</td><td>Defensive/Utility — odzyskuje zasób po udanym block/counter. Kontra: bait block, resource pressure.</td></tr>
+            </table>
+          </details>
+        </article>
+
+        <article class="class-card">
+          <div class="ch"><h3>Łotrzyk</h3><span class="role">assassin / flanker</span></div>
+          <dl class="kv">
+            <dt>Bronie</dt><dd>sztylety, miecz 1H, off-hand, lekka kusza</dd>
+            <dt>Staty</dt><dd>Dexterity (Int/Vit pomocniczo)</dd>
+            <dt>Obrażenia</dt><dd>Physical, Poison</dd>
+            <dt>Obrona</dt><dd>Evasion, mobilność, stealth</dd>
+          </dl>
+          <p class="loop"><b>PvE:</b> podejście ze stealth → backstab/opener → poison/bleed → dash disengage.</p>
+          <p class="loop"><b>PvP:</b> flank → opener → wymuszenie defensywy → kill albo wycofanie.</p>
+          <div class="tags"><span class="tag">reveal</span><span class="tag">detection</span><span class="tag">AoE</span><span class="tag">armor</span></div>
+
+          <details class="sub"><summary>Zabójca — burst assassin</summary>
+            <div class="subclass"><p>Sygnatura: <i>Execution Mark</i> — oznaczony cel, pierwszy backstab/crit dobija bonusem.</p>
+              <div class="strong-weak"><div><span>Mocne</span>opener, mobilność</div><div><span>Słabe</span>słaby po nieudanym wejściu, reveal</div></div>
+              <p class="upgrade">Lvl 50: <b>Executioner</b> (mocniejszy finisher na low HP) albo <b>Nightblade</b> (więcej resetów stealth, słabszy burst).</p>
+            </div></details>
+          <details class="sub"><summary>Sabotażysta — pułapki i kontrola terenu</summary>
+            <div class="subclass"><p>Sygnatura: <i>Venom Minefield</i> — ograniczona liczba pułapek Poison/Control.</p>
+              <div class="strong-weak"><div><span>Mocne</span>area denial, długie walki</div><div><span>Słabe</span>wymaga setupu, trap reveal</div></div>
+              <p class="upgrade">Lvl 50: <b>Plague Engineer</b> (mocniejszy poison/DoT) albo <b>Trapmaster</b> (więcej kontroli terenu).</p>
+            </div></details>
+          <details class="sub"><summary>Cień — scouting i disengage</summary>
+            <div class="subclass"><p>Sygnatura: <i>Shadow Step</i> — krótki reposition/disengage z combat timerem.</p>
+              <div class="strong-weak"><div><span>Mocne</span>scouting, ucieczka</div><div><span>Słabe</span>niższy burst niż Zabójca</div></div>
+              <p class="upgrade">Lvl 50: <b>Phantom</b> (odporność na reveal, mniejszy dmg) albo <b>Shadowrunner</b> (objective mobility, słabsza walka wprost).</p>
+            </div></details>
+
+          <details class="kit"><summary>Quick Cut · Fade Step · Venom Edge · Cheap Trick</summary>
+            <table class="skillkit">
+              <tr><td class="sname">Quick Cut</td><td>Melee/Physical — szybki strike do weave z ruchem. Kontra: block, armor, peel, kite.</td></tr>
+              <tr><td class="sname">Fade Step</td><td>Movement/Stealth — krótki dash, reduced detection. Kontra: reveal, tracking, AoE, root/slow.</td></tr>
+              <tr><td class="sname">Venom Edge</td><td>Melee/DoT/Poison — presja poisonu w długiej walce. Kontra: poison resist, cleanse, disengage.</td></tr>
+              <tr><td class="sname">Cheap Trick</td><td>Control/Melee — krótki interrupt/blind/slow. Kontra: Tenacity, range, bait.</td></tr>
+            </table>
+          </details>
+        </article>
+
+        <article class="class-card">
+          <div class="ch"><h3>Łowca</h3><span class="role">ranged / kiting</span></div>
+          <dl class="kv">
+            <dt>Bronie</dt><dd>łuk, kusza, sztylet zapasowy, pułapki</dd>
+            <dt>Staty</dt><dd>Dexterity (Vit/Int pomocniczo)</dd>
+            <dt>Obrażenia</dt><dd>Physical, Poison (warianty pułapkowe)</dd>
+            <dt>Obrona</dt><dd>Evasion, dystans, detekcja</dd>
+          </dl>
+          <p class="loop"><b>PvE:</b> pull z dystansu → kite → trap slow/root → finish z bezpiecznej pozycji.</p>
+          <p class="loop"><b>PvP:</b> line of sight + range, karanie otwartej przestrzeni, flank trapami.</p>
+          <div class="tags"><span class="tag">line of sight</span><span class="tag">gap closer</span><span class="tag">stealth flank</span></div>
+
+          <details class="sub"><summary>Strzelec — precyzja na dystans</summary>
+            <div class="subclass"><p>Sygnatura: <i>Piercing Shot</i> — mocny projectile z windupem, wymaga LoS.</p>
+              <div class="strong-weak"><div><span>Mocne</span>range, single-target DPS</div><div><span>Słabe</span>ciasne mapy, gap close</div></div>
+              <p class="upgrade">Lvl 50: <b>Deadeye</b> (mocniejszy single-target) albo <b>Marksman</b> (stabilniejszy DPS/range control).</p>
+            </div></details>
+          <details class="sub"><summary>Tropiciel — anti-stealth</summary>
+            <div class="subclass"><p>Sygnatura: <i>Hunter's Mark</i> — wzmacnia tracking, osłabia stealth celu.</p>
+              <div class="strong-weak"><div><span>Mocne</span>anti-stealth, kontrola terenu</div><div><span>Słabe</span>niższy burst, wymaga przygotowania</div></div>
+              <p class="upgrade">Lvl 50: <b>Pathfinder</b> (survival/trap mobility) albo <b>Stalker</b> (mocniejszy tracking).</p>
+            </div></details>
+          <details class="sub"><summary>Władca Bestii — companion combat</summary>
+            <div class="subclass"><p>Sygnatura: <i>Pack Command</i> — bestia wykonuje pin/harass/interrupt.</p>
+              <div class="strong-weak"><div><span>Mocne</span>PvE solo, dodatkowa presja</div><div><span>Słabe</span>companion killable, wymaga zarządzania</div></div>
+              <p class="upgrade">Lvl 50: <b>Packlord</b> (mocniejsza presja companiona) albo <b>Primal Caller</b> (więcej utility/survival).</p>
+            </div></details>
+
+          <details class="kit"><summary>Focused Shot · Snare Trap · Tracking Mark · Companion Command</summary>
+            <table class="skillkit">
+              <tr><td class="sname">Focused Shot</td><td>Projectile/Physical — podstawowy ranged dmg, uczy LoS/aim. Kontra: LoS, block, dodge, gap close.</td></tr>
+              <tr><td class="sname">Snare Trap</td><td>Trap/Control — utrzymanie dystansu, kite elit. Kontra: detection, cleanse/root break.</td></tr>
+              <tr><td class="sname">Tracking Mark</td><td>Utility/Detection — anti-stealth, target focus. Kontra: cleanse, LoS, bait mark.</td></tr>
+              <tr><td class="sname">Companion Command</td><td>Minion/Physical — podstawowa komenda towarzysza. Kontra: kill companion, AoE, pressure owner.</td></tr>
+            </table>
+          </details>
+        </article>
+
+        <article class="class-card">
+          <div class="ch"><h3>Mag</h3><span class="role">caster / area control</span></div>
+          <dl class="kv">
+            <dt>Bronie</dt><dd>kostur, różdżka, katalizator</dd>
+            <dt>Staty</dt><dd>Intelligence (Dex/Vit pomocniczo)</dd>
+            <dt>Obrażenia</dt><dd>Fire, Cold, Lightning</dd>
+            <dt>Obrona</dt><dd>Ward, mana management, pozycja</dd>
+          </dl>
+          <p class="loop"><b>PvE:</b> kontrola dystansu → ward przed burstem → rotacja spelli → decyzja: burst czy defensywa.</p>
+          <p class="loop"><b>PvP:</b> safe cast window, ward/mobilność do przetrwania engage.</p>
+          <div class="tags"><span class="tag">interrupt</span><span class="tag">silence</span><span class="tag">gap close</span></div>
+
+          <details class="sub"><summary>Piromanta — burn / area denial</summary>
+            <div class="subclass"><p>Sygnatura: <i>Inferno Ground</i> — strefa Fire/Burn, możliwa do opuszczenia.</p>
+              <div class="strong-weak"><div><span>Mocne</span>PvE AoE, area denial</div><div><span>Słabe</span>Fire resistance, mobilność wroga</div></div>
+              <p class="upgrade">Lvl 50: <b>Infernalist</b> (mocniejszy burn) albo <b>Ashcaller</b> (więcej area denial/debuffów).</p>
+            </div></details>
+          <details class="sub"><summary>Kriomanta — kontrola i tempo</summary>
+            <div class="subclass"><p>Sygnatura: <i>Frost Prison</i> — krótkie okno kontroli z limitami PvP.</p>
+              <div class="strong-weak"><div><span>Mocne</span>kite, setup dla party</div><div><span>Słabe</span>niższy raw damage</div></div>
+              <p class="upgrade">Lvl 50: <b>Frostbinder</b> (mocniejsza kontrola celu) albo <b>Cryoguard</b> (defensywny ward/control hybrid).</p>
+            </div></details>
+          <details class="sub"><summary>Burzomanta — burst i mobilność</summary>
+            <div class="subclass"><p>Sygnatura: <i>Storm Surge</i> — szybki burst Lightning + reposition.</p>
+              <div class="strong-weak"><div><span>Mocne</span>szybkie punish windows</div><div><span>Słabe</span>cooldown dependent, słabszy sustain</div></div>
+              <p class="upgrade">Lvl 50: <b>Stormcaller</b> (mocniejszy shock/chain) albo <b>Tempest</b> (więcej mobility/burst windows).</p>
+            </div></details>
+
+          <details class="kit"><summary>Elemental Bolt · Lesser Ward · Arcane Step · Mana Focus</summary>
+            <table class="skillkit">
+              <tr><td class="sname">Elemental Bolt</td><td>Spell/Projectile (Fire/Cold/Lightning), Mana — podstawowy dmg. Kontra: interrupt, LoS, dodge, resist.</td></tr>
+              <tr><td class="sname">Lesser Ward</td><td>Defensive/Spell, Mana — podstawowa defensywa castera. Kontra: pressure ward, interrupt recast, mana drain.</td></tr>
+              <tr><td class="sname">Arcane Step</td><td>Movement/Spell, Mana — reposition castera. Kontra: bait movement, root/slow, LoS.</td></tr>
+              <tr><td class="sname">Mana Focus</td><td>Spell/Utility, Mana — odzyskuje tempo kosztem okna podatności. Kontra: interrupt, pressure podczas castu.</td></tr>
+            </table>
+          </details>
+        </article>
+
+        <article class="class-card">
+          <div class="ch"><h3>Akolita</h3><span class="role">support / healer / disruptor</span></div>
+          <dl class="kv">
+            <dt>Bronie</dt><dd>młot, kostur, różdżka, tarcza (Inkwizytor)</dd>
+            <dt>Staty</dt><dd>Faith (Int/Str/Vit pomocniczo)</dd>
+            <dt>Obrażenia</dt><dd>Fire, Physical, Chaos</dd>
+            <dt>Obrona</dt><dd>healing, cleanse, ward/protection</dd>
+          </dl>
+          <p class="loop"><b>PvE:</b> sustain heal/ward, kontrola debuffem, utility zamiast czystego burstu.</p>
+          <p class="loop"><b>PvP:</b> utrzymanie sojuszników, wymuszanie cleanse/anti-heal decyzji.</p>
+          <div class="tags"><span class="tag">anti-heal</span><span class="tag">silence</span><span class="tag">focus fire</span></div>
+
+          <details class="sub"><summary>Kapelan — healer / protection</summary>
+            <div class="subclass"><p>Sygnatura: <i>Sanctuary Ward</i> — okno ochronne dla sojuszników.</p>
+              <div class="strong-weak"><div><span>Mocne</span>najlepszy healing, cleanse</div><div><span>Słabe</span>niski damage, anti-heal/silence</div></div>
+              <p class="upgrade">Lvl 50: <b>Hierophant</b> (mocniejszy ward/protection) albo <b>Saint</b> (cleanse/heal identity, mocne limity PvP).</p>
+            </div></details>
+          <details class="sub"><summary>Inkwizytor — Fire/Physical disruptor</summary>
+            <div class="subclass"><p>Sygnatura: <i>Judgment Brand</i> — anti-heal / kara za cast w krótkim oknie.</p>
+              <div class="strong-weak"><div><span>Mocne</span>przeciw healerom/casterom</div><div><span>Słabe</span>nie jest pełnym tankiem, kite</div></div>
+              <p class="upgrade">Lvl 50: <b>Justicar</b> (więcej melee/Physical) albo <b>Witch Hunter</b> (mocniejszy anti-caster/anti-heal).</p>
+            </div></details>
+          <details class="sub"><summary>Rytualista / Warlock — summoner Chaos</summary>
+            <div class="subclass"><p>Sygnatura: <i>Pact of the Hollow</i> — wzmocnienie summonów kosztem defensywy właściciela.</p>
+              <div class="strong-weak"><div><span>Mocne</span>PvE solo, attrition</div><div><span>Słabe</span>setup, słaba mobilność, summony killable</div></div>
+              <p class="upgrade">Lvl 50: <b>Demonolog</b> (mocniejsze summony/pact) albo <b>Klatwomistrz</b> (mocniejsze curse/debuff/drain).</p>
+            </div></details>
+
+          <details class="kit"><summary>Minor Mending · Purifying Ward · Judgment Spark · Lesser Rite</summary>
+            <table class="skillkit">
+              <tr><td class="sname">Minor Mending</td><td>Heal/Spell, Faith — podstawowy heal/sustain. Kontra: anti-heal, interrupt, silence.</td></tr>
+              <tr><td class="sname">Purifying Ward</td><td>Defensive/Heal, Faith — minor ward/cleanse-lite. Kontra: bait cleanse, reapply debuffs.</td></tr>
+              <tr><td class="sname">Judgment Spark</td><td>Spell/Fire/Control, Faith — offensive disrupt, lekki anti-heal. Kontra: cleanse, Fire resist, interrupt.</td></tr>
+              <tr><td class="sname">Lesser Rite</td><td>Curse/Minion/Chaos — zapowiedź Warlocka, słabszy niż pełny kit. Kontra: cleanse curse, kill summon, interrupt.</td></tr>
+            </table>
+          </details>
+        </article>
+
+      </div>
+
+      <div class="macro-note">
+        <b>Reguła PvP dla całego rostera:</b> każdy burst wymaga setupu/cooldownu i ma punish window; healing ma
+        modyfikator PvP i kontrę (anti-heal/silence/interrupt); stealth kontrują reveal/detection/AoE; summony
+        mają limit, obniżony dmg vs graczy i muszą być zabijalne; tanki mają niższy kill pressure i kontry
+        (guard break/flank/DoT). Żadna klasa nie wymaga jednego konkretnego unikatowego itemu, żeby działać, ani
+        nie może wziąć wszystkich najmocniejszych pasywek/upgrade'ów naraz.
+      </div>
+    </section>
+
+    <!-- ============ EKONOMIA ============ -->
+    <section class="block" id="ekonomia">
+      <div class="block-head">
+        <span class="kicker">docs/itemization-foundation + docs/economy-crafting-loot + docs/professions-foundation · merge</span>
+        <h2>Itemizacja i ekonomia</h2>
+        <p>System inspirowany PoE, ale czytelniejszy pod Minecraft. Przedmioty wzmacniają tagi skilli i typy
+        obrażeń, nie same nazwy klas.</p>
+      </div>
+
+      <h3 style="font-size:1.1rem;">Sloty i typy sprzętu</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">11 slotów: Main Hand, Off Hand, Helmet,
+      Chestplate, Leggings, Boots, Amulet, 2× Ring, Belt, Trinket. 11 typów broni (1H/2H Sword, Axe, Mace/Hammer,
+      Dagger, Bow, Crossbow, Staff, Wand, Catalyst/Relic, Shield), 4 typy zbroi (Heavy/Medium/Light/Robes) — każdy
+      z realnym tradeoffem w mobilności, stealcie i ochronie.</p>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Rzadkość</h3>
+      <div class="tags" style="margin-top:8px;">
+        <span class="tag">Common — tylko bazowe staty</span>
+        <span class="tag">Magic — 1-2 affixy</span>
+        <span class="tag">Rare — trzon endgame</span>
+        <span class="tag">Epic — wyspecjalizowane</span>
+        <span class="tag">Unique — zmienia gameplay, nie zawsze najsilniejszy</span>
+      </div>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Waluty</h3>
+      <div class="table-wrap">
+        <table class="currencies">
+          <thead><tr><th>Waluta</th><th>Źródła</th><th>Na co idzie</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">Common Currency</td><td>questy, moby, dungeony, vendor, handel</td><td>repair, respec, podstawowe rzemiosło, market tax</td></tr>
+            <tr><td class="strong">Gameplay Premium</td><td>bossy, challenge dungeony, reputacje, sezony</td><td>mocne rzemiosło, cosmetic prestige, reroll — nośnik <i>Prestige</i></td></tr>
+            <tr><td class="strong">PvP Currency</td><td>capture points, arena, bounty, contested objectives</td><td>PvP bazy sprzętu, cosmetics, ranking rewards</td></tr>
+            <tr><td class="strong">Dungeon / Boss Tokens</td><td>dungeon clear, boss kill, weekly objective</td><td>zabezpieczenie przed pechem, materiały bossowe</td></tr>
+            <tr><td class="strong">Faction Currency</td><td>reputation questy, faction eventy, dungeony frakcyjne</td><td>vendor unlocks, recipes, dungeon keys</td></tr>
+            <tr><td class="strong">Guild Materials</td><td>guild wars, territory, guild bossy, wkład członków</td><td>siege equipment, guild upgrades, defense structures</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Profesje</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Trzy warstwy: <b>gathering</b> (mniej
+      limitowane), <b>rzemiosło</b> (combat-power, mocno limitowane na wysokich tierach), <b>service systems</b>
+      (odzysk/repair/ulepszanie — wspólne mechaniki, nie osobne profesje).</p>
+      <div class="layer-grid">
+        <div class="layer-card"><span class="step">gathering</span><h4>Górnictwo · Zielarstwo · Łowiectwo</h4><p>Rudy/kryształy, zioła/toksyny, skóry/kości/kły — surowce dla reszty łańcucha.</p></div>
+        <div class="layer-card"><span class="step">rzemiosło</span><h4>Kowalstwo · Krawiectwo · Jubilerstwo</h4><p>Broń melee/ciężka zbroja · szaty i lekki/średni pancerz · pierścienie/amulety/resisty.</p></div>
+        <div class="layer-card"><span class="step">rzemiosło</span><h4>Alchemia · Zaklinanie · Inżynieria · Gotowanie</h4><p>Potiony/trucizny/cleanse · runy/enchanty/ward · pułapki/bomby/utility · jedzenie/pre-combat buffy.</p></div>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;">
+      Progresja tierowa: <span class="tags" style="display:inline-flex;"><span class="tag">Basic (1-2)</span><span class="tag">Skilled (3)</span><span class="tag">Specialist (4)</span><span class="tag">Master</span><span class="tag">Grandmaster</span></span>
+      — rekomendacja: max. 2 profesje rzemieślnicze na poziomie Master, 1 specjalizacja Grandmaster na postać.
+      Jedna postać nie ma wymaksować wszystkiego — stąd sens rynku.</p>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Dwie listy profesji — obok siebie</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Formalny rejestr
+      <code class="mono">docs/contracts/profession-list.yaml</code> definiuje inny, węższy zestaw niż stary
+      fundament — 8 profesji zamiast 10, po angielsku, ale za to z <b>24 realnie nazwanymi cechami/gildiami</b>
+      (3 na profesję) i limitem <b>2 aktywnych profesji na postać</b>:</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Profesja (nowy rejestr)</th><th>Kategoria</th><th>3 nazwane organizacje</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">Miner</td><td>gathering</td><td>Deep Vein Guild · Stoneward Union · Blackcore Order</td></tr>
+            <tr><td class="strong">Lumberjack</td><td>gathering</td><td>Ironbark Compact · Greenring Lodge · Embergrain Circles</td></tr>
+            <tr><td class="strong">Harvester</td><td>gathering</td><td>Golden Sheaf Guild · Rootwake Conclave · Cinderfield Cooperative</td></tr>
+            <tr><td class="strong">Blacksmith</td><td>production_service</td><td>Forge Covenant · Red Anvil Syndicate · Ashen Hammer League</td></tr>
+            <tr><td class="strong">Armorer</td><td>production_service</td><td>Bastion Craft · Wardsteel Assembly · Silver Rivet Circle</td></tr>
+            <tr><td class="strong">Alchemist</td><td>production_service</td><td>Glass Circle · Mercury Accord · Verdant Retort</td></tr>
+            <tr><td class="strong">Artificer</td><td>production_service</td><td>Clockwork Forum · Lattice Union · Sparkwright Compact</td></tr>
+            <tr><td class="strong">Cook</td><td>production_service</td><td>Hearth Guild · Salt Covenant · Cinder Ladle Society</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Zniknęły z tej listy: Krawiectwo,
+      Jubilerstwo, Zaklinanie/Runotwórstwo, Inżynieria i Łowiectwo (jako gathering) — albo jeszcze nie zostały
+      przeniesione do nowego rejestru, albo zostały świadomie scalone/wycięte. Żadna z 24 organizacji nie ma
+      jeszcze przypisanej treści (status <code class="mono">framework_ready</code> — same nazwy, zero mechanik).</p>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Model łupu z lochów</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Mieszanka: ekwipunek + materiały
+      profesyjne + bazy pod rzemiosło + zetony (zabezpieczenie przed pechem) + fragmenty receptur + materiał z
+      bossa + odzysk. Zasada nazewnicza dokumentów: <code class="mono">loot→łup</code>,
+      <code class="mono">token→zeton</code>, <code class="mono">salvage→odzysk</code>,
+      <code class="mono">pity→zabezpieczenie przed pechem</code>. Boss nigdy nie gwarantuje najlepszego przedmiotu
+      w grze — jest ważnym, ale nie jedynym źródłem.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Trzy różne listy slotów — obok siebie</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">W repo funkcjonują naraz trzy niezgodne ze
+      sobą listy slotów ekwipunku, z trzech różnych dokumentów. Zestawione obok siebie widać, co się powtarza, a
+      co jest sporne:</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Slot</th><th>Fundament itemizacji (11)</th><th>Realny stack pluginów (14)</th><th>Nowszy kontrakt (10 + Relic)</th></tr></thead>
+          <tbody>
+            <tr><td>Broń główna</td><td>✓ Main Hand</td><td>✓ Main Hand</td><td>✓ main_hand</td></tr>
+            <tr><td>Druga ręka</td><td>✓ Off Hand</td><td>✓ Off Hand</td><td>✓ off_hand</td></tr>
+            <tr><td>Hełm / klatka / nogi / buty</td><td>✓</td><td>✓</td><td>✓ (head/chest/legs/feet)</td></tr>
+            <tr><td>Pierścienie</td><td>✓ ×2</td><td>✓ ×2</td><td>✓ ring_1 / ring_2</td></tr>
+            <tr><td>Amulet</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Pas</td><td>✓ Belt</td><td>✗ brak w konfiguracji</td><td>✗</td></tr>
+            <tr><td>Trinket / Charm</td><td>✓ Trinket</td><td>— (patrz Artifact)</td><td>✗</td></tr>
+            <tr><td>Bransoleta</td><td>✗</td><td>✓ Bracelet</td><td>✗ jawnie „legacy, poza v1”</td></tr>
+            <tr><td>Rękawice</td><td>✗</td><td>✓ Gloves</td><td>✗ jawnie „legacy, poza v1”</td></tr>
+            <tr><td>Artefakty</td><td>✗</td><td>✓ Artifact ×3</td><td>✗ jawnie „legacy, poza v1”</td></tr>
+            <tr><td>Relikwia</td><td>— (mieszana z Off Hand)</td><td>— (mieszana z Talisman/Ornament/Tome)</td><td>✓ jeden dedykowany slot Relic</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Innymi słowy: to, co faktycznie już działa
+      w pluginach (14 slotów, kolumna środkowa), jest szersze niż to, co zakłada najnowszy formalny kontrakt (10
+      slotów + Relic, kolumna prawa) — a ten z kolei wprost odrzuca bransoletę, rękawice i 3 artefakty jako
+      „legacy”. Nikt jeszcze tego nie rozstrzygnął.</p>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Prefiksy i sufiksy — limity rzadkości</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Prefiks = główna moc („co przedmiot robi”:
+      obrażenia, defensywa, zasoby). Sufiks = dopasowanie („jak pasuje do postaci”: atrybuty, odporności, tempo,
+      kryt, utility). Unikat może łamać podział i mieć własny efekt specjalny.</p>
+      <div class="tier-grid">
+        <div class="tier"><span class="name">Zwykły</span><p>0 prefiksów, 0 sufiksów — same bazowe staty.</p></div>
+        <div class="tier"><span class="name">Magiczny</span><p>max 1 prefiks + 1 sufiks.</p></div>
+        <div class="tier"><span class="name">Rzadki</span><p>max 3 prefiksy + 3 sufiksy — trzon progresji.</p></div>
+        <div class="tier"><span class="name">Epicki / Unikatowy</span><p>mocniejszy wariant / efekt warunkowy — unikat poza limitem 3+3, ale z tradeoffem.</p></div>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Każdy slot ma zamkniętą pulę: broń losuje
+      obrażenia/tempo/kryt, ale nie duże odporności; tarcza losuje blok/gardę/pancerz, ale nie obrażenia; katalizator/
+      relikwia losują manę/ward/obrażenia zaklęć/leczenie; pas wspiera przygotowanie i ekonomię (koszt naprawy,
+      odzysk), ale nigdy nie jest najlepszym slotem ofensywnym. Zakazane w pierwszym akcie: pełna odporność na typ
+      obrażeń, stały root/silence/ogłuszenie, leczenie bez limitu, duże stałe skrócenie wszystkich cooldownów.</p>
+
+      <h3 style="margin-top:24px;font-size:1.1rem;">Dwa opisy walut — obok siebie</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Stary fundament ekonomii dzieli waluty po
+      <i>źródle aktywności</i> (6 typów, patrz tabela wyżej). Nowszy, znacznie bardziej dopracowany
+      <code class="mono">docs/design/economy/economy-model.md</code> dzieli je po <i>mechanice</i> — to nie to samo
+      cięcie tego samego tortu, więc warto zestawić je obok siebie:</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Stary podział (wg źródła)</th><th>Nowy podział (wg mechaniki)</th><th>Co nowego wnosi</th></tr></thead>
+          <tbody>
+            <tr><td>Common Currency</td><td><b>gold</b> — <code class="mono">account-wide</code>, nie per postać</td><td>jedyna waluta do podatków, NPC i domyślnych rozliczeń usług</td></tr>
+            <tr><td>Gameplay Premium</td><td><b>premium balance</b></td><td>osobna od gold, tylko sklep/monetyzacja — nigdy zwykły pieniądz graczy</td></tr>
+            <tr><td>— (brak odpowiednika)</td><td><b>currency items</b> (orby reroll, katalizatory)</td><td>nowa warstwa w stylu PoE — zużywana w operacjach na przedmiotach, nie ogólny pieniądz</td></tr>
+            <tr><td>PvP / Faction / Guild / Boss Tokens</td><td><b>progression goods</b>, <b>gear items</b></td><td>dopuszczane do rynku tylko wg jawnej matrycy — nieznana kategoria domyślnie odrzucona</td></tr>
+            <tr><td>— (brak odpowiednika)</td><td><b>service contracts</b> (Fixed Price, RFO, escrow)</td><td>formalny system usług między graczami z rozliczeniem w depozycie</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Reszta realnych ustaleń nowego modelu: jeden
+      globalny rynek (Auction House) bez podziału na osobne ekonomie regionalne; NPC są stabilizatorem, nie głównym
+      rynkiem (celowo niskie, przewidywalne ceny skupu); sinki rosną z etapem gry — mikro (naprawa, opłata za
+      wystawienie) → średnie (reroll, magazyn) → duże (crafting wysokiego tieru, prestiż); telemetria pilnuje
+      inflacji i koncentracji bogactwa (udział top 1%/5%/10% w całości złota); awaryjne dźwignie nigdy nie
+      obejmują ręcznego kasowania majątku gracza.</p>
+    </section>
+
+    <!-- ============ POTWORY ============ -->
+    <section class="block" id="potwory">
+      <div class="block-head">
+        <span class="kicker">docs/mob-boss-encounter-001 + docs/level-1-dungeon-island + docs/dungeon-ladder-002-010 · content-candidate</span>
+        <h2>Potwory i lochy <span style="font-family:var(--font-mono);font-size:.9rem;color:var(--muted);">— cały pierwszy akt: loch_001 do loch_010</span></h2>
+        <p>Wertykalny wycinek serwera: Stolica Wyspy → Portal Nexus → loch → boss → powrót do huba → wybór klasy
+        na poziomie 10. Trudność zmienia <i>zachowanie</i> mobów, nie tylko HP/dmg — bliżej Elden Ring/Terraria
+        pressure niż idle farmy.</p>
+      </div>
+
+      <div class="callout" style="margin:18px 0 0;">
+        <h3 style="font-size:.95rem;">Prawdziwa nazwa loch_001: <span style="color:var(--accent);">Kwietna Polana</span></h3>
+        <p>Dokumenty projektowe cały czas mówią „Level 1 Dungeon Island" / „loch_001", ale w realnym configu
+        (<code class="mono">maps/level_1/config.yml</code>) loch ma już polską nazwę wyświetlaną graczowi:
+        <b>Kwietna Polana</b>. <code class="mono">docs/ai/mmo-excellence-playbook.md</code> dorzuca elementy, których
+        nie ma w żadnym z fundamentów: dodatkowego mini-bossa <b>Grove Warden</b> na moście przed bramą korzeni
+        (trasa: <i>fale → Grove Warden → root gate → Grove Guardian → nagroda</i>), scenerię-kotwicę za bossem —
+        uschnięte, korumpowane <b>Drzewo-Serce Gaju</b> — oraz nazwane rodziny łupu pierwszego poziomu:
+        <b>Gajowe Relikty, Pęknięte Runy, Żelazna Wyprawa, Runiczna Wyprawa</b>.</p>
+      </div>
+
+      <h3 style="font-size:1.1rem;margin-top:24px;">Loch 001 — projekt (fundament) vs to, co realnie stoi w configu</h3>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Element</th><th>Projekt (foundation-docs)</th><th>Realny config (MythicMobs/MythicDungeons)</th></tr></thead>
+          <tbody>
+            <tr><td>Trash moby</td><td>6 ról: Feral Wolf, Rootling, Briar Archer, Grove Channeler, Shielded Husk, Toxic Creeper</td><td>2 realne: <code class="mono">GroveWolf</code> (WOLF, HP 30, DMG 5) i <code class="mono">CorruptedSprout</code> (HUSK, HP 20, DMG 4, ThornShot)</td></tr>
+            <tr><td>Mini-elita</td><td>Elite Gatekeeper (Heavy Slam, Guarded Stance, Call Roots, Channel Fortify)</td><td>brak w configu — niezaimplementowana</td></tr>
+            <tr><td>Boss</td><td>GroveGuardian, 3 fazy narracyjne (Awakening / Grove Ritual / Enrage-Lite)</td><td><code class="mono">level_1_grove_guardian</code> (ZOMBIE, HP 400, DMG 12, Armor 6); próg enrage HP: Łatwy &lt;119, Normalny &lt;174, Trudny &lt;228; skille RootSmash, SummonAdds, ThornNova (tylko Trudny)</td></tr>
+            <tr><td>Klasa gracza</td><td>5 klas: Wojownik/Łotrzyk/Łowca/Mag/Akolita</td><td>domyślna klasa MMOCore to generyczny <code class="mono">Human</code> (4 sloty skilli, krzywa XP <code class="mono">{level}*200</code>) — pełny roster klas jeszcze nie podłączony</td></tr>
+            <tr><td>Ekwipunek startowy</td><td>rarity/affix system z pełnym itemization foundation</td><td><code class="mono">STEEL_SWORD</code> (na bazie IRON_SWORD, atk 6.5) + <code class="mono">RECALL_POTION</code> (60s cooldown) + 25 złota</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">To najbardziej wiarygodny obraz stanu
+      faktycznego w całym repo: pierwszy loch <i>fizycznie istnieje i da się w niego zagrać</i>, ale jest dużo
+      chudszy niż to, co opisują dokumenty projektowe — szczegóły w sekcji „Co realnie działa" niżej.</p>
+
+      <h3 style="font-size:1.1rem;margin-top:24px;">Loch 001 (projekt) — Level 1 Dungeon Island</h3>
+      <div class="bestiary-grid">
+        <article class="mob-card"><h4>Feral Wolf</h4><span class="role">szybki melee</span><p>Uczy spacingu i dodge; leap z czytelnym windupem, na wyższym poziomie feintuje podejście.</p><span class="drop">wolf fang · rough hide · small bone</span></article>
+        <article class="mob-card"><h4>Rootling</h4><span class="role">plant / root utility</span><p>Uczy ruchu i unikania strefy root; na wyższym poziomie synchronizuje się z innym mobem.</p><span class="drop">corrupted root · wild herb</span></article>
+        <article class="mob-card"><h4>Briar Archer</h4><span class="role">ranged harasser</span><p>Uczy line of sight i dodge/block; na wyższym poziomie zmienia pozycję, ale bez aimbota.</p><span class="drop">wood fragment · rough hide</span></article>
+        <article class="mob-card"><h4>Grove Channeler</h4><span class="role">caster / channeler</span><p>Uczy interruptu i target priority; może baitować krótkim fake channelem.</p><span class="drop">weak essence · cracked crystal</span></article>
+        <article class="mob-card"><h4>Shielded Husk</h4><span class="role">defensywny</span><p>Uczy guard break, heavy attack, parry/counter i ataku od tyłu.</p><span class="drop">cracked plate · small bone</span></article>
+        <article class="mob-card"><h4>Toxic Creeper</h4><span class="role">poison / root</span><p>Lekki test status pressure — nigdy nie wymaga cleanse, zanim gracz go zdobędzie.</p><span class="drop">toxin sac · antidote material</span></article>
+      </div>
+
+      <div class="boss-panel">
+        <div class="bh"><h3>GroveGuardian <span style="color:var(--muted);font-weight:400;">/ Strażnik Gaju</span></h3><span class="subtitle">pierwszy boss — czytelny, wolny, edukacyjny; do przejścia solo na trudności „Łatwy”</span></div>
+        <p style="color:var(--ink-soft);font-size:.88rem;margin:0;">Nie jest testem posiadania tanka, healera ani konkretnej klasy. Zero losowych one-shotów, zero chain-CC bez kontry.</p>
+        <div class="phases">
+          <div class="phase"><span class="pn">Faza 1 — Awakening</span><h5>nauka pozycji i unik</h5>
+            <ul><li>Root Slam — frontalny slam (dash/block)</li><li>Vine Line — liniowy telegraph roota</li><li>Summon Rootlings — 1–2 addy</li></ul></div>
+          <div class="phase"><span class="pn">Faza 2 — Grove Ritual</span><h5>interrupt i zarządzanie areną</h5>
+            <ul><li>Ground Bloom — AoE na ziemi</li><li>Barkskin Channel — przerywalny shield/heal</li><li>Briar Volley — projectile (LoS/dodge)</li></ul></div>
+          <div class="phase"><span class="pn">Low HP — Enrage-Lite</span><h5>presja końcowa</h5>
+            <ul><li>Faster Slam — szybszy, wciąż czytelny</li><li>Root Pulse — fala z jasnym telegraphem</li><li>Add Pressure — więcej Rootlingów, bez zalania areny</li></ul></div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:34px;font-size:1.1rem;">Loch 002-010 — drabinka pierwszego aktu</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Żaden loch nie jest reskinem poprzedniego
+      — każdy ma własny klimat, rodzinę przeciwników, bossa i tożsamość łupu. <code class="mono">Normalny /
+      Klasyczny</code> jest domyślnym trybem, <code class="mono">Łatwy</code> fallbackiem dla casuali.</p>
+      <div class="zone-grid">
+        <div class="zone-card"><div class="zn"><h4>Bagna Zgniłych Korzeni</h4><span class="zid">loch_002 · Tier 2</span></div><p class="climate">bagna, mgła, organiczne zagrożenia</p><p class="boss">Boss: <b>Mirebound Matriarch</b> — kałuże, chwyt korzeni, przywołanie pijawek</p><span class="mats">włókna korzeni · gruczoły bestii · ichor matriarchini</span></div>
+        <div class="zone-card"><div class="zn"><h4>Zatopione Ruiny Archiwum</h4><span class="zid">loch_003</span></div><p class="climate">zatopione ruiny, runiczne biblioteki</p><p class="boss">Boss: <b>Drowned Archivist</b> — kanałowanie run, addy, fala wody</p><span class="mats">pęknięte tabliczki · słabe esencje · soczewka archiwisty</span></div>
+        <div class="zone-card"><div class="zn"><h4>Kryształowe Jaskinie</h4><span class="zid">loch_004</span></div><p class="climate">jaskinie, echo, światło odbite od kryształów</p><p class="boss">Boss: <b>Crystal Burrower</b> — podziemny doskok, deszcz odłamków, rezonujące filary</p><span class="mats">pęknięte kryształy · pył kryształowy · rdzeń nornika</span></div>
+        <div class="zone-card"><div class="zn"><h4>Opuszczona Kopalnia Nadzorcy</h4><span class="zid">loch_005</span></div><p class="climate">tory, windy, mechaniczne pułapki</p><p class="boss">Boss: <b>Ironjaw Overseer</b> — szarża wózkiem, spadające skały, slam na pancerz</p><span class="mats">zardzewiała ruda · złom kopalniany · fragment żelaznej szczęki</span></div>
+        <div class="zone-card"><div class="zn"><h4>Złamana Forteca</h4><span class="zid">loch_006</span></div><p class="climate">koszary, mury, martwy garnizon</p><p class="boss">Boss: <b>Broken Captain</b> — ściana tarcz, wezwanie sztandaru, postawa kontry</p><span class="mats">materiał sztandaru · stal forteczna · stara pieczęć rozkazu</span></div>
+        <div class="zone-card"><div class="zn"><h4>Mroźna Przełęcz</h4><span class="zid">loch_007</span></div><p class="climate">śnieg, wiatr, wąskie mosty</p><p class="boss">Boss: <b>Frostbound Warden</b> — linia lodu, puls mrozu, aura spowolnienia</p><span class="mats">mroźne futro · odłamki szronu · serce strażnika</span></div>
+        <div class="zone-card"><div class="zn"><h4>Popielne Sanktuarium</h4><span class="zid">loch_008</span></div><p class="climate">popiół, ogień, zrujnowana kaplica</p><p class="boss">Boss: <b>Ash Priest</b> — ognisty chant, fala popiołu, strefy ognia</p><span class="mats">pył popiołu · esencja ognia · żar kapłana</span></div>
+        <div class="zone-card"><div class="zn"><h4>Pustkowia Kości</h4><span class="zid">loch_009</span></div><p class="climate">suche pustkowia, przeklęte obeliski</p><p class="boss">Boss: <b>Bonecaller Exile</b> — addy z kości, znak klątwy, rytuał przywołania</p><span class="mats">suche kości · pył klątwy · fokus zaklinacza kości</span></div>
+        <div class="zone-card" style="border-color:var(--accent);"><div class="zn"><h4>Brama Pierwszego Aktu</h4><span class="zid">loch_010 · finał aktu</span></div><p class="climate">stara wyspiarska brama — miks korzeni, kryształów, popiołu, kości</p><p class="boss">Boss: <b>Island Gatekeeper</b> — garda, kanałowanie, presja finałowa</p><span class="mats">żeton bramy aktu · rdzeń pierwszego aktu</span></div>
+      </div>
+
+      <div class="macro-note">
+        <b>Warstwa formalna (draft, bez konkretnej treści):</b> nowszy <code class="mono">docs/design/pve/</code>
+        planuje Dungeon jako <b>100 pięter w 10 sektorach</b> (piętro ≈ 10–20 min, grupa 1–4 graczy, piętro 010 =
+        finał sektora, raid to osobny format). Boss-y mają typować się jako klasy:
+        <div class="boss-class-list">
+          <span class="tag">DUELIST</span><span class="tag">SIEGE</span><span class="tag">COMMANDER</span>
+          <span class="tag">HUNTER</span><span class="tag">RITUALIST</span><span class="tag">COLOSSUS</span>
+        </div>
+        a moby jako role z biblioteki archetypów (Frontline, Skirmisher, Artillery, Controller, Support,
+        Disruptor, Summoner, Assassin, Objective Unit, Elite Anchor). To szkielet walidacyjny pod przyszłe
+        piętra — powyższe 10 lochów to jedyne encountery, które realnie mają nazwy, klimaty i bossów.
+      </div>
+
+      <h3 style="margin-top:30px;font-size:1.1rem;">Endgame poza lochami — 4 filary (formalny szkielet)</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Nowszy dokument endgame dzieli PvE
+      poza lochem na cztery różne formaty, żeby nie powstały trzy różnie nazwane wersje tej samej pętli:</p>
+      <div class="card-grid">
+        <div class="info-card"><h4>Evergreen Dungeon/Island</h4><p>Bazowy, zawsze wybieralny backbone — bez wymogu paczki czy Ascension.</p></div>
+        <div class="info-card"><h4>Sigils / Maps</h4><p>Jawne paczki-modyfikatory nakładane na cel evergreen — opt-in wysoka wariancja.</p></div>
+        <div class="info-card"><h4>Ascension</h4><p>Długoterminowy overlay prestiżowy — nie może zastąpić evergreen jako domyślnego wejścia.</p></div>
+        <div class="info-card"><h4>Raid / Public Prestige</h4><p>Osobny format grupowy/publiczny — nie może być jedynym obowiązkowym źródłem mocy.</p></div>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;"><b>Raid</b> ma własną
+      strukturę skrzydeł (<code class="mono">ENTRY_ORIENTATION → WING_1-3 → FINAL_WING</code>) i tę samą drabinkę
+      trudności co lochy (story/standard/veteran/mythic), ale z mocniejszymi wymaganiami koordynacji i przypisań
+      ról. <b>Public Events</b> (World Boss, Public Meta-Event, Public Objective Event) skalują się pasmami
+      populacji (SMALL/MEDIUM/LARGE/SURGE) i mają własny system kontrybucji anty-leech — meta-eventy używają
+      typów etapów: Assembly, Escort, Defense, Point Control, Resource Push, Boss Climax, Recovery. Żaden z tych
+      czterech filarów nie ma jeszcze jednego konkretnego, nazwanego przykładu — cała warstwa jest
+      <span class="badge draft">draft</span>.</p>
+    </section>
+
+    <!-- ============ CO REALNIE DZIAŁA ============ -->
+    <section class="block" id="mvp">
+      <div class="block-head">
+        <span class="kicker">docs/ai/foundation-mvp-spec-values.md + foundation-mvp-scope.md · [CONFIG] — realne wartości ze skonfigurowanych, działających pluginów</span>
+        <h2>Co realnie działa dziś <span style="font-family:var(--font-mono);font-size:.9rem;color:var(--muted);">— nie projekt, tylko stan configu</span></h2>
+        <p>To jedyny dokument w repo, który podaje wartości wprost skopiowane z działającej konfiguracji, nie
+        projektowe założenia. Dokładna ścieżka aktualnego MVP: <code class="mono">Stolica Wyspy → starter package →
+        sygnał profilu → Portal Nexus → level_1 → pierwszy boss → nagroda → powrót</code>. Świadomie POZA
+        zakresem teraz: gildie i wojny gildii, sezony/prestiż/kosmetyki, pełny loadout/bank, world eventy, szerszy
+        endgame, progresja PvP, pętle frakcji, zaawansowany crafting, twardnienie produkcyjne.</p>
+      </div>
+
+      <h3 style="font-size:1.1rem;">Hub — realne współrzędne i 17 NPC</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Świat huba to <code class="mono">world</code>
+      (Multiverse-Core, <code class="mono">online-mode=false</code>). Główna oś biegnie na +Z; gracz idzie pieszo
+      od spawnu na północ do Portal Nexus, bez teleportu.</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Dzielnica</th><th>Środek (X,Y,Z)</th><th>NPC (MythicMobs, nieruchome)</th></tr></thead>
+          <tbody>
+            <tr><td>Spawn Gate</td><td class="strong">0, 103, 0</td><td>CityGuide — „Witaj w Stolicy Wyspy. Portal Nexus jest prosto na północ."</td></tr>
+            <tr><td>Market/Gear + Profesje</td><td class="strong">0, 103, 24</td><td>GearVendor, RepairKeeper, SalvageKeeper, StashKeeper, ForgeKeeper, Alchemist, Runesmith, Artisan</td></tr>
+            <tr><td>Portal Nexus (centrum)</td><td class="strong">0, 103, 48</td><td>PortalKeeper — „Wybierz loch. Na start: Kwietna Polana (level_1)."</td></tr>
+            <tr><td>Skill/Class District</td><td class="strong">-24, 103, 48</td><td>StarterSkillTrainer + 5 mentorów: Warrior/Rogue/Ranger/Mage/Acolyte (każdy: „Klasa otworzy się na 10 poziomie.")</td></tr>
+            <tr><td>Quest/Info Board</td><td class="strong">24, 103, 48</td><td>BoardClerk — „Zlecenia i wskazówki. Po loch — idź do Portalu."</td></tr>
+            <tr><td>Temple District</td><td class="strong">0, 103, 72</td><td>ShrineKeeper — „Bóstwa czekają. Błogosławieństwa wkrótce."</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Realny stack pluginów za każdą nagrodą</h3>
+      <div class="tags">
+        <span class="tag">MythicDungeons — wynik encountera</span>
+        <span class="tag">MythicMobs — trigger dropu z moba</span>
+        <span class="tag">MMOItems — definicja itemu</span>
+        <span class="tag">Nexo — reprezentacja wizualna</span>
+        <span class="tag">MMOInventory — przechowywanie</span>
+        <span class="tag">CMI — dostawca waluty</span>
+        <span class="tag">Vault — most ekonomiczny</span>
+        <span class="tag">MMOProfiles — tożsamość postaci</span>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;">Zasada tożsamości nagród:
+      identyfikatorem postaci jest <code class="mono">MMOProfiles.getCurrent().getUniqueId()</code>, nigdy
+      <code class="mono">player_uuid</code> ani nazwa gracza — podstawianie UUID gracza jako identyfikatora
+      postaci jest wprost zakazane w kontrakcie nagród.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Realne wartości trudności lochu</h3>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Poziom</th><th>Mnożnik HP moba</th><th>Mnożnik liczby</th><th>Mnożnik obrażeń</th><th>Bonus poziomów Mythic</th></tr></thead>
+          <tbody>
+            <tr><td>Łatwy</td><td>1.0</td><td>1.0</td><td>1.0</td><td>0</td></tr>
+            <tr><td>Normalny</td><td>1.4</td><td>1.3</td><td>1.25</td><td>+1</td></tr>
+            <tr><td>Trudny</td><td>1.9</td><td>1.6</td><td>1.6</td><td>+2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Baza dropu bossa (każda trudność):
+      <code class="mono">STEEL_SWORD</code> 35%, 2-4× <code class="mono">STEEL_INGOT</code>, 50%
+      <code class="mono">RECALL_POTION</code>, 120 exp, 50-90 złota — rośnie z trudnością. Krytyczna zasada
+      walidacji: nagrodę odpala <b>tylko realna śmierć w walce</b> (<code class="mono">TriggerMythicMobDeath</code>)
+      — komenda <code class="mono">/kill</code> czy zabicie przez RCON tego nie uruchamia.</p>
+
+      <h3 style="margin-top:28px;font-size:1.1rem;">Ile z tego naprawdę stoi — zmierzone, system po systemie</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;"><code class="mono">docs/mmorpg-product-audit-2026-07-13.md</code>
+      to jedyny dokument z policzoną „dojrzałością dowodową" — <b>~40% ogółem</b>, czyli tyle, ile da się dziś
+      potwierdzić, nie ile contentu istnieje na papierze:</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>System</th><th>Gotowość</th><th>Największa luka</th></tr></thead>
+          <tbody>
+            <tr><td>Plugin inventory / compatibility</td><td class="strong">70%</td><td>nieuzupełnione licencje, SNAPSHOT-y</td></tr>
+            <tr><td>Paper / Docker / Velocity</td><td class="strong">65%</td><td>brak świeżego bootu i testu proxy</td></tr>
+            <tr><td>MythicMobs / ModelEngine</td><td class="strong">50%</td><td>brak live spawn i dowodu wydajności</td></tr>
+            <tr><td>Testability</td><td class="strong">50%</td><td>brak jednego resetowalnego test-worldu</td></tr>
+            <tr><td>CharacterStage / profil</td><td class="strong">45%</td><td>reflection adapter, brak E2E persystencji</td></tr>
+            <tr><td>MythicDungeons / world</td><td class="strong">45%</td><td>reset instancji i reward handoff niepotwierdzone</td></tr>
+            <tr><td>MMOCore / MMOProfiles</td><td class="strong">40%</td><td>MySQL wyłączony</td></tr>
+            <tr><td>MMOItems / MMOInventory</td><td class="strong">40%</td><td>niepotwierdzony storage i pochodzenie nagród</td></tr>
+            <tr><td>Economy / CMI / Vault</td><td class="strong">35%</td><td>brak pełnego rejestru źródeł/sinków</td></tr>
+            <tr><td>HUD / GUI</td><td class="strong">35%</td><td>brak hierarchii informacji i testu UX</td></tr>
+            <tr><td>Combat / MythicLib</td><td class="strong">30%</td><td>brak audytu formuł w runtime</td></tr>
+            <tr><td>Gildie / social</td><td class="strong">30%</td><td>brak zamkniętej funkcji społecznej</td></tr>
+            <tr><td class="strong" style="color:var(--flag);">Questy</td><td class="strong" style="color:var(--flag);">10%</td><td>tylko projekt — brak właściciela i adaptera</td></tr>
+            <tr><td class="strong" style="color:var(--flag);">Profesje</td><td class="strong" style="color:var(--flag);">10%</td><td>tylko projekt — brak właściciela i implementacji</td></tr>
+            <tr><td class="strong" style="color:var(--flag);">PvP / sezony</td><td class="strong" style="color:var(--flag);">10%</td><td>tylko projekt — brak właściciela i granicy resetu</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;">Realne błędy z logów w dniu audytu:
+      <code class="mono">level_1_briarwolf</code> (jeszcze inna nazwa tego samego wilka — trzecia obok „Feral Wolf"
+      z fundamentu i „GroveWolf" z configu) bez blueprintu, <code class="mono">level_1_glimmer_wisp</code> i
+      <code class="mono">level_1_moss_stalker</code> bez wygenerowanych assetów, <code class="mono">shared.droptable.yml</code>
+      z nieobsługiwanym typem <code class="mono">mmoitem</code>, brak działającego dostawcy ekonomii przez Vault na
+      serwerze <code class="mono">srv-items</code>. Osobno, realny system towarzyszy (<code class="mono">docs/architecture/companion-system.md</code>)
+      pozwala dziś na dokładnie jedno: <b>1 aktywny companion na gracza, bez zapisu stanu po restarcie</b> — bramka
+      wydania to tylko „przywołaj Tank T1 → chodź za mną → odwołaj → wyjście bez osieroconych encji".</p>
+
+      <div class="callout" style="border-left-color:var(--flag);margin-top:28px;">
+        <h3 style="font-size:1rem;">Samokrytyczny audyt (<code class="mono">character-sector-mmo-gap-teardown-2026-07-04.md</code>) — najostrzejszy dokument w repo</h3>
+        <p>Zespół sam porównał sektor postaci do WoW/FFXIV/GW2/ESO i spisał werdykt z dowodami z realnych plików.
+        To jedyne miejsce, gdzie ktoś przyznaje wprost, że dokumentacja i runtime to dwa różne światy:</p>
+        <ul style="padding-left:20px;margin:8px 0;">
+          <li><b>Klasy realnie dzielą te same generyczne skille</b> — <code class="mono">WEAKEN, COMBO_ATTACK,
+          DEEP_WOUND, MINOR_HEALINGS, AMBERS</code> — z <code class="mono">rogue.yml</code> i
+          <code class="mono">marksman.yml</code> jako najgorszymi przykładami relabelingu tego samego klocka.</li>
+          <li><b>Realne pliki klas MMOCore to <code class="mono">warrior.yml, rogue.yml, marksman.yml, mage.yml,
+          paladin.yml</code></b> — angielskie, generyczne nazwy RPG, nie polska piątka Wojownik/Łotrzyk/Łowca/Mag/Akolita
+          z fundamentów. <code class="mono">paladin</code> nie odpowiada żadnej zaprojektowanej klasie ani podklasie.</li>
+          <li><b>Rasy nie istnieją jako system</b> — menu wprost pokazuje graczowi „Pasyw zakontraktowany" i
+          „Runtime hook: pending"; rasa jest obecnie metadaną tożsamości, nie mocą startową.</li>
+          <li><b>Podklasy i mastery gates</b> są w większości „pending runtime hook" — signature skille i trial-e
+          istnieją w docs, nie w rękach gracza.</li>
+          <li><b>Profesje pokazują graczowi wprost</b> „Runtime XP: pending", „Runtime recipe XP: pending" — cała
+          pętla gather→craft→refine→salvage→market jeszcze nie żyje.</li>
+          <li><b>Walidator dowodzi zgodności kontraktu, nie jakości przeżycia</b> — system może „przechodzić testy"
+          mimo że gracz nic z tego nie odczuwa; „kontrakt jest gotowy, ale loop jeszcze nie żyje".</li>
+        </ul>
+        <p style="margin-bottom:0;">Priorytet najgroźniejszych braków wg autora audytu: rasy nie istnieją → klasy są
+        lepiej napisane niż zmechanizowane → podklasy nie żyją w rękach gracza → profesje nie są równorzędnym
+        filarem → onboarding redukuje wybór do menu → skille/mastery/loadout są słabsze niż ich dokumentacja →
+        itemizacja poprawna, ale niepożądana → walidator może udawać dojrzałość.</p>
+      </div>
+
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:20px;">Osobno: biblia stylu
+      wizualnego (<code class="mono">docs/assets/visual_style_bible.md</code>) ustala zasady dla całej grafiki —
+      czytelny sylwetka/materiał przed teksturą i blaskiem, jeden dominujący pomysł + jeden wspierający +
+      powściągliwe akcenty, każdy asset przypisany do konkretnego regionu/frakcji/lochu (inaczej to „draft"), zakaz
+      fotorealizmu i mieszania stylów z assetów ze sklepu.</p>
+    </section>
+
+    <!-- ============ ŻYCIE ŚWIATA ============ -->
+    <section class="block" id="zycie">
+      <div class="block-head">
+        <span class="kicker">docs/world-content-loop + docs/pvp-foundation + docs/guilds + docs/reputation-faction + docs/seasons-prestige · merge</span>
+        <h2>Życie świata: questy, PvP, gildie, sezony</h2>
+        <p>Warstwy, które robią ze świata coś więcej niż ciąg lochów: zlecenia prowadzące do konkretnego contentu,
+        ryzykowne PvP z jasną kontrą na każdą mocną mechanikę, gildie walczące o terytoria w oknach czasowych, i
+        sezony, które resetują tylko to, co sezonowe.</p>
+      </div>
+
+      <h3 style="font-size:1.1rem;">Typy questów</h3>
+      <div class="tags" style="margin-top:6px;">
+        <span class="tag">Quest / Zlecenie</span><span class="tag">Dungeon Objective</span><span class="tag">Bounty</span>
+        <span class="tag">Profession Order</span><span class="tag">Daily / Weekly</span><span class="tag">Achievement</span>
+        <span class="tag">Subclass Trial</span><span class="tag">Reputation Quest</span><span class="tag">Guild Quest</span>
+        <span class="tag">Event Quest</span>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;">Przykład z loch_001:
+      <code class="mono">Kły z Lochu 001</code> (zbierz 10 kłów wilka) → wilki w loch_001 → XP/złoto/materiał.
+      Quest wskazuje content, nie zastępuje samej gry — nie ma udawać wielkiej fabuły.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">World Events</h3>
+      <div class="tags" style="margin-top:6px;">
+        <span class="tag">Invasion</span><span class="tag">Caravan</span><span class="tag">Resource Rush</span>
+        <span class="tag">Relic Capture</span><span class="tag">Rare Elite Spawn</span><span class="tag">World Boss</span>
+        <span class="tag">Faction Conflict</span><span class="tag">Corrupted Zone</span><span class="tag">Dungeon Surge</span>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;">Każdy event ma jasny cel
+      i limit czasu, reward proporcjonalny do ryzyka, i nie jest jedynym źródłem kluczowego progresu — event
+      board w hubie generuje ruch, nie obowiązkową farmę.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">PvP — tryby i counterplay</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Tryby: <b>Duel</b> (1v1, zero ryzyka, tutorial) →
+      <b>Arena</b> (1v1/3v3, punkt odniesienia balansu) → <b>Open World Flagged</b> → <b>Contested Zones</b>
+      (combat timer, PvP currency) → <b>Guild War</b> (endgame, siege windows). Balans bazowy pod 1v1/3v3, ale
+      musi działać w open world i wojnach gildii.</p>
+      <div class="table-wrap">
+        <table class="counterplay">
+          <thead><tr><th>Archetyp</th><th>Kontra</th></tr></thead>
+          <tbody>
+            <tr><td class="strong">Stealth / opener</td><td>reveal, tracking, AoE wyrywające ze stealth, DoT, poziom światła, combat timer</td></tr>
+            <tr><td class="strong">Healer / sustain</td><td>anti-heal, silence, burst w oknie braku zasobów</td></tr>
+            <tr><td class="strong">Summoner</td><td>presja bezpośrednio na ownera, zabicie summonów, limity</td></tr>
+            <tr><td class="strong">Caster / cast time</td><td>interrupt, line of sight, baitowanie wardu, presja melee</td></tr>
+            <tr><td class="strong">Tank / turtle</td><td>guard break, anti-heal, flankowanie, DoT i chaos damage</td></tr>
+            <tr><td class="strong">Burst / assassin</td><td>baitowanie wejścia, kara po cooldownach, Poise/Tenacity</td></tr>
+            <tr><td class="strong">Ranged / kiting</td><td>line of sight, przeszkody, mobilność, gap closer</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Gildie</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Guild District w hubie: creation NPC, bank,
+      quest board, war board, territory info. Wojny toczą się o <i>objective</i> (Capture core, Hold point, Destroy
+      gate, Escort siege engine, Relic extraction), nie o kill count, w oknach siege — nie 24/7 grief. Dominująca
+      gildia trafia na soft anti-snowball limity; solo gracz zawsze ma podstawową progresję poza wojną o terytoria.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Reputacja i frakcje</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Reputacja to progres horyzontalny, opt-in,
+      bez obowiązkowego best-in-slot. Wzrost u jednej frakcji może kosztować reputację u przeciwnej — decyzja
+      gracza ma wagę. Konkretne nazwy frakcji i lore są jeszcze poza zakresem (status <span class="badge legacy">legacy_design_input</span>,
+      aktualni właściciele: <code class="mono">organization-relationship-contract.yaml</code>,
+      <code class="mono">faction-definition-template.yaml</code>). Nowszy kontrakt dorzuca konkrety: 7 kategorii
+      organizacji (<span class="tags" style="display:inline-flex;"><span class="tag">FACTION</span><span class="tag">RELIGION</span><span class="tag">PROFESSIONAL</span><span class="tag">TRADE</span><span class="tag">INFORMATION</span><span class="tag">MILITARY</span><span class="tag">ANTAGONIST</span></span>),
+      rekomendację <b>3-4 frakcji globalnych</b> i <b>1-3 organizacji lokalnych na wyspę</b>, oraz rozdzielenie
+      reputacji od zaufania: <code class="mono">reputation</code> (ogólna opinia) nie czyści automatycznie
+      <code class="mono">trust_debt</code> (nierozliczonego naruszenia zaufania), a <code class="mono">effective_rank</code>
+      może być niższa niż <code class="mono">stored_rank</code> — czyli można stracić realny wpływ w organizacji,
+      nie tracąc formalnie zdobytej rangi. Osobny szablon religii przewiduje 4 tryby odejścia:
+      <code class="mono">PEACEFUL_EXIT, CONVERSION, EXCLUSION, OATHBREAK</code> — spójne z konsekwencjami zmiany
+      bóstwa opisanymi w sekcji „Stolica Wyspy i bóstwa" wyżej.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Sezony, prestiż, kosmetyka</h3>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Reset dotyczy</th><th>Reset NIE dotyka</th></tr></thead>
+          <tbody>
+            <tr><td>PvP ladder</td><td>poziom postaci, klasa/podklasa</td></tr>
+            <tr><td>rankingi gildii</td><td>zdobyty gear i profesje</td></tr>
+            <tr><td>sezonowe leaderboardy</td><td>trwałe unlocki (recipes, region access)</td></tr>
+            <tr><td>sezonowe waluty/punkty</td><td>kosmetyka, tytuły, prestiż</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;">Zasada anti-FOMO: gracz
+      wracający po przerwie nie traci postaci ani dorobku — resetuje się tylko to, co z założenia konkurencyjne.
+      Zero pay-to-win i pay-to-skip: sezonowej przewagi nie da się kupić za realne pieniądze.</p>
+    </section>
+
+    <!-- ============ TOWARZYSZE ============ -->
+    <section class="block" id="towarzysze">
+      <div class="block-head">
+        <span class="kicker">docs/pet-companion-minion-system-foundation · merge (+ nowszy techniczny draft bez konkretów)</span>
+        <h2>Towarzysze, pety i miniony</h2>
+        <p>Trzy oddzielne systemy, inspirowane różnymi grami, żeby się nie dublowały: <b>global pet</b>
+        (Dungeon Defenders 1 — pet jak żywy item), <b>beast companion</b> Władcy Bestii (WoW/4Story — pet class),
+        <b>miniony</b> Rytualisty/Warlocka (WoW/PoE — skill-based summons).</p>
+      </div>
+
+      <div class="layer-grid">
+        <div class="layer-card"><span class="step">warstwa 1 · dla każdego</span><h4>Global Pet</h4><p>Jeden aktywny pet, niski capowany power, nie tankuje bossów, nie bodyblockuje w PvP.</p></div>
+        <div class="layer-card"><span class="step">warstwa 2 · podklasa Łowcy</span><h4>Beast Companion</h4><p>Jedna główna bestia bojowa, komendy (attack/return/hold/protect), killable/CC-able, owner realnym celem.</p></div>
+        <div class="layer-card"><span class="step">warstwa 3 · Akolita / Warlock</span><h4>Miniony</h4><p>Przywoływane skillem/rytuałem/klątwą, liczniejsze ale słabsze, count cap + cooldown, zabijalne.</p></div>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">10 archetypów Global Pet</h3>
+      <div class="pet-grid">
+        <div class="pet-chip"><b>Spark Pet</b><span>słaby pocisk w cel gracza co kilka sekund</span></div>
+        <div class="pet-chip"><b>Ward Pet</b><span>mały shield/ward proc po otrzymaniu obrażeń</span></div>
+        <div class="pet-chip"><b>Pulse Pet</b><span>okresowa aura utility: reveal, pokazanie materiałów, debuff</span></div>
+        <div class="pet-chip"><b>Leech Pet</b><span>minimalny zwrot zasobu po killu</span></div>
+        <div class="pet-chip"><b>Bomb Pet</b><span>co jakiś czas mały ładunek/wybuch utility</span></div>
+        <div class="pet-chip"><b>Totem Pet</b><span>krótki mikro-totem albo buff zone</span></div>
+        <div class="pet-chip"><b>Finder Pet</b><span>wykrywa materiały, skrzynki, sekrety</span></div>
+        <div class="pet-chip"><b>Mender Pet</b><span>mały heal/regen tick po walce</span></div>
+        <div class="pet-chip"><b>Trickster Pet</b><span>mały utility proc: slow, mini blind, confuse</span></div>
+        <div class="pet-chip"><b>Craft Pet</b><span>drobny bonus profesyjny: salvage hint, material preview</span></div>
+      </div>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Rodziny bestii Władcy Bestii</h3>
+      <div class="tags">
+        <span class="tag">Wolf — chase/harass/bleed</span>
+        <span class="tag">Bear / Boar — light tank/peel</span>
+        <span class="tag">Bird — scout/mark/anti-stealth</span>
+        <span class="tag">Spider / Serpent — poison/slow</span>
+        <span class="tag">Cat / Panther — flank/crit window</span>
+        <span class="tag">Spirit Beast — utility/ward, rzadki unlock</span>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.85rem;margin-top:10px;">Bossy i elity nie są
+      oswajalne (elity dopiero po specjalnym late-game unlocku). Oswojona bestia zachowuje rolę rodziny, nie
+      dokładne mechaniki bossa, z którego pochodzi.</p>
+
+      <h3 style="margin-top:26px;font-size:1.1rem;">Warstwa kreatywna vs warstwa techniczna — obok siebie</h3>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.87rem;">Ten sam temat opisują dwa dokumenty
+      zupełnie innym językiem: stary jest o fantazji i gameplayu, nowy (<span class="badge draft">draft</span>,
+      wciąż roboczy) o technicznym szkielecie runtime.</p>
+      <div class="table-wrap">
+        <table class="statuses">
+          <thead><tr><th>Stary fundament (gameplay)</th><th>Nowy Pet Core (technika)</th></tr></thead>
+          <tbody>
+            <tr><td>3 warstwy: Global Pet, Beast Companion, Miniony</td><td>wspólny model cyklu życia: <code class="mono">stabled → pending_spawn → active_assist/active_mount/active_summon → suppressed/downed → recalled</code></td></tr>
+            <tr><td>10 nazwanych archetypów peta, 6 rodzin bestii</td><td><code class="mono">PetSubjectId</code> = trwałe ID właściciela, niezależne od UUID gracza na sesji</td></tr>
+            <tr><td>„pety nie mogą tankować bossów, nie bodyblockują”</td><td>formalna transakcja przyznania aktora: <code class="mono">reserve → transition → commit → rollback</code>, z limitem aktorów na postać</td></tr>
+            <tr><td>„jeden aktywny pet naraz”</td><td>budżet runtime współdzielony między pet/mount/summony, z jawną kolejnością priorytetu przy przekroczeniu limitu</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="max-width:72ch;color:var(--ink-soft);font-size:.9rem;margin-top:14px;">
+      Formalny Pet Core planuje pełny system: capture, breeding, trening, ewolucja, pet-skille, konsensualne pet
+      battles, transfer między postaciami jako „Soft Transfer” (nigdy natychmiast pełna gotowość). Twarda zasada
+      wspólna dla obu warstw: pety mogą realnie liczyć się w PvE, ale <b>nigdy nie dają przewagi w PvP graczy</b> —
+      w trybie PvP aktywny pet trafia w stan <code class="mono">suppressed</code>.
+      </p>
+    </section>
+
+    <!-- ============ PODRÓŻ GRACZA ============ -->
+    <section class="block" id="podroz">
+      <div class="block-head">
+        <span class="kicker">docs/player-journey-milestone-roadmap + docs/onboarding-tutorial · merge</span>
+        <h2>Podróż gracza: level 1 → endgame</h2>
+        <p>Nauka przez granie, nie przez ścianę tekstu. Hub jest eksploracyjny (MMO do zwiedzania), nie liniowy
+        tutorial — ale gracz zawsze wie, gdzie iść dalej.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-step"><span class="lvl">1–10</span><div><h5>Starter Phase</h5><p>10 „testerów stylu" (melee, defense, projectile, mobility, stealth, spell, support, debuff, summon, trap) na ograniczonym hotbarze. System może zasugerować klasę na podstawie użycia, ale nie wymusza.</p></div></div>
+        <div class="tl-step"><span class="lvl">10</span><div><h5>Wybór klasy bazowej</h5><p>Class mentor quest + krótki trial. Core class kit, class passive, wyraźny skok identity względem starterów.</p></div></div>
+        <div class="tl-step"><span class="lvl">10–25</span><div><h5>Core Class Development</h5><p>Skill upgrades, mastery nodes, pierwszy dungeon (loch_001+), pierwszy kontakt z frakcją, opcjonalny duel/arena tutorial niskiego ryzyka.</p></div></div>
+        <div class="tl-step"><span class="lvl">25</span><div><h5>Wybór podklasy</h5><p>Subclass trial testuje gameplay, nie level (np. Zabójca = stealth/backstab bez alarmu, Kapelan = heal/cleanse pod presją). Signature skill + subclass passive + tradeoff.</p></div></div>
+        <div class="tl-step"><span class="lvl">25–50</span><div><h5>Subclass Development</h5><p>Trudniejsze dungeony, contested zones, reputacje, target farming, guild onboarding, pierwszy poważny PvP objective.</p></div></div>
+        <div class="tl-step"><span class="lvl">50</span><div><h5>Upgrade podklasy</h5><p>Advanced specialization (np. Demonolog/Klatwomistrz) — nie druga pełna podklasa. Wymaga mastery, quest chain, contentu i kosztu ekonomicznego.</p></div></div>
+        <div class="tl-step"><span class="lvl">50+</span><div><h5>Endgame Loop</h5><p>Boss target farming, challenge dungeony, PvP ranking, guild wars, reputation maxing, crafting, seasonal goals, cosmetic prestige — kilka równoległych dróg, żadna obowiązkowa.</p></div></div>
+      </div>
+
+      <div class="macro-note">
+        <b>Przykładowa ścieżka Warlocka</b> (z dokumentu roadmapy): Summon/Debuff Tester (1-10) → Akolita +
+        <i>Lesser Rite</i> (10) → sustain + słaby summon/ritual (10-25) → Rytualista/Warlock + <i>Pact of the
+        Hollow</i>, pełny summon/curse/drain loop (25) → Chaos mastery, curse uptime (25-50) → Demonolog albo
+        Klatwomistrz (50) → farmienie pod Minion/Curse/Chaos tagi, wciąż z kontrami: cleanse, kill summon,
+        interrupt, owner pressure (50+).
+      </div>
+    </section>
+
+    <!-- ============ MAPA ŹRÓDEŁ ============ -->
+    <section class="block" id="mapa">
+      <div class="block-head">
+        <span class="kicker">Nawigacja po repo</span>
+        <h2>Gdzie leży ta treść naprawdę</h2>
+        <p>Wszystkie pliki przeczytane wprost przy budowaniu tej strony (drugi, dokładniejszy przebieg —
+        ~35 dokumentów), z ich statusem dyspozycji z <code class="mono">docs/foundation-index.md</code>.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="sources">
+          <thead><tr><th>Plik</th><th>Status</th><th>Co tam jest</th></tr></thead>
+          <tbody>
+            <tr><td class="path">docs/foundation-index.md</td><td><span class="badge canonical">canonical</span></td><td class="desc">Mapa nawigacyjna — co jest scalone, content-candidate, legacy.</td></tr>
+            <tr><td class="path">docs/product/00-master-product-bible.md</td><td><span class="badge canonical">approved</span></td><td class="desc">Filary produktu, audiencja, mapa domen 00–19.</td></tr>
+            <tr><td class="path">docs/current-server-plan.md</td><td><span class="badge canonical">current</span></td><td class="desc">Realny stan: nic bez dowodu runtime, priorytet 0 = login/restart/persystencja.</td></tr>
+            <tr><td class="path">docs/contracts/world-progression-model.md</td><td><span class="badge draft">proposed</span></td><td class="desc">ACT/ISL/DNG/FLOOR, poziomy trudności story→mythic.</td></tr>
+            <tr><td class="path">docs/contracts/act-map.yaml</td><td><span class="badge draft">proposed</span></td><td class="desc">Tylko ACT-01/ACT-02 jako placeholdery — brak nazw świata.</td></tr>
+            <tr><td class="path">docs/class-subclass-foundation-v0.0.1.md</td><td><span class="badge legacy">legacy_design_input</span></td><td class="desc">Pełny roster 5 klas × 3 podklasy z rolami, statami, counterplayem.</td></tr>
+            <tr><td class="path">docs/class-skill-kits-foundation-v0.0.1.md</td><td><span class="badge merge">merge</span></td><td class="desc">Nazwane skille (4 core + signature) dla każdej klasy/podklasy.</td></tr>
+            <tr><td class="path">docs/skill-trees-passives-upgrades-foundation-v0.0.1.md</td><td><span class="badge merge">merge</span></td><td class="desc">Nazwane ścieżki Level 50 upgrade (Bastion/Protector itd.) dla wszystkich podklas.</td></tr>
+            <tr><td class="path">docs/design/classes/class-framework.md, race-framework.md</td><td><span class="badge draft">draft</span></td><td class="desc">Formalny kształt kontraktu — zero konkretnych klas/ras.</td></tr>
+            <tr><td class="path">docs/combat-foundation, damage-defense-foundation, skill-ability-system</td><td><span class="badge merge">merge</span></td><td class="desc">Rdzeń walki, typy obrażeń/defensyw, struktura skilli.</td></tr>
+            <tr><td class="path">docs/itemization-foundation, economy-crafting-loot, professions-foundation</td><td><span class="badge merge">merge</span></td><td class="desc">Sloty/bronie/rzadkość, 6 walut, 10 profesji z tierami.</td></tr>
+            <tr><td class="path">docs/level-1-dungeon-island + mob-boss-encounter-001</td><td><span class="badge candidate">content-candidate</span></td><td class="desc">Loch_001 w pełni: 6 mobów, Elite Gatekeeper, boss GroveGuardian z fazami.</td></tr>
+            <tr><td class="path">docs/dungeon-ladder-002-010-foundation</td><td><span class="badge merge">merge</span></td><td class="desc">9 kolejnych lochów aktu 1 — klimat, moby, boss, materiały każdego.</td></tr>
+            <tr><td class="path">docs/dungeon-progression-difficulty-theme-ladder</td><td><span class="badge merge">merge</span></td><td class="desc">4-poziomowy model trudności + kierunek klimatyczny 001-100.</td></tr>
+            <tr><td class="path">docs/design/pve/{mob-archetypes,boss-framework,dungeon-framework}</td><td><span class="badge draft">DESIGN_ONLY</span></td><td class="desc">100-piętrowy makro-szkielet i archetypy ról — bez konkretnych pięter.</td></tr>
+            <tr><td class="path">docs/pvp-foundation, guilds-foundation, seasons-prestige-cosmetics</td><td><span class="badge merge">merge</span></td><td class="desc">Tryby PvP + counterplay matrix, terytoria/wojny gildii, reset vs persist.</td></tr>
+            <tr><td class="path">docs/reputation-faction-foundation, quest-contract-objective</td><td><span class="badge legacy">legacy_design_input</span></td><td class="desc">Filozofia frakcji/reputacji, typy questów z przykładami dla loch_001.</td></tr>
+            <tr><td class="path">docs/world-content-loop-foundation, world-events-foundation</td><td><span class="badge merge">merge</span></td><td class="desc">Typy regionów, pętla gry, 9 typów world eventów.</td></tr>
+            <tr><td class="path">docs/pet-companion-minion-system-foundation</td><td><span class="badge merge">merge</span></td><td class="desc">3 warstwy towarzyszy, 10 archetypów Global Pet, rodziny bestii.</td></tr>
+            <tr><td class="path">docs/design/companions/{companion-framework,pet-core-system}.md</td><td><span class="badge draft">draft</span></td><td class="desc">Formalne reguły techniczne (cykl życia, budżet aktorów) — bez konkretnych gatunków.</td></tr>
+            <tr><td class="path">docs/player-journey-milestone-roadmap, onboarding-tutorial, stolica-wyspy-hub</td><td><span class="badge merge">merge</span></td><td class="desc">Pełna ścieżka 1→endgame, filozofia onboardingu, struktura huba.</td></tr>
+            <tr><td class="path">docs/progression-respec-foundation, starter-skills-class-progression, loadout-bank-storage, loot-reward-table-001, model-lupu-z-lochow</td><td><span class="badge legacy / merge">mieszany</span></td><td class="desc">Mastery/respec, 10 starter-testerów, loadout/bank, konkretna tabela łupu loch_001.</td></tr>
+            <tr><td class="path">docs/stolica-wyspy-hub-foundation, discovery-npc-board-loop-001</td><td><span class="badge merge">merge</span></td><td class="desc">13 dzielnic huba, system 10 bóstw z tradeoffami, filozofia „discovery, nie hand-holding”.</td></tr>
+            <tr><td class="path">docs/ekwipunek-pierwszego-aktu, foundation-sloty-i-ekwipunek, foundation-typy-ekwipunku, prefiksy-sufiksy-pierwszego-aktu</td><td><span class="badge candidate">content-candidate</span></td><td class="desc">Akcenty łupu per loch, realne sloty pluginów (14), limity afiksów per rzadkość i slot.</td></tr>
+            <tr><td class="path">docs/design/economy/economy-model.md</td><td><span class="badge draft">draft, ale rozwinięty</span></td><td class="desc">Realna polityka: gold account-wide, currency items PoE-style, globalny AH, sinki, telemetria inflacji.</td></tr>
+            <tr><td class="path">docs/design/items/itemization-framework.md, relic-contract.yaml</td><td><span class="badge draft">draft, ale rozwinięty</span></td><td class="desc">4 osie itemu, 3 warstwy danych, slot v1 (10+Relic) — w konflikcie z realnym stackiem pluginów. Relic: max 1 equipped, 3 tryby (passive/active/hybrid).</td></tr>
+            <tr><td class="path">docs/design/economy/{marketplace,binding-policy,service-order-market}.md</td><td><span class="badge draft">draft, ale rozwinięty</span></td><td class="desc">7 kategorii zbywalności towaru, 5 stanów bindingu, rynek usług Fixed Price / RFO z reputacją i depozytem.</td></tr>
+            <tr><td class="path">docs/design/classes/{weapon-schools,combat-loadout}.md</td><td><span class="badge draft">draft</span></td><td class="desc">Konkretny model slotów walki: 4 aktywne + 1 mobilność + 1 utility + 3 pasywne + 1 Relic. Zero nazwanych szkół broni.</td></tr>
+            <tr><td class="path">docs/design/companions/{class-summons,mount-system}.md</td><td><span class="badge draft">draft</span></td><td class="desc">Formalne granice: summony klasowe ≠ Pet Core, wierzchowiec = rola aktywnego peta, nie osobny system walki.</td></tr>
+            <tr><td class="path">docs/design/pve/{encounter-framework,endgame-framework,public-events,raid-framework,package-registry}</td><td><span class="badge draft">DESIGN_ONLY</span></td><td class="desc">4 filary endgame, model skrzydeł rajdu, pasma populacji eventów publicznych — bez konkretnego contentu; rejestr paczek pusty.</td></tr>
+            <tr><td class="path">docs/contracts/{unlock-rules,dungeon-floor-contract,travel-and-discovery,island-sector-mapping}</td><td><span class="badge draft">proposed</span></td><td class="desc">70-80%/20-30% dostępu do regionu, gate veteran/mythic przez ukończenie niższej trudności, taksonomia hubów i stanów odkrycia.</td></tr>
+            <tr><td class="path">docs/contracts/{organization-relationship,faction-definition-template,religion-definition-template,reward-contract}</td><td><span class="badge draft">draft/template</span></td><td class="desc">7 kategorii organizacji, 3-4 frakcje globalne, 4 tryby odejścia z religii, realny stack nagród (MMOProfiles jako jedyne źródło tożsamości).</td></tr>
+            <tr><td class="path">docs/contracts/profession-list.yaml</td><td><span class="badge draft">framework_ready</span></td><td class="desc">Nowy, węższy rejestr: 8 profesji, 24 nazwane gildie/organizacje, limit 2 aktywnych profesji na postać.</td></tr>
+            <tr><td class="path">docs/companions/mythicmobs-config.md</td><td><span class="badge canonical">CONFIG</span></td><td class="desc">Jedyny realnie opisany companion: tank T1 na bazie oswojonego WOLF, dystans walki 18 bloków.</td></tr>
+            <tr><td class="path">docs/design/minecraft-core-loop.md</td><td><span class="badge canonical">active-curated</span></td><td class="desc">7-krokowa pętla gracza i definicja MVP vertical slice — jedno z niewielu miejsc mówiących wprost „co musi działać".</td></tr>
+            <tr><td class="path">docs/ai/foundation-mvp-spec-values.md</td><td><span class="badge canonical">[CONFIG] — realne wartości</span></td><td class="desc"><b>Najważniejsze źródło w repo dla stanu faktycznego:</b> realne koordynaty huba, 17 NPC z dialogami, realne staty bossa i mobów, realne droptable, realny starter kit.</td></tr>
+            <tr><td class="path">docs/ai/foundation-mvp-scope.md</td><td><span class="badge canonical">current</span></td><td class="desc">Dokładna granica MVP i lista tego, co świadomie poza zakresem teraz (gildie, sezony, PvP, endgame).</td></tr>
+            <tr><td class="path">docs/ai/mmo-excellence-playbook.md, city-hub-mvp-concept.md</td><td><span class="badge merge">merge</span></td><td class="desc">Prawdziwa nazwa „Kwietna Polana", mini-boss Grove Warden, „Drzewo-Serce Gaju", nazwane rodziny łupu; layout huba 3 koncepcjami naraz.</td></tr>
+            <tr><td class="path">docs/product/00-tier-0-product-identity.md</td><td><span class="badge canonical">approved</span></td><td class="desc">Najwyższego poziomu założenia: obietnica produktu, JTBD, 10 anti-goals, doktryna fair-play PvP (gear/level realnie się liczą).</td></tr>
+            <tr><td class="path">docs/product/00-first-class-path-registry.yaml</td><td><span class="badge canonical">approved</span></td><td class="desc">Pełna, wyliczona lista 13 ścieżek + status dostarczenia każdej (prawie wszystkie: cannot_judge / blocked).</td></tr>
+            <tr><td class="path">docs/product/00-open-questions.yaml</td><td><span class="badge draft">open</span></td><td class="desc">5 nierozstrzygniętych pytań produktowych — m.in. granica reset/persystencja sezon vs postać wciąż otwarta.</td></tr>
+            <tr><td class="path">docs/character-sector-mmo-gap-teardown-2026-07-04.md</td><td><span class="badge blocked">samokrytyka</span></td><td class="desc"><b>Najbardziej wiarygodny dokument w repo o realnym stanie:</b> porównanie do WoW/FFXIV/GW2/ESO z dowodami z realnych plików klas i menu.</td></tr>
+            <tr><td class="path">docs/assets/visual_style_bible.md</td><td><span class="badge canonical">baseline</span></td><td class="desc">Zasady wizualne dla całej grafiki: czytelność sylwetki, jeden dominujący + jeden wspierający pomysł, zakaz fotorealizmu.</td></tr>
+            <tr><td class="path">docs/mmorpg-product-audit-2026-07-13.md</td><td><span class="badge blocked">40% dojrzałości</span></td><td class="desc">Jedyny dokument z policzoną gotowością per system — questy/profesje/PvP na 10%. Najcenniejsze źródło do oceny stanu faktycznego.</td></tr>
+            <tr><td class="path">docs/ai/foundation-implementation-status.md, known-runtime-issues.md</td><td><span class="badge blocked">planned/blocked</span></td><td class="desc">Ledger M0-M7 (większość „planned"/„blocked") + 4 aktywne, nazwane błędy runtime (HuskSync, MCPets, MythicMobs, MythicDungeons).</td></tr>
+            <tr><td class="path">docs/architecture/companion-system.md</td><td><span class="badge canonical">CONFIG</span></td><td class="desc">Realna architektura towarzyszy: max 1 aktywny na gracza, zero persystencji po restarcie.</td></tr>
+            <tr><td class="path">docs/ai/legacy-lessons/dungeon-001-lessons.md</td><td><span class="badge legacy">legacy</span></td><td class="desc">Wcześniejsza (odrzucona) tożsamość lochu 001 — „zatopiona ruina", zanim stał się „Kwietną Polaną".</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Zbudowane z bezpośredniej lektury plików w repo (stan na 2026-09-13, gałąź <code class="mono">main</code>,
+      część treści jeszcze niezacommitowana w working tree; ponad 70 dokumentów przeczytanych wprost w czterech
+      przebiegach — całe <code class="mono">docs/</code>, <code class="mono">docs/design/</code>,
+      <code class="mono">docs/contracts/</code> i kluczowe <code class="mono">docs/ai/</code> zostały sprawdzone).
+      Świadomie pominięte jako niskiej wartości: czysto techniczne rejestry yaml bez treści fabularnej
+      (currency-registry, sources-and-sinks, escrow-contract, market-eligibility-matrix, equipment-slots,
+      item-data-model, modification-operation-semantics, quest-state-contract, stack-lot-contract,
+      account-character-*, domain-03-authority-snapshots, migration ledgers) oraz proces-owe dokumenty agentowe w
+      <code class="mono">docs/ai/</code> niezwiązane z treścią gry (workflow, audyty, szablony pakietów pracy).
+      Przy realnej pracy nad daną domeną wracaj zawsze do źródła wskazanego w tabeli, nie tylko do tego podsumowania.
+    </footer>
+  </main>
+</div>

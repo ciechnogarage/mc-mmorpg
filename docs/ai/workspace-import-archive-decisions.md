@@ -1,0 +1,58 @@
+# Workspace Import/Archive Decisions
+
+Date: 2026-07-21
+
+Scope document:
+- Read-only import/archive decisions for `/home/przemek/projects/MCMMORPG` and `/home/przemek/projects/Minecraft`.
+- Decisions are based on `docs/ai/workspace-classification-manifest.md`, the workspace standard tech plan, and shallow metadata only.
+- This document does not execute any import, archive, move, delete, or rename action.
+
+Decision meanings:
+- `import`: path is a candidate to be copied into `/home/przemek/projects/MC` in a later approved ticket.
+- `archive`: path is a candidate for legacy/archive handling in a later approved ticket.
+- `block`: no import/archive action is allowed until the listed blocker is removed by a dedicated follow-up ticket.
+
+> **non-execution:** This document is planning-only classification. It does not execute, authorize, or approve filesystem changes. Every row below still requires a separate ticket before any import, archive, move, delete, or rename action.
+
+## `/home/przemek/projects/MCMMORPG`
+
+| Decision | Source path/data group | Proposed target layer | Data risk | Rollback/backup requirement | Blocker |
+| --- | --- | --- | --- | --- | --- |
+| `block` | `/home/przemek/projects/MCMMORPG` root container | `archive/import` | Medium: non-git legacy workspace container with ownership-duplication risk | Before any future action, capture a full path inventory and checksums; rollback/backup requirement is a restore-capable snapshot of the full root | Root-level handling stays blocked until child paths are resolved individually in follow-up tickets |
+| `import` | `/home/przemek/projects/MCMMORPG/plugins/MythicMobs/skills` | `source` | Medium: likely config-as-source, but the authoritative copy is not yet proven | Before import, create file inventory plus checksums and record destination mapping; rollback/backup requirement is delete imported copy and restore the captured snapshot | Confirm whether `/home/przemek/projects/MC` already contains the authoritative MythicMobs skills set |
+| `block` | `/home/przemek/projects/MCMMORPG/plugins/MythicMobs` namespace above `skills` | `source` | Medium: namespace can contain sibling files not yet classified | Before any broader namespace handling, snapshot the tree and preserve checksums; rollback/backup requirement is restore the namespace snapshot | Do not archive or import the full namespace until `skills` parity is validated and remaining files are classified |
+
+## `/home/przemek/projects/Minecraft`
+
+| Decision | Source path/data group | Proposed target layer | Data risk | Rollback/backup requirement | Blocker |
+| --- | --- | --- | --- | --- | --- |
+| `block` | `/home/przemek/projects/Minecraft` root container | `archive/import` | High: mixed docs, assets, generated outputs, runtime copy, and local tooling | Before any future root-level action, create a full inventory plus git provenance snapshot; rollback/backup requirement is a restore-capable snapshot of the full root | Root-level handling stays blocked until path-group decisions are executed only through separate approved tickets |
+| `import` | `/home/przemek/projects/Minecraft/docs`, `/home/przemek/projects/Minecraft/wiki`, `/home/przemek/projects/Minecraft/design`, `/home/przemek/projects/Minecraft/decisions`, `/home/przemek/projects/Minecraft/decision_log.md`, `/home/przemek/projects/Minecraft/tasks`, `/home/przemek/projects/Minecraft/AGENTS.md` | `docs` | Low to medium: documentation drift risk with low runtime risk | Snapshot filenames and checksums before import; rollback/backup requirement is remove imported docs and restore the prior doc set from git or snapshot | Deduplicate against `/home/przemek/projects/MC/docs` so older material does not overwrite newer canonical docs |
+| `import` | `/home/przemek/projects/Minecraft/scripts` | `source` | Low to medium: automation source with low direct data risk | Record file inventory and destination mapping before import; rollback/backup requirement is delete imported files and restore the captured snapshot | Check whether scripts depend on Windows-only legacy paths before import |
+| `block` | `/home/przemek/projects/Minecraft/ops` | `source` | High: operational content can include credentials, hostnames, and privileged procedures | Separate backup/restore plan is required in the follow-up ticket; rollback/backup requirement must be part of that ticket | Separate security-handling ticket and privileged-operations review are required before any import/archive action |
+| `import` | `/home/przemek/projects/Minecraft/assets` | `source` | Medium: reusable asset source is plausible, but lineage versus copies is not fully proven | Snapshot directory tree and checksums before import; rollback/backup requirement is remove imported asset subtree and restore the snapshot | Reconcile against `modele/OUTPUT — kopia (2)` so one canonical asset source is chosen |
+| `import` | `/home/przemek/projects/Minecraft/content` | `source` | Medium: gameplay/content source candidate with low direct secret risk | Snapshot file list and checksums before import; rollback/backup requirement is delete imported content subtree and restore the snapshot | Confirm ownership and destination structure under `/home/przemek/projects/MC` before copy |
+| `block` | `/home/przemek/projects/Minecraft/modele/OUTPUT — kopia (2)` including `ModelEngine`, `MythicMobs`, and `resource pack` | `archive/import` | Medium: naming suggests copy/output, but the manifest records active planning references to this path | Before any import/archive decision, create checksums and a side-by-side mapping against `assets`; rollback/backup requirement is restore the captured snapshot | Resolve whether this is authoritative source material or only a legacy/export copy; do not archive while active references still exist |
+| `import` | `/home/przemek/projects/Minecraft/IRIS PACKS/earthworld` | `source` | Medium: source-like worldgen pack with low direct secret risk | Snapshot pack tree and checksums before import; rollback/backup requirement is remove imported pack and restore the snapshot | Confirm the desired canonical landing path under `/home/przemek/projects/MC` and whether the pack is still maintained |
+| `archive` | `/home/przemek/projects/Minecraft/IRIS PACKS/earthworld-stable.zip` | `archive/import` | Low to medium: release bundle/archive artifact | Preserve checksum and archive manifest before archive handling; rollback/backup requirement is restore the archived bundle from backup | Confirm whether the zip is still needed for reproducibility or release reference |
+| `block` | `/home/przemek/projects/Minecraft/Server — kopia/1.21.11` | `runtime` | Critical: runtime/server copy likely contains worlds, player data, bans, caches, logs, and secret-bearing config surfaces | Separate backup/restore ticket is required before any handling; rollback/backup requirement must cover full server-state restoration | Separate security-handling ticket is required; metadata-only evidence is insufficient for any runtime/player-data action |
+| `archive` | `/home/przemek/projects/Minecraft/builds` | `archive/import` | Low to medium: likely build outputs or deliverables rather than canonical source | Preserve file inventory and checksums before archive handling; rollback/backup requirement is restore archived outputs from backup | Confirm whether any build artifact is still referenced by current docs or release notes |
+| `import` | `/home/przemek/projects/Minecraft/qa` | `docs` | Low to medium: QA evidence/documents with low runtime risk | Snapshot filenames before import; rollback/backup requirement is remove imported QA docs and restore the snapshot | Label imported artifacts with original date/context so stale evidence is not mistaken for current validation |
+| `block` | `/home/przemek/projects/Minecraft/tools` | `source` | Medium: mixed automation scripts and non-source artifacts under one tree | Snapshot file inventory before any split; rollback/backup requirement is restore the full tree snapshot | Mixed contents require a follow-up split so only active tooling can later be considered for import |
+| `import` | `/home/przemek/projects/Minecraft/.agents` | `source` | Medium: agent skills/instructions may still be active workflow source | Snapshot files before import; rollback/backup requirement is delete the imported subset and restore the snapshot | Reconcile current instructions under `/home/przemek/projects/MC` to avoid policy drift |
+| `import` | `/home/przemek/projects/Minecraft/.github/agent-knowledge` | `generated` | Medium: mirrored knowledge/docs appear generated or harvested rather than canonical source | Preserve provenance notes and checksums before import; rollback/backup requirement is remove imported generated subtree and restore or regenerate from backup | Confirm the mirrors are still needed and not being treated as canonical human-authored docs |
+| `archive` | `/home/przemek/projects/Minecraft/.codegraph`, `/home/przemek/projects/Minecraft/.cursor`, `/home/przemek/projects/Minecraft/.vscode`, `/home/przemek/projects/Minecraft/Minecraft.code-workspace`, `/home/przemek/projects/Minecraft/.git` | `archive/import` | Medium: local workspace metadata/history with low product-data risk but high developer-state specificity | Preserve provenance snapshot before archive handling; rollback/backup requirement is restore the archived workspace metadata backup | Do not import these into canonical active source as-is; retain only for provenance or local recovery |
+| `archive` | `/home/przemek/projects/Minecraft/.tools/jdk-21`, `/home/przemek/projects/Minecraft/.tools/mariadb-11.4.10-winx64` | `archive/import` | Medium: local toolchain binaries rather than canonical project source | Preserve version manifest and checksums before archive handling; rollback/backup requirement is restore the archived toolchain backup | Confirm whether canonical `/home/przemek/projects/MC` already declares or vendors these tools elsewhere |
+| `block` | `/home/przemek/projects/Minecraft/.tools/mariadb-data` | `runtime` | Critical: database data directory with direct data-loss and security exposure risk | Separate backup/restore ticket is required before any handling; rollback/backup requirement must include a verified database restoration procedure | No import/archive action is allowed on metadata-only evidence for live or copied database state |
+| `block` | `/home/przemek/projects/Minecraft/.tools/velocity-loch-local` including `forwarding.secret` | `runtime` | Critical: secret-bearing proxy/config subtree with credential-handling risk | Separate backup/restore plan is required before any handling; rollback/backup requirement must preserve the untouched subtree and recovery path without reading or copying secret values | Separate security-handling ticket is required because the manifest explicitly flags `forwarding.secret`; no import/archive action is allowed on metadata-only evidence |
+
+## Decisions not authorized by this document
+
+- Moving, deleting, renaming, importing, or archiving any file or directory.
+- Bulk copying `/home/przemek/projects/MCMMORPG` or `/home/przemek/projects/Minecraft` into `/home/przemek/projects/MC`.
+- Any action on runtime data, player data, world data, database data, logs, or server copies without a separate backup/restore ticket.
+- Any action on secrets, secret-bearing configs, or operational material without a separate security-handling ticket.
+- Treating any `archive`, `import`, or `block` row as self-executing approval.
+
+Required next gate:
+- Every row marked `import`, `archive`, or `block` still requires a dedicated follow-up ticket with explicit approval before any filesystem action happens.

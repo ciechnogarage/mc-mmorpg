@@ -1,0 +1,145 @@
+name: mc-rag
+
+# Local, CPU-capable hybrid RAG stack for the MC repository.
+# Exactly six services: qdrant, embedding-service, reranker-service,
+# rag-indexer, rag-api, mc-knowledge-mcp.
+#
+# The repository is mounted read-only into every service that reads it.
+# Model weights live in named volumes so they are cached across restarts.
+
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.18.3
+    restart: unless-stopped
+    environment:
+      QDRANT__SERVICE__HTTP_PORT: "6333"
+      QDRANT__SERVICE__GRPC_PORT: "6334"
+    volumes:
+      - qdrant-storage:/qdrant/storage
+    ports:
+      - "127.0.0.1:${QDRANT_HTTP_PORT:-6333}:6333"
+      - "127.0.0.1:${QDRANT_GRPC_PORT:-6334}:6334"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333'"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 10
+
+  embedding-service:
+    build:
+      context: ./services/embedding
+      target: "${EMBEDDING_IMAGE_TARGET:-real}"
+    restart: unless-stopped
+    environment:
+      EMBEDDING_BACKEND: "${EMBEDDING_BACKEND:-bge}"
+      EMBEDDING_MODEL: "${EMBEDDING_MODEL:-BAAI/bge-m3}"
+      EMBEDDING_MODEL_REVISION: "${EMBEDDING_MODEL_REVISION:-5617a9f61b028005a4858fdac845db406aefb181}"
+      EMBEDDING_DEVICE: "${EMBEDDING_DEVICE:-cpu}"
+      EMBEDDING_BATCH_SIZE: "${EMBEDDING_BATCH_SIZE:-8}"
+      OMP_NUM_THREADS: "${OMP_NUM_THREADS:-4}"
+    volumes:
+      - embedding-models:/models
+    ports:
+      - "127.0.0.1:${EMBEDDING_PORT:-18080}:8000"
+
+  reranker-service:
+    build:
+      context: ./services/reranker
+      target: "${RERANKER_IMAGE_TARGET:-real}"
+    restart: unless-stopped
+    environment:
+      RERANKER_BACKEND: "${RERANKER_BACKEND:-bge}"
+      RERANKER_MODEL: "${RERANKER_MODEL:-BAAI/bge-reranker-v2-m3}"
+      RERANKER_MODEL_REVISION: "${RERANKER_MODEL_REVISION:-953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e}"
+      RERANKER_DEVICE: "${RERANKER_DEVICE:-cpu}"
+      RERANKER_BATCH_SIZE: "${RERANKER_BATCH_SIZE:-8}"
+      OMP_NUM_THREADS: "${OMP_NUM_THREADS:-4}"
+    volumes:
+      - reranker-models:/models
+    ports:
+      - "127.0.0.1:${RERANKER_PORT:-18081}:8000"
+
+  rag-indexer:
+    build:
+      context: ./services
+      dockerfile: indexer/Dockerfile
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: rag-indexer
+      QDRANT_URL: "http://qdrant:6333"
+      EMBEDDING_URL: "http://embedding-service:8000"
+      EMBEDDING_MODEL: "${EMBEDDING_MODEL:-BAAI/bge-m3}"
+      EMBEDDING_MODEL_REVISION: "${EMBEDDING_MODEL_REVISION:-5617a9f61b028005a4858fdac845db406aefb181}"
+      EMBEDDING_TIMEOUT_SECONDS: "${EMBEDDING_TIMEOUT_SECONDS:-300}"
+      REPO_PATH: /repo
+      REPO_NAME: "${REPO_NAME:-MC}"
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: /repo
+      INDEX_STATE_PATH: /state/indexer.json
+      WATCH_INTERVAL_SECONDS: "${WATCH_INTERVAL_SECONDS:-2}"
+      RECONCILE_INTERVAL_SECONDS: "${RECONCILE_INTERVAL_SECONDS:-300}"
+      RECONCILE_EMBED_BATCH_CHUNKS: "${RECONCILE_EMBED_BATCH_CHUNKS:-32}"
+      MAX_FILE_BYTES: "${MAX_FILE_BYTES:-2000000}"
+    volumes:
+      # Repository is the source of truth; mounted read-only.
+      - type: bind
+        source: ${MC_REPO_PATH:-..}
+        target: /repo
+        read_only: true
+      - indexer-state:/state
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      embedding-service:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${RAG_INDEXER_PORT:-18082}:8000"
+
+  rag-api:
+    build:
+      context: ./services
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: rag-api
+      QDRANT_URL: "http://qdrant:6333"
+      EMBEDDING_URL: "http://embedding-service:8000"
+      EMBEDDING_MODEL: "${EMBEDDING_MODEL:-BAAI/bge-m3}"
+      EMBEDDING_MODEL_REVISION: "${EMBEDDING_MODEL_REVISION:-5617a9f61b028005a4858fdac845db406aefb181}"
+      RERANKER_URL: "http://reranker-service:8000"
+      INDEXER_URL: "http://rag-indexer:8000"
+      REPO_NAME: "${REPO_NAME:-MC}"
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      embedding-service:
+        condition: service_healthy
+      reranker-service:
+        condition: service_healthy
+      rag-indexer:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${RAG_API_PORT:-18090}:8000"
+
+  mc-knowledge-mcp:
+    build:
+      context: ./services
+      dockerfile: knowledge_mcp/Dockerfile
+    restart: unless-stopped
+    environment:
+      RAG_API_URL: "http://rag-api:8000"
+      MCP_HOST: "0.0.0.0"
+      MCP_PATH: /mcp
+    depends_on:
+      rag-api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${MCP_PORT:-18091}:8000"
+
+volumes:
+  qdrant-storage:
+  indexer-state:
+  embedding-models:
+  reranker-models:

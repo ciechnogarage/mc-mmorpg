@@ -1,0 +1,17 @@
+dr001_ruined_gate_key:
+  itemname: Ruined Gate Key
+  material: TRIPWIRE_HOOK
+  Pack:
+    model: nexo:item/dr001/item/ruined_gate_key
+
+dr001_relic_shard:
+  itemname: Relic Shard
+  material: AMETHYST_SHARD
+  Pack:
+    model: nexo:item/dr001/item/relic_shard
+
+dr001_cleansing_draught:
+  itemname: Cleansing Draught
+  material: POTION
+  Pack:
+    model: nexo:item/dr001/item/cleansing_draught

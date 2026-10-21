@@ -1,0 +1,54 @@
+menu_title: '&8✦ &d&lEWOLUCJA PETA &8✦'
+size: 54
+
+items:
+  filler:
+    material: PURPLE_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  current_stage:
+    material: WOLF_SPAWN_EGG
+    slot: 20
+    display_name: '&6Obecny etap'
+    lore:
+      - '&7Aktywny pet: &f%petcore_active_pet%'
+      - '&7Status: &f%petcore_summary%'
+      - ''
+      - '&8Phase 2 pokazuje tylko status.'
+
+  next_stage:
+    material: NETHER_STAR
+    slot: 24
+    display_name: '&dNastępna ewolucja &8[LOCKED]'
+    lore:
+      - '&7Wymagania: poziom, bond, materiały.'
+      - '&7Authority: &f%petcore_authority%'
+      - '&cZablokowane: progression backend.'
+
+  requirements:
+    material: BOOK
+    slot: 31
+    display_name: '&eWymagania'
+    lore:
+      - '&7Tu później pojawi się checklista.'
+      - '&7Brakujące materiały i content będą'
+      - '&7czytane z PetCore, nie z menu YAML.'
+
+  back:
+    material: ARROW
+    slot: 48
+    display_name: '&ePowrót'
+    left_click_commands:
+      - '[openguimenu] petcore_main'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 50
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

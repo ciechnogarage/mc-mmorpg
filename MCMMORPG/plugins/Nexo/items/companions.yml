@@ -1,0 +1,9 @@
+# Nexo owns the resource-pack presentation layer for companion UI assets.
+# Vanilla material fallbacks in DeluxeMenus keep the menu readable before a pack refresh.
+companion_tank_t1_icon:
+  material: WOLF_SPAWN_EGG
+  itemname: '<#D6AA4C><b>Strażnik Przysięgi'
+  lore:
+    - '<gray>Tank · Tier I'
+  Pack:
+    texture: nexo:item/nexo_tools/forest_shield

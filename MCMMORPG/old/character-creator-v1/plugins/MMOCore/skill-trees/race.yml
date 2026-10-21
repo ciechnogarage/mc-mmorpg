@@ -1,0 +1,188 @@
+id: 'race'
+name: '&dRace'
+type: CUSTOM
+lore:
+  - '&dPlaceholder race buffs, gated by LuckPerms race permission.'
+  - '&7See docs/character-sector-contract.md Race Passive Matrix for the canon design this stands in for.'
+max-point-spent: 10
+
+icon:
+  material: PLAYER_HEAD
+  item_flags: [HIDE_ATTRIBUTES]
+
+# Every node below is a PLACEHOLDER stat buff gated by permission-required
+# on the LuckPerms permission granted at character finalize (race.<id>).
+# Values are not balanced; swap for the real Race Passive Matrix triggers
+# (economy/combat event hooks) when those are implemented.
+
+nodes:
+
+#### CZLOWIEK
+  czlowiek_1:
+    name: '&fKontrakt Ocalalego I'
+    coordinates: -4,-2
+    permission-required: 'race.czlowiek'
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Additional experience +3%'
+      1:
+        - '&7PLACEHOLDER - Additional experience +3%'
+
+  czlowiek_2:
+    name: '&fKontrakt Ocalalego II'
+    coordinates: -4,-1
+    permission-required: 'race.czlowiek'
+    parents:
+      strong:
+        czlowiek_1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Cooldown reduction +3%'
+      1:
+        - '&7PLACEHOLDER - Cooldown reduction +3%'
+
+#### ORK
+  ork_1:
+    name: '&cKrwawy Nacisk I'
+    coordinates: -2,-2
+    permission-required: 'race.ork'
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="WEAPON_DAMAGE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Weapon damage +2'
+      1:
+        - '&7PLACEHOLDER - Weapon damage +2'
+
+  ork_2:
+    name: '&cKrwawy Nacisk II'
+    coordinates: -2,-1
+    permission-required: 'race.ork'
+    parents:
+      strong:
+        ork_1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ATTACK_SPEED";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Attack speed +3%'
+      1:
+        - '&7PLACEHOLDER - Attack speed +3%'
+
+#### ELF
+  elf_1:
+    name: '&bPierwszy Trop I'
+    coordinates: 0,-2
+    permission-required: 'race.elf'
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Critical strike chance +2%'
+      1:
+        - '&7PLACEHOLDER - Critical strike chance +2%'
+
+  elf_2:
+    name: '&bPierwszy Trop II'
+    coordinates: 0,-1
+    permission-required: 'race.elf'
+    parents:
+      strong:
+        elf_1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ARROW_VELOCITY";amount=10;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Arrow velocity +10%'
+      1:
+        - '&7PLACEHOLDER - Arrow velocity +10%'
+
+#### KRASNOLUD
+  krasnolud_1:
+    name: '&6Dlug Stali I'
+    coordinates: 2,-2
+    permission-required: 'race.krasnolud'
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Physical damage reduction +2%'
+      1:
+        - '&7PLACEHOLDER - Physical damage reduction +2%'
+
+  krasnolud_2:
+    name: '&6Dlug Stali II'
+    coordinates: 2,-1
+    permission-required: 'race.krasnolud'
+    parents:
+      strong:
+        krasnolud_1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=10;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Max health +10'
+      1:
+        - '&7PLACEHOLDER - Max health +10'
+
+#### NIEUMARLY
+  nieumarly_1:
+    name: '&8Odmowa Grobu I'
+    coordinates: 4,-2
+    permission-required: 'race.nieumarly'
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Magic damage reduction +2%'
+      1:
+        - '&7PLACEHOLDER - Magic damage reduction +2%'
+
+  nieumarly_2:
+    name: '&8Odmowa Grobu II'
+    coordinates: 4,-1
+    permission-required: 'race.nieumarly'
+    parents:
+      strong:
+        nieumarly_1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DODGE_RATING";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - '&7PLACEHOLDER - Dodge rating +2'
+      1:
+        - '&7PLACEHOLDER - Dodge rating +2'

@@ -96,8 +96,8 @@ files:
    integration file.
 6. Runtime proof must show reload success, spawn success, and proof that the
    base mob is visually hidden under the rendered model.
-7. Reward review is not closed here; reward ownership hands off to
-   `minecraft-rpg-systems` when loot contents or progression effects change.
+7. Reward review is not closed here; reward ownership hands off to the RPG
+   systems domain when loot contents or progression effects change.
 
 ## Deterministic 10 Percent QA Sampling Contract
 
@@ -122,8 +122,7 @@ With the current queue size of `1`, the deterministic sample is exactly
 
 ## QA Dashboard And Regression Handoff
 
-These items belong in `MCMMORPG/_validation` and should be owned by
-`minecraft-release-qa`:
+These items belong in `MCMMORPG/_validation` and should be owned by release QA:
 
 1. dashboard report for boss queue coverage, strict-ready count, sampled count,
    stale manifests, and missing runtime evidence
@@ -137,12 +136,12 @@ These items belong in `MCMMORPG/_validation` and should be owned by
 
 ## Ownership And Handoff
 
-- `minecraft-mobs-models`
+- Mobs and models
   owns queue admission, local boss/model graph truth, boss skill/model anchors,
   and blueprint/manifests under proved evidence.
-- `minecraft-release-qa`
+- Release QA
   owns `_validation` dashboarding, regression tests, sampling implementation,
   and runtime proof aggregation.
-- `minecraft-rpg-systems`
+- RPG systems
   owns reward-content review when boss drop contents, progression, or balance
   effects change.

@@ -1,0 +1,23 @@
+{
+  "dungeon_ruins_001.root_ambient": {
+    "replace": false,
+    "sounds": [
+      "minecraft:ambient/cave/cave1",
+      "minecraft:block/mangrove_roots/break"
+    ]
+  },
+  "dungeon_ruins_001.crystal_chime": {
+    "replace": false,
+    "sounds": [
+      "minecraft:block/amethyst_block/chime",
+      "minecraft:block/amethyst_cluster/place"
+    ]
+  },
+  "dungeon_ruins_001.ember_trial": {
+    "replace": false,
+    "sounds": [
+      "minecraft:block/fire/ambient",
+      "minecraft:block/lava/pop"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "nexo:item/dungeon_ruins_001/block/overgrown_rune_stone"
+  }
+}

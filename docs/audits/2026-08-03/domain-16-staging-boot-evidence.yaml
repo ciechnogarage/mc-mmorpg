@@ -1,0 +1,135 @@
+version: 1
+captured_at: "2026-08-03T14:48:20+02:00"
+scope_id: domain-16-staging-boot-baseline
+backend: staging-docker-baseline
+environment: staging
+commit: f0f9526b46b7
+
+paper_version:
+  value: "Paper 1.21.11-127-main@bd74bf6"
+  source: docker://srv-world,srv-items,srv-hub,srv-minioncore
+  note: "Observed through healthy compose-backed Paper containers on 2026-08-03."
+
+java_version:
+  value: "OpenJDK / java21 container runtime"
+  source: MCMMORPG/docker/compose.yml
+  note: "Compose baseline uses `itzg/minecraft-server:java21` for gameplay backends."
+
+plugin_inventory_ref: docs/technical/plugin-manifest.yaml
+status_vocabulary_ref: docs/technical/status-and-evidence-vocabulary.md#canonical-status-and-evidence-rules
+handoff_contract_ref: docs/technical/runtime-evidence-handoff.md
+
+config_refs:
+  - MCMMORPG/docker/compose.yml
+  - MCMMORPG/docker/velocity/velocity.toml
+  - MCMMORPG/server.properties
+
+started_at: "2026-08-03T14:44:59+02:00"
+finished_at: "2026-08-03T14:48:20+02:00"
+runner: codex
+
+commands:
+  - "cd MCMMORPG/docker && docker compose --profile world --profile items --profile hub --profile minioncore up -d mariadb velocity srv-world srv-items srv-hub srv-minioncore"
+  - "date -Iseconds"
+  - "cd MCMMORPG/docker && docker compose ps -a"
+  - "docker inspect -f '{{.Name}}|{{.State.Status}}|{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}|{{.State.StartedAt}}|{{.State.FinishedAt}}|{{.State.ExitCode}}' velocity mcmmorpg-mariadb srv-world srv-items srv-hub srv-minioncore"
+  - "docker logs --tail 120 velocity"
+  - "docker logs --tail 120 mcmmorpg-mariadb"
+  - "docker logs --tail 120 srv-world"
+  - "docker logs --tail 120 srv-items"
+  - "docker logs --tail 120 srv-hub"
+  - "docker logs --tail 120 srv-minioncore"
+
+log_paths:
+  - docker://velocity
+  - docker://mcmmorpg-mariadb
+  - docker://srv-world
+  - docker://srv-items
+  - docker://srv-hub
+  - docker://srv-minioncore
+  - MCMMORPG/logs/latest.log
+
+evidence_ref_ids:
+  - EVID-STATUS-VOCAB-2026-07-22
+  - EVID-PERF-BUDGETS-2026-07-22
+
+evidence_refs:
+  - evidence_id: EVID-STAGING-BOOT-COMPOSE-UP-2026-08-03
+    source_type: command
+    source_path: MCMMORPG/docker
+    observed_at: 2026-08-03
+    scope: full-stack compose bring-up for the Domain 16 staging baseline
+    summary: "Compose successfully started `mariadb`, `velocity`, `srv-world`, `srv-items`, `srv-hub`, and `srv-minioncore` under one observation window."
+    command: "cd MCMMORPG/docker && docker compose --profile world --profile items --profile hub --profile minioncore up -d mariadb velocity srv-world srv-items srv-hub srv-minioncore"
+
+  - evidence_id: EVID-STAGING-BOOT-COMPOSE-PS-2026-08-03
+    source_type: command
+    source_path: MCMMORPG/docker
+    observed_at: 2026-08-03
+    scope: live compose service state after bring-up
+    summary: "Compose state shows `velocity`, `mcmmorpg-mariadb`, `srv-world`, `srv-items`, `srv-hub`, and `srv-minioncore` all `Up` and `healthy`; `srv-petcore` remains exited and out of scope for this baseline."
+    command: "cd MCMMORPG/docker && docker compose ps -a"
+
+  - evidence_id: EVID-STAGING-BOOT-DOCKER-INSPECT-2026-08-03
+    source_type: command
+    source_path: MCMMORPG/docker
+    observed_at: 2026-08-03
+    scope: container lifecycle and health transitions for the required baseline services
+    summary: "Final inspect snapshot shows `velocity`, `mcmmorpg-mariadb`, `srv-world`, `srv-items`, `srv-hub`, and `srv-minioncore` in `running|healthy` state with exit code `0`."
+    command: "docker inspect -f '{{.Name}}|{{.State.Status}}|{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}|{{.State.StartedAt}}|{{.State.FinishedAt}}|{{.State.ExitCode}}' velocity mcmmorpg-mariadb srv-world srv-items srv-hub srv-minioncore"
+
+  - evidence_id: EVID-STAGING-BOOT-VELOCITY-LOG-2026-08-03
+    source_type: log
+    source_path: docker://velocity
+    observed_at: 2026-08-03
+    scope: proxy boot on the public staging entrypoint
+    summary: "Velocity log shows `Done` and `Listening on ...:25565`; the proxy remains healthy while warning that it runs in offline mode."
+    command: "docker logs --tail 120 velocity"
+
+  - evidence_id: EVID-STAGING-BOOT-MARIADB-LOG-2026-08-03
+    source_type: log
+    source_path: docker://mcmmorpg-mariadb
+    observed_at: 2026-08-03
+    scope: database readiness for compose-backed gameplay startup
+    summary: "MariaDB log contains a fresh `ready for connections` line during the 2026-08-03 bring-up; the container finished healthy."
+    command: "docker logs --tail 120 mcmmorpg-mariadb"
+
+  - evidence_id: EVID-STAGING-BOOT-BACKEND-LOGS-2026-08-03
+    source_type: log
+    source_path: docker://srv-world,docker://srv-items,docker://srv-hub,docker://srv-minioncore
+    observed_at: 2026-08-03
+    scope: gameplay backend completion for the required staging baseline
+    summary: "`srv-items`, `srv-hub`, `srv-minioncore`, and `srv-world` all reached healthy state; `srv-world` finished after a longer plugin-heavy startup and logged `Done (53.882s)`."
+    command: "docker logs --tail 120 srv-world && docker logs --tail 120 srv-items && docker logs --tail 120 srv-hub && docker logs --tail 120 srv-minioncore"
+
+  - evidence_id: EVID-STAGING-BOOT-STALE-HOST-LOG-2026-08-03
+    source_type: log
+    source_path: MCMMORPG/logs/latest.log
+    observed_at: 2026-08-03
+    scope: older host-level Paper artifact retained for contrast
+    summary: "`MCMMORPG/logs/latest.log` is still a stale 2026-07-05 host-level bind failure and was not used as the primary success signal for the compose-backed boot verdict."
+
+verdict: PASS
+requested_status_transition: none
+status_update_applied: false
+
+scenario_verdicts:
+  proxy_baseline: PASS
+  database_baseline: PASS
+  gameplay_backend_baseline: PASS
+  repo_host_paper_baseline: FAIL
+
+blockers: []
+
+summary: |
+  The required `mcmmorpg` compose baseline for Domain 16 was successfully brought up on 2026-08-03. The required services
+  `velocity`, `mcmmorpg-mariadb`, `srv-world`, `srv-items`, `srv-hub`, and `srv-minioncore` all reached `running|healthy`
+  state in one observation window. The older host-level `MCMMORPG/logs/latest.log` remains a stale 2026-07-05 bind failure,
+  but it no longer blocks the compose-backed staging boot scenario because the current live verdict is grounded in fresh
+  Docker/compose evidence.
+
+notes:
+  - "`srv-petcore` was not part of the required Domain 16 staging baseline and remained exited."
+  - "`velocity` continues to warn that it runs in offline mode; this is a security caveat, not a boot failure."
+  - "`srv-world` had the slowest startup path and emitted content/plugin warnings before eventually reaching `healthy`."
+  - "Observed warning classes during boot included outdated-Paper notices, offline-mode warnings, missing ModelEngine hitboxes, and plugin/content-specific MythicLib/MythicMobs/Vault warnings that need separate compatibility review."

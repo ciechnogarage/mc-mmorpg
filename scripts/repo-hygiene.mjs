@@ -7,6 +7,17 @@ export const GIT_STATUS_MAX_BUFFER = 64 * 1024 * 1024;
 const REPOSITORY_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 export const REQUIRED_IGNORE_RULES = [
+  '**/node_modules/',
+  '**/__pycache__/',
+  '**/.pytest_cache/',
+  '*.py[cod]',
+  '.tmp-contract-fix/',
+  'bots/runs/',
+  'bots/probe_*_tmp.js',
+  'docs/Plugins-wiki-local/',
+  'docs.zip',
+  'modele/OUTPUT — kopia (2)/',
+  'modele/OUTPUT — kopia (2).zip',
   '.mcp.json',
   'MCMMORPG/.console_history',
   'MCMMORPG/_coord/briefs/',
@@ -34,6 +45,16 @@ export const REQUIRED_IGNORE_RULES = [
   'MCMMORPG/docker/velocity/*.jar',
   'MCMMORPG/docker/velocity/lang/',
   'MCMMORPG/docker/velocity/plugins/',
+  'MCMMORPG/source/environments/**/paper.jar',
+  'MCMMORPG/source/environments/**/server.properties',
+  'MCMMORPG/source/environments/**/plugins/**/*.jar',
+  'MCMMORPG/source/environments/**/plugins/**/*.db',
+  'MCMMORPG/source/environments/**/plugins/**/*.sqlite',
+  'MCMMORPG/source/environments/**/plugins/**/*.mv.db',
+  'MCMMORPG/source/environments/**/plugins/MythicMobs/data/',
+  'MCMMORPG/source/environments/**/plugins/**/userdata/',
+  'MCMMORPG/source/environments/**/plugins/**/playerdata/',
+  'MCMMORPG/source/environments/**/plugins/**/cache/',
   'MCMMORPG/plugins/**/userdata/',
   'MCMMORPG/plugins/MythicDungeons/maps/level_1/data/',
   'MCMMORPG/plugins/MythicDungeons/maps/level_1/entities/',
@@ -65,6 +86,10 @@ export const REQUIRED_IGNORE_RULES = [
 ];
 
 const RUNTIME_PREFIXES = [
+  '.tmp-contract-fix/',
+  'bots/runs/',
+  'docs/Plugins-wiki-local/',
+  'modele/OUTPUT — kopia (2)/',
   'MCMMORPG/backups/',
   'MCMMORPG/_coord/briefs/',
   'MCMMORPG/_coord/results/',
@@ -88,6 +113,8 @@ const RUNTIME_PREFIXES = [
 ];
 
 const RUNTIME_PATHS = new Set([
+  'docs.zip',
+  'modele/OUTPUT — kopia (2).zip',
   'MCMMORPG/plugins/Iris/worlds.json',
   'MCMMORPG/plugins/ProtocolLib/lastupdate',
   'MCMMORPG/docker/.env',
@@ -106,6 +133,31 @@ const RUNTIME_WORLD_PREFIXES = [
 
 export function classifyRepositoryPath(inputPath) {
   const normalized = inputPath.replaceAll('\\', '/').replace(/^\.\//, '');
+  if (
+    normalized.startsWith('node_modules/') ||
+    normalized.includes('/node_modules/') ||
+    normalized.startsWith('__pycache__/') ||
+    normalized.includes('/__pycache__/') ||
+    normalized.startsWith('.pytest_cache/') ||
+    normalized.includes('/.pytest_cache/') ||
+    /\.py[cod]$/.test(normalized) ||
+    /^bots\/probe_.*_tmp\.js$/.test(normalized)
+  ) {
+    return 'runtime';
+  }
+  if (normalized.startsWith('MCMMORPG/source/environments/')) {
+    if (normalized.endsWith('/paper.jar') || normalized.endsWith('/server.properties')) {
+      return 'runtime';
+    }
+    if (
+      normalized.includes('/plugins/') &&
+      (/\.(?:jar|db|sqlite|mv\.db)$/.test(normalized) ||
+        normalized.includes('/plugins/MythicMobs/data/') ||
+        /\/(?:userdata|playerdata|cache)\//.test(normalized))
+    ) {
+      return 'runtime';
+    }
+  }
   if (normalized === '.mcp.json') return 'runtime';
   if (normalized === 'MCMMORPG/.console_history') return 'runtime';
   if (normalized.startsWith('MCMMORPG/plugin-src/') && normalized.includes('/build/')) {

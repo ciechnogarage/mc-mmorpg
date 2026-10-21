@@ -145,16 +145,7 @@ The next owner must be able to quote back:
 
 If the brief does not supply that, the handoff is incomplete.
 
-## Immediate Next Commands
+## Immediate Next Step
 
-Dry-run first from `$HOME`:
-
-```bash
-npm run collab:task -- --dry-run "art direction read-only brief for level_1_moss_stalker in $MC_ROOT; backend world; Blockbench/reference packet prep; first read MCMMORPG/_validation/work_packets/level_1_moss_stalker_art_brief_packet.md and execute it as the source-of-truth packet; route to the correct MC art agent and show the exact worker path"
-```
-
-Then, if the dry-run looks sane, the direct worker command is:
-
-```bash
-npm run mc:agent -- art --write-policy read-only --role primary "read-only brief for level_1_moss_stalker in $MC_ROOT; backend world; first read MCMMORPG/_validation/model_studies/direwolf_family_reference_extraction_packet.md plus $MC_ROOT/docs/ai/mc-creature-agent-production-runbook.md and $MC_ROOT/docs/ai/mc-mob-model-agent-pipeline.md; inspect local refs in MCMMORPG plus direct corpus refs in $HOME/projects/Minecraft/modele/OUTPUT — kopia (2); use grove_guardian and corrupted_sprout only as local anchor points, not direct templates; treat the direwolf packet as the family-rule source and explicitly say which rule IDs transfer cleanly, which need translation for a grove-corruption stalker, and which must not be copied literally; borrow Littleroom-grade integration discipline, SamusDev-grade role clarity, and Toro-grade silhouette pressure without copying anatomy; return 3 local references with exact paths, 3 direct corpus references with exact paths, 1-3 external principle references, 5-10 extracted principles, 3-5 forbidden traits, 2-3 silhouette directions, one recommended baseline direction, a reference mass map, landmark list, joint-chain map, 4 motion-stress poses, a Layer A vs Layer B split, exact artifact paths under MCMMORPG/_validation/model_studies, and a concrete Blockbench review plan for the next art pass (captures, side-by-side setup, drift checks); create/update level_1_moss_stalker_reference_study.md, level_1_moss_stalker_silhouette_candidates.md, level_1_moss_stalker_reference_parity.md, level_1_moss_stalker_reference_shell_lock.md, and level_1_moss_stalker_translation_plan.md; judge against $MC_ROOT/docs/ai/mc-model-mob-learning-spec.md, $MC_ROOT/docs/ai/mc-model-mob-critique-rubric.md, $MC_ROOT/docs/ai/mc-model-mob-anti-pattern-catalog.md, and $MC_ROOT/docs/ai/mc-blockbench-review-gate.md; do not edit gameplay files"
-```
+Execute this packet directly as a read-only brief. Read the referenced corpus,
+produce the required study artifacts, and do not edit gameplay files.

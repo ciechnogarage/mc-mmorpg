@@ -1,0 +1,103 @@
+schema_version: 1
+contract_id: mmoitems-item-section-schema
+contract_version: 1
+plugin: MMOItems
+target:
+  file: MCMMORPG/plugins/MMOItems/item/sword.yml
+  section_key: ASHEN_VANGUARD
+  tuple: MMOItems:MCMMORPG/plugins/MMOItems/item/sword.yml#ASHEN_VANGUARD
+  rollback_unit: section_only
+
+section_identity:
+  content_type: item
+  item_family: weapon
+  item_subfamily: sword
+  stable_runtime_id: ASHEN_VANGUARD
+  section_key_is_authoritative: true
+  identity_v1:
+    model: target_tuple_plus_section_key
+    tuple: MMOItems:MCMMORPG/plugins/MMOItems/item/sword.yml#ASHEN_VANGUARD
+    section_key: ASHEN_VANGUARD
+
+keys:
+  base:
+    required: true
+    owner: generator
+    type: enum
+    allowed_values:
+      - SWORD
+
+  name:
+    required: true
+    owner: generator
+    type: string
+    min_length: 1
+
+  lore:
+    required: false
+    owner: generator
+    type: list[string]
+    max_items: 12
+
+  attack-damage:
+    required: true
+    owner: generator
+    type: number
+    min: 0
+
+  attack-speed:
+    required: false
+    owner: generator
+    type: number
+
+  required-level:
+    required: false
+    owner: generator
+    type: integer
+    min: 0
+
+  type:
+    required: false
+    owner: plugin-derived
+    type: string
+    allowed_values:
+      - WEAPON
+    derivation_rule: implicit_defaults_materialized
+
+  unbreakable:
+    required: false
+    owner: plugin-derived
+    type: boolean
+    derivation_rule: implicit_defaults_materialized
+
+  disable-repairing:
+    required: false
+    owner: plugin-derived
+    type: boolean
+    derivation_rule: implicit_defaults_materialized
+
+plugin_derived_whitelist_v1:
+  - type
+  - unbreakable
+  - disable-repairing
+
+key_policies:
+  unknown_keys_policy:
+    mode: allow-unowned-but-non-authoritative
+    effect:
+      - unknown-keys-do-not-expand-generator-owned-boundary
+      - unknown-keys-do-not-count-as-plugin-derived-without-whitelist
+      - unknown-keys-must-not-satisfy-required-assertions
+  generator_may_write_only_owned_keys: true
+  plugin_may_derive_only_plugin_derived_whitelist_v1: true
+  manual_runtime_edits_forbidden: true
+
+evidence_assertions:
+  committed_target_pass_requires:
+    - section-present
+    - exact-runtime-id-match
+    - required-generator-keys-present
+    - no-conflict-on-generator-owned-or-whitelisted-plugin-derived-keys
+  effective_runtime_pass_requires:
+    - generator-owned-values-preserved
+    - plugin-derived-whitelist-v1-within-normalization-contract

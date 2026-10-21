@@ -1,0 +1,121 @@
+schema_version: 2
+contract_id: account-character-contract
+contract_version: 1
+contract_status: draft
+runtime_status: partial
+release_status: blocked
+contract_owner: "01"
+domain_owner: "02"
+semantic_owner: "02"
+runtime_authority:
+  account_id: velocity_forwarded_profile
+  character_id: MMOProfiles.getCurrent().getUniqueId()
+  profile_id: MMOProfiles.getCurrent().getUniqueId()
+persistence_owner:
+  account_identity_mapping: pending_domain02_authoritative_store
+  character_identity_mapping: MMOProfiles_profile_storage_v1
+  active_character_context: MMOProfiles_profile_storage_v1
+integration_coordinator: "01"
+data_scope:
+  - account_id
+  - character_id
+canonical_key:
+  account_id:
+    issuer: mcmmorpg-dev-offline
+    namespace: mcmmorpg:account:dev-offline:v1
+    assurance_level: dev_offline_unverified
+    source_principal: velocity_forwarded_profile
+    production_online_namespace: mcmmorpg:account:online:v1
+  character_id:
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    source: MMOProfiles.getCurrent().getUniqueId()
+    value_equal_to_profile_id_in_v1: true
+  profile_id:
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    source: MMOProfiles.getCurrent().getUniqueId()
+    technical_key_only: true
+identity_namespace:
+  account: mcmmorpg:account:online:v1
+  character: mcmmorpg:character:mmoprofiles-profile:v1
+  profile: mcmmorpg:character:mmoprofiles-profile:v1
+writers:
+  - system: Domain01IdentityResolver
+    writes:
+      - account_id
+consumers:
+  - CharacterStage
+  - PetCore
+commands:
+  - resolve_account_id_from_velocity_profile
+api:
+  account_identity_policy:
+    namespace: mcmmorpg:account:dev-offline:v1
+    issuer: mcmmorpg-dev-offline
+    assurance_level: dev_offline_unverified
+    source_principal: velocity_forwarded_profile
+    offline_to_online_policy: explicit_mapping_record_required
+    silent_key_rewrite: forbidden
+  character_identity_policy:
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    source: MMOProfiles.getCurrent().getUniqueId()
+    profile_id_value_equivalent_in_v1: true
+    cross_domain_identity_after_adapter_swap: false
+    forbidden_sources:
+      - player_uuid
+domain_events:
+  - account_identity_resolved
+permissions:
+  - read_velocity_forwarded_profile
+pdc_keys: []
+migration_policy:
+  source_registry_snapshot: docs/contracts/migration/config-authority-registry-v1-snapshot.yaml
+  petcore_profile_uuid_grandfathered_for_v1: true
+backward_compatibility:
+  legacy_player_uuid_as_account_id: forbidden
+dependencies:
+  - docs/contracts/migration/config-authority-registry-v1-snapshot.yaml
+affected_systems:
+  - MMOProfiles
+evidence:
+  planning_artifact: fixture
+  ticket_artifact: fixture
+  repository_contracts:
+    - fixture
+open_questions:
+  - fixture
+supersedes: []
+superseded_by: []
+state_vocabularies:
+  lifecycle_status: [CREATING, PLAYABLE, DELETE_PENDING, DELETED, PURGED]
+  creator_stage: [CREATED, IDENTITY_SELECTED, RACE_SELECTED, CLASS_SELECTED, APPEARANCE_SELECTED, VALIDATING, READY]
+  profile_binding_status: [RESERVED, BOUND, REPAIR_REQUIRED, QUARANTINED, RELEASED]
+store_records:
+  account_record:
+    fields:
+      slot_counters:
+        type: object
+        fields:
+          base_character_slots: int
+          purchased_character_slots: int
+          granted_character_slots: int
+          temporary_character_slots: int
+          total_character_slots: int
+          occupied_character_count: int
+          reserved_character_count: int
+          available_character_slots: int
+        derivation:
+          total_character_slots: base_character_slots + purchased_character_slots + granted_character_slots + temporary_character_slots
+          available_character_slots: total_character_slots - occupied_character_count - reserved_character_count
+  active_session_record:
+    fields:
+      active_session_id: string|null
+      session_epoch: int
+      session_state:
+        values: [INACTIVE, ACTIVE, EXPIRED]
+    activation_concurrency:
+      lock_conflict_policy: reject_concurrent_activation
+      stale_session_epoch_policy: fail_closed_and_require_fresh_activation
+      activation_allowed_session_states: [INACTIVE, EXPIRED]
+      activation_rejected_session_states: [ACTIVE]
+  mmoprofiles_profile_mapping_record:
+    primary_key: profile_id

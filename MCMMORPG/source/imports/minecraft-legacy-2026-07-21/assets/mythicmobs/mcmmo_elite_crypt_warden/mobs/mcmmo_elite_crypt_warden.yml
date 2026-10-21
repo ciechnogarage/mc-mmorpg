@@ -1,0 +1,43 @@
+MCMMOEliteCryptWarden:
+  Type: IRON_GOLEM
+  Display: '&5Elite Crypt Warden'
+  Health: 500
+  Damage: 12
+  Faction: mcmmo_crypt
+  BossBar:
+    Enabled: true
+    Title: '&5Elite Crypt Warden'
+    Range: 45
+    Color: PURPLE
+    Style: SEGMENTED_10
+  AIGoalSelectors:
+    - clear
+    - meleeattack{s=1.0;fu=false}
+    - randomstroll
+    - lookatplayers
+    - randomlookaround
+    - float
+  AITargetSelectors:
+    - clear
+    - players
+    - hurtbytarget
+  Options:
+    PreventOtherDrops: true
+    PreventSunburn: true
+    AlwaysShowName: false
+    MovementSpeed: 0.20
+    FollowRange: 36
+    KnockbackResistance: 0.85
+    MaxCombatDistance: 45
+    Silent: true
+    AttackSpeed: 1
+  Skills:
+    - model{mid=mcmmo_elite_crypt_warden;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onSpawn
+    - model{mid=mcmmo_elite_crypt_warden;usestatemachine=true;save=true;damagetint=true;showshadow=true} @self ~onLoad
+    - skill{s=MCMMOEliteCryptWardenSpawn} @self ~onSpawn
+    - skill{s=MCMMOEliteCryptWardenAttack01;sync=true} @trigger ~onAttack
+    - skill{s=MCMMOEliteCryptWardenAttack02} @target ~onTimer:140 0.35
+    - skill{s=MCMMOEliteCryptWardenVoidCast} @target ~onTimer:220 0.25
+    - skill{s=MCMMOEliteCryptWardenSpecial01} @self ~onTimer:320 0.20
+    - state{mid=mcmmo_elite_crypt_warden;s=hurt;li=1;lo=1;force=false;loop=ONCE;override=true} @self ~onDamaged
+    - skill{s=MCMMOEliteCryptWardenDeath} @self ~onDeath

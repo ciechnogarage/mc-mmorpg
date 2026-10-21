@@ -1,0 +1,47 @@
+stage: end
+display: "END / Void Sanctum"
+biome: dr001_end_void_sanctum
+intent: "Anchor destruction, final multi-phase boss, once-only loot shrine, and safe exit."
+objectives:
+  - id: dr001_end_destroy_void_anchors
+    type: interact_destroy
+    target_nexo_id: dr001_void_anchor
+    count: 3
+    guard_mob: DR001_AnchorWarden
+    scoreboard_line: "&fKotwice: &d%dr001_anchors%/3"
+    completion_signal: dr001_void_anchors_destroyed
+  - id: dr001_end_defeat_aurelion
+    type: boss
+    target_mob: DR001_RuinedKingAurelion
+    prerequisites:
+      - dr001_void_anchors_destroyed
+    scoreboard_line: "&fBoss: &c%AurelionHP%%"
+    completion_signal: dr001_aurelion_defeated
+  - id: dr001_end_claim_loot_shrine
+    type: loot_once
+    target_nexo_id: dr001_loot_shrine
+    prerequisites:
+      - dr001_aurelion_defeated
+    loot_table: DR001_AurelionDrops
+    cooldown_scope: "per-player daily plus mythic weekly crown-core gate"
+    completion_signal: dr001_loot_shrine_claimed
+  - id: dr001_end_exit_portal
+    type: teleporter
+    target: exit_portal
+    prerequisites:
+      - dr001_loot_shrine_claimed
+    completion_signal: dr001_dungeon_complete
+checkpoint:
+  id: cp_final_arena
+  activation_signal: dr001_final_arena_unlocked
+transition:
+  next_stage: complete
+  unlock_signal: dr001_dungeon_complete
+mythic_only:
+  anchor_respawn_seconds: 60
+  enrage_seconds: 120
+manual_editor_notes:
+  - "Void Anchor shield reduction must be verified in staging; use DR001_VoidImmunityCheck only as logical hook until runtime-proven."
+  - "Loot shrine once-only and weekly reward checks are release blockers."
+cleanup:
+  despawn_mobs_with_prefix: DR001_

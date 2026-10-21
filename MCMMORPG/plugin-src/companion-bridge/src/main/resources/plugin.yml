@@ -1,0 +1,10 @@
+name: CompanionBridge
+version: ${version}
+main: pl.mcmmorpg.companionbridge.CompanionBridgePlugin
+api-version: "1.21"
+author: OpenAI Codex
+softdepend:
+  - Vault
+  - MMOCore
+  - MMOProfiles
+  - spark

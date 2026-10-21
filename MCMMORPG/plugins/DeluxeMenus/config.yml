@@ -11,6 +11,8 @@ metas_list_page_size: 15
 gui_menus:
   foundation_nexus:
     file: foundation_nexus.yml
+  companion_panel:
+    file: companion_panel.yml
   basics_menu:
     file: basics_menu.yml
   advanced_menu:

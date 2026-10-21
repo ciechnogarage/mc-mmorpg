@@ -1,0 +1,16 @@
+name: Mistrzostwa
+main: pl.mcmmorpg.mistrzostwa.Mistrzostwa
+version: '${version}'
+api-version: '1.21'
+description: Mistrzostwa profesji - blokada rozwoju powyzej progu bez mistrzostwa, wybor i platna zmiana per profil postaci.
+depend: [MMOCore, MythicLib, LuckPerms, Vault]
+softdepend: [PlaceholderAPI, MMOProfiles, DeluxeMenus, CoreTools]
+commands:
+  mistrzostwo:
+    description: Mistrzostwa profesji (wywolywane przez menu z konsoli; admin).
+    usage: /mistrzostwo <okno|wybierz|zmien|info|nadaj|odbierz|zdejmij-cooldown|reload> ...
+    permission: mistrzostwa.admin
+permissions:
+  mistrzostwa.admin:
+    description: Komendy /mistrzostwo (menu wywoluje je z konsoli).
+    default: op

@@ -1,0 +1,97 @@
+contract:
+  id: reward-grant-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_tested
+  release_status: blocked
+  owner: "01"
+  semantic_owner: "10"
+  runtime_authority:
+    encounter_result: MythicDungeons
+    mob_drop_trigger: MythicMobs
+    item_definition: MMOItems
+    item_visual_representation: Nexo
+    inventory_storage: MMOInventory
+    currency_provider: CMI
+    economy_bridge: Vault
+  identity_contract: docs/contracts/account-character-contract.yaml
+  evidence_register: docs/audits/2026-07-13/runtime-evidence-register.yaml
+
+required_context:
+  - reward_transaction_id
+  - idempotency_key
+  - account_id
+  - account_namespace
+  - account_assurance_level
+  - character_id
+  - character_namespace
+  - profile_id
+  - source_type
+  - source_id
+  - encounter_instance_id
+  - reward_table_id
+  - granted_at
+
+identity_rules:
+  account_id:
+    required: true
+    namespace: mcmmorpg:account:dev-offline:v1
+    source_principal: velocity_forwarded_profile
+    assurance_level: dev_offline_unverified
+  character_id:
+    required: true
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    source: MMOProfiles.getCurrent().getUniqueId()
+    value_equal_to_profile_id_in_v1: true
+  profile_id:
+    required: true
+    namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    technical_key_only: true
+  forbidden_identity_sources:
+    - player_uuid
+    - player_name
+    - display_name
+    - profile_slot_number
+
+guarantees:
+  idempotent: true
+  duplicate_transaction_rejected: true
+  source_provenance_required: true
+  cross_character_reward_grant_forbidden: true
+  reward_context_without_identity_contract_fields_forbidden: true
+
+failure_policy:
+  inventory_full: pending_delivery
+  storage_unavailable: reject_and_log
+  duplicate_transaction: ignore_and_audit
+  invalid_item_id: reject_and_alert
+  invalid_currency_id: reject_and_alert
+  missing_account_identity: reject_and_audit
+  missing_character_identity: reject_and_audit
+  profile_character_mismatch: reject_and_audit
+  namespace_mismatch: reject_and_audit
+
+required_observability:
+  - transaction_start
+  - transaction_commit
+  - transaction_rejected
+  - transaction_duplicate
+  - transaction_pending_delivery
+  - transaction_storage_failure
+  - identity_context_resolved
+  - identity_context_mismatch
+
+implementation_rule:
+  mode: adapter_first
+  bridge_plugin: only_if_existing_api_cannot_prove_idempotency
+  no_yaml_only_guarantee: true
+  silent_identity_fallback: forbidden
+  player_uuid_substitution: forbidden
+
+migration_notes:
+  supersedes:
+    - bare_player_uuid_context
+  cutover_requirements:
+    - reward producers populate account_id and character_id from account-character-contract
+    - reward consumers reject grants missing account_namespace or character_namespace
+    - runtime evidence proves duplicate reward replay cannot cross character boundaries

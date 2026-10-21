@@ -1,0 +1,77 @@
+contract:
+  id: island-sector-mapping-v1
+  version: 1
+  contract_status: proposed
+  runtime_status: not_tested
+  release_status: blocked
+  owner: "06"
+  semantic_owner: "06"
+  upstream_contracts:
+    - docs/contracts/world-progression-model.md
+    - docs/contracts/unlock-rules.yaml
+    - docs/contracts/travel-and-discovery.md
+  purpose:
+    - define canonical pairing between islands and dungeon sectors
+    - define semantic relationship requirements inside one act bundle
+    - prevent drift between world and dungeon content tracks
+  non_goals:
+    - define act production status
+    - define travel graph topology
+    - define floor progression details
+    - define runtime content references
+  mapping_rules:
+    act_bundle_shape: one_island_one_sector
+    required_shared_axes:
+      - theme
+      - conflict
+      - mechanical_language
+      - reward_identity
+    required_relationships:
+      theme_link: required
+      conflict_link: required
+      mechanical_link: required
+      reward_link: required
+      narrative_link: recommended
+    allowed_variation:
+      - secondary_faction_overlap
+      - mirrored_conflict_perspective
+      - asymmetric_exposure_to_shared_threat
+      - different_surface_expression_of_same_mechanic
+  relationship_taxonomy:
+    theme_link:
+      meaning: shared fantasy tone, biome logic, or threat identity
+    conflict_link:
+      meaning: shared central conflict, mirrored pressure, or directly connected stakes
+    mechanical_link:
+      meaning: shared gameplay language, hazards, or learned counters
+    reward_link:
+      meaning: coherent reward identity across world and dungeon routes
+    narrative_link:
+      meaning: direct story continuation or reinforcing perspective, but not always identical scenes
+  required_bundle_fields:
+    - act_id
+    - island_id
+    - dungeon_sector_id
+    - relationship
+    - discovery_alignment
+  act_bundles:
+    - act_id: ACT-01
+      island_id: ISL-01
+      dungeon_sector_id: DNG-01
+      relationship:
+        theme_link: required
+        conflict_link: required
+        mechanical_link: required
+        reward_link: required
+        narrative_link: recommended
+      discovery_alignment:
+        island_discovery_supports_sector_context: true
+        dungeon_camp_present_or_equivalent: true
+  invariants:
+    - every_act_bundle_pairs_exactly_one_island_and_one_dungeon_sector
+    - island_and_sector_must_share_theme_conflict_and_mechanical_language
+    - act_bundles_may_vary_in_surface_expression_without_breaking_shared_identity
+    - this_contract_tracks_pairing_and_relationship_not_pipeline_status
+  references:
+    downstream_contracts:
+      - docs/contracts/act-map.yaml

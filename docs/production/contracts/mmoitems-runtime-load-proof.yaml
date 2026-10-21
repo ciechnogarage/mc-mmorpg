@@ -1,0 +1,34 @@
+schema_version: 1
+contract_id: mmoitems-runtime-load-proof
+contract_version: 1
+plugin: MMOItems
+content_type: item
+subject_scope:
+  - item.weapon.sword.ashen_vanguard
+required_fields:
+  - schema_version
+  - proof_kind
+  - plugin
+  - environment
+  - build_id
+  - target_file
+  - section_key
+  - target_tuple
+  - status
+  - captured_at
+field_contract:
+  proof_kind:
+    exact_value: mmoitems-reload-boundary
+  environment:
+    allowed_values:
+      - staging
+  status:
+    allowed_values:
+      - success
+      - failed
+  target_tuple:
+    exact_value: MMOItems:MCMMORPG/plugins/MMOItems/item/sword.yml#ASHEN_VANGUARD
+runtime_loaded_pass_requires:
+  - status == success
+  - build_id matches runtime_load evidence build_id
+  - target_tuple matches audited pilot tuple

@@ -1,11 +1,11 @@
 # Known Runtime Issues
 
-Purpose: keep current MC runtime problems diagnosable without agents repeating
+Purpose: keep current MC runtime problems diagnosable without repeating
 blind fixes or exposing secrets.
 
 ## HuskSync MySQL Failure
 
-Owner: `minecraft-ops-sync`
+Owner: runtime operations
 
 Symptom: `HuskSync has failed to load`, `Failed to initialize MySQL database
 connection`, or `SQLNonTransientConnectionException` in `MCMMORPG/logs/latest.log`.
@@ -26,7 +26,7 @@ bug before proposing a fix.
 
 ## MCPets SQL Fallback
 
-Owner: `minecraft-ops-sync` with `minecraft-mobs-models`
+Owner: runtime operations with mobs and models
 
 Symptom: `[MCPets] Could not reach SQL database` followed by YAML fallback.
 
@@ -44,7 +44,7 @@ a release blocker for persistence.
 
 ## MythicMobs Duplicate Model Warning
 
-Owner: `minecraft-mobs-models`
+Owner: mobs and models
 
 Symptom: `[MythicMobs] Entity already contains model with ID {}` or targeter
 config warnings.
@@ -60,7 +60,7 @@ with the narrowest spawn/model check on staging.
 
 ## MythicDungeons PlayerQuitEvent Error
 
-Owner: `minecraft-dungeon-world` with `minecraft-release-qa`
+Owner: dungeons and worlds with release QA
 
 Symptom: `Could not pass event PlayerQuitEvent to MythicDungeons` during dungeon
 instance cleanup.

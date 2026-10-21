@@ -1,0 +1,67 @@
+contract:
+  id: act-map-v1
+  version: 1
+  contract_status: proposed
+  runtime_status: not_tested
+  release_status: blocked
+  owner: "06"
+  semantic_owner: "06"
+  upstream_contracts:
+    - docs/contracts/world-progression-model.md
+    - docs/contracts/island-sector-mapping.yaml
+    - docs/contracts/unlock-rules.yaml
+  purpose:
+    - define canonical act list structure for domain 06
+    - define act topology and progression edges
+    - define pipeline status vocabulary for act production planning
+  non_goals:
+    - define detailed island briefs
+    - define detailed dungeon floor data
+    - define travel nodes
+    - define runtime rollout gates
+  act_status_vocabulary:
+    - concept
+    - contracting
+    - templating
+    - production_ready
+    - in_production
+    - validated
+  progression_role_vocabulary:
+    - onboarding_foundation
+    - expansion
+    - escalation
+    - late_game
+    - endgame
+  topology_rules:
+    default_unlock_shape: forward_progression
+    optional_branching_allowed: true
+    semantic_unlock_authority: docs/contracts/unlock-rules.yaml
+    bundle_authority: docs/contracts/island-sector-mapping.yaml
+  acts:
+    - act_id: ACT-01
+      bundle_ref:
+        island_id: ISL-01
+        dungeon_sector_id: DNG-01
+      unlocks_from: []
+      unlocks_to:
+        - ACT-02
+      status: contracting
+      progression_role: onboarding_foundation
+      notes:
+        - first canonical bundle for ISL/DNG production templates
+    - act_id: ACT-02
+      bundle_ref:
+        island_id: ISL-02
+        dungeon_sector_id: DNG-02
+      unlocks_from:
+        - ACT-01
+      unlocks_to: []
+      status: concept
+      progression_role: expansion
+      notes:
+        - placeholder row showing expected map shape before content drafting
+  invariants:
+    - every_act_entry_must_reference_exactly_one_island_and_one_dungeon_sector
+    - act_map_owns_pipeline_status_not_relationship_semantics
+    - unlock_edges_must_not_redefine_unlock_next_act_rules
+    - progression_role_describes_product_position_not_runtime_difficulty

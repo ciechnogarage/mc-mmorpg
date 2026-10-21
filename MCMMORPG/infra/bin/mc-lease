@@ -1,0 +1,756 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REGISTRY_DIR="$ROOT_DIR/infra/leases"
+REGISTRY_FILE="$REGISTRY_DIR/registry.tsv"
+LOCK_FILE="$REGISTRY_DIR/registry.lock"
+HEADER=$'lease_id\tenvironment\tscope\towner\tpurpose\tstatus\tcompose_project\tnamespace\tenv_file\tsource_path\truntime_path\tlog_path\tsecret_path\tproxy_port\tproxy_bind_policy\trcon_port\trcon_bind_policy\tdb_port\tdb_bind_policy\tallowed_paths\tforbidden_paths\tallowed_validation_channels\trequired_validation_channels\trollback_method\tclose_reclaim_protocol'
+
+LEASE_ID=""
+LEASE_ENVIRONMENT=""
+LEASE_SCOPE=""
+LEASE_OWNER=""
+LEASE_PURPOSE=""
+LEASE_STATUS=""
+LEASE_COMPOSE_PROJECT=""
+LEASE_NAMESPACE=""
+LEASE_ENV_FILE=""
+LEASE_SOURCE_PATH=""
+LEASE_RUNTIME_PATH=""
+LEASE_LOG_PATH=""
+LEASE_SECRET_PATH=""
+LEASE_PROXY_PORT=""
+LEASE_PROXY_BIND_POLICY=""
+LEASE_RCON_PORT=""
+LEASE_RCON_BIND_POLICY=""
+LEASE_DB_PORT=""
+LEASE_DB_BIND_POLICY=""
+LEASE_ALLOWED_PATHS=""
+LEASE_FORBIDDEN_PATHS=""
+LEASE_ALLOWED_CHANNELS=""
+LEASE_REQUIRED_CHANNELS=""
+LEASE_ROLLBACK_METHOD=""
+LEASE_CLOSE_RECLAIM_PROTOCOL=""
+
+usage() {
+  cat <<'EOF'
+Usage:
+  infra/bin/mc-lease validate
+  infra/bin/mc-lease show <scope>
+  infra/bin/mc-lease export-env <scope>
+  infra/bin/mc-lease sync-env <scope>
+  infra/bin/mc-lease allocate --scope <scope> --owner <owner> --purpose <purpose> [--status <status>] [--proxy-port <port>] [--rcon-port <port>] [--db-port <port>] [--write]
+
+Notes:
+  - The registry is the single source of truth for active `dev-<scope>` leases.
+  - `allocate` defaults to dry-run unless `--write` is provided.
+  - `sync-env` rewrites `environments/dev/<scope>.env` from the registry row.
+  - Write operations lock `infra/leases/registry.lock` and fail closed if `flock` is unavailable.
+EOF
+}
+
+die() {
+  echo "mc-lease: $*" >&2
+  exit 1
+}
+
+warn() {
+  echo "mc-lease: $*" >&2
+}
+
+quote_sh() {
+  printf "%q" "$1"
+}
+
+trim_cr() {
+  printf '%s' "${1%$'\r'}"
+}
+
+is_valid_scope() {
+  [[ "$1" =~ ^[a-z0-9][a-z0-9-]*$ ]]
+}
+
+is_valid_status() {
+  case "$1" in
+    requested|allocated|active|closed|expired) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+is_active_status() {
+  case "$1" in
+    requested|allocated|active) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+is_port() {
+  [[ "$1" =~ ^[0-9]+$ ]] && (( "$1" >= 1 && "$1" <= 65535 ))
+}
+
+ensure_registry_file() {
+  mkdir -p "$REGISTRY_DIR"
+  if [[ ! -f "$REGISTRY_FILE" ]]; then
+    printf '%s\n' "$HEADER" >"$REGISTRY_FILE"
+  fi
+
+  local current_header
+  current_header="$(head -n 1 "$REGISTRY_FILE")"
+  [[ "$(trim_cr "$current_header")" == "$HEADER" ]] || die "unexpected registry header in $REGISTRY_FILE"
+}
+
+require_write_lock_support() {
+  command -v flock >/dev/null 2>&1 \
+    || die "write operations require flock on $LOCK_FILE; flock is not available"
+}
+
+with_registry_lock() {
+  local callback="$1"
+  local lock_fd
+  shift
+
+  require_write_lock_support
+  mkdir -p "$REGISTRY_DIR"
+  : >"$LOCK_FILE"
+  exec {lock_fd}>"$LOCK_FILE"
+  flock "$lock_fd"
+  "$callback" "$@"
+  flock -u "$lock_fd"
+  exec {lock_fd}>&-
+}
+
+expected_lease_id() {
+  printf 'dev-%s' "$1"
+}
+
+expected_compose_project() {
+  printf 'mc-dev-%s' "$1"
+}
+
+expected_env_file() {
+  printf 'environments/dev/%s.env' "$1"
+}
+
+expected_source_path() {
+  printf 'source/environments/dev/%s' "$1"
+}
+
+expected_runtime_path() {
+  printf 'runtime/dev-%s' "$1"
+}
+
+expected_log_path() {
+  printf 'runtime/dev-%s/logs' "$1"
+}
+
+expected_secret_path() {
+  printf 'runtime/dev-%s/secrets/runtime.env' "$1"
+}
+
+expected_db_name() {
+  printf 'mc_dev_%s' "${1//-/_}"
+}
+
+default_allowed_paths() {
+  local scope="$1"
+  printf '%s' "source/shared/proxy,source/environments/dev/$scope,environments/dev/$scope.env,runtime/dev-$scope"
+}
+
+default_forbidden_paths() {
+  printf '%s' "world,world_nether,world_the_end,plugins,docker,runtime/*/secrets"
+}
+
+default_allowed_channels() {
+  printf '%s' "docker-compose-config,logs,manual-qa"
+}
+
+default_required_channels() {
+  printf '%s' "docker-compose-config"
+}
+
+default_close_reclaim_protocol() {
+  local runtime_path="$1"
+  local log_path="$2"
+  local secret_path="$3"
+  local proxy_port="$4"
+  local rcon_port="$5"
+  local db_port="$6"
+
+  printf '%s' "Reclaim ports proxy=${proxy_port},rcon=${rcon_port},db=${db_port}; stop and remove any compose resources for this namespace before reuse; inspect or archive logs from ${log_path}; delete sandbox runtime at ${runtime_path}; delete or rotate secrets at ${secret_path}."
+}
+
+render_env_content() {
+  cat <<EOF
+# Managed by infra/bin/mc-lease from infra/leases/registry.tsv.
+MC_ENVIRONMENT=dev
+MC_SELECTOR=$LEASE_SCOPE
+MC_LEASE_ID=$LEASE_ID
+MC_LEASE_OWNER=$LEASE_OWNER
+MC_LEASE_PURPOSE=$LEASE_PURPOSE
+MC_LEASE_STATUS=$LEASE_STATUS
+MC_COMPOSE_PROJECT=$LEASE_COMPOSE_PROJECT
+MC_NAMESPACE=$LEASE_NAMESPACE
+MC_RUNTIME_PATH=$LEASE_RUNTIME_PATH
+MC_LOG_PATH=$LEASE_LOG_PATH
+MC_SECRET_PATH=$LEASE_SECRET_PATH
+MC_PUBLIC_PROXY_BIND=127.0.0.1
+MC_ADMIN_BIND=127.0.0.1
+MC_PUBLIC_PROXY_PORT=$LEASE_PROXY_PORT
+MC_DB_HOST_PORT=$LEASE_DB_PORT
+MC_RCON_HOST_PORT=$LEASE_RCON_PORT
+MC_MARIADB_DATABASE=$(expected_db_name "$LEASE_SCOPE")
+MC_MARIADB_USER=$(expected_db_name "$LEASE_SCOPE")
+MC_GAME_INIT_MEMORY=1G
+MC_GAME_MAX_MEMORY=2G
+MC_SOURCE_PROXY_DIR=source/shared/proxy
+MC_SOURCE_GAME_DIR=$LEASE_SOURCE_PATH
+EOF
+}
+
+load_lease_by_scope() {
+  local target_scope="$1"
+  local found=0
+
+  ensure_registry_file
+
+  while IFS=$'\t' read -r lease_id environment scope owner purpose status compose_project namespace env_file source_path runtime_path log_path secret_path proxy_port proxy_bind_policy rcon_port rcon_bind_policy db_port db_bind_policy allowed_paths forbidden_paths allowed_channels required_channels rollback_method close_reclaim_protocol; do
+    [[ -n "$lease_id" ]] || continue
+    [[ "$environment" == "dev" ]] || continue
+    [[ "$scope" == "$target_scope" ]] || continue
+    is_active_status "$status" || continue
+
+    found=$((found + 1))
+    LEASE_ID="$lease_id"
+    LEASE_ENVIRONMENT="$environment"
+    LEASE_SCOPE="$scope"
+    LEASE_OWNER="$owner"
+    LEASE_PURPOSE="$purpose"
+    LEASE_STATUS="$status"
+    LEASE_COMPOSE_PROJECT="$compose_project"
+    LEASE_NAMESPACE="$namespace"
+    LEASE_ENV_FILE="$env_file"
+    LEASE_SOURCE_PATH="$source_path"
+    LEASE_RUNTIME_PATH="$runtime_path"
+    LEASE_LOG_PATH="$log_path"
+    LEASE_SECRET_PATH="$secret_path"
+    LEASE_PROXY_PORT="$proxy_port"
+    LEASE_PROXY_BIND_POLICY="$proxy_bind_policy"
+    LEASE_RCON_PORT="$rcon_port"
+    LEASE_RCON_BIND_POLICY="$rcon_bind_policy"
+    LEASE_DB_PORT="$db_port"
+    LEASE_DB_BIND_POLICY="$db_bind_policy"
+    LEASE_ALLOWED_PATHS="$allowed_paths"
+    LEASE_FORBIDDEN_PATHS="$forbidden_paths"
+    LEASE_ALLOWED_CHANNELS="$allowed_channels"
+    LEASE_REQUIRED_CHANNELS="$required_channels"
+    LEASE_ROLLBACK_METHOD="$rollback_method"
+    LEASE_CLOSE_RECLAIM_PROTOCOL="$close_reclaim_protocol"
+  done < <(tail -n +2 "$REGISTRY_FILE")
+
+  (( found == 1 )) || die "expected exactly one active lease for scope '$target_scope', found $found"
+}
+
+verify_close_reclaim_protocol() {
+  local protocol="$1"
+  [[ "$protocol" == *port* ]] || die "close/reclaim protocol must mention ports"
+  [[ "$protocol" == *runtime* ]] || die "close/reclaim protocol must mention runtime"
+  [[ "$protocol" == *log* ]] || die "close/reclaim protocol must mention logs"
+  [[ "$protocol" == *secret* ]] || die "close/reclaim protocol must mention secrets"
+}
+
+collect_env_conflicts() {
+  local candidate_env_file="$1"
+  local candidate_namespace="$2"
+  local candidate_proxy_port="$3"
+  local candidate_rcon_port="$4"
+  local candidate_db_port="$5"
+  local candidate_scope="$6"
+  local file env_namespace env_proxy env_rcon env_db
+
+  while IFS= read -r file; do
+    case "$file" in
+      */template.env) continue ;;
+    esac
+    file="${file#$ROOT_DIR/}"
+    [[ "$file" == "$candidate_env_file" ]] && continue
+
+    env_namespace=""
+    env_proxy=""
+    env_rcon=""
+    env_db=""
+
+    while IFS='=' read -r key value; do
+      case "$key" in
+        MC_NAMESPACE) env_namespace="$value" ;;
+        MC_PUBLIC_PROXY_PORT) env_proxy="$value" ;;
+        MC_RCON_HOST_PORT) env_rcon="$value" ;;
+        MC_DB_HOST_PORT) env_db="$value" ;;
+      esac
+    done <"$ROOT_DIR/$file"
+
+    [[ -n "$env_namespace" && "$env_namespace" == "$candidate_namespace" ]] \
+      && die "namespace collision: '$candidate_namespace' also declared in $file"
+    [[ -n "$env_proxy" && "$env_proxy" == "$candidate_proxy_port" ]] \
+      && die "proxy port collision: $candidate_proxy_port also declared in $file"
+    [[ -n "$env_rcon" && "$env_rcon" == "$candidate_rcon_port" ]] \
+      && die "rcon port collision: $candidate_rcon_port also declared in $file"
+    [[ -n "$env_db" && "$env_db" == "$candidate_db_port" ]] \
+      && die "db port collision: $candidate_db_port also declared in $file"
+  done < <(find "$ROOT_DIR/environments" -type f -name '*.env' | sort)
+
+  [[ "$candidate_env_file" == "$(expected_env_file "$candidate_scope")" ]] \
+    || die "scope '$candidate_scope' must resolve to $(expected_env_file "$candidate_scope"), got $candidate_env_file"
+}
+
+verify_row_collisions() {
+  local expected_scope="$1"
+  local ignore_lease_id="${2:-}"
+  local found_scope=0
+
+  while IFS=$'\t' read -r lease_id environment scope owner purpose status compose_project namespace env_file source_path runtime_path log_path secret_path proxy_port proxy_bind_policy rcon_port rcon_bind_policy db_port db_bind_policy allowed_paths forbidden_paths allowed_channels required_channels rollback_method close_reclaim_protocol; do
+    [[ -n "$lease_id" ]] || continue
+    is_active_status "$status" || continue
+    [[ "$lease_id" == "$ignore_lease_id" ]] && continue
+
+    [[ "$scope" == "$expected_scope" ]] && found_scope=$((found_scope + 1))
+    [[ "$LEASE_ID" == "$lease_id" ]] && die "lease id collision: $LEASE_ID already exists"
+    [[ "$LEASE_SCOPE" == "$scope" ]] && die "scope collision: dev-$LEASE_SCOPE already exists"
+    [[ "$LEASE_COMPOSE_PROJECT" == "$compose_project" ]] && die "compose project collision: $LEASE_COMPOSE_PROJECT already exists"
+    [[ "$LEASE_NAMESPACE" == "$namespace" ]] && die "namespace collision: $LEASE_NAMESPACE already exists"
+    [[ "$LEASE_ENV_FILE" == "$env_file" ]] && die "env file collision: $LEASE_ENV_FILE already exists"
+    [[ "$LEASE_SOURCE_PATH" == "$source_path" ]] && die "source path collision: $LEASE_SOURCE_PATH already exists"
+    [[ "$LEASE_RUNTIME_PATH" == "$runtime_path" ]] && die "runtime path collision: $LEASE_RUNTIME_PATH already exists"
+    [[ "$LEASE_SECRET_PATH" == "$secret_path" ]] && die "secret path collision: $LEASE_SECRET_PATH already exists"
+    [[ "$LEASE_PROXY_PORT" == "$proxy_port" ]] && die "proxy port collision: $LEASE_PROXY_PORT already exists"
+    [[ "$LEASE_RCON_PORT" == "$rcon_port" ]] && die "rcon port collision: $LEASE_RCON_PORT already exists"
+    [[ "$LEASE_DB_PORT" == "$db_port" ]] && die "db port collision: $LEASE_DB_PORT already exists"
+  done < <(tail -n +2 "$REGISTRY_FILE")
+
+  (( found_scope == 0 )) || die "registry already contains active lease for scope '$expected_scope'"
+  collect_env_conflicts "$LEASE_ENV_FILE" "$LEASE_NAMESPACE" "$LEASE_PROXY_PORT" "$LEASE_RCON_PORT" "$LEASE_DB_PORT" "$LEASE_SCOPE"
+}
+
+validate_loaded_lease() {
+  is_valid_scope "$LEASE_SCOPE" || die "invalid scope '$LEASE_SCOPE'"
+  is_valid_status "$LEASE_STATUS" || die "invalid status '$LEASE_STATUS' for $LEASE_ID"
+  [[ "$LEASE_ENVIRONMENT" == "dev" ]] || die "lease '$LEASE_ID' must target environment dev"
+  [[ "$LEASE_ID" == "$(expected_lease_id "$LEASE_SCOPE")" ]] || die "lease_id mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_COMPOSE_PROJECT" == "$(expected_compose_project "$LEASE_SCOPE")" ]] || die "compose_project mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_NAMESPACE" == "$LEASE_COMPOSE_PROJECT" ]] || die "namespace must equal compose_project for $LEASE_ID"
+  [[ "$LEASE_ENV_FILE" == "$(expected_env_file "$LEASE_SCOPE")" ]] || die "env_file mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_SOURCE_PATH" == "$(expected_source_path "$LEASE_SCOPE")" ]] || die "source_path mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_RUNTIME_PATH" == "$(expected_runtime_path "$LEASE_SCOPE")" ]] || die "runtime_path mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_LOG_PATH" == "$(expected_log_path "$LEASE_SCOPE")" ]] || die "log_path mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_SECRET_PATH" == "$(expected_secret_path "$LEASE_SCOPE")" ]] || die "secret_path mismatch for scope '$LEASE_SCOPE'"
+  [[ "$LEASE_PROXY_BIND_POLICY" == "loopback-only" ]] || die "proxy bind policy must be loopback-only for $LEASE_ID"
+  [[ "$LEASE_RCON_BIND_POLICY" == "loopback-only" ]] || die "rcon bind policy must be loopback-only for $LEASE_ID"
+  [[ "$LEASE_DB_BIND_POLICY" == "loopback-only" ]] || die "db bind policy must be loopback-only for $LEASE_ID"
+  is_port "$LEASE_PROXY_PORT" || die "invalid proxy port '$LEASE_PROXY_PORT' for $LEASE_ID"
+  is_port "$LEASE_RCON_PORT" || die "invalid rcon port '$LEASE_RCON_PORT' for $LEASE_ID"
+  is_port "$LEASE_DB_PORT" || die "invalid db port '$LEASE_DB_PORT' for $LEASE_ID"
+  [[ "$LEASE_PROXY_PORT" != "25565" ]] || die "proxy port 25565 is forbidden for dev leases"
+  [[ -n "$LEASE_OWNER" ]] || die "owner is required for $LEASE_ID"
+  [[ -n "$LEASE_PURPOSE" ]] || die "purpose is required for $LEASE_ID"
+  [[ -n "$LEASE_ALLOWED_PATHS" ]] || die "allowed_paths is required for $LEASE_ID"
+  [[ -n "$LEASE_FORBIDDEN_PATHS" ]] || die "forbidden_paths is required for $LEASE_ID"
+  [[ -n "$LEASE_ALLOWED_CHANNELS" ]] || die "allowed validation channels are required for $LEASE_ID"
+  [[ -n "$LEASE_REQUIRED_CHANNELS" ]] || die "required validation channels are required for $LEASE_ID"
+  [[ -n "$LEASE_ROLLBACK_METHOD" ]] || die "rollback method is required for $LEASE_ID"
+  verify_close_reclaim_protocol "$LEASE_CLOSE_RECLAIM_PROTOCOL"
+}
+
+verify_env_file_matches_registry() {
+  local expected_file="$ROOT_DIR/$LEASE_ENV_FILE"
+  local tmp_file
+
+  [[ -f "$expected_file" ]] || die "missing env file for $LEASE_ID: $expected_file"
+
+  tmp_file="$(mktemp)"
+  trap 'rm -f "$tmp_file"' RETURN
+  render_env_content >"$tmp_file"
+
+  if ! cmp -s "$tmp_file" "$expected_file"; then
+    die "env file drift for $LEASE_ID at $expected_file; run 'infra/bin/mc-lease sync-env $LEASE_SCOPE'"
+  fi
+
+  rm -f "$tmp_file"
+  trap - RETURN
+}
+
+pick_free_port() {
+  local start="$1"
+  local end="$2"
+  local reserved_csv="$3"
+  local port
+
+  for ((port = start; port <= end; port++)); do
+    case ",$reserved_csv," in
+      *,"$port",*) continue ;;
+    esac
+    printf '%s\n' "$port"
+    return 0
+  done
+
+  return 1
+}
+
+collect_reserved_ports() {
+  local values=()
+  local file key value
+
+  ensure_registry_file
+
+  while IFS=$'\t' read -r lease_id environment scope owner purpose status compose_project namespace env_file source_path runtime_path log_path secret_path proxy_port proxy_bind_policy rcon_port rcon_bind_policy db_port db_bind_policy allowed_paths forbidden_paths allowed_channels required_channels rollback_method close_reclaim_protocol; do
+    [[ -n "$lease_id" ]] || continue
+    is_active_status "$status" || continue
+    values+=("$proxy_port" "$rcon_port" "$db_port")
+  done < <(tail -n +2 "$REGISTRY_FILE")
+
+  while IFS= read -r file; do
+    case "$file" in
+      */template.env) continue ;;
+    esac
+    while IFS='=' read -r key value; do
+      case "$key" in
+        MC_PUBLIC_PROXY_PORT|MC_RCON_HOST_PORT|MC_DB_HOST_PORT)
+          values+=("$value")
+          ;;
+      esac
+    done <"$file"
+  done < <(find "$ROOT_DIR/environments" -type f -name '*.env' | sort)
+
+  (IFS=,; printf '%s\n' "${values[*]}")
+}
+
+prepare_proposed_lease() {
+  local scope="$1"
+  local owner="$2"
+  local purpose="$3"
+  local status="$4"
+  local proxy_port="$5"
+  local rcon_port="$6"
+  local db_port="$7"
+
+  LEASE_ID="$(expected_lease_id "$scope")"
+  LEASE_ENVIRONMENT="dev"
+  LEASE_SCOPE="$scope"
+  LEASE_OWNER="$owner"
+  LEASE_PURPOSE="$purpose"
+  LEASE_STATUS="$status"
+  LEASE_COMPOSE_PROJECT="$(expected_compose_project "$scope")"
+  LEASE_NAMESPACE="$LEASE_COMPOSE_PROJECT"
+  LEASE_ENV_FILE="$(expected_env_file "$scope")"
+  LEASE_SOURCE_PATH="$(expected_source_path "$scope")"
+  LEASE_RUNTIME_PATH="$(expected_runtime_path "$scope")"
+  LEASE_LOG_PATH="$(expected_log_path "$scope")"
+  LEASE_SECRET_PATH="$(expected_secret_path "$scope")"
+  LEASE_PROXY_PORT="$proxy_port"
+  LEASE_PROXY_BIND_POLICY="loopback-only"
+  LEASE_RCON_PORT="$rcon_port"
+  LEASE_RCON_BIND_POLICY="loopback-only"
+  LEASE_DB_PORT="$db_port"
+  LEASE_DB_BIND_POLICY="loopback-only"
+  LEASE_ALLOWED_PATHS="$(default_allowed_paths "$scope")"
+  LEASE_FORBIDDEN_PATHS="$(default_forbidden_paths)"
+  LEASE_ALLOWED_CHANNELS="$(default_allowed_channels)"
+  LEASE_REQUIRED_CHANNELS="$(default_required_channels)"
+  LEASE_ROLLBACK_METHOD="git-revert+sandbox-reset"
+  LEASE_CLOSE_RECLAIM_PROTOCOL="$(default_close_reclaim_protocol "$LEASE_RUNTIME_PATH" "$LEASE_LOG_PATH" "$LEASE_SECRET_PATH" "$LEASE_PROXY_PORT" "$LEASE_RCON_PORT" "$LEASE_DB_PORT")"
+}
+
+registry_row() {
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$LEASE_ID" \
+    "$LEASE_ENVIRONMENT" \
+    "$LEASE_SCOPE" \
+    "$LEASE_OWNER" \
+    "$LEASE_PURPOSE" \
+    "$LEASE_STATUS" \
+    "$LEASE_COMPOSE_PROJECT" \
+    "$LEASE_NAMESPACE" \
+    "$LEASE_ENV_FILE" \
+    "$LEASE_SOURCE_PATH" \
+    "$LEASE_RUNTIME_PATH" \
+    "$LEASE_LOG_PATH" \
+    "$LEASE_SECRET_PATH" \
+    "$LEASE_PROXY_PORT" \
+    "$LEASE_PROXY_BIND_POLICY" \
+    "$LEASE_RCON_PORT" \
+    "$LEASE_RCON_BIND_POLICY" \
+    "$LEASE_DB_PORT" \
+    "$LEASE_DB_BIND_POLICY" \
+    "$LEASE_ALLOWED_PATHS" \
+    "$LEASE_FORBIDDEN_PATHS" \
+    "$LEASE_ALLOWED_CHANNELS" \
+    "$LEASE_REQUIRED_CHANNELS" \
+    "$LEASE_ROLLBACK_METHOD" \
+    "$LEASE_CLOSE_RECLAIM_PROTOCOL"
+}
+
+write_env_file() {
+  local env_file="$ROOT_DIR/$LEASE_ENV_FILE"
+  local env_dir
+  local tmp_file
+
+  env_dir="$(dirname "$env_file")"
+  mkdir -p "$env_dir"
+  tmp_file="$(mktemp "$env_dir/.${LEASE_SCOPE}.env.tmp.XXXXXX")"
+  trap 'rm -f "$tmp_file"' RETURN
+  render_env_content >"$tmp_file"
+  mv "$tmp_file" "$env_file"
+  rm -f "$tmp_file"
+  trap - RETURN
+}
+
+command_validate() {
+  local active_scope
+
+  ensure_registry_file
+
+  while IFS=$'\t' read -r lease_id environment scope owner purpose status compose_project namespace env_file source_path runtime_path log_path secret_path proxy_port proxy_bind_policy rcon_port rcon_bind_policy db_port db_bind_policy allowed_paths forbidden_paths allowed_channels required_channels rollback_method close_reclaim_protocol; do
+    [[ -n "$lease_id" ]] || continue
+    LEASE_ID="$lease_id"
+    LEASE_ENVIRONMENT="$environment"
+    LEASE_SCOPE="$scope"
+    LEASE_OWNER="$owner"
+    LEASE_PURPOSE="$purpose"
+    LEASE_STATUS="$status"
+    LEASE_COMPOSE_PROJECT="$compose_project"
+    LEASE_NAMESPACE="$namespace"
+    LEASE_ENV_FILE="$env_file"
+    LEASE_SOURCE_PATH="$source_path"
+    LEASE_RUNTIME_PATH="$runtime_path"
+    LEASE_LOG_PATH="$log_path"
+    LEASE_SECRET_PATH="$secret_path"
+    LEASE_PROXY_PORT="$proxy_port"
+    LEASE_PROXY_BIND_POLICY="$proxy_bind_policy"
+    LEASE_RCON_PORT="$rcon_port"
+    LEASE_RCON_BIND_POLICY="$rcon_bind_policy"
+    LEASE_DB_PORT="$db_port"
+    LEASE_DB_BIND_POLICY="$db_bind_policy"
+    LEASE_ALLOWED_PATHS="$allowed_paths"
+    LEASE_FORBIDDEN_PATHS="$forbidden_paths"
+    LEASE_ALLOWED_CHANNELS="$allowed_channels"
+    LEASE_REQUIRED_CHANNELS="$required_channels"
+    LEASE_ROLLBACK_METHOD="$rollback_method"
+    LEASE_CLOSE_RECLAIM_PROTOCOL="$close_reclaim_protocol"
+
+    validate_loaded_lease
+    if is_active_status "$LEASE_STATUS"; then
+      verify_env_file_matches_registry
+      active_scope="$LEASE_SCOPE"
+      verify_row_collisions "$active_scope" "$LEASE_ID"
+    fi
+  done < <(tail -n +2 "$REGISTRY_FILE")
+
+  echo "mc-lease: registry is valid"
+}
+
+command_show() {
+  load_lease_by_scope "$1"
+  validate_loaded_lease
+
+  cat <<EOF
+lease_id: $LEASE_ID
+owner: $LEASE_OWNER
+purpose: $LEASE_PURPOSE
+status: $LEASE_STATUS
+compose_project: $LEASE_COMPOSE_PROJECT
+namespace: $LEASE_NAMESPACE
+env_file: $LEASE_ENV_FILE
+source_path: $LEASE_SOURCE_PATH
+runtime_path: $LEASE_RUNTIME_PATH
+log_path: $LEASE_LOG_PATH
+secret_path: $LEASE_SECRET_PATH
+proxy_port: $LEASE_PROXY_PORT ($LEASE_PROXY_BIND_POLICY)
+rcon_port: $LEASE_RCON_PORT ($LEASE_RCON_BIND_POLICY)
+db_port: $LEASE_DB_PORT ($LEASE_DB_BIND_POLICY)
+allowed_paths: $LEASE_ALLOWED_PATHS
+forbidden_paths: $LEASE_FORBIDDEN_PATHS
+allowed_validation_channels: $LEASE_ALLOWED_CHANNELS
+required_validation_channels: $LEASE_REQUIRED_CHANNELS
+rollback_method: $LEASE_ROLLBACK_METHOD
+close_reclaim_protocol: $LEASE_CLOSE_RECLAIM_PROTOCOL
+EOF
+}
+
+command_export_env() {
+  load_lease_by_scope "$1"
+  validate_loaded_lease
+  verify_env_file_matches_registry
+  collect_env_conflicts "$LEASE_ENV_FILE" "$LEASE_NAMESPACE" "$LEASE_PROXY_PORT" "$LEASE_RCON_PORT" "$LEASE_DB_PORT" "$LEASE_SCOPE"
+
+  cat <<EOF
+export MC_ENVIRONMENT=$(quote_sh "$LEASE_ENVIRONMENT")
+export MC_SELECTOR=$(quote_sh "$LEASE_SCOPE")
+export MC_STACK_SLUG=$(quote_sh "$LEASE_ID")
+export MC_LEASE_ID=$(quote_sh "$LEASE_ID")
+export MC_LEASE_OWNER=$(quote_sh "$LEASE_OWNER")
+export MC_LEASE_PURPOSE=$(quote_sh "$LEASE_PURPOSE")
+export MC_LEASE_STATUS=$(quote_sh "$LEASE_STATUS")
+export MC_COMPOSE_PROJECT=$(quote_sh "$LEASE_COMPOSE_PROJECT")
+export MC_NAMESPACE=$(quote_sh "$LEASE_NAMESPACE")
+export MC_DEFINITION_FILE=$(quote_sh "$ROOT_DIR/$LEASE_ENV_FILE")
+export MC_SOURCE_PROXY_DIR=$(quote_sh "source/shared/proxy")
+export MC_SOURCE_GAME_DIR=$(quote_sh "$LEASE_SOURCE_PATH")
+export MC_SOURCE_PROXY_DIR_ABS=$(quote_sh "$ROOT_DIR/source/shared/proxy")
+export MC_SOURCE_GAME_DIR_ABS=$(quote_sh "$ROOT_DIR/$LEASE_SOURCE_PATH")
+export MC_RUNTIME_PATH=$(quote_sh "$LEASE_RUNTIME_PATH")
+export MC_RUNTIME_ROOT=$(quote_sh "$ROOT_DIR/$LEASE_RUNTIME_PATH")
+export MC_LOG_PATH=$(quote_sh "$LEASE_LOG_PATH")
+export MC_LOG_ROOT=$(quote_sh "$ROOT_DIR/$LEASE_LOG_PATH")
+export MC_SECRET_PATH=$(quote_sh "$LEASE_SECRET_PATH")
+export MC_SECRET_ENV_FILE=$(quote_sh "$ROOT_DIR/$LEASE_SECRET_PATH")
+export MC_PUBLIC_PROXY_BIND=$(quote_sh "127.0.0.1")
+export MC_ADMIN_BIND=$(quote_sh "127.0.0.1")
+export MC_PUBLIC_PROXY_PORT=$(quote_sh "$LEASE_PROXY_PORT")
+export MC_RCON_HOST_PORT=$(quote_sh "$LEASE_RCON_PORT")
+export MC_DB_HOST_PORT=$(quote_sh "$LEASE_DB_PORT")
+export MC_MARIADB_DATABASE=$(quote_sh "$(expected_db_name "$LEASE_SCOPE")")
+export MC_MARIADB_USER=$(quote_sh "$(expected_db_name "$LEASE_SCOPE")")
+export MC_ALLOWED_PATHS=$(quote_sh "$LEASE_ALLOWED_PATHS")
+export MC_FORBIDDEN_PATHS=$(quote_sh "$LEASE_FORBIDDEN_PATHS")
+export MC_ALLOWED_VALIDATION_CHANNELS=$(quote_sh "$LEASE_ALLOWED_CHANNELS")
+export MC_REQUIRED_VALIDATION_CHANNELS=$(quote_sh "$LEASE_REQUIRED_CHANNELS")
+export MC_ROLLBACK_METHOD=$(quote_sh "$LEASE_ROLLBACK_METHOD")
+export MC_CLOSE_RECLAIM_PROTOCOL=$(quote_sh "$LEASE_CLOSE_RECLAIM_PROTOCOL")
+EOF
+}
+
+command_sync_env_locked() {
+  load_lease_by_scope "$1"
+  validate_loaded_lease
+  write_env_file
+  echo "mc-lease: wrote $LEASE_ENV_FILE"
+}
+
+command_sync_env() {
+  with_registry_lock command_sync_env_locked "$1"
+}
+
+perform_allocate() {
+  local scope="$1"
+  local owner="$2"
+  local purpose="$3"
+  local status="$4"
+  local proxy_port="$5"
+  local rcon_port="$6"
+  local db_port="$7"
+  local reserved_ports
+
+  ensure_registry_file
+  reserved_ports="$(collect_reserved_ports)"
+  proxy_port="${proxy_port:-$(pick_free_port 25566 25599 "$reserved_ports")}" || die "no free proxy ports available"
+  rcon_port="${rcon_port:-$(pick_free_port 25576 25619 "$reserved_ports")}" || die "no free rcon ports available"
+  db_port="${db_port:-$(pick_free_port 23316 23399 "$reserved_ports")}" || die "no free db ports available"
+
+  prepare_proposed_lease "$scope" "$owner" "$purpose" "$status" "$proxy_port" "$rcon_port" "$db_port"
+  validate_loaded_lease
+  verify_row_collisions "$scope"
+}
+
+command_allocate_locked() {
+  perform_allocate "$@"
+  printf '%s\n' "$(registry_row)" >>"$REGISTRY_FILE"
+  write_env_file
+  echo "mc-lease: allocated $LEASE_ID"
+}
+
+command_allocate() {
+  local scope=""
+  local owner=""
+  local purpose=""
+  local status="allocated"
+  local proxy_port=""
+  local rcon_port=""
+  local db_port=""
+  local write_mode="no"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --scope) scope="${2:-}"; shift 2 ;;
+      --owner) owner="${2:-}"; shift 2 ;;
+      --purpose) purpose="${2:-}"; shift 2 ;;
+      --status) status="${2:-}"; shift 2 ;;
+      --proxy-port) proxy_port="${2:-}"; shift 2 ;;
+      --rcon-port) rcon_port="${2:-}"; shift 2 ;;
+      --db-port) db_port="${2:-}"; shift 2 ;;
+      --write) write_mode="yes"; shift ;;
+      --dry-run) write_mode="no"; shift ;;
+      *) die "unknown allocate option '$1'" ;;
+    esac
+  done
+
+  is_valid_scope "$scope" || die "allocate requires a valid --scope"
+  [[ -n "$owner" ]] || die "allocate requires --owner"
+  [[ -n "$purpose" ]] || die "allocate requires --purpose"
+  is_valid_status "$status" || die "invalid --status '$status'"
+
+  if [[ "$write_mode" == "yes" ]]; then
+    with_registry_lock command_allocate_locked "$scope" "$owner" "$purpose" "$status" "$proxy_port" "$rcon_port" "$db_port"
+    return
+  fi
+
+  perform_allocate "$scope" "$owner" "$purpose" "$status" "$proxy_port" "$rcon_port" "$db_port"
+
+  cat <<EOF
+dry_run: true
+lease_id: $LEASE_ID
+scope: $LEASE_SCOPE
+status: $LEASE_STATUS
+compose_project: $LEASE_COMPOSE_PROJECT
+namespace: $LEASE_NAMESPACE
+env_file: $LEASE_ENV_FILE
+source_path: $LEASE_SOURCE_PATH
+runtime_path: $LEASE_RUNTIME_PATH
+log_path: $LEASE_LOG_PATH
+secret_path: $LEASE_SECRET_PATH
+proxy_port: $LEASE_PROXY_PORT ($LEASE_PROXY_BIND_POLICY)
+rcon_port: $LEASE_RCON_PORT ($LEASE_RCON_BIND_POLICY)
+db_port: $LEASE_DB_PORT ($LEASE_DB_BIND_POLICY)
+allowed_paths: $LEASE_ALLOWED_PATHS
+forbidden_paths: $LEASE_FORBIDDEN_PATHS
+allowed_validation_channels: $LEASE_ALLOWED_CHANNELS
+required_validation_channels: $LEASE_REQUIRED_CHANNELS
+rollback_method: $LEASE_ROLLBACK_METHOD
+close_reclaim_protocol: $LEASE_CLOSE_RECLAIM_PROTOCOL
+EOF
+}
+
+main() {
+  local command="${1:-}"
+  [[ -n "$command" ]] || {
+    usage
+    exit 1
+  }
+  shift || true
+
+  case "$command" in
+    validate)
+      [[ $# -eq 0 ]] || die "validate does not accept arguments"
+      command_validate
+      ;;
+    show)
+      [[ $# -eq 1 ]] || die "show requires <scope>"
+      command_show "$1"
+      ;;
+    export-env)
+      [[ $# -eq 1 ]] || die "export-env requires <scope>"
+      command_export_env "$1"
+      ;;
+    sync-env)
+      [[ $# -eq 1 ]] || die "sync-env requires <scope>"
+      command_sync_env "$1"
+      ;;
+    allocate)
+      command_allocate "$@"
+      ;;
+    *)
+      usage
+      die "unsupported command '$command'"
+      ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,18 @@
+resourcepack_namespace: dr001
+models:
+  block:
+    dr001_rune_cracked_stone: block/rune_cracked_stone
+    dr001_ancient_moss_panel: block/ancient_moss_panel
+    dr001_cursed_water_grate: block/cursed_water_grate
+    dr001_void_rune_block: block/void_rune_block
+    dr001_broken_crown_ornament: block/broken_crown_ornament
+  furniture:
+    dr001_void_anchor: furniture/void_anchor
+    dr001_rune_pedestal: furniture/rune_pedestal
+    dr001_broken_king_statue: furniture/broken_king_statue
+    dr001_soul_censer: furniture/soul_censer
+    dr001_loot_shrine: furniture/loot_shrine
+  item:
+    dr001_ruined_gate_key: item/ruined_gate_key
+    dr001_relic_shard: item/relic_shard
+    dr001_cleansing_draught: item/cleansing_draught

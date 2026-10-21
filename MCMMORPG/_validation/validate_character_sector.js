@@ -31,7 +31,10 @@ const files = {
   firstContractMenu: 'plugins/CoreTools/MenuCreator/foundation_first_contract.yml',
   storageMenu: 'plugins/CoreTools/MenuCreator/foundation_storage.yml',
   nexusMenu: 'plugins/DeluxeMenus/gui_menus/foundation_nexus.yml',
-  scripts: 'plugins/CoreTools/Scripts/foundation_character_flow.yml',
+  scripts: [
+    'plugins/CoreTools/Scripts/foundation_character_flow.yml',
+    'plugins/CoreTools/Scripts/foundation_character_creator_v2.yml',
+  ],
   variables: 'plugins/CoreTools/Variables/foundation_character.yml',
   inventory: 'plugins/MMOInventory/inventory/default_mmoinventory.yml',
   permissions: 'permissions.yml',
@@ -419,14 +422,18 @@ function materialSources(loaded) {
   return sources;
 }
 
-const loaded = Object.fromEntries(Object.entries(files).map(([key, rel]) => [key, exists(rel) ? read(rel) : '']));
+const loaded = Object.fromEntries(Object.entries(files).map(([key, rel]) => [
+  key,
+  Array.isArray(rel) ? rel.map(item => exists(item) ? read(item) : '').join('\n') : (exists(rel) ? read(rel) : ''),
+]));
 const itemTexts = Object.fromEntries(Object.entries(typeFiles).map(([type, rel]) => [type, read(rel)]));
 const checks = [];
 const creatorMenuTexts = Object.entries(files)
   .filter(([key, rel]) => key.endsWith('Menu') && rel.includes('plugins/CoreTools/MenuCreator/'))
   .map(([key]) => ({ key, text: loaded[key] }));
 
-const missingRequiredFiles = Object.entries(files).filter(([, rel]) => !exists(rel)).map(([, rel]) => rel);
+const missingRequiredFiles = Object.entries(files)
+  .flatMap(([, rel]) => Array.isArray(rel) ? rel.filter(item => !exists(item)) : (!exists(rel) ? [rel] : []));
 checks.push(missingRequiredFiles.length
   ? fail('character-sector required files are missing', { missingRequiredFiles })
   : pass('character-sector required files exist', { count: Object.keys(files).length }));

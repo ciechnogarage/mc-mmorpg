@@ -1,0 +1,61 @@
+menu_title: '&8✦ &6&lKOMPANI &8✦'
+size: 27
+open_command:
+  - companionpanel
+items:
+  tank_t1:
+    material: WOLF_SPAWN_EGG
+    slot: 11
+    display_name: '&6&lStrażnik Przysięgi'
+    lore:
+      - '&7Tank · Tier I'
+      - '&7Wysokie zdrowie i obrona.'
+      - ''
+      - '&aOdblokowany domyślnie'
+      - '&eKliknij, aby przywołać.'
+    left_click_commands:
+      - '[player] companion summon companion.tank.tier1'
+      - '[sound] ENTITY_WOLF_AMBIENT'
+  archer_preview:
+    material: BOW
+    slot: 13
+    display_name: '&8Łucznik · Tier I'
+    lore:
+      - '&7Dystansowy kompan.'
+      - ''
+      - '&8Zablokowany — kolejna transza.'
+  healer_preview:
+    material: GLISTERING_MELON_SLICE
+    slot: 15
+    display_name: '&8Uzdrowiciel · Tier I'
+    lore:
+      - '&7Wsparcie właściciela.'
+      - ''
+      - '&8Zablokowany — kolejna transza.'
+  follow:
+    material: LEAD
+    slot: 20
+    display_name: '&aTryb: FOLLOW'
+    lore:
+      - '&7Podąża za właścicielem.'
+      - '&eKliknij, aby ustawić.'
+    left_click_commands:
+      - '[player] companion mode follow'
+      - '[sound] UI_BUTTON_CLICK'
+  dismiss:
+    material: BARRIER
+    slot: 22
+    display_name: '&cOdwołaj kompana'
+    lore:
+      - '&7Usuwa aktywną encję.'
+      - '&7Wybór postaci pozostaje zapisany.'
+    left_click_commands:
+      - '[player] companion dismiss'
+      - '[sound] ENTITY_WOLF_WHINE'
+  back:
+    material: COMPASS
+    slot: 26
+    display_name: '&ePowrót do Nexusu'
+    left_click_commands:
+      - '[player] foundation'
+      - '[close]'

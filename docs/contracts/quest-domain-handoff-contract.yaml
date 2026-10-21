@@ -1,0 +1,262 @@
+contract:
+  id: quest-domain-handoff-v1
+  version: 1
+  contract_status: accepted
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "08"
+  contract_owner: "08"
+  purpose:
+    - close the Domain 06 to 08 world-fact and objective-credit boundary
+    - close the Domain 08 to 10 reward-entitlement boundary
+    - define Domain 14 as a presentation consumer without write authority
+    - keep quest completion durable and reward delivery idempotent across retries and restarts
+  resolves_product_question: PRODUCT-QUESTION-001
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/quest-state-contract.yaml
+    - docs/contracts/reward-contract.yaml
+    - docs/contracts/reward-transaction-contract.yaml
+    - docs/contracts/world-progression-contract.yaml
+
+authority:
+  world_fact_semantics: "06"
+  quest_definition_and_state: "08"
+  objective_credit_decision: "08"
+  reward_entitlement_decision: "08"
+  reward_policy_and_valuation: "10"
+  reward_transaction_coordination: "01"
+  player_facing_projection: "14"
+  release_evidence: "17"
+  forbidden_authority_claims:
+    - Domain 06 must not mark a quest objective or quest run complete.
+    - Domain 08 must not mutate item, currency, or reputation balances directly.
+    - Domain 10 must not reinterpret whether a quest objective or run completed.
+    - Domain 14 must not write quest state, objective credit, entitlement, or reward receipts.
+
+identity:
+  subject:
+    key: character_id
+    contract_ref: docs/contracts/account-character-contract.yaml
+  quest_definition:
+    key: [quest_id, quest_version]
+    authority: Domain08QuestService
+  quest_run:
+    key: quest_run_id
+    type: uuid
+    authority: Domain08QuestService
+    uniqueness_scope: one accepted occurrence of a quest for one character
+  objective:
+    key: [quest_id, quest_version, objective_id]
+    authority: Domain08QuestService
+  world_fact:
+    key: world_fact_id
+    type: uuid_or_stable_source_event_id
+    authority: Domain06WorldFactPublisher
+  objective_credit:
+    key: objective_credit_id
+    type: uuid
+    authority: Domain08QuestService
+    replay_fence: [character_id, quest_run_id, objective_id, world_fact_id]
+  reward_entitlement:
+    key: reward_entitlement_id
+    type: uuid
+    authority: Domain08QuestService
+    replay_fence: [character_id, quest_run_id, reward_policy_ref]
+
+world_fact_handoff:
+  producer: Domain06WorldFactPublisher
+  consumer: Domain08QuestService
+  delivery_semantics: at_least_once
+  consumer_must_be_idempotent: true
+  ordering_guarantee: none_across_sources
+  required_envelope:
+    schema_version: integer
+    world_fact_id: uuid_or_stable_source_event_id
+    fact_type: string
+    fact_revision: string
+    occurred_at: iso8601
+    source_system: string
+    source_instance_id: string_or_null
+    actor_character_id: string_or_null
+    participant_character_ids: []
+    world_context:
+      island_id: string_or_null
+      region_id: string_or_null
+      dungeon_sector_id: string_or_null
+      floor_id: string_or_null
+      encounter_instance_id: string_or_null
+    fact_payload: {}
+  minimum_fact_types:
+    - LOCATION_ENTERED
+    - ENTITY_DEFEATED
+    - OBJECT_USED
+    - AREA_DEFENDED
+    - ENCOUNTER_STATE_REACHED
+    - WORLD_ITEM_COLLECTED
+  producer_rules:
+    - Publish only an observed world fact and its eligible actor or participant context.
+    - Do not include quest_id, objective_id, credit amount, or completion status as authoritative fields.
+    - Preserve the same world_fact_id when retrying the same observed fact.
+  consumer_rules:
+    - Resolve active quest runs and objective definitions inside Domain 08.
+    - Validate character eligibility, quest version, party-credit rule, and objective predicate before credit.
+    - Record at most one credit for one replay-fence tuple.
+    - One world fact may credit multiple different objectives only when each objective independently matches.
+    - An inactive or unmatched quest produces no state mutation and is not an error.
+
+objective_credit_record:
+  objective_credit_id: uuid
+  character_id: string
+  quest_run_id: uuid
+  quest_id: string
+  quest_version: integer
+  objective_id: string
+  world_fact_id: uuid_or_stable_source_event_id
+  credit_delta: positive_integer
+  resulting_progress: non_negative_integer
+  objective_completed: true_or_false
+  credited_at: iso8601
+  credit_policy_revision: string
+
+quest_completion_and_entitlement:
+  completion_writer: Domain08QuestService
+  atomic_boundary:
+    - persist final objective credit
+    - persist resulting quest-run status
+    - persist reward entitlement or an outbox record for it
+  reward_entitlement_shape:
+    reward_entitlement_id: uuid
+    character_id: string
+    quest_run_id: uuid
+    quest_id: string
+    quest_version: integer
+    reward_policy_ref: string
+    reward_policy_revision: string
+    source_context:
+      source_type: QUEST_COMPLETION
+      source_id: quest_run_id
+      source_revision: quest_version
+    entitlement_status: PENDING|SUBMITTED|SETTLED|RETRYABLE_FAILURE|MANUAL_REVIEW
+    created_at: iso8601
+    reward_transaction_id: uuid_or_null
+  rules:
+    - Domain 08 decides that the character earned the declared reward entitlement.
+    - Domain 10 owns reward contents, valuation, caps, sinks, and anti-inflation policy behind reward_policy_ref.
+    - The same quest run and reward policy revision must not create a second entitlement.
+    - Quest completion may remain durable while reward delivery is pending.
+    - A quest is not marked reward-settled until a committed transaction receipt is recorded.
+
+reward_handoff:
+  producer: Domain08QuestService
+  policy_consumer: Domain10EconomyPolicy
+  transaction_consumer: Domain01RewardTransactionCoordinator
+  transaction_contract_ref: docs/contracts/reward-transaction-contract.yaml
+  grant_contract_ref: docs/contracts/reward-contract.yaml
+  transaction_type: REWARD
+  idempotency_key_format: quest_reward:{character_id}:{quest_run_id}:{reward_policy_ref}:{reward_policy_revision}
+  policy_response:
+    reward_table_id: string
+    reward_table_revision: string
+    requested_effects:
+      item_grants: []
+      currency_deltas: []
+      reputation_deltas: []
+      unlock_effects: []
+  rules:
+    - Reject an unknown or obsolete reward_policy_ref without changing balances.
+    - Replaying the same entitlement returns the recorded transaction outcome.
+    - Retryable storage or provider failures keep the entitlement pending and do not roll back quest completion.
+    - Ambiguous partial application enters MANUAL_REVIEW; it must never issue a guessed compensating reward.
+
+presentation_handoff:
+  producer: Domain08QuestService
+  consumer: Domain14QuestJournal
+  projection_shape:
+    character_id: string
+    quest_run_id: uuid
+    quest_id: string
+    quest_version: integer
+    quest_status: string
+    current_step_id: string_or_null
+    objective_progress: []
+    reward_delivery_status: PENDING|SETTLED|ATTENTION_REQUIRED|NONE
+    projection_revision: non_negative_integer
+  command_boundary:
+    allowed_commands:
+      - ACCEPT_QUEST
+      - ABANDON_QUEST
+      - SELECT_BRANCH
+      - ACKNOWLEDGE_DIALOGUE
+    command_target: Domain08QuestService
+    presentation_must_not_assume_success_before_domain_receipt: true
+  rules:
+    - Domain 14 renders only Domain 08 projections and localized definition content.
+    - A menu click, chat line, scoreboard value, or HUD state is never quest completion evidence.
+    - Stale projection revisions may be displayed as loading state but must not be written back as truth.
+
+persistence_and_reset:
+  quest_state_owner: Domain08QuestService
+  durable_subject_scope: character_id
+  durable_records:
+    - quest_run
+    - objective_credit
+    - recorded_decision
+    - reward_entitlement
+    - reward_transaction_receipt
+  reset_rules:
+    implicit_reset: forbidden
+    repeatable_quest_requires_explicit_schedule_and_new_quest_run_id: true
+    season_reset_requires_definition_policy_and_migration_rule: true
+    definition_version_change_requires_migration_or_obsolete_resolution: true
+
+failure_semantics:
+  duplicate_world_fact: return_recorded_credit_or_no_match_without_new_mutation
+  missing_character_identity: reject_and_audit
+  unknown_fact_type_or_schema: quarantine_and_alert
+  stale_quest_version: apply_explicit_migration_or_reject_without_mutation
+  quest_inactive_or_objective_unmatched: ignore_without_mutation
+  reward_policy_unknown: keep_entitlement_pending_and_alert
+  reward_provider_unavailable: retry_same_idempotency_key
+  ambiguous_reward_commit: manual_review
+  presentation_unavailable: quest_state_continues_without_ui_write_fallback
+
+invariants:
+  - World facts are evidence inputs, never quest-state writes.
+  - Objective credit is written only by Domain 08.
+  - Reward value and balance mutation are written only through Domain 10 policy and the transaction contracts.
+  - Presentation state is a projection and never an authority fallback.
+  - Replaying any fact, entitlement, or transaction cannot duplicate objective credit or reward effects.
+  - Runtime implementation must not claim release readiness until restart, replay, party-credit, and duplicate-reward evidence exists.
+
+validation_requirements:
+  static:
+    - every quest objective declares a supported fact type, predicate, and party-credit rule
+    - every completion reward declares reward_policy_ref and revision
+    - every Domain 14 projection field maps to Domain 08 state or definition content
+  runtime:
+    - duplicate world-fact replay produces one objective credit
+    - out-of-order unrelated facts do not corrupt quest progress
+    - restart between completion and reward settlement produces one reward
+    - party-credit rules award only eligible participants
+    - unavailable reward provider leaves a retryable entitlement without losing completion
+    - stale UI projection cannot overwrite newer quest state
+  evidence_owner: "17"
+
+release_gate:
+  contract_boundary_closed: true
+  runtime_verified: false
+  release_ready: false
+  blockers:
+    - Domain08QuestService_not_implemented_or_selected_as_runtime_adapter
+    - Domain06_world_fact_publisher_not_runtime_verified
+    - Domain10_reward_policy_mapping_not_runtime_verified
+    - Domain14_projection_and_command_path_not_runtime_verified
+    - Domain17_restart_replay_party_and_duplicate_evidence_missing
+
+non_goals:
+  - final quest content or dialogue
+  - final reward values
+  - selection of a vendor quest plugin
+  - world encounter implementation
+  - UI layout or localization copy

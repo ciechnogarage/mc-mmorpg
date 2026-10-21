@@ -1,0 +1,9 @@
+{
+  "name": "@mmorpg-bots/bot-core",
+  "version": "0.1.0",
+  "main": "index.js",
+  "dependencies": {
+    "mineflayer": "4.37.1",
+    "@mmorpg-bots/safe-protocol": "*"
+  }
+}

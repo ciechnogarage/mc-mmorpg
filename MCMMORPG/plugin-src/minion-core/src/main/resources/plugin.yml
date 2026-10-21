@@ -1,0 +1,13 @@
+name: MinionCore
+version: ${version}
+main: pl.mcmmorpg.minioncore.MinionCorePlugin
+api-version: "1.21"
+author: OpenAI Codex
+depend:
+  - WorldGuard
+softdepend:
+  - MythicMobs
+commands:
+  minion:
+    description: Control the technical melee minion slice.
+    usage: /minion summon <melee|ranged|support> 3 | /minion follow|hold|attack|dismiss

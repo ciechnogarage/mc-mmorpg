@@ -1,0 +1,89 @@
+schema_version: 1
+metadata:
+  matrix_id: domain-17-regression-matrix
+  domain: 17
+  stage: 1
+  authority: normative_shape_non_authoritative_until_cutover
+  source_of_truth_status: inactive_until_cutover
+  validator: tools/qa/validate-schemas.mjs
+  scenario_registry_path: docs/qa/e2e-scenarios.yaml
+  release_gates_path: docs/qa/release-gates.yaml
+  migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+  baseline_note: >
+    Matrix entries map change types to scenario refresh requirements. They are
+    not evidence records and do not imply any scenario has passed.
+entries:
+  - matrix_id: character_creator_login_persistence_contract_or_config_change
+    scenario_id: character_creator_login_persistence
+    release_status: blocked
+    release_effect: blocks_release
+    coverage_level: release_gate
+    change_types:
+      - account_character_contract
+      - character_creator_flow
+      - profile_storage_config
+      - restart_recovery_path
+    affected_domains:
+      - character
+      - account
+      - persistence
+    evidence_refresh_required:
+      - before-after-snapshot
+      - bot-transcript
+      - server-log
+      - rollback-proof
+    refresh_rule: refresh_required_for_any_build_or_config_change_touching_profile_identity_or_restart_recovery
+
+  - matrix_id: reward_restart_recovery_contract_or_config_change
+    scenario_id: reward_restart_recovery
+    release_status: blocked
+    release_effect: blocks_release
+    coverage_level: release_gate
+    change_types:
+      - reward_contract
+      - reward_transaction_contract
+      - economy_provider_config
+      - inventory_storage_config
+      - restart_recovery_path
+    affected_domains:
+      - economy
+      - rewards
+      - inventory
+      - persistence
+    evidence_refresh_required:
+      - transaction-ledger-snapshot
+      - inventory-snapshot
+      - economy-snapshot
+      - server-log
+      - rollback-proof
+    refresh_rule: refresh_required_for_any_build_or_config_change_touching_reward_idempotency_or_storage_authority
+
+  - matrix_id: character_creator_login_persistence_performance_scaffold
+    scenario_id: character_creator_login_persistence
+    release_status: blocked
+    release_effect: none
+    coverage_level: scaffold_only
+    change_types:
+      - performance_budget_definition
+      - runner_definition
+      - normalization_environment_definition
+    affected_domains:
+      - qa
+      - performance
+    evidence_refresh_required: []
+    refresh_rule: no_active_performance_release_decision_until_threshold_authority_source_runner_and_normalization_environment_exist
+
+  - matrix_id: reward_restart_recovery_performance_scaffold
+    scenario_id: reward_restart_recovery
+    release_status: blocked
+    release_effect: none
+    coverage_level: scaffold_only
+    change_types:
+      - performance_budget_definition
+      - runner_definition
+      - normalization_environment_definition
+    affected_domains:
+      - qa
+      - performance
+    evidence_refresh_required: []
+    refresh_rule: no_active_performance_release_decision_until_threshold_authority_source_runner_and_normalization_environment_exist

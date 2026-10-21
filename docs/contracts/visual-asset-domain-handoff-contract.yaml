@@ -1,0 +1,208 @@
+schema_version: 1
+
+contract:
+  id: visual-asset-domain-handoff-v1
+  version: 1
+  contract_status: proposed
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "15"
+  contract_owner: "15"
+  release_owner: "17"
+  purpose:
+    - route visual asset requests from gameplay domains into one canonical asset contract
+    - separate visual authority, production orchestration, evidence gates, and release approval
+    - keep static declarations distinct from live Blockbench, staging, and runtime proof
+  consumers: ["05", "06", "07", "12", "14"]
+
+domain_boundaries:
+  "15":
+    name: asset_pipeline
+    owns:
+      - asset identifier and AssetSpec normalization
+      - asset family, style profile, rig archetype, and delivery profile
+      - editable visual source, art direction, and visual quality requirements
+      - source-to-plugin integration contract
+    does_not_own:
+      - consumer gameplay semantics
+      - production queue or job-state orchestration
+      - release approval or runtime truth
+  "18":
+    name: content_production_pipeline
+    owns:
+      - production queue, job state, retries, templates, and orchestration receipts
+      - execution of declared authoring and integration stages through approved adapters
+    does_not_own:
+      - semantic brief or visual direction
+      - independent art verdict
+      - release approval
+  "17":
+    name: qa_and_release_gates
+    owns:
+      - evidence schemas and hash-consistency rules
+      - independent gate evaluation, rollback evidence, and release approval
+    does_not_own:
+      - asset design or source repair
+      - production-job orchestration
+      - promotion of static evidence into runtime proof
+
+consumer_brief_authority:
+  "05":
+    name: itemization
+    responsible_for: [item identity, rarity, item stats, economy-facing semantics]
+    required_brief_inputs: [item_definition_ref, rarity_or_material_constraints, use_context]
+    forbidden_transfer: Domain 15 must not redefine stats, rarity, durable item identity, or economy effects.
+  "06":
+    name: world_and_progression
+    responsible_for: [region, world context, availability, progression context]
+    required_brief_inputs: [region_or_world_ref, progression_context, environmental_constraints]
+    forbidden_transfer: Domain 15 must not redefine world facts, unlocks, or progression.
+  "07":
+    name: pve_and_endgame
+    responsible_for: [combat role, encounter intent, telegraph requirements, skill timing]
+    required_brief_inputs: [encounter_ref, combat_role, telegraph_and_timing_constraints]
+    forbidden_transfer: Domain 15 must not redefine combat behavior, damage, or encounter pacing.
+  "12":
+    name: companion_systems
+    responsible_for: [pet_or_mount_role, behavior, persistence, eligibility]
+    required_brief_inputs: [companion_role, behavior_constraints, persistence_and_eligibility_refs]
+    forbidden_transfer: Domain 15 must not redefine companion persistence, caps, eligibility, or runtime authority.
+  "14":
+    name: ux_and_onboarding
+    responsible_for: [icon, menu, onboarding, readability, presentation constraints]
+    required_brief_inputs: [presentation_surface, readability_constraints, icon_or_preview_requirements]
+    forbidden_transfer: Domain 15 must not redefine UX flow, menu behavior, or onboarding state.
+
+asset_profiles:
+  asset_type:
+    - mob
+    - boss
+    - npc
+    - pet
+    - mount
+    - item
+    - weapon
+    - armor_cosmetic
+    - furniture_prop
+    - vfx
+  rig_archetype: [biped, quadruped, flying, serpentine, multipart, static]
+  delivery_profile:
+    modelengine_entity:
+      authoring_source: .bbmodel
+      presentation_owner: ModelEngine
+      pack_owner: Nexo
+      allowed_asset_types: [mob, boss, npc, pet, mount, furniture_prop, vfx]
+    nexo_static:
+      authoring_source: nexo_source_configuration_and_referenced_authoring_assets
+      presentation_owner: Nexo
+      pack_owner: Nexo
+      allowed_asset_types: [item, weapon, armor_cosmetic, furniture_prop, vfx]
+
+profile_contracts:
+  asset_family_profile:
+    required_fields:
+      - asset_type
+      - required_views
+      - required_states_or_animations
+      - geometry_budget_ref
+      - texture_budget_ref
+      - performance_budget_ref
+      - allowed_delivery_profiles
+  style_profile:
+    scope_vocabulary: [region, faction, asset_family]
+    required_fields:
+      - style_profile_id
+      - version
+      - scope
+      - shape_language
+      - proportion_rules
+      - palette_and_material_rules
+      - contrast_and_detail_density
+      - ornament_and_emissive_rules
+      - animation_language
+      - performance_budget_ref
+      - forbidden_traits
+      - approved_reference_ids
+      - anti_reference_ids
+  rig_archetype_profile:
+    required_fields:
+      - rig_archetype
+      - hierarchy_rules
+      - required_bones_or_locators
+      - required_states_or_animations
+      - pivot_and_deformation_rules
+      - profile_specific_invalid_fixtures
+  delivery_profile:
+    required_fields:
+      - delivery_profile
+      - editable_source_policy
+      - presentation_owner
+      - merged_pack_owner
+      - integration_targets
+      - static_validation_commands
+      - runtime_evidence_requirements
+
+required_asset_spec:
+  - asset_id
+  - asset_type
+  - requesting_domain
+  - semantic_brief_ref
+  - style_profile
+  - rig_archetype
+  - delivery_profile
+  - profile_version_refs
+  - editable_source_ref
+  - integration_targets
+  - acceptance_criteria
+
+handoffs:
+  brief_to_visual_contract:
+    producer: requesting_consumer_domain
+    consumer: "15"
+    requires: [semantic_brief_ref, domain_constraints, acceptance_criteria]
+  visual_contract_to_production_job:
+    producer: "15"
+    consumer: "18"
+    requires: [complete_asset_spec, approved_profiles, editable_source_policy]
+  art_evidence_to_gate:
+    producer: independent_visual_critic
+    consumer: "17"
+    requires: [asset_spec_hash, source_sha256, render_sha256_set, verdict]
+  integration_evidence_to_gate:
+    producer: "18"
+    consumer: "17"
+    requires: [source_sha256, configuration_sha256_set, validator_results, production_job_receipt]
+  release_decision:
+    producer: "17"
+    consumers: ["00", "05", "06", "07", "12", "14", "15", "18"]
+    requires: [art_gate, integration_gate, runtime_gate_when_release_claims_runtime]
+
+source_and_pack_policy:
+  modelengine_source_mutation: approved_transactional_blockbench_mcp_only
+  direct_bbmodel_json_write: forbidden
+  generated_exports_caches_and_packs_are_authoring_sources: false
+  merged_resource_pack_owner: Nexo
+  merged_pack_condition: Pack.import.model_engine_is_true
+  staging_or_live_change_requires_explicit_approval: true
+
+gate_contract:
+  ART_PASS:
+    authority: independent_visual_critic
+    proves: exact hash-bound source and renders satisfy the brief and style profile
+    does_not_prove: [plugin integration, runtime behavior, release readiness]
+  INTEGRATION_PASS:
+    authority: "17"
+    proves: exact source and configuration hashes pass declared static integration checks
+    does_not_prove: [art quality, plugin activation, client delivery, runtime behavior]
+  RUNTIME_PASS:
+    authority: "17"
+    proves: separately approved runtime evidence matches exact source, configuration, and pack hashes
+    does_not_prove: [future builds, changed sources, changed configuration]
+
+invariants:
+  - Plugin placement never transfers product-semantic domain ownership.
+  - Domain 18 cannot start authoring with an incomplete AssetSpec.
+  - The builder cannot issue ART_PASS for its own output.
+  - Changing a reviewed source or render hash invalidates its associated verdict.
+  - ART_PASS, INTEGRATION_PASS, and RUNTIME_PASS are independent and non-transitive.
+  - A static declaration or generated output never proves staging, live, or runtime behavior.

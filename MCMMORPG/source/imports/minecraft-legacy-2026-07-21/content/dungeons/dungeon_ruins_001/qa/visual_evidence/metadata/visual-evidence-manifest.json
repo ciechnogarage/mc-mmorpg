@@ -1,0 +1,144 @@
+{
+  "generatedAtUtc": "2026-05-30T17:56:59.020Z",
+  "outputRoot": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence",
+  "previewStrategy": [
+    "Generated local preview PNGs using repo-local Node canvas and prismarine-nbt.",
+    "Boss evidence renders Blockbench .bbmodel cube geometry and embedded textures.",
+    "Nexo evidence renders candidate model geometry plus source texture PNGs.",
+    "Schematic evidence renders top-down highest-solid-block overviews from .schem NBT.",
+    "Audio evidence uses local ffmpeg to render waveform and spectrogram PNGs."
+  ],
+  "bosses": [
+    {
+      "bossId": "DR001_GatewardenVaros",
+      "source": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/intake/modelengine/dr001_gatewarden_varos.bbmodel",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/bosses/DR001_GatewardenVaros.png"
+    },
+    {
+      "bossId": "DR001_CisternOracleNhalruun",
+      "source": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/intake/modelengine/dr001_nhalruun.bbmodel",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/bosses/DR001_CisternOracleNhalruun.png"
+    },
+    {
+      "bossId": "DR001_RuinedKingAurelion",
+      "source": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/intake/modelengine/dr001_ruined_king.bbmodel",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/bosses/DR001_RuinedKingAurelion.png"
+    }
+  ],
+  "nexo": [
+    {
+      "assetId": "dr001_rune_cracked_stone",
+      "sourceKey": "block/rune_cracked_stone",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/nexo/dr001_rune_cracked_stone.png"
+    },
+    {
+      "assetId": "dr001_rune_pedestal",
+      "sourceKey": "furniture/rune_pedestal",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/nexo/dr001_rune_pedestal.png"
+    },
+    {
+      "assetId": "dr001_void_anchor",
+      "sourceKey": "furniture/void_anchor",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/nexo/dr001_void_anchor.png"
+    },
+    {
+      "assetId": "dr001_relic_shard",
+      "sourceKey": "item/relic_shard",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/nexo/dr001_relic_shard.png"
+    },
+    {
+      "assetId": "dr001_all_nexo_textures",
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/nexo/dr001_nexo_texture_contact_sheet.png"
+    }
+  ],
+  "schematics": [
+    {
+      "fileName": "gatehouse_broken_01.schem",
+      "width": 43,
+      "height": 25,
+      "length": 35,
+      "palette": [
+        "minecraft:air",
+        "minecraft:mossy_stone_bricks",
+        "minecraft:cracked_stone_bricks",
+        "minecraft:rooted_dirt",
+        "minecraft:mangrove_roots",
+        "minecraft:moss_carpet",
+        "minecraft:water",
+        "minecraft:glow_lichen",
+        "minecraft:chain",
+        "minecraft:lantern",
+        "minecraft:chest"
+      ],
+      "metadata": {
+        "Name": "dr001_gatehouse_broken_01",
+        "Author": "codex_local_procedural_candidate",
+        "ReviewStatus": "blocked_quality_review"
+      },
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/schematics/gatehouse_broken_01_overview.png"
+    },
+    {
+      "fileName": "varos_gate_arena_01.schem",
+      "width": 61,
+      "height": 27,
+      "length": 51,
+      "palette": [
+        "minecraft:air",
+        "minecraft:mossy_stone_bricks",
+        "minecraft:cracked_stone_bricks",
+        "minecraft:rooted_dirt",
+        "minecraft:mangrove_roots",
+        "minecraft:moss_carpet",
+        "minecraft:water",
+        "minecraft:glow_lichen",
+        "minecraft:chain",
+        "minecraft:lantern",
+        "minecraft:chest"
+      ],
+      "metadata": {
+        "Name": "dr001_varos_gate_arena_01",
+        "Author": "codex_local_procedural_candidate",
+        "ReviewStatus": "blocked_quality_review"
+      },
+      "evidence": "C:/Codex/Minecraft/content/dungeons/dungeon_ruins_001/qa/visual_evidence/schematics/varos_gate_arena_01_overview.png"
+    }
+  ],
+  "audio": [
+    {
+      "sound": "roots_whisper",
+      "input": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\intake\\sounds\\dr001\\roots_whisper.ogg",
+      "wave": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\roots_whisper_waveform.png",
+      "spec": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\roots_whisper_spectrogram.png",
+      "waveOk": true,
+      "specOk": true,
+      "stderr": ""
+    },
+    {
+      "sound": "cistern_geyser",
+      "input": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\intake\\sounds\\dr001\\cistern_geyser.ogg",
+      "wave": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\cistern_geyser_waveform.png",
+      "spec": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\cistern_geyser_spectrogram.png",
+      "waveOk": true,
+      "specOk": true,
+      "stderr": ""
+    },
+    {
+      "sound": "void_crown_pulse",
+      "input": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\intake\\sounds\\dr001\\void_crown_pulse.ogg",
+      "wave": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\void_crown_pulse_waveform.png",
+      "spec": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\void_crown_pulse_spectrogram.png",
+      "waveOk": true,
+      "specOk": true,
+      "stderr": ""
+    },
+    {
+      "sound": "aurelion_enrage",
+      "input": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\intake\\sounds\\dr001\\aurelion_enrage.ogg",
+      "wave": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\aurelion_enrage_waveform.png",
+      "spec": "C:\\Codex\\Minecraft\\content\\dungeons\\dungeon_ruins_001\\qa\\visual_evidence\\audio\\aurelion_enrage_spectrogram.png",
+      "waveOk": true,
+      "specOk": true,
+      "stderr": ""
+    }
+  ]
+}

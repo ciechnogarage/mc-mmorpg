@@ -1,0 +1,111 @@
+services:
+  mariadb:
+    image: mariadb:11.8
+    restart: "${MC_DB_RESTART_POLICY:-unless-stopped}"
+    environment:
+      MARIADB_DATABASE: "${MC_MARIADB_DATABASE:?set MC_MARIADB_DATABASE}"
+      MARIADB_USER: "${MC_MARIADB_USER:?set MC_MARIADB_USER}"
+      MARIADB_PASSWORD: "${MC_MARIADB_PASSWORD:?set MC_MARIADB_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${MC_MARIADB_ROOT_PASSWORD:?set MC_MARIADB_ROOT_PASSWORD}"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mariadb-admin ping -h localhost -u root -p"$$MARIADB_ROOT_PASSWORD" --silent
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+    networks:
+      mc_backend:
+        aliases:
+          - "${MC_NAMESPACE}-db"
+    ports:
+      - "${MC_ADMIN_BIND:-127.0.0.1}:${MC_DB_HOST_PORT:?set MC_DB_HOST_PORT}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    labels:
+      io.mcmmorpg.environment: "${MC_ENVIRONMENT}"
+      io.mcmmorpg.selector: "${MC_SELECTOR}"
+      io.mcmmorpg.namespace: "${MC_NAMESPACE}"
+
+  game:
+    image: itzg/minecraft-server:java21
+    restart: "${MC_GAME_RESTART_POLICY:-no}"
+    tty: true
+    stdin_open: true
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      EULA: "TRUE"
+      TYPE: "CUSTOM"
+      CUSTOM_SERVER: "/data/paper.jar"
+      USE_AIKAR_FLAGS: "${MC_USE_AIKAR_FLAGS:-TRUE}"
+      ENABLE_AUTOPAUSE: "FALSE"
+      ONLINE_MODE: "FALSE"
+      ENABLE_RCON: "TRUE"
+      RCON_PASSWORD: "${MC_RCON_PASSWORD:?set MC_RCON_PASSWORD}"
+      RCON_PORT: "25575"
+      SERVER_PORT: "25565"
+      MAX_PLAYERS: "${MC_MAX_PLAYERS:-20}"
+      SPAWN_PROTECTION: "0"
+      OVERRIDE_SERVER_PROPERTIES: "TRUE"
+      INIT_MEMORY: "${MC_GAME_INIT_MEMORY:-1G}"
+      MAX_MEMORY: "${MC_GAME_MAX_MEMORY:-2G}"
+      LEVEL: "${MC_LEVEL_NAME:-world}"
+    networks:
+      mc_backend:
+        aliases:
+          - "${MC_NAMESPACE}-game"
+    ports:
+      - "${MC_ADMIN_BIND:-127.0.0.1}:${MC_RCON_HOST_PORT:?set MC_RCON_HOST_PORT}:25575"
+    volumes:
+      - game_data:/data
+      - type: bind
+        source: "${MC_SOURCE_GAME_DIR_ABS:?set MC_SOURCE_GAME_DIR_ABS}"
+        target: /seed
+        read_only: true
+    labels:
+      io.mcmmorpg.environment: "${MC_ENVIRONMENT}"
+      io.mcmmorpg.selector: "${MC_SELECTOR}"
+      io.mcmmorpg.namespace: "${MC_NAMESPACE}"
+      io.mcmmorpg.source-dir: "${MC_SOURCE_GAME_DIR_ABS}"
+
+  proxy:
+    image: itzg/bungeecord:java25
+    restart: "${MC_PROXY_RESTART_POLICY:-unless-stopped}"
+    depends_on:
+      game:
+        condition: service_started
+    environment:
+      TYPE: "VELOCITY"
+      JAVA_TOOL_OPTIONS: "${MC_PROXY_JAVA_TOOL_OPTIONS:--Dvelocity.packet-decode-logging=false}"
+    networks:
+      mc_backend:
+        aliases:
+          - "${MC_NAMESPACE}-proxy"
+    ports:
+      - "${MC_PUBLIC_PROXY_BIND:-0.0.0.0}:${MC_PUBLIC_PROXY_PORT:?set MC_PUBLIC_PROXY_PORT}:25565"
+    volumes:
+      - proxy_data:/server
+      - type: bind
+        source: "${MC_SOURCE_PROXY_DIR_ABS:?set MC_SOURCE_PROXY_DIR_ABS}"
+        target: /seed
+        read_only: true
+    labels:
+      io.mcmmorpg.environment: "${MC_ENVIRONMENT}"
+      io.mcmmorpg.selector: "${MC_SELECTOR}"
+      io.mcmmorpg.namespace: "${MC_NAMESPACE}"
+      io.mcmmorpg.source-dir: "${MC_SOURCE_PROXY_DIR_ABS}"
+
+networks:
+  mc_backend:
+    name: "${MC_NAMESPACE:?set MC_NAMESPACE}_backend"
+
+volumes:
+  mariadb_data:
+    name: "${MC_NAMESPACE:?set MC_NAMESPACE}_mariadb_data"
+  game_data:
+    name: "${MC_NAMESPACE:?set MC_NAMESPACE}_game_data"
+  proxy_data:
+    name: "${MC_NAMESPACE:?set MC_NAMESPACE}_proxy_data"

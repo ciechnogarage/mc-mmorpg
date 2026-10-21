@@ -1,0 +1,15 @@
+schema_version: 1
+template_id: item.weapon.sword
+pilot_only: true
+description: >
+  Minimal pilot template for item.weapon.sword.ashen_vanguard. This is not
+  generic support for other item families or classes.
+required_fields:
+  - id
+  - display_name
+  - content_type
+  - item_family
+  - item_subfamily
+  - template_id
+  - runtime
+  - stats

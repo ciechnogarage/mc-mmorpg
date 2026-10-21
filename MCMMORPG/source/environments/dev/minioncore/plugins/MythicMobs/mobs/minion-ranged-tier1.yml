@@ -1,0 +1,14 @@
+# T6 ranged slice: no skills or timers; central RoleBehavior launches guarded vanilla arrows.
+# MinionCore canonical ID: minion.ranged.tier1. MythicMobs IDs must not contain dots.
+minion_ranged_tier1:
+  Type: SKELETON
+  Display: '&7Ranged Minion'
+  Health: 16
+  Damage: 1
+  Options:
+    NoAI: true
+    PreventSunburn: true
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true

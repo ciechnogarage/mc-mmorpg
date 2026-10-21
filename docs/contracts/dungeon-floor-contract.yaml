@@ -1,0 +1,128 @@
+contract:
+  id: dungeon-floor-contract-v1
+  version: 1
+  contract_status: proposed
+  runtime_status: not_tested
+  release_status: blocked
+  owner: "06"
+  semantic_owner: "06"
+  upstream_contracts:
+    - docs/contracts/world-progression-model.md
+    - docs/contracts/unlock-rules.yaml
+  purpose:
+    - define the invariant structure of a dungeon sector
+    - define floor sequencing and replay rules
+    - define canonical difficulty semantics for sectors
+    - define required field groups for future DNG specifications
+  non_goals:
+    - per-sector content briefs
+    - balancing numbers
+    - reward table data
+    - runtime instancing implementation
+  canonical_ids:
+    act_id_pattern: ACT-[0-9][0-9]
+    island_id_pattern: ISL-[0-9][0-9]
+    sector_id_pattern: DNG-[0-9][0-9]
+    floor_id_pattern: FLOOR-[0-9][0-9][0-9]
+    canonical_difficulty_ids:
+      - story
+      - standard
+      - veteran
+      - mythic
+  sector_contract:
+    floor_range:
+      start: 1
+      end: 10
+    unlock_model:
+      type: sequential_with_persistent_replay
+      upstream_rule_ref: docs/contracts/unlock-rules.yaml#dungeon_access
+    selection_model:
+      unlocked_floors_remain_selectable: true
+      floor_selection_scope: per_sector
+    finale:
+      floor_id: FLOOR-010
+      is_finale: true
+      is_raid: false
+    design_principles:
+      - sector_uses_shared_library_of_spaces
+      - sector_uses_shared_library_of_enemies
+      - sector_uses_shared_library_of_mechanics
+      - later_floors_expand_and_recombine_prior_lessons
+      - sector_is_not_ten_unrelated_mini_dungeons
+  difficulty_policy:
+    availability_scope: per_floor
+    reference_tier: standard
+    first_floor_unlock_grants:
+      - story
+      - standard
+    higher_tier_unlocks:
+      veteran:
+        requires_completion_of_same_floor_on: standard
+      mythic:
+        requires_completion_of_same_floor_on: veteran
+    unlocked_difficulties_remain_selectable: true
+    story_preserves_core_mechanics: true
+    standard_is_primary_progression_tier: true
+    veteran_requires_execution_expansion: true
+    mythic_requires_mechanical_expansion: true
+    mythic_numeric_only_scaling_forbidden: true
+  encounter_structure:
+    expected_layers:
+      - traversal_pressure
+      - trash_or_standard_encounters
+      - elite_checks
+      - miniboss_or_intermediate_tests
+      - finale_boss_or_sector_resolution
+    allowed_variation:
+      - non_boss_resolution_floor
+      - objective_driven_floor
+      - hazard_focused_floor
+  required_sector_fields:
+    theme:
+      required: true
+      intent: fantasy_tone_threat_identity
+    mechanical_lesson:
+      required: true
+      intent: what_the_sector_teaches_and_tests
+    floor_progression:
+      required: true
+      intent: how_floors_001_to_010_escalate_and_recombine_mechanics
+    encounter_composition:
+      required: true
+      intent: distribution_of_standard_elite_miniboss_boss_pressure
+    elite_miniboss_boss_distribution:
+      required: true
+      intent: placement_pattern_for_key_encounter_tiers
+    unlock_rules_ref:
+      required: true
+      intent: explicit_link_to_unlock_contract
+    difficulty_variants:
+      required: true
+      intent: behavior_delta_for_story_standard_veteran_mythic
+    reward_categories:
+      required: true
+      intent: category_identity_not_numeric_tables
+    island_link:
+      required: true
+      intent: paired_ISL_relationship_reference
+    budgets:
+      required: true
+      intent: MythicMobs_ModelEngine_instance_envelope
+    test_criteria:
+      required: true
+      intent: solo_and_2_to_4_player_validation_targets
+  floor_template_requirements:
+    each_floor_must_define:
+      - floor_id
+      - role_in_sector
+      - mechanic_delta_from_previous_floor
+      - encounter_shape
+      - failure_pressure
+      - reward_context
+    each_floor_must_not_define:
+      - isolated_unrelated_theme
+      - standalone_dungeon_identity_disconnected_from_sector
+  references:
+    paired_content_contracts:
+      - docs/contracts/island-sector-mapping.yaml
+      - docs/contracts/act-map.yaml

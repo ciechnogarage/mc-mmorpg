@@ -1,0 +1,6 @@
+schema_version: 1
+register_kind: domain01_runtime_evidence_register
+notes:
+  - Schema and integrity register for domain-01 runtime-critical evidence records.
+  - This register does not claim that any scenario passed; it only constrains record shape and metadata integrity.
+records: []

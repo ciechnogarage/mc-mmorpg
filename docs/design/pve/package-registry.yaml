@@ -1,0 +1,87 @@
+version: 0
+owner_domain: "07-pve-encounters"
+artifact_role: canonical_package_registry
+
+authority:
+  write_surface: docs/design/pve/package-registry.yaml
+  write_owner: domain-07
+  read_consumers:
+    - docs/design/pve/endgame-framework.md
+    - docs/design/pve/dungeon-framework.md
+  mutation_rule: >
+    Only this file may mint, supersede, retire, or rename package identity.
+    All other planning artifacts are read-only consumers of canonical package identity.
+
+package_id_contract:
+  uniqueness_scope: global_within_sigil_and_map_packages
+  immutable_after_shipping: true
+  supersession_requires_new_package_id: true
+  parity_key_is_not_identity: true
+  missing_registry_entry_invalidates_package_bind: true
+
+binding_contract:
+  applies_to_run_classifier: SIGIL_OR_MAP_RUN
+  bindable_statuses:
+    - SHIPPING
+  required_for_package_bind:
+    - package_id
+    - package_namespace
+    - run_target
+    - status
+  binding_rule: >
+    A package-bound run is valid only when the bound package_id resolves to one
+    live registry entry in this file whose package_namespace, run_target, and
+    status permit that bind. Only entries in bindable_statuses may bind to live
+    runs.
+  applicability_rule: >
+    Downstream artifacts may reference a package only through its canonical
+    package_id from this registry. A package may bind only to targets permitted
+    by its registry entry.
+  run_target_match_semantics: >
+    run_target is an exact-match identifier or exact-match list of identifiers.
+    A bind is valid only when the selected runtime target exactly equals one
+    declared run_target entry. Prefix, partial, inferred, or family-wide matches
+    are invalid unless a future superseding schema defines them explicitly.
+
+mutation_contract:
+  mint:
+    allowed_when:
+      - package_id is new
+      - minimum_entry_schema is complete
+      - target applicability is declared
+  supersede:
+    allowed_when:
+      - new package_id is created
+      - supersedes points to prior canonical package_id
+      - prior entry remains immutable
+  retire:
+    allowed_when:
+      - status changes to RETIRED
+      - package_id is not reused
+  rename:
+    allowed: false
+    rule: package identity may not be renamed in place; ship a new package_id instead
+  shipping_locks:
+    locked_after_shipping:
+      - package_id
+      - package_namespace
+      - run_target
+      - parity_key
+      - allowed_classifiers
+    rule: >
+      Once status is SHIPPING, identity-adjacent fields are immutable in place.
+      Any semantic change to those fields requires a new package_id or a
+      superseding entry.
+
+minimum_entry_schema:
+  package_id: "string"
+  package_namespace: "SIGIL|MAP"
+  run_target: "string|list_of_exact_target_ids"
+  status: "DRAFT|SHIPPING|SUPERSEDED|RETIRED"
+  parity_key: "string"
+  supersedes: []
+  allowed_classifiers:
+    - SIGIL_OR_MAP_RUN
+  applicability_notes: "string"
+
+packages: []

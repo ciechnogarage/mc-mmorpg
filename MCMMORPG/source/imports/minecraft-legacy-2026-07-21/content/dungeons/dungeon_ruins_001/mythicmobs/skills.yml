@@ -1,0 +1,289 @@
+DR001_CrumblingStrike:
+  Cooldown: 8
+  Skills:
+    - damage{a=8} @target
+    - potion{type=SLOW;duration=40;level=1} @target
+    - effect:particles{p=block_crack;amount=24;speed=0.1} @target
+
+DR001_RootArrow:
+  Cooldown: 10
+  Skills:
+    - damage{a=6} @target
+    - potion{type=SLOW;duration=60;level=2} @target
+    - effect:particles{p=falling_spore_blossom;amount=20;speed=0.02} @target
+
+DR001_RootlingLeap:
+  Cooldown: 7
+  Skills:
+    - leap{velocity=1.1} @target
+    - delay 10
+    - damage{a=5} @target
+
+DR001_RubbleSlam:
+  Cooldown: 14
+  Skills:
+    - message{cooldown=24;m="&6Animated rubble raises both arms."} @PlayersInRadius{r=24}
+    - delay 24
+    - damage{a=14} @PlayersInRadius{r=4}
+    - throw{velocity=1.0;velocityY=0.45} @PlayersInRadius{r=4}
+
+DR001_VarosIntro:
+  Cooldown: 60
+  Skills:
+    - message{m="&6Varos<&co> Nikt nie przejdzie przez Złamaną Bramę."} @PlayersInRadius{r=45}
+    - effect:sound{s=entity.iron_golem.repair;volume=1.0;pitch=0.7} @PlayersInRadius{r=45}
+
+DR001_GateSlam:
+  Cooldown: 8
+  Skills:
+    - message{cooldown=20;m="&cVaros oznacza ziemię przed sobą."} @PlayersInRadius{r=35}
+    - effect:particles{p=dust_color_transition;color=#C99B4A;color2=#FF3300;amount=120;hSpread=4;ySpread=0.1;speed=0;yOffset=0.1} @self
+    - delay 24
+    - damage{a=22} @PlayersInRadius{r=5}
+    - throw{velocity=1.1;velocityY=0.45} @PlayersInRadius{r=5}
+
+DR001_SummonRubbleAdds:
+  Cooldown: 45
+  Skills:
+    - message{m="&6Varos przywołuje gruz!"} @PlayersInRadius{r=35}
+    - summon{type=DR001_AnimatedRubble;amount=2;radius=4} @self
+
+DR001_VarosPhaseTwoRuntimeVerify:
+  Cooldown: 45
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<60%} true
+  Skills:
+    - skill{s=DR001_SummonRubbleAdds} @self
+
+DR001_FallingRocks:
+  Cooldown: 30
+  Skills:
+    - message{m="&cStrop zaczyna się walić!"} @PlayersInRadius{r=40}
+    - delay 20
+    - damage{a=14} @PlayersInRadius{r=30;limit=3;sort=RANDOM}
+    - effect:particles{p=falling_dust;amount=80;speed=0.2} @self
+
+DR001_VarosPhaseThreeRuntimeVerify:
+  Cooldown: 30
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<25%} true
+  Skills:
+    - skill{s=DR001_FallingRocks} @self
+
+DR001_VarosStandaloneDeath:
+  Cooldown: 2
+  Skills:
+    - message{m="&aŁańcuchy bramy pękają. Schody do cystern są otwarte."} @PlayersInRadius{r=45}
+
+DR001_DungeonOnly_VarosDeathSignal:
+  Cooldown: 2
+  Skills:
+    # Dungeon-only: DungeonSignalMechanic requires an active MythicDungeons player/instance context.
+    # Standalone boss smoke uses DR001_VarosStandaloneDeath until full dungeon flow can prove this safely.
+    - dsignal{s=dr001_varos_defeated} @self
+    - dsignal{s=dr001_checkpoint_after_varos} @self
+
+DR001_TombguardShieldBash:
+  Cooldown: 10
+  Skills:
+    - damage{a=12} @target
+    - throw{velocity=0.9;velocityY=0.25} @target
+
+DR001_PoisonCloud:
+  Cooldown: 12
+  Skills:
+    - effect:particles{p=composter;amount=90;hSpread=2;ySpread=1;speed=0.02;yOffset=1} @target
+    - delay 24
+    - potion{type=POISON;duration=80;level=1} @PlayersInRadius{r=4}
+
+DR001_AcolyteHeal:
+  Cooldown: 16
+  Skills:
+    - heal{a=24} @MobsInRadius{r=10;types=DR001_RuinThrall,DR001_MossboundArcher,DR001_RootlingSwarmer,DR001_AnimatedRubble,DR001_DrownedTombguard,DR001_PlagueAcolyte,DR001_CisternLeech,DR001_BoneMason,DR001_VoidboundKnight,DR001_RuneSentinel,DR001_CrownShade,DR001_AnchorWarden}
+    - effect:particles{p=happy_villager;amount=50;hSpread=1;ySpread=1;speed=0} @self
+
+DR001_LeechDrain:
+  Cooldown: 8
+  Skills:
+    - damage{a=8} @target
+    - heal{a=8} @self
+
+DR001_BoneWallSummon:
+  Cooldown: 22
+  Skills:
+    - message{cooldown=30;m="&fBone Mason binds the path with old bones."} @PlayersInRadius{r=34}
+    - summon{type=DR001_RootlingSwarmer;amount=3;radius=5} @self
+
+DR001_NhalruunIntro:
+  Cooldown: 60
+  Skills:
+    - message{m="&3Nhal'Ruun<&co> Nie ufaj wodzie."} @PlayersInRadius{r=52}
+    - effect:sound{s=ambient.underwater.enter;volume=1.0;pitch=0.8} @PlayersInRadius{r=52}
+
+DR001_CursedGeyser:
+  Cooldown: 13
+  Skills:
+    - message{cooldown=22;m="&3Cursed geyser marks a player."} @PlayersInRadius{r=45}
+    - effect:particles{p=dripping_water;amount=80;hSpread=1;ySpread=1;speed=0.02} @target
+    - delay 40
+    - damage{a=18} @PlayersInRadius{r=4}
+    - potion{type=POISON;duration=90;level=1} @PlayersInRadius{r=4}
+
+DR001_FloodPhase:
+  Cooldown: 90
+  Skills:
+    - message{m="&3Cysterna się podnosi. Zabij pijawki i użyj oczyszczenia."} @PlayersInRadius{r=52}
+    - potion{type=SLOW;duration=180;level=1} @PlayersInRadius{r=52}
+    - summon{type=DR001_CisternLeech;amount=4;radius=10} @self
+
+DR001_NhalruunFloodPhaseRuntimeVerify:
+  Cooldown: 90
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<70%} true
+  Skills:
+    - skill{s=DR001_FloodPhase} @self
+
+DR001_MirrorRunes:
+  Cooldown: 45
+  Skills:
+    - message{m="&bCztery runy odbijają zaklęcie Nhal'Ruuna."} @PlayersInRadius{r=52}
+    - summon{type=DR001_BoneMason;amount=2;radius=8} @self
+    - dsignal{s=dr001_mirror_runes_phase} @self
+
+DR001_NhalruunMirrorRunesRuntimeVerify:
+  Cooldown: 45
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<35%} true
+  Skills:
+    - skill{s=DR001_MirrorRunes} @self
+
+DR001_TidalDrain:
+  Cooldown: 30
+  Skills:
+    - message{cooldown=35;m="&cPrzerwij Tidal Drain albo boss odzyska siły!"} @PlayersInRadius{r=52}
+    - delay 50
+    - healpercent{m=0.08} @self
+
+DR001_NhalruunStandaloneDeath:
+  Cooldown: 2
+  Skills:
+    - message{m="&3Woda opada. Most Korony budzi się z ciszy."} @PlayersInRadius{r=52}
+
+DR001_DungeonOnly_NhalruunDeathSignal:
+  Cooldown: 2
+  Skills:
+    # Dungeon-only: DungeonSignalMechanic requires an active MythicDungeons player/instance context.
+    # Standalone boss smoke uses DR001_NhalruunStandaloneDeath until full dungeon flow can prove this safely.
+    - dsignal{s=dr001_nhalruun_defeated} @self
+    - dsignal{s=dr001_checkpoint_after_nhalruun} @self
+
+DR001_VoidCleave:
+  Cooldown: 9
+  Skills:
+    - damage{a=20} @PlayersInRadius{r=4}
+    - effect:particles{p=portal;amount=80;hSpread=2;ySpread=1;speed=0.03} @self
+
+DR001_KnightEnrage:
+  Cooldown: 60
+  Skills:
+    - potion{type=INCREASE_DAMAGE;duration=160;level=1} @self
+
+DR001_KnightEnrageRuntimeVerify:
+  Cooldown: 60
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<35%} true
+  Skills:
+    - skill{s=DR001_KnightEnrage} @self
+
+DR001_RuneBeam:
+  Cooldown: 15
+  Skills:
+    - message{cooldown=25;m="&dRune Sentinel channels a beam."} @PlayersInRadius{r=42}
+    - delay 30
+    - damage{a=18} @target
+
+DR001_ShadeBlink:
+  Cooldown: 12
+  Skills:
+    - teleportto{location=@target} @self
+    - damage{a=14} @target
+
+DR001_AnchorShieldPulse:
+  Cooldown: 16
+  Skills:
+    - potion{type=DAMAGE_RESISTANCE;duration=120;level=1} @self
+    - effect:particles{p=reverse_portal;amount=120;hSpread=3;ySpread=2;speed=0.03} @self
+
+DR001_AurelionIntro:
+  Cooldown: 60
+  Skills:
+    - message{m="&6Aurelion<&co> Korona wciąż oddycha."} @PlayersInRadius{r=68}
+    - effect:sound{s=entity.warden.roar;volume=1.0;pitch=0.7} @PlayersInRadius{r=68}
+
+DR001_VoidImmunityCheck:
+  Cooldown: 20
+  Skills:
+    - message{m="&5Aktywne Void Anchors wzmacniają Aureliona."} @PlayersInRadius{r=68}
+    - potion{type=DAMAGE_RESISTANCE;duration=200;level=1} @self
+
+DR001_CrownShockwave:
+  Cooldown: 17
+  Skills:
+    - message{cooldown=28;m="&6Aurelion unosi pękniętą koronę."} @PlayersInRadius{r=60}
+    - delay 30
+    - damage{a=24} @PlayersInRadius{r=7}
+    - throw{velocity=1.6;velocityY=0.65} @PlayersInRadius{r=7}
+
+DR001_SummonCrownShades:
+  Cooldown: 35
+  Skills:
+    - summon{type=DR001_CrownShade;amount=3;radius=9} @self
+    - effect:particles{p=portal;amount=200;hSpread=6;ySpread=2;speed=0.05} @self
+
+DR001_AurelionShadePhaseRuntimeVerify:
+  Cooldown: 35
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<70%} true
+  Skills:
+    - skill{s=DR001_SummonCrownShades} @self
+
+DR001_ThroneCollapse:
+  Cooldown: 15
+  Skills:
+    - message{cooldown=24;m="&cTron pęka. Szukaj bezpiecznej runy."} @PlayersInRadius{r=68}
+    - delay 35
+    - damage{a=26} @PlayersInRadius{r=10}
+
+DR001_AurelionCollapsePhaseRuntimeVerify:
+  Cooldown: 15
+  Conditions:
+    # RUNTIME_VERIFY_MYTHICMOBS_HP_CONDITION: confirm healthpercent syntax on staging before release.
+    - healthpercent{p=<35%} true
+  Skills:
+    - skill{s=DR001_ThroneCollapse} @self
+
+DR001_AurelionEnrage:
+  Cooldown: 120
+  Skills:
+    - message{m="&4Aurelion wpada w enrage. Zakończ walkę teraz."} @PlayersInRadius{r=68}
+    - potion{type=INCREASE_DAMAGE;duration=999999;level=1} @self
+
+DR001_AurelionStandaloneDeath:
+  Cooldown: 2
+  Skills:
+    - message{m="&aKorona milknie. Loot shrine jest otwarty."} @PlayersInRadius{r=72}
+    - effect:sound{s=ui.toast.challenge_complete;volume=1.0;pitch=1.0} @PlayersInRadius{r=72}
+
+DR001_DungeonOnly_AurelionDeathSignal:
+  Cooldown: 2
+  Skills:
+    # Dungeon-only: DungeonSignalMechanic requires an active MythicDungeons player/instance context.
+    # Standalone boss smoke uses DR001_AurelionStandaloneDeath until full dungeon flow can prove this safely.
+    - dsignal{s=dr001_aurelion_defeated} @self
+    - dsignal{s=dr001_loot_shrine_unlocked} @self
