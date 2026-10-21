@@ -77,7 +77,10 @@ import org.bukkit.util.Vector;
  */
 public final class DwieBronie extends JavaPlugin implements Listener {
 
-  private record Cios(UUID cel, int tick, double skala) {}
+  /** cel = encja z ataku (moze byc pod-hitboxem ModelEngine), baza = encja, ktora faktycznie dostaje obrazenia. */
+  private record Cios(UUID cel, UUID baza, int tick, double skala) {
+    boolean trafia(UUID u) { return cel.equals(u) || baza.equals(u); }
+  }
 
   private static final class Stan {
     int ostatniTick = -1000;
@@ -95,6 +98,14 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   private NamespacedKey kluczUzbrojenia;
   private NamespacedKey kluczPremii;
   private boolean mmocore;
+  private MostModelEngine mostMe;   // null = brak ModelEngine (softdepend)
+
+  /** Pod-hitbox ModelEngine (osobna encja przy modelu) -> bazowa encja moba; inna encja bez zmian. */
+  Entity baza(Entity e) {
+    if (mostMe == null || e == null) return e;
+    try { Entity b = mostMe.baza(e); return b == null ? e : b; }
+    catch (Throwable ex) { return e; }
+  }
 
   @Override
   public void onEnable() {
@@ -103,6 +114,10 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     kluczUzbrojenia = new NamespacedKey(this, "ppm");
     kluczPremii = new NamespacedKey(this, "premia_szybkosci");
     mmocore = getServer().getPluginManager().isPluginEnabled("MMOCore");
+    if (getServer().getPluginManager().isPluginEnabled("ModelEngine")) {
+      try { mostMe = new MostModelEngine(); }
+      catch (Throwable ex) { getLogger().warning("ModelEngine bez zgodnego API - pod-hitboxy bez mapowania: " + ex); }
+    }
     getServer().getPluginManager().registerEvents(this, this);
     getServer().getScheduler().runTaskTimer(this, () -> getServer().getOnlinePlayers().forEach(this::odswiez), 10L, 5L);
   }
@@ -246,7 +261,10 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     s.poprzedniaLewa = lewa;
     if (!lewa) { dbg(p.getName() + " cios PRAWA tick=" + teraz); return; }
     double k = wymuszona > 0 ? wymuszona : skala(p);
-    ciosyLewa.put(p.getUniqueId(), new Cios(e.getAttacked().getUniqueId(), teraz, k));
+    // pod-hitbox ME (np. ostrze kosy) przekazuje obrazenia bazie moba - EntityDamageByEntity przychodzi na baze
+    ciosyLewa.put(p.getUniqueId(), new Cios(e.getAttacked().getUniqueId(), baza(e.getAttacked()).getUniqueId(), teraz, k));
+    // znacznik dla innych pluginow (Trafienia: luk ciosu lewej reki idzie od lewej): wazny tylko w tym ticku
+    p.setMetadata("dwiebronie_lewa", new org.bukkit.metadata.FixedMetadataValue(this, teraz));
     s.lewaTick = teraz;
     if (wymuszona <= 0) {
       p.swingOffHand();
@@ -263,7 +281,7 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     Cios c = ciosyLewa.get(p.getUniqueId());
     if (c == null) return;
     if (c.tick() != tick()) { ciosyLewa.remove(p.getUniqueId()); return; }
-    if (!c.cel().equals(e.getEntity().getUniqueId())) return;
+    if (!c.trafia(e.getEntity().getUniqueId())) return;
     double przed = e.getDamage();
     e.setDamage(przed * c.skala());
     ciosyLewa.remove(p.getUniqueId());
@@ -339,9 +357,11 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     p.attack(cel);
     s.wymuszonaSkala = 0;
     // efekty tylko po prawdziwym trafieniu - nie przy obrazeniach anulowanych przez ochrone (PvP w Stolicy, NPC)
-    boolean trafil = cel.getUniqueId().equals(s.trafiony) && s.trafionyTick == tick();
-    dbg(p.getName() + " PPM trafil=" + trafil);
-    if (trafil && cel instanceof LivingEntity z && (wariant.equals("mocny") || wariant.equals("podwojny"))) efektMocnego(p, z, wariant);
+    Entity bazaCelu = baza(cel);
+    boolean trafil = s.trafionyTick == tick()
+        && (cel.getUniqueId().equals(s.trafiony) || bazaCelu.getUniqueId().equals(s.trafiony));
+    dbg(p.getName() + " PPM trafil=" + trafil + (bazaCelu != cel ? " baza=" + bazaCelu.getType() : ""));
+    if (trafil && bazaCelu instanceof LivingEntity z && (wariant.equals("mocny") || wariant.equals("podwojny"))) efektMocnego(p, z, wariant);
   }
 
   /** Kierunek z klawiszy ruchu w chwili puszczenia PPM (jak w Skyrimie: przod > tyl > bok). */
