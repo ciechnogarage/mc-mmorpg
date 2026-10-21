@@ -1,0 +1,97 @@
+# Wyscigi Chowancow: cztery cwiartki na strone; char U+4C00 + 4*strona + N-1.
+wyscigi_1:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_1
+  ascent: 13
+  height: 111
+  char: 䰀
+wyscigi_2:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_2
+  ascent: 13
+  height: 111
+  char: 䰁
+wyscigi_3:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_3
+  ascent: -98
+  height: 111
+  char: 䰂
+wyscigi_4:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_4
+  ascent: -98
+  height: 111
+  char: 䰃
+wyscigi_czasowka_1:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_czasowka_1
+  ascent: 13
+  height: 111
+  char: 䰄
+wyscigi_czasowka_2:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_czasowka_2
+  ascent: 13
+  height: 111
+  char: 䰅
+wyscigi_czasowka_3:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_czasowka_3
+  ascent: -98
+  height: 111
+  char: 䰆
+wyscigi_czasowka_4:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_czasowka_4
+  ascent: -98
+  height: 111
+  char: 䰇
+wyscigi_wyscig_1:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_wyscig_1
+  ascent: 13
+  height: 111
+  char: 䰈
+wyscigi_wyscig_2:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_wyscig_2
+  ascent: 13
+  height: 111
+  char: 䰉
+wyscigi_wyscig_3:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_wyscig_3
+  ascent: -98
+  height: 111
+  char: 䰊
+wyscigi_wyscig_4:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_wyscig_4
+  ascent: -98
+  height: 111
+  char: 䰋
+wyscigi_pauza_1:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_pauza_1
+  ascent: 13
+  height: 111
+  char: 䰌
+wyscigi_pauza_2:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_pauza_2
+  ascent: 13
+  height: 111
+  char: 䰍
+wyscigi_pauza_3:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_pauza_3
+  ascent: -98
+  height: 111
+  char: 䰎
+wyscigi_pauza_4:
+  font: minecraft:default
+  texture: nexo:gui/wyscigi_pauza_4
+  ascent: -98
+  height: 111
+  char: 䰏

@@ -1,0 +1,156 @@
+version: 1
+captured_at: "2026-08-03T14:48:20+02:00"
+scope_id: domain-16-plugin-compatibility-baseline
+backend: staging-docker-baseline
+environment: staging
+commit: f0f9526b46b7
+
+paper_version:
+  value: "Paper 1.21.11-127-main@bd74bf6"
+  source: docker://srv-world,srv-items,srv-hub,srv-minioncore
+  note: "Observed on the currently healthy compose-backed staging baseline."
+
+java_version:
+  value: "OpenJDK / java21 container runtime"
+  source: MCMMORPG/docker/compose.yml
+  note: "Gameplay backends are built from `itzg/minecraft-server:java21`."
+
+plugin_inventory_ref: docs/technical/plugin-manifest.yaml
+dependency_graph_ref: docs/technical/dependency-graph.md
+boot_evidence_ref: docs/audits/2026-08-03/domain-16-staging-boot-evidence.yaml
+status_vocabulary_ref: docs/technical/status-and-evidence-vocabulary.md#canonical-status-and-evidence-rules
+handoff_contract_ref: docs/technical/runtime-evidence-handoff.md
+
+config_refs:
+  - MCMMORPG/docker/compose.yml
+  - MCMMORPG/docker/build-servers.sh
+  - MCMMORPG/docker/servers/world/plugins
+  - MCMMORPG/docker/servers/items/plugins
+  - MCMMORPG/docker/servers/hub/plugins
+  - MCMMORPG/docker/servers/minioncore/plugins
+
+started_at: "2026-08-03T14:48:20+02:00"
+finished_at: "2026-08-03T15:00:00+02:00"
+runner: codex
+
+commands:
+  - "cd MCMMORPG/docker && docker compose ps -a"
+  - "docker inspect -f '{{.Name}} {{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' velocity mcmmorpg-mariadb srv-world srv-items srv-hub srv-minioncore"
+  - "ls -1 MCMMORPG/docker/servers/world/plugins/*.jar | xargs -n1 basename | sort"
+  - "ls -1 MCMMORPG/docker/servers/items/plugins/*.jar | xargs -n1 basename | sort"
+  - "ls -1 MCMMORPG/docker/servers/hub/plugins/*.jar | xargs -n1 basename | sort"
+  - "ls -1 MCMMORPG/docker/servers/minioncore/plugins/*.jar | xargs -n1 basename | sort"
+  - "docker logs --tail 400 srv-world"
+  - "docker logs --tail 400 srv-items"
+  - "docker logs --tail 250 srv-hub"
+  - "docker logs --tail 300 srv-minioncore"
+  - "docker logs --tail 200 velocity"
+
+log_paths:
+  - docker://srv-world
+  - docker://srv-items
+  - docker://srv-hub
+  - docker://srv-minioncore
+  - docker://velocity
+
+evidence_ref_ids:
+  - EVID-STAGING-BOOT-COMPOSE-PS-2026-08-03
+  - EVID-STAGING-BOOT-DOCKER-INSPECT-2026-08-03
+  - EVID-STAGING-BOOT-BACKEND-LOGS-2026-08-03
+
+evidence_refs:
+  - evidence_id: EVID-COMPAT-BACKEND-INVENTORY-2026-08-03
+    source_type: inventory
+    source_path: MCMMORPG/docker/servers
+    observed_at: 2026-08-03
+    scope: effective plugin jars assembled into running backend data trees
+    summary: "Backend plugin inventory was observed directly from the compose-mounted `/data/plugins` trees: `world=24`, `items=18`, `hub=12`, `minioncore=5` jars."
+    notes: "This confirms the packaging split actually used by the running staging baseline rather than only the canonical manifest."
+
+  - evidence_id: EVID-COMPAT-ITEMS-MMO-CHAIN-2026-08-03
+    source_type: log
+    source_path: docker://srv-items
+    observed_at: 2026-08-03
+    scope: runtime compatibility of the MMO stack on the items backend
+    summary: "`srv-items` reached healthy state and logs show `MMOCore` enabling, `MMOItems` hooking into `MMOInventory`, `MMOCore`, `Nexo`, `Vault`, and `PlaceholderAPI`, plus `Done` at backend level."
+    command: "docker logs --tail 400 srv-items"
+    notes: "The same log stream also includes an `MMOItems` economy-support error and MMOCore/MMOProfiles Vault warnings; those are captured separately as blockers."
+
+  - evidence_id: EVID-COMPAT-HUB-CMI-CHAIN-2026-08-03
+    source_type: log
+    source_path: docker://srv-hub
+    observed_at: 2026-08-03
+    scope: runtime compatibility of the CMI/CMILib/LuckPerms/Vault hub stack
+    summary: "`srv-hub` reached healthy state and logs show `Vault` enabled, `LuckPerms` registering the Vault hook, `CMILib` enabling, `Guilds` creating tables successfully, and `Guilds` hooking into `PlaceholderAPI`."
+    command: "docker logs --tail 250 srv-hub"
+
+  - evidence_id: EVID-COMPAT-WORLD-MYTHIC-CHAIN-2026-08-03
+    source_type: log
+    source_path: docker://srv-world
+    observed_at: 2026-08-03
+    scope: runtime compatibility of the world-facing Mythic/ModelEngine stack
+    summary: "`srv-world` reached healthy state after a long startup, logged `Done (53.882s)`, and showed `MythicDungeons` loading dungeon `level_1` plus `ModelEngine` resource-pack generation activity."
+    command: "docker logs --tail 500 srv-world"
+    notes: "The same log stream carries substantial MythicMobs drop-table warnings and ModelEngine hitbox warnings, so boot compatibility exists but release-safe content compatibility is not clean."
+
+  - evidence_id: EVID-COMPAT-MINIONCORE-HEALTH-2026-08-03
+    source_type: log
+    source_path: docker://srv-minioncore
+    observed_at: 2026-08-03
+    scope: auxiliary runtime compatibility on the minioncore slice
+    summary: "`srv-minioncore` reached healthy state and continued emitting its own runtime telemetry after boot, which proves the reduced slice stays up under the current compose baseline."
+    command: "docker logs --tail 300 srv-minioncore"
+
+  - evidence_id: EVID-COMPAT-VELOCITY-PROXY-2026-08-03
+    source_type: log
+    source_path: docker://velocity
+    observed_at: 2026-08-03
+    scope: proxy compatibility with the current staging plugin/runtime stack
+    summary: "Velocity remained healthy, loaded 1 proxy plugin, and listened on `:25565` through the whole compatibility observation window."
+    command: "docker logs --tail 200 velocity"
+    notes: "Proxy log continues to warn about offline mode; this is a security caveat, not a plugin-load failure."
+
+verdict: BLOCKED
+requested_status_transition: none
+status_update_applied: false
+
+scenario_verdicts:
+  packaging_inventory_alignment: PASS
+  boot_time_dependency_chain_items: PASS
+  boot_time_dependency_chain_hub: PASS
+  boot_time_dependency_chain_world: PASS
+  release_safe_plugin_surface: BLOCKED
+
+blockers:
+  - blocker_id: BLK-COMPAT-001
+    status_family: runtime_status
+    summary: "The items stack does not boot cleanly with economy integration: `MMOItems` logs `Could not load Economy Support (Vault)` and MMOCore/MMOProfiles report missing economy support even though Vault is present."
+    required_evidence: "Focused runtime proof that the intended economy provider loads cleanly for the MMO stack, or an explicit contract that this degraded path is acceptable."
+    owner: domain-16
+    scope: items-economy-compatibility
+
+  - blocker_id: BLK-COMPAT-002
+    status_family: runtime_status
+    summary: "The world stack emits live MythicMobs drop-table configuration warnings (`Drop type not found`) during boot."
+    required_evidence: "World-slice runtime proof that the referenced drop/content chain is either fixed or intentionally excluded from compatibility claims."
+    owner: domain-16
+    scope: world-content-compatibility
+
+  - blocker_id: BLK-COMPAT-003
+    status_family: runtime_status
+    summary: "The world stack emits ModelEngine warnings about missing hitboxes while loading models."
+    required_evidence: "Validated model/runtime evidence showing those warnings are either benign for the supported set or resolved in the active world slice."
+    owner: domain-16
+    scope: modelengine-runtime-surface
+
+summary: |
+  The currently running staging compose baseline proves that the plugin stack is broadly boot-compatible at the runtime level: the required backends stay
+  healthy, the MMO chain on `srv-items` hooks together, the CMI/CMILib/LuckPerms/Vault hub stack loads, and the world-facing Mythic/ModelEngine stack
+  completes startup. However, the boot logs are not clean enough for a release-safe compatibility claim. The live evidence still contains economy-provider
+  warnings on the items slice plus world-slice MythicMobs and ModelEngine warning classes, so the overall compatibility evidence is useful but remains
+  `BLOCKED` for release-facing claims.
+
+notes:
+  - "This artifact is intentionally narrower than gameplay validation: it proves boot-time compatibility surfaces, not full player-visible behavior."
+  - "The stale host-level `MCMMORPG/logs/latest.log` from 2026-07-05 was not used as a success signal; compose-backed live logs were primary."
+  - "Velocity offline-mode warnings remain a security caveat tracked elsewhere and were not reclassified here as plugin-load failures."

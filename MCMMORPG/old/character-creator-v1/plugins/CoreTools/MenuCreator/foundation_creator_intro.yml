@@ -69,10 +69,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_race_czlowiek
+          - creator_v2_select_race_czlowiek
       click:
         Scripts:
-          creator_v2_select_race_czlowiek
+          - creator_v2_select_race_czlowiek
 
     race_ork:
       location: top
@@ -85,10 +85,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_race_ork
+          - creator_v2_select_race_ork
       click:
         Scripts:
-          creator_v2_select_race_ork
+          - creator_v2_select_race_ork
 
     race_elf:
       location: top
@@ -101,10 +101,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_race_elf
+          - creator_v2_select_race_elf
       click:
         Scripts:
-          creator_v2_select_race_elf
+          - creator_v2_select_race_elf
 
     race_krasnolud:
       location: top
@@ -117,10 +117,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_race_krasnolud
+          - creator_v2_select_race_krasnolud
       click:
         Scripts:
-          creator_v2_select_race_krasnolud
+          - creator_v2_select_race_krasnolud
 
     race_nieumarly:
       location: top
@@ -133,10 +133,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_race_nieumarly
+          - creator_v2_select_race_nieumarly
       click:
         Scripts:
-          creator_v2_select_race_nieumarly
+          - creator_v2_select_race_nieumarly
 
     class_warrior:
       location: top
@@ -149,10 +149,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_class_warrior
+          - creator_v2_select_class_warrior
       click:
         Scripts:
-          creator_v2_select_class_warrior
+          - creator_v2_select_class_warrior
 
     class_rogue:
       location: top
@@ -165,10 +165,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_class_rogue
+          - creator_v2_select_class_rogue
       click:
         Scripts:
-          creator_v2_select_class_rogue
+          - creator_v2_select_class_rogue
 
     class_marksman:
       location: top
@@ -181,10 +181,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_class_marksman
+          - creator_v2_select_class_marksman
       click:
         Scripts:
-          creator_v2_select_class_marksman
+          - creator_v2_select_class_marksman
 
     class_mage:
       location: top
@@ -197,10 +197,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_class_mage
+          - creator_v2_select_class_mage
       click:
         Scripts:
-          creator_v2_select_class_mage
+          - creator_v2_select_class_mage
 
     class_paladin:
       location: top
@@ -213,10 +213,10 @@ foundation_creator_intro:
         - '<gray>Lewy klik: wybierz'
       left_click:
         Scripts:
-          creator_v2_select_class_paladin
+          - creator_v2_select_class_paladin
       click:
         Scripts:
-          creator_v2_select_class_paladin
+          - creator_v2_select_class_paladin
 
     race_preview:
       location: top
@@ -228,10 +228,10 @@ foundation_creator_intro:
         - '<gray>Otwiera spotlight aktualnego rodu.'
       left_click:
         Scripts:
-          creator_v2_preview_pending_race
+          - creator_v2_preview_pending_race
       click:
         Scripts:
-          creator_v2_preview_pending_race
+          - creator_v2_preview_pending_race
 
     class_preview:
       location: top
@@ -243,10 +243,10 @@ foundation_creator_intro:
         - '<gray>Otwiera spotlight aktualnej klasy.'
       left_click:
         Scripts:
-          creator_v2_preview_pending_class
+          - creator_v2_preview_pending_class
       click:
         Scripts:
-          creator_v2_preview_pending_class
+          - creator_v2_preview_pending_class
 
     current_summary:
       location: top
@@ -269,10 +269,10 @@ foundation_creator_intro:
         - '<gray>Kasuje pending rasy i klasy.'
       left_click:
         Scripts:
-          creator_v2_reset_selection
+          - creator_v2_reset_selection
       click:
         Scripts:
-          creator_v2_reset_selection
+          - creator_v2_reset_selection
 
     accept:
       location: top
@@ -284,10 +284,10 @@ foundation_creator_intro:
         - '<gray>Dziala tylko przy kompletnym wyborze.'
       left_click:
         Scripts:
-          creator_v2_accept_pending_character
+          - creator_v2_accept_pending_character
       click:
         Scripts:
-          creator_v2_accept_pending_character
+          - creator_v2_accept_pending_character
 
     back:
       location: top
@@ -299,7 +299,7 @@ foundation_creator_intro:
         - '<gray>Wyjdz z kreatora do ekranu slotu.'
       left_click:
         Scripts:
-          creator_v2_leave_to_stage
+          - creator_v2_leave_to_stage
       click:
         Scripts:
-          creator_v2_leave_to_stage
+          - creator_v2_leave_to_stage

@@ -1,0 +1,4 @@
+rg flag __global__ -w world pvp deny
+rg flag __global__ -w world_nether pvp deny
+rg flag __global__ -w world_the_end pvp deny
+rg flag __global__ -w creator_limbo pvp deny

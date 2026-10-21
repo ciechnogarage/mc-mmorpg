@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "report_id": "domain-17-stage-1-release-readiness-staging",
+  "generated_at": "2026-08-03T13:18:59.492Z",
+  "command_contract": "node tools/qa/reports/release-readiness.mjs --env <environment> [--root docs/qa] [--output <json>] [--markdown-output <md>] [--now <iso>] [--no-write]",
+  "target_env": "staging",
+  "workspace_root": "/home/przemek/projects/MC",
+  "runtime_touched": false,
+  "staging_touched": false,
+  "lease_required": "none",
+  "source_files": {
+    "scenarios": {
+      "path": "docs/qa/e2e-scenarios.yaml",
+      "sha256": "d5fbb34c7656c2b559df6b268abcf76c65166b69f7d2c69cf8ad4ca504304a58"
+    },
+    "gates": {
+      "path": "docs/qa/release-gates.yaml",
+      "sha256": "538901395f8c2086e0418fc6ebd464e1864b21f528f59ed3e325a7fb5fa748b1"
+    },
+    "evidence": {
+      "path": "docs/qa/runtime-evidence-registry.yaml",
+      "sha256": "3a637f3d1512bcb85768bf408b92c81bab8762f7a02a1718fae64b9084c147eb"
+    }
+  },
+  "build_context": {
+    "commit": "baseline-no-runtime",
+    "paper": "baseline-no-runtime",
+    "plugin_manifest_hash": "baseline-no-runtime"
+  },
+  "policy": {
+    "evidence_max_age_hours": 168,
+    "required_build_context_fields": [
+      "commit",
+      "paper",
+      "plugin_manifest_hash"
+    ],
+    "aggregation_rules": {
+      "missing_evidence": "blocks_release",
+      "stale_evidence": "reject_record",
+      "unknown_status": "fail_closed",
+      "missing_scenario_ref": "fail_closed",
+      "environment_blocker_verdict": "BLOCKED",
+      "environment_blocker_is_product_fail": false,
+      "partial_runtime_status_supports_candidate": false,
+      "prerequisite_blocker_supports_candidate": false
+    },
+    "proof_requirements": {
+      "character_creator_login_persistence": {
+        "evidence_types": [
+          "server-log",
+          "bot-transcript",
+          "before-after-snapshot",
+          "restart-recovery-proof",
+          "rollback-proof"
+        ],
+        "contracts": [
+          "docs/contracts/account-character-contract.yaml"
+        ],
+        "metadata": [
+          "account_id_authority",
+          "character_id_authority",
+          "profile_id_authority",
+          "character_stage_authority",
+          "persistence_storage_owner",
+          "test_account_uuid",
+          "restart_recovery_rollback_proof"
+        ]
+      },
+      "reward_restart_recovery": {
+        "evidence_types": [
+          "server-log",
+          "bot-transcript",
+          "transaction-ledger-snapshot",
+          "inventory-snapshot",
+          "economy-snapshot",
+          "restart-recovery-proof",
+          "rollback-proof"
+        ],
+        "contracts": [
+          "docs/contracts/reward-contract.yaml",
+          "docs/contracts/reward-transaction-contract.yaml"
+        ],
+        "metadata": [
+          "reward_transaction_id_owner",
+          "idempotency_key_owner",
+          "currency_provider_owner",
+          "inventory_storage_owner",
+          "duplicate_rejection_proof_path",
+          "interrupted_recovery_rollback_policy"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "release_status": "blocked",
+    "release_effect": "blocks_release",
+    "readiness_claim_allowed": false,
+    "contract_status": "blocked",
+    "runtime_status": "blocked",
+    "selected_evidence_records": 2,
+    "rejected_evidence_records": 0,
+    "gate_count": 3,
+    "scenario_count": 2
+  },
+  "evidence_selection": {
+    "latest_valid_per_build_context": [
+      {
+        "scenario_id": "character_creator_login_persistence",
+        "evidence_id": "character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked",
+        "environment": "dev-qa",
+        "selection_reason": "latest_valid_cross_environment_blocker"
+      },
+      {
+        "scenario_id": "reward_restart_recovery",
+        "evidence_id": "reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked",
+        "environment": "dev-qa",
+        "selection_reason": "latest_valid_cross_environment_blocker"
+      }
+    ],
+    "rejected": []
+  },
+  "scenarios": [
+    {
+      "scenario_id": "character_creator_login_persistence",
+      "domain": "character",
+      "system": "character_creator_login_persistence",
+      "release_critical": true,
+      "selected_evidence_id": "character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked",
+      "evidence_environment": "dev-qa",
+      "selection_reason": "latest_valid_cross_environment_blocker",
+      "contract_status": "blocked",
+      "runtime_status": "blocked",
+      "result_verdict": "BLOCKED",
+      "release_effect": "blocks_release",
+      "blockers": [
+        "D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE",
+        "missing_runtime_evidence",
+        "environment_blocker",
+        "release_effect_blocks_release"
+      ],
+      "why_not_pass": "mc-lease registry is valid. mc-lease show qa reported zero active leases for the required scope. Runtime validation was not attempted. No backend, Docker container, RCON session, Mineflayer bot, world data, player data, plugin config, or staging state was touched."
+    },
+    {
+      "scenario_id": "reward_restart_recovery",
+      "domain": "economy",
+      "system": "quest_reward",
+      "release_critical": true,
+      "selected_evidence_id": "reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked",
+      "evidence_environment": "dev-qa",
+      "selection_reason": "latest_valid_cross_environment_blocker",
+      "contract_status": "blocked",
+      "runtime_status": "blocked",
+      "result_verdict": "BLOCKED",
+      "release_effect": "blocks_release",
+      "blockers": [
+        "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+        "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+        "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+        "missing_runtime_evidence",
+        "economy_duplication_risk",
+        "restart_recovery_failure",
+        "environment_blocker",
+        "release_effect_blocks_release"
+      ],
+      "why_not_pass": "Prerequisite checkpoint decision is BLOCKED. mc-lease registry is valid. mc-lease show qa reported zero active leases for the required scope. Static prerequisite inspection found no durable reward_transaction_id source, idempotency_key source, or duplicate-rejection proof path. Runtime validation was not attempted. No backend, Docker container, RCON session, Mineflayer bot, world data, player data, plugin config, runtime state, or staging state was touched."
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "character_creator_login_persistence_prerequisites",
+      "gate_type": "prerequisite",
+      "configured_release_status": "candidate",
+      "effective_release_status": "blocked",
+      "effective_release_effect": "blocks_release",
+      "required_scenarios": [
+        "character_creator_login_persistence"
+      ],
+      "required_evidence_ids": [],
+      "required_verdict": "PASS",
+      "required_runtime_status": "verified",
+      "scenario_results": [
+        {
+          "scenario_id": "character_creator_login_persistence",
+          "selected_evidence_id": "character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked",
+          "result_verdict": "BLOCKED",
+          "contract_status": "blocked",
+          "runtime_status": "blocked",
+          "release_effect": "blocks_release"
+        }
+      ],
+      "blockers": [
+        "D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE",
+        "missing_runtime_evidence",
+        "environment_blocker",
+        "release_effect_blocks_release"
+      ],
+      "reasons": [
+        "character_creator_login_persistence is BLOCKED by character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked.",
+        "character_creator_login_persistence release_effect blocks_release.",
+        "character_creator_login_persistence contract_status blocked.",
+        "character_creator_login_persistence runtime_status blocked.",
+        "Prerequisite gate blocks candidate support until required scenario evidence is PASS."
+      ],
+      "candidate_rule": "supports_candidate_only_when_required_scenario_has_release_grade_pass_evidence"
+    },
+    {
+      "gate_id": "reward_restart_recovery_prerequisites",
+      "gate_type": "prerequisite",
+      "configured_release_status": "candidate",
+      "effective_release_status": "blocked",
+      "effective_release_effect": "blocks_release",
+      "required_scenarios": [
+        "reward_restart_recovery"
+      ],
+      "required_evidence_ids": [],
+      "required_verdict": "PASS",
+      "required_runtime_status": "verified",
+      "scenario_results": [
+        {
+          "scenario_id": "reward_restart_recovery",
+          "selected_evidence_id": "reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked",
+          "result_verdict": "BLOCKED",
+          "contract_status": "blocked",
+          "runtime_status": "blocked",
+          "release_effect": "blocks_release"
+        }
+      ],
+      "blockers": [
+        "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+        "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+        "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+        "missing_runtime_evidence",
+        "economy_duplication_risk",
+        "restart_recovery_failure",
+        "environment_blocker",
+        "release_effect_blocks_release"
+      ],
+      "reasons": [
+        "reward_restart_recovery is BLOCKED by reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked.",
+        "reward_restart_recovery release_effect blocks_release.",
+        "reward_restart_recovery contract_status blocked.",
+        "reward_restart_recovery runtime_status blocked.",
+        "Prerequisite gate blocks candidate support until required scenario evidence is PASS."
+      ],
+      "candidate_rule": "supports_candidate_only_when_required_scenario_has_release_grade_pass_evidence"
+    },
+    {
+      "gate_id": "stage_1_exemplar_release_gate",
+      "gate_type": "release",
+      "configured_release_status": "candidate",
+      "effective_release_status": "blocked",
+      "effective_release_effect": "blocks_release",
+      "required_scenarios": [
+        "character_creator_login_persistence",
+        "reward_restart_recovery"
+      ],
+      "required_evidence_ids": [],
+      "required_verdict": "PASS",
+      "required_runtime_status": "verified",
+      "scenario_results": [
+        {
+          "scenario_id": "character_creator_login_persistence",
+          "selected_evidence_id": "character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked",
+          "result_verdict": "BLOCKED",
+          "contract_status": "blocked",
+          "runtime_status": "blocked",
+          "release_effect": "blocks_release"
+        },
+        {
+          "scenario_id": "reward_restart_recovery",
+          "selected_evidence_id": "reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked",
+          "result_verdict": "BLOCKED",
+          "contract_status": "blocked",
+          "runtime_status": "blocked",
+          "release_effect": "blocks_release"
+        }
+      ],
+      "blockers": [
+        "D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE",
+        "missing_runtime_evidence",
+        "environment_blocker",
+        "release_effect_blocks_release",
+        "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+        "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+        "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+        "economy_duplication_risk",
+        "restart_recovery_failure"
+      ],
+      "reasons": [
+        "character_creator_login_persistence is BLOCKED by character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked.",
+        "character_creator_login_persistence release_effect blocks_release.",
+        "character_creator_login_persistence contract_status blocked.",
+        "character_creator_login_persistence runtime_status blocked.",
+        "reward_restart_recovery is BLOCKED by reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked.",
+        "reward_restart_recovery release_effect blocks_release.",
+        "reward_restart_recovery contract_status blocked.",
+        "reward_restart_recovery runtime_status blocked."
+      ],
+      "candidate_rule": "supports_candidate_only_when_all_required_scenarios_have_release_grade_pass_evidence"
+    }
+  ],
+  "blockers": [
+    "D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE",
+    "missing_runtime_evidence",
+    "environment_blocker",
+    "release_effect_blocks_release",
+    "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+    "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+    "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+    "economy_duplication_risk",
+    "restart_recovery_failure"
+  ],
+  "risks": [
+    "Stage 1 remains non-authoritative until the Domain 17 QA source-of-truth cutover checklist completes.",
+    "BLOCKED environment/prerequisite evidence is evaluator input only and does not prove product runtime behavior."
+  ],
+  "why_not_pass": "Stage 1 is not passable: D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE, missing_runtime_evidence, environment_blocker, release_effect_blocks_release, D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE, D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING, D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING, economy_duplication_risk, restart_recovery_failure."
+}

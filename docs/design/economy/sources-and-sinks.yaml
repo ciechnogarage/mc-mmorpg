@@ -1,0 +1,566 @@
+schema_version: 1
+status: proposed
+updated_at: "2026-08-03"
+owner_domain: "10-economy"
+source_plan: "docs/design/economy/economy-model.md"
+source_registry: "docs/design/economy/currency-registry.yaml"
+stack_lot_contract: "docs/contracts/stack-lot-contract.yaml"
+notes:
+  - "Draft planning matrix. Not runtime truth."
+  - "This file budgets allowed value entry, removal, and transfer behavior for gold and itemized currency."
+  - "Premium shop balance is intentionally excluded from ordinary gameplay source and sink balancing."
+  - "Listing-fee timing is explicit here: upfront at listing creation, not deferred to sale settlement."
+  - "Itemized currency transfer flows use stack-lot semantics so partial fills, returns, and rollback remain auditable."
+
+currency_scope:
+  included:
+    - gold
+    - reroll_currency_items
+    - upgrade_currency_items
+    - craft_modifier_currency_items
+  excluded:
+    - premium_shop_balance
+  exclusion_reason:
+    premium_shop_balance: "Premium balance is outside ordinary player-market circulation."
+
+status_vocabulary:
+  - enabled
+  - constrained
+  - reserved_not_enabled
+  - forbidden
+
+flow_type_vocabulary:
+  - source
+  - sink
+  - transfer_only
+
+progression_stage_vocabulary:
+  - onboarding
+  - early
+  - mid
+  - endgame
+  - cross_stage
+
+rules:
+  source_requires_budget_owner: true
+  sink_requires_budget_owner: true
+  transfer_only_is_not_net_creation: true
+  primary_money_sources_must_have_sink_coverage: true
+  premium_to_gold_source_forbidden: true
+  npc_floor_printing_forbidden_by_default: true
+  salvage_gold_loop_forbidden: true
+  retry_or_restart_duplicate_payout_forbidden: true
+  itemized_currency_sources_must_map_to_item_operations: true
+  itemized_currency_transfer_requires_stack_lot_tracking: true
+  stack_lot_quantity_lineage_required: true
+  service_tender_and_operation_fuel_must_be_modeled_separately: true
+
+economy_invariants:
+  - id: FLOW-INV-001
+    rule: "Gold may only enter circulation through explicitly budgeted gameplay sources."
+  - id: FLOW-INV-002
+    rule: "Premium balance does not directly convert into gold."
+  - id: FLOW-INV-003
+    rule: "Itemized currency enters and leaves the economy as stack-lot resources, not as invisible generic balances."
+  - id: FLOW-INV-004
+    rule: "Transfer-only flows redistribute value between players but do not count as sink or source."
+  - id: FLOW-INV-005
+    rule: "Every enabled itemized-currency trade flow must define partial-fill and unsold-return behavior."
+
+currency_budgets:
+  gold:
+    class_ref: primary_money
+    balancing_goal:
+      - "Keep gold meaningful from onboarding to endgame."
+      - "Remove gold continuously through many small and medium sinks."
+      - "Avoid dependence on one oversized sink or one oversized source."
+    dominant_risks:
+      - reward_inflation
+      - vendor_arbitrage
+      - salvage_to_gold_loops
+      - liquid_wealth_concentration
+  reroll_currency_items:
+    class_ref: itemized_currency
+    balancing_goal:
+      - "Support reroll and affix-chasing loops without replacing gold as primary money."
+      - "Preserve demand through meaningful committed-state consumption."
+    dominant_risks:
+      - excess_stockpiling
+      - high_end_price_fixation
+      - reroll_supply_outpacing_item_chase
+  upgrade_currency_items:
+    class_ref: itemized_currency
+    balancing_goal:
+      - "Gate upgrade velocity and quality progression."
+      - "Stay tradeable without becoming default settlement tender."
+    dominant_risks:
+      - power_inflation
+      - upgrade_throughput_cornering
+  craft_modifier_currency_items:
+    class_ref: itemized_currency
+    balancing_goal:
+      - "Support advanced crafting identity."
+      - "Keep deterministic or semi-deterministic shaping costly enough to preserve chase value."
+    dominant_risks:
+      - craft_determinism_becoming_too_cheap
+      - bottleneck_abuse
+
+flows:
+  - id: GOLD-SRC-ONBOARDING-QUESTS
+    currency_id: gold
+    flow_type: source
+    status: enabled
+    stage: onboarding
+    owner_domain: "08"
+    system_surface: "starter_quests_and_onboarding_rewards"
+    description: "Starter quest and onboarding gold grants."
+    design_intent: "Teach value and basic spending without forcing early grind."
+    guardrails:
+      - "one-time or tightly bounded repeatability"
+      - "account and character fraud checks"
+      - "no recreate-delete reward loops"
+
+  - id: GOLD-SRC-PVE-ACTIVITY
+    currency_id: gold
+    flow_type: source
+    status: enabled
+    stage: early
+    owner_domain: "07"
+    system_surface: "open_world_pve_and_basic_combat_rewards"
+    description: "Gold from ordinary PvE activity."
+    design_intent: "Provide baseline circulation for repair, travel, and first trade behavior."
+    guardrails:
+      - "reward rates budgeted per time"
+      - "anti-afk and anti-farm-loop protections"
+      - "no unintended stacking with duplicate reward handlers"
+
+  - id: GOLD-SRC-DUNGEON-ENCOUNTERS
+    currency_id: gold
+    flow_type: source
+    status: enabled
+    stage: mid
+    owner_domain: "07"
+    system_surface: "dungeon_completion_and_encounter_rewards"
+    description: "Gold from dungeon and encounter completion."
+    design_intent: "Reward coordinated or higher-risk content without making dungeons the only valid gold path."
+    guardrails:
+      - "instance-reset abuse checks"
+      - "completion-state idempotency"
+      - "per-encounter budget caps"
+
+  - id: GOLD-SRC-REPEATABLE-SYSTEMS
+    currency_id: gold
+    flow_type: source
+    status: constrained
+    stage: cross_stage
+    owner_domain: "00"
+    system_surface: "repeatable_activity_budget"
+    description: "Explicitly budgeted repeatable gold sources."
+    design_intent: "Allow controlled repeatable loops without hidden printing."
+    guardrails:
+      - "must be individually budgeted"
+      - "telemetry review required"
+      - "cooldown or diminishing-return hooks allowed"
+
+  - id: GOLD-SRC-PLAYER-TRADE-PROCEEDS
+    currency_id: gold
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "auction_house_and_direct_trade"
+    description: "Gold transferred from one player account to another through trade settlement."
+    design_intent: "Redistribute liquidity without minting new gold."
+    guardrails:
+      - "not counted as net new gold"
+      - "paired with fee sinks"
+
+  - id: GOLD-SRC-PREMIUM-CONVERSION
+    currency_id: gold
+    flow_type: source
+    status: forbidden
+    stage: cross_stage
+    owner_domain: "13"
+    system_surface: "premium_exchange"
+    description: "Direct conversion from premium balance into ordinary gold."
+    design_intent: "Forbidden in v1."
+    guardrails:
+      - "must remain disabled unless a future accepted decision supersedes this file"
+
+  - id: GOLD-SRC-NPC-FLOOR-PRINTING
+    currency_id: gold
+    flow_type: source
+    status: forbidden
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "universal_npc_floor_price"
+    description: "Broad material-to-gold printing through NPC floor guarantees."
+    design_intent: "Forbidden except narrow onboarding or recovery exceptions."
+    guardrails:
+      - "global unconditional floor price disallowed"
+
+  - id: GOLD-SRC-SALVAGE-TO-GOLD
+    currency_id: gold
+    flow_type: source
+    status: forbidden
+    stage: cross_stage
+    owner_domain: "09"
+    system_surface: "salvage_cashout_loop"
+    description: "Gold generation through salvage loops."
+    design_intent: "Forbidden as a standard source."
+    guardrails:
+      - "salvage may return items or materials, not become a default cash printer"
+
+  - id: GOLD-SNK-LISTING-FEES
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: early
+    owner_domain: "10"
+    system_surface: "auction_house_listing_fee"
+    description: "Upfront fee charged at listing creation."
+    design_intent: "Discourage spam and remove small gold amounts continuously."
+    guardrails:
+      - "clear flat or simple category-based logic"
+      - "must not make low-tier market use impossible"
+      - "charged at listing-create, not delayed until sale settlement"
+
+  - id: GOLD-SNK-TRANSACTION-TAX
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "auction_house_sale_tax"
+    description: "Gold removed on successful sale completion."
+    design_intent: "Core recurring sink tied to market volume."
+    guardrails:
+      - "deducted atomically with sale settlement"
+      - "same rate logic on all standard AH transactions in v1"
+
+  - id: GOLD-SNK-SERVICE-FEES
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: early
+    owner_domain: "10"
+    system_surface: "service_order_fees"
+    description: "Economy fee applied to player service contracts."
+    design_intent: "Remove gold from service throughput without distorting quoted contract value."
+    guardrails:
+      - "deducted atomically with service settlement"
+      - "must not double-charge on retry"
+
+  - id: GOLD-SNK-LISTING-CANCEL-OR-EXPIRY-PENALTY
+    currency_id: gold
+    flow_type: sink
+    status: reserved_not_enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "listing_cancel_or_expiry_policy"
+    description: "Optional extra penalty for cancellation or expiry."
+    design_intent: "Reserved for later anti-spam tuning if needed."
+    guardrails:
+      - "must not duplicate the upfront listing fee"
+      - "requires explicit marketplace policy before enablement"
+
+  - id: GOLD-SNK-REPAIRS
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: early
+    owner_domain: "05"
+    system_surface: "equipment_repairs"
+    description: "Gold spent on repair or maintenance actions."
+    design_intent: "Regular sink tied to active play."
+    guardrails:
+      - "should scale with usage or item band"
+      - "must not feel punitive in onboarding"
+
+  - id: GOLD-SNK-TRAVEL
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: onboarding
+    owner_domain: "08"
+    system_surface: "travel_and_mobility_fees"
+    description: "Gold spent on transport and convenience movement."
+    design_intent: "Create low-friction recurring outflow."
+    guardrails:
+      - "costs visible and predictable"
+
+  - id: GOLD-SNK-STORAGE-EXPANSION
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: early
+    owner_domain: "10"
+    system_surface: "material_bank_capacity_upgrades"
+    description: "Gold spent to increase material bank capacity."
+    design_intent: "Monetize convenience without charging rent for inactivity."
+    guardrails:
+      - "no recurring idle rent"
+      - "upgrade path should be legible"
+
+  - id: GOLD-SNK-NPC-PURCHASES
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: onboarding
+    owner_domain: "10"
+    system_surface: "npc_vendor_prices"
+    description: "Gold spent at NPC vendors."
+    design_intent: "Provide predictable spend outlets without replacing player trade."
+    guardrails:
+      - "npc inventories must not outcompete player market on ordinary goods"
+
+  - id: GOLD-SNK-MODIFICATION-GOLD-COSTS
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: mid
+    owner_domain: "09"
+    system_surface: "crafting_and_modification_gold_costs"
+    description: "Gold cost attached to crafting, reroll, and upgrade operations."
+    design_intent: "Ensure item progression consumes both money and itemized operation fuel."
+    guardrails:
+      - "must not replace itemized-currency identity"
+      - "costs should scale with operation band"
+
+  - id: GOLD-SNK-PRESTIGE-VANITY
+    currency_id: gold
+    flow_type: sink
+    status: enabled
+    stage: endgame
+    owner_domain: "14"
+    system_surface: "prestige_and_vanity_spend"
+    description: "Aspirational spend on non-essential prestige or vanity."
+    design_intent: "Absorb high-end wealth without touching core progression fairness."
+    guardrails:
+      - "should feel desirable, not mandatory"
+
+  - id: REROLL-SRC-PVE-DROPS
+    currency_id: reroll_currency_items
+    flow_type: source
+    status: enabled
+    stage: early
+    owner_domain: "07"
+    system_surface: "pve_drop_tables"
+    description: "Reroll currency dropped from gameplay."
+    design_intent: "Tie loot activity to item experimentation."
+    guardrails:
+      - "drop rates budgeted against reroll demand"
+      - "not every activity must drop every currency class"
+
+  - id: REROLL-SRC-DUNGEON-REWARDS
+    currency_id: reroll_currency_items
+    flow_type: source
+    status: enabled
+    stage: mid
+    owner_domain: "07"
+    system_surface: "dungeon_reward_tables"
+    description: "Reroll currency awarded from structured content."
+    design_intent: "Support targeted progression loops."
+    guardrails:
+      - "completion idempotency required"
+
+  - id: REROLL-SRC-NPC-VENDING
+    currency_id: reroll_currency_items
+    flow_type: source
+    status: reserved_not_enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "npc_currency_supply"
+    description: "NPC sale of reroll currency."
+    design_intent: "Reserved for future narrow cases only."
+    guardrails:
+      - "if enabled later, must not trivialize drop-loop value"
+
+  - id: REROLL-TRANSFER-AH
+    currency_id: reroll_currency_items
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "auction_house_stack_lot_transfer"
+    description: "Stack-lot transfer of reroll currency through AH sale."
+    design_intent: "Allow market circulation without minting or deleting quantity."
+    guardrails:
+      - "partial fills must create traceable remainder lots"
+      - "unsold or cancelled quantity must return to owner as exact residual lot"
+
+  - id: REROLL-TRANSFER-DIRECT
+    currency_id: reroll_currency_items
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "direct_trade_stack_lot_transfer"
+    description: "Direct player-to-player transfer of reroll currency lots."
+    design_intent: "Allow non-AH circulation without minting or deleting quantity."
+    guardrails:
+      - "quantity transfer must reference source lot and destination lot result"
+
+  - id: REROLL-SNK-ITEM-OPERATIONS
+    currency_id: reroll_currency_items
+    flow_type: sink
+    status: enabled
+    stage: mid
+    owner_domain: "09"
+    system_surface: "reroll_operations"
+    description: "Consumption of reroll currency in item operations."
+    design_intent: "Primary sink for reroll currency."
+    guardrails:
+      - "consumed only on committed operation path"
+      - "no duplicate consumption on retry"
+
+  - id: UPGRADE-SRC-PVE-DROPS
+    currency_id: upgrade_currency_items
+    flow_type: source
+    status: enabled
+    stage: mid
+    owner_domain: "07"
+    system_surface: "upgrade_currency_drop_tables"
+    description: "Upgrade currency dropped from gameplay."
+    design_intent: "Feed quality progression and long-tail item investment."
+    guardrails:
+      - "rarity should preserve upgrade aspiration"
+
+  - id: UPGRADE-SRC-ENDGAME-REWARDS
+    currency_id: upgrade_currency_items
+    flow_type: source
+    status: enabled
+    stage: endgame
+    owner_domain: "07"
+    system_surface: "endgame_reward_tables"
+    description: "Upgrade currency from harder content."
+    design_intent: "Connect difficult content to high-value item advancement."
+    guardrails:
+      - "must not allow runaway power inflation"
+
+  - id: UPGRADE-TRANSFER-AH
+    currency_id: upgrade_currency_items
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "auction_house_stack_lot_transfer"
+    description: "Stack-lot transfer of upgrade currency through AH sale."
+    design_intent: "Keep upgrade currency marketable with no stack mint or loss."
+    guardrails:
+      - "partial fills must create traceable remainder lots"
+      - "unsold or cancelled quantity must return to owner as exact residual lot"
+
+  - id: UPGRADE-TRANSFER-DIRECT
+    currency_id: upgrade_currency_items
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "direct_trade_stack_lot_transfer"
+    description: "Direct player-to-player transfer of upgrade currency lots."
+    design_intent: "Allow non-AH circulation without minting or deleting quantity."
+    guardrails:
+      - "quantity transfer must reference source lot and destination lot result"
+
+  - id: UPGRADE-SNK-ITEM-UPGRADES
+    currency_id: upgrade_currency_items
+    flow_type: sink
+    status: enabled
+    stage: mid
+    owner_domain: "09"
+    system_surface: "upgrade_operations"
+    description: "Consumption of upgrade currency during upgrade operations."
+    design_intent: "Core sink for upgrade throughput."
+    guardrails:
+      - "operation commits atomically with item result"
+
+  - id: CRAFTMOD-SRC-PVE-DROPS
+    currency_id: craft_modifier_currency_items
+    flow_type: source
+    status: constrained
+    stage: mid
+    owner_domain: "07"
+    system_surface: "craft_modifier_drop_tables"
+    description: "Craft-modifier currency from controlled gameplay sources."
+    design_intent: "Enable advanced crafting identity without flooding deterministic power."
+    guardrails:
+      - "tighter supply than broad reroll currency"
+      - "budget review required before enabling new sources"
+
+  - id: CRAFTMOD-SRC-SPECIAL-CONTENT
+    currency_id: craft_modifier_currency_items
+    flow_type: source
+    status: constrained
+    stage: endgame
+    owner_domain: "07"
+    system_surface: "specialized_or_endgame_reward_paths"
+    description: "Craft-modifier currency from specialized content."
+    design_intent: "Keep advanced item shaping attached to meaningful gameplay."
+    guardrails:
+      - "should not become mass-farm commodity without review"
+
+  - id: CRAFTMOD-TRANSFER-AH
+    currency_id: craft_modifier_currency_items
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "auction_house_stack_lot_transfer"
+    description: "Stack-lot transfer of craft-modifier currency through AH sale."
+    design_intent: "Keep craft-modifier currency marketable with no stack mint or loss."
+    guardrails:
+      - "partial fills must create traceable remainder lots"
+      - "unsold or cancelled quantity must return to owner as exact residual lot"
+
+  - id: CRAFTMOD-TRANSFER-DIRECT
+    currency_id: craft_modifier_currency_items
+    flow_type: transfer_only
+    status: enabled
+    stage: cross_stage
+    owner_domain: "10"
+    system_surface: "direct_trade_stack_lot_transfer"
+    description: "Direct player-to-player transfer of craft-modifier currency lots."
+    design_intent: "Allow non-AH circulation without minting or deleting quantity."
+    guardrails:
+      - "quantity transfer must reference source lot and destination lot result"
+
+  - id: CRAFTMOD-SNK-CRAFTING-OPERATIONS
+    currency_id: craft_modifier_currency_items
+    flow_type: sink
+    status: enabled
+    stage: mid
+    owner_domain: "09"
+    system_surface: "craft_modifier_operations"
+    description: "Consumption of craft-modifier currency during shaping operations."
+    design_intent: "Main sink for advanced crafting instruments."
+    guardrails:
+      - "cost should preserve chase value"
+      - "must not bypass binding and marketability policy"
+
+cross_currency_rules:
+  - id: CROSS-001
+    rule: "Gold may be used alongside itemized currency in one operation, but gold is settlement tender and itemized currency is operation fuel."
+  - id: CROSS-002
+    rule: "A sink that only transfers gold or itemized currency between players is not counted as economy removal."
+  - id: CROSS-003
+    rule: "If a new source is introduced for any itemized-currency class, a matching high-confidence sink path must be named in the same release plan."
+  - id: CROSS-004
+    rule: "Partial fills, cancellations, and expiries of itemized-currency listings must preserve exact residual stack-lot quantity."
+
+reserved_followups:
+  - file: "docs/design/economy/binding-policy.md"
+    reason: "Needed to finalize which concrete categories remain AH-eligible, direct-trade-eligible, and escrow-eligible."
+  - file: "docs/design/economy/escrow-contract.md"
+    reason: "Needed to define listing-create, cancel, expiry, and stack-lot reservation semantics."
+  - file: "docs/design/economy/service-order-market.md"
+    reason: "Needed to attach concrete service-fee, RFO funding, and provider payout behavior."
+  - file: "docs/design/economy/market-eligibility-matrix.yaml"
+    reason: "Needed to replace category-level ambiguity with exact market rules."
+
+non_goals:
+  - "Exact numeric values for any source or sink."
+  - "Drop chances or reward-table implementation."
+  - "NPC inventory design."
+  - "The full transaction schema."
+  - "The final item-by-item binding matrix."

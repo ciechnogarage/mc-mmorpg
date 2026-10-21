@@ -1,0 +1,13 @@
+# T6 support slice: no skills/timers/damage; central RoleBehavior applies a cooldown buff only.
+# MinionCore canonical ID: minion.support.tier1. MythicMobs IDs must not contain dots.
+minion_support_tier1:
+  Type: VILLAGER
+  Display: '&7Support Minion'
+  Health: 18
+  Damage: 0
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true

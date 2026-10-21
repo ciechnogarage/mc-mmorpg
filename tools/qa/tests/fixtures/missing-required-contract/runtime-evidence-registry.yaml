@@ -1,0 +1,50 @@
+records:
+- artifacts:
+  - kind: bot-transcript
+    path: tools/qa/reports/character_login_persistence.bot.txt
+  assertions:
+  - Character state persisted.
+  build:
+    commit: fixture-commit
+    paper: paper-1.21.x
+    plugin_manifest_hash: sha256:fixture-plugin-manifest
+  contract_refs: []
+  contract_status: approved
+  domain: character
+  environment: dev-qa
+  evidence_id: character_login_persistence_001
+  evidence_types:
+  - server-log
+  - bot-transcript
+  execution:
+    environment_control:
+      lease: dev-qa
+      rollback:
+        method: runtime_snapshot_restore
+        proof_paths:
+        - tools/qa/reports/rollback-proof.txt
+      runtime_touched: true
+      staging_touched: false
+      workspace_root: /home/przemek/projects/MC
+    executed_by: qa-release-evidence-runner
+    finished_at: '2026-07-22T10:10:00Z'
+    log_paths:
+    - MCMMORPG/logs/latest.log
+    runner: MCMMORPG/_validation/foundation_runtime.js
+    started_at: '2026-07-22T10:00:00Z'
+  metadata:
+    test_account_uuid: 00000000-0000-4000-8000-000000000001
+  preconditions:
+  - Isolated backend was empty.
+  release_effect: supports_candidate
+  result:
+    observations:
+    - Fixture record only.
+    verdict: PASS
+  runtime_status: verified
+  scenario_id: character_login_persistence
+  steps:
+  - Ran character persistence probe.
+  system: login_persistence
+  test_type: restart_recovery
+schema_version: 1

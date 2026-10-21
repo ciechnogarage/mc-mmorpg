@@ -1,0 +1,117 @@
+contract:
+  id: stack-lot-identity-contract-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "05"
+  semantic_owner: "10"
+  purpose:
+    - define durable identity and quantity custody for stackable goods and itemized currency
+    - make split, merge, reservation, settlement, and return operations auditable
+    - preserve exact quantity lineage without relying on lore, display state, or opaque metadata
+  dependencies:
+    - docs/contracts/item-instance-contract.yaml
+    - docs/contracts/reward-transaction-contract.yaml
+    - docs/design/economy/escrow-contract.md
+
+identity:
+  stack_lot_id:
+    type: uuid
+    authority: Domain05ItemInstanceService
+    scope: one_durable_quantity_lot
+    mutable: false
+    duplicates_allowed: false
+    required_on:
+      - stackable_item_issuance
+      - market_listing
+      - escrow_reservation
+      - partial_fill
+      - residual_return
+      - unsold_remainder
+    forbidden_identity_sources:
+      - item_definition_id_alone
+      - item_instance_id_alone
+      - display_name
+      - lore_text
+      - inventory_slot
+      - transient_entity_uuid
+
+lot_record_shape:
+  stack_lot_id: uuid
+  item_definition_id: string
+  item_instance_id: uuid_or_null
+  owner_account_id: string
+  owner_character_id: string_or_null
+  quantity: positive_integer
+  unit_identity: string
+  revision: non_negative_integer
+  status: ACTIVE|RESERVED|CONSUMED|TRANSFERRED|RETURNED|VOID
+  parent_lot_ids: []
+  created_by_transaction_id: uuid
+  lineage_event_ids: []
+
+lineage_event_shape:
+  lineage_event_id: uuid
+  event_type: ISSUE|SPLIT|MERGE|RESERVE|RELEASE|TRANSFER|CONSUME|RETURN|VOID
+  transaction_id: uuid
+  source_lot_ids: []
+  destination_lot_ids: []
+  source_quantity: non_negative_integer
+  destination_quantity: non_negative_integer
+  occurred_at: iso8601
+  expected_revisions: {}
+
+operation_rules:
+  split:
+    - source_lot_must_be_active
+    - requested_quantity_must_be_positive_and_less_than_source_quantity
+    - source_quantity_plus_child_quantity_must_equal_original_quantity
+    - create_new_child_stack_lot_id_and_lineage_event
+  merge:
+    - all_source_lots_must_share_item_definition_and_unit_identity
+    - all_source_lots_must_be_owned_by_same_account_and_character_scope
+    - all_source_lots_must_be_active_and_unreserved
+    - source_quantities_must_be_zeroed_exactly_once
+    - create_new_destination_stack_lot_id_and_lineage_event
+  reserve:
+    - reserve_exact_quantity_against_stack_lot_id_and_expected_revision
+    - reserved_quantity_must_not_be_available_to_competing_operations
+    - partial_reservation_must_create_traceable_residual_lot
+  partial_fill:
+    - sold_quantity_is_consumed_or_transferred_once
+    - unsold_quantity_remains_in_a_distinct_residual_lot
+    - residual_lot_must_reference_listing_and_parent_lot_lineage
+  residual_return:
+    - return_exact_reserved_quantity_to_authorized_owner
+    - return_must_be_idempotent_by_transaction_id
+    - return_must_not_recreate_consumed_quantity
+  unsold_remainder:
+    - cancellation_or_expiry_returns_exact_remaining_quantity
+    - listing_fee_and_asset_quantity_are_accounted_separately
+    - unresolved_quantity_mismatch_enters_manual_review
+
+invariants:
+  - id: LOT-INV-001
+    rule: "Every active stackable asset has exactly one durable stack_lot_id for its current quantity custody."
+  - id: LOT-INV-002
+    rule: "quantity is an explicit positive integer on the lot record; it is never inferred from lore, UI, or opaque metadata."
+  - id: LOT-INV-003
+    rule: "For every lineage event, total source quantity equals total destination quantity except ISSUE, CONSUME, and VOID events."
+  - id: LOT-INV-004
+    rule: "A split, merge, partial fill, or return is committed atomically with its lineage event and transaction reference."
+  - id: LOT-INV-005
+    rule: "No lot revision may be consumed by two active reservations or two settlement commits."
+  - id: LOT-INV-006
+    rule: "A consumed or transferred quantity cannot also remain in an unsold remainder or return lot."
+  - id: LOT-INV-007
+    rule: "Unknown lineage, duplicate return, or quantity mismatch requires manual review and blocks automatic payout."
+
+integration:
+  currency_registry_ref: docs/design/economy/currency-registry.yaml
+  escrow_contract_ref: docs/design/economy/escrow-contract.md
+  marketplace_ref: docs/design/economy/marketplace.md
+  transaction_contract_ref: docs/contracts/reward-transaction-contract.yaml
+  item_instance_contract_ref: docs/contracts/item-instance-contract.yaml
+  itemized_currency_requires_stack_lot_id: true
+  stackable_market_goods_require_stack_lot_id: true

@@ -1,0 +1,62 @@
+menu_title: '&f䰀䰁䰂䰃'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Wyścigi Chowańców'
+    lore:
+      - '&7Wierzchowiec z wypożyczalni,'
+      - '&7wszyscy mają równe szanse.'
+      - '&7Wynik zależy tylko od jazdy.'
+  czasowka:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eCzasówka'
+    lore:
+      - '&7Sam na torze, walczysz z zegarem.'
+      - '&7Najlepszy czas trafia do rekordów.'
+      - ''
+      - '&fKliknij, by wybrać wierzchowca.'
+    left_click_commands:
+      - '[openguimenu] wyscigi_czasowka'
+  wyścig:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Wyścig z innymi'
+    lore:
+      - '&7Do 8 jeźdźców. Na torze skrzynki'
+      - '&7z bonusami, LPM = cios bronią.'
+      - '&7Poczekalnia 20 s.'
+      - ''
+      - '&fKliknij, by wybrać wierzchowca.'
+    left_click_commands:
+      - '[openguimenu] wyscigi_wyscig'
+  rekordy:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bRekordy toru'
+    lore:
+      - '&7Najlepsze przejazdy i okrążenie.'
+    left_click_commands:
+      - '[console] wyscigi rekordy %player_name%'
+      - '[close]'
+  sterowanie:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&fJak jeździć'
+    lore:
+      - '&fW &7gaz, &fS &7hamulec, &fA/D &7skręt'
+      - '&fShift + A/D &7= poślizg; im dłużej,'
+      - '&7tym mocniejsze turbo po puszczeniu'
+      - '&7(iskry: &fbiałe &7→ &9niebieskie &7→ &6pomarańczowe&7)'
+      - '&6» &7na torze przyspiesza'
+      - '&fF &7bonus, &fLPM &7cios, &fQ &7pauza'
+      - '&fW &7tuż przed &aSTART! &7= turbo startowe'
+      - '&7Widok z boku: &fF5'

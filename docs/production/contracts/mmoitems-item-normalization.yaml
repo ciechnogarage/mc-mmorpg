@@ -1,0 +1,81 @@
+schema_version: 1
+contract_id: mmoitems-item-normalization
+contract_version: 1
+plugin: MMOItems
+content_type: item
+applies_to:
+  - target_file: MCMMORPG/plugins/MMOItems/item/sword.yml
+    section_key_pattern: '^[A-Z0-9_]+$'
+comparison_units:
+  generated_projection:
+    description: Deterministic generator output before writing to the runtime target.
+  committed_target:
+    description: Exact section committed to the target runtime file.
+  effective_runtime:
+    description: Effective section or state observed after plugin reload on staging.
+normalization_rules:
+  - rule_id: key_order_not_significant
+    stage:
+      from: committed_target
+      to: effective_runtime
+    kind: serialization_only
+    allowed: true
+    scope:
+      keys:
+        - '*'
+    evidence_assertion: key-order-diff-ignored
+  - rule_id: implicit_defaults_materialized
+    stage:
+      from: committed_target
+      to: effective_runtime
+    kind: semantic_but_allowed
+    allowed: true
+    scope:
+      keys:
+        - type
+        - unbreakable
+        - disable-repairing
+    condition:
+      only_if_missing_in_committed_target: true
+    evidence_assertion: allowed-default-materialization
+  - rule_id: numeric_string_canonicalization
+    stage:
+      from: committed_target
+      to: effective_runtime
+    kind: serialization_only
+    allowed: true
+    scope:
+      keys:
+        - attack-damage
+        - attack-speed
+        - required-level
+    canonical_form:
+      representation: parse-equivalent-numeric-only
+      rounding_allowed: false
+      value_change_allowed: false
+    evidence_assertion: numeric-representation-normalized
+forbidden_drift:
+  - drift_id: unknown-key-added
+    description: Plugin added a key outside the allowed normalization contract.
+  - drift_id: generator-owned-value-changed
+    description: Effective runtime changed a generator-owned value outside allowed normalization.
+  - drift_id: section-key-rebound
+    description: Effective runtime no longer maps to the expected section key.
+digest_authority:
+  generated_projection_digest:
+    computed_from: normalized-generated-projection
+  committed_target_digest:
+    computed_from: normalized-target-section
+  effective_runtime_digest:
+    computed_from: normalized-effective-runtime-after-allowed-rules
+verdict_rules:
+  runtime_loaded_pass_requires:
+    - committed-target-present
+    - reverse-bijection-green
+    - reload-succeeded
+    - effective-runtime-diff-subset-of-allowed-normalization
+  runtime_loaded_fail_requires_any:
+    - forbidden-drift-detected
+    - target-missing
+    - duplicate-target-owner
+    - orphan-target

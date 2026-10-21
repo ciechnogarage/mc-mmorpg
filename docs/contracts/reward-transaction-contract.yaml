@@ -1,0 +1,384 @@
+contract:
+  id: reward-transaction-coordinator-contract-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "01"
+  semantic_owner: "10"
+  purpose:
+    - define one transaction boundary for reward grant, craft output, and trade settlement
+    - require a durable idempotent operation record before mutating player-visible state
+    - coordinate item, currency, and ownership changes across plugins without claiming exactly-once delivery
+    - carry the Domain 10 escrow lifecycle durably, including cancel, expiry, rollback, and manual resolution
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/reward-contract.yaml
+    - docs/contracts/item-instance-contract.yaml
+    - docs/contracts/stack-lot-contract.yaml
+    - docs/design/economy/escrow-contract.md
+    - docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  upstream_dependencies:
+    domain_05:
+      required:
+        - item_definition_catalog
+        - item_instance_identity_contract
+    domain_10:
+      required:
+        - currency_scope_contract
+        - trade_policy_contract
+    domain_17:
+      required:
+        - restart_replay_duplicate_rejection_evidence
+        - partial_failure_and_compensation_regression_tests
+
+transaction_identity:
+  transaction_id:
+    type: uuid
+    authority: Domain01RewardTransactionCoordinator
+    mutable: false
+    duplicates_allowed: false
+  idempotency_key:
+    type: string
+    authority: producer_request_context
+    mutable: false
+    uniqueness_scope: per_business_operation
+  correlation_id:
+    type: uuid_or_trace_id
+    authority: orchestration_layer
+    mutable: false
+  owner_subject_key:
+    contract_ref: docs/contracts/account-character-contract.yaml
+    key: character_id
+
+transaction_scope:
+  supported_flows:
+    - reward_grant
+    - craft_commit
+    - trade_settlement
+    - escrow_settlement
+  escrow_business_flow:
+    business_type_authority: docs/design/economy/escrow-contract.md
+    business_type_field: escrow_transaction_type
+    note: >-
+      The shell does not restate the Domain 10 escrow business type list.
+      It carries the declared escrow_transaction_type verbatim and rejects a
+      value the escrow contract does not define.
+  managed_assets:
+    - item_instance_id
+    - item_definition_id
+    - currency_delta
+    - settlement_tender
+    - operation_fuel_lot
+    - asset_lot_reservation
+    - fee_leg
+    - ownership_transfer
+  explicit_non_goals:
+    - dungeon_runtime_instancing
+    - cosmetic_preview_only_flows
+    - chat_or_menu_only_feedback
+
+runtime_authority:
+  coordinator: Domain01RewardTransactionCoordinator
+  reward_source_plugins:
+    - MythicDungeons
+    - MythicMobs
+  item_definition_catalog: MMOItems
+  item_inventory_runtime: MMOInventory
+  currency_provider: CMI
+  economy_bridge: Vault
+
+state_machine:
+  vocabulary_authority: docs/design/economy/escrow-contract.md
+  statuses:
+    - PREPARED
+    - FUNDS_RESERVED
+    - ASSETS_RESERVED
+    - COMMITTING
+    - COMMITTED
+    - CANCELLING
+    - CANCELLED
+    - EXPIRING
+    - EXPIRED
+    - ROLLING_BACK
+    - ROLLED_BACK
+    - FAILED
+    - MANUAL_REVIEW
+    - MANUAL_RESOLUTION_COMMITTING
+    - MANUALLY_RESOLVED
+  terminal_statuses:
+    - COMMITTED
+    - CANCELLED
+    - EXPIRED
+    - ROLLED_BACK
+    - FAILED
+    - MANUALLY_RESOLVED
+  non_terminal_holding_statuses:
+    - MANUAL_REVIEW
+  legacy_status_aliases:
+    RECEIVED: PREPARED
+    VALIDATED: PREPARED
+    RESERVED: FUNDS_RESERVED
+    APPLYING: COMMITTING
+    COMPENSATED: ROLLED_BACK
+  allowed_transitions:
+    PREPARED: [FUNDS_RESERVED, ASSETS_RESERVED, CANCELLING, EXPIRING, FAILED, MANUAL_REVIEW]
+    FUNDS_RESERVED: [ASSETS_RESERVED, COMMITTING, CANCELLING, EXPIRING, FAILED, MANUAL_REVIEW]
+    ASSETS_RESERVED: [COMMITTING, CANCELLING, EXPIRING, FAILED, MANUAL_REVIEW]
+    COMMITTING: [COMMITTED, ROLLING_BACK, MANUAL_REVIEW]
+    CANCELLING: [CANCELLED, MANUAL_REVIEW]
+    EXPIRING: [EXPIRED, MANUAL_REVIEW]
+    ROLLING_BACK: [ROLLED_BACK, MANUAL_REVIEW]
+    MANUAL_REVIEW: [MANUAL_RESOLUTION_COMMITTING, COMMITTING, ROLLING_BACK, CANCELLING, EXPIRING]
+    MANUAL_RESOLUTION_COMMITTING: [MANUALLY_RESOLVED, MANUAL_REVIEW]
+    COMMITTED: []
+    CANCELLED: []
+    EXPIRED: []
+    ROLLED_BACK: []
+    FAILED: []
+    MANUALLY_RESOLVED: []
+  transition_notes:
+    - >-
+      Cancel and expiry always pass through CANCELLING or EXPIRING so custody
+      release is a durably attributable step. The compressed market-listing
+      diagram in the escrow contract renders these edges as direct, which is a
+      view simplification, not a second state machine.
+    - >-
+      MANUAL_REVIEW may resume forward into COMMITTING when an operator confirms
+      the pre-commit intent was still valid; it reaches MANUALLY_RESOLVED only
+      through MANUAL_RESOLUTION_COMMITTING so operator action is itself durable.
+    - >-
+      MANUAL_RESOLUTION_COMMITTING may fall back to MANUAL_REVIEW when the
+      operator-approved resolution cannot be applied. It has no other exit.
+  forbidden_transitions:
+    - prepared_to_committed_when_custody_was_required
+    - committed_to_rolled_back_as_silent_replay_behavior
+    - any_transition_out_of_a_terminal_status
+    - manual_review_treated_as_terminal
+    - transition_inferred_from_chat_gui_label_or_item_lore
+  invariants:
+    - durable_operation_record_exists_before_any_reservation_or_commit
+    - replay_of_same_idempotency_key_must_not_duplicate_effects
+    - failure_recovery_must_not_depend_on_chat_gui_display_name_or_lore
+    - exactly_once_claim_is_forbidden
+    - manual_review_is_not_terminal_and_requires_a_declared_resolution_path
+    - cancel_and_expiry_must_release_reserved_custody_or_escalate_to_manual_review
+    - every_transaction_ends_in_exactly_one_terminal_status
+
+operation_record_shape:
+  record_schema_version: 2
+  transaction_id: uuid
+  idempotency_key: string
+  correlation_id: string
+  transaction_type: REWARD|CRAFT|TRADE|ESCROW
+  escrow_transaction_type: string_or_null
+  account_id: string
+  character_id: string
+  profile_id: string
+  state: >-
+    PREPARED|FUNDS_RESERVED|ASSETS_RESERVED|COMMITTING|COMMITTED|CANCELLING|CANCELLED|EXPIRING|EXPIRED|ROLLING_BACK|ROLLED_BACK|FAILED|MANUAL_REVIEW|MANUAL_RESOLUTION_COMMITTING|MANUALLY_RESOLVED
+  failure_code: string_or_null
+  escrow_record_ref:
+    business_shape_authority: docs/design/economy/escrow-contract.md
+    carried_business_sections:
+      - party_roles
+      - market_context
+      - tender_entries
+      - operation_fuel_entries
+      - asset_lot_entries
+      - fee_legs
+    note: >-
+      Domain 10 owns the field semantics of these sections. The shell stores them
+      durably, fences them, and replays them; it does not reinterpret them.
+  requested_effects:
+    item_grants: []
+    item_consumptions: []
+    currency_deltas: []
+    settlement_tender_deltas: []
+    operation_fuel_lots: []
+    asset_lot_reservations: []
+    fee_legs: []
+    stack_lot_lineage_events: []
+    ownership_transfers: []
+  applied_effects:
+    item_instance_ids: []
+    currency_receipts: []
+    committed_fee_leg_ids: []
+    released_reservation_leg_ids: []
+    returned_stack_lot_ids: []
+  source_context:
+    source_type: string
+    source_id: string
+    source_revision: string
+  timestamps:
+    created_at: iso8601
+    last_transition_at: iso8601
+    committed_at: iso8601_or_null
+    expires_at: iso8601_or_null
+    resolution_deadline_at: iso8601_or_null
+
+reservation_and_commit_rules:
+  item_output_requires_item_instance_id_before_commit: true
+  item_consumption_requires_reservable_instance_identity: true
+  currency_mutation_requires_transaction_reference: true
+  service_settlement_tender_must_be_gold: true
+  premium_balance_must_not_be_ordinary_settlement_tender: true
+  itemized_currency_must_be_recorded_as_operation_fuel: true
+  stack_lot_mutations_must_reference_stack_lot_id_and_lineage_event: true
+  cross_character_transfer_requires_single_coordinated_operation: true
+  manual_review_required_on_unknown_partial_commit: true
+  every_reservable_leg_requires_expected_revision: true
+  partial_stack_lot_reservation_must_create_traceable_residual_lot: true
+  one_stack_lot_revision_must_not_back_two_active_reservations: true
+  reservation_release_must_be_recorded_per_leg_id: true
+  cancel_or_expiry_must_not_end_with_unreleased_reserved_custody: true
+
+replay_and_reservation_semantics:
+  reservation_replay:
+    reservation_is_keyed_by: [transaction_id, leg_id, expected_revision]
+    repeated_reserve_for_same_leg_id_is_a_no_op_when_already_reserved: true
+    expected_revision_mismatch_does_not_reserve_and_does_not_partially_apply: true
+    expected_revision_mismatch_outcome: retry_with_refreshed_revision_or_MANUAL_REVIEW
+  release_replay:
+    release_is_recorded_in_applied_effects_released_reservation_leg_ids: true
+    repeated_release_of_the_same_leg_id_is_a_no_op: true
+    release_must_return_exact_reserved_quantity_via_stack_lot_contract: true
+  terminal_replay_outcomes:
+    COMMITTED: return_recorded_commit_outcome
+    CANCELLED: return_recorded_cancel_outcome
+    EXPIRED: return_recorded_expiry_outcome
+    ROLLED_BACK: return_recorded_rollback_outcome
+    FAILED: return_recorded_failure_outcome
+    MANUALLY_RESOLVED: return_recorded_manual_outcome
+  unresolved_partial_state_replay: resume_recovery_or_enter_MANUAL_REVIEW
+  forbidden_on_replay:
+    - duplicate_payout_for_the_same_idempotency_key
+    - duplicate_return_of_the_same_reserved_leg_or_lot
+    - recharging_a_fee_leg_already_present_in_committed_fee_leg_ids
+    - delivering_both_transformed_output_and_original_input_as_final_state
+
+fee_timing:
+  fee_roles:
+    listing_fee:
+      charged_at_state: PREPARED
+      charge_point: listing_create
+      refunded_on_cancel_or_expiry: false
+      note: >-
+        Charged upfront when the listing record becomes durable, before or with
+        asset reservation. Cancel and expiry preserve the already charged fee.
+    transaction_tax:
+      charged_at_state: COMMITTING
+      charge_point: sale_settlement
+      refunded_on_cancel_or_expiry: not_applicable
+      note: Charged only on successful sale settlement, atomically with commit.
+    service_fee:
+      charged_at_state: COMMITTING
+      charge_point: service_settlement
+      refunded_on_cancel_or_expiry: not_applicable
+      note: >-
+        Charged only on successful service settlement unless a later Domain 10
+        policy names an explicit reservation or deposit variant.
+  rules:
+    every_fee_charge_is_one_explicit_fee_leg_with_leg_id: true
+    fee_leg_must_record_charged_at_state: true
+    committed_fee_leg_ids_are_the_replay_fence_for_recharge: true
+    rollback_must_state_whether_each_fee_leg_was_charged_preserved_waived_or_refunded: true
+    fee_and_asset_quantity_are_accounted_separately: true
+
+delivery_contract:
+  delivery_semantics: at_least_once
+  consumer_requirement: idempotent
+  ordering: per_entity_when_required
+  exactly_once_claim: forbidden
+
+compensation_policy:
+  terminal_status_for_automatic_compensation: ROLLED_BACK
+  automatic_compensation_allowed_for:
+    - unapplied_currency_reservation
+    - unapplied_item_output_before_visibility
+    - reserved_but_uncommitted_asset_or_fuel_lot
+  manual_review_required_for:
+    - ambiguous_trade_settlement
+    - duplicate_item_instance_detection
+    - ownership_transfer_after_partial_visibility
+    - restart_during_apply_without_durable_effect_receipt
+    - reserved_custody_present_without_a_durable_outcome_record
+    - stack_lot_quantity_mismatch_during_release_or_return
+    - resolution_deadline_at_passed_with_unresolved_custody
+  rollback_rules:
+    - return_reserved_tender_when_settlement_did_not_commit
+    - return_reserved_material_and_fuel_lots_unless_validly_consumed_by_a_committed_result
+    - return_original_service_input_when_no_committed_transform_occurred
+    - preserve_and_state_fee_leg_accounting_for_every_fee_leg
+    - escalate_ambiguity_to_MANUAL_REVIEW_instead_of_inventing_a_compromise_state
+
+manual_resolution_policy:
+  manual_review_is_terminal: false
+  permitted_outcomes_from_manual_review:
+    - COMMITTED
+    - CANCELLED
+    - EXPIRED
+    - ROLLED_BACK
+    - MANUALLY_RESOLVED
+  manual_resolution_committing_requirements:
+    - operator_decision_is_durably_recorded_before_mutation
+    - operator_identity_and_decision_reason_are_recorded
+  manually_resolved_requirements:
+    - exactly_one_final_ownership_outcome
+    - complete_fee_leg_breakdown
+    - durable_notes_explaining_the_exception_path
+
+integration_events:
+  produced:
+    - transaction_received
+    - transaction_reserved
+    - transaction_committed
+    - transaction_cancelled
+    - transaction_expired
+    - transaction_rolled_back
+    - transaction_compensated
+    - transaction_manual_review_required
+    - transaction_manually_resolved
+  consumed:
+    - reward_request_received
+    - craft_commit_requested
+    - trade_settlement_requested
+    - escrow_settlement_requested
+    - escrow_cancel_requested
+    - escrow_expiry_due
+    - escrow_manual_resolution_approved
+
+rules:
+  transaction_coordinator_is_single_writer_for_durable_transaction_state: true
+  reward_contract_must_not_commit_items_or_currency_outside_transaction_coordinator: true
+  item_instance_contract_must_supply_instance_identity_for_durable_item_effects: true
+  duplicate_transaction_id_is_integrity_incident: true
+  duplicate_item_instance_id_during_commit_is_integrity_incident: true
+  transaction_resume_after_restart_requires_durable_record_replay: true
+  escrow_business_semantics_remain_owned_by_domain_10: true
+  concurrency_fence_inputs:
+    - transaction_id
+    - idempotency_key
+    - actor_identity
+    - reserved_asset_or_stack_lot_identity
+    - expected_revision
+    - market_context_identity
+
+migration_requirements:
+  migration_ledger_ref: docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  relevant_legacy_claims:
+    - loot_and_rewards
+    - currency_and_economy
+  current_phase: shell_only_no_cutover
+  cutover_blockers:
+    - transaction_coordinator_service_not_implemented
+    - item_instance_service_not_implemented
+    - economy_scope_contract_not_finalized
+    - duplicate_replay_evidence_missing
+    - compensation_policy_not_verified_under_restart
+
+open_questions:
+  - Whether craft and trade settle through one shared coordinator implementation or through distinct adapters over one durable journal.
+  - Which receipts prove an item output became visible to the player for compensation decisions.
+  - How stack split and merge semantics interact with item_instance_id during trade and crafting.
+  - Whether CMI plus Vault can expose sufficient durable references for rollback and audit or need a dedicated transaction bridge.

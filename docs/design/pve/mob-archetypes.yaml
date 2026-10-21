@@ -1,0 +1,388 @@
+version: 0.3
+domain: 07-pve-encounters
+status: draft
+last_updated: 2026-08-12
+source_of_truth:
+  - docs/design/pve/encounter-framework.md
+
+notes:
+  - This file defines reusable mob archetypes and their normative contribution to encounter ledgers.
+  - This file is structural only. Numeric combat balance remains owned by domain 03.
+  - Every concrete mob spec must reference exactly one `primary_archetype_id` from this file.
+  - Boss add packages must reference archetypes from this file unless a documented exception exists.
+
+enums:
+  role_family: [FRONTLINE, SKIRMISHER, ARTILLERY, CONTROLLER, SUPPORT, DISRUPTOR, SUMMONER, ASSASSIN, OBJECTIVE_UNIT, ELITE_ANCHOR]
+  pressure_type: [POSITIONING, INTERRUPT, TARGET_PRIORITY, MOVEMENT_DODGE, SPACE_DENIAL, ATTRITION, BURST_RESPONSE, OBJECTIVE_HANDLING, ADD_CONTROL]
+  control_immunity_class: [CONTROL_VULNERABLE, CONTROL_RESISTANT, CONTROL_LIMITED, CONTROL_IMMUNE]
+  interruptibility_class: [UNINTERRUPTIBLE, INTERRUPTIBLE_OPTIONAL, INTERRUPTIBLE_RECOMMENDED, INTERRUPTIBLE_REQUIRED]
+  displacement_response_class: [DISPLACEMENT_NONE, DISPLACEMENT_LIMITED, DISPLACEMENT_ALLOWED]
+  telegraph_tier: [TIER_1_MINOR, TIER_2_MAJOR, TIER_3_CRITICAL]
+  telegraph_channel: [visual, audio, mixed, worldspace]
+  durability_tier: [LOW, MEDIUM, HIGH]
+  mobility_tier: [LOW, MEDIUM, HIGH]
+  cadence_tier: [LOW, MEDIUM, HIGH]
+  pack_shell_level: [NONE, LIGHT, MEDIUM, HEAVY]
+
+schema_contract:
+  archetype_required_fields:
+    - archetype_id
+    - combat_consumer_status
+    - d03_consumer_bindings
+    - display_name
+    - role_family
+    - combat_job
+    - encounter_use
+    - primary_pressure_type
+    - secondary_pressure_types
+    - allowed_pack_roles_with
+    - disallowed_pack_roles_with
+    - target_profile
+    - counterplay
+    - behavior_profile
+    - failure_profile
+    - control_contract
+    - telegraph_contract
+    - runtime_contribution
+    - pack_scaling_profile
+  runtime_contribution_definition:
+    description: Per one active instance of this archetype at peak contribution.
+    fields:
+      - actor_slots
+      - priority_target_slots
+      - hazard_slots
+      - periodic_skill_slots
+      - projectile_source_slots
+      - high_fidelity_model_slots
+  pack_scaling_profile_definition:
+    fields:
+      - body_count_delta
+      - support_presence_delta
+      - hazard_slot_delta
+      - periodic_skill_slot_delta
+      - projectile_source_slot_delta
+      - priority_target_slot_delta
+      - objective_concurrency_delta
+      - reinforcement_payload_delta
+      - add_cadence_delta
+      - notes
+  telegraph_contract_definition:
+    fields:
+      - baseline_tier
+      - signature_tier
+      - default_channel
+      - default_window_ms
+      - default_clarity_notes
+  d03_consumer_binding_definition:
+    fields:
+      - mechanic_id
+      - mechanic_contract_version
+      - required_readiness
+      - mechanic_contract_ref
+      - gate_transition_envelope_ref
+      - contract_bundle_digest
+      - build_digest
+    rules:
+      - required_readiness must equal RUNTIME_VERIFIED
+      - every executable combat mechanic must have exactly one binding
+      - empty bindings require DESIGN_ONLY or VALIDATED status and prohibit runtime execution
+
+global_rules:
+  pack_authoring_rules:
+    - Standard floor packs should have one readable center of gravity.
+    - A standard pack should teach or test one main answer first.
+    - Two ELITE_ANCHOR units in one standard pack are disallowed.
+    - ASSASSIN, DISRUPTOR, and SUMMONER roles require explicit active-count caps in consuming specs.
+    - SUPPORT and CONTROLLER units should be protected by shell, spacing, or objective geometry, not hidden unfairness.
+  budget_rules:
+    - Archetype runtime_contribution values are additive across active instances.
+    - Archetypes do not implicitly create budget-bearing adds through this file.
+    - Any spawned actors must be declared by the consuming encounter reinforcement contract or boss add package.
+    - Encounter overflow behavior is controlled by the parent encounter or boss spec, not the archetype.
+  scaling_rules:
+    - Solo variants reduce support load before deleting the anchor lesson.
+    - 4-player variants may add bodies, shell, or one secondary pressure lane, but may not add new primary mechanic grammar.
+    - Archetype scaling may change count and concurrency; it may not redefine the archetype's counterplay family.
+    - Archetype pack_scaling_profile is a reusable authoring default; the consuming encounter or boss spec is the authoritative runtime scaling contract.
+  telegraph_rules:
+    - Archetype telegraph defaults are inherited by consuming specs unless explicitly overridden.
+    - Concrete encounters and bosses may tighten these defaults; they may not erase them.
+  d03_consumer_binding_rules:
+    - Mechanic tags, control classes, counterplay prose, runtime providers, and archetype identity never substitute for a Domain 03 binding.
+    - Missing, duplicate, stale, digest-mismatched, downgraded, or revoked binding suppresses or rejects the mechanic fail-closed.
+    - No archetype entry may claim RUNTIME_VERIFIED until all reachable mechanics resolve one immutable Domain 03 contract, gate-envelope, bundle, and build lineage.
+
+composition_aliases:
+  support_shell:
+    allowed_role_pairs:
+      - [FRONTLINE, SUPPORT]
+      - [FRONTLINE, ARTILLERY]
+      - [FRONTLINE, CONTROLLER]
+      - [ELITE_ANCHOR, SUPPORT]
+      - [ELITE_ANCHOR, ARTILLERY]
+      - [ELITE_ANCHOR, CONTROLLER]
+  harassment_shell:
+    allowed_role_pairs:
+      - [OBJECTIVE_UNIT, FRONTLINE]
+      - [OBJECTIVE_UNIT, CONTROLLER]
+
+defaults:
+  zero_scaling_profile: &zero_scaling
+    body_count_delta: 0
+    support_presence_delta: 0
+    hazard_slot_delta: 0
+    periodic_skill_slot_delta: 0
+    projectile_source_slot_delta: 0
+    priority_target_slot_delta: 0
+    objective_concurrency_delta: 0
+    reinforcement_payload_delta: 0
+    add_cadence_delta: 0
+    notes: baseline
+
+archetypes:
+  - archetype_id: frontline
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Frontline
+    role_family: FRONTLINE
+    combat_job: Holds space, creates first contact, and protects softer roles.
+    encounter_use: Core body for introductory and mixed packs.
+    primary_pressure_type: POSITIONING
+    secondary_pressure_types: [ATTRITION]
+    allowed_pack_roles_with: [SKIRMISHER, ARTILLERY, CONTROLLER, SUPPORT, SUMMONER, OBJECTIVE_UNIT, ELITE_ANCHOR]
+    disallowed_pack_roles_with: []
+    target_profile: {preferred_targeting: nearest_or_in_lane, retarget_frequency: LOW, chase_profile: COMMIT_SHORT}
+    counterplay: [spacing, flank_or_back_angle, guard_break_or_bait]
+    behavior_profile: {durability_tier: MEDIUM, mobility_tier: LOW, cadence_tier: LOW, pack_shell_level: LIGHT, recovery_windows: [after_whiffed_commit, after_guard_break]}
+    failure_profile: {first_failure: loses_space, repeat_failure: frontline_pins_space_for_backline}
+    control_contract: {control_immunity_class: CONTROL_RESISTANT, interruptibility_class: UNINTERRUPTIBLE, displacement_response_class: DISPLACEMENT_LIMITED}
+    telegraph_contract: {baseline_tier: TIER_1_MINOR, signature_tier: TIER_2_MAJOR, default_channel: visual, default_window_ms: 900, default_clarity_notes: frontal_commit_clear_windup}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 0, hazard_slots: 0, periodic_skill_slots: 0, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, notes: preserve_anchor}
+      duo_profile: *zero_scaling
+      trio_profile: *zero_scaling
+      party4_profile: {<<: *zero_scaling, body_count_delta: 1, notes: may_add_body_if_pack_budget_allows}
+
+  - archetype_id: skirmisher
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Skirmisher
+    role_family: SKIRMISHER
+    combat_job: Repositions, probes angles, and punishes static play.
+    encounter_use: Mobility lesson and side-angle pressure.
+    primary_pressure_type: MOVEMENT_DODGE
+    secondary_pressure_types: [POSITIONING]
+    allowed_pack_roles_with: [FRONTLINE, ARTILLERY, SUPPORT, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [ASSASSIN]
+    target_profile: {preferred_targeting: exposed_or_split_target, retarget_frequency: MEDIUM, chase_profile: HIT_AND_REPOSITION}
+    counterplay: [turn_and_peel, force_bad_angle, punish_reposition_recovery]
+    behavior_profile: {durability_tier: LOW, mobility_tier: HIGH, cadence_tier: MEDIUM, pack_shell_level: NONE, recovery_windows: [after_dash_commit, after_failed_engage]}
+    failure_profile: {first_failure: loses_safe_positioning, repeat_failure: crossfire_or_multi_angle_pressure}
+    control_contract: {control_immunity_class: CONTROL_VULNERABLE, interruptibility_class: UNINTERRUPTIBLE, displacement_response_class: DISPLACEMENT_ALLOWED}
+    telegraph_contract: {baseline_tier: TIER_1_MINOR, signature_tier: TIER_2_MAJOR, default_channel: visual, default_window_ms: 700, default_clarity_notes: movement_commit_reveal}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 0, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, notes: keep_single_angle}
+      duo_profile: *zero_scaling
+      trio_profile: {<<: *zero_scaling, priority_target_slot_delta: 1, notes: add_multi_angle_pressure}
+      party4_profile: {<<: *zero_scaling, body_count_delta: 1, priority_target_slot_delta: 1, notes: second_skirmisher_only_if_budget_allows}
+
+  - archetype_id: artillery
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Artillery
+    role_family: ARTILLERY
+    combat_job: Applies ranged lane pressure and forces LoS or gap-close decisions.
+    encounter_use: Backline pressure and zoning.
+    primary_pressure_type: TARGET_PRIORITY
+    secondary_pressure_types: [MOVEMENT_DODGE]
+    allowed_pack_roles_with: [FRONTLINE, CONTROLLER, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [OBJECTIVE_UNIT]
+    target_profile: {preferred_targeting: visible_exposed_target, retarget_frequency: LOW, chase_profile: HOLD_BACKLINE}
+    counterplay: [line_of_sight, gap_close, target_swap]
+    behavior_profile: {durability_tier: LOW, mobility_tier: LOW, cadence_tier: MEDIUM, pack_shell_level: MEDIUM, recovery_windows: [after_volley, after_relocate]}
+    failure_profile: {first_failure: chip_pressure_accumulates, repeat_failure: safe_stationary_play_breaks_down}
+    control_contract: {control_immunity_class: CONTROL_VULNERABLE, interruptibility_class: INTERRUPTIBLE_OPTIONAL, displacement_response_class: DISPLACEMENT_ALLOWED}
+    telegraph_contract: {baseline_tier: TIER_1_MINOR, signature_tier: TIER_2_MAJOR, default_channel: visual, default_window_ms: 800, default_clarity_notes: lane_shot_clear_origin}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 0, projectile_source_slots: 1, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, notes: keep_los_lesson_without_shell_bloat}
+      duo_profile: *zero_scaling
+      trio_profile: *zero_scaling
+      party4_profile: {<<: *zero_scaling, support_presence_delta: 1, projectile_source_slot_delta: 1, notes: stronger_shell}
+
+  - archetype_id: controller
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Controller
+    role_family: CONTROLLER
+    combat_job: Shapes movement lanes and sets up allied pressure through space denial.
+    encounter_use: Mid-tier complexity spike and setup role.
+    primary_pressure_type: SPACE_DENIAL
+    secondary_pressure_types: [TARGET_PRIORITY]
+    allowed_pack_roles_with: [FRONTLINE, ARTILLERY, ELITE_ANCHOR, SUMMONER]
+    disallowed_pack_roles_with: [CONTROLLER]
+    target_profile: {preferred_targeting: choke_or_high_value_position, retarget_frequency: LOW, chase_profile: HOLD_OR_STEP}
+    counterplay: [leave_denied_space, burst_controller, interrupt_if_available]
+    behavior_profile: {durability_tier: LOW, mobility_tier: LOW, cadence_tier: LOW, pack_shell_level: MEDIUM, recovery_windows: [after_zone_expiry, after_failed_setup]}
+    failure_profile: {first_failure: reduced_safe_space, repeat_failure: allied_pressure_becomes_harder_to_avoid}
+    control_contract: {control_immunity_class: CONTROL_LIMITED, interruptibility_class: INTERRUPTIBLE_RECOMMENDED, displacement_response_class: DISPLACEMENT_LIMITED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_2_MAJOR, default_channel: mixed, default_window_ms: 1100, default_clarity_notes: zone_seed_and_area_outline}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 1, periodic_skill_slots: 1, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, hazard_slot_delta: -1, periodic_skill_slot_delta: -1, notes: reduce_zone_overlap}
+      duo_profile: *zero_scaling
+      trio_profile: {<<: *zero_scaling, priority_target_slot_delta: 1, notes: stronger_setup_pressure}
+      party4_profile: {<<: *zero_scaling, support_presence_delta: 1, hazard_slot_delta: 1, priority_target_slot_delta: 1, notes: only_if_caps_allow}
+
+  - archetype_id: support
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Support
+    role_family: SUPPORT
+    combat_job: Extends encounter duration or stabilizes allied threats.
+    encounter_use: Priority target that changes pack behavior if ignored.
+    primary_pressure_type: TARGET_PRIORITY
+    secondary_pressure_types: [ATTRITION]
+    allowed_pack_roles_with: [FRONTLINE, SKIRMISHER, ARTILLERY, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [SUPPORT]
+    target_profile: {preferred_targeting: ally_cluster_or_anchor, retarget_frequency: LOW, chase_profile: HOLD_BEHIND_SHELL}
+    counterplay: [target_swap, interrupt_if_available, break_shell_and_focus]
+    behavior_profile: {durability_tier: LOW, mobility_tier: LOW, cadence_tier: LOW, pack_shell_level: HEAVY, recovery_windows: [after_support_cycle, after_failed_channel]}
+    failure_profile: {first_failure: encounter_takes_longer, repeat_failure: anchor_persists_past_expected_window}
+    control_contract: {control_immunity_class: CONTROL_VULNERABLE, interruptibility_class: INTERRUPTIBLE_RECOMMENDED, displacement_response_class: DISPLACEMENT_ALLOWED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_2_MAJOR, default_channel: mixed, default_window_ms: 1000, default_clarity_notes: support_cast_clear_target_link}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 1, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, notes: remove_support_before_anchor}
+      duo_profile: *zero_scaling
+      trio_profile: *zero_scaling
+      party4_profile: {<<: *zero_scaling, support_presence_delta: 1, periodic_skill_slot_delta: 1, notes: extra_support_only_if_budget_allows}
+
+  - archetype_id: disruptor
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Disruptor
+    role_family: DISRUPTOR
+    combat_job: Breaks rhythm and punishes greedy execution windows.
+    encounter_use: Mid-to-late floor anti-comfort role.
+    primary_pressure_type: BURST_RESPONSE
+    secondary_pressure_types: [TARGET_PRIORITY]
+    allowed_pack_roles_with: [FRONTLINE, ARTILLERY, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [DISRUPTOR, ASSASSIN]
+    target_profile: {preferred_targeting: committed_or_casting_target, retarget_frequency: MEDIUM, chase_profile: PUNISH_AND_BACK_OFF}
+    counterplay: [bait_commit, preserve_defensive_timing, peel_or_focus]
+    behavior_profile: {durability_tier: LOW, mobility_tier: MEDIUM, cadence_tier: HIGH, pack_shell_level: LIGHT, recovery_windows: [after_interrupt_dash, after_failed_punish]}
+    failure_profile: {first_failure: rhythm_break, repeat_failure: recovery_windows_collapse}
+    control_contract: {control_immunity_class: CONTROL_LIMITED, interruptibility_class: UNINTERRUPTIBLE, displacement_response_class: DISPLACEMENT_LIMITED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_2_MAJOR, default_channel: visual, default_window_ms: 650, default_clarity_notes: punish_lunge_or_breakin_signal}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 0, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, notes: avoid_multi_disruptor_overlap}
+      duo_profile: *zero_scaling
+      trio_profile: {<<: *zero_scaling, priority_target_slot_delta: 1, notes: one_additional_pressure_lane}
+      party4_profile: {<<: *zero_scaling, body_count_delta: 1, priority_target_slot_delta: 1, notes: only_if_no_assassin_present}
+
+  - archetype_id: summoner
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Summoner
+    role_family: SUMMONER
+    combat_job: Converts ignored cycles into actor-bearing add burden.
+    encounter_use: Add-control lesson and escalation role.
+    primary_pressure_type: ADD_CONTROL
+    secondary_pressure_types: [TARGET_PRIORITY]
+    allowed_pack_roles_with: [FRONTLINE, CONTROLLER, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [SUMMONER]
+    target_profile: {preferred_targeting: protected_backline_position, retarget_frequency: LOW, chase_profile: HOLD_BACKLINE}
+    counterplay: [burst_summoner, interrupt_if_available, clear_spawned_bodies]
+    behavior_profile: {durability_tier: LOW, mobility_tier: LOW, cadence_tier: LOW, pack_shell_level: MEDIUM, recovery_windows: [after_summon_cycle, after_interrupt]}
+    failure_profile: {first_failure: actor_count_rises, repeat_failure: add_budget_spirals}
+    control_contract: {control_immunity_class: CONTROL_VULNERABLE, interruptibility_class: INTERRUPTIBLE_RECOMMENDED, displacement_response_class: DISPLACEMENT_ALLOWED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_3_CRITICAL, default_channel: mixed, default_window_ms: 1200, default_clarity_notes: summon_circle_and_cast_link}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 1, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, add_cadence_delta: -1, notes: reduce_actor_bearing_add_rate_first}
+      duo_profile: *zero_scaling
+      trio_profile: *zero_scaling
+      party4_profile: {<<: *zero_scaling, support_presence_delta: 1, priority_target_slot_delta: 1, add_cadence_delta: 1, notes: stronger_shell_and_add_rate_only_if_caps_allow}
+
+  - archetype_id: assassin
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Assassin
+    role_family: ASSASSIN
+    combat_job: Threatens exposed players through short lethal windows and angle punishment.
+    encounter_use: Sparse high-threat specialist, never pack filler.
+    primary_pressure_type: BURST_RESPONSE
+    secondary_pressure_types: [MOVEMENT_DODGE]
+    allowed_pack_roles_with: [FRONTLINE, SUPPORT, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [ASSASSIN, DISRUPTOR]
+    target_profile: {preferred_targeting: isolated_or_low_commitment_target, retarget_frequency: MEDIUM, chase_profile: AMBUSH_WINDOW}
+    counterplay: [keep_spacing_honest, hold_reactive_defensive, punish_after_commit]
+    behavior_profile: {durability_tier: LOW, mobility_tier: HIGH, cadence_tier: LOW, pack_shell_level: NONE, recovery_windows: [after_reveal, after_missed_commit]}
+    failure_profile: {first_failure: health_or_space_spike_loss, repeat_failure: repeated_backline_panic}
+    control_contract: {control_immunity_class: CONTROL_LIMITED, interruptibility_class: UNINTERRUPTIBLE, displacement_response_class: DISPLACEMENT_LIMITED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_3_CRITICAL, default_channel: visual, default_window_ms: 750, default_clarity_notes: reveal_and_dash_commit}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 0, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, notes: keep_single_assassin_only}
+      duo_profile: *zero_scaling
+      trio_profile: {<<: *zero_scaling, priority_target_slot_delta: 1, notes: stronger_backline_threat}
+      party4_profile: {<<: *zero_scaling, body_count_delta: 1, priority_target_slot_delta: 1, notes: never_pair_with_disruptor_duplicate}
+
+  - archetype_id: objective_unit
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Objective Unit
+    role_family: OBJECTIVE_UNIT
+    combat_job: Forces handling of a room-side goal other than pure kill order.
+    encounter_use: Escort, channel, shrine, carrier, or room-state modifier.
+    primary_pressure_type: OBJECTIVE_HANDLING
+    secondary_pressure_types: [TARGET_PRIORITY]
+    allowed_pack_roles_with: [FRONTLINE, CONTROLLER, ELITE_ANCHOR]
+    disallowed_pack_roles_with: [OBJECTIVE_UNIT]
+    target_profile: {preferred_targeting: objective_location, retarget_frequency: LOW, chase_profile: OBJECTIVE_BOUND}
+    counterplay: [contest_objective_window, clear_shell, stop_progress_before_threshold]
+    behavior_profile: {durability_tier: MEDIUM, mobility_tier: LOW, cadence_tier: LOW, pack_shell_level: HEAVY, recovery_windows: [after_objective_tick_window, after_shell_break]}
+    failure_profile: {first_failure: objective_progress_loss, repeat_failure: encounter_escalates}
+    control_contract: {control_immunity_class: CONTROL_LIMITED, interruptibility_class: INTERRUPTIBLE_OPTIONAL, displacement_response_class: DISPLACEMENT_LIMITED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_3_CRITICAL, default_channel: mixed, default_window_ms: 1100, default_clarity_notes: objective_progress_bar_and_world_anchor}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 0, periodic_skill_slots: 1, projectile_source_slots: 0, high_fidelity_model_slots: 0}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, objective_concurrency_delta: 0, notes: avoid_parallel_objective_burden}
+      duo_profile: *zero_scaling
+      trio_profile: {<<: *zero_scaling, objective_concurrency_delta: 1, notes: allow_one_parallel_objective_lane}
+      party4_profile: {<<: *zero_scaling, support_presence_delta: 1, periodic_skill_slot_delta: 1, priority_target_slot_delta: 1, objective_concurrency_delta: 1, notes: only_if_encounter_declares_objective_concurrency}
+
+  - archetype_id: elite_anchor
+    combat_consumer_status: DESIGN_ONLY
+    d03_consumer_bindings: []
+    display_name: Elite Anchor
+    role_family: ELITE_ANCHOR
+    combat_job: Defines pack identity and ties allied roles into one room-control problem.
+    encounter_use: Elite rooms, miniboss shells, or trash climax beats.
+    primary_pressure_type: TARGET_PRIORITY
+    secondary_pressure_types: [POSITIONING, ATTRITION]
+    allowed_pack_roles_with: [FRONTLINE, SKIRMISHER, ARTILLERY, CONTROLLER, SUPPORT, DISRUPTOR, SUMMONER, OBJECTIVE_UNIT]
+    disallowed_pack_roles_with: [ELITE_ANCHOR]
+    target_profile: {preferred_targeting: central_space_control, retarget_frequency: LOW, chase_profile: COMMIT_LONG}
+    counterplay: [identify_anchor_rule, solve_shell_then_focus, exploit_anchor_recovery]
+    behavior_profile: {durability_tier: HIGH, mobility_tier: MEDIUM, cadence_tier: MEDIUM, pack_shell_level: MEDIUM, recovery_windows: [after_signature_commit, after_failed_escalation]}
+    failure_profile: {first_failure: room_remains_unstable, repeat_failure: shell_roles_outlive_clear_window}
+    control_contract: {control_immunity_class: CONTROL_LIMITED, interruptibility_class: INTERRUPTIBLE_OPTIONAL, displacement_response_class: DISPLACEMENT_LIMITED}
+    telegraph_contract: {baseline_tier: TIER_2_MAJOR, signature_tier: TIER_3_CRITICAL, default_channel: mixed, default_window_ms: 1000, default_clarity_notes: anchor_signature_clear_body_language}
+    runtime_contribution: {actor_slots: 1, priority_target_slots: 1, hazard_slots: 1, periodic_skill_slots: 1, projectile_source_slots: 0, high_fidelity_model_slots: 1}
+    pack_scaling_profile:
+      solo_profile: {<<: *zero_scaling, support_presence_delta: -1, hazard_slot_delta: -1, notes: preserve_anchor_reduce_shell}
+      duo_profile: *zero_scaling
+      trio_profile: {<<: *zero_scaling, priority_target_slot_delta: 1, notes: stronger_room_control}
+      party4_profile: {<<: *zero_scaling, support_presence_delta: 1, hazard_slot_delta: 1, periodic_skill_slot_delta: 1, priority_target_slot_delta: 1, notes: full_shell_variant_only_if_budget_allows}
+
+integration_notes:
+  - Encounter authors aggregate runtime_contribution across active instances to check actor_budget caps.
+  - Boss add packages must use `archetype_id` plus explicit counts and phase ownership; prose-only add references are invalid.
+  - Summoner-like concrete mobs do not get implicit spawn rights from archetype alone; actor-bearing spawned bodies must be authored in encounter reinforcements or boss add packages.
+  - If a concrete mob departs from its archetype counterplay family, it requires a documented exception in the consuming spec.
+  - When a consuming boss or encounter spec uses `compatibility_contract`, explicit `disallowed_role_pairs` and `anchor_limit_override` take precedence over composition aliases and archetype-level allowed/disallowed pairings; absent an explicit override, archetype-level constraints remain binding.

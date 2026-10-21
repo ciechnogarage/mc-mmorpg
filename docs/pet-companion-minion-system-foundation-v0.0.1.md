@@ -15,6 +15,36 @@ abuse, pet pay-to-win, permanent tank petami i pasywnym damage bez counterplayu.
 Dokument jest projektowy. Nie definiujemy finalnego AI, plugin configow, statow,
 cooldownow, pelnego UI kolekcji petow ani finalnych questow oswajania.
 
+## Runtime Authority
+
+`PetCore` jest jedynym durable authority dla profili, postepu i lifecycle
+kazdego towarzysza opisanego w tym dokumencie (global pet, beast companion,
+summony/miniony oraz adventurer companion). MythicMobs pozostaje wykonawca
+fizycznej jednostki (spawn, ruch, animacje, skille) przez waski adapter;
+PetCore nigdy nie wywoluje MythicMobs API bezposrednio. Zrodlem prawdy jest
+`docs/adr/ADR-003-petcore-companion-authority.md` oraz repozytoryjny
+kontrakt `docs/contracts/petcore-identity-and-content-run-contract.yaml`
+(artefakt planistyczny Traycer
+`petcore-unified-companion-runtime-tech-plan/identity-and-content-run-contract`
+pozostaje kontekstem, ale nie jest zaleznoscia normatywna).
+
+`PetSubjectId = MMOProfiles.profileId` jest jedynym durable identity dla
+profilu petow, unlockow, progresji i limitow owner x policy. UUID gracza to
+tylko sesyjny principal i nigdy nie zastepuje `PetSubjectId`.
+
+`MCPets` jest legacy-only: wylaczony jako runtime, nie moze auto-spawnowac,
+mountowac ani teleportowac zadnej jednostki. Jego dotychczasowe dane sa
+wylacznie read-only input do jednorazowego, potwierdzonego przez gracza
+claimu w aktualnie wybrany profil - patrz
+`docs/contracts/petcore-legacy-claim-contract.yaml`. Nie ma automatycznej
+migracji do kazdej postaci ani dual-write miedzy MCPets a PetCore.
+
+Ten dokument pozostaje design input dla policy/gameplay (patrz sekcje ponizej,
+ktore odpowiadaja policy `GLOBAL_PET`, `BEAST_COMPANION`, `SUMMONED_MINION` w
+tech planie); nie definiuje jeszcze finalnego przemapowania na
+`PetDefinition`/`ActivePet` ani admission/scheduler - to zakres kolejnych
+ticketow PetCore.
+
 ## Core Model
 
 ### Global Pet

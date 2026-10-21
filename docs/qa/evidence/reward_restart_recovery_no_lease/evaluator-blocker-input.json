@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "blocker_input_id": "domain-17-reward-idempotency-evidence-record-blocker-2026-08-03",
+  "source_checkpoint": "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json",
+  "scenario_id": "reward_restart_recovery",
+  "evidence_id": "reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked",
+  "result": {
+    "verdict": "BLOCKED",
+    "release_effect": "blocks_release",
+    "failure_family": "prerequisite_blocked"
+  },
+  "environment_control": {
+    "workspace_root": "/home/przemek/projects/MC",
+    "lease_required": "dev-qa",
+    "lease": "none",
+    "runtime_touched": false,
+    "staging_touched": false,
+    "rollback": {
+      "method": "not_required_no_runtime_or_config_mutation",
+      "proof_paths": [
+        "docs/qa/evidence/reward_restart_recovery_no_lease/rollback-restore-proof.md"
+      ]
+    }
+  },
+  "files_or_areas": [
+    "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/decision.yaml",
+    "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json",
+    "docs/qa/evidence/reward_restart_recovery_no_lease/foundation-report.json",
+    "docs/qa/evidence/reward_restart_recovery_no_lease/evidence-record.json",
+    "docs/qa/runtime-evidence-registry.yaml"
+  ],
+  "proposed_or_applied_changes": [
+    "Materialized a schema-valid BLOCKED evidence record for reward_restart_recovery.",
+    "Registered the blocked evidence record in docs/qa/runtime-evidence-registry.yaml.",
+    "Preserved prerequisite blockers instead of fabricating runtime PASS evidence."
+  ],
+  "validation": [
+    "MCMMORPG/infra/bin/mc-lease validate passed.",
+    "MCMMORPG/infra/bin/mc-lease show qa confirmed zero active qa leases.",
+    "tools/qa/adapters/foundation-runtime.mjs emitted the evidence record with verdict BLOCKED.",
+    "node tools/qa/validate-schemas.mjs passed."
+  ],
+  "risks": [
+    "Reward duplication risk remains unresolved until runtime proof identifies transaction and idempotency owners.",
+    "This record is deterministic evaluator input, not product runtime evidence."
+  ],
+  "blockers": [
+    {
+      "blocker_id": "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+      "reason": "No active dev-qa lease exists for safe runtime inspection."
+    },
+    {
+      "blocker_id": "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+      "reason": "No durable reward_transaction_id or idempotency_key owner is identified."
+    },
+    {
+      "blocker_id": "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+      "reason": "No duplicate-rejection proof source or runner path is identified."
+    }
+  ],
+  "next_owner": "domain-17 reward/economy runtime owner",
+  "why_not_pass": "No dev-qa lease exists, prerequisite proof capability is blocked, and no runtime evidence proves duplicate rejection, economy snapshot stability, or inventory item-instance stability."
+}

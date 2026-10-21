@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "compose": {
+    "path": "/home/przemek/projects/MC/MCMMORPG/docker/compose.yml",
+    "project": "mcmmorpg",
+    "config_sha256": "5a3898e6c58857aada050dd3752e3348a6acfa9c8de2540887d1fec919f0e702"
+  },
+  "allowed_host_root": "/home/przemek/projects/MC/MCMMORPG/docker",
+  "targets": {
+    "world": {
+      "compose_project": "mcmmorpg",
+      "compose_service": "srv-world",
+      "compose_profile": "world",
+      "host_data_path": "/home/przemek/projects/MC/MCMMORPG/docker/servers/world",
+      "container_data_path": "/data",
+      "plugin_directory": "plugins",
+      "pilot_eligible": true,
+      "blast_radius": "single-backend",
+      "lifecycle": {
+        "allowed_operations": ["inventory", "backup", "prepare-staging", "compose-stop", "compose-start", "compose-run-test", "health-check", "deploy", "rollback"],
+        "single_service_only": true,
+        "no_dependencies": true,
+        "recreate": false,
+        "require_current_config_digest": true
+      }
+    },
+    "items": {
+      "compose_project": "mcmmorpg",
+      "compose_service": "srv-items",
+      "compose_profile": "items",
+      "host_data_path": "/home/przemek/projects/MC/MCMMORPG/docker/servers/items",
+      "container_data_path": "/data",
+      "plugin_directory": "plugins",
+      "pilot_eligible": true,
+      "blast_radius": "single-backend",
+      "lifecycle": {
+        "allowed_operations": ["inventory", "backup", "prepare-staging", "compose-stop", "compose-start", "compose-run-test", "health-check", "deploy", "rollback"],
+        "single_service_only": true,
+        "no_dependencies": true,
+        "recreate": false,
+        "require_current_config_digest": true
+      }
+    },
+    "hub": {
+      "compose_project": "mcmmorpg",
+      "compose_service": "srv-hub",
+      "compose_profile": "hub",
+      "host_data_path": "/home/przemek/projects/MC/MCMMORPG/docker/servers/hub",
+      "container_data_path": "/data",
+      "plugin_directory": "plugins",
+      "pilot_eligible": true,
+      "blast_radius": "single-backend",
+      "lifecycle": {
+        "allowed_operations": ["inventory", "backup", "prepare-staging", "compose-stop", "compose-start", "compose-run-test", "health-check", "deploy", "rollback"],
+        "single_service_only": true,
+        "no_dependencies": true,
+        "recreate": false,
+        "require_current_config_digest": true
+      }
+    },
+    "velocity": {
+      "compose_project": "mcmmorpg",
+      "compose_service": "velocity",
+      "compose_profile": null,
+      "host_data_path": "/home/przemek/projects/MC/MCMMORPG/docker/velocity",
+      "container_data_path": "/server",
+      "plugin_directory": "plugins",
+      "pilot_eligible": false,
+      "blast_radius": "global-entrypoint",
+      "lifecycle": {
+        "allowed_operations": ["inventory", "backup", "prepare-staging", "compose-stop", "compose-start", "compose-run-test", "health-check", "deploy", "rollback"],
+        "single_service_only": true,
+        "no_dependencies": true,
+        "recreate": false,
+        "require_current_config_digest": true
+      }
+    }
+  }
+}

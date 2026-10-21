@@ -1,0 +1,7 @@
+menu_title: '&f䅠䅡䅢䅣'
+size: 54
+items:
+  przygoda:
+    material: AIR
+    slots: [0, 1, 9, 10]
+    display_name: '&fPrzygoda'

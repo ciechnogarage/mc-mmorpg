@@ -1,0 +1,240 @@
+schema_version: 1
+
+status: draft
+updated_at: "2026-07-31"
+owner_domain: "05-itemization"
+
+closes_ticket: "Domain 05: Modification Transactions and Capacity"
+source_plan: "domain-05-modification-transactions-tech-plan"
+
+notes:
+  - "Draft planning file. Not runtime truth."
+  - "This file records domain-05 OPERATION SEMANTICS only. It is not a transaction implementation."
+  - "The durable operation shell (identity, envelope, idempotency, concurrency, recovery authority) belongs to domain 01."
+  - "Nothing here claims that any plugin implements these states today."
+  - "The mutation target is one durable item_instance. See docs/design/items/item-data-model.yaml."
+
+authority_split:
+  domain_05_owns:
+    - "meaning of Modification Capacity"
+    - "which operations count as modification operations"
+    - "gameplay meaning of success, failure, and a worsening result"
+    - "operation_type semantics"
+  domain_01_owns:
+    - "operation identity"
+    - "transaction envelope"
+    - "idempotency semantics"
+    - "revision/concurrency semantics"
+    - "durable persistence and recovery authority"
+
+capacity_rules:
+  consumed_at: "COMMITTED"
+  never_consumed_at:
+    - "RECEIVED"
+    - "VALIDATED"
+    - "RESERVED"
+    - "APPLYING"
+    - "preview generation"
+  regenerates: false
+  initial_crafting_consumes_capacity: false
+  later_modification_consumes_capacity: true
+  atomic_commit_set:
+    - "resulting item state"
+    - "resulting remaining_capacity"
+    - "revision increment"
+    - "successful operation linkage"
+  rationale:
+    - "Consuming capacity before COMMITTED creates phantom loss across restart boundaries."
+    - "Capacity spent without a visible item result makes recovery ambiguous."
+    - "Committing item result and capacity together avoids compensation logic for what is one business mutation."
+  player_affordances_removed:
+    keep_old_result: false
+    restore_to_previous_state: false
+    modification_may_worsen_item: true
+
+operation_record:
+  status: "domain_05_minimum_field_needs"
+  shell_authority: "01-data-contracts"
+  note: "Each modification attempt creates one durable operation record BEFORE item mutation begins."
+  minimum_fields:
+    - field: "operation_id"
+      owner: "01-data-contracts"
+    - field: "idempotency_key"
+      owner: "01-data-contracts"
+    - field: "item_instance_id"
+      owner: "01-data-contracts"
+    - field: "expected_revision"
+      owner: "01-data-contracts"
+    - field: "operation_type"
+      owner: "05-itemization"
+    - field: "requested_by"
+      owner: "01-data-contracts"
+      note: "Must use the domain-01 identity envelope, not a bare player UUID."
+    - field: "cost_snapshot"
+      owner: "05-itemization"
+      note: "Snapshot shape only. Concrete prices belong to domain 10."
+    - field: "status"
+      owner: "01-data-contracts"
+    - field: "result_snapshot_or_result_delta"
+      owner: "05-itemization"
+    - field: "created_at"
+      owner: "01-data-contracts"
+    - field: "committed_at"
+      owner: "01-data-contracts"
+    - field: "failure_reason"
+      owner: "01-data-contracts"
+
+retry_identity:
+  key: "idempotency_key"
+  not_based_on:
+    - "lore"
+    - "display text"
+    - "payload comparison"
+    - "GUI transient state"
+  replay_of_same_key_must:
+    - "not consume capacity twice"
+    - "return the already committed result, or"
+    - "resume or recover the in-flight operation, or"
+    - "resolve to a safe failure state for manual review"
+  new_player_intent: "requires a new idempotency_key even when the visible request payload looks identical"
+
+workflow_states:
+  alignment: "domain-01 transaction vocabulary"
+  states:
+    - state: "RECEIVED"
+      domain_05_meaning: "Operation accepted, not yet validated."
+      capacity_effect: "none"
+      item_business_state_effect: "none"
+    - state: "VALIDATED"
+      domain_05_meaning: "Operation allowed against current rules and snapshot."
+      capacity_effect: "none"
+      item_business_state_effect: "none"
+    - state: "RESERVED"
+      domain_05_meaning: "Instance revision fenced for exclusive mutation under a live lease."
+      capacity_effect: "none"
+      item_business_state_effect: "none"
+    - state: "APPLYING"
+      domain_05_meaning: "Mutation in progress, not yet final business success."
+      capacity_effect: "none"
+      item_business_state_effect: "not_yet_durable"
+    - state: "COMMITTED"
+      domain_05_meaning: "Item result and capacity result are both durable."
+      capacity_effect: "consumed"
+      item_business_state_effect: "durable"
+    - state: "COMPENSATED"
+      domain_05_meaning: "Downstream recovery path after a failed committed side-effect scenario, if such a path exists."
+      capacity_effect: "per compensation contract"
+      item_business_state_effect: "per compensation contract"
+    - state: "MANUAL_REVIEW"
+      domain_05_meaning: "State ambiguity or recovery boundary requires operator intervention."
+      capacity_effect: "frozen pending resolution"
+      item_business_state_effect: "frozen pending resolution"
+
+reservation_lease:
+  purpose: "Exclusivity fence, not a business mutation."
+  fences_on:
+    - "item_instance_id"
+    - "expected_revision"
+  does_not:
+    - "spend capacity"
+    - "change affixes"
+    - "change binding"
+    - "change visible item business state"
+  v1_lease_requirements:
+    - "reservation owner"
+    - "reservation expiry"
+    - "explicit release semantics"
+    - "reaper or timeout recovery semantics"
+  failure_mode_addressed: "stranded reservations that block legitimate retries"
+
+item_instance_side_requirements:
+  note: "Fields the modification contract needs on the mutation target."
+  domain_05_semantic:
+    - "initial_capacity"
+    - "remaining_capacity"
+    - "modification_count"
+  domain_01_shell:
+    status: "placeholder_pending_domain_01"
+    fields:
+      - "revision"
+      - "last_successful_operation_id or equivalent durable linkage"
+  storage_rule:
+    item_instance_keeps: "current pointers and current state only"
+    full_history_home: "domain-01 durable operation ledger or event stream"
+
+restart_and_recovery:
+  before_committed:
+    - "No partially applied business mutation may be exposed."
+    - "Capacity must remain unspent."
+    - "Recovery must resolve from durable operation state, never from GUI or lore."
+    - "Expired or abandoned reservations must be recoverable without indefinite item lock."
+  after_committed:
+    - "Replay of the same idempotency_key returns the committed result."
+    - "Capacity must not change again."
+  unresolvable:
+    - "The operation enters MANUAL_REVIEW."
+
+invariants:
+  - id: "MOD-INV-001"
+    rule: "One logical operation must not consume capacity twice."
+    authority: "05-itemization"
+  - id: "MOD-INV-002"
+    rule: "Restart and retry must resolve by idempotency_key."
+    authority: "01-data-contracts"
+  - id: "MOD-INV-003"
+    rule: "Duplicate operations on the same instance/revision must be fenced."
+    authority: "01-data-contracts"
+  - id: "MOD-INV-004"
+    rule: "Failure before COMMITTED must not produce partial item-state mutation."
+    authority: "05-itemization"
+  - id: "MOD-INV-005"
+    rule: "Item mutation must not depend on lore parsing or GUI transient state."
+    authority: "05-itemization"
+  - id: "MOD-INV-006"
+    rule: "A durable operation record must exist before item mutation begins."
+    authority: "01-data-contracts"
+  - id: "MOD-INV-007"
+    rule: "Item result, remaining_capacity, revision increment, and operation linkage commit atomically or not at all."
+    authority: "01-data-contracts"
+  - id: "MOD-INV-008"
+    rule: "RESERVED must not be observable as a change to item business state."
+    authority: "05-itemization"
+
+failure_modes_avoided:
+  - "double capacity consumption on retry"
+  - "item result committed without a matching capacity change"
+  - "capacity loss without a durable item result"
+  - "concurrent modification race on the same instance revision"
+  - "recovery logic depending on transient UI or lore state"
+  - "stranded reservations that block legitimate retries"
+
+non_goals:
+  - "Exact economy costs or material prices."
+  - "GUI flow."
+  - "NPC or crafting-station implementation."
+  - "The final domain-01 contract file for the modification operation shell."
+  - "Any claim that these states exist in a running plugin."
+
+placeholders_pending_domain_01:
+  - id: "PLACEHOLDER-D01-OP-IDENTITY"
+    blocks: "final operation_id and operation record persistence shape"
+    unblocked_by: "domain-01 durable operation contract shell"
+  - id: "PLACEHOLDER-D01-IDEMPOTENCY"
+    blocks: "final idempotency_key format, scope, and retention"
+    unblocked_by: "domain-01 idempotency semantics"
+  - id: "PLACEHOLDER-D01-CONCURRENCY"
+    blocks: "final expected_revision comparison and conflict resolution"
+    unblocked_by: "domain-01 revision/concurrency semantics"
+  - id: "PLACEHOLDER-D01-LEDGER"
+    blocks: "where full modification history durably lives"
+    unblocked_by: "domain-01 operation ledger or event stream decision"
+  - id: "PLACEHOLDER-D01-COMPENSATION"
+    blocks: "whether a COMPENSATED path exists for item modification at all"
+    unblocked_by: "domain-01 compensation contract"
+
+open_questions:
+  - "Exact initial capacity formula."
+  - "Per-operation capacity costs."
+  - "Allowed degradation patterns when a modification worsens the item."
+  - "Whether preview generation is a distinct operation_type or a non-durable read path."
+  - "Reservation lease duration and reaper cadence."

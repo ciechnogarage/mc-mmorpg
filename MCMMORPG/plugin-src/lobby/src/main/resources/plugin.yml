@@ -1,0 +1,13 @@
+name: Lobby
+version: '${version}'
+main: pl.mcmmorpg.lobby.LobbyPlugin
+api-version: '1.21'
+description: Wyspa w pustce z portalami na serwery sieci.
+commands:
+  lobby:
+    description: Administracja lobby (przebuduj, przeladuj).
+    permission: lobby.admin
+    usage: /lobby <przebuduj|przeladuj>
+permissions:
+  lobby.admin:
+    default: op

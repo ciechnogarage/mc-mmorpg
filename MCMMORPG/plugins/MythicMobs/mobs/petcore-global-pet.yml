@@ -1,0 +1,21 @@
+# PetCore Global Pet vertical slice. PetCore owns target selection, follow cadence,
+# allow-listed skills and lifecycle; MythicMobs supplies only the physical wolf.
+PetCore_GlobalPet_T1:
+  Type: WOLF
+  Display: '<gold>Global Pet</gold>'
+  Health: 12
+  Damage: 0
+  Options:
+    MovementSpeed: 0.26
+    PreventOtherDrops: true
+    PreventMobKillDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventLeashing: true
+    PreventRenaming: true
+    AlwaysShowName: true
+  AITargetSelectors:
+    - 0 clear
+  Skills:
+    - skill{s=PetCore_GlobalPetSpawn} @self ~onSpawn
+    - skill{s=PetCore_GlobalPetDeath} @self ~onDeath

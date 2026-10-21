@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "companion-bridge/v1/performance.schema.json",
+  "title": "CompanionBridge Server Performance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "capturedAt", "serverTick", "tps", "averageTickTimeMs", "onlinePlayers"],
+  "properties": {
+    "contractVersion": { "const": 1 },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "serverTick": { "type": "integer", "minimum": 0 },
+    "tps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["last1m", "last5m", "last15m"],
+      "properties": {
+        "last1m": { "type": "number" },
+        "last5m": { "type": "number" },
+        "last15m": { "type": "number" }
+      }
+    },
+    "averageTickTimeMs": { "type": "number" },
+    "onlinePlayers": { "type": "integer", "minimum": 0 }
+  }
+}

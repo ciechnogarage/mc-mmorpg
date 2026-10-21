@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "installations": [
+    {
+      "plugin_id": "placeholderapi",
+      "target": "world",
+      "installed_version": "2.12.2",
+      "jar_path": "plugins/PlaceholderAPI-2.12.2.jar",
+      "config_paths": ["plugins/PlaceholderAPI/config.yml"],
+      "mutation_policy": {
+        "schema_version": 1,
+        "default_class": "excluded",
+        "entries": [
+          {
+            "path": "plugins/PlaceholderAPI",
+            "class": "rollback",
+            "backup_method": "copy",
+            "restore_method": "replace-from-backup"
+          }
+        ],
+        "manifest_sha256": "053784429aef2d4e57251de3187bed9169ecea690184846a0536e7616a9f3aca"
+      }
+    },
+    {
+      "plugin_id": "placeholderapi",
+      "target": "items",
+      "installed_version": "2.12.2",
+      "jar_path": "plugins/PlaceholderAPI-2.12.2.jar",
+      "config_paths": ["plugins/PlaceholderAPI/config.yml"],
+      "mutation_policy": {
+        "schema_version": 1,
+        "default_class": "excluded",
+        "entries": [
+          {
+            "path": "plugins/PlaceholderAPI",
+            "class": "rollback",
+            "backup_method": "copy",
+            "restore_method": "replace-from-backup"
+          }
+        ],
+        "manifest_sha256": "053784429aef2d4e57251de3187bed9169ecea690184846a0536e7616a9f3aca"
+      }
+    },
+    {
+      "plugin_id": "placeholderapi",
+      "target": "hub",
+      "installed_version": "2.12.2",
+      "jar_path": "plugins/PlaceholderAPI-2.12.2.jar",
+      "config_paths": ["plugins/PlaceholderAPI/config.yml"],
+      "mutation_policy": {
+        "schema_version": 1,
+        "default_class": "excluded",
+        "entries": [
+          {
+            "path": "plugins/PlaceholderAPI",
+            "class": "rollback",
+            "backup_method": "copy",
+            "restore_method": "replace-from-backup"
+          }
+        ],
+        "manifest_sha256": "053784429aef2d4e57251de3187bed9169ecea690184846a0536e7616a9f3aca"
+      }
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+dr001_rune_cracked_stone:
+  itemname: Rune Cracked Stone
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/block/rune_cracked_stone
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      hardness: 3.5
+      blast_resistance: 6.0
+
+dr001_ancient_moss_panel:
+  itemname: Ancient Moss Panel
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/block/ancient_moss_panel
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      hardness: 3.0
+      blast_resistance: 5.0
+
+dr001_cursed_water_grate:
+  itemname: Cursed Water Grate
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/block/cursed_water_grate
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      hardness: 4.0
+      blast_resistance: 7.0
+
+dr001_void_rune_block:
+  itemname: Void Rune Block
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/block/void_rune_block
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      hardness: 5.0
+      blast_resistance: 8.0
+      light: 7
+
+dr001_broken_crown_ornament:
+  itemname: Broken Crown Ornament
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/block/broken_crown_ornament
+  Mechanics:
+    custom_block:
+      type: NOTEBLOCK
+      hardness: 5.0
+      blast_resistance: 8.0

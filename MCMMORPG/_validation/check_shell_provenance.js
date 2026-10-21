@@ -25,7 +25,10 @@ function main() {
   const total = (model.elements || []).length;
 
   const provPath = `${modelPath}.provenance.json`;
-  const provenance = fs.existsSync(provPath) ? JSON.parse(fs.readFileSync(provPath, 'utf8')) : {};
+  const mobIdForProvenance = path.basename(modelPath, '.bbmodel');
+  const relocatedProvPath = path.join(__dirname, 'model_provenance', mobIdForProvenance, `${mobIdForProvenance}.provenance.json`);
+  const resolvedProvPath = fs.existsSync(provPath) ? provPath : relocatedProvPath;
+  const provenance = fs.existsSync(resolvedProvPath) ? JSON.parse(fs.readFileSync(resolvedProvPath, 'utf8')) : {};
   const elementUuids = new Set((model.elements || []).map((e) => e.uuid));
   const covered = [...elementUuids].filter((u) => provenance[u]).length;
   const ratio = total > 0 ? covered / total : 0;

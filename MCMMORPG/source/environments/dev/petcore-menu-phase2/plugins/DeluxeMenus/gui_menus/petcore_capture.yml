@@ -1,0 +1,56 @@
+menu_title: '&8✦ &a&lŁAPANIE / UNLOCKI &8✦'
+size: 54
+
+items:
+  filler:
+    material: GREEN_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  capture_status:
+    material: LEAD
+    slot: 22
+    display_name: '&aStatus łapania'
+    lore:
+      - '&7Capture backend nie jest jeszcze aktywny.'
+      - '&7Profil: &f%petcore_profile%'
+      - '&7Authority: &f%petcore_authority%'
+      - '&7Blokada: &f%petcore_block_reason%'
+      - ''
+      - '&cZablokowane do Capture MVP.'
+
+  future_sources:
+    material: COMPASS
+    slot: 30
+    display_name: '&ePrzyszłe źródła petów'
+    lore:
+      - '&7- drop/egg z contentu'
+      - '&7- quest / achievement'
+      - '&7- sklep eventowy'
+      - '&7- craft / materiały'
+
+  safety:
+    material: IRON_BARS
+    slot: 32
+    display_name: '&cZasada authority'
+    lore:
+      - '&7Kliknięcie w menu nigdy nie nada peta samo.'
+      - '&7Unlock musi przejść przez PetCore DB.'
+
+  back:
+    material: ARROW
+    slot: 48
+    display_name: '&ePowrót'
+    left_click_commands:
+      - '[openguimenu] petcore_main'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 50
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

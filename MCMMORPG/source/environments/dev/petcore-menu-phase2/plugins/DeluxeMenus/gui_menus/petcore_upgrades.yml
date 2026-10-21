@@ -1,0 +1,61 @@
+menu_title: '&8✦ &e&lULEPSZENIA PETA &8✦'
+size: 54
+
+items:
+  filler:
+    material: YELLOW_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  power:
+    material: IRON_SWORD
+    slot: 20
+    display_name: '&cMoc bojowa &8[LOCKED]'
+    lore:
+      - '&7PvE/PvP capy będą egzekwowane przez PetCore.'
+      - '&7Content: &f%petcore_content%'
+      - '&cZablokowane: upgrade backend.'
+
+  utility:
+    material: HOPPER
+    slot: 22
+    display_name: '&bUtility &8[LOCKED]'
+    lore:
+      - '&7Loot, cooldowny, jakość życia.'
+      - '&7Authority: &f%petcore_authority%'
+      - '&cZablokowane: upgrade backend.'
+
+  bond:
+    material: EXPERIENCE_BOTTLE
+    slot: 24
+    display_name: '&aBond / XP &8[LOCKED]'
+    lore:
+      - '&7Czas i surowce w grze podnoszą potencjał.'
+      - '&7Profil: &f%petcore_profile%'
+      - '&cZablokowane: progression backend.'
+
+  no_fake_costs:
+    material: REDSTONE
+    slot: 31
+    display_name: '&cBrak fałszywych kosztów'
+    lore:
+      - '&7Menu nie pokazuje zmyślonych materiałów.'
+      - '&7Koszty pojawią się po backendzie.'
+
+  back:
+    material: ARROW
+    slot: 48
+    display_name: '&ePowrót'
+    left_click_commands:
+      - '[openguimenu] petcore_main'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 50
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

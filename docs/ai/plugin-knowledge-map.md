@@ -1,6 +1,6 @@
 # Plugin Knowledge Map
 
-Purpose: shared source map for MC agents inspecting plugin syntax, runtime
+Purpose: shared source map for inspecting plugin syntax, runtime
 behavior, and cross-plugin integrations.
 
 ## Source Ladder
@@ -19,16 +19,16 @@ effects.
 
 ## Domain Starting Points
 
-| Domain agent | Start | Do not expose |
+| Domain | Start | Do not expose |
 | --- | --- | --- |
-| `minecraft-plugin-inventory` | `MCMMORPG/plugins/`, `docs/plugin_manifest.yaml`, `docs/compatibility_matrix.md` | JAR internals unless needed as evidence |
-| `minecraft-ops-sync` | `MCMMORPG/logs/latest.log`, plugin runtime config names, service docs | DB credentials, hostnames, tokens, player data |
-| `minecraft-rpg-systems` | `MMOCore/classes`, `MMOItems/item`, tiers, types, stats, drop tables | `userdata/`, live player inventories |
-| `minecraft-mobs-models` | `MythicMobs/mobs`, `skills`, `droptables`, `ModelEngine/blueprints`, resource-pack paths | generated caches unless explicitly in scope |
-| `minecraft-dungeon-world` | MythicDungeons maps/config, Iris packs/worlds, Multiverse worlds, WorldGuard regions | generated chunks, player data, destructive world edits |
-| `minecraft-ui-hud-menus` | DeluxeMenus menus, MythicHUD layouts/listeners, PlaceholderAPI config, CMI UI settings | admin-only commands hidden in menus without review |
-| `minecraft-permissions-economy` | LuckPerms, Vault, CMI, Guilds configs and local permission examples | security keys, DB contents, private player state |
-| `minecraft-release-qa` | `MCMMORPG/logs/latest.log`, `_validation/`, changed config paths, rollback notes | secrets, raw sensitive logs, private player state |
+| Plugin inventory | `MCMMORPG/plugins/`, `docs/plugin_manifest.yaml`, `docs/compatibility_matrix.md` | JAR internals unless needed as evidence |
+| Runtime operations | `MCMMORPG/logs/latest.log`, plugin runtime config names, service docs | DB credentials, hostnames, tokens, player data |
+| RPG systems | `MMOCore/classes`, `MMOItems/item`, tiers, types, stats, drop tables | `userdata/`, live player inventories |
+| Mobs and models | `MythicMobs/mobs`, `skills`, `droptables`, `ModelEngine/blueprints`, resource-pack paths | generated caches unless explicitly in scope |
+| Dungeons and worlds | MythicDungeons maps/config, Iris packs/worlds, Multiverse worlds, WorldGuard regions | generated chunks, player data, destructive world edits |
+| UI, HUD and menus | DeluxeMenus menus, MythicHUD layouts/listeners, PlaceholderAPI config, CMI UI settings | admin-only commands hidden in menus without review |
+| Permissions and economy | LuckPerms, Vault, CMI, Guilds configs and local permission examples | security keys, DB contents, private player state |
+| Release QA | `MCMMORPG/logs/latest.log`, `_validation/`, changed config paths, rollback notes | secrets, raw sensitive logs, private player state |
 
 ## Shared Cross-Checks
 

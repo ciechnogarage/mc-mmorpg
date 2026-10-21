@@ -1,0 +1,638 @@
+schema_version: 1
+
+asset_spec:
+  asset_spec_id: phase2_root_lurker_pilot.assetspec
+  asset_spec_version: 1.0.0
+  asset_id: phase2_root_lurker_pilot
+  asset_type: mob
+  requesting_domain: "07"
+  visual_contract_owner: "15"
+  production_orchestration_owner: "18"
+  evidence_and_release_owner: "17"
+  contract_ref:
+    path: docs/contracts/visual-asset-domain-handoff-contract.yaml
+    contract_id: visual-asset-domain-handoff-v1
+    contract_version: 1
+  semantic_brief_ref:
+    path: MCMMORPG/_validation/work_packets/level_1_moss_stalker_art_brief_packet.md
+    sha256: f900ec05faae0aa25b45b0affc29ff5071c6cb2ca19a61fd2a71f80c0a53ac4d
+    adaptation: local_non_deploy_phase2_pilot_with_a_new_asset_id
+  status: direction_approved_ready_for_local_authoring
+  deploy_asset: false
+
+  domain_constraints:
+    encounter_ref:
+      kind: local_visual_pilot
+      id: phase2_root_lurker_pilot
+      source: MCMMORPG/_validation/work_packets/level_1_moss_stalker_art_brief_packet.md
+      runtime_binding: none
+    combat_role: fast_flank_pressure_chase_add
+    encounter_intent:
+      - subordinate mobile grove predator, never a boss or miniboss read
+      - one clear forward attack side supports a readable lunge telegraph
+      - visual mass must communicate pursuit speed before surface detail is read
+    telegraph_and_timing_constraints:
+      idle:
+        intent: loaded crouch with restrained weight transfer
+        gameplay_event_binding: none_for_local_pilot
+      lunge:
+        intent: chest-led forward commitment with visible anticipation, contact, and recovery
+        gameplay_event_binding: deliberately_unset_by_domain_07
+        note: Visual contact may be posed, but this AssetSpec does not define damage, skill timing, or encounter pacing.
+    viewing_distance_blocks:
+      minimum: 15
+      maximum: 30
+    locomotion_read: low_long_grounded_quadruped
+    dominant_visual_promise: corrupted_grove_hunter
+    must_read_as:
+      - low prowling predator
+      - forequarter-led chase add
+      - rooted grove-corruption organism
+    must_not_be_confused_with:
+      - literal wolf reskin
+      - humanoid druid or treant boss
+      - plant turret or flower pod
+      - shrine, furniture, or bark sculpture with legs
+      - generic armored zombie with foliage
+
+  profile_version_refs:
+    asset_family_profile: phase2_local_mob.v1
+    style_profile: level_1_grove_corruption_predator.v1
+    rig_archetype_profile: quadruped_predator.v1
+    delivery_profile: modelengine_entity.local_pilot.v1
+    geometry_budget: phase2_root_lurker_geometry.v1
+    texture_budget: phase2_root_lurker_texture.v1
+    performance_budget: phase2_root_lurker_performance.v1
+  style_profile: level_1_grove_corruption_predator.v1
+  rig_archetype: quadruped
+  delivery_profile: modelengine_entity
+
+  path_policy:
+    write_allowed_paths:
+      - MCMMORPG/_validation/asset_specs/phase2_root_lurker_pilot.assetspec.yaml
+      - MCMMORPG/_validation/pilots/phase2_root_lurker_pilot/
+      - MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/
+    editable_source_root: MCMMORPG/_validation/pilots/phase2_root_lurker_pilot/
+    evidence_root: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/
+    forbidden_paths:
+      - plugins/**
+      - MCMMORPG/plugins/**
+      - MCMMORPG/source/**
+      - MCMMORPG/environments/**
+      - MCMMORPG/runtime/**
+      - MCMMORPG/world*/**
+      - staging/**
+    operational_prohibitions:
+      - no server start, reload, stop, or runtime probe
+      - no staging, live, Nexo pack, ModelEngine cache, or MythicMobs mutation
+      - no world, player data, economy, permission, secret, or deployment change
+      - no direct JSON generation or patching of a bbmodel
+      - no source or evidence output outside the two declared pilot roots
+
+  editable_source_ref:
+    path: MCMMORPG/_validation/pilots/phase2_root_lurker_pilot/phase2_root_lurker_pilot.bbmodel
+    state: planned_not_created_by_asset_direction
+    format: bbmodel
+    mutation_policy: approved_transactional_blockbench_mcp_only
+    texture_policy: embedded_or_sibling_files_only_under_editable_source_root
+    generated_exports_are_authoring_sources: false
+  integration_targets:
+    - id: local_modelengine_entity_source_compatibility
+      mode: static_local_only
+      deploy_target: none
+    - id: nexo_merged_pack_contract
+      mode: declaration_only
+      merged_pack_owner: Nexo
+      pack_build_authorized: false
+  acceptance_criteria:
+    details_ref: $.acceptance_criteria
+    required_ids:
+      - AC-SIL-01
+      - AC-SIL-02
+      - AC-SIL-03
+      - AC-ROLE-01
+      - AC-ROLE-02
+      - AC-CON-01
+      - AC-CON-02
+      - AC-CON-03
+      - AC-ANIM-01
+      - AC-ANIM-02
+      - AC-ANIM-03
+      - AC-ORIG-01
+      - AC-SCOPE-01
+
+profiles:
+  asset_family_profile:
+    profile_id: phase2_local_mob
+    version: 1
+    asset_type: mob
+    required_views:
+      - front
+      - side
+      - back
+      - three_quarter
+      - player_scale
+    required_states_or_animations:
+      - idle
+      - lunge
+    geometry_budget_ref: phase2_root_lurker_geometry.v1
+    texture_budget_ref: phase2_root_lurker_texture.v1
+    performance_budget_ref: phase2_root_lurker_performance.v1
+    allowed_delivery_profiles:
+      - modelengine_entity
+
+  style_profile:
+    style_profile_id: level_1_grove_corruption_predator
+    version: 1
+    scope: asset_family
+    shape_language:
+      - low-long hunting axis
+      - wedge-shaped root mask leading a compressed shoulder shelf
+      - narrow rib taper into compact propulsion hips
+      - dragged-root rear counterweight
+      - one controlled attack-side break
+    proportion_rules:
+      - body-axis length must be at least 1.8 times total visual height in the side silhouette
+      - shoulder line must sit above the abdomen and lead the mass hierarchy
+      - abdomen must visibly narrow between forequarter and hindquarter masses
+      - player-scale shoulder height must read between 45 and 65 percent of player height
+      - no permanent feature may make the mob read taller than 80 percent of player height
+    palette_and_material_rules:
+      - dark low-saturation bark and root planes carry primary mass
+      - moss is a secondary softening accent and cannot define the silhouette
+      - one restrained corruption seam, node, or eye slit carries the highest focal contrast
+      - surface direction follows root and bark flow instead of random pixel noise
+    contrast_and_detail_density:
+      - strongest contrast is reserved for the forward threat origin
+      - tertiary detail is sparse and subordinate at 15 to 30 blocks
+      - untextured silhouette must preserve family and role readability
+    ornament_and_emissive_rules:
+      - no ornamental armor, antlers, flowers, or equal-weight spikes
+      - emissive treatment is optional and, if used, limited to one combat-relevant focal area
+      - permanent VFX geometry is forbidden; future lash or root burst spectacle stays modular
+    animation_language:
+      - motion begins in rear compression and chest commitment, then travels into the head threat block
+      - idle shows stored forward pressure without constant twitching
+      - lunge has readable anticipation, action path, contact pose, follow-through, and stable recovery
+      - all authored key times align to 0.05-second increments
+    performance_budget_ref: phase2_root_lurker_performance.v1
+    forbidden_traits:
+      - literal naturalistic canine muzzle, ears, paws, rib cage, or fur breakup
+      - upright humanoid torso or shoulder-waist-leg hierarchy
+      - symmetric stalk, pod, flower-head, turret, shrine, or furniture read
+      - one-thickness log body or bamboo-like uniform limbs
+      - random bilateral mismatch presented as character
+      - moss, spikes, glow, or texture noise used to rescue a failed shell
+      - floating cubes, unsupported mass, paper-thin accidental surfaces, or hidden duplicate geometry
+      - permanently fused attack FX that obscures the core organism
+    approved_reference_ids:
+      - moss_stalker_reference_study
+      - moss_stalker_silhouette_candidates
+      - direwolf_render_front
+      - direwolf_render_side
+      - direwolf_render_three_quarter
+      - direwolf_render_player_scale
+      - direwolf_motion_idle
+      - direwolf_motion_attack_phases
+    anti_reference_ids:
+      - previous_moss_stalker_backup
+
+  rig_archetype_profile:
+    profile_id: quadruped_predator
+    version: 1
+    rig_archetype: quadruped
+    hierarchy_rules:
+      - root owns chest and lower-back body chains
+      - chest owns head threat assembly and both front limb chains
+      - lower_back owns both rear limb chains and the rear counterweight chain
+      - visual cubes belong to exactly one intended bone
+      - hitbox and helper bones remain separate from rendered anatomy
+    required_bones_or_locators:
+      - root
+      - chest
+      - lower_back
+      - head
+      - threat_tip
+      - left_front_upper
+      - left_front_lower
+      - left_front_foot
+      - right_front_upper
+      - right_front_lower
+      - right_front_foot
+      - left_back_upper
+      - left_back_lower
+      - left_back_foot
+      - right_back_upper
+      - right_back_lower
+      - right_back_foot
+      - tail_base
+      - tail_mid
+      - tail_tip
+      - hitbox
+    required_states_or_animations:
+      - idle
+      - lunge
+    pivot_and_deformation_rules:
+      - pivots sit at anatomical rotation centers for head, legs, feet, and rear counterweight segments
+      - mirrored bilateral chains are mechanically symmetric before the selected attack-side accent is introduced
+      - feet preserve ground contact in neutral idle and lunge recovery
+      - head and threat_tip remain independently poseable for anticipation and contact
+      - belly, inner-leg, head-neck, and tail-body negative spaces survive animation extremes
+    profile_specific_invalid_fixtures:
+      - humanoid arm and leg naming substituted for quadruped limb chains
+      - any missing upper-lower-foot segment in one of the four leg chains
+      - hitbox parented inside a rendered limb or head chain
+      - single rigid body chain with legs attached as decorative supports
+      - idle without a closed loop
+      - lunge without distinct anticipation, contact, and recovery poses
+
+  delivery_profile:
+    profile_id: modelengine_entity.local_pilot
+    version: 1
+    delivery_profile: modelengine_entity
+    editable_source_policy: approved_transactional_blockbench_mcp_only
+    presentation_owner: ModelEngine
+    merged_pack_owner: Nexo
+    integration_targets:
+      - local_modelengine_entity_source_compatibility
+      - nexo_merged_pack_contract_declaration_only
+    static_validation_commands:
+      - "node MCMMORPG/_validation/render_bbmodel_review.js --blueprint MCMMORPG/_validation/pilots/phase2_root_lurker_pilot/phase2_root_lurker_pilot.bbmodel --output MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot"
+      - "sha256sum MCMMORPG/_validation/pilots/phase2_root_lurker_pilot/phase2_root_lurker_pilot.bbmodel"
+    runtime_evidence_requirements:
+      status: not_authorized_for_this_local_pilot
+      required_before_any_future_runtime_pass:
+        - explicit approval to use an isolated runtime
+        - exact source, configuration, export, and merged-pack SHA-256 values
+        - client-visible spawn and animation evidence for the exact hashes
+        - collision, scale, orientation, ground-contact, and player-distance proof
+
+  budgets:
+    geometry:
+      profile_id: phase2_root_lurker_geometry
+      version: 1
+      maximum_rendered_elements: 96
+      maximum_visual_bones: 28
+      maximum_hierarchy_depth: 6
+      required_hidden_hitbox_cubes: 1
+      note: These are pilot ceilings, not quality targets; unused budget must not be filled with decorative noise.
+    texture:
+      profile_id: phase2_root_lurker_texture
+      version: 1
+      maximum_canvas: 64x64
+      diffuse_textures: 1
+      optional_emissive_textures: 1
+      uv_requirements:
+        - every rendered face has an in-bounds mapping
+        - no unintended overlap between unlike materials
+        - coherent texel density across neighboring primary masses
+    performance:
+      profile_id: phase2_root_lurker_performance
+      version: 1
+      scope: local_single_entity_art_pilot
+      maximum_concurrent_entity_claim: 1
+      runtime_performance_claim_allowed: false
+      constraints:
+        - stay within geometry and rig ceilings
+        - no permanent helper VFX model
+        - no runtime, FPS, TPS, packet, or multi-entity claim from static evidence
+
+references:
+  - reference_id: moss_stalker_art_brief
+    path: MCMMORPG/_validation/work_packets/level_1_moss_stalker_art_brief_packet.md
+    sha256: f900ec05faae0aa25b45b0affc29ff5071c6cb2ca19a61fd2a71f80c0a53ac4d
+    role: semantic role, distant read, forbidden family drift, and handoff boundaries
+    may_borrow:
+      - fast flank-pressure role
+      - corrupted grove hunter promise
+      - original-synthesis and no-deploy boundaries
+    no_copy_limits:
+      - do not inherit its old target ID, backend route, or future plugin paths
+      - do not treat likely gameplay hooks as implemented encounter behavior
+
+  - reference_id: moss_stalker_reference_study
+    path: MCMMORPG/_validation/model_studies/level_1_moss_stalker_reference_study.md
+    sha256: 5e8a79bbe80d851640bbc1e5a76559961edec89959388c10325379541bf4c596
+    role: Layer A predator hierarchy, joint-chain method, mass map, and Layer B grove translation rules
+    may_borrow:
+      - low-long axis and forequarter dominance
+      - motion-critical separation logic
+      - dragged-root counterweight method
+      - one controlled attack-side emphasis
+    no_copy_limits:
+      - do not copy vendor geometry, proportions, bones, keyframes, texture, or exact anatomy
+      - historical corpus paths in the study are provenance only and are not authoring-source paths for this pilot
+
+  - reference_id: moss_stalker_silhouette_candidates
+    path: MCMMORPG/_validation/model_studies/level_1_moss_stalker_silhouette_candidates.md
+    sha256: abe8b9875b0aef317212785509a82bf1cb305aa9a8f3ed47b9b2f9a0dafd6757
+    role: three-direction comparison and selected A root-lurker hound constraints
+    may_borrow:
+      - candidate A mass order
+      - candidate B one-side threat emphasis only
+      - candidate C singular forward threat origin only
+    no_copy_limits:
+      - do not borrow B full-body asymmetry
+      - do not borrow C shortened rear silhouette
+
+  - reference_id: moss_stalker_learning
+    path: docs/ai/level_1_moss_stalker_learning.md
+    sha256: 8ab590249a67dd07a85913b6f929941ee512d77c46734f0edc425bf431563af3
+    role: evidence-backed repair order for predator quadrupeds
+    may_borrow:
+      - family shell before polish
+      - forequarter, backline, focal break, then stance order
+    no_copy_limits:
+      - do not treat one prior iteration sequence as proof of art quality for this new source
+
+  - reference_id: direwolf_render_front
+    path: MCMMORPG/_validation/reviews/ref_direwolf/front.png
+    sha256: a7b4b29ca77e391f0af86c7f4f61081216483225a082f01fd33c594564c752a9
+    role: study cranial and forequarter dominance from the front
+    may_borrow:
+      - dominant-mass hierarchy and supported center of gravity
+    no_copy_limits:
+      - no exact outline, skull, jaw, ear, paw, width ratio, or surface motif
+
+  - reference_id: direwolf_render_side
+    path: MCMMORPG/_validation/reviews/ref_direwolf/side.png
+    sha256: 00b37de9bbda9cb968d459f390a17cbf5baec8e92c4cd4a0031117afbdb7f8f2
+    role: study low-long body axis, belly clearance, hip break, and rear counterweight rhythm
+    may_borrow:
+      - mass sequencing and motion-supporting negative spaces
+    no_copy_limits:
+      - no exact body ratio, backline contour, tail contour, or limb placement
+
+  - reference_id: direwolf_render_three_quarter
+    path: MCMMORPG/_validation/reviews/ref_direwolf/three_quarter.png
+    sha256: d992f5f339f688e4ca0df46982ca32070bc3eee858756ba9135f1910d18192ca
+    role: study single forward threat origin and overlap control
+    may_borrow:
+      - readable head-to-chest ordering and clean limb overlap
+    no_copy_limits:
+      - no exact pose, anatomy, or camera-dependent silhouette tracing
+
+  - reference_id: direwolf_render_player_scale
+    path: MCMMORPG/_validation/reviews/ref_direwolf/player_scale.png
+    sha256: b9b592a614acb609f35acf21076f04305866d0f63c4a6dc2204edc3db2a73924
+    role: calibrate subordinate predator readability relative to a player
+    may_borrow:
+      - comparison method and distant-read discipline
+    no_copy_limits:
+      - no exact scale transfer; this pilot follows its own explicit player-scale criteria
+
+  - reference_id: direwolf_motion_idle
+    path: MCMMORPG/_validation/reviews/ref_direwolf/animation_idle_start.png
+    sha256: 4a68a71f16459a21968502ad699514d81d5f0381e6084c3451f0d7aacc18131a
+    role: study grounded stored energy in a predator idle
+    may_borrow:
+      - weight-bearing logic and restrained secondary motion
+    no_copy_limits:
+      - no pose, keyframe, timing, or bone transform copying
+
+  - reference_id: direwolf_motion_attack_phases
+    paths:
+      - path: MCMMORPG/_validation/reviews/ref_direwolf/animation_attack_1_anticipation.png
+        sha256: e936f398a71c676c2143eb4a367e1e7fac9be01e411c093ae326784a3f26d995
+      - path: MCMMORPG/_validation/reviews/ref_direwolf/animation_attack_1_impact.png
+        sha256: f6b8d2535fdd7f9bee72125d01e3f67b0135ba5fc20935e413a5463c31a7fd16
+      - path: MCMMORPG/_validation/reviews/ref_direwolf/animation_attack_1_recovery.png
+        sha256: 7d605bb1fab30b8c53cbbb5c1a68f154098eea875e35f1454f510118b67a27e4
+    role: study readable anticipation-contact-recovery separation
+    may_borrow:
+      - phase clarity and full-body kinetic-chain principle
+    no_copy_limits:
+      - no frame, pose, transform, keyframe density, or timing copying
+
+  - reference_id: previous_moss_stalker_backup
+    path: MCMMORPG/_validation/model_backups/level_1_moss_stalker/20260709-125236/level_1_moss_stalker.bbmodel
+    sha256: aa07eb1c16a7d17e5d3265faa96489a767c44daf5f901d6057dff9d2e31feca4
+    role: anti-reference for decorative rescue and a reminder that technical presence does not prove art quality
+    may_borrow:
+      - nothing at geometry, rig, UV, texture, or animation level
+    no_copy_limits:
+      - must not be opened as an editable seed, duplicated, imported, or patched into the pilot
+
+silhouette_directions:
+  - id: A
+    name: root_lurker_hound
+    selected: true
+    optimization: fastest low-long chase read with one clean forward threat
+    dominant_masses:
+      - root-mask head wedge
+      - compressed shoulder shelf
+      - narrow rib taper
+      - compact propulsion hips
+      - dragged-root rear counterweight
+    negative_space_plan:
+      - open belly channel between fore and rear contact zones
+      - readable notch between head wedge and shoulder shelf
+      - four separated limb chains with visible inner-leg gaps
+      - rear gap before the counterweight leaves the hip mass
+    falsifiable_checks:
+      - front silhouette reads predator rather than pod, shrine, or humanoid
+      - side silhouette keeps length-to-height ratio at or above 1.8
+      - removing all texture and moss does not break family or role read
+      - one forward threat origin remains identifiable at 15 to 30 blocks
+
+  - id: B
+    name: one_side_thorn_raptor
+    selected: false
+    optimization: strongest flank-pressure signal through a dominant attack side
+    material_difference_from_A: threat-side forelimb, cheek, and shoulder create a hooked diagonal instead of A's balanced prow
+    rejection_risk: full-body asymmetry fragments the organism and competes with locomotion mass
+    allowed_borrow_into_A: one attack-side accent only
+
+  - id: C
+    name: burrow_stalker_mask_beast
+    selected: false
+    optimization: strongest frontal ambush menace through an oversized root mask and compressed rear
+    material_difference_from_A: front mask dominates a shorter trunk and reduced counterweight instead of A's chase-length axis
+    rejection_risk: shortened rear collapses into stump, shrine, turret, or furniture read
+    allowed_borrow_into_A: one singular forward threat origin only
+
+selected_silhouette_direction:
+  id: A
+  name: root_lurker_hound
+  selection_basis:
+    family_read: strongest low-long predator read after all texture is removed
+    role_read: fastest chase-add and flank-pressure recognition at player distance
+    scale_read: subordinate mob proportions remain below miniboss presence
+    dominant_shape: root-mask wedge and shoulder shelf form one forward prow
+    negative_space: best belly, limb-chain, head-neck, and rear-counterweight separation
+    animation_support: preserves its identity in both loaded idle and chest-led lunge
+
+required_animations:
+  - name: idle
+    loop: loop
+    minimum_duration_seconds: 1.5
+    maximum_duration_seconds: 3.0
+    timing_grid_seconds: 0.05
+    required_motion:
+      - closed loop with no visible pop
+      - subtle chest and head load shift while all four feet remain planted
+      - restrained tail or rear-root counterbalance
+      - silhouette remains low, forward-loaded, and asymmetrically focused
+    forbidden_motion:
+      - constant twitching
+      - breathing that expands the body into one uniform log
+      - foot sliding or floating contacts
+
+  - name: lunge
+    loop: once
+    minimum_duration_seconds: 0.8
+    maximum_duration_seconds: 1.4
+    timing_grid_seconds: 0.05
+    required_phases:
+      - anticipation: rear compression and slight threat-block withdrawal
+      - action: chest commits forward before the head threat reaches contact
+      - contact: one readable forward threat origin without a bound gameplay event
+      - follow_through: spine and rear counterweight continue the action path
+      - recovery: stable low stance with readable foot contact
+    forbidden_motion:
+      - head-only jab
+      - teleport-like translation without rear push
+      - copied bite motion or jaw anatomy
+      - recovery ending off-balance or above the intended scale envelope
+
+required_evidence:
+  evidence_binding:
+    source_sha256_required: true
+    every_render_sha256_required: true
+    stale_or_mismatched_hash_result: INSUFFICIENT_EVIDENCE
+  exact_paths:
+    source_hash_record: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/source.sha256
+    render_manifest: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/render_manifest.yaml
+    independent_visual_verdict: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/visual_qa.yaml
+    views:
+      front: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/front.png
+      side: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/side.png
+      back: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/back.png
+      three_quarter: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/three_quarter.png
+      player_scale: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/player_scale.png
+    silhouette:
+      black_three_quarter: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/silhouette.png
+    animation_frames:
+      idle_start: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_idle_start.png
+      idle_peak: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_idle_peak.png
+      idle_end: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_idle_end.png
+      lunge_anticipation: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_lunge_anticipation.png
+      lunge_contact: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_lunge_contact.png
+      lunge_follow_through: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_lunge_follow_through.png
+      lunge_recovery: MCMMORPG/_validation/model_reviews/phase2_root_lurker_pilot/animation_lunge_recovery.png
+  capture_requirements:
+    - orthographic views share a stable scale, ground plane, neutral lighting, and hidden hitbox
+    - player-scale view includes a standard player figure and a 15 to 30 block thumbnail read
+    - idle and lunge frames come from the exact reviewed source revision
+    - evidence shows mapped texture and untextured silhouette; neither substitutes for the other
+    - no reference image is presented as pilot evidence
+
+acceptance_criteria:
+  silhouette_and_family:
+    - id: AC-SIL-01
+      criterion: Flat-black front, side, back, and three-quarter views read as one grounded quadruped predator without relying on texture.
+      evidence: [front, side, back, three_quarter, black_three_quarter]
+    - id: AC-SIL-02
+      criterion: Side silhouette length is at least 1.8 times total visual height and retains visible belly clearance.
+      evidence: [side]
+    - id: AC-SIL-03
+      criterion: Head wedge, shoulder shelf, rib taper, hip drive, and rear counterweight form a descending readable mass sequence.
+      evidence: [side, three_quarter]
+  role_and_distance:
+    - id: AC-ROLE-01
+      criterion: At 15 to 30 blocks, a reviewer identifies a fast chase or flank predator and the single forward threat origin without reading the asset name.
+      evidence: [player_scale, three_quarter]
+    - id: AC-ROLE-02
+      criterion: The mob reads subordinate to a player-scale miniboss profile; shoulder height stays between 45 and 65 percent of player height and no permanent feature exceeds 80 percent.
+      evidence: [player_scale]
+  construction_and_negative_space:
+    - id: AC-CON-01
+      criterion: Belly, inner-leg, head-neck, and tail-body negative spaces remain visible in neutral, idle extreme, lunge contact, and recovery.
+      evidence: [side, three_quarter, idle_peak, lunge_contact, lunge_recovery]
+    - id: AC-CON-02
+      criterion: All four upper-lower-foot chains support the center of mass with no floating contacts, uniform bamboo limbs, or accidental intersections.
+      evidence: [front, side, back, lunge_recovery]
+    - id: AC-CON-03
+      criterion: Bark, root, moss, and corruption treatment reinforces the five-mass hierarchy; no detail rescues or obscures a failed shell.
+      evidence: [front, side, three_quarter, black_three_quarter]
+  rig_and_animation:
+    - id: AC-ANIM-01
+      criterion: Idle is a closed 1.5 to 3.0 second loop on the 0.05-second grid with four planted feet and no visible pop.
+      evidence: [idle_start, idle_peak, idle_end]
+    - id: AC-ANIM-02
+      criterion: Lunge is a non-looping 0.8 to 1.4 second action with distinct anticipation, chest-led action, contact, follow-through, and stable recovery.
+      evidence: [lunge_anticipation, lunge_contact, lunge_follow_through, lunge_recovery]
+    - id: AC-ANIM-03
+      criterion: Lunge reads as root-mask or thorn-snout commitment rather than copied canine bite anatomy, and no gameplay impact tick is claimed.
+      evidence: [lunge_anticipation, lunge_contact, lunge_follow_through]
+  originality_and_scope:
+    - id: AC-ORIG-01
+      criterion: Independent visual QA finds no copied reference outline, anatomy, pose, texture, branded motif, bone transform, or keyframe sequence.
+      evidence: [independent_visual_verdict]
+    - id: AC-SCOPE-01
+      criterion: Editable sources exist only under the pilot source root and all review evidence exists only under the pilot evidence root.
+      evidence: [source_hash_record, render_manifest, independent_visual_verdict]
+
+gate_separation:
+  art_gate:
+    gate: ART_PASS
+    current_status: pending_independent_visual_qa
+    authority: independent_visual_critic
+    requires:
+      - exact AssetSpec SHA-256
+      - exact editable-source SHA-256
+      - SHA-256 for every required render
+      - every acceptance criterion satisfied with no known issue
+    proves: exact hash-bound source and renders satisfy this AssetSpec
+    does_not_prove:
+      - plugin integration
+      - ModelEngine or Nexo activation
+      - runtime behavior
+      - release readiness
+  integration_gate:
+    gate: INTEGRATION_PASS
+    current_status: not_requested_for_direction_scope
+    authority: "17"
+    requires_before_future_evaluation:
+      - exact source and configuration hashes
+      - profile-aware static validator results
+      - production job receipt from domain 18
+    proves_if_later_granted: exact hashes pass declared static integration checks
+    does_not_prove:
+      - art quality
+      - plugin activation
+      - client delivery
+      - runtime behavior
+  runtime_gate:
+    gate: RUNTIME_PASS
+    current_status: not_authorized
+    authority: "17"
+    requires_before_future_evaluation:
+      - separate explicit runtime approval
+      - exact source, configuration, export, and pack hashes
+      - isolated runtime and real-client evidence
+    proves_if_later_granted: only the exact tested hashes behaved as recorded at runtime
+    does_not_prove:
+      - future builds
+      - changed sources
+      - changed configuration
+  release:
+    current_status: blocked_non_deploy_pilot
+    deployment_or_pack_promotion_allowed: false
+    note: ART_PASS, INTEGRATION_PASS, and RUNTIME_PASS are independent, non-transitive, and cannot be inferred from one another.
+
+handoff:
+  next_owner: domain_18_blockbench_authoring_job
+  authoring_scope:
+    - create only the declared editable source and its sibling texture source under the pilot source root
+    - implement selected direction A, the declared rig, and only idle plus lunge
+    - capture required evidence only under the pilot evidence root
+  authoring_forbidden:
+    - changing this AssetSpec to justify the built result
+    - treating references as geometry or animation templates
+    - issuing ART_PASS for builder output
+    - touching plugins, staging, server state, generated packs, caches, or runtime data
+  unresolved_for_any_future_deploy:
+    - Domain 07 must separately bind lunge timing and gameplay events to a real encounter.
+    - Domain 18 and Domain 17 must define and evaluate plugin integration evidence if deployment is later requested.
+    - Runtime work remains forbidden without separate explicit approval.

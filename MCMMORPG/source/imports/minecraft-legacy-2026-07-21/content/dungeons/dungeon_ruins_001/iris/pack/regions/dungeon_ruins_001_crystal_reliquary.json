@@ -1,0 +1,6 @@
+{
+  "name": "Crystal Reliquary",
+  "landBiomes": [ "dungeon_ruins_001_crystal_reliquary" ],
+  "seaBiomes": [ "dungeon_ruins_001_crystal_reliquary" ],
+  "shoreBiomes": [ "dungeon_ruins_001_crystal_reliquary" ]
+}

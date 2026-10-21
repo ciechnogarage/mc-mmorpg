@@ -1,0 +1,109 @@
+contract:
+  id: world-dungeon-unlock-rules-v1
+  version: 1
+  contract_status: proposed
+  runtime_status: not_tested
+  release_status: blocked
+  owner: "06"
+  semantic_owner: "06"
+  upstream_contracts:
+    - docs/contracts/world-progression-model.md
+  purpose:
+    - define unlock rule taxonomy for domain 06
+    - define act progression gates
+    - define island gating boundaries
+    - define dungeon floor unlock rules
+  non_goals:
+    - concrete act or island content data
+    - runtime persistence ownership
+    - travel node taxonomy
+    - plugin command or adapter behavior
+  unlock_rule_sets:
+    act_progression:
+      unlock_next_act:
+        mode: any_of
+        conditions:
+          - island_regional_milestone_completed
+          - dungeon_sector_finale_completed
+      guardrails:
+        - world_path_and_dungeon_path_are_peer_routes
+        - next_act_unlock_cannot_require_both_routes_by_default
+    island_access:
+      default_open_region_percent:
+        min: 70
+        max: 80
+      milestone_gated_region_percent:
+        min: 20
+        max: 30
+      cannot_gate:
+        - core_services
+        - baseline_exploration
+        - primary_activity_loop
+      may_gate:
+        - enclave
+        - finale_location
+        - shortcut
+        - special_event
+        - escalation_zone
+    dungeon_access:
+      floor_unlock_model: sequential
+      replay_unlocked_floors: true
+      selection_scope: per_sector
+      dynamic_character_level_lock: false
+      gated_by_progress_contract: true
+      finale_floor_id: FLOOR-010
+  milestone_taxonomy:
+    island_regional_milestone_completed:
+      scope: island
+      meaning: regional progression checkpoint sufficient for act advancement
+    dungeon_sector_finale_completed:
+      scope: dungeon_sector
+      meaning: completion of sector finale sufficient for act advancement
+    regional_enclave_cleared:
+      scope: island_subregion
+      meaning: enclave or protected zone opened through local progression
+    escalation_zone_stabilized:
+      scope: island_subregion
+      meaning: regional escalation beat resolved or normalized
+    floor_completion:
+      scope: floor
+      meaning: one floor cleared for sequential sector progression
+  gate_object_taxonomy:
+    allowed:
+      enclave:
+        description: optional or advanced enclave space
+      finale_location:
+        description: final act or regional confrontation space
+      shortcut:
+        description: traversal acceleration unlocked after progress
+      special_event:
+        description: gated event layer or special interaction beat
+      escalation_zone:
+        description: high-pressure regional escalation space
+    forbidden:
+      core_services:
+        description: repair, storage, market, crafting, or other baseline services
+      baseline_exploration:
+        description: the main majority of the initial island footprint
+      primary_activity_loop:
+        description: normal repeatable activity path expected on first access
+  persistence_rules:
+    act_unlock_scope: character
+    island_gate_scope: character
+    dungeon_floor_unlock_scope: character
+    invariant:
+      - semantic_rules_defined_here_even_if_storage_owner_is_not_yet_declared
+      - domain_06_progression_is_character_scoped_unless_superseded_by_future_cross_domain_contract
+  fallback_rules:
+    world_only_player:
+      result: eligible_for_next_act_when_island_regional_milestone_completed
+    dungeon_only_player:
+      result: eligible_for_next_act_when_dungeon_sector_finale_completed
+    mixed_route_player:
+      result: eligible_via_first_completed_peer_route
+  references:
+    downstream_contracts:
+      - docs/contracts/dungeon-floor-contract.yaml
+      - docs/contracts/travel-and-discovery.md
+      - docs/contracts/island-sector-mapping.yaml
+      - docs/contracts/act-map.yaml

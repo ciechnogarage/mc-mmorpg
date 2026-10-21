@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "companion-bridge/v1/player-snapshot.schema.json",
+  "title": "CompanionBridge Player Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "snapshotSequence", "capturedAt", "serverTick", "player", "integrations"],
+  "properties": {
+    "contractVersion": { "const": 1 },
+    "snapshotSequence": { "type": "integer", "minimum": 0 },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "serverTick": { "type": "integer", "minimum": 0 },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uuid", "name", "online"],
+      "properties": {
+        "uuid": { "type": "string" },
+        "name": { "type": ["string", "null"] },
+        "online": { "type": "boolean" },
+        "world": { "type": ["string", "null"] },
+        "location": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["x", "y", "z"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "z": { "type": "number" }
+          }
+        },
+        "health": { "type": ["number", "null"] },
+        "food": { "type": ["integer", "null"] },
+        "gameMode": { "type": ["string", "null"] }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vault", "mmocore", "mmoprofiles"],
+      "properties": {
+        "vault": { "$ref": "#/definitions/integrationStub" },
+        "mmocore": { "$ref": "#/definitions/integrationStub" },
+        "mmoprofiles": { "$ref": "#/definitions/integrationStub" }
+      }
+    }
+  },
+  "definitions": {
+    "integrationStub": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["available"],
+      "properties": {
+        "available": { "type": "boolean" }
+      }
+    }
+  }
+}

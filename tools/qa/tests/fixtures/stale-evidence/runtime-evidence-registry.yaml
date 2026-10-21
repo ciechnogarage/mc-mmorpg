@@ -1,0 +1,44 @@
+schema_version: 1
+records:
+- evidence_id: character_login_persistence_001
+  scenario_id: character_login_persistence
+  domain: character
+  system: login_persistence
+  environment: dev-qa
+  test_type: restart_recovery
+  contract_status: approved
+  runtime_status: verified
+  release_effect: supports_candidate
+  preconditions: []
+  steps: []
+  assertions: []
+  artifacts: []
+  build:
+    paper: paper-1.21.x
+    plugin_manifest_hash: sha256:fixture-plugin-manifest
+    commit: stale-fixture-commit
+  execution:
+    runner: MCMMORPG/_validation/foundation_runtime.js
+    started_at: '2026-07-22T10:00:00Z'
+    finished_at: '2026-07-22T10:10:00Z'
+    executed_by: qa-release-evidence-runner
+    log_paths:
+    - MCMMORPG/logs/latest.log
+    environment_control:
+      lease: dev-qa
+      workspace_root: /home/przemek/projects/MC
+      runtime_touched: true
+      staging_touched: false
+      rollback:
+        method: runtime_snapshot_restore
+        proof_paths:
+        - tools/qa/reports/rollback-proof.txt
+  result:
+    verdict: PASS
+  evidence_types:
+  - server-log
+  - bot-transcript
+  contract_refs:
+  - docs/contracts/account-character-contract.yaml
+  metadata:
+    test_account_uuid: 00000000-0000-4000-8000-000000000001

@@ -1,0 +1,7 @@
+schema_version: 1
+entries:
+  - matrix_id: character_login_persistence_restart
+    scenario_id: character_login_persistence
+    release_status: candidate
+    release_effect: supports_candidate
+    coverage_level: release_gate

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -50,8 +49,12 @@ import org.bukkit.plugin.Plugin;
  *
  * <p>Po drugie, {@code write()} bylo synchroniczne na watku glownym i serializowalo CALY
  * plik — z NBT kazdego przedmiotu wszystkich zapisanych graczy — przy kazdym wejsciu i
- * kazdym wyjsciu z kreatora. Teraz serializacja zostaje na watku wolajacego (bo dotyka
- * ItemStackow), a na wątek poboczny idzie samo I/O, z debouncem jak w CharacterStore.
+ * kazdym wyjsciu z kreatora. Serializacja nadal dzieje sie na watku glownym (bo dotyka
+ * ItemStackow), ale POD debouncem, a nie przed nim: profil spark pokazal, ze {@code
+ * sweepInventory} w watchdogu wolal {@code put()} seriami, a kazde takie wolanie
+ * serializowalo caly plik od nowa — samo YAML-owanie zjadalo 1,5 s na 15 min zycia
+ * serwera, na watku glownym. Teraz seria zmian w oknie debounce'u to JEDNA serializacja
+ * (na koncu okna, gdy yaml ma juz komplet zmian) i JEDEN zapis na dysk, na watku pobocznym.
  */
 public final class SessionStateStore {
 
@@ -72,12 +75,6 @@ public final class SessionStateStore {
   private final Logger logger;
   private final YamlConfiguration yaml = new YamlConfiguration();
 
-  /**
-   * Ostatni zserializowany stan pliku, policzony na watku wolajacego. Zadanie asynchroniczne
-   * zapisuje to, co tu zastanie — kolejne zmiany w oknie debounce'u po prostu nadpisuja
-   * wartosc, wiec na dysk trafia zawsze najswiezsza wersja.
-   */
-  private final AtomicReference<String> pendingSnapshot = new AtomicReference<>();
   private final AtomicBoolean saveQueued = new AtomicBoolean();
 
   public SessionStateStore(Plugin plugin, Logger logger) {
@@ -257,25 +254,39 @@ public final class SessionStateStore {
   }
 
   /**
-   * Serializuje TU I TERAZ (czyli na watku wolajacego — ItemStacki nalezy dotykac na
-   * glownym), a samo I/O odklada na watek poboczny z debouncem.
+   * Odklada CALY zapis — i serializacje, i I/O — na koniec okna debounce'u. Pierwsze
+   * wolanie w oknie zamawia zadanie, kolejne nie robia nic: yaml jest juz zaktualizowany,
+   * wiec jedna serializacja na koncu okna widzi komplet zmian.
+   *
+   * <p>Serializacja leci zadaniem SYNCHRONICZNYM, bo dotyka ItemStackow, a te nalezy
+   * czytac na watku glownym. Na watek poboczny idzie dopiero gotowy string.
    */
   private void scheduleSave() {
-    pendingSnapshot.set(yaml.saveToString());
     if (!saveQueued.compareAndSet(false, true)) {
       return;
     }
     try {
-      Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+      Bukkit.getScheduler().runTaskLater(plugin, () -> {
         saveQueued.set(false);
-        writeAtomically(pendingSnapshot.get());
+        String snapshot = snapshot();
+        try {
+          Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> writeAtomically(snapshot));
+        } catch (RuntimeException ex) {
+          // Wylaczanie pluginu w oknie debounce'u: zapisz tu, na watku glownym.
+          writeAtomically(snapshot);
+        }
       }, DEBOUNCE_TICKS);
     } catch (RuntimeException ex) {
       // Scheduler niedostepny: plugin juz wylaczany albo brak dzialajacego serwera.
       // Zapisz od razu — lepiej zablokowac watek na milisekunde niz zgubic plecak.
       saveQueued.set(false);
-      writeAtomically(pendingSnapshot.get());
+      writeAtomically(snapshot());
     }
+  }
+
+  /** Serializacja pod zamkiem: {@code put}/{@code clear} moga w tym czasie zmieniac yaml. */
+  private synchronized String snapshot() {
+    return yaml.saveToString();
   }
 
   /**

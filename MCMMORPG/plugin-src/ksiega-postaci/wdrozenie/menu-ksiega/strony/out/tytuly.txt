@@ -1,0 +1,7 @@
+hub_postac | menu_title: '&f䨀䨁䨂䨃' | U+4A00, U+4A01, U+4A02, U+4A03
+hub_umiejetnosci | menu_title: '&f䨄䨅䨆䨇' | U+4A04, U+4A05, U+4A06, U+4A07
+hub_ekonomia | menu_title: '&f䨈䨉䨊䨋' | U+4A08, U+4A09, U+4A0A, U+4A0B
+hub_spolecznosc | menu_title: '&f䨌䨍䨎䨏' | U+4A0C, U+4A0D, U+4A0E, U+4A0F
+hub_ustawienia | menu_title: '&f䨐䨑䨒䨓' | U+4A10, U+4A11, U+4A12, U+4A13
+hub_pomoc | menu_title: '&f䨔䨕䨖䨗' | U+4A14, U+4A15, U+4A16, U+4A17
+stolica_podroze | menu_title: '&f䨘䨙䨚䨛' | U+4A18, U+4A19, U+4A1A, U+4A1B

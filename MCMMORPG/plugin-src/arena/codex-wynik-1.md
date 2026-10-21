@@ -1,0 +1,3 @@
+Przygotowałem kod pluginu Arena, konfigurację świata i menu, skrypt budowy oraz scenariusze testów A–K. Szczegóły i ryzyka są w [RAPORT-1.md](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/RAPORT-1.md).
+
+Kompilacja Java 21, składnia 11 plików YAML i 10 plików JS oraz statyczna kontrola budowli przeszły. Składnię regionów i warunków menu sprawdziłem także w dokumentacji [WorldGuard](https://worldguard.enginehub.org/en/latest/regions/storage/) i [DeluxeMenus](https://wiki.helpch.at/helpchat-plugins/deluxemenus/options-and-configurations/requirements). Nie uruchamiałem serwera ani Dockera. Przed wdrożeniem na produkcję trzeba na klonie potwierdzić działanie zaklęć oraz brak nagród w niestandardowych systemach Chowańców, broni i zadań.

@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "companion-bridge/v1/health.schema.json",
+  "title": "CompanionBridge Health",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "status", "serverTick", "capturedAt"],
+  "properties": {
+    "contractVersion": { "const": 1 },
+    "status": { "type": "string", "enum": ["ok"] },
+    "serverTick": { "type": "integer", "minimum": 0 },
+    "capturedAt": { "type": "string", "format": "date-time" }
+  }
+}

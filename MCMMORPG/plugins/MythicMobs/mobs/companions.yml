@@ -1,0 +1,18 @@
+# CompanionCore maps canonical companion.tank.tier1 to this MythicMob ID.
+# WOLF + CompanionCore#setOwner keeps FOLLOW on vanilla Paper pathfinding; no custom navigator.
+Companion_Tank_T1:
+  Type: WOLF
+  Display: '&6Strażnik Przysięgi'
+  Health: 80
+  Damage: 7
+  Options:
+    MovementSpeed: 0.26
+    MaxCombatDistance: 18
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventSunburn: true
+  Skills:
+    - skill{s=CompanionTankSpawn} @self ~onSpawn
+    - skill{s=CompanionTankGuard} @self ~onDamaged
+    - skill{s=CompanionTankDeath} @self ~onDeath

@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/iron_hoe",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    55
+   ],
+   "translation": [
+    -0.0,
+    7.078,
+    -0.043
+   ],
+   "scale": [
+    1.19,
+    1.19,
+    1.19
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -55
+   ],
+   "translation": [
+    0.0,
+    7.078,
+    -0.043
+   ],
+   "scale": [
+    1.19,
+    1.19,
+    1.19
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    13
+   ],
+   "translation": [
+    2.33,
+    5.375,
+    1.558
+   ],
+   "scale": [
+    0.816,
+    0.816,
+    0.816
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -13
+   ],
+   "translation": [
+    -0.07,
+    5.375,
+    1.558
+   ],
+   "scale": [
+    0.816,
+    0.816,
+    0.816
+   ]
+  }
+ }
+}

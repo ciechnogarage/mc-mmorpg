@@ -1,0 +1,60 @@
+contract:
+  id: petcore-legacy-claim-v1
+  contract_status: accepted
+  runtime_status: not_tested
+  release_status: blocked
+  version: 1
+  owner: PetCore
+  supersedes_authority: MCPets
+  evidence_register: docs/audits/2026-07-13/runtime-evidence-register.yaml
+
+authority:
+  pet_subject_identity: MMOProfiles.profileId
+  durable_pet_profile: PetCore
+  legacy_source: MCPets (read-only migration input; not a live dependency)
+
+# PetCore uses its own MariaDB database/table namespace, isolated from the
+# unmanaged `mcpets_db` MCPets used (never successfully connected in staging:
+# no `mcpets_db` database exists on the shared mcmmorpg MariaDB instance as of
+# 2026-07-20 - see docs/audits/2026-07-20/mcpets-cutover-evidence.md).
+namespace:
+  database: petcore
+  key: PetSubjectId = MMOProfiles.profileId
+  tables:
+    - name: petcore_profile
+      key: [pet_subject_id, definition_id]
+      owns: [unlocks, selected_definition, progression, policy_eligibility]
+    - name: petcore_legacy_claim_receipt
+      key: [pet_subject_id, legacy_source_record_id]
+      owns: [source_checksum, claimed_at, receipt_id]
+      purpose: one-time idempotency ledger for legacy claims
+
+legacy_claim:
+  source: MCPets legacy config/data as of the MCPets cutover date (ADR-003)
+  trigger: explicit player-initiated claim action (command or menu); never automatic
+  scope: currently selected PetSubjectId only; a legacy record can never be copied to a different profile
+  idempotency:
+    checksum_required: true
+    checksum_algorithm: sha256
+    one_time_receipt: true
+    duplicate_claim_same_profile: rejected_and_logged
+    duplicate_claim_other_profile: rejected_and_logged
+  failure_policy:
+    checksum_mismatch: reject_and_alert
+    already_claimed: reject_and_log
+    source_unreadable: reject_and_log
+    petcore_db_unavailable: reject_new_claim_no_fallback
+  guarantees:
+    - source_record_unchanged_on_failure
+    - no_petcore_state_created_on_failed_claim
+    - never_automatic
+    - never_dual_write_with_mcpets
+    - never_copies_to_a_second_profile
+
+required_evidence:
+  - a legacy record can be claimed once by the selected profile
+  - a second claim attempt on the same profile, or a claim attempt from a
+    different profile against the same legacy record, is rejected
+  - a failed import leaves the legacy source unchanged and creates no PetCore state
+  - the checksum/receipt row created by a successful claim is visible in
+    petcore_legacy_claim_receipt

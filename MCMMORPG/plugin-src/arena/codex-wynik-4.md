@@ -1,0 +1,5 @@
+Wykonałem ZLECENIE-4: menu Q, zaproszenia MMOCore i pojedynki na arenie.
+Kod jest w [MenuGracza.java](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/src/main/java/pl/mcmmorpg/arena/MenuGracza.java) i [ArenaPlugin.java](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/src/main/java/pl/mcmmorpg/arena/ArenaPlugin.java).
+Dodałem [konfigurację](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/src/main/resources/config.yml) oraz [instrukcję wdrożenia Q](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/wdrozenie/pliki/Zaklecia/config.yml.PATCH.md).
+Szczegóły i użyte API są w [RAPORT-4.md](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/RAPORT-4.md).
+Zgodnie ze zleceniem nie budowałem ani nie testowałem; pozostaje sprawdzenie dwoma klientami.

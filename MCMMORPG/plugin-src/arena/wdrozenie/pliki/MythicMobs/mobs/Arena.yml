@@ -1,0 +1,14 @@
+ARENA_MANEKIN:
+  Type: IRON_GOLEM
+  Display: '&eManekin treningowy'
+  Health: 100000
+  Damage: 0
+  Options:
+    NoAI: true
+    Despawn: false
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    KnockbackResistance: 1
+    Silent: true
+  AIGoalSelectors: ['0 clear']
+  AITargetSelectors: ['0 clear']

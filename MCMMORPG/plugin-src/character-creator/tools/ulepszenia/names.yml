@@ -1,0 +1,15 @@
+# Losowe imie w ksiedze "Nowa postac" (przycisk Losuj): poczatek + koncowka, wg rasy.
+# Wynik musi przejsc zasady imion (3-16 znakow) i byc wolny — inaczej losowanie idzie dalej.
+names:
+  czlowiek:
+    start: [Bor, Rad, Jar, Mir, Sta, Dobr, Wit, Bol, Zby, Ciech, Przem, Wal, Gost, Lech, Mies, Sob]
+    end: [osław, omir, owit, ogost, obor, ek, an, imir, idar, ko, uch, osz]
+  elf:
+    start: [Ae, Ela, Fae, Gal, Ith, Lae, Mir, Syl, Thal, Ely, Cae, Nim, Ser, Ara, Lue]
+    end: [rion, wen, dril, thas, riel, lith, nor, ael, andil, iel, ara, ethil, orin]
+  ork:
+    start: [Gro, Kra, Mug, Thra, Zog, Gor, Brak, Urg, Dur, Snag, Grim, Rok, Yaz, Mog]
+    end: [gash, nak, dush, rok, gul, thak, mok, zug, grub, bag, ok, ash]
+  nieumarly:
+    start: [Mor, Vex, Sil, Kar, Nyx, Ash, Grav, Vel, Mal, Sor, Ze, Obs, Cryp, Um]
+    end: [grim, thul, mar, vane, rik, ius, oth, ane, ekh, ul, is, orn]

@@ -201,6 +201,22 @@ items:
       - '[player] class'
       - '[close]'
 
+  companions:
+    material: WOLF_SPAWN_EGG
+    slot: 24
+    display_name: '&6&lKompani'
+    lore:
+      - '&7Wybierz sprzymierzeńca dla'
+      - '&7aktualnej postaci RPG.'
+      - ''
+      - '&6Tank T1 &7— dostępny w MVP'
+      - '&8Archer i Healer: wkrótce'
+      - ''
+      - '&eOtwórz panel kompanów.'
+    left_click_commands:
+      - '[player] dm open companion_panel'
+      - '[sound] ENTITY_WOLF_AMBIENT'
+
   starter_notice:
     material: NETHERITE_SCRAP
     slot: 23

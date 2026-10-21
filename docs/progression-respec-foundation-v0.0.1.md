@@ -1,3 +1,13 @@
+# Status
+
+`legacy_design_input`.
+
+This document is retained for progression, respec, loadout, and combat-lockout
+design input only. It is not the source of truth for Domain 04 class/subclass
+contracts, final unlock levels, final talent trees, formulas, resource rules, or
+production `CLS-*` content. Use `docs/design/classes/class-framework.md` for the
+class framework and future Domain 04 contracts for progression/loadout details.
+
 # Progression & Respec Foundation v0.0.1
 
 ## Cel dokumentu

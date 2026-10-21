@@ -1,0 +1,3 @@
+Poprawiłem ikonę ARENY: większe, jasne miecze otaczają małą tarczę; ramka i podpis pozostały bez zmian.
+Zaktualizowałem cztery pliki PNG, [skrypt](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/wdrozenie/pack/gui/rysuj_kafel.py), [podgląd](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/wdrozenie/pack/gui/podglad.png) i [raport](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/RAPORT-3.md).
+Kontrola palety, wymiarów i pikseli poza kaflem przeszła; nie wdrażałem na serwer.

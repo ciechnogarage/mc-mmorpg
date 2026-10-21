@@ -1,0 +1,14 @@
+schema_version: 1
+registry_id: content-registry
+generated_from:
+  - registry/content/items/item.weapon.sword.ashen_vanguard.yaml
+entries:
+  - subject_id: item.weapon.sword.ashen_vanguard
+    registry_path: registry/content/items/item.weapon.sword.ashen_vanguard.yaml
+    source_path: content/items/weapons/ashen_vanguard.yaml
+    content_type: item
+    template_id: item.weapon.sword
+    runtime_plugin: MMOItems
+    target_tuple: MMOItems:MCMMORPG/plugins/MMOItems/item/sword.yml#ASHEN_VANGUARD
+    lifecycle_stage: draft
+    runtime_status: not_loaded

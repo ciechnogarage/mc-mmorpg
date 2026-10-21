@@ -1,0 +1,176 @@
+menu_title: '&8✦ &d&lPETCORE &8✦'
+size: 54
+open_command:
+  - petmenu
+  - pets
+
+items:
+  filler:
+    material: BLACK_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  active_pet:
+    material: WOLF_SPAWN_EGG
+    slot: 22
+    display_name: '&6&lAktywny Pet'
+    lore:
+      - '&7Status: &f%petcore_summary%'
+      - '&7Aktywny: &f%petcore_active_pet%'
+      - '&7Authority: &f%petcore_authority%'
+      - '&7Blokada: &f%petcore_block_reason%'
+      - ''
+      - '&eLewy klik: &fprzywołaj &8(%petcore_can_summon%)'
+      - '&ePrawy klik: &fodwołaj &8(%petcore_can_recall%)'
+      - ''
+      - '&8Backend: PetCore Global Pet'
+    left_click_commands:
+      - '[player] petcore summon'
+      - '[sound] ENTITY_WOLF_AMBIENT'
+    right_click_commands:
+      - '[player] petcore recall'
+      - '[sound] ENTITY_WOLF_WHINE'
+
+  collection:
+    material: CHEST
+    slot: 19
+    display_name: '&b&lKolekcja Petów'
+    lore:
+      - '&7Owned, locked, rarity i source hints.'
+      - '&7Status: &f%petcore_summary%'
+      - ''
+      - '&eKliknij: &fotwórz kolekcję'
+    left_click_commands:
+      - '[openguimenu] petcore_collection'
+      - '[sound] UI_BUTTON_CLICK'
+
+  capture:
+    material: LEAD
+    slot: 20
+    display_name: '&a&lŁapanie / Unlocki'
+    lore:
+      - '&7Flow łapania, unlocków i źródeł petów.'
+      - '&7Blokada: &f%petcore_block_reason%'
+      - ''
+      - '&eKliknij: &fzobacz status'
+    left_click_commands:
+      - '[openguimenu] petcore_capture'
+      - '[sound] UI_BUTTON_CLICK'
+
+  evolution:
+    material: NETHER_STAR
+    slot: 24
+    display_name: '&d&lEwolucja'
+    lore:
+      - '&7Stage, preview, wymagania i confirm.'
+      - '&7Authority: &f%petcore_authority%'
+      - ''
+      - '&eKliknij: &fzobacz ścieżkę'
+    left_click_commands:
+      - '[openguimenu] petcore_evolution'
+      - '[sound] UI_BUTTON_CLICK'
+
+  upgrades:
+    material: ANVIL
+    slot: 25
+    display_name: '&e&lUlepszenia'
+    lore:
+      - '&7Staty, materiały, capy PvE/PvP.'
+      - '&7Content: &f%petcore_content%'
+      - ''
+      - '&eKliknij: &fzobacz panel'
+    left_click_commands:
+      - '[openguimenu] petcore_upgrades'
+      - '[sound] UI_BUTTON_CLICK'
+
+  skills:
+    material: ENCHANTED_BOOK
+    slot: 31
+    display_name: '&9&lSkille / Loadout'
+    lore:
+      - '&7Nauka, sloty, cooldowny, loadout.'
+      - '&7Aktywny pet: &f%petcore_active_pet%'
+      - ''
+      - '&eKliknij: &fzobacz skille'
+    left_click_commands:
+      - '[openguimenu] petcore_skills'
+      - '[sound] UI_BUTTON_CLICK'
+
+  duel:
+    material: IRON_SWORD
+    slot: 30
+    display_name: '&c&lPet Duel'
+    lore:
+      - '&7Real-time accepted pet fight.'
+      - '&7Duel: &f%petcore_duel%'
+      - '&7Summon: &f%petcore_can_summon%'
+      - ''
+      - '&eKliknij: &fpanel pojedynku'
+    left_click_commands:
+      - '[openguimenu] petcore_duel'
+      - '[sound] ENTITY_WOLF_GROWL'
+
+  cosmetics:
+    material: AMETHYST_SHARD
+    slot: 32
+    display_name: '&d&lSkórki / Cosmetics'
+    lore:
+      - '&7Wygląd, rarity frame, Nexo icons.'
+      - ''
+      - '&8Locked: visual-only Phase 3.'
+
+  beast:
+    material: BONE
+    slot: 37
+    display_name: '&6&lBeast Companion'
+    lore:
+      - '&7Klasowy companion Łowcy.'
+      - ''
+      - '&8Locked: Beast Companion runtime.'
+
+  minions:
+    material: WITHER_SKELETON_SKULL
+    slot: 39
+    display_name: '&5&lMiniony'
+    lore:
+      - '&7Akolita / Rytualista / Summoner.'
+      - ''
+      - '&8Locked: Summoned Minions runtime.'
+
+  adventurer:
+    material: PLAYER_HEAD
+    slot: 41
+    display_name: '&f&lAdventurer Companion'
+    lore:
+      - '&7Humanoidalny solo pomagier.'
+      - '&7Chowa się w social-run party.'
+      - ''
+      - '&8Locked: Adventurer runtime.'
+
+  status:
+    material: COMPASS
+    slot: 43
+    display_name: '&3&lStatus PetCore'
+    lore:
+      - '&7Profil: &f%petcore_profile%'
+      - '&7Zweryfikowany: &f%petcore_profile_verified%'
+      - '&7Content: &f%petcore_content%'
+      - '&7Authority: &f%petcore_authority%'
+      - '&7Duel: &f%petcore_duel%'
+      - ''
+      - '&8%petcore_summary%'
+    left_click_commands:
+      - '[player] petcore status summary'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 49
+    display_name: '&cZamknij'
+    lore:
+      - '&7Zamknij menu PetCore.'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

@@ -1,0 +1,154 @@
+# Wiary — patron postaci i błogosławieństwo (projekt: strona JD9X7Mxv6dBTXN3oNjBehR, wersja 3).
+# Patron jest zapisywany OSOBNO dla każdej postaci (moduł danych MMOProfiles), nie dla konta.
+# Postać wybiera patrona spośród 6 bóstw: 3 Starszych (grupa 'starsi') + 3 bóstw swojej rasy.
+# Rasa postaci = folder pliku jej klasy w plugins/MMOCore/classes/<rasa>/ (czytane przy starcie).
+
+laska:
+  # Jak długo trwa błogosławieństwo (minuty). Nowe można wymodlić dopiero, gdy stare wygaśnie.
+  czas-minut: 30
+  # Siła rośnie z atrybutem MMOCore 'wiara' (suma: punkty + przedmioty), liczona w chwili modlitwy.
+  # Powyżej tego progu punkty nie wzmacniają już łaski.
+  wiara-limit: 40
+  atrybut: wiara
+
+zmiana-patrona:
+  # Pierwszy wybór jest darmowy i natychmiastowy. Każda kolejna zmiana wymaga odczekania tylu godzin
+  # od poprzedniej i zdejmuje aktywne błogosławieństwo.
+  odnowienie-godzin: 24
+
+# Rasy: id folderu klas MMOCore -> nazwa do komunikatów.
+rasy:
+  czlowiek: 'Człowiek'
+  elf: 'Elf'
+  ork: 'Ork'
+  nieumarly: 'Nieumarły'
+
+# Efekt łaski: stat MythicLib, typ FLAT albo RELATIVE, wartość = baza + na-punkt * min(wiara, limit).
+# 'opis' dopisuje się po liczbie; 'skala' mnoży liczbę tylko w opisie (np. odrzut 0..1 -> procent).
+# Typ RELATIVE = procent wartości statystyki postaci, dlatego jego opis zawsze ma '%'.
+bostwa:
+  ordhun:
+    imie: 'Ordhun'
+    tytul: 'Pierwszy Korzeń'
+    grupa: starsi
+    kolor: '&6'
+    domena: 'ziemia, rośliny, zwierzęta'
+    efekty:
+      - {stat: KNOCKBACK_RESISTANCE, typ: FLAT, baza: 0.10, na-punkt: 0.005, skala: 100, opis: '% odporności na odrzut'}
+      - {stat: ARMOR_TOUGHNESS, typ: FLAT, baza: 1.0, na-punkt: 0.05, opis: ' wytrzymałości pancerza'}
+  nysara:
+    imie: 'Nysara'
+    tytul: 'Tkaczka Losu'
+    grupa: starsi
+    kolor: '&6'
+    domena: 'los, przysięgi, podróże'
+    efekty:
+      - {stat: ADDITIONAL_EXPERIENCE, typ: FLAT, baza: 3.0, na-punkt: 0.15, opis: '% doświadczenia postaci'}
+  vharun:
+    imie: 'Vharun'
+    tytul: 'Ten, Który Milczy'
+    grupa: starsi
+    kolor: '&6'
+    domena: 'śmierć, sąd, spokój po życiu'
+    efekty:
+      - {stat: CRITICAL_STRIKE_CHANCE, typ: FLAT, baza: 2.0, na-punkt: 0.10, opis: '% szansy na trafienie krytyczne'}
+
+  solenna:
+    imie: 'Solenna'
+    tytul: 'Pani Latarni'
+    grupa: czlowiek
+    kolor: '&e'
+    domena: 'światło, ochrona dróg'
+    efekty:
+      - {stat: UNDEAD_DAMAGE, typ: FLAT, baza: 5.0, na-punkt: 0.25, opis: '% obrażeń przeciw nieumarłym'}
+  valdris:
+    imie: 'Valdris'
+    tytul: 'Kamienny Sędzia'
+    grupa: czlowiek
+    kolor: '&e'
+    domena: 'prawo, sprawiedliwość, tarcza'
+    efekty:
+      - {stat: ARMOR, typ: FLAT, baza: 1.0, na-punkt: 0.10, opis: ' pancerza'}
+  heldra:
+    imie: 'Heldra'
+    tytul: 'Matka Żniw'
+    grupa: czlowiek
+    kolor: '&e'
+    domena: 'urodzaj, dom, rzemiosło'
+    efekty:
+      - {stat: HEALTH_REGENERATION, typ: RELATIVE, baza: 15.0, na-punkt: 0.75, opis: '% regeneracji zdrowia'}
+
+  aelyra:
+    imie: 'Aelyra'
+    tytul: 'Pani Srebrnego Miesiąca'
+    grupa: elf
+    kolor: '&b'
+    domena: 'księżyc, duchy przodków, przepowiednie'
+    efekty:
+      - {stat: MAGICAL_DAMAGE, typ: FLAT, baza: 3.0, na-punkt: 0.15, opis: '% obrażeń magicznych'}
+  sylvaen:
+    imie: 'Sylvaen'
+    tytul: 'Szept Koron'
+    grupa: elf
+    kolor: '&b'
+    domena: 'wiatr, łowy, ścieżki lasu'
+    efekty:
+      - {stat: MOVEMENT_SPEED, typ: RELATIVE, baza: 3.0, na-punkt: 0.10, opis: '% prędkości ruchu'}
+  iridel:
+    imie: 'Iridel'
+    tytul: 'Czytająca Gwiazdy'
+    grupa: elf
+    kolor: '&b'
+    domena: 'magia, gwiazdy, wiedza'
+    efekty:
+      - {stat: COOLDOWN_REDUCTION, typ: FLAT, baza: 2.0, na-punkt: 0.10, opis: '% skrócenia odnowienia umiejętności'}
+
+  gorrath:
+    imie: 'Gorrath'
+    tytul: 'Pierwszy Wódz'
+    grupa: ork
+    kolor: '&c'
+    domena: 'przodkowie, wojna, honor rodu'
+    efekty:
+      - {stat: MAX_HEALTH, typ: RELATIVE, baza: 3.0, na-punkt: 0.15, opis: '% maksymalnego zdrowia'}
+  kharzuk:
+    imie: 'Kharzuk'
+    tytul: 'Burzowy Byk'
+    grupa: ork
+    kolor: '&c'
+    domena: 'burza, piorun, szał bitewny'
+    efekty:
+      - {stat: CRITICAL_STRIKE_POWER, typ: FLAT, baza: 5.0, na-punkt: 0.25, opis: '% siły trafień krytycznych'}
+  mogra:
+    imie: 'Mogra'
+    tytul: 'Matka Kłów'
+    grupa: ork
+    kolor: '&c'
+    domena: 'łowy, bestie, przetrwanie'
+    efekty:
+      - {stat: PVE_DAMAGE, typ: FLAT, baza: 2.0, na-punkt: 0.10, opis: '% obrażeń przeciw potworom'}
+
+  morvhena:
+    imie: 'Morvhena'
+    tytul: 'Pani, Która Podniosła'
+    grupa: nieumarly
+    kolor: '&3'
+    domena: 'nieśmiertelność, powrót zza progu'
+    efekty:
+      - {stat: LIFESTEAL, typ: FLAT, baza: 1.0, na-punkt: 0.05, opis: '% kradzieży życia'}
+  vhorax:
+    imie: 'Vhorax'
+    tytul: 'Wieczny Głód'
+    grupa: nieumarly
+    kolor: '&3'
+    domena: 'dusze, głód, siła brana od innych'
+    efekty:
+      - {stat: SPELL_VAMPIRISM, typ: FLAT, baza: 1.0, na-punkt: 0.05, opis: '% wampiryzmu czarów'}
+  ossyra:
+    imie: 'Ossyra'
+    tytul: 'Pasterka Umarłych'
+    grupa: nieumarly
+    kolor: '&3'
+    domena: 'pamięć, żałoba, opieka nad zmarłymi'
+    efekty:
+      - {stat: PVE_DEFENSE, typ: FLAT, baza: 2.0, na-punkt: 0.10, opis: '% ochrony przed potworami'}

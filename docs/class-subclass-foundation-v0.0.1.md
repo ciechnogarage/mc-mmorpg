@@ -1,3 +1,13 @@
+# Status
+
+`legacy_design_input`.
+
+This document is retained for fantasy, role, high-level roster, and counterplay
+input only. It is not the source of truth for Domain 04 class/subclass contracts,
+stat ids, damage types, formulas, resource rules, unlock levels, runtime ids, or
+production `CLS-*` content. Use `docs/design/classes/class-framework.md` as the
+governing class and subclass contract.
+
 # Class & Subclass Foundation v0.0.1
 
 ## Cel dokumentu

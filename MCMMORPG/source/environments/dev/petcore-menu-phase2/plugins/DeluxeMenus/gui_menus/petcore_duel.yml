@@ -1,0 +1,91 @@
+menu_title: '&8✦ &c&lPET DUEL &8✦'
+size: 54
+
+items:
+  filler:
+    material: RED_STAINED_GLASS_PANE
+    slots:
+      - 0-8
+      - 45-53
+    display_name: '&0'
+
+  duel_status:
+    material: IRON_SWORD
+    slot: 13
+    display_name: '&cStatus Pojedynku'
+    lore:
+      - '&7Duel: &f%petcore_duel%'
+      - '&7Aktywny pet: &f%petcore_active_pet%'
+      - '&7Summon dostępny: &f%petcore_can_summon%'
+      - '&7Blokada: &f%petcore_block_reason%'
+      - ''
+      - '&8Tylko zaakceptowane pety walczą.'
+
+  challenge_info:
+    material: NAME_TAG
+    slot: 20
+    display_name: '&eWyzwanie gracza'
+    lore:
+      - '&7Phase 2 nie zgaduje target selectora.'
+      - '&7Użyj: &f/petcore duel request <nick>'
+      - '&7Docelowo ten slot otworzy selector gracza.'
+
+  accept:
+    material: LIME_DYE
+    slot: 22
+    display_name: '&aAkceptuj pending duel'
+    lore:
+      - '&7Akceptuje aktualne zaproszenie,'
+      - '&7jeśli PetCore ma pending request.'
+    left_click_commands:
+      - '[player] petcore duel accept'
+      - '[sound] ENTITY_PLAYER_LEVELUP'
+
+  decline:
+    material: RED_DYE
+    slot: 24
+    display_name: '&cOdrzuć pending duel'
+    lore:
+      - '&7Odrzuca aktualne zaproszenie,'
+      - '&7jeśli PetCore ma pending request.'
+    left_click_commands:
+      - '[player] petcore duel decline'
+      - '[sound] BLOCK_NOTE_BLOCK_BASS'
+
+  skill:
+    material: ENCHANTED_BOOK
+    slot: 30
+    display_name: '&9Wymuś skill peta'
+    lore:
+      - '&7Używa obecnego allow-listed skilla.'
+      - '&7PetCore odrzuci akcję poza aktywnym duelem.'
+    left_click_commands:
+      - '[player] petcore duel skill PetCore_GlobalPetPulse'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+
+  end:
+    material: BARRIER
+    slot: 32
+    display_name: '&cZakończ duel'
+    lore:
+      - '&7Kończy twój aktywny Pet Duel.'
+      - '&7Cleanup pozostaje po stronie PetCore.'
+    left_click_commands:
+      - '[player] petcore duel end'
+      - '[sound] ENTITY_WOLF_WHINE'
+
+  back:
+    material: ARROW
+    slot: 48
+    display_name: '&ePowrót'
+    left_click_commands:
+      - '[openguimenu] petcore_main'
+      - '[sound] UI_BUTTON_CLICK'
+
+  close:
+    material: BARRIER
+    slot: 50
+    display_name: '&cZamknij'
+    left_click_commands:
+      - '[close]'
+      - '[sound] UI_BUTTON_CLICK'

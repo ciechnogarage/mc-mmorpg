@@ -1,0 +1,241 @@
+# MMOCore: cztery ćwiartki na okno, U+4A80–U+4AA7.
+player_stats_1:
+  font: minecraft:default
+  texture: nexo:gui/player-stats_1
+  ascent: 13
+  height: 111
+  char: "䪀"
+player_stats_2:
+  font: minecraft:default
+  texture: nexo:gui/player-stats_2
+  ascent: 13
+  height: 111
+  char: "䪁"
+player_stats_3:
+  font: minecraft:default
+  texture: nexo:gui/player-stats_3
+  ascent: -98
+  height: 111
+  char: "䪂"
+player_stats_4:
+  font: minecraft:default
+  texture: nexo:gui/player-stats_4
+  ascent: -98
+  height: 111
+  char: "䪃"
+attribute_view_1:
+  font: minecraft:default
+  texture: nexo:gui/attribute-view_1
+  ascent: 13
+  height: 111
+  char: "䪄"
+attribute_view_2:
+  font: minecraft:default
+  texture: nexo:gui/attribute-view_2
+  ascent: 13
+  height: 111
+  char: "䪅"
+attribute_view_3:
+  font: minecraft:default
+  texture: nexo:gui/attribute-view_3
+  ascent: -98
+  height: 111
+  char: "䪆"
+attribute_view_4:
+  font: minecraft:default
+  texture: nexo:gui/attribute-view_4
+  ascent: -98
+  height: 111
+  char: "䪇"
+skill_list_1:
+  font: minecraft:default
+  texture: nexo:gui/skill-list_1
+  ascent: 13
+  height: 111
+  char: "䪈"
+skill_list_2:
+  font: minecraft:default
+  texture: nexo:gui/skill-list_2
+  ascent: 13
+  height: 111
+  char: "䪉"
+skill_list_3:
+  font: minecraft:default
+  texture: nexo:gui/skill-list_3
+  ascent: -98
+  height: 111
+  char: "䪊"
+skill_list_4:
+  font: minecraft:default
+  texture: nexo:gui/skill-list_4
+  ascent: -98
+  height: 111
+  char: "䪋"
+quest_list_1:
+  font: minecraft:default
+  texture: nexo:gui/quest-list_1
+  ascent: 13
+  height: 111
+  char: "䪌"
+quest_list_2:
+  font: minecraft:default
+  texture: nexo:gui/quest-list_2
+  ascent: 13
+  height: 111
+  char: "䪍"
+quest_list_3:
+  font: minecraft:default
+  texture: nexo:gui/quest-list_3
+  ascent: -98
+  height: 111
+  char: "䪎"
+quest_list_4:
+  font: minecraft:default
+  texture: nexo:gui/quest-list_4
+  ascent: -98
+  height: 111
+  char: "䪏"
+party_creation_1:
+  font: minecraft:default
+  texture: nexo:gui/party-creation_1
+  ascent: 13
+  height: 111
+  char: "䪐"
+party_creation_2:
+  font: minecraft:default
+  texture: nexo:gui/party-creation_2
+  ascent: 13
+  height: 111
+  char: "䪑"
+party_creation_3:
+  font: minecraft:default
+  texture: nexo:gui/party-creation_3
+  ascent: -98
+  height: 111
+  char: "䪒"
+party_creation_4:
+  font: minecraft:default
+  texture: nexo:gui/party-creation_4
+  ascent: -98
+  height: 111
+  char: "䪓"
+party_view_1:
+  font: minecraft:default
+  texture: nexo:gui/party-view_1
+  ascent: 13
+  height: 111
+  char: "䪔"
+party_view_2:
+  font: minecraft:default
+  texture: nexo:gui/party-view_2
+  ascent: 13
+  height: 111
+  char: "䪕"
+party_view_3:
+  font: minecraft:default
+  texture: nexo:gui/party-view_3
+  ascent: -98
+  height: 111
+  char: "䪖"
+party_view_4:
+  font: minecraft:default
+  texture: nexo:gui/party-view_4
+  ascent: -98
+  height: 111
+  char: "䪗"
+friend_list_1:
+  font: minecraft:default
+  texture: nexo:gui/friend-list_1
+  ascent: 13
+  height: 111
+  char: "䪘"
+friend_list_2:
+  font: minecraft:default
+  texture: nexo:gui/friend-list_2
+  ascent: 13
+  height: 111
+  char: "䪙"
+friend_list_3:
+  font: minecraft:default
+  texture: nexo:gui/friend-list_3
+  ascent: -98
+  height: 111
+  char: "䪚"
+friend_list_4:
+  font: minecraft:default
+  texture: nexo:gui/friend-list_4
+  ascent: -98
+  height: 111
+  char: "䪛"
+friend_removal_1:
+  font: minecraft:default
+  texture: nexo:gui/friend-removal_1
+  ascent: 13
+  height: 111
+  char: "䪜"
+friend_removal_2:
+  font: minecraft:default
+  texture: nexo:gui/friend-removal_2
+  ascent: 13
+  height: 111
+  char: "䪝"
+friend_removal_3:
+  font: minecraft:default
+  texture: nexo:gui/friend-removal_3
+  ascent: -98
+  height: 111
+  char: "䪞"
+friend_removal_4:
+  font: minecraft:default
+  texture: nexo:gui/friend-removal_4
+  ascent: -98
+  height: 111
+  char: "䪟"
+guild_creation_1:
+  font: minecraft:default
+  texture: nexo:gui/guild-creation_1
+  ascent: 13
+  height: 111
+  char: "䪠"
+guild_creation_2:
+  font: minecraft:default
+  texture: nexo:gui/guild-creation_2
+  ascent: 13
+  height: 111
+  char: "䪡"
+guild_creation_3:
+  font: minecraft:default
+  texture: nexo:gui/guild-creation_3
+  ascent: -98
+  height: 111
+  char: "䪢"
+guild_creation_4:
+  font: minecraft:default
+  texture: nexo:gui/guild-creation_4
+  ascent: -98
+  height: 111
+  char: "䪣"
+guild_view_1:
+  font: minecraft:default
+  texture: nexo:gui/guild-view_1
+  ascent: 13
+  height: 111
+  char: "䪤"
+guild_view_2:
+  font: minecraft:default
+  texture: nexo:gui/guild-view_2
+  ascent: 13
+  height: 111
+  char: "䪥"
+guild_view_3:
+  font: minecraft:default
+  texture: nexo:gui/guild-view_3
+  ascent: -98
+  height: 111
+  char: "䪦"
+guild_view_4:
+  font: minecraft:default
+  texture: nexo:gui/guild-view_4
+  ascent: -98
+  height: 111
+  char: "䪧"

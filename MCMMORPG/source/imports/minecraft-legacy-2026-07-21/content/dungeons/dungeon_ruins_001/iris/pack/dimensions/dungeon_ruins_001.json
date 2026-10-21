@@ -1,0 +1,30 @@
+{
+  "name": "Dungeon Ruins 001 ImageMap",
+  "fluidHeight": 0,
+  "regions": [
+    "empty",
+    "dungeon_ruins_001_sunken_root_ruins",
+    "dungeon_ruins_001_crystal_reliquary",
+    "dungeon_ruins_001_ashen_throne"
+  ],
+  "bedrock": false,
+  "landChance": 1,
+  "continentalStyle": {
+    "style": "SIMPLEX"
+  },
+  "regionStyle": {
+    "imageMap": {
+      "image": "dungeon_ruins_001_layout",
+      "coordinateScale": 1,
+      "interpolationMethod": "NONE",
+      "channel": "BLUE",
+      "tiled": false,
+      "centered": true
+    }
+  },
+  "rockPalette": {
+    "palette": [
+      { "block": "minecraft:air" }
+    ]
+  }
+}

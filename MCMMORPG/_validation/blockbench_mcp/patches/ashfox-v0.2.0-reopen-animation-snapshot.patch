@@ -1,0 +1,79 @@
+diff --git a/packages/blockbench-runtime/src/adapters/blockbench/snapshot/animations.ts b/packages/blockbench-runtime/src/adapters/blockbench/snapshot/animations.ts
+index e73aeb1..a9eaa13 100644
+--- a/packages/blockbench-runtime/src/adapters/blockbench/snapshot/animations.ts
++++ b/packages/blockbench-runtime/src/adapters/blockbench/snapshot/animations.ts
+@@ -23,8 +23,9 @@ export const extractChannels = (
+     particle: [],
+     timeline: []
+   };
+-  Object.entries(animators).forEach(([bone, animator]) => {
++  Object.entries(animators).forEach(([animatorId, animator]) => {
+     if (!isRecord(animator)) return;
++    const bone = typeof animator.name === 'string' && animator.name.length > 0 ? animator.name : animatorId;
+     const grouped = collectAnimatorChannels(animator);
+     grouped.forEach((entry) => {
+       channels.push({ bone, channel: entry.channel, keys: entry.keys });
+@@ -62,8 +63,8 @@ const collectAnimatorChannels = (
+   keyframes.forEach((kf) => {
+     if (!isRecord(kf)) return;
+     const channel = normalizeAnimationChannel(kf.channel ?? kf.data_channel ?? kf.transform);
+-    const value = kf.data_points ?? kf.value ?? kf.data_point;
+-    if (!channel || !Array.isArray(value) || value.length < 3) return;
++    const value = readKeyframeVector(kf.data_points ?? kf.value ?? kf.data_point);
++    if (!channel || !value) return;
+     buckets[channel].push({
+       time: normalizeKeyframeTime(Number(kf.time ?? kf.frame ?? 0)),
+       value: [value[0], value[1], value[2]],
+@@ -75,6 +76,21 @@ const collectAnimatorChannels = (
+     .map(([channel, keys]) => ({ channel: channel as 'rot' | 'pos' | 'scale', keys }));
+ };
+ 
++const readKeyframeVector = (value: unknown): [number, number, number] | null => {
++  let vector: unknown[] | null = null;
++  if (Array.isArray(value) && value.length >= 3 && !isRecord(value[0])) {
++    vector = value;
++  } else if (Array.isArray(value) && value.length > 0 && isRecord(value[0])) {
++    vector = [value[0].x, value[0].y, value[0].z];
++  } else if (isRecord(value)) {
++    vector = [value.x, value.y, value.z];
++  }
++  if (!vector) return null;
++  const normalized = vector.slice(0, 3).map((entry) => Number(entry));
++  if (normalized.length !== 3 || normalized.some((entry) => !Number.isFinite(entry))) return null;
++  return [normalized[0], normalized[1], normalized[2]];
++};
++
+ const collectAnimatorTriggers = (
+   animator: UnknownRecord
+ ): Array<{ type: 'sound' | 'particle' | 'timeline'; keys: TrackedAnimationTrigger['keys'] }> => {
+diff --git a/packages/blockbench-runtime/tests/blockbenchSnapshot.test.ts b/packages/blockbench-runtime/tests/blockbenchSnapshot.test.ts
+index e476fb0..6eb3306 100644
+--- a/packages/blockbench-runtime/tests/blockbenchSnapshot.test.ts
++++ b/packages/blockbench-runtime/tests/blockbenchSnapshot.test.ts
+@@ -100,9 +100,11 @@ const withGlobals = (overrides: TestGlobals, run: () => void) => {
+           loop: 'loop',
+           snapping: 20,
+           animators: {
+-            body: {
++            'body-uuid': {
++              name: 'body',
+               keyframes: [
+                 { channel: 'rotation', time: 0, data_points: [0, 0, 0] },
++                { channel: 'rotation', time: 0.5, data_points: [{ x: '0', y: '10', z: '0' }] },
+                 { channel: 'timeline', time: 1, data_point: 'tick' }
+               ]
+             }
+@@ -125,6 +127,8 @@ const withGlobals = (overrides: TestGlobals, run: () => void) => {
+       assert.equal(result?.animations.length, 1);
+       assert.equal(result?.animationsStatus, 'available');
+       assert.equal(result?.animations[0].channels?.length, 1);
++      assert.equal(result?.animations[0].channels?.[0]?.bone, 'body');
++      assert.deepEqual(result?.animations[0].channels?.[0]?.keys[1]?.value, [0, 10, 0]);
+       assert.equal(result?.animations[0].triggers?.length, 1);
+       assert.equal(result?.animationTimePolicy.timeEpsilon, 1e-9);
+     }
+@@ -219,4 +223,3 @@ const withGlobals = (overrides: TestGlobals, run: () => void) => {
+     }
+   );
+ }
+-

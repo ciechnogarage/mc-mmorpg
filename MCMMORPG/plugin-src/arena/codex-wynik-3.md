@@ -1,0 +1,3 @@
+Dorysowałem kafel ARENA w czterech pasach tła; [podgląd](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/wdrozenie/pack/gui/podglad.png).
+[Skrypt](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/wdrozenie/pack/gui/rysuj_kafel.py) odtwarza wynik; sprawdziłem wymiary, zakres zmienionych pikseli i powtarzalność.
+[Raport-3.md](/home/dev/Desktop/Przemek/MC/.claude/worktrees/arena/MCMMORPG/plugin-src/arena/RAPORT-3.md) ma 8 linii. Nie wdrażałem zmian.

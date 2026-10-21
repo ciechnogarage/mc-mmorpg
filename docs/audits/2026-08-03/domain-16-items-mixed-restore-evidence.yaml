@@ -1,0 +1,144 @@
+version: 1
+captured_at: "2026-08-03T15:21:41+02:00"
+scope_id: domain-16-items-mixed-restore
+backend: srv-items
+environment: staging
+commit: f0f9526b46b7
+
+recovery_contract_ref: docs/technical/backup-and-recovery.md
+boot_evidence_ref: docs/audits/2026-08-03/domain-16-staging-boot-evidence.yaml
+compatibility_evidence_ref: docs/audits/2026-08-03/domain-16-plugin-compatibility-evidence.yaml
+restore_evidence_ref: docs/audits/2026-08-03/domain-16-restore-test-evidence.yaml
+status_vocabulary_ref: docs/technical/status-and-evidence-vocabulary.md#canonical-status-and-evidence-rules
+database_topology_ref: docs/technical/database-topology.md
+
+started_at: "2026-08-03T15:18:00+02:00"
+finished_at: "2026-08-03T15:21:41+02:00"
+runner: codex
+
+commands:
+  - "docker logs --tail 220 srv-items"
+  - "cp -a MCMMORPG/docker/servers/items/plugins/CoreTools/plugindata /tmp/domain16-items-mixed-*/snapshot/CoreTools-plugindata"
+  - "cp -a MCMMORPG/docker/servers/items/plugins/LuckPerms /tmp/domain16-items-mixed-*/snapshot/LuckPerms"
+  - "tar -czf /tmp/domain16-items-mixed-*/items-local-stores-snapshot.tar.gz -C /tmp/domain16-items-mixed-*/snapshot CoreTools-plugindata LuckPerms"
+  - "sha256sum source local-store files and restored copies"
+  - "docker exec mcmmorpg-mariadb mariadb-dump -uroot -p'$MARIADB_ROOT_PASSWORD' --single-transaction mcmmorpg > /tmp/domain16-items-mixed-*/items-mariadb-snapshot.sql"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -e 'DROP DATABASE IF EXISTS mcmmorpg_items_restore_probe_20260803; CREATE DATABASE mcmmorpg_items_restore_probe_20260803;'"
+  - "docker exec -i mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' mcmmorpg_items_restore_probe_20260803 < /tmp/domain16-items-mixed-*/items-mariadb-snapshot.sql"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -Nse 'SELECT TABLE_SCHEMA, COUNT(*) FROM information_schema.tables WHERE TABLE_SCHEMA=\"mcmmorpg_items_restore_probe_20260803\" GROUP BY TABLE_SCHEMA; SELECT COUNT(*) FROM mcmmorpg_items_restore_probe_20260803.mmoprofiles_playerdata;'"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -e 'DROP DATABASE mcmmorpg_items_restore_probe_20260803;'"
+
+log_paths:
+  - docker://srv-items
+  - docker://mcmmorpg-mariadb
+
+evidence_ref_ids:
+  - EVID-COMPAT-ITEMS-MMO-CHAIN-2026-08-03
+  - EVID-STAGING-BOOT-COMPOSE-PS-2026-08-03
+
+evidence_refs:
+  - evidence_id: EVID-ITEMS-MIXED-SLICE-LIVE-2026-08-03
+    source_type: log
+    source_path: docker://srv-items
+    observed_at: 2026-08-03
+    scope: proof that the selected backend slice is the active MMO/local-store runtime under review
+    summary: "`srv-items` stayed healthy and logs show `MMOProfiles`, `CoreTools`, `MMOCore`, and `MMOItems` enabling and hooking into the expected runtime surfaces."
+    command: "docker logs --tail 220 srv-items"
+
+  - evidence_id: EVID-ITEMS-LOCAL-STORE-SNAPSHOT-2026-08-03
+    source_type: runtime_test
+    source_path: MCMMORPG/docker/servers/items/plugins
+    observed_at: 2026-08-03
+    scope: snapshot and restore of local file-backed stores for the items slice
+    summary: "A same-window snapshot was taken of `CoreTools/plugindata` and the `LuckPerms` plugin directory from the live `items` backend, archived, restored into an isolated temp tree, and re-verified."
+    notes: "The restored tree included `CoreTools.db`, `luckperms-h2-v2.mv.db`, `luckperms-h2-v2.trace.db`, `config.yml`, `contexts.json`, and LuckPerms bundled libs."
+
+  - evidence_id: EVID-ITEMS-LOCAL-STORE-HASH-MATCH-2026-08-03
+    source_type: runtime_test
+    source_path: MCMMORPG/docker/servers/items/plugins/CoreTools/plugindata/CoreTools.db
+    observed_at: 2026-08-03
+    scope: integrity match between source local stores and restored copies
+    summary: "SHA-256 hashes matched between the source and restored copies of `CoreTools.db`, `luckperms-h2-v2.mv.db`, and `luckperms-h2-v2.trace.db`."
+    notes: "Source hashes observed: `CoreTools.db=b32d7681...`, `luckperms-h2-v2.mv.db=3518b6bd...`, `luckperms-h2-v2.trace.db=1d66ad20...`."
+
+  - evidence_id: EVID-ITEMS-MARIADB-SNAPSHOT-2026-08-03
+    source_type: runtime_test
+    source_path: docker://mcmmorpg-mariadb
+    observed_at: 2026-08-03
+    scope: logical MariaDB snapshot for the same mixed-scope drill
+    summary: "The active `mcmmorpg` MariaDB schema was dumped to a temporary SQL snapshot during the same observation window; the resulting snapshot file was about `154.8K`."
+    notes: "Live source row count for `mcmmorpg.mmoprofiles_playerdata` during the drill was `126`."
+
+  - evidence_id: EVID-ITEMS-MARIADB-RESTORE-PROBE-2026-08-03
+    source_type: runtime_test
+    source_path: docker://mcmmorpg-mariadb
+    observed_at: 2026-08-03
+    scope: restore of the MariaDB part of the items slice into an isolated probe database
+    summary: "The SQL snapshot was restored into temporary schema `mcmmorpg_items_restore_probe_20260803`, which contained one table and `126` rows in `mmoprofiles_playerdata`, matching the live source snapshot."
+
+  - evidence_id: EVID-ITEMS-RUNTIME-SURVIVAL-2026-08-03
+    source_type: command
+    source_path: MCMMORPG/docker
+    observed_at: 2026-08-03
+    scope: non-destructive execution boundary for the running staging slice
+    summary: "After the mixed-scope drill, both `srv-items` and `mcmmorpg-mariadb` remained `running|healthy`, proving the restore probe did not damage the active staging baseline."
+    command: "docker inspect -f '{{.Name}} {{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' srv-items mcmmorpg-mariadb"
+
+verdict: PASS
+requested_status_transition: none
+status_update_applied: false
+
+scenario_verdicts:
+  items_local_store_restore: PASS
+  items_db_restore: PASS
+  items_mixed_local_file_plus_db_restore: PASS
+  domain_wide_recoverability: BLOCKED
+
+canonical_blocker_status:
+  - blocker_id: BLK-RECOVERY-001
+    effect: narrowed
+    still_open: true
+    rationale: "This artifact adds a real same-window mixed restore drill for one named backend slice, `srv-items`, so the restore-test blocker is no longer hypothetical for that slice. It remains open at domain scope because the runtime baseline includes more than one active slice."
+  - blocker_id: BLK-RECOVERY-002
+    effect: narrowed
+    still_open: true
+    rationale: "The artifact proves one coherent mixed local-file plus MariaDB restore path for `srv-items`, but it does not yet cover other slices, historical backup inventory, vendor assets, or a full secret-aware disaster-recovery runbook."
+  - blocker_id: BLK-RECOVERY-003
+    effect: unchanged
+    still_open: true
+    rationale: "No cache semantics were exercised in this slice-level restore drill, so cache recovery remains open."
+
+blockers:
+  - blocker_id: BLK-RECOVERY-001
+    status_family: release_status
+    summary: "Canonical restore-test blocker is narrowed but still open: `srv-items` now has a tested mixed restore path, but the current runtime baseline still lacks equivalent named restore proof for the remaining active release-relevant scope."
+    required_evidence: "Named restore test result that covers current DB plus backend/runtime state scope."
+    owner: domain-16
+    scope: restore-test
+
+  - blocker_id: BLK-RECOVERY-002
+    status_family: release_status
+    summary: "Canonical end-to-end recoverability blocker is narrowed but still open: this drill proves one same-window mixed restore path for `srv-items`, not a full domain-wide recovery exercise from the intended backup inventory and runbook path."
+    required_evidence: "Reviewed recovery runbook or drill proving the intended scope can be brought back coherently."
+    owner: domain-16
+    scope: end-to-end-recoverability
+
+  - blocker_id: BLK-RECOVERY-003
+    status_family: runtime_status
+    summary: "Canonical cache recovery blocker is unchanged here: the items slice drill did not test cache loss, invalidation, or restart semantics."
+    required_evidence: "Canonical cache contract with restart behavior and failure safety."
+    owner: domain-16
+    scope: cache-recovery
+
+summary: |
+  A full mixed local-file plus MariaDB restore drill was completed for one named backend slice: `srv-items`. During one observation
+  window, local store files from `CoreTools` and `LuckPerms` were snapshotted from the live backend, restored into an isolated temp
+  tree, and hash-verified against the source. In the same window, the active `mcmmorpg` MariaDB schema was dumped, restored into a
+  temporary probe database, and verified to contain the expected table and row count. This is enough to move the `items` slice from
+  hypothetical mixed restore to tested mixed restore. It is not enough to upgrade full Domain 16 recoverability on its own.
+
+notes:
+  - "The temporary probe database was dropped after verification."
+  - "Temporary local restore artifacts were kept only for the duration of the drill and will be removed after evidence capture."
+  - "This artifact intentionally proves one slice-level mixed restore path without claiming a complete historical backup/restore workflow for the whole domain."
+  - "This artifact narrows the earlier `mixed_local_file_plus_db_restore: BLOCKED` conclusion in `docs/audits/2026-08-03/domain-16-restore-test-evidence.yaml`, but only for the named `srv-items` slice."

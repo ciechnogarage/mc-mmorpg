@@ -1,0 +1,11 @@
+# Event-only first-slice skills. CompanionCore owns lifecycle and owner identity.
+CompanionTankSpawn:
+  Skills:
+    - effect:sound{s=entity.wolf.ambient;volume=0.5;pitch=0.8} @self
+CompanionTankGuard:
+  Cooldown: 8
+  Skills:
+    - potion{type=DAMAGE_RESISTANCE;duration=60;level=0} @self
+CompanionTankDeath:
+  Skills:
+    - effect:sound{s=entity.wolf.death;volume=0.7;pitch=0.8} @self

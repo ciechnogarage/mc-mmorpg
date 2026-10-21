@@ -1,0 +1,15 @@
+name: CompanionCore
+version: 0.1.0-SNAPSHOT
+main: pl.mcmmorpg.companioncore.CompanionCorePlugin
+api-version: "1.21"
+author: MCMMORPG
+softdepend: [MythicMobs, MMOProfiles, DeluxeMenus]
+commands:
+  companion:
+    description: Manage the active character companion.
+    usage: /companion <summon|dismiss|mode|status|debug|admin>
+permissions:
+  companion.use: { default: true }
+  companion.summon: { default: true }
+  companion.mode: { default: true }
+  companion.admin: { default: op }

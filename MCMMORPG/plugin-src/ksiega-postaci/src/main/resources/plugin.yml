@@ -1,0 +1,13 @@
+name: KsiegaPostaci
+version: ${version}
+main: pl.mcmmorpg.ksiega.KsiegaPostaci
+api-version: '1.21'
+depend: [MMOItems, MythicLib, MMOInventory, ProtocolLib, MMOCore]
+softdepend: [MMOProfiles, CoreTools, PlaceholderAPI, Nexo]
+commands:
+  ksiegaportal:
+    description: Otwiera portal MENU z konsoli.
+    permission: ksiegapostaci.portal.admin
+permissions:
+  ksiegapostaci.portal.admin:
+    default: op

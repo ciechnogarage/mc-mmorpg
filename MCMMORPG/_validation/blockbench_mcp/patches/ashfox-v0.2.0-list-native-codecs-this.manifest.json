@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "patch_id": "ashfox-v0.2.0-list-native-codecs-this",
+  "description": "Preserve the ExportPort receiver when ExportService invokes listNativeCodecs, preventing BlockbenchExport from losing access to this.compileAdapter.",
+  "scope": "source-only local patch; no Blockbench installation or runtime state change",
+  "upstream": {
+    "repository": "https://github.com/sigee-min/ashfox.git",
+    "version": "0.2.0",
+    "tag": "v0.2.0",
+    "commit": "232a712e8879d9ca3da3151d6491704a4e06ebb8"
+  },
+  "patch": {
+    "path": "MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-list-native-codecs-this.patch",
+    "sha256": "b782843ef44c5bbcf23d11fd14ea00db77e36fa88a9ab8d237629c5dad6f47fd",
+    "strip": 1,
+    "affected_files": [
+      "packages/blockbench-runtime/src/usecases/ExportService.ts",
+      "packages/blockbench-runtime/tests/exportService.test.ts"
+    ]
+  },
+  "commands": {
+    "checkout": "git checkout --detach 232a712e8879d9ca3da3151d6491704a4e06ebb8",
+    "verify_patch": "git apply --check /path/to/MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-list-native-codecs-this.patch",
+    "apply_patch": "git apply /path/to/MCMMORPG/_validation/blockbench_mcp/patches/ashfox-v0.2.0-list-native-codecs-this.patch",
+    "install_dependencies": "npm ci",
+    "test": "npm --workspace @ashfox/blockbench-runtime run test",
+    "typecheck": "npm run typecheck",
+    "build": "npm run build:blockbench"
+  },
+  "artifact_policy": "The upstream release hashes remain immutable. Every installed patched bundle must be recorded separately under ashfox.lock.json local_patch with its build-tool pin, local path, and SHA-256."
+}

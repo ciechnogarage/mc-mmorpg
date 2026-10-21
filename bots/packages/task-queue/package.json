@@ -1,0 +1,5 @@
+{
+  "name": "@mmorpg-bots/task-queue",
+  "version": "0.1.0",
+  "main": "index.js"
+}

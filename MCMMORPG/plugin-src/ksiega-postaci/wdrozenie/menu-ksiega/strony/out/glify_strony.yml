@@ -1,0 +1,169 @@
+# Cztery ćwiartki na stronę; char U+4A00 + 4*i + N-1.
+hub_postac_1:
+  font: minecraft:default
+  texture: nexo:gui/hub_postac_1
+  ascent: 13
+  height: 111
+  char: "䨀"
+hub_postac_2:
+  font: minecraft:default
+  texture: nexo:gui/hub_postac_2
+  ascent: 13
+  height: 111
+  char: "䨁"
+hub_postac_3:
+  font: minecraft:default
+  texture: nexo:gui/hub_postac_3
+  ascent: -98
+  height: 111
+  char: "䨂"
+hub_postac_4:
+  font: minecraft:default
+  texture: nexo:gui/hub_postac_4
+  ascent: -98
+  height: 111
+  char: "䨃"
+hub_umiejetnosci_1:
+  font: minecraft:default
+  texture: nexo:gui/hub_umiejetnosci_1
+  ascent: 13
+  height: 111
+  char: "䨄"
+hub_umiejetnosci_2:
+  font: minecraft:default
+  texture: nexo:gui/hub_umiejetnosci_2
+  ascent: 13
+  height: 111
+  char: "䨅"
+hub_umiejetnosci_3:
+  font: minecraft:default
+  texture: nexo:gui/hub_umiejetnosci_3
+  ascent: -98
+  height: 111
+  char: "䨆"
+hub_umiejetnosci_4:
+  font: minecraft:default
+  texture: nexo:gui/hub_umiejetnosci_4
+  ascent: -98
+  height: 111
+  char: "䨇"
+hub_ekonomia_1:
+  font: minecraft:default
+  texture: nexo:gui/hub_ekonomia_1
+  ascent: 13
+  height: 111
+  char: "䨈"
+hub_ekonomia_2:
+  font: minecraft:default
+  texture: nexo:gui/hub_ekonomia_2
+  ascent: 13
+  height: 111
+  char: "䨉"
+hub_ekonomia_3:
+  font: minecraft:default
+  texture: nexo:gui/hub_ekonomia_3
+  ascent: -98
+  height: 111
+  char: "䨊"
+hub_ekonomia_4:
+  font: minecraft:default
+  texture: nexo:gui/hub_ekonomia_4
+  ascent: -98
+  height: 111
+  char: "䨋"
+hub_spolecznosc_1:
+  font: minecraft:default
+  texture: nexo:gui/hub_spolecznosc_1
+  ascent: 13
+  height: 111
+  char: "䨌"
+hub_spolecznosc_2:
+  font: minecraft:default
+  texture: nexo:gui/hub_spolecznosc_2
+  ascent: 13
+  height: 111
+  char: "䨍"
+hub_spolecznosc_3:
+  font: minecraft:default
+  texture: nexo:gui/hub_spolecznosc_3
+  ascent: -98
+  height: 111
+  char: "䨎"
+hub_spolecznosc_4:
+  font: minecraft:default
+  texture: nexo:gui/hub_spolecznosc_4
+  ascent: -98
+  height: 111
+  char: "䨏"
+hub_ustawienia_1:
+  font: minecraft:default
+  texture: nexo:gui/hub_ustawienia_1
+  ascent: 13
+  height: 111
+  char: "䨐"
+hub_ustawienia_2:
+  font: minecraft:default
+  texture: nexo:gui/hub_ustawienia_2
+  ascent: 13
+  height: 111
+  char: "䨑"
+hub_ustawienia_3:
+  font: minecraft:default
+  texture: nexo:gui/hub_ustawienia_3
+  ascent: -98
+  height: 111
+  char: "䨒"
+hub_ustawienia_4:
+  font: minecraft:default
+  texture: nexo:gui/hub_ustawienia_4
+  ascent: -98
+  height: 111
+  char: "䨓"
+hub_pomoc_1:
+  font: minecraft:default
+  texture: nexo:gui/hub_pomoc_1
+  ascent: 13
+  height: 111
+  char: "䨔"
+hub_pomoc_2:
+  font: minecraft:default
+  texture: nexo:gui/hub_pomoc_2
+  ascent: 13
+  height: 111
+  char: "䨕"
+hub_pomoc_3:
+  font: minecraft:default
+  texture: nexo:gui/hub_pomoc_3
+  ascent: -98
+  height: 111
+  char: "䨖"
+hub_pomoc_4:
+  font: minecraft:default
+  texture: nexo:gui/hub_pomoc_4
+  ascent: -98
+  height: 111
+  char: "䨗"
+stolica_podroze_1:
+  font: minecraft:default
+  texture: nexo:gui/stolica_podroze_1
+  ascent: 13
+  height: 111
+  char: "䨘"
+stolica_podroze_2:
+  font: minecraft:default
+  texture: nexo:gui/stolica_podroze_2
+  ascent: 13
+  height: 111
+  char: "䨙"
+stolica_podroze_3:
+  font: minecraft:default
+  texture: nexo:gui/stolica_podroze_3
+  ascent: -98
+  height: 111
+  char: "䨚"
+stolica_podroze_4:
+  font: minecraft:default
+  texture: nexo:gui/stolica_podroze_4
+  ascent: -98
+  height: 111
+  char: "䨛"

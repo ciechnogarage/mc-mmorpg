@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+COMPOSE_FILE="$ROOT_DIR/infra/compose/foundation.compose.yml"
+LEASE_HELPER="$ROOT_DIR/infra/bin/mc-lease"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  infra/bin/mcenv preflight
+  infra/bin/mcenv config <environment> <role-or-scope>
+  infra/bin/mcenv up|down|stop|logs|ps|build|reset|remove <environment> <role-or-scope> [docker-compose args...]
+
+Examples:
+  infra/bin/mcenv preflight
+  infra/bin/mcenv config staging game
+  infra/bin/mcenv config dev example-scope
+  infra/bin/mc-lease allocate --scope feature-a --owner agent-123 --purpose ticket-xyz --write
+
+Notes:
+  - `staging` accepts `proxy`, `game`, `lobby`, `dungeon-<id>`.
+  - `dev` requires an active lease in `infra/leases/registry.tsv`.
+  - `world`, `items`, `hub` legacy selectors are rejected here.
+EOF
+}
+
+die() {
+  echo "mcenv: $*" >&2
+  exit 1
+}
+
+warn() {
+  echo "mcenv: $*" >&2
+}
+
+is_legacy_selector() {
+  case "$1" in
+    world|items|hub) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+validate_selector() {
+  local environment="$1"
+  local selector="$2"
+
+  if is_legacy_selector "$selector"; then
+    die "legacy selector '$selector' is not allowed in the new standard"
+  fi
+
+  case "$environment" in
+    staging)
+      [[ "$selector" =~ ^(proxy|game|lobby|dungeon-[a-z0-9-]+)$ ]] \
+        || die "staging selector must be proxy|game|lobby|dungeon-<id>, got '$selector'"
+      ;;
+    dev)
+      [[ "$selector" =~ ^[a-z0-9][a-z0-9-]*$ ]] \
+        || die "dev scope must match ^[a-z0-9][a-z0-9-]*$, got '$selector'"
+      ;;
+    *)
+      die "environment must be staging or dev, got '$environment'"
+      ;;
+  esac
+}
+
+source_definition_file() {
+  local definition_file="$1"
+
+  [[ -f "$definition_file" ]] || die "missing stack definition: $definition_file"
+
+  set -a
+  # shellcheck disable=SC1090
+  . "$definition_file"
+  set +a
+
+  export MC_DEFINITION_FILE="$definition_file"
+}
+
+load_stack_definition() {
+  local definition_file
+  local lease_exports
+
+  case "$MC_ENVIRONMENT" in
+    staging)
+      definition_file="$ROOT_DIR/environments/staging/$MC_SELECTOR.env"
+      source_definition_file "$definition_file"
+      ;;
+    dev)
+      [[ -x "$LEASE_HELPER" ]] || die "missing lease helper: $LEASE_HELPER"
+      lease_exports="$("$LEASE_HELPER" export-env "$MC_SELECTOR")" \
+        || die "failed to resolve dev lease for '$MC_SELECTOR'"
+      eval "$lease_exports"
+      ;;
+  esac
+}
+
+set_stack_identity() {
+  case "$MC_ENVIRONMENT" in
+    staging) export MC_STACK_SLUG="${MC_STACK_SLUG:-staging-$MC_SELECTOR}" ;;
+    dev) export MC_STACK_SLUG="${MC_STACK_SLUG:-dev-$MC_SELECTOR}" ;;
+  esac
+
+  export MC_NAMESPACE="${MC_NAMESPACE:-mc-$MC_STACK_SLUG}"
+  export MC_COMPOSE_PROJECT="${MC_COMPOSE_PROJECT:-$MC_NAMESPACE}"
+  export MC_SOURCE_PROXY_DIR="${MC_SOURCE_PROXY_DIR:-source/shared/proxy}"
+  export MC_SOURCE_GAME_DIR="${MC_SOURCE_GAME_DIR:-source/environments/$MC_ENVIRONMENT/$MC_SELECTOR}"
+  export MC_RUNTIME_ROOT="${MC_RUNTIME_ROOT:-$ROOT_DIR/runtime/$MC_STACK_SLUG}"
+
+  if [[ "$MC_SOURCE_PROXY_DIR" = /* ]]; then
+    export MC_SOURCE_PROXY_DIR_ABS="$MC_SOURCE_PROXY_DIR"
+  else
+    export MC_SOURCE_PROXY_DIR_ABS="$ROOT_DIR/$MC_SOURCE_PROXY_DIR"
+  fi
+
+  if [[ "$MC_SOURCE_GAME_DIR" = /* ]]; then
+    export MC_SOURCE_GAME_DIR_ABS="$MC_SOURCE_GAME_DIR"
+  else
+    export MC_SOURCE_GAME_DIR_ABS="$ROOT_DIR/$MC_SOURCE_GAME_DIR"
+  fi
+}
+
+load_secret_env() {
+export MC_SECRET_ENV_FILE="${MC_SECRET_ENV_FILE:-$MC_RUNTIME_ROOT/secrets/runtime.env}"
+
+  if [[ -f "$MC_SECRET_ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    . "$MC_SECRET_ENV_FILE"
+    set +a
+    return
+  fi
+
+  warn "secret env not found at $MC_SECRET_ENV_FILE; continuing in read-only mode"
+  export MC_RCON_PASSWORD="${MC_RCON_PASSWORD:-PLACEHOLDER_RCON_PASSWORD}"
+  export MC_MARIADB_PASSWORD="${MC_MARIADB_PASSWORD:-PLACEHOLDER_MARIADB_PASSWORD}"
+export MC_MARIADB_ROOT_PASSWORD="${MC_MARIADB_ROOT_PASSWORD:-PLACEHOLDER_MARIADB_ROOT_PASSWORD}"
+}
+
+load_config_placeholder_secrets() {
+export MC_SECRET_ENV_FILE="${MC_SECRET_ENV_FILE:-$MC_RUNTIME_ROOT/secrets/runtime.env}"
+export MC_RCON_PASSWORD="PLACEHOLDER_RCON_PASSWORD"
+export MC_MARIADB_PASSWORD="PLACEHOLDER_MARIADB_PASSWORD"
+export MC_MARIADB_ROOT_PASSWORD="PLACEHOLDER_MARIADB_ROOT_PASSWORD"
+}
+
+require_real_secrets() {
+  [[ -f "$MC_SECRET_ENV_FILE" ]] || die "cannot $1 without real secret env: $MC_SECRET_ENV_FILE"
+}
+
+compose() {
+  (
+    cd "$ROOT_DIR"
+    docker compose -f "$COMPOSE_FILE" --project-name "$MC_COMPOSE_PROJECT" "$@"
+  )
+}
+
+run_compose_command() {
+  local command="$1"
+  shift
+
+  case "$command" in
+    config) compose config "$@" ;;
+    up)
+      require_real_secrets "up"
+      compose up -d "$@"
+      ;;
+    down) compose down "$@" ;;
+    stop) compose stop "$@" ;;
+    logs) compose logs "$@" ;;
+    ps) compose ps "$@" ;;
+    build)
+      require_real_secrets "build"
+      compose build "$@"
+      ;;
+    reset)
+      [[ "${MCENV_CONFIRM_RESET:-}" == "yes" ]] || die "reset is destructive; rerun with MCENV_CONFIRM_RESET=yes"
+      compose down --volumes --remove-orphans "$@"
+      ;;
+    remove)
+      [[ "${MCENV_CONFIRM_REMOVE:-}" == "yes" ]] || die "remove is destructive; rerun with MCENV_CONFIRM_REMOVE=yes"
+      compose rm -sf "$@"
+      ;;
+    *)
+      die "unsupported command '$command'"
+      ;;
+  esac
+}
+
+main() {
+  local command="${1:-}"
+  local environment
+  local selector
+
+  [[ -n "$command" ]] || {
+    usage
+    exit 1
+  }
+  shift || true
+
+  if [[ "$command" == "preflight" ]]; then
+    [[ $# -eq 0 ]] || die "preflight does not accept stack arguments"
+    exec "$ROOT_DIR/infra/bin/mc-preflight"
+  fi
+
+  environment="${1:-}"
+  selector="${2:-}"
+  shift $(( $# >= 2 ? 2 : $# )) || true
+
+  [[ -n "$environment" ]] || die "missing environment"
+  [[ -n "$selector" ]] || die "missing role/scope"
+
+  export MC_ENVIRONMENT="$environment"
+  export MC_SELECTOR="$selector"
+
+  validate_selector "$MC_ENVIRONMENT" "$MC_SELECTOR"
+load_stack_definition
+set_stack_identity
+if [[ "$command" == "config" ]]; then
+load_config_placeholder_secrets
+else
+load_secret_env
+fi
+run_compose_command "$command" "$@"
+}
+
+main "$@"

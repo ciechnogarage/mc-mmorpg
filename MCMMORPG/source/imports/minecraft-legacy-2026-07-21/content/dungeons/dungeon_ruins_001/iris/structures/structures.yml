@@ -1,0 +1,95 @@
+biomes:
+  dr001_start_overgrown_ruins:
+    display: "Ruined Gatehouse"
+    palette:
+      base:
+        - minecraft:mossy_stone_bricks
+        - minecraft:cracked_stone_bricks
+        - minecraft:vines
+      accent:
+        - dr001_rune_cracked_stone
+        - dr001_ancient_moss_panel
+    structures:
+      - gatehouse_broken_01
+      - rooted_courtyard_01
+      - varos_gate_arena_01
+    hazards:
+      - trap_falling_stones_01
+      - root_snare
+  dr001_mid_sunken_catacombs:
+    display: "Sunken Catacombs"
+    palette:
+      base:
+        - minecraft:deepslate_tiles
+        - minecraft:bone_block
+        - minecraft:soul_lantern
+      accent:
+        - dr001_cursed_water_grate
+        - dr001_rune_pedestal
+    structures:
+      - collapsed_stairwell_01
+      - cistern_puzzle_01
+      - nhalruun_oracle_chamber_01
+    hazards:
+      - trap_cursed_water_01
+      - trap_bone_spikes_01
+  dr001_end_void_sanctum:
+    display: "Void Sanctum"
+    palette:
+      base:
+        - minecraft:blackstone
+        - minecraft:obsidian
+        - minecraft:amethyst_block
+      accent:
+        - dr001_void_rune_block
+        - dr001_broken_crown_ornament
+    structures:
+      - crown_bridge_01
+      - void_anchor_hall_01
+      - void_sanctum_arena_01
+      - loot_shrine_exit_01
+    hazards:
+      - trap_void_pulse_01
+      - throne_collapse_safe_runes
+
+structures:
+  gatehouse_broken_01:
+    schematic: gatehouse_broken_01.schem
+    stage: start
+    purpose: "spawn, first gate silhouette, relic tutorial"
+  rooted_courtyard_01:
+    schematic: rooted_courtyard_01.schem
+    stage: start
+    purpose: "18-kill courtyard and hidden cache"
+  varos_gate_arena_01:
+    schematic: varos_gate_arena_01.schem
+    stage: start
+    purpose: "Varos arena with falling-rock markers"
+  collapsed_stairwell_01:
+    schematic: collapsed_stairwell_01.schem
+    stage: transition
+    purpose: "checkpoint after Varos and descent"
+  cistern_puzzle_01:
+    schematic: cistern_puzzle_01.schem
+    stage: mid
+    purpose: "4 aqueduct rune puzzle"
+  nhalruun_oracle_chamber_01:
+    schematic: nhalruun_oracle_chamber_01.schem
+    stage: mid
+    purpose: "Nhal'Ruun boss room and flood phase"
+  crown_bridge_01:
+    schematic: crown_bridge_01.schem
+    stage: transition
+    purpose: "bridge into END biome"
+  void_anchor_hall_01:
+    schematic: void_anchor_hall_01.schem
+    stage: end
+    purpose: "3 Void Anchors with guards"
+  void_sanctum_arena_01:
+    schematic: void_sanctum_arena_01.schem
+    stage: end
+    purpose: "Aurelion final arena"
+  loot_shrine_exit_01:
+    schematic: loot_shrine_exit_01.schem
+    stage: end
+    purpose: "once-only loot shrine and exit portal"

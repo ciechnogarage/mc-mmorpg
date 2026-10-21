@@ -1,0 +1,57 @@
+contract:
+  id: organization-relationship-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_implemented
+  release_status: blocked
+  owner_domain: "08"
+  upstream_dependencies:
+    domain_02:
+      required:
+        - stable_character_id
+    domain_04:
+      required:
+        - legacy_technique_boundary
+        - faith_scar_boundary
+    domain_10:
+      required:
+        - service_access_boundary
+    domain_14:
+      required:
+        - player_visible_status_presentation
+    domain_17:
+      required:
+        - membership_and_rank_migration_tests
+
+relationship_fields:
+  reputation:
+    meaning: general_opinion_about_character
+  membership_state:
+    meaning: formal_membership_status
+  stored_rank:
+    meaning: highest_earned_rank
+  effective_rank:
+    meaning: currently_recognized_rank
+  trust:
+    meaning: willingness_to_assign_sensitive_work
+  trust_debt:
+    meaning: unresolved_relational_breach
+  allegiance_state:
+    meaning: primary_alliance_state
+  exile_state:
+    meaning: ban_on_membership_or_access
+
+rules:
+  reputation_does_not_auto_clear_trust_debt: true
+  membership_and_reputation_are_separate_axes: true
+  effective_rank_may_be_lower_than_stored_rank: true
+  exile_state_must_be_explicit: true
+
+organization_categories:
+  - FACTION
+  - RELIGION
+  - PROFESSIONAL
+  - TRADE
+  - INFORMATION
+  - MILITARY
+  - ANTAGONIST

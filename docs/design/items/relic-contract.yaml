@@ -1,0 +1,222 @@
+schema_version: 1
+status: draft
+updated_at: "2026-07-31"
+owner_domain: "05-itemization"
+
+notes:
+  - "Draft planning contract. Not runtime truth and not a runtime implementation claim."
+  - "Covers the domain-05 side of the Relic contract only: item identity, slot binding, and reference shape."
+  - "Every domain-03 or domain-04 owned reference remains an explicit placeholder token; domain 05 does not invent foreign identifiers or paths."
+  - "Relic is a build modifier, not a second class system and not a parallel combat engine."
+
+authority_inputs:
+  - "docs/design/items/itemization-framework.md"
+  - "docs/design/items/equipment-slots.yaml"
+  - "docs/design/classes/combat-loadout.md"
+
+ownership:
+  domain_05_itemization:
+    - "Relic as item-slot identity"
+    - "Relic item definition contract shape"
+    - "item-side restriction tags carried by Relic"
+    - "relationship between a Relic item and referenced effect contracts"
+  domain_04_classes:
+    - "whether loadout state allows Relic activation"
+    - "presence of dedicated Relic input in the loadout/control contract"
+    - "class, subclass, and weapon-school compatibility semantics"
+  domain_03_combat_core:
+    - "cooldown contract"
+    - "effect activation execution contract"
+    - "combat-state and control-state enforcement during activation"
+    - "resource interaction semantics"
+  domain_14_ui:
+    - "presentation of the dedicated Relic input"
+  domain_01_data_contracts:
+    - "durable shell for item_instance identity, ownership, revision, and persistence boundary"
+
+slot_binding:
+  slot_id: "relic"
+  slot_registry_ref: "docs/design/items/equipment-slots.yaml#slots.relic"
+  allowed_item_tags:
+    - "relic"
+  max_equipped: 1
+  unique_equip_scope: "relic"
+  dedicated_activation_input: true
+  activation_input_owner: "04-classes"
+  activation_input_ref: "docs/design/classes/combat-loadout.md#relic-slot"
+  consumes_combat_skill_slot: false
+  substitution_allowed: false
+  forbidden_substitute_slots:
+    - "ring_1"
+    - "ring_2"
+    - "amulet"
+    - "artifact1"
+    - "artifact2"
+    - "artifact3"
+
+relic_definition_contract:
+  scope: "Domain-05 Relic fields on the item-definition layer."
+  fields:
+    relic_mode:
+      type: "enum"
+      allowed_values:
+        - "passive_only"
+        - "active_only"
+        - "hybrid"
+      required: true
+      owner_domain: "05-itemization"
+
+    passive_effect_refs:
+      type: "list<effect_ref>"
+      cardinality: "mode_constrained"
+      required_when: "relic_mode in [passive_only, hybrid]"
+      forbidden_when: "relic_mode == active_only"
+      owner_domain: "05-itemization"
+      reference_target_owner: "03-combat-core"
+      resolves_through: "PENDING_DOMAIN_03_EFFECT_CONTRACT"
+      rule: "References only. Effect semantics, magnitudes, stacking, and execution stay outside this file."
+
+    active_effect_ref:
+      type: "effect_ref"
+      cardinality: "0..1"
+      required_when: "relic_mode in [active_only, hybrid]"
+      forbidden_when: "relic_mode == passive_only"
+      owner_domain: "05-itemization"
+      reference_target_owner: "03-combat-core"
+      resolves_through: "PENDING_DOMAIN_03_ACTIVATION_CONTRACT"
+      rule: "One optional active reference at most; active effect logic is not embedded in item data."
+
+    cooldown_group:
+      type: "cooldown_group_ref"
+      cardinality: "0..1"
+      required_when: "relic_mode in [active_only, hybrid]"
+      owner_domain: "05-itemization"
+      reference_target_owner: "03-combat-core"
+      resolves_through: "PENDING_DOMAIN_03_COOLDOWN_CONTRACT"
+      rule: "Names the shared cooldown group; a relic-only cooldown engine is forbidden."
+
+    restriction_tags:
+      type: "list<tag_ref>"
+      cardinality: "0..n"
+      required: false
+      owner_domain: "05-itemization"
+      accepted_tag_families:
+        - family: "class_tags"
+          reference_target_owner: "04-classes"
+          resolves_through: "PENDING_DOMAIN_04_CLASS_TAG_VOCABULARY"
+        - family: "weapon_school_tags"
+          reference_target_owner: "04-classes"
+          resolves_through: "PENDING_DOMAIN_04_WEAPON_SCHOOL_TAG_VOCABULARY"
+        - family: "state_or_compatibility_tags"
+          reference_target_owner: "03-combat-core"
+          resolves_through: "PENDING_DOMAIN_03_STATE_TAG_VOCABULARY"
+      rule: "Tag-based restrictions only. Per-relic scripted eligibility is not approved in v1."
+
+    unique_equipped_group:
+      type: "string"
+      cardinality: "0..1"
+      default: "relic"
+      owner_domain: "05-itemization"
+      rule: "Constrains simultaneous Relics by group."
+
+mode_matrix:
+  - relic_mode: "passive_only"
+    passive_effect_refs: "1..n"
+    active_effect_ref: "forbidden"
+    cooldown_group: "not required"
+  - relic_mode: "active_only"
+    passive_effect_refs: "0"
+    active_effect_ref: "exactly 1"
+    cooldown_group: "required"
+  - relic_mode: "hybrid"
+    passive_effect_refs: "1..n"
+    active_effect_ref: "exactly 1"
+    cooldown_group: "required"
+
+unresolved_external_contracts:
+  - placeholder: "PENDING_DOMAIN_03_EFFECT_CONTRACT"
+    owner_domain: "03-combat-core"
+    needed_for: "passive_effect_refs resolution"
+    published_artifact: null
+    domain_05_position: "Domain 05 stores references only; it does not define effect semantics or invent identifiers."
+  - placeholder: "PENDING_DOMAIN_03_ACTIVATION_CONTRACT"
+    owner_domain: "03-combat-core"
+    needed_for: "active_effect_ref resolution and activation execution"
+    published_artifact: null
+    domain_05_position: "Activation must route through shared combat/effect contracts, never Relic-local logic."
+  - placeholder: "PENDING_DOMAIN_03_COOLDOWN_CONTRACT"
+    owner_domain: "03-combat-core"
+    needed_for: "cooldown_group resolution and cooldown persistence through reconnect"
+    published_artifact: null
+    domain_05_position: "Relic uses the shared cooldown contract; a parallel cooldown system is forbidden."
+  - placeholder: "PENDING_DOMAIN_03_STATE_TAG_VOCABULARY"
+    owner_domain: "03-combat-core"
+    needed_for: "state_or_compatibility_tags restriction values"
+    published_artifact: null
+    domain_05_position: "Domain 05 may carry compatibility tags on the item, but domain 03 owns their meaning."
+  - placeholder: "PENDING_DOMAIN_04_CLASS_TAG_VOCABULARY"
+    owner_domain: "04-classes"
+    needed_for: "class_tags restriction values"
+    published_artifact: null
+    domain_05_position: "Domain 05 may carry class tags on the item, but domain 04 owns eligibility policy."
+  - placeholder: "PENDING_DOMAIN_04_WEAPON_SCHOOL_TAG_VOCABULARY"
+    owner_domain: "04-classes"
+    needed_for: "weapon_school_tags restriction values"
+    published_artifact: null
+    domain_05_position: "Domain 05 may carry weapon-school tags on the item, but domain 04 owns eligibility policy."
+  - placeholder: "PENDING_DOMAIN_04_LOADOUT_ACTIVATION_GATE"
+    owner_domain: "04-classes"
+    needed_for: "whether current loadout state permits Relic activation"
+    published_artifact: "docs/design/classes/combat-loadout.md (slot published; gating detail still domain-04 owned)"
+    domain_05_position: "Relic slot is agreed. Activation eligibility remains a domain-04 decision."
+
+item_instance_touchpoints:
+  rule: "Relic state stays inside the domain-05 item_instance boundary because the Relic is still an item."
+  relic_specific_state:
+    - "relic definition identity"
+    - "referenced passive/active contract pointers"
+    - "item-side restriction tags"
+  excluded:
+    - "no second player-owned runtime entity outside item_instance"
+    - "no relic-only persistence object"
+  durable_shell_owner: "01-data-contracts"
+  durable_shell_position: "Identity, owner envelope, revision, and persistence boundary are not defined here."
+
+invariants_v1:
+  - "At most one Relic can be equipped at a time."
+  - "Relic never consumes an active, mobility, utility, or passive combat skill slot."
+  - "At most one active_effect_ref exists per Relic definition."
+  - "passive_only Relics carry no active_effect_ref."
+  - "Every effect reference must resolve through a shared domain-03 contract or the definition is invalid."
+  - "Restriction evaluation uses tags only."
+  - "Accessory slots and legacy artifact slots never activate Relic behavior."
+  - "An unresolved external reference fails closed: the Relic is rejected or disabled, never partially activated."
+
+guardrails:
+  - "No separate Relic resource system in v1."
+  - "No Relic-only damage resolver or combat state machine."
+  - "No multi-skill Relic rotation contract."
+  - "No second active-skill bar hidden inside Relic behavior."
+  - "No legacy artifact1-3 fallback Relic authority."
+
+validation_expectations:
+  note: "These are future checks the implementation must demonstrate; no validator is implemented by this document."
+  checks:
+    - "only one Relic can be equipped"
+    - "Relic does not consume a normal combat skill slot"
+    - "active_effect_ref resolves through shared combat/effect contracts"
+    - "cooldown persists through reconnect using the shared cooldown contract"
+    - "ordinary accessory and legacy artifact slots cannot silently activate Relic behavior"
+    - "relic_mode cardinality agrees with the mode_matrix"
+
+non_goals:
+  - "concrete Relic content or Relic lists"
+  - "affix taxonomy or Relic affix families"
+  - "combat numbers, cooldown values, or balance"
+  - "GUI implementation or keybind layout"
+  - "runtime plugin implementation"
+
+open_questions:
+  - "Whether hybrid Relics share one cooldown_group across passive-triggered active effects or need a second group once domain 03 publishes the cooldown contract."
+  - "Whether unique_equipped_group needs values beyond the default once more than one Relic family exists."
+  - "Whether domain 04 gates Relic activation per loadout state, per class, or both."

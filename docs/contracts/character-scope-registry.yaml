@@ -1,0 +1,760 @@
+version: 1
+
+contract:
+  id: character-scope-registry-v1
+  status: proposed
+  owner_domain: "02"
+  runtime_status: not_implemented
+  release_status: blocked
+  date: "2026-07-21"
+  source_note: >
+    Domain 02 registry for account, character, plugin-profile, and session data
+    ownership. This file is a contract artifact, not proof that the runtime
+    plugins already satisfy it.
+
+scope_vocabulary:
+  - ACCOUNT
+  - CHARACTER
+  - PLUGIN_PROFILE
+  - SESSION
+  - ITEM_INSTANCE
+
+source_vocabulary:
+  - DOMAIN_01_ACCOUNT_SERVICE
+  - DOMAIN_01_CHARACTER_REGISTRY
+  - DOMAIN_02_CHARACTER_DATABASE
+  - MMOProfiles
+  - MMOCore
+  - MMOInventory
+  - MMOItems
+  - CMI_VAULT
+  - LuckPerms
+  - PetCore
+  - NarrativeDomain
+  - ProfessionDomain
+  - CosmeticDomain
+  - UXDomain
+  - RewardDomain
+
+rules:
+  one_source_of_truth_per_entry: true
+  minecraft_uuid_is_not_character_id: true
+  plugin_profile_id_is_not_character_id: true
+  character_scoped_consumers_require_character_id: true
+  account_wide_requires_explicit_registry_entry: true
+  database_failures_fail_closed: true
+  schema_version_required_for_character_records: true
+  live_session_state_is_not_lifecycle_status: true
+  domain_04_semantic_ids_persist_in_domain_02_character_record: true
+
+required_entry_keys:
+  - key
+  - scope
+  - owner_domain
+  - source_of_truth
+  - required_for_activation
+
+semantic_validator_contract:
+  command: python3 scripts/check-character-scope-registry.py docs/contracts/character-scope-registry.yaml
+  required_checks:
+    - yaml_parses
+    - entries_is_list_of_mappings
+    - required_entry_keys_present
+    - scope_in_scope_vocabulary
+    - source_of_truth_in_source_vocabulary
+    - entry_keys_unique
+    - required_for_activation_boolean
+    - lifecycle_state_coverage
+    - slot_occupancy_semantics
+    - authority_registry_fields
+    - durable_mapping_contract_shape
+    - petcore_selected_strategy
+    - replacement_rows_match_canonical_registry
+    - canonical_source_blocks_consistent
+    - domain04_persisted_state_present
+
+petcore_cutover_strategy:
+  selected_strategy: read_through_then_one_time_migration
+  legacy_subject_key: MMOProfiles.profileId
+  target_subject_key: character_id
+  phase_0_current:
+    canonical_write_key: MMOProfiles.profileId
+    character_id_claims: rejected
+  phase_1_read_through:
+    canonical_write_key: MMOProfiles.profileId
+    character_id_resolution: required
+    unresolved_mapping_policy: block_companion_actions
+    ambiguous_mapping_policy: quarantine_and_block
+  no_dual_authority: true
+
+domain02_contract_baseline:
+  lifecycle_states:
+    - CREATING
+    - PLAYABLE
+    - DELETE_PENDING
+    - DELETED
+    - PURGED
+  creator_states:
+    - CREATED
+    - IDENTITY_SELECTED
+    - RACE_SELECTED
+    - CLASS_SELECTED
+    - APPEARANCE_SELECTED
+    - VALIDATING
+    - READY
+
+  activation_gate:
+    lifecycle_status: PLAYABLE
+    creator_stage: READY
+    required_flags:
+      - all_required_profiles_loaded
+      - schema_version_supported
+      - session_lock_acquired
+      - no_concurrent_activation
+      - session_epoch_current
+    failure_mode: fail_closed
+
+  slot_categories:
+    inputs:
+      - base
+      - purchased
+      - granted
+      - temporary
+    reserved:
+      - CREATING
+    occupied:
+      - PLAYABLE
+      - DELETE_PENDING
+    released:
+      - DELETED
+      - PURGED
+    derived_counts:
+      total_character_slots:
+        - account.character_slots.base
+        - account.character_slots.purchased
+        - account.character_slots.granted
+        - account.character_slots.temporary
+      available_character_slots:
+        formula: total_character_slots - occupied_character_count - reserved_character_count
+
+  authority_inputs:
+    - account_identity
+    - character_identity_lifecycle
+    - mmoprofiles_plugin_profile
+    - character_stage_presentation
+
+  ownership_split:
+    durable_mapping_record_shape: store-and-lifecycle
+    resolver_and_adapter_behavior: profile-resolution-boundary
+
+petcore_phase_boundary:
+  phase_1_read_through_in_scope: true
+  phase_2_migrate_subject_in_scope: false
+
+phase_3_character_subject_in_scope: false
+
+record_models_contract: docs/contracts/account-character-contract.yaml
+
+required_record_models:
+  - account_record
+  - character_record
+  - active_session_record
+  - mmoprofiles_profile_mapping_record
+
+# Domain 04 owns the meaning of these identifiers; Domain 02 persists them in the
+# character record. Each key below must also appear as a CHARACTER-scoped entry
+# carrying semantic_owner_domain "04" and persistence_owner_domain "02". The
+# durable bucket that stores this state lives in
+# docs/contracts/account-character-contract.yaml as
+# character_record.fields.domain04_character_state.
+domain04_persisted_state:
+  semantic_owner_domain: "04"
+  persistence_owner_domain: "02"
+  canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+  record_bucket: domain04_character_state
+  keys:
+    - character.identity.race_id
+    - character.identity.class_id
+    - character.identity.subclass_id
+    - character.progression.learned_skill_ids
+    - character.progression.weapon_school_unlock_ids
+    - character.loadout.active_loadout_id
+    - character.loadout.equipped_skill_ids
+    - character.progression.talent_allocations
+    - character.progression.respec_state
+    - character.progression.legacy_technique_ids
+    - character.progression.faith_scar_ids
+
+entries:
+  - key: account.identity.account_id
+    scope: ACCOUNT
+    owner_domain: "01"
+    source_of_truth: DOMAIN_01_ACCOUNT_SERVICE
+    required_for_activation: true
+    mutable:
+      after_creation: false
+    consumers:
+      - Domain02CharacterService
+      - MonetizationDomain
+      - CosmeticDomain
+      - UXDomain
+
+  - key: account.identity.minecraft_uuid
+    scope: ACCOUNT
+    owner_domain: "01"
+    source_of_truth: DOMAIN_01_ACCOUNT_SERVICE
+    required_for_activation: true
+    mutable:
+      after_creation: false
+    constraints:
+      not_character_identity: true
+    consumers:
+      - Domain02CharacterService
+      - SessionLockAdapter
+      - BukkitRuntime
+
+  - key: account.character_slots.base
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    merge_strategy: SUM
+    mutable:
+      by_product_policy: true
+    consumers:
+      - CharacterCreationFlow
+      - UXDomain
+
+  - key: account.character_slots.purchased
+    scope: ACCOUNT
+    owner_domain: "13"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    merge_strategy: IDEMPOTENT_TRANSACTION_SUM
+    idempotency_key: purchase_id
+    mutable:
+      by_purchase_grant: true
+    consumers:
+      - CharacterCreationFlow
+      - MonetizationDomain
+      - UXDomain
+
+  - key: account.character_slots.granted
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    merge_strategy: SUM
+    mutable:
+      by_admin_grant: true
+    consumers:
+      - CharacterCreationFlow
+      - SupportTooling
+
+  - key: account.character_slots.temporary
+    scope: ACCOUNT
+    owner_domain: "00"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    status: reserved_not_enabled
+    constraints:
+      requires_expiration_contract: true
+      requires_downgrade_contract: true
+    consumers:
+      - CharacterCreationFlow
+
+  - key: account.character_slots.occupied_character_count
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    computed_from:
+      character.lifecycle_status:
+        occupies_slot:
+          - PLAYABLE
+          - DELETE_PENDING
+        reserved_slot:
+          - CREATING
+        releases_slot:
+          - DELETED
+          - PURGED
+    consumers:
+      - CharacterCreationFlow
+      - CharacterDeletionFlow
+      - CharacterRestoreFlow
+      - UXDomain
+
+  - key: account.character_slots.reserved_character_count
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    computed_from:
+      character.lifecycle_status:
+        reserved_slot:
+          - CREATING
+    consumers:
+      - CharacterCreationFlow
+      - CharacterDeletionFlow
+      - CharacterRestoreFlow
+      - UXDomain
+
+  - key: account.character_slots.total_character_slots
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    computed_from:
+      sum_of:
+        - account.character_slots.base
+        - account.character_slots.purchased
+        - account.character_slots.granted
+        - account.character_slots.temporary
+    consumers:
+      - CharacterCreationFlow
+      - MonetizationDomain
+      - SupportTooling
+      - UXDomain
+
+  - key: account.character_slots.available_character_slots
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    computed_from:
+      formula: account.character_slots.total_character_slots - account.character_slots.occupied_character_count - account.character_slots.reserved_character_count
+    consumers:
+      - CharacterCreationFlow
+      - UXDomain
+
+  - key: account.active_character_id
+    scope: ACCOUNT
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    mutable:
+      through_activation_flow: true
+    validation:
+      character_must_belong_to_account: true
+      session_lock_required: true
+      lifecycle_status_must_be_playable: true
+      creator_stage_must_be_ready: true
+      schema_version_must_be_supported: true
+      required_profiles_must_be_loaded: true
+      concurrent_activation_rejected: true
+      stale_session_epoch_rejected: true
+    consumers:
+      - SessionLockAdapter
+      - MMOProfilesAdapter
+      - MMOCoreAdapter
+      - UXDomain
+      - PetCore
+
+  - key: character.identity.character_id
+    scope: CHARACTER
+    owner_domain: "01"
+    source_of_truth: DOMAIN_01_CHARACTER_REGISTRY
+    required_for_activation: true
+    mutable:
+      after_creation: false
+    constraints:
+      never_reuse_after_purge: true
+    consumers:
+      - Domain02CharacterService
+      - MMOProfilesAdapter
+      - MMOCoreAdapter
+      - PetCore
+
+  - key: character.identity.account_id
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    mutable:
+      after_creation: false
+    validation:
+      account_must_exist: true
+    consumers:
+      - Domain02CharacterService
+      - SessionLockAdapter
+
+  - key: character.identity.race_id
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_character_creation_or_approved_migration: true
+    consumers:
+      - Domain02CharacterService
+      - CharacterStage
+      - UXDomain
+
+  - key: character.identity.class_id
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_character_creation_or_approved_migration: true
+    consumers:
+      - Domain02CharacterService
+      - CharacterStage
+      - UXDomain
+      - MMOCoreAdapter
+
+  - key: character.identity.subclass_id
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_subclass_unlock_or_approved_migration: true
+    constraints:
+      nullable_until_subclass_unlock: true
+    consumers:
+      - Domain02CharacterService
+      - UXDomain
+      - MMOCoreAdapter
+
+  - key: character.progression.learned_skill_ids
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_progression_flow: true
+    consumers:
+      - Domain02CharacterService
+      - MMOCoreAdapter
+      - UXDomain
+
+  - key: character.progression.weapon_school_unlock_ids
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_progression_flow: true
+    consumers:
+      - Domain02CharacterService
+      - MMOCoreAdapter
+      - UXDomain
+
+  - key: character.loadout.active_loadout_id
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_loadout_flow: true
+    consumers:
+      - Domain02CharacterService
+      - MMOCoreAdapter
+      - UXDomain
+
+  - key: character.loadout.equipped_skill_ids
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_loadout_flow: true
+    consumers:
+      - Domain02CharacterService
+      - MMOCoreAdapter
+      - UXDomain
+
+  - key: character.progression.talent_allocations
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_progression_flow: true
+    consumers:
+      - Domain02CharacterService
+      - UXDomain
+
+  - key: character.progression.respec_state
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_progression_flow: true
+    consumers:
+      - Domain02CharacterService
+      - UXDomain
+
+  - key: character.progression.legacy_technique_ids
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_progression_flow: true
+    consumers:
+      - Domain02CharacterService
+      - UXDomain
+
+  - key: character.progression.faith_scar_ids
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    semantic_owner_domain: "04"
+    persistence_owner_domain: "02"
+    canonical_definition_contract: docs/design/classes/domain-02-03-alignment.md
+    mutable:
+      through_domain04_progression_flow: true
+    consumers:
+      - Domain02CharacterService
+      - UXDomain
+
+  - key: character.lifecycle_status
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    allowed_values:
+      - CREATING
+      - PLAYABLE
+      - DELETE_PENDING
+      - DELETED
+      - PURGED
+    slot_occupancy:
+      CREATING: reserved
+      PLAYABLE: occupied
+      DELETE_PENDING: occupied
+      DELETED: released
+      PURGED: released
+    mutable:
+      through_lifecycle_flow: true
+    consumers:
+      - CharacterCreationFlow
+      - CharacterDeletionFlow
+      - CharacterRestoreFlow
+      - SessionLockAdapter
+      - UXDomain
+
+  - key: character.creator_stage
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    allowed_values:
+      - CREATED
+      - IDENTITY_SELECTED
+      - RACE_SELECTED
+      - CLASS_SELECTED
+      - APPEARANCE_SELECTED
+      - VALIDATING
+      - READY
+    mutable:
+      through_creator_flow: true
+    adapter_note: CharacterStage may render creator state, but does not own completion.
+    consumers:
+      - CharacterStage
+      - CoreTools
+      - UXDomain
+      - SessionLockAdapter
+
+  - key: character.schema_version
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    mutable:
+      through_migration: true
+    validation:
+      supported_or_migratable_required: true
+      migration_failure_blocks_activation: true
+    consumers:
+      - Domain02CharacterService
+      - MigrationTooling
+      - SessionLockAdapter
+
+  - key: character.plugin_profiles.mmoprofiles.profile_id
+    scope: PLUGIN_PROFILE
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    technical_authority: MMOProfiles
+    constraints:
+      not_character_identity: true
+      one_active_profile_per_character: true
+      one_character_per_active_profile: true
+    consumers:
+      - Domain02CharacterService
+      - MMOProfilesAdapter
+      - SessionLockAdapter
+
+  - key: character.plugin_profiles.mmoprofiles.binding_status
+    scope: PLUGIN_PROFILE
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    allowed_values:
+      - RESERVED
+      - BOUND
+      - REPAIR_REQUIRED
+      - QUARANTINED
+      - RELEASED
+    consumers:
+      - Domain02CharacterService
+      - MMOProfilesAdapter
+      - RepairTooling
+      - SessionLockAdapter
+
+  - key: petcore.subject.character_id
+    scope: CHARACTER
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: false
+    selected_strategy: read_through_then_one_time_migration
+    legacy_subject_key: MMOProfiles.profileId
+    target_subject_key: character_id
+    canonical_write_key: MMOProfiles.profileId
+    unresolved_mapping_policy: block_companion_actions
+    ambiguous_mapping_policy: quarantine_and_block
+    no_dual_authority: true
+    consumers:
+      - PetCore
+
+  - key: character.runtime.active_session_id
+    scope: SESSION
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    mutable:
+      through_activation_flow: true
+    expires_on_logout: true
+    validation:
+      double_login_rejected_or_fenced: true
+      active_session_blocks_parallel_activation: true
+    consumers:
+      - SessionLockAdapter
+      - BukkitRuntime
+      - MMOProfilesAdapter
+      - MMOCoreAdapter
+
+  - key: character.runtime.session_epoch
+    scope: SESSION
+    owner_domain: "02"
+    source_of_truth: DOMAIN_02_CHARACTER_DATABASE
+    required_for_activation: true
+    mutable:
+      monotonic_increment: true
+    validation:
+      stale_epoch_rejected: true
+      epoch_match_required_for_activation: true
+    consumers:
+      - SessionLockAdapter
+      - PetCore
+      - RuntimeCleanup
+
+replacement_rows:
+  config_authority_registry:
+    - id: account_identity
+      domain: account
+      authority: Domain01AccountService
+      current_adapter: none
+      target_persistence: account_database
+      consumers:
+        - Domain02CharacterService
+        - MonetizationDomain
+        - CosmeticDomain
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+      evidence: docs/contracts/account-character-model.md
+    - id: character_identity_lifecycle
+      domain: characters
+      authority: Domain02CharacterService
+      current_adapter: none
+      target_persistence: domain02_character_database
+      consumers:
+        - MMOProfilesAdapter
+        - MMOCoreAdapter
+        - CharacterStage
+        - PetCore
+        - UXDomain
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+      evidence: docs/contracts/account-character-model.md
+    - id: mmoprofiles_plugin_profile
+      domain: plugin_profiles
+      authority: MMOProfiles
+      current_adapter: MCMMORPG/plugins/MMOProfiles
+      target_persistence: plugin_profile_storage_mapped_to_character_id
+      consumers:
+        - Domain02CharacterService
+        - CharacterStage
+        - MMOCore
+        - MMOInventory
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+      evidence: docs/contracts/character-scope-registry.yaml
+    - id: character_stage_presentation
+      domain: ux
+      authority: CharacterStage
+      current_adapter: MCMMORPG/plugin-src/character-stage
+      target_persistence: none_reads_domain02_character_state
+      consumers:
+        - Domain02CharacterService
+        - CoreTools
+        - UXDomain
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+      evidence: MCMMORPG/plugin-src/character-stage/README.md
+
+blocked_until_resolved:
+  - id: adr_001_player_profile_scope
+    issue: ADR-001 still overstates MMOProfiles player-profile authority and remains outside this ticket's scope.
+    files:
+      - docs/adr/ADR-001-player-data-authority.md
+      - docs/config_authority_registry.yaml
+  - id: petcore_profile_id_subject
+    issue: PetCore durable state still references MMOProfiles.profileId in legacy contracts and needs later follow-up outside this ticket.
+    files:
+      - docs/contracts/petcore-identity-and-content-run-contract.yaml
+      - docs/contracts/petcore-legacy-claim-contract.yaml
+
+required_runtime_evidence:
+  - leased-backend activation rejection for concurrent login
+  - leased-backend activation rejection for stale session epoch
+  - leased-backend proof that unsupported schema blocks activation

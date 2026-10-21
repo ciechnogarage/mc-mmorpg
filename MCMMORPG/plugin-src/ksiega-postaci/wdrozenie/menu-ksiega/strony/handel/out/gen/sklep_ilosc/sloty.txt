@@ -1,0 +1,54 @@
+00 | empty
+01 | empty
+02 | empty
+03 | empty
+04 | grzbiet (rezerwa techniczna)
+05 | empty
+06 | empty
+07 | empty
+08 | empty
+09 | empty
+10 | empty
+11 | empty
+12 | empty
+13 | grzbiet (rezerwa techniczna)
+14 | empty
+15 | empty
+16 | empty
+17 | empty
+18 | empty
+19 | empty
+20 | empty
+21 | empty
+22 | grzbiet (rezerwa techniczna)
+23 | item_to_be_purchased
+24 | empty
+25 | empty
+26 | empty
+27 | missing_purchase, sell_dollar
+28 | missing_purchase, sell_dollar
+29 | back_to_category
+30 | back_to_category
+31 | grzbiet (rezerwa techniczna)
+32 | empty
+33 | empty
+34 | empty
+35 | empty
+36 | missing_purchase, sell_dollar
+37 | missing_purchase, sell_dollar
+38 | back_to_category
+39 | back_to_category
+40 | grzbiet (rezerwa techniczna)
+41 | empty
+42 | empty
+43 | empty
+44 | empty
+45 | empty
+46 | empty
+47 | empty
+48 | empty
+49 | grzbiet (rezerwa techniczna)
+50 | empty
+51 | empty
+52 | empty
+53 | empty

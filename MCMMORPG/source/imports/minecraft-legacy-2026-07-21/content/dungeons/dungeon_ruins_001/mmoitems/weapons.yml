@@ -1,0 +1,37 @@
+DR001_RELIC_BLADE:
+  base:
+    material: IRON_SWORD
+    name: '&bRelic Blade'
+    required-level: 12
+    tier: RARE
+    attack-damage: 8.0
+    attack-speed: 1.55
+    pve-damage: 4.0
+    lore:
+      - '&7A blade recovered from the broken gatehouse.'
+
+DR001_OVERGROWN_BOW:
+  base:
+    material: BOW
+    name: '&aOvergrown Bow'
+    required-level: 12
+    tier: RARE
+    attack-damage: 6.0
+    pve-damage: 4.0
+    lore:
+      - '&7Roots tighten around every arrow.'
+
+DR001_CROWNREAVER:
+  base:
+    material: NETHERITE_SWORD
+    name: '&6Koronoburca'
+    required-level: 30
+    tier: LEGENDARY
+    attack-damage: 16.0
+    attack-speed: 1.45
+    critical-strike-chance: 12.0
+    critical-strike-power: 35.0
+    pve-damage: 9.0
+    lore:
+      - '&7Ostrze, które pamięta upadek Aureliona.'
+      - '&6Effect design: Crown Shockwave on elite or boss hit cooldown.'

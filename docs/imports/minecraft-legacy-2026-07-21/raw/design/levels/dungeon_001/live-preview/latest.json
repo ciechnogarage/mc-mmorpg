@@ -1,0 +1,113 @@
+{
+  "capturedAt": "2026-05-26T23:20:25.816Z",
+  "file": "frame-2026-05-26T23-20-25-788Z.png",
+  "world": "iris:aiamgakaa38.",
+  "position": {
+    "x": 0.5,
+    "y": 125,
+    "z": -150.5
+  },
+  "blockUnderFeet": "mossy_stone_bricks",
+  "viewerUrl": "http://127.0.0.1:3009",
+  "holdMs": 60000,
+  "intervalMs": 8000,
+  "profile": "dungeon-001-visual-preview",
+  "frames": [
+    {
+      "capturedAt": "2026-05-26T23:19:29.521Z",
+      "file": "frame-2026-05-26T23-19-28-387Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:19:37.556Z",
+      "file": "frame-2026-05-26T23-19-37-524Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:19:45.598Z",
+      "file": "frame-2026-05-26T23-19-45-571Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:19:53.650Z",
+      "file": "frame-2026-05-26T23-19-53-615Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:20:01.685Z",
+      "file": "frame-2026-05-26T23-20-01-654Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:20:09.722Z",
+      "file": "frame-2026-05-26T23-20-09-694Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:20:17.770Z",
+      "file": "frame-2026-05-26T23-20-17-738Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    },
+    {
+      "capturedAt": "2026-05-26T23:20:25.816Z",
+      "file": "frame-2026-05-26T23-20-25-788Z.png",
+      "world": "iris:aiamgakaa38.",
+      "position": {
+        "x": 0.5,
+        "y": 125,
+        "z": -150.5
+      },
+      "blockUnderFeet": "mossy_stone_bricks",
+      "viewerUrl": "http://127.0.0.1:3009"
+    }
+  ]
+}

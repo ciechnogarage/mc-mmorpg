@@ -1,0 +1,79 @@
+{
+  "report_id": "foundation-pass",
+  "verdict": "PASS",
+  "domain": "character",
+  "system": "character_creator_login_persistence",
+  "environment": "dev-qa",
+  "test_type": "foundation_runtime_adapter_release_grade",
+  "contract_status": "approved",
+  "requiredProof": [
+    "STATIC_CONTRACT",
+    "RUNTIME_PROOF",
+    "INTEGRATION_PROOF",
+    "PLAYER_PROOF"
+  ],
+  "achievedProof": [
+    "STATIC_CONTRACT",
+    "RUNTIME_PROOF",
+    "INTEGRATION_PROOF",
+    "PLAYER_PROOF"
+  ],
+  "proofArtifacts": [
+    {
+      "kind": "bot-transcript",
+      "path": "docs/qa/evidence/release-grade/bot-transcript.json",
+      "sha256": "sha256:release-grade-bot-transcript"
+    }
+  ],
+  "build": {
+    "commit": "baseline-no-runtime",
+    "paper": "baseline-no-runtime",
+    "plugin_manifest_hash": "baseline-no-runtime"
+  },
+  "execution": {
+    "runner": "MCMMORPG/_validation/release_readiness_runtime_probe.mjs",
+    "backend": "staging-release-backend",
+    "docker_volume_id": "staging-release-volume",
+    "test_account_uuid": "00000000-0000-4000-8000-000000000001",
+    "started_at": "2026-08-03T00:00:00Z",
+    "finished_at": "2026-08-03T00:00:00Z",
+    "executed_by": "qa-release-evidence-runner",
+    "log_paths": [
+      "docs/qa/evidence/release-grade/server.log"
+    ],
+    "environment_control": {
+      "lease": "dev-qa",
+      "workspace_root": "/home/przemek/projects/MC",
+      "runtime_touched": true,
+      "staging_touched": false,
+      "rollback": {
+        "method": "runtime_snapshot_restore",
+        "proof_paths": [
+          "docs/qa/evidence/release-grade/rollback-proof.md"
+        ]
+      }
+    }
+  },
+  "observations": [
+    "Fixture PASS with complete player proof."
+  ],
+  "evidence_types": [
+    "server-log",
+    "bot-transcript",
+    "before-after-snapshot",
+    "restart-recovery-proof",
+    "rollback-proof"
+  ],
+  "contract_refs": [
+    "docs/contracts/account-character-contract.yaml"
+  ],
+  "metadata": {
+    "account_id_authority": "fixture-account-authority",
+    "character_id_authority": "fixture-character-authority",
+    "profile_id_authority": "fixture-profile-authority",
+    "character_stage_authority": "fixture-stage-authority",
+    "persistence_storage_owner": "fixture-storage-owner",
+    "test_account_uuid": "00000000-0000-4000-8000-000000000001",
+    "restart_recovery_rollback_proof": "tools/qa/tests/fixtures/foundation-runtime/pass.json"
+  }
+}

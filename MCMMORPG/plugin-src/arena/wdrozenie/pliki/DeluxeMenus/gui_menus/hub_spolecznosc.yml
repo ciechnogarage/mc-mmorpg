@@ -1,0 +1,80 @@
+menu_title: '&f䨌䨍䨎䨏'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&dSpołeczność'
+    lore:
+      - '&7Drużyna: wspólne doświadczenie i łup.'
+      - '&7Gildia: twoi członkowie i wspólnota.'
+      - '&7Znajomi: sprawdź, kto jest online.'
+  druzyna:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aDrużyna'
+    lore:
+      - '&7Wspólne doświadczenie i łup.'
+    left_click_commands:
+      - '[player] party'
+  znajomi:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bZnajomi'
+    lore:
+      - '&7Lista znajomych online i offline.'
+    left_click_commands:
+      - '[player] friends'
+  gildia:
+    material: nexo-mmo_icon_blank
+    slots: [24, 25, 33, 34]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Gildia'
+    lore:
+      - '&7Twoja gildia i jej członkowie.'
+    left_click_commands:
+      - '[player] guild'
+  arena_wejdz:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    priority: 2
+    update: true
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&cOtwarta Arena'
+    lore:
+      - '&7PvP włączone w ringu.'
+      - '&7Śmierć bez kary.'
+      - '&7Manekiny do pomiaru obrażeń.'
+    view_requirement:
+      requirements:
+        poza_arena:
+          type: '!string equals'
+          input: '%player_world%'
+          output: 'arena'
+    left_click_commands:
+      - '[console] arena wejdz %player_name%'
+      - '[close]'
+  arena_wyjdz:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    priority: 1
+    update: true
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aWyjdź z areny'
+    lore:
+      - '&7Powrót do zapamiętanego miejsca.'
+      - '&7Po walce odczekaj 10 sekund.'
+    view_requirement:
+      requirements:
+        na_arenie:
+          type: string equals
+          input: '%player_world%'
+          output: 'arena'
+    left_click_commands:
+      - '[console] arena wyjdz %player_name%'
+      - '[close]'

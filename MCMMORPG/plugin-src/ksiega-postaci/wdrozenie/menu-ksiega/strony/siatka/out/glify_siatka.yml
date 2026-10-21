@@ -1,0 +1,73 @@
+# Cztery ćwiartki na stronę; char U+4A40 + 4*i + N-1.
+wiara_1:
+  font: minecraft:default
+  texture: nexo:gui/wiara_1
+  ascent: 13
+  height: 111
+  char: "䩀"
+wiara_2:
+  font: minecraft:default
+  texture: nexo:gui/wiara_2
+  ascent: 13
+  height: 111
+  char: "䩁"
+wiara_3:
+  font: minecraft:default
+  texture: nexo:gui/wiara_3
+  ascent: -98
+  height: 111
+  char: "䩂"
+wiara_4:
+  font: minecraft:default
+  texture: nexo:gui/wiara_4
+  ascent: -98
+  height: 111
+  char: "䩃"
+ksiega_zaklec_1:
+  font: minecraft:default
+  texture: nexo:gui/ksiega_zaklec_1
+  ascent: 13
+  height: 111
+  char: "䩄"
+ksiega_zaklec_2:
+  font: minecraft:default
+  texture: nexo:gui/ksiega_zaklec_2
+  ascent: 13
+  height: 111
+  char: "䩅"
+ksiega_zaklec_3:
+  font: minecraft:default
+  texture: nexo:gui/ksiega_zaklec_3
+  ascent: -98
+  height: 111
+  char: "䩆"
+ksiega_zaklec_4:
+  font: minecraft:default
+  texture: nexo:gui/ksiega_zaklec_4
+  ascent: -98
+  height: 111
+  char: "䩇"
+profession_main_1:
+  font: minecraft:default
+  texture: nexo:gui/profession_main_1
+  ascent: 13
+  height: 111
+  char: "䩈"
+profession_main_2:
+  font: minecraft:default
+  texture: nexo:gui/profession_main_2
+  ascent: 13
+  height: 111
+  char: "䩉"
+profession_main_3:
+  font: minecraft:default
+  texture: nexo:gui/profession_main_3
+  ascent: -98
+  height: 111
+  char: "䩊"
+profession_main_4:
+  font: minecraft:default
+  texture: nexo:gui/profession_main_4
+  ascent: -98
+  height: 111
+  char: "䩋"

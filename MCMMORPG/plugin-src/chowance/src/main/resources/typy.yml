@@ -1,0 +1,15 @@
+# Tabela skuteczności typów (właściciel pliku: Agent A; treść tabeli przyjęta od Agenta B — PROBLEMY B-005,
+# DECYZJE D-07). atak -> obrona: mnożnik. Brak wpisu = 1.0. Świadomie BEZ 0.0: przy jednym aktywnym
+# stworze w walce real-time immunitet to martwy ruch, a nie decyzja taktyczna.
+stab: 1.25          # ruch w typie własnym stwora
+skutecznosc:
+  OGIEN:     {NATURA: 2.0, METAL: 2.0, NIEUMARLY: 2.0, WODA: 0.5, ZIEMIA: 0.5, OGIEN: 0.5}
+  WODA:      {OGIEN: 2.0, ZIEMIA: 2.0, WODA: 0.5, NATURA: 0.5}
+  ZIEMIA:    {OGIEN: 2.0, METAL: 2.0, NATURA: 0.5, POWIETRZE: 0.5}
+  POWIETRZE: {NATURA: 2.0, BESTIA: 2.0, METAL: 0.5, POWIETRZE: 0.5}
+  NATURA:    {WODA: 2.0, ZIEMIA: 2.0, OGIEN: 0.5, POWIETRZE: 0.5, NATURA: 0.5, METAL: 0.5}
+  MROK:      {SWIATLO: 2.0, BESTIA: 2.0, MROK: 0.5, NIEUMARLY: 0.5}
+  SWIATLO:   {MROK: 2.0, NIEUMARLY: 2.0, METAL: 0.5, SWIATLO: 0.5}
+  METAL:     {SWIATLO: 2.0, BESTIA: 2.0, OGIEN: 0.5, WODA: 0.5, METAL: 0.5}
+  BESTIA:    {NATURA: 2.0, METAL: 0.5}
+  NIEUMARLY: {BESTIA: 2.0, POWIETRZE: 2.0, SWIATLO: 0.5, NIEUMARLY: 0.5}

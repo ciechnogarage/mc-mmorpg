@@ -1,0 +1,6 @@
+{
+  "name": "Ashen Throne",
+  "landBiomes": [ "dungeon_ruins_001_ashen_throne" ],
+  "seaBiomes": [ "dungeon_ruins_001_ashen_throne" ],
+  "shoreBiomes": [ "dungeon_ruins_001_ashen_throne" ]
+}

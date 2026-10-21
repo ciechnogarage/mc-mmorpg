@@ -73,10 +73,8 @@ effects.
 
 ## Handoff
 
-During read-only dry runs, agents do not spawn nested agents. The coordinator
-routes cross-domain work using:
+Route cross-domain work using:
 
 - `docs/ai/mechanic-plugin-map.md`
-- `docs/ai/plugin-agent-roster.md`
 - `docs/ai/plugin-knowledge-map.md`
 - `docs/ai/foundation-mvp-implementation.md`

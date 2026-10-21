@@ -1,0 +1,77 @@
+{
+ "model": {
+  "type": "minecraft:condition",
+  "property": "minecraft:using_item",
+  "on_true": {
+   "type": "minecraft:range_dispatch",
+   "property": "minecraft:use_duration",
+   "scale": 0.05,
+   "entries": [
+    {
+     "threshold": 0.4,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140c1/stick"
+     }
+    },
+    {
+     "threshold": 0.8,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140c2/stick"
+     }
+    },
+    {
+     "threshold": 1.2,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140c3/stick"
+     }
+    }
+   ],
+   "fallback": {
+    "type": "minecraft:model",
+    "model": "bron:item/s140c/stick"
+   }
+  },
+  "on_false": {
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s140kl/stick"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s140kp/stick"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s140kt/stick"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s140/stick"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s140/stick"
+   }
+  }
+ }
+}

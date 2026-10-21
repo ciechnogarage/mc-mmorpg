@@ -1,0 +1,59 @@
+wiara — 54 sloty; kolumna 4 jest nieklikalnym grzbietem.
+Lewa strona: emblemat 4×3; rzędy 3–5: stan i akcje. Prawa: gniazda.
+
+00 | rząd 0, kol 0 | stan
+01 | rząd 0, kol 1 | stan
+02 | rząd 0, kol 2 | stan
+03 | rząd 0, kol 3 | stan
+04 | rząd 0, kol 4 | grzbiet
+05 | rząd 0, kol 5 | pusty
+06 | rząd 0, kol 6 | pusty
+07 | rząd 0, kol 7 | pusty
+08 | rząd 0, kol 8 | pusty
+09 | rząd 1, kol 0 | stan
+10 | rząd 1, kol 1 | stan
+11 | rząd 1, kol 2 | stan
+12 | rząd 1, kol 3 | stan
+13 | rząd 1, kol 4 | grzbiet
+14 | rząd 1, kol 5 | pusty
+15 | rząd 1, kol 6 | pusty
+16 | rząd 1, kol 7 | pusty
+17 | rząd 1, kol 8 | pusty
+18 | rząd 2, kol 0 | stan
+19 | rząd 2, kol 1 | stan
+20 | rząd 2, kol 2 | stan
+21 | rząd 2, kol 3 | stan
+22 | rząd 2, kol 4 | grzbiet
+23 | rząd 2, kol 5 | b_ordhun
+24 | rząd 2, kol 6 | b_nysara
+25 | rząd 2, kol 7 | b_vharun
+26 | rząd 2, kol 8 | pusty
+27 | rząd 3, kol 0 | pusty
+28 | rząd 3, kol 1 | pusty
+29 | rząd 3, kol 2 | pusty
+30 | rząd 3, kol 3 | pusty
+31 | rząd 3, kol 4 | grzbiet
+32 | rząd 3, kol 5 | b_solenna, b_aelyra, b_gorrath, b_morvhena
+33 | rząd 3, kol 6 | b_valdris, b_sylvaen, b_kharzuk, b_vhorax
+34 | rząd 3, kol 7 | b_heldra, b_iridel, b_mogra, b_ossyra
+35 | rząd 3, kol 8 | pusty
+36 | rząd 4, kol 0 | pusty
+37 | rząd 4, kol 1 | pusty
+38 | rząd 4, kol 2 | modlitwa, modlitwa_trwa, modlitwa_brak_patrona
+39 | rząd 4, kol 3 | pusty
+40 | rząd 4, kol 4 | grzbiet
+41 | rząd 4, kol 5 | pusty
+42 | rząd 4, kol 6 | pusty
+43 | rząd 4, kol 7 | pusty
+44 | rząd 4, kol 8 | pusty
+45 | rząd 5, kol 0 | pusty
+46 | rząd 5, kol 1 | pusty
+47 | rząd 5, kol 2 | pusty
+48 | rząd 5, kol 3 | pusty
+49 | rząd 5, kol 4 | grzbiet
+50 | rząd 5, kol 5 | pusty
+51 | rząd 5, kol 6 | pusty
+52 | rząd 5, kol 7 | pusty
+53 | rząd 5, kol 8 | pusty
+
+Powrót wyłącznie przez plakietkę dolnego panelu pluginu w ukrytym EQ.

@@ -1,63 +1,237 @@
-# Repository Guidelines
+# MC Repository Instructions
 
-## Project Structure & Module Organization
+These rules extend the global agent instructions for
+`/home/przemek/projects/MC`.
 
-- `MCMMORPG/` contains the runnable Paper Minecraft server copy, including `paper.jar`, world folders, `server.properties`, and plugin configuration.
-- `MCMMORPG/plugins/` holds plugin jars and per-plugin config folders such as `MMOCore/`, `CMI/`, `Iris/`, and `ModelEngine/`.
-- `MCMMORPG/world*` contains generated world state. Treat these files as data, not hand-edited source.
-- `docs/` contains operational documentation. Keep `docs/plugin_manifest.yaml`, `docs/compatibility_matrix.md`, and `docs/server_environment.md` aligned with server changes.
-- `docs/ai/` is for durable AI workflows, playbooks, and review checklists.
+## Repository shape
 
-## Build, Test, and Development Commands
+This is a mixed Minecraft project containing:
 
-- Do not start Paper natively and do not use the disabled `start.sh`. Runtime
-  validation uses Docker backends behind Velocity; see
-  `MCMMORPG/START_HERE_DOCKER.md`.
-- Select the backend by affected area: `world` for dungeons/world/mobs/models,
-  `items` for items/equipment/classes/login, and `hub` for social/hub work.
-- From `MCMMORPG/docker`, use `./mc up <area>`, `./mc rcon <area> "<command>"`,
-  `./mc logs <area>`, and `./mc down <area>`. Players connect through Velocity
-  on `localhost:25565`; never validate by connecting directly to a backend.
-- Test every affected area on its own backend. Cross-area changes require
-  separate evidence from each affected backend.
-- Inspect the latest boot/runtime log:
-  `tail -n 200 MCMMORPG/logs/latest.log`
-- Find plugin or config references quickly:
-  `rg "PluginName|setting_key" MCMMORPG/plugins docs`
-- Review plugin inventory docs before upgrades:
-  `sed -n '1,160p' docs/plugin_manifest.yaml`
+- server configuration and data;
+- Java plugin sources;
+- Node validation and bot tooling;
+- Python RAG services;
+- operational and architectural documentation;
+- visual-asset source and integration contracts.
 
-There is no application build system in this repository. Validation is primarily server boot, log review, plugin compatibility review, and focused in-game checks on staging.
+There is no single command that validates every part of the repository.
 
-## Coding Style & Naming Conventions
+Before changing a subsystem, inspect:
 
-- Use 2-space indentation for YAML config files unless the existing file uses another style.
-- Keep JSON valid and minimally reformatted; avoid churn in generated files.
-- Prefer lowercase, descriptive doc filenames with hyphens or underscores, matching existing examples such as `server_environment.md`.
-- Preserve plugin vendor filenames and jar versions exactly.
+1. its nearest manifest or build definition;
+2. its tests or validation scripts;
+3. its README or authoritative local documentation;
+4. at least one nearby working example.
 
-## Testing Guidelines
+Treat generated worlds, runtime state, lease state, logs, caches, compiled
+artifacts, exports, vendor JARs, credentials, and secrets as data or operational
+state rather than ordinary source. Do not edit or regenerate them unless the
+task explicitly requires it.
 
-- After plugin jar, config, or world-generation changes, start only the relevant
-  Docker backend and inspect both `./mc logs <area>` and the area-specific runtime
-  evidence for errors, missing dependencies, and warning spikes.
-- For gameplay changes, verify the relevant flow in-game on staging before production use.
-- For `ModelEngine` mobs, do not treat a YAML `Model:` section or an existing `.bbmodel` as proof that the model is active. Before claiming a model exists or works, verify all three: the active MythicMobs YAML reference, the source blueprint in `plugins/ModelEngine/blueprints/`, and compiled `model_id:*` entries in `plugins/ModelEngine/.data/cache.json`.
-- When touching boss/mob models, run `node MCMMORPG/_validation/check_modelengine_binding.js` before any art/runtime conclusion. If the script reports `CACHE_MISSING`, the model is not active yet, regardless of reload output or viewer screenshots.
-- For boss-quality `ModelEngine` work, a valid import is still not enough. Before calling a model "good", verify that the blueprint has a real segmented `outliner` rig (not one flat bag of cubes), a hidden `hitbox` bone, and explicit state animations. Run `node MCMMORPG/_validation/check_modelengine_quality.js`; if it fails on `RIG_NOT_SEGMENTED`, `HIERARCHY_TOO_FLAT`, or `ANIMATIONS_MISSING`, treat the model as unfinished.
-- For every new or materially changed ModelEngine model, follow `docs/ai/modelengine-model-production.md`. A quality claim requires current multi-view renders, a quality manifest whose SHA-256 matches the shipped blueprint, all review scores at least 4/5, no known issues, and live spawn inspection. Import/cache success alone is never visual approval.
-- All creature-model final art is Blockbench-first. Edit and inspect the real `.bbmodel` natively in Blockbench while iterating; do not treat guessed numeric edits, script-generated geometry, or render-only review as an acceptable primary art workflow.
-- Before overwriting a generated `.bbmodel` or its generator during visual iteration, create a versioned backup containing both files. Never describe a user-created copy as an agent-created backup.
-- After two visual rejections of the same model, stop geometry mutations. Return to the best explicitly accepted visual baseline and prepare side-by-side silhouette/material studies; do not substitute a mechanically simplified blockout or treat structural validation as artistic progress.
-- Boss manifests use schema version 2 and must bind animation contracts to real MythicMobs skills and model-part bones. Run `npm --prefix MCMMORPG/_validation run modelengine:ecosystem -- --model <model_id>`; unresolved states, helper bones, impact ticks, skill sources, or integration files block completion.
-- Update docs when observed versions, runtime requirements, or known gaps change.
+## Sources and truthfulness
 
-## Commit & Pull Request Guidelines
+Use this evidence order for plugin syntax and runtime behavior:
 
-This path does not expose usable Git history, so no repository-specific commit convention can be inferred. Use concise, imperative commit messages such as `Update MMOCore class config` or `Document Paper 1.21.11 plugin inventory`.
+1. Active local configuration, source, schema, or nearby working example.
+2. Current repository documentation and tests.
+3. Official vendor documentation.
+4. Trusted community sources only when authoritative sources do not answer.
 
-Pull requests should include the affected plugin/config paths, validation performed, log issues found or cleared, and screenshots or short clips for UI, HUD, menu, model, or gameplay-facing changes.
+Do not guess:
 
-## Security & Configuration Tips
+- permission nodes;
+- placeholders;
+- plugin commands;
+- model or asset identifiers;
+- database behavior;
+- economy effects;
+- lease ownership;
+- runtime topology;
+- deployment state.
 
-Do not commit secrets, private keys, raw player data, or unnecessary production logs. Be especially careful with plugin keys, database settings, `ops.json`, ban lists, and sync/auth plugin configuration. Back up world and player data before risky plugin or schema changes.
+Distinguish design documentation from behavior observed in an actual runtime.
+
+## Runtime targets and leases
+
+The supported interface for new runtime work is
+`MCMMORPG/infra/bin/mcenv` using an explicit `staging` or `dev` target.
+
+The names `world`, `items`, and `hub` remain present in historical and observed
+runtime evidence. They are not valid selectors or authorized targets for new
+work.
+
+Do not start, stop, modify, migrate, or rely on a legacy target unless the task
+explicitly concerns legacy operation or topology cutover. For such a task,
+inspect the exact current mapping and obtain authority before mutating runtime
+state.
+
+### Common runtime preflight
+
+Before runtime work:
+
+1. Identify the exact environment, selector or scope, and behavioral claim to
+   be tested.
+2. Read the relevant current runtime documentation and target definition.
+3. Run `MCMMORPG/infra/bin/mcenv preflight` as a baseline diagnostic.
+
+`mcenv preflight` currently inspects only baseline ports and does not prove that
+all ports required by a particular dev lease or staging configuration are free
+or owned by the expected process.
+
+### Dev targets
+
+Before using or mutating a `dev` target:
+
+1. Confirm that `MCMMORPG/infra/leases/registry.tsv` already exists before
+   running `mc-lease` or `mcenv config dev`. If it is missing, stop and report
+   the blocker because the current lease helper may create the registry.
+2. Run `MCMMORPG/infra/bin/mc-lease validate`.
+3. Resolve the exact scope with
+   `MCMMORPG/infra/bin/mc-lease show <scope>`.
+4. Confirm that exactly one current lease is accepted by the current
+   `mc-lease show` or `mc-lease export-env` implementation. Do not assume that
+   only the literal status `active` is resolvable; use the helper's current
+   status semantics.
+5. Inspect the lease's allowed paths, forbidden paths, validation channels,
+   secret source, rollback method, and close/reclaim protocol.
+6. Inspect current process, socket, Docker, and container ownership for every
+   port declared by the lease—currently proxy, RCON, and database.
+7. Render the exact configuration with
+   `MCMMORPG/infra/bin/mcenv config dev <scope>`.
+8. Inspect every additional host-published port present in the rendered Compose
+   configuration and verify its current ownership.
+9. Obtain authority for the exact dev runtime mutation before starting,
+   stopping, rebuilding, resetting, removing, or otherwise changing it.
+
+Do not read secret contents merely because a lease exposes their path. Access
+them only when the requested operation requires them and that access is
+authorized.
+
+### Staging targets
+
+Before using or mutating a `staging` target:
+
+1. Confirm that the exact staging selector is supported and its definition
+   exists.
+2. Render the configuration with
+   `MCMMORPG/infra/bin/mcenv config staging <selector>`.
+3. Inspect every host-published port declared by the staging definition or
+   rendered Compose configuration.
+4. Inspect current process, socket, Docker, and container ownership for every
+   such port.
+5. Obtain explicit approval before starting, stopping, rebuilding, reloading,
+   resetting, removing, or otherwise changing staging.
+
+Staging does not use the dev lease registry. Do not run `mc-lease show` for a
+staging selector or present a staging target as a dev lease.
+
+### Runtime authority
+
+Read-only inspection such as configuration rendering, process inspection,
+socket inspection, logs, or status queries does not by itself authorize a
+runtime mutation.
+
+Starting, stopping, rebuilding, resetting, removing, or otherwise changing a
+runtime requires authority for that exact target. Confirmation environment
+variables or command-line flags are technical safety gates, not substitutes
+for user authorization.
+
+Staging is reserved for approved integration, promotion, acceptance, or release
+work. Do not start, stop, rebuild, reload, or change staging without explicit
+approval.
+
+Lease allocation, activation, close, reclaim, environment synchronization, and
+registry changes are operational mutations. Do not perform them unless runtime
+provisioning or lease maintenance is in scope and authorized.
+
+## Validation routing
+
+Run checks appropriate to the changed paths and claims.
+
+Common entry points include:
+
+- repository contracts and validators:
+  `node --test tests/*.test.mjs`;
+- updater:
+  `npm --prefix mcmmorpg-updater test`;
+- ModelEngine and repository validation:
+  select the relevant script from `MCMMORPG/_validation/package.json` and run
+  it with `npm --prefix MCMMORPG/_validation run <script>`;
+- bots:
+  use the relevant script in `bots/package.json`;
+- RAG services:
+  use the relevant service's test environment and pytest suite;
+- Java plugins:
+  use the module's checked-in build or validation script.
+
+Do not assume a working Gradle wrapper when none exists.
+
+Do not describe a bot smoke or acceptance command as a unit-test suite.
+
+A parser, schema check, dry run, successful build, generated configuration, or
+clean startup log does not prove:
+
+- gameplay behavior;
+- visual quality;
+- plugin activation;
+- correct cross-plugin integration;
+- persistence behavior;
+- client-visible behavior;
+- live readiness.
+
+Those claims require the corresponding isolated runtime, client, logs,
+screenshots, protocol evidence, or structured runtime evidence.
+
+Ask before changing or restarting:
+
+- staging or a live server;
+- external services;
+- worlds or player data;
+- economy or permissions;
+- secrets or credentials;
+- lease and runtime registries.
+
+## Repository skills
+
+Use a repository-specific skill only when its exact domain matches the task.
+
+Use `minecraft-dungeon-artistry` only for dungeon scenes, encounters, pacing,
+environmental storytelling, and visual-quality direction. Its references are
+domain guidance, not general repository policy.
+
+Empty or removed Minecraft skill directories are not capabilities and must not
+be presented as available.
+
+When a repository-specific workflow applies, use it instead of stacking a
+generic planning, specification, or review workflow covering the same concern.
+
+## Visual assets
+
+Route new or materially changed visual assets through
+`docs/contracts/visual-asset-domain-handoff-contract.yaml` and load only the
+role-specific asset skill for the current stage.
+
+Do not patch ModelEngine `.bbmodel` JSON directly. Authoring requires an
+available approved transactional Blockbench MCP writer and explicit authority
+to mutate the asset source.
+
+Keep `ART_PASS`, `INTEGRATION_PASS`, and `RUNTIME_PASS` separate and bound to
+exact source revisions. The asset builder cannot issue its own `ART_PASS`.
+
+Do not install or run Blockbench integrations or mutate staging, runtime,
+worlds, player data, economy, permissions, or secrets without the required
+approval.
+
+## Completion
+
+Keep changes scoped to the request and preserve unrelated worktree changes.
+
+Finish with concrete evidence:
+
+- changed paths;
+- checks run and their results;
+- relevant negative or regression checks;
+- runtime or visual evidence when such claims are made;
+- checks not run and why;
+- unresolved limitations;
+- any runtime, lease, or external state changed.

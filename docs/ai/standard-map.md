@@ -15,7 +15,7 @@ operational checklist for agents and human reviewers.
 
 ## Source Of Truth
 
-- AI/project rules: `AGENTS.md`, `.cursor/rules/`, `.agents/skills/`.
+- AI/project procedures: `.cursor/rules/`, `.agents/skills/`, and focused docs in `docs/ai/`.
 - Product/orchestration: `.github/agent-knowledge/mcmmorpg-orchestrator/SPEC.md`.
 - Plugin syntax: `.github/agent-knowledge/minecraft-server-docs/registry.yml` and source folders.
 - Plugin inventory: `docs/plugin_manifest.yaml`, `docs/compatibility_matrix.md`, `docs/server_environment.md`.

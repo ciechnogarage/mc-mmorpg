@@ -1,0 +1,11 @@
+# Raport 3 — kafel Otwartej Areny
+- Pasy 1/2 tworzą górę, 3/4 dół obrazu 352×444 px (każdy pas 176×222 px).
+- Sloty 41, 42, 50, 51 odpowiadają prostokątowi kafla x=193–264, y=177–249; przesunięcie od kafla DRUŻYNA wynosi 144 px w dół.
+- Ramka i kremowa tabliczka pochodzą z istniejącego kafla GILDIA; wnętrze obrazka ma ciemnogranatowe tło.
+- Litery A z GILDIA oraz R/N z DRUŻYNA; E z podpisu SKLEP w serwerowym `hub_ekonomia`.
+- Ikona: dwa skrzyżowane miecze na bordowo-złotej tarczy, z palety istniejących kafli, bez czerni i szumu.
+- Wynik: `wdrozenie/pack/gui/hub_spolecznosc_{1,2,3,4}.png`; podgląd 4× i wycinek 8× w `podglad.png`.
+- Skrypt: `wdrozenie/pack/gui/rysuj_kafel.py`. Nie wdrażano na serwer.
+- Runda 3b: ikona 40×28 px, wyśrodkowana we wnętrzu 50×35 px; jasne, grubsze miecze tworzą X wokół małej tarczy.
+- Usunięto ciemny kontur ikony; ostrza, złote jelce i bordowa tarcza używają wyłącznie kolorów kafli GILDIA i ZNAJOMI.
+- `podglad.png` pokazuje okno 4× oraz kafle ARENA i GILDIA obok siebie w skali 8×.

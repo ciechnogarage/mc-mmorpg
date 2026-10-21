@@ -1,0 +1,23 @@
+menu_title: '&f䨐䨑䨒䨓'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&eUstawienia'
+    lore:
+      - '&7Tryb PvP: włącz lub wyłącz'
+      - '&7walkę z innymi graczami.'
+  pvp:
+    material: nexo-mmo_icon_blank
+    slots: [6, 7, 15, 16]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&cTryb PvP'
+    lore:
+      - '&7Włącz lub wyłącz walkę z graczami.'
+    left_click_commands:
+      - '[player] pvpmode'
+      - '[close]'

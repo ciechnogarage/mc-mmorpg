@@ -1,0 +1,17 @@
+schema_version: 1
+registry_kind: domain_03_combat_mechanic_authority_registry
+authority_id: domain_03_combat_core
+authority_contract_ref: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-03-combat-core-revision/index.md@33b076efb539dc5b0007c372d939ed447be6216116f975d95b20c76bf42e32e4
+snapshots:
+  - snapshot_id: d03-authority-ready-direct-damage-v1
+    snapshot_ref: docs/contracts/domain-03-authority-snapshots/ready-direct-damage.yaml@ff5b5762bd670abde7d6591bc5ca5440292099943ab8cfc36b851998526dc5ee
+    lifecycle: ACTIVE
+  - snapshot_id: d03-authority-ready-direct-periodic-damage-v1
+    snapshot_ref: docs/contracts/domain-03-authority-snapshots/ready-direct-periodic-damage.yaml@4bcd616b7a42e7b2ab34266f00434c4deb3b330eeac261d5c670868118441f52
+    lifecycle: ACTIVE
+  - snapshot_id: d03-authority-downgraded-direct-damage-v1
+    snapshot_ref: docs/contracts/domain-03-authority-snapshots/downgraded-direct-damage.yaml@a3cde3e867216b4e798e3927b87034fec513f401bf34ca8f1c0707de361190e7
+    lifecycle: ACTIVE
+  - snapshot_id: d03-authority-revoked-direct-damage-v1
+    snapshot_ref: docs/contracts/domain-03-authority-snapshots/revoked-direct-damage.yaml@532e73473ba73e4c7fbdc64d00d61ea2a7393314977c9f54c9ce213d620eb5f4
+    lifecycle: ACTIVE

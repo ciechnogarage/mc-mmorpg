@@ -1,5 +1,15 @@
 # Quest, Contract & Dungeon Objective Foundation v0.0.1
 
+Status: `legacy_design_input`
+
+This document remains useful as design input for activity types and board-driven content wrappers, but it is not a runtime contract.
+
+Current contract owners:
+
+- `docs/contracts/quest-state-contract.yaml`
+- `docs/contracts/narrative-choice-consequence-contract.yaml`
+- `docs/contracts/evidence-knowledge-contract.yaml`
+
 ## Cel dokumentu
 
 Ten dokument definiuje lekkie questy, zlecenia i objective'y contentowe dla

@@ -1,0 +1,127 @@
+General:
+  Version: 1
+  DungeonType: CLASSIC
+  ChunkGenerator: iris:dungeon_ruins_001
+  DisplayName: '&6Ruiny Złamanej Korony'
+  ShowTitleOnStart: true
+  Lobby:
+    Enabled: false
+    Location:
+      x: 0.0
+      y: 70.0
+      z: 0.0
+      pitch: 0.0
+      yaw: 0.0
+  AlwaysUseExit: false
+  Gamemode: SURVIVAL
+  PlayerLives: 3
+  InstantRespawnPlayers: false
+  DeadPlayersSpectate: true
+  CloseDungeonWhenAllSpectating: true
+  KeepInventoryOnEnter: true
+  KeepHealthOnEnter: false
+  KeepFoodOnEnter: false
+  KeepPotionEffectsOnEnter: false
+  KeepExpOnEnter: true
+  KickOfflinePlayers: true
+  KickOfflinePlayersDelay: 300
+  MaxBackups: 7
+  MaxInstances: 4
+  TimeLimit: 45
+  CleanupDelay: 2400
+  MaxPlayers: 5
+  GiveLootAfterCompletion: true
+  LootCooldown:
+    Enabled: true
+    PerReward: true
+    CooldownType: DAILY
+    CooldownTime: 0
+    ResetDay: 1
+  AccessCooldown:
+    Enabled: true
+    CooldownOnFinish: true
+    CooldownOnLeave: false
+    CooldownOnLoseLives: false
+    CooldownOnStart: false
+    CooldownType: DAILY
+    CooldownTime: 0
+    ResetDay: 1
+  StartLocation:
+    x: 0.5
+    y: 128.0
+    z: 64.5
+    pitch: 0.0
+    yaw: 180.0
+
+Requirements:
+  Permissions: []
+  MinPartySize: 1
+  MaxPartySize: 5
+  DungeonsComplete: []
+  Cost: 0
+  LeaderOnlyCost: false
+
+AccessKeys:
+  Consume: true
+  LeaderOnly: false
+  KeyItems:
+    - DR001_RUINED_GATE_KEY
+
+Difficulty:
+  EnableDifficultyLevels: true
+  EnableDifficultyMenu: true
+  Levels:
+    NORMAL:
+      DisplayName: '&aNormal'
+      MinLevel: 12
+    VETERAN:
+      DisplayName: '&6Veteran'
+      MinLevel: 20
+    MYTHIC:
+      DisplayName: '&5Mythic'
+      MinLevel: 30
+
+Rules:
+  SpawnMobs: false
+  SpawnAnimals: false
+  SpawnMonsters: false
+  AllowBreakBlocks: false
+  AllowPlaceBlocks: false
+  AllowSpawnEggs: false
+  AllowEnderpearl: false
+  AllowChorusFruit: false
+  AllowBucket: false
+  AllowPlaceEntities: false
+  DisableRandomTick: true
+  PreventPlantGrowth: true
+  PreventExplosionBlockDamage: true
+  PvP: false
+  HideDeathMessages: false
+  PreventTeleportIn: true
+  AllowCommands: false
+  AllowedCommands:
+    - party
+    - dparty
+    - p
+    - dungeon leave
+    - md leave
+    - leave
+  DisallowedCommands: []
+  BannedItems: []
+  CustomBannedItems: []
+  AllowPickupBannedItems: false
+  AllowCraftBannedItems: false
+  AllowStorageBannedItems: false
+  BlockPlaceWhitelist: []
+  BlockBreakWhitelist: []
+  BlockPlaceBlacklist: []
+  BlockBreakBlacklist: []
+  AllowBreakPlacedBlocks: false
+  DamageProtectedEntities: []
+  InteractProtectedEntities:
+    - ITEM_FRAME
+    - ARMOR_STAND
+  PreventDurabilityLoss:
+    Armor: false
+    Weapons: false
+    Tools: false

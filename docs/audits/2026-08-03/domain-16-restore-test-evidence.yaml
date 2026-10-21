@@ -1,0 +1,148 @@
+version: 1
+captured_at: "2026-08-03T15:11:00+02:00"
+scope_id: domain-16-restore-test-baseline
+backend: staging-docker-baseline
+environment: staging
+commit: f0f9526b46b7
+
+boot_evidence_ref: docs/audits/2026-08-03/domain-16-staging-boot-evidence.yaml
+compatibility_evidence_ref: docs/audits/2026-08-03/domain-16-plugin-compatibility-evidence.yaml
+recovery_contract_ref: docs/technical/backup-and-recovery.md
+status_vocabulary_ref: docs/technical/status-and-evidence-vocabulary.md#canonical-status-and-evidence-rules
+plugin_inventory_ref: docs/technical/plugin-manifest.yaml
+database_topology_ref: docs/technical/database-topology.md
+
+started_at: "2026-08-03T15:09:54+02:00"
+finished_at: "2026-08-03T15:11:00+02:00"
+runner: codex
+
+commands:
+  - "tar -tzf MCMMORPG/backups/level_1_template_20260705_184530.tgz"
+  - "mktemp -d /tmp/domain16-restore-XXXXXX"
+  - "tar -xzf MCMMORPG/backups/level_1_template_20260705_184530.tgz -C <tmpdir>"
+  - "python3 structure checks over restored /tmp/domain16-restore-*/level_1"
+  - "docker logs --tail 200 srv-world | grep 'Loading dungeon: level_1|level_1'"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -Nse 'SHOW DATABASES;'"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -Nse 'SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA=\"mcmmorpg\";'"
+  - "docker exec mcmmorpg-mariadb mariadb-dump -uroot -p'$MARIADB_ROOT_PASSWORD' --single-transaction mcmmorpg > /tmp/domain16-mcmmorpg-restore-probe-20260803.sql"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -e 'DROP DATABASE IF EXISTS mcmmorpg_restore_probe_20260803; CREATE DATABASE mcmmorpg_restore_probe_20260803;'"
+  - "docker exec -i mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' mcmmorpg_restore_probe_20260803 < /tmp/domain16-mcmmorpg-restore-probe-20260803.sql"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -Nse 'SELECT TABLE_SCHEMA, COUNT(*) FROM information_schema.tables WHERE TABLE_SCHEMA=\"mcmmorpg_restore_probe_20260803\" GROUP BY TABLE_SCHEMA; SELECT COUNT(*) FROM mcmmorpg_restore_probe_20260803.mmoprofiles_playerdata;'"
+  - "docker exec mcmmorpg-mariadb mariadb -uroot -p'$MARIADB_ROOT_PASSWORD' -e 'DROP DATABASE mcmmorpg_restore_probe_20260803;'"
+  - "/usr/bin/find MCMMORPG -type f \\( -name '*.db' -o -name '*.sqlite' -o -name '*.mv.db' -o -name '*.h2.db' \\) | sort"
+
+log_paths:
+  - docker://mcmmorpg-mariadb
+  - docker://srv-world
+  - MCMMORPG/backups/level_1_template_20260705_184530.tgz
+
+evidence_ref_ids:
+  - EVID-STAGING-BOOT-COMPOSE-PS-2026-08-03
+  - EVID-STAGING-BOOT-DOCKER-INSPECT-2026-08-03
+
+evidence_refs:
+  - evidence_id: EVID-RESTORE-TEMPLATE-ARCHIVE-2026-08-03
+    source_type: inventory
+    source_path: MCMMORPG/backups/level_1_template_20260705_184530.tgz
+    observed_at: 2026-08-03
+    scope: archived world/template restore candidate
+    summary: "A 3.5M archive from 2026-07-05 exists and lists a `level_1/` tree with `paper-world.yml`, `level.dat`, region/entity data, and an Iris datapack footprint."
+
+  - evidence_id: EVID-RESTORE-TEMPLATE-EXTRACT-2026-08-03
+    source_type: runtime_test
+    source_path: MCMMORPG/backups/level_1_template_20260705_184530.tgz
+    observed_at: 2026-08-03
+    scope: non-destructive restore drill for the archived `level_1` template
+    summary: "The archive was extracted into an isolated temp directory and produced a coherent world/template tree with `paper-world.yml`, `level.dat`, `session.lock`, `region/`, `entities/`, and `datapacks/iris/pack.mcmeta`."
+    notes: "Observed counts during restore drill: `region_files=4`, `entity_files=3`, `iris_datapack_files=100`, extracted size about `18M`. The extraction tree was ephemeral and cleaned after verification, so the canonical retained source is the archive itself."
+
+  - evidence_id: EVID-RESTORE-LEVEL1-RUNTIME-LINK-2026-08-03
+    source_type: log
+    source_path: docker://srv-world
+    observed_at: 2026-08-03
+    scope: relevance of the restored artifact to the active world-facing runtime slice
+    summary: "Current `srv-world` boot log includes `MythicDungeons` loading dungeon `level_1`, which ties the restored template artifact to the live world slice under review."
+    command: "docker logs --tail 200 srv-world | grep 'Loading dungeon: level_1|level_1'"
+
+  - evidence_id: EVID-RESTORE-MARIADB-DUMP-2026-08-03
+    source_type: runtime_test
+    source_path: docker://mcmmorpg-mariadb
+    observed_at: 2026-08-03
+    scope: logical restore drill for the active MariaDB scope
+    summary: "The live `mcmmorpg` database was dumped, restored into temporary database `mcmmorpg_restore_probe_20260803`, verified, and dropped without touching the source schema."
+    notes: "Source schema contained one table `mmoprofiles_playerdata`; restored probe schema also contained one table and `126` rows before cleanup."
+
+  - evidence_id: EVID-RESTORE-LOCAL-STORES-2026-08-03
+    source_type: inventory
+    source_path: MCMMORPG
+    observed_at: 2026-08-03
+    scope: proof that active runtime still mixes MariaDB with local file-backed stores
+    summary: "Active runtime tree still contains local stores such as `cmi.sqlite.db`, `Guilds/database.db`, `LuckPerms/luckperms-h2-v2.mv.db`, and `CoreTools.db` across backend `/data` trees."
+    notes: "This proves that a MariaDB-only restore drill is insufficient for the full Domain 16 recovery claim."
+
+  - evidence_id: EVID-RESTORE-RECOVERY-DIR-ABSENT-2026-08-03
+    source_type: inventory
+    source_path: MCMMORPG/recovery
+    observed_at: 2026-08-03
+    scope: canonical recovery asset directory presence
+    summary: "`MCMMORPG/recovery` is absent, so there is still no dedicated checked-in recovery asset directory for the mixed-scope runtime."
+
+verdict: BLOCKED
+requested_status_transition: none
+status_update_applied: false
+
+scenario_verdicts:
+  archived_template_restore: PASS
+  mariadb_logical_restore: PASS
+  mixed_local_file_plus_db_restore: BLOCKED
+  full_recoverability_scope: BLOCKED
+
+canonical_blocker_status:
+  - blocker_id: BLK-RECOVERY-001
+    effect: narrowed
+    still_open: true
+    rationale: "This artifact proves a real archived-template restore and a real logical MariaDB restore, but at this capture point it did not yet include one same-window mixed restore drill for a named backend slice."
+  - blocker_id: BLK-RECOVERY-002
+    effect: narrowed
+    still_open: true
+    rationale: "The artifact narrows the end-to-end recoverability gap by proving archive structure, live world relevance, MariaDB logical restore, and mixed-storage presence, but it does not yet restore backend `/data`, local plugin stores, vendor assets, and secrets as one coherent runbook path."
+  - blocker_id: BLK-RECOVERY-003
+    effect: unchanged
+    still_open: true
+    rationale: "No cache-loss or stale-cache recovery behavior was exercised here, so the cache recovery blocker remains fully open."
+
+blockers:
+  - blocker_id: BLK-RECOVERY-001
+    status_family: release_status
+    summary: "Canonical restore-test blocker is only narrowed here: the artifact proves archive restore plus logical MariaDB restore, but not yet one same-window mixed restore drill for a named backend slice."
+    required_evidence: "Named restore test result that covers current DB plus backend/runtime state scope."
+    owner: domain-16
+    scope: restore-test
+
+  - blocker_id: BLK-RECOVERY-002
+    status_family: release_status
+    summary: "Canonical end-to-end recoverability blocker remains open: mixed runtime scope across MariaDB, backend `/data`, local plugin storage, vendor assets, and secret re-entry was not restored as one coherent drill in this artifact."
+    required_evidence: "Reviewed recovery runbook or drill proving the intended scope can be brought back coherently."
+    owner: domain-16
+    scope: end-to-end-recoverability
+
+  - blocker_id: BLK-RECOVERY-003
+    status_family: runtime_status
+    summary: "Canonical cache recovery blocker is unchanged here: this restore baseline did not test cache restart behavior, stale-cache detection, or cache-loss safety."
+    required_evidence: "Canonical cache contract with restart behavior and failure safety."
+    owner: domain-16
+    scope: cache-recovery
+
+summary: |
+  Two real restore drills were completed on 2026-08-03 without damaging the healthy staging baseline. First, the archived
+  `level_1_template_20260705_184530.tgz` world/template backup was restored into an isolated temp directory and validated
+  structurally, including Iris datapack contents. Second, the live `mcmmorpg` MariaDB schema was dumped and restored into
+  a temporary database, verified, and dropped cleanly. Those probes are enough to upgrade restore evidence from purely
+  hypothetical to partially tested, but they do not prove full recoverability for the Domain 16 runtime because the active
+  stack still includes untested local `sqlite`/`h2` stores and lacks a complete mixed-scope restore walkthrough.
+
+notes:
+  - "Temporary restore artifacts were cleaned up after verification: the extracted `/tmp/domain16-restore-*` tree and the temporary SQL dump were removed, and the probe database was dropped."
+  - "Live runtime state was only used where necessary: to prove `level_1` is active in `srv-world` and to execute the non-destructive MariaDB restore probe."
+  - "The active runtime currently has no `MCMMORPG/recovery` directory, which matches the blocker already named in `docs/technical/backup-and-recovery.md`."
+  - "A later artifact from the same day, `docs/audits/2026-08-03/domain-16-items-mixed-restore-evidence.yaml`, narrows the mixed-slice portion of `BLK-RECOVERY-001` and `BLK-RECOVERY-002` for `srv-items` only."

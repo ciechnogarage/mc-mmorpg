@@ -1,0 +1,24 @@
+dr001_objectives:
+  status: release_prep_contract
+  start:
+    - dr001_start_collect_relic_shards
+    - dr001_start_clear_courtyard
+    - dr001_start_defeat_varos
+    - dr001_start_unlock_stairwell
+  mid:
+    - dr001_mid_activate_aqueduct_runes
+    - dr001_mid_survive_flood_phase
+    - dr001_mid_defeat_nhalruun
+    - dr001_mid_unlock_crown_bridge
+  end:
+    - dr001_end_destroy_void_anchors
+    - dr001_end_defeat_aurelion
+    - dr001_end_claim_loot_shrine
+    - dr001_end_exit_portal
+  placeholders_to_wire:
+    - "%dr001_stage%"
+    - "%dr001_relics%"
+    - "%dr001_kills%"
+    - "%dr001_runes%"
+    - "%dr001_flood_time%"
+    - "%dr001_anchors%"

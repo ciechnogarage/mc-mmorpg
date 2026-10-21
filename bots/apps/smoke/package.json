@@ -1,0 +1,13 @@
+{
+  "name": "@mmorpg-bots/smoke",
+  "version": "0.1.0",
+  "main": "smoke.js",
+  "dependencies": {
+    "@mmorpg-bots/bot-core": "*",
+    "@mmorpg-bots/skills": "*",
+    "@mmorpg-bots/command-bus": "*",
+    "@mmorpg-bots/mmo-bridge": "*",
+    "@mmorpg-bots/qa": "*",
+    "@mmorpg-bots/safe-protocol": "*"
+  }
+}

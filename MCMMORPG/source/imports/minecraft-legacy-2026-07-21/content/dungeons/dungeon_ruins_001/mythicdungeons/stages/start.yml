@@ -1,0 +1,45 @@
+stage: start
+display: "START / Overgrown Ruins"
+biome: dr001_start_overgrown_ruins
+intent: "Teach relic collection, courtyard combat, telegraphed slam counterplay, and first checkpoint."
+objectives:
+  - id: dr001_start_collect_relic_shards
+    type: collect
+    item_id: DR001_RELIC_SHARD
+    count: 3
+    scoreboard_line: "&fRelikty: &e%dr001_relics%/3"
+    completion_signal: dr001_relic_shards_collected
+  - id: dr001_start_clear_courtyard
+    type: kill_count
+    count: 18
+    target_mobs:
+      - DR001_RuinThrall
+      - DR001_MossboundArcher
+      - DR001_RootlingSwarmer
+      - DR001_AnimatedRubble
+    scoreboard_line: "&fDziedziniec: &e%dr001_kills%/18"
+    completion_signal: dr001_start_courtyard_cleared
+  - id: dr001_start_defeat_varos
+    type: boss
+    target_mob: DR001_GatewardenVaros
+    prerequisites:
+      - dr001_relic_shards_collected
+      - dr001_start_courtyard_cleared
+    completion_signal: dr001_varos_defeated
+  - id: dr001_start_unlock_stairwell
+    type: transition
+    target: collapsed_stairwell_01
+    prerequisites:
+      - dr001_varos_defeated
+    completion_signal: dr001_start_complete
+checkpoint:
+  id: cp_after_varos
+  activation_signal: dr001_checkpoint_after_varos
+transition:
+  next_stage: mid
+  unlock_signal: dr001_start_complete
+manual_editor_notes:
+  - "Use MythicDungeons editor to bind relic shard pickup and Varos death signal to stage completion."
+  - "Command syntax for reload/play is documented in qa/FINAL_ASSET_LIVE_RUNNER.md; do not execute without approval."
+cleanup:
+  despawn_mobs_with_prefix: DR001_

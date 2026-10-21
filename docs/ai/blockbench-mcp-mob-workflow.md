@@ -58,16 +58,37 @@ Zasady wiązania: nazwy stanów w configach (`state{s=<name>}`) = 1:1 nazwy anim
 
 ## MCP: wykrycie i sposób pracy
 
-Skonfigurowane w `~/projects/MC/.mcp.json` (wymagany uruchomiony Blockbench desktop z załadowanym pluginem):
+Lokalny endpoint jest skonfigurowany w ignorowanym przez Git pliku `.mcp.json`. Wymaga uruchomionego Blockbench Desktop z przypiętym pluginem:
 
 | Serwer | Endpoint | Rola |
 |---|---|---|
-| `blockbench-ashfox` | `http://127.0.0.1:8788/mcp` | **primary** — deterministyczne low-level tools, revision guard |
-| `blockbench-jj` | `http://localhost:3000/bb-mcp` | fallback (jasonjgardner) — zweryfikowany działający 2026-07-09 |
+| `blockbench-ashfox` | `http://127.0.0.1:8788/mcp` | jedyny kandydat writer — deterministyczne low-level tools, revision guard |
 
-**UWAGA port**: domyślny port ashfox **8787 koliduje z proxy Headroom** na tej maszynie. Po załadowaniu pluginu ustaw w Blockbench Settings → `ashfox: Server` → MCP Port = **8788** i przeładuj plugin.
+Pin Fazy 1 znajduje się w `MCMMORPG/_validation/blockbench_mcp/ashfox.lock.json`: Ashfox `v0.2.0` (`232a712...`) i Blockbench `5.1.6`, oba weryfikowane po SHA-256. Port 8788 jest celowo inny od domyślnego 8787 i endpoint musi pozostać na loopbacku.
 
-Najpierw sprawdź, który endpoint odpowiada (`tools/list`). Nie zakładaj sygnatur narzędzi z pamięci — odczytaj je z `tools/list`.
+Nie zakładaj sygnatur narzędzi z pamięci — odczytaj je z `tools/list`. Przed pracą uruchom:
+
+```bash
+npm --prefix MCMMORPG/_validation run modelengine:mcp-transaction:health
+npm --prefix MCMMORPG/_validation run modelengine:mcp-transaction:test
+```
+
+### Status gate Fazy 1.1 (2026-08-12)
+
+Lokalny wariant `ashfox-v0.2.0-native-roundtrip+mc.2` jest zatwierdzonym writerem dla izolowanego authoringu `.bbmodel` w tym workflow. Bazuje dokładnie na upstream `v0.2.0` / `232a712...`; dwa uporządkowane patche, Node użyty do builda i wynikowy plugin mają osobne SHA-256 w `MCMMORPG/_validation/blockbench_mcp/ashfox.lock.json`.
+
+Izolowany conformance zakończył się `CONFORMANCE_PASS`:
+
+- natywny `export(format=native_codec, codecId=project)` utworzył `.bbmodel`;
+- Blockbench ponownie otworzył wynik, a `validate` przed i po zwrócił pustą listę findings;
+- semantyczne struktury geometrii, hierarchii, UV/face bindings i animacji 20 FPS miały identyczny SHA-256 oraz pusty diff;
+- PNG tekstury i render preview miały identyczne SHA-256 przed i po;
+- ten sam job wznowiono po reopen bez duplikatów;
+- rollback, revision guard, journal i resume pozostają PASS.
+
+Pełny surowy diff jest zachowany osobno i pokazuje oczekiwaną zmianę sesyjnych UUID oraz zanik opcjonalnego `contentHash`/`uvPixelsPerBlock` w snapshotcie po reopen. Dlatego trwała rekonsyliacja jobów musi używać unikalnych nazw domenowych; UUID Ashfox nie są kontraktem trwałym między otwarciami. Treść tekstury jest porównywana przez SHA-256 odczytanego PNG.
+
+Reprodukcja: `npm --prefix MCMMORPG/_validation run modelengine:mcp-conformance`; oczekiwany wynik dla dokładnego lokalnego pinu to `CONFORMANCE_PASS`. Raport i oba rodzaje diffu są w ignorowanym `MCMMORPG/_validation/runs/blockbench-mcp/phase1-conformance/`. Wynik nie jest `ART_PASS`, `INTEGRATION_PASS` ani `RUNTIME_PASS` i nie upoważnia do stagingu, serwera, importu ModelEngine/Nexo lub generowania packa.
 
 ### Wariant ashfox (primary)
 
@@ -76,11 +97,6 @@ Najpierw sprawdź, który endpoint odpowiada (`tools/list`). Nie zakładaj sygna
 3. Zmiany tylko wykrytymi narzędziami: `add_bone`, `add_cube` (mesh tylko gdy referencja wymaga), `assign_texture`, `paint_faces`, `read_texture`, `create_animation_clip`, `set_frame_pose`, `set_trigger_keyframes`
 4. Narzędzia mutujące: przekazuj aktualny `ifRevision`; po revision-mismatch → `get_project_state` i retry z nowym revision
 5. Po większej zmianie `get_project_state`; przed eksportem **obowiązkowo** `validate` → `render_preview` → `export`
-
-### Wariant jasonjgardner (fallback)
-
-1. Załaduj skill `blockbench-use` jeśli dostępny, potem listuj narzędzia
-2. Ten sam logiczny workflow: inspekcja → plan → modelowanie → teksturowanie → animacja → walidacja → preview → eksport
 
 ## Etapy
 
@@ -155,10 +171,12 @@ Uzupełniająco: `node MCMMORPG/_validation/render_bbmodel_review.js` + przeglą
 ### I — Raport końcowy (dokładnie w tej kolejności)
 1. `DETECTED_STACK` 2. `CHOSEN_REFERENCE` 3. `ASSET_PLAN` 4. `OUTPUTS` (pliki, co deployowalne, gdzie `TODO_UNKNOWN_FIELD`) 5. `VALIDATION_RESULT`
 
-## Instalacja pluginów (runtime, jednorazowo per maszyna)
+## Instalacja pluginu (lokalnie, bez stagingu i serwera)
 
-- ashfox: Blockbench → File → Plugins → Load Plugin from URL → `https://github.com/sigee-min/ashfox/releases/latest/download/ashfox.js` (lokalna kopia: `~/projects/Minecraft/tools/ashfox-plugin/ashfox.js`; źródła: `~/projects/Minecraft/tools/ashfox/`). Potem **zmień port na 8788** (patrz UWAGA wyżej). Status popup: `ashfox MCP inline|sidecar: 127.0.0.1:8788/mcp`.
-- jasonjgardner: Load Plugin from URL → `https://jasonjgardner.github.io/blockbench-mcp-plugin/mcp.js`; port/endpoint w Settings → General (`3000` / `bb-mcp`). Stan 2026-07-09: załadowany i działający.
-- Blockbench jest snapem (`blockbench-snapcraft`) — przy problemach z portem/plikami sprawdź confinement; fallback: AppImage/deb.
-- Check (endpoint wymaga handshake MCP initialize → Mcp-Session-Id; goły `tools/list` bez sesji zwróci błąd): `curl -s http://127.0.0.1:8788/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"probe","version":"1.0"}}}'`
-- Pułapka `risky_eval` (jj): wymaga otwartego projektu; odrzuca kod zawierający `//` (także w URL-ach) i `console.`.
+- Instaluj dokładnie asset wskazany przez `ashfox.lock.json`, nie ruchome `/latest/`; przed uruchomieniem porównaj SHA-256.
+- Lokalny pin Fazy 1.1: `/home/przemek/.local/share/blockbench-plugins/ashfox/v0.2.0-mc.2/ashfox.js`; izolowany profil ładuje go przez audytowalny symlink, a niezmieniony upstream zachowano jako `ashfox.upstream.js`.
+- Blockbench AppImage `5.1.6`: `/home/przemek/.local/opt/blockbench/5.1.6/Blockbench_5.1.6.AppImage`; profil izolowany: `/home/przemek/.local/state/mc-ashfox-conformance/`.
+- Ashfox ma uprawnienia tylko w izolowanym profilu Blockbench. Endpoint: `127.0.0.1:8788/mcp`; nie wiąż go do interfejsu sieciowego.
+- Na hoście bez działającego WebGL uruchamiaj AppImage z programowym rendererem: `--ozone-platform=x11 --disable-vulkan --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`. Flaga `--disable-gpu` psuje Blockbench i nie jest dozwolonym obejściem.
+- Handshake negocjuje wspieraną wersję protokołu; aktualny obserwowany wynik to MCP `2025-11-25`. Nie wracaj do sztywnego `2025-03-26`.
+- Ta instalacja nie upoważnia do zmian staging/live, uruchomienia Minecrafta, importu ModelEngine/Nexo ani generowania resource packa.
