@@ -1,0 +1,54 @@
+# HudDane: dane dla HUD-a, ktorych nie daja inne pluginy.
+# Druzyna: czlonek dalej niz zasieg (albo w innym swiecie) jest pokazywany jako "daleko".
+druzyna:
+  zasieg: 64
+  niskie-hp: 0.3
+# Przywolance: moby MythicMobs, ktorych rodzicem (parent) jest gracz. Czas zycia w tickach
+# (z umiejetnosci MythicLib/MythicMobs); bez wpisu HUD nie pokazuje odliczania.
+slugi:
+  limit: 3
+  czas-zycia:
+    AKO_SLUGA_OBRONCA: 300
+    AKO_OGNIK_KSIEZYCA: 160
+    AKO_PRZODEK_MLOTA: 200
+    AKO_KOSIARZ_CISZY: 200
+    SPEC_WILK_STEPU: 200
+    SPEC_WILK_STEPU_BRON: 200
+    SPEC_PRZODEK: 240
+    SPEC_PRZODEK_BRON: 240
+    SPEC_SLUGA_KURHANU: 240
+    SPEC_SLUGA_KURHANU_BRON: 240
+# Efekty pokazywane w HUD-zie (klucz Minecrafta -> id ikony). Kolejnosc = priorytet.
+efekty:
+  unluck: rany
+  poison: trucizna
+  wither: uschniecie
+  slowness: spowolnienie
+  weakness: oslabienie
+  regeneration: regeneracja
+  strength: sila
+  resistance: odpornosc
+  speed: szybkosc
+  fire_resistance: ognioodpornosc
+# Cel zadania w HUD-zie: krok przycinany do max-krok znakow; strzalka do miejsca, ktorego fragment wystepuje w tekscie kroku.
+zadania:
+  max-krok: 38
+  miejsca:
+    straznicza:
+      fragment: "Strażniczk"
+      swiat: stolica_odnowa
+      x: 32.5
+      y: 101
+      z: -48.5
+    trener:
+      fragment: "trenerem"
+      swiat: stolica_odnowa
+      x: 32.5
+      y: 101
+      z: -48.5
+    wybieg:
+      fragment: "dzikiego"
+      swiat: stolica_odnowa
+      x: 42
+      y: 102
+      z: -52
