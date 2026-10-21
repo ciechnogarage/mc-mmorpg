@@ -125,6 +125,16 @@ final class ZZielnik {
         return v;
     }
 
+    /** Test/admin: zapomina pokazane rady (wejscie i po ruchu), zeby porownac kadry wariantow komunikatow. */
+    int zapomnijRady(Player p) {
+        UUID u = Zlecenia.profil(p);
+        int n = 0;
+        n += lic(u).keySet().removeIf(k -> k.startsWith("_r_")) ? 1 : 0;
+        n += dla(u).removeIf(k -> k.startsWith("_rada_")) ? 1 : 0;
+        zapisz(u);
+        return n;
+    }
+
     /** Rada po ruchu: tylko 3 pierwsze razy na postac i rodzaj. */
     boolean rada3(Player p, String rodzaj) { return dolicz(p, "_r_" + rodzaj, 1, false) <= 3; }
 

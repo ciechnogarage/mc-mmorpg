@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Wycinek zielarza na KLONIE (klon.sh): jar Rzemiosla, przedmioty tylko-klon, restart, teren testowy, kepy, suszarnie.
-# Uzycie: przygotuj_klon.sh [nazwa=zielarz] [--bez-terenu]
+# Uzycie: [WARIANT=v7|a|b|c] przygotuj_klon.sh [nazwa=zielarz] [--bez-terenu]
+# Klon stawiaj z kreatorem: klon.sh start <nazwa> --z-kreatorem (bez niego Wiary/MMOProfiles nie wstaja i karta postaci
+# pokazuje surowe %wiary_*% i klase "Human" — tak powstaly kadry v7 z 21.10)
 set -euo pipefail
 N=${1:-zielarz}; D=/opt/docker/mc/klony/$N/data; H="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; P=$H/../../plugin-src/rzemioslo
 [[ -d "$D/plugins" ]] || { echo "brak klonu $N"; exit 2; }
@@ -14,6 +16,9 @@ cp "$G/nexo/items/zielarz.yml" "$D/plugins/Nexo/items/zielarz.yml"
 mkdir -p "$D/plugins/Nexo/pack/assets/nexo/textures/block/zielarz" "$D/plugins/Nexo/pack/assets/nexo/models/zielarz"
 cp "$G"/nexo/pack/assets/nexo/textures/block/zielarz/*.png "$D/plugins/Nexo/pack/assets/nexo/textures/block/zielarz/"
 cp "$G"/nexo/pack/assets/nexo/models/zielarz/*.json "$D/plugins/Nexo/pack/assets/nexo/models/zielarz/"
+python3 "$H/wyglad/grafika_ui.py" "$D/plugins/Nexo/pack" >/dev/null   # font zielarz:ui: ikony klawiszy i tabliczka HUD (komunikaty A/B/C)
+# wariant komunikatow: WARIANT=v7|a|b|c przygotuj_klon.sh ... (bez zmiennej zostaje to, co w configu; domyslnie v7)
+if [[ -n "${WARIANT:-}" ]]; then python3 "$H/wyglad/wariant.py" "$D/plugins/Rzemioslo/config.yml" "$WARIANT"; fi
 M=$D/plugins/MMOItems/item/material.yml
 sed -i '/^# >>> ZIELARZ wycinek/,/^# <<< ZIELARZ wycinek/d' "$M"; cat "$H/przedmioty-klon.yml" >> "$M"
 python3 "$H/klon_v7.py" "$D"   # v7: receptury z wybornymi + skup wybornych (tylko klon)

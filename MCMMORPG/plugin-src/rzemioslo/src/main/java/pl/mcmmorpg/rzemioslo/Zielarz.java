@@ -153,6 +153,8 @@ final class Zielarz implements Listener {
     private final NamespacedKey kJakosc, kZamiana, kSlot, kUchwyt, kPartia;
     private final PacketListenerAbstract pakiety;
     final ZZielnik zielnik;
+    /** Wszystkie komunikaty zbioru (wariant pokazu z configu: komunikaty.zielarz-wariant). */
+    final ZKomunikaty kom;
     final ZSuszarnia suszarnia;
 
     Zielarz(Rzemioslo plugin) {
@@ -164,6 +166,7 @@ final class Zielarz implements Listener {
         this.kSlot = new NamespacedKey(plugin, "zielarz_slot");
         this.kUchwyt = new NamespacedKey(plugin, "zielarz_uchwyt");
         this.zielnik = new ZZielnik(plugin);
+        this.kom = new ZKomunikaty(plugin);
         this.suszarnia = new ZSuszarnia(plugin);
         Bukkit.getPluginManager().registerEvents(suszarnia, plugin);
         Bukkit.getScheduler().runTaskLater(plugin, suszarnia::pokazWszystko, 40L);
@@ -337,16 +340,16 @@ final class Zielarz implements Listener {
         if (sesje.containsKey(p.getUniqueId()) || plugin.zbieranie().wTrakcie(p) || p.isInsideVehicle()
                 || p.getGameMode() == GameMode.SPECTATOR) return;
         double odl = p.getLocation().distance(b.getLocation().add(0.5, 0, 0.5));
-        if (odl < 1.1) { plugin.pasek(p, "§fCofnij się o krok. Stoisz w samej roślinie."); return; }
+        if (odl < 1.1) { kom.odmowa(p, "§fCofnij się o krok. Stoisz w samej roślinie."); return; }
         int prog = PROG.getOrDefault(gatunek, 1), poz = Profesje.poziom(p, PROF);
-        if (poz < prog && !p.hasPermission("rzemioslo.zielarz.bezprogow")) { plugin.pasek(p, "§fNie znasz się jeszcze na tej roślinie. §7Zielarstwo " + prog + " (masz " + poz + ")."); return; }
-        if (odl > 3.2) { plugin.pasek(p, "§7Podejdź bliżej, żeby pochylić się nad rośliną."); return; }   // stale, bliskie zblizenie
+        if (poz < prog && !p.hasPermission("rzemioslo.zielarz.bezprogow")) { kom.odmowa(p, "§fNie znasz się jeszcze na tej roślinie. §7Zielarstwo " + prog + " (masz " + poz + ")."); return; }
+        if (odl > 3.2) { kom.odmowa(p, "§7Podejdź bliżej, żeby pochylić się nad rośliną."); return; }   // stale, bliskie zblizenie
         Stan st = stan(p, b);
         long teraz = System.currentTimeMillis();
         if (st.odrostDo > teraz) {
             String gk = gatunek;
             Bukkit.getScheduler().runTask(plugin, () -> p.sendBlockChange(b.getLocation(), wygladBloku(gk, true, b)));
-            plugin.pasek(p, "§7Ta kępa jeszcze odrasta. Wróć za §f" + czas((st.odrostDo - teraz) / 1000) + "§7.");
+            kom.odmowa(p, "§7Ta kępa jeszcze odrasta. Wróć za §f" + czas((st.odrostDo - teraz) / 1000) + "§7.");
             return;
         }
         // po odroscie nowy okaz, ale rozpoznanie kepy zostaje (gracz juz wie, co tu rosnie)
@@ -354,10 +357,10 @@ final class Zielarz implements Listener {
         String rodzaj = plugin.dane().narzedzieProfesji.getOrDefault(PROF, "sierp");
         Przedmioty.Znalezione sierp = plugin.przedmioty().najlepsze(p, rodzaj, 1);
         if (sierp == null) {
-            plugin.pasek(p, plugin.kom("brak-narzedzia", "{narzedzie}", Przedmioty.nazwaRodzaju(rodzaj), "{tier}", "I"));
+            kom.odmowa(p, plugin.kom("brak-narzedzia", "{narzedzie}", Przedmioty.nazwaRodzaju(rodzaj), "{tier}", "I"));
             return;
         }
-        if (Przedmioty.zepsute(sierp.item())) { plugin.pasek(p, "§cSierp jest stępiony do cna. Napraw go, zanim weźmiesz się za zioła."); return; }
+        if (Przedmioty.zepsute(sierp.item())) { kom.odmowa(p, "§cSierp jest stępiony do cna. Napraw go, zanim weźmiesz się za zioła."); return; }
         // miejsce przyklekniecia: ~1,7 bloku przed kepa od strony gracza, na gruncie
         Location o = b.getLocation().add(0.5, 0, 0.5);
         Vector przod = o.toVector().subtract(p.getLocation().toVector()).setY(0);
@@ -409,17 +412,13 @@ final class Zielarz implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy) s.r.skala(1f, 3); }, 12L);
         // kamera gracza nie jest obracana na sile (walczyla z mysza); celowanie zostaje w rekach gracza
         p.playSound(p.getLocation(), Sound.BLOCK_GRASS_STEP, SoundCategory.PLAYERS, 0.8f, 0.8f);
-        plugin.pasek(p, "§f" + nazwaKepy(s) + " §7· Shift: odejdź");
         s.r.zaslon(1.5f, gatunek.equals("kozlek") ? 1.6f : 1.2f);
-        String rada = wskazowka(s);
-        if (rada == null && s.mokro && gatunek.equals("dziurawiec") && zielnik.rada3(p, "rosa")) rada = "Mokre ziele|Mokre ziele. Zielarze mówią, że takie pleśnieje w suszarni.";
-        if (rada == null && s.stan.okazala()) rada = "Okazała kępa|Okazała kępa. Rzadko się taką spotyka.";
-        if (rada != null && zielnik.rada(p, widocznyGatunek(s)) <= 3) {   // najwyzej 3 razy: krotko w podtytule (miesci sie przy GUI 3-4), cala rada na czacie
-            String[] rr = rada.split("\\|", 2);
-            p.showTitle(net.kyori.adventure.title.Title.title(Component.empty(), Component.text(rr[0], net.kyori.adventure.text.format.NamedTextColor.WHITE),
-                    net.kyori.adventure.title.Title.Times.times(java.time.Duration.ofMillis(300), java.time.Duration.ofSeconds(4), java.time.Duration.ofMillis(600))));
-            p.sendMessage("§2Zielarz: §f" + rr[rr.length - 1]);
-        }
+        String rada = wskazowka(s), radaNowa = wskazowkaNowa(s);
+        if (rada == null && s.mokro && gatunek.equals("dziurawiec") && zielnik.rada3(p, "rosa")) { rada = "Mokre ziele|Mokre ziele. Zielarze mówią, że takie pleśnieje w suszarni."; radaNowa = "§eMokre ziele.|§7Zielarze mówią, że mokre pleśnieje w suszarni."; }
+        if (rada == null && s.stan.okazala()) { rada = "Okazała kępa|Okazała kępa. Rzadko się taką spotyka."; radaNowa = "§eOkazała kępa. §7Rzadko się taką spotyka."; }
+        boolean pokazRade = rada != null && zielnik.rada(p, widocznyGatunek(s)) <= 3;   // najwyzej 3 razy
+        // v7: nazwa na pasku, rada w podtytule i na czacie; A/B/C: ZKomunikaty (bez tytulu, czat tylko jako dziennik)
+        kom.wejscie(p, s.r.o.clone(), przod, nazwaKepy(s), pokazRade ? rada : null, pokazRade ? radaNowa : null);
         zielnik.zobaczono(p, widocznyGatunek(s));
         s.zad = Bukkit.getScheduler().runTaskTimer(plugin, () -> tik(s), 1L, 1L);
     }
@@ -445,6 +444,16 @@ final class Zielarz implements Listener {
             case "dziurawiec" -> zielnik.ma(s.p, "dziurawiec_wyborny") ? null : "Tnij LPM tuż pod kwiatami|LPM tnie tuż pod kwiatami. Chorych pędów nie bierz.";
             case "kozlek" -> zielnik.ma(s.p, "kozlek_wyborny") ? null : "Opukaj ziemię łopatką (LPM)|Opukaj ziemię łopatką (LPM), odkop głuche miejsca, korzeń ciągnij PPM.";
             case "szerokolistna" -> zielnik.ma(s.p, "konwalia_zapach") || zielnik.ma(s.p, "czosnek_zapach") ? null : "Uwaga: trujący sobowtór!|Trujący sobowtór! Niepewny? Trzymaj PPM na liściu, żeby go powąchać.";
+            default -> null;
+        };
+    }
+
+    /** Ta sama rada dla wariantow A/B/C: zdanie o swiecie, klawisz jako ikona; "|" = kolejny krok (osobna linia). */
+    private String wskazowkaNowa(Sesja s) {
+        return switch (widocznyGatunek(s)) {
+            case "dziurawiec" -> "§f{LPM} Tnij tuż pod kwiatami.|§7Chorych pędów nie bierz.";
+            case "kozlek" -> "§f{LPM} Opukaj ziemię łopatką.|§7Głuche miejsca odkop, §f{PPM} §7ciągnij korzeń.";
+            case "szerokolistna" -> "§6Trujący sobowtór!|§7Niepewny? Przytrzymaj §f{PPM} §7i powąchaj liść.";
             default -> null;
         };
     }
@@ -551,7 +560,7 @@ final class Zielarz implements Listener {
                 ZRoslina.Czesc roz = rozeta(s);
                 if (roz != null && !roz.zabrana && s.t % 2 == 0) s.r.przesun(roz, new Vector3f(0, (float) (s.postep * 0.5), 0), 3);
             }
-            if (s.trzeszczy && s.napiecie <= gornaPasma(s)) { s.trzeszczy = false; if (s.wprawa < 3) plugin.pasek(s.p, "§fPopuściłeś. Możesz ciągnąć dalej."); }
+            if (s.trzeszczy && s.napiecie <= gornaPasma(s)) { s.trzeszczy = false; if (s.wprawa < 3) pasek(s, "§fPopuściłeś. Możesz ciągnąć dalej."); }
         }
         if (s.t - s.ostatniaAkcja > 900) zakoncz(s, "§7Wstajesz.");
         else if (wszystkoZebrane(s) && s.t >= s.zajetyDo) zakoncz(s, null);
@@ -587,13 +596,18 @@ final class Zielarz implements Listener {
             case "gleba" -> { if (!s.sonda[c.nr] && !s.poluzowane[c.nr]) sonduj(s, c); else kop(s, c); }
             case "lisc" -> zerwijLisc(s, c);   // w rekawicach jeden lisc (scinanie calej kepy jednym klikiem bylo pulapka)
             case "kwiat" -> podpowiedz(s, "kwiat", "§fKwiaty zostaw. Zbiera się liście.");
-            case "rozeta" -> podpowiedz(s, "rozeta", "§fKozłka się nie ścina. §7Chwyć łodygę przy ziemi (PPM) i ciągnij.");
+            case "rozeta" -> podpowiedz(s, "rozeta", "§fKozłka się nie ścina. §7Chwyć łodygę przy ziemi (PPM) i ciągnij.",
+                    "§fKozłka nie tniesz. §7{PPM} ciągnij łodygę przy ziemi.");
             default -> { }
         }
     }
 
     /** Rada-instrukcja po ruchu: tylko 3 pierwsze razy na postac i rodzaj (dzwiek i obraz zostaja zawsze). */
-    private void podpowiedz(Sesja s, String rodzaj, String txt) { if (zielnik.rada3(s.p, rodzaj)) plugin.pasek(s.p, txt); }
+    private void podpowiedz(Sesja s, String rodzaj, String txt) { podpowiedz(s, rodzaj, txt, null); }
+    private void podpowiedz(Sesja s, String rodzaj, String txt, String nowy) { if (zielnik.rada3(s.p, rodzaj)) pasek(s, txt, nowy); }
+    /** Komunikat w trakcie zbioru: v7 stary pasek, A/B/C przez ZKomunikaty (nowy == null: stary tekst z ikonami klawiszy). */
+    private void pasek(Sesja s, String txt) { pasek(s, txt, null); }
+    private void pasek(Sesja s, String txt, String nowy) { kom.zdarzenie(s.p, s.r.o.clone(), txt, nowy); }
 
     /** Pomiar PPM: odstepy miedzy powtorzeniami pakietu (rozklad do raportu; tylko gdy pomiar wlaczony). */
     static final int[] ODSTEPY_PPM = new int[16];
@@ -640,14 +654,14 @@ final class Zielarz implements Listener {
         if (c == null || c.zabrana || s.chwytZalatwiony) return;
         if (dl <= 4 || dl <= 11 && (c.typ.equals("kwiat") || c.typ.equals("ped"))) klik(s, c);   // klik dluzszy niz jeden pakiet tez jest klikiem (wczesniej przepadal bez sladu)
         else if (c.typ.equals("lisc")) podpowiedz(s, "lisc-krotko", "§fZa krótko, żeby cokolwiek poczuć.");
-        else if (c.typ.equals("ped") && dl >= 12) { s.r.przechyl(c, new org.joml.Quaternionf(), new Vector3f(), 0f, 6); plugin.pasek(s.p, "§fPuszczasz. Pęd prostuje się."); }
+        else if (c.typ.equals("ped") && dl >= 12) { s.r.przechyl(c, new org.joml.Quaternionf(), new Vector3f(), 0f, 6); pasek(s, "§fPuszczasz. Pęd prostuje się."); }
     }
 
     private void klik(Sesja s, ZRoslina.Czesc c) {
         switch (c.typ) {
             case "lisc" -> zerwijLisc(s, c);
             case "ped" -> podpowiedz(s, "ped-klik", "§fZiele bierze się sierpem (LPM). §7Trzymanie PPM wyrywa pęd z korzeniem.");
-            case "kwiat" -> plugin.pasek(s.p, s.gatunek.equals("konwalia") ? "§7Drobne białe dzwonki. Lepiej ich nie zrywać."
+            case "kwiat" -> pasek(s, s.gatunek.equals("konwalia") ? "§7Drobne białe dzwonki. Lepiej ich nie zrywać."
                     : "§7Gwiazdki kwiatów na wysokiej łodyżce.");
             case "rozeta" -> {
                 dzwiek(s, Sound.BLOCK_HANGING_ROOTS_STEP, 0.7f, 0.7f);
@@ -758,7 +772,7 @@ final class Zielarz implements Listener {
             }
             if (d != null) m += " §7Drugi pęd: " + tnijPedNa(s, d, hit.getY());
         }
-        plugin.pasek(s.p, m);
+        pasek(s, m);
     }
 
     /** Ped sciety na wysokosci swiata yHit (wzgledem kotwicy pedu); zwraca opis z kolorem jakosci. */
@@ -815,12 +829,12 @@ final class Zielarz implements Listener {
     private boolean reka(Sesja s) { return ThreadLocalRandom.current().nextDouble() < wprawaP(s.wprawa); }
 
     private void zerwijKwiatyDziurawca(Sesja s, ZRoslina.Czesc c) {
-        if (c.b("bezKwiatow")) { plugin.pasek(s.p, "§fKwiatów już tu nie ma."); return; }
+        if (c.b("bezKwiatow")) { pasek(s, "§fKwiatów już tu nie ma."); return; }
         c.klocki.removeIf(kl -> { if (kl.seg == 3) { kl.d.remove(); return true; } return false; });
         c.cechy.put("bezKwiatow", true);
         dzwiek(s, Sound.BLOCK_AZALEA_LEAVES_BREAK, 0.6f, 1.6f);
-        if (c.s("faza").equals("kw") && !c.b("chory")) { daj(s, "PROF_MEDICINAL_HERB", 1, 0.4); plugin.pasek(s.p, "§eZrywasz same kwiaty. Mało ziela."); }
-        else plugin.pasek(s.p, "§fZrywasz palcami. Nic, co by się nadało.");
+        if (c.s("faza").equals("kw") && !c.b("chory")) { daj(s, "PROF_MEDICINAL_HERB", 1, 0.4); pasek(s, "§eZrywasz same kwiaty. Mało ziela."); }
+        else pasek(s, "§fZrywasz palcami. Nic, co by się nadało.");
     }
 
     private void wyrwijPed(Sesja s, ZRoslina.Czesc c) {
@@ -837,7 +851,7 @@ final class Zielarz implements Listener {
         dzwiek(s, Sound.BLOCK_GRASS_BREAK, 0.8f, 0.7f);
         wstrzas(s);
         uwaga(s, "wyrwany");
-        plugin.pasek(s.p, "§cWyrwany z korzeniem. Ziele ubrudzone ziemią, do niczego, a kępa nie odrośnie szybko.");
+        pasek(s, "§cWyrwany z korzeniem. Ziele ubrudzone ziemią, do niczego, a kępa nie odrośnie szybko.");
     }
 
     // ================================================================ KOZLEK: korzen z oporem
@@ -896,7 +910,8 @@ final class Zielarz implements Listener {
         s.p.spawnParticle(Particle.DUST, l, 3, 0.06, 0.02, 0.06, GRUDKA);
         if (s.boczne[i]) { dzwiek(s, Sound.BLOCK_ROOTED_DIRT_HIT, 1f, 0.55f); dzwiek(s, Sound.BLOCK_HANGING_ROOTS_HIT, 0.8f, 0.6f); }
         else { dzwiek(s, Sound.BLOCK_SAND_HIT, 1f, 1.5f); dzwiek(s, Sound.BLOCK_GRAVEL_HIT, 0.5f, 1.6f); }
-        podpowiedz(s, "sonda", s.boczne[i] ? "§7Głuchy, zbity odgłos. §8LPM jeszcze raz: kop." : "§7Sypki szelest. §8LPM jeszcze raz: kop mimo to.");
+        podpowiedz(s, "sonda", s.boczne[i] ? "§7Głuchy, zbity odgłos. §8LPM jeszcze raz: kop." : "§7Sypki szelest. §8LPM jeszcze raz: kop mimo to.",
+                s.boczne[i] ? "§fGłuchy, zbity odgłos. §7Tu coś jest: §f{LPM} §7kop." : "§7Sypki szelest. Pod spodem raczej pusto.");
         zielnik.odkryj(s.p, "kozlek_sonda");
     }
 
@@ -915,7 +930,7 @@ final class Zielarz implements Listener {
 
     private void kop(Sesja s, ZRoslina.Czesc g) {
         int i = g.nr;
-        if (s.poluzowane[i]) { plugin.pasek(s.p, "§fTu ziemia już rozluźniona."); return; }
+        if (s.poluzowane[i]) { pasek(s, "§fTu ziemia już rozluźniona."); return; }
         if (s.postep > 0.98) return;
         s.poluzowane[i] = true;
         zuzyj(s);
@@ -929,7 +944,7 @@ final class Zielarz implements Listener {
             s.r.kartaSrodek(g, "zielarz_k_kozlek_korzonek", (g.box.getMinX() + g.box.getMaxX()) / 2 * 0.8, 0.025, (g.box.getMinZ() + g.box.getMaxZ()) / 2 * 0.8, 0.26,
                     ZRoslina.obrotY(i * 90).mul(ZRoslina.obrotX(-90)));
         if (!s.boczne[i]) s.zleKopanie++;   // niepotrzebnie ruszona ziemia osypuje sie na korzen: wezsze pasmo, gorszy korzen
-        plugin.pasek(s.p, s.boczne[i] ? "§7Ziemia puszcza. Korzonek odsłonięty." : "§6Sama ziemia. Osypuje się na korzeń, ciągnąć będzie trudniej.");
+        pasek(s, s.boczne[i] ? "§7Ziemia puszcza. Korzonek odsłonięty." : "§6Sama ziemia. Osypuje się na korzeń, ciągnąć będzie trudniej.");
     }
 
     private void ciagnij(Sesja s, ZRoslina.Czesc roz) {
@@ -962,14 +977,14 @@ final class Zielarz implements Listener {
             s.naderwany = false;
             wstrzas(s);
             s.p.spawnParticle(Particle.DUST, base, 8, 0.12, 0.05, 0.12, GRUDKA);
-            if (s.wprawa < 3) plugin.pasek(s.p, "§6Korzeń trzeszczy… popuść.");   // rada tylko przy 3 pierwszych zbiorach; dzwiek i drzenie zostaja
+            if (s.wprawa < 3) pasek(s, "§6Korzeń trzeszczy… popuść.");   // rada tylko przy 3 pierwszych zbiorach; dzwiek i drzenie zostaja
         }
         // trzeszczenie zignorowane: korzen sie nadrywa (przy wodzie kruchy: wczesniej i drozej)
         if (s.trzeszczy && !s.naderwany && s.napiecie > gorna + (s.przyWodzie ? 0.10 : 0.15)) {
             s.naderwany = true;
             s.naderwania++;
             dzwiek(s, Sound.ENTITY_ITEM_BREAK, 0.5f, 0.5f);
-            plugin.pasek(s.p, "§6Coś trzasnęło w ziemi. Korzeń naderwany.");
+            pasek(s, "§6Coś trzasnęło w ziemi. Korzeń naderwany.");
         }
         if (s.napiecie >= s.zerwanie) { zerwijKorzen(s, roz, otw); return; }
         if (s.postep >= 1.0) wyciagnijKorzen(s, roz, otw);
@@ -993,7 +1008,7 @@ final class Zielarz implements Listener {
         if (s.postep > 0.3) daj(s, "PROF_KORZEN_KOZLKA", 1, q);
         zielnik.odkryj(s.p, "kozlek_urwany");
         uwaga(s, "urwany");
-        plugin.pasek(s.p, "§cKorzeń urwał się w ziemi." + (s.postep > 0.3 ? " W ręku tylko kawałek." : ""));
+        pasek(s, "§cKorzeń urwał się w ziemi." + (s.postep > 0.3 ? " W ręku tylko kawałek." : ""));
     }
 
     private void wyciagnijKorzen(Sesja s, ZRoslina.Czesc roz, int otw) {
@@ -1028,7 +1043,7 @@ final class Zielarz implements Listener {
                 : niepewna ? "§eKorzeń wyszedł cały. Ręka jeszcze niepewna: draśnięty łopatką."
                 : q >= 0.85 ? "§aKorzeń wyszedł cały, z korzonkami."
                 : "§eKorzeń wyszedł cały, ale " + (s.naderwania > 0 ? "naderwany" : "obity rozkopaną ziemią") + ".";
-        plugin.pasek(s.p, m);
+        pasek(s, m);
         if (s.przyWodzie && s.naderwania > 0 || !s.przyWodzie && s.wprawa >= 2) zielnik.odkryj(s.p, "kozlek_woda");
         if (otw > 0) uwaga(s, "korzonki");
     }
@@ -1113,7 +1128,7 @@ final class Zielarz implements Listener {
         if (niepewna) q = 0.7;
         skaza(s, daj(s, idLiscia(s), 1, q));
         boolean jakCzosnek = s.gatunek.equals("czosnek") || !s.rozpoznana;   // konwalia nierozpoznana wyglada jak czosnek
-        plugin.pasek(s.p, (q >= 0.85 ? "§a" : "§e") + (l.b("stary") ? "Stary liść, żółknie na końcu."
+        pasek(s, (q >= 0.85 ? "§a" : "§e") + (l.b("stary") ? "Stary liść, żółknie na końcu."
                 : niepewna ? "Ręka jeszcze niepewna: liść zgnieciony przy zrywaniu."
                 : s.roztarte && s.gatunek.equals("czosnek") ? "Kępa pognieciona przy rozcieraniu: dobre, nie wyborne."
                 : l.b("kwitnie") && jakCzosnek ? "Młody liść, ale kępa już kwitnie: mniej ostry." : "Młody, jędrny liść."));
@@ -1138,7 +1153,7 @@ final class Zielarz implements Listener {
         dzwiek(s, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.3f);
         dzwiek(s, Sound.BLOCK_AZALEA_LEAVES_BREAK, 0.8f, 1.0f);
         skaza(s, daj(s, idLiscia(s), n, suma / n));
-        plugin.pasek(s.p, "§eŚcinasz wszystko jednym ruchem. Liście pogniecione.");
+        pasek(s, "§eŚcinasz wszystko jednym ruchem. Liście pogniecione.");
     }
 
     private void rozcieraj(Sesja s, ZRoslina.Czesc l, int dl) {
@@ -1156,7 +1171,7 @@ final class Zielarz implements Listener {
         zielnik.zapamietaj(s.p, kluczRozpoznania(s.blok, s.stan));
         boolean czosnek = s.gatunek.equals("czosnek");
         dzwiek(s, Sound.BLOCK_MOSS_CARPET_BREAK, 0.8f, 1.4f);
-        plugin.pasek(s.p, czosnek ? "§aRozcierasz liść w palcach. Ostry zapach czosnku." : "§6Rozcierasz liść. Bez zapachu, tylko gorzki sok. To konwalia.");
+        pasek(s, czosnek ? "§aRozcierasz liść w palcach. Ostry zapach czosnku." : "§6Rozcierasz liść. Bez zapachu, tylko gorzki sok. To konwalia.");
         if (pierwszy) zielnik.odkryj(s.p, czosnek ? "czosnek_zapach" : "konwalia_zapach");
         if (czosnek) { zielnik.odkryj(s.p, "czosnek_rozcieranie"); podpowiedz(s, "roztarty", "§7Pewność kosztuje: roztarta kępa da liście dobre, nie wyborne."); }
     }
@@ -1248,6 +1263,7 @@ final class Zielarz implements Listener {
         s.konczy = true;
         if (s.zad != null) s.zad.cancel();
         sesje.remove(s.p.getUniqueId());
+        kom.koniec(s.p);   // etykieta B / tabliczka C znika takze przy wyjsciu z gry
         if (!s.zranienie) poKoncu.put(s.p.getUniqueId(), System.currentTimeMillis() + 1200);   // po ciosie tarcza i mikstury od razu
         int zostalo = 0, wszystkich = 0, zdrowych = 0;
         for (ZRoslina.Czesc c : s.r.czesci) if (c.typ.equals("ped") || c.typ.equals("lisc")) {
@@ -1330,7 +1346,7 @@ final class Zielarz implements Listener {
             if (s.chore > 0) p.sendMessage("§7Chorych pędów (" + s.chore + ") nie bierzesz do pęczka: ścięte poszły w trawę.");
             if (odrostOpis != null) p.sendMessage("§7" + odrostOpis);
             zielnik.wypiszZaleglosci(p);
-            if (komunikat != null) plugin.pasek(p, komunikat);
+            kom.koniec(p, komunikat);   // A/B/C: zdejmuje etykiete/tabliczke; v7: sam pasek
         }
     }
 
@@ -1431,6 +1447,7 @@ final class Zielarz implements Listener {
         wylaczanie = true;   // zadania opoznione juz sie nie wykonaja — zakoncz sprzata od razu
         wzory.usunWszystko();
         for (Sesja s : new ArrayList<>(sesje.values())) zakoncz(s, null);
+        kom.zatrzymajWszystko();
         try { PacketEvents.getAPI().getEventManager().unregisterListener(pakiety); } catch (Throwable ignored) { }
         zielnik.zapiszWszystko();
         zapiszStany();
@@ -1513,7 +1530,7 @@ final class Zielarz implements Listener {
         if (s == null || !(in.isForward() || in.isBackward() || in.isLeft() || in.isRight() || in.isJump())) return;
         if (s.t - s.ostatniRuchKom < 60) return;
         s.ostatniRuchKom = s.t;
-        plugin.pasek(s.p, "§fPochylasz się nad rośliną. §7Shift: wstań.");
+        pasek(s, "§fPochylasz się nad rośliną. §7Shift: wstań.", "§fPochylasz się nad rośliną. §7{SHIFT} wstań");
     }
 
     /** Dymki "New Recipe" przy zbiorze zaslanialy scene — w trakcie i tuz po sesji receptury odkrywaja sie po cichu. */

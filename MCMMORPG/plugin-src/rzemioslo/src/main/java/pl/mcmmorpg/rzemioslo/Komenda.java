@@ -187,6 +187,15 @@ final class Komenda implements TabExecutor {
                 Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
                 if (p != null) s.sendMessage("odrost: " + plugin.zielarz().odrostTeraz(p) + " kep");
             }
+            case "kom-test" -> {           // kom-test <gracz> <tekst...> — test: komunikat w biezacym wariancie (& = kolor, {LPM} {PPM} {SHIFT})
+                Player p = a.length > 2 ? Bukkit.getPlayerExact(a[1]) : null;
+                String t = String.join(" ", java.util.Arrays.copyOfRange(a, 2, a.length)).replace('&', '\u00a7');
+                if (p != null) plugin.zielarz().kom.zdarzenie(p, p.getLocation(), t, t);
+            }
+            case "rady-reset" -> {         // rady-reset <gracz> — test: rady zielarza pokaza sie znow (kadry wariantow komunikatow)
+                Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
+                if (p != null) s.sendMessage("rady-reset: " + plugin.zielarz().zielnik.zapomnijRady(p));
+            }
             case "zielnik" -> {            // zielnik <gracz> — okno zielnika (menu Q wola z konsoli)
                 Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : (s instanceof Player pp ? pp : null);
                 if (p == null) { s.sendMessage("brak gracza"); return true; }
