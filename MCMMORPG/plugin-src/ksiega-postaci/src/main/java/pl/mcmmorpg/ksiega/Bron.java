@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -71,6 +72,10 @@ final class Bron implements Listener {
   private final NamespacedKey leftSpellKey = new NamespacedKey("zaklecia", "lewa_zaklec");
   // Nakładki z wdrozenie/klon/generuj.py: klon widać w slocie, w dłoni nic (właściciel 03.10).
   private final Set<String> hiddenModels = new HashSet<>();
+  // Gracze w trakcie wyjscia (od PlayerQuitEvent do konca ticku). Paper zrzuca przedmiot z kursora
+  // dopiero PO zdarzeniu wyjscia (PlayerList.remove), a MMOProfiles zapisal juz wtedy ekwipunek postaci.
+  // Anulowany zrzut Paper oddaje do ekwipunku, ktorego nikt juz nie zapisze -> przedmiot przepada.
+  private final Set<UUID> leaving = new HashSet<>();
 
   Bron(KsiegaPostaci plugin) {
     this.plugin = plugin;
@@ -912,10 +917,22 @@ final class Bron implements Listener {
   }
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void drop(PlayerDropItemEvent event) {
-    if (virtual(event.getItemDrop().getItemStack())
-        || event.getPlayer().getInventory().getHeldItemSlot() == LEFT_IMAGE)
-      event.setCancelled(true);
-    refreshLater(event.getPlayer());
+    Player player = event.getPlayer();
+    if (virtual(event.getItemDrop().getItemStack())) event.setCancelled(true);
+    // Slot 1 pokazuje obraz lewej broni: Q nie moze wyrzucic prawdziwej broni spod niego. Przy wyjsciu
+    // zrzut pochodzi z kursora, nie ze slotu 1 -> nie anulujemy (inaczej przedmiot znika, patrz leaving).
+    else if (player.getInventory().getHeldItemSlot() == LEFT_IMAGE
+        && !leaving.contains(player.getUniqueId())) event.setCancelled(true);
+    refreshLater(player);
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void dropWhileLeaving(PlayerDropItemEvent event) {
+    Player player = event.getPlayer();
+    ItemStack item = event.getItemDrop().getItemStack();
+    if (event.isCancelled() && leaving.contains(player.getUniqueId()) && !virtual(item))
+      plugin.getLogger().warning("Zrzut kursora przy wyjsciu " + player.getName() + " (" + item.getType()
+          + ") anulowany przez inny plugin - przedmiot przepadnie (zapis profilu byl wczesniej).");
   }
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void pickup(EntityPickupItemEvent event) {
@@ -939,7 +956,12 @@ final class Bron implements Listener {
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
-  public void quit(PlayerQuitEvent event) { canonical(event.getPlayer()); }
+  public void quit(PlayerQuitEvent event) {
+    UUID id = event.getPlayer().getUniqueId();
+    leaving.add(id);
+    Bukkit.getScheduler().runTask(plugin, () -> leaving.remove(id));
+    canonical(event.getPlayer());
+  }
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void kick(PlayerKickEvent event) { canonical(event.getPlayer()); }
