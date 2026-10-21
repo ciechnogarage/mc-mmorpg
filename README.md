@@ -9,7 +9,7 @@ helpers, and design documentation for the MC MMORPG Paper server.
   assets, Docker orchestration, and validation helpers.
 - `docs/` contains the product foundation, runtime constraints, plugin
   inventory, and compatibility documentation.
-- `.agents/` contains repository-local task-agent procedures.
+- `CLAUDE.md` holds repository rules; former Codex procedures (`AGENTS.md`, `.agents/`) are archived in `docs/archiwum/codex-2026-10-21/`.
 
 Runtime data, binaries, worlds, player data, caches, generated packs, and
 credentials are intentionally excluded by `.gitignore`.
