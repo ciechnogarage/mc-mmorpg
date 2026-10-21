@@ -28,7 +28,7 @@ import pl.mcmmorpg.charactercreator.profile.RaceModelListener;
  * ProfileCreateEvent/ProfileSelectEvent/ProfileUnloadEvent instead of us listening to
  * PlayerJoinEvent ourselves.
  */
-public final class CharacterCreatorPlugin extends JavaPlugin {
+public class CharacterCreatorPlugin extends JavaPlugin {
 
   /** Straznik sesji — co 10 tickow, patrz CreatorSessionManager#tick. */
   private static final long WATCHDOG_PERIOD_TICKS = 10L;

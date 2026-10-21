@@ -64,6 +64,8 @@ dependencies {
   compileOnly(files(pinnedPluginJars))
 
   testImplementation(paperApi)
+  // MockBukkit 4.116.3 (linia v1.21) jest zbudowany przeciw paper-api 1.21.11-R0.1-SNAPSHOT.
+  testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.116.3")
   testImplementation(files(pinnedPluginJars))
   testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
