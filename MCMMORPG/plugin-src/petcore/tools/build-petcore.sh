@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SERVER_ROOT="$(cd "$ROOT/../.." && pwd)"
 VERSION="0.1.0-SNAPSHOT"
 
-docker run --rm \
+docker run --rm --name "build-petcore-$$" --memory 2g \
   --user "$(id -u):$(id -g)" \
   --volume "$SERVER_ROOT:/server" \
   --workdir /server/plugin-src/petcore \

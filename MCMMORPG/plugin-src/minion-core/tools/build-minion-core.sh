@@ -47,7 +47,7 @@ require_same_sha256 "WorldGuard" "$SOURCE_WORLDGUARD" "$RUNTIME_WORLDGUARD"
 require_same_sha256 "FastAsyncWorldEdit" "$SOURCE_FAWE" "$RUNTIME_FAWE"
 require_same_sha256 "MythicMobs" "$SOURCE_MYTHICMOBS" "$RUNTIME_MYTHICMOBS"
 
-docker run --rm \
+docker run --rm --name "build-minion-core-$$" --memory 2g \
   --user "$(id -u):$(id -g)" \
   --volume "$SERVER_ROOT:/server" \
   --workdir /server/plugin-src/minion-core \

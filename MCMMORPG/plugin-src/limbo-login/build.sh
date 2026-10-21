@@ -15,7 +15,7 @@ if [ -n "$(git -C "$here" status --porcelain -- "$here" 2>/dev/null)" ]; then
   git_rev="${git_rev}.dirty"
 fi
 
-exec docker run --rm \
+exec docker run --rm --name "build-limbo-login-$$" --memory 2g \
   -u "$(id -u):$(id -g)" \
   -v "$repo_root:$repo_root" \
   -v "$here/../character-creator/.gradle-home:/gradle-home" \

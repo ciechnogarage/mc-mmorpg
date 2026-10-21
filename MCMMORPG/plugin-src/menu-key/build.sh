@@ -7,7 +7,7 @@ git_rev="$(git -C "$here" rev-parse --short HEAD 2>/dev/null || echo nogit)"
 if [ -n "$(git -C "$here" status --porcelain -- "$here" 2>/dev/null)" ]; then
   git_rev="${git_rev}.dirty"
 fi
-exec docker run --rm -u "$(id -u):$(id -g)" \
+exec docker run --rm --name "build-menu-key-$$" --memory 2g -u "$(id -u):$(id -g)" \
   -v "$repo_root:$repo_root" \
   -v /opt/docker/mc/data/world1/plugins:/srv-plugins:ro \
   -v "$here/.gradle-home:/gradle-home" \

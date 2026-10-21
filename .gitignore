@@ -170,5 +170,5 @@ Thumbs.db
 *.code-workspace
 
 # wyniki buildu i pliki tymczasowe narzedzi
-**/build/classes/
+**/build/
 .ashfox/tmp/
