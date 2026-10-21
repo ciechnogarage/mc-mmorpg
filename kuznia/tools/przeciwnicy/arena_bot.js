@@ -32,10 +32,10 @@ bot.once('spawn', async () => {
   await sleep(2000)
   for (let i = 0; i < POWT; i++) {
     await rcon(`minecraft:kill @e[type=!player,x=286,y=-62,z=286,dx=28,dy=10,dz=28]`)
-    await rcon(`gamemode survival ${nick}`); await rcon(`effect clear ${nick}`)
+    await rcon(`gamemode survival ${nick}`); await rcon(`minecraft:effect clear ${nick}`)
     await rcon(`minecraft:item replace entity ${nick} weapon.mainhand with minecraft:stone_sword`)
     await rcon(`minecraft:tp ${nick} 300.5 -59 293.5 0 0`); await sleep(1200)
-    await rcon(`effect give ${nick} instant_health 1 5 true`); await sleep(600)
+    await rcon(`minecraft:effect give ${nick} instant_health 1 5 true`); await sleep(600)
     hpStrata = 0; hpPrev = bot.health; zgon = false; reakcje = 0
     await rcon(`mm mobs spawn ${MOB} 1 world,300.5,-59,306.5`); await sleep(800)
     const t0 = Date.now(); let zabity = false

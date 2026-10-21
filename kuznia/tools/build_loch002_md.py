@@ -535,8 +535,10 @@ L002_FINAL:
 # ---------------- skille
 POD = "<caster.l.w>"
 def ex(cmd):
-    """vanillowa komenda w swiecie instancji (selektory z distance= w cmd)"""
-    return f'  - command{{c="execute in minecraft:{POD} run {cmd}"}}\n'
+    """vanillowa komenda w swiecie instancji (selektory z distance= w cmd).
+    Prefiks minecraft: obowiazkowy: CMI przejmuje gole effect/gamerule/time/weather TAKZE w execute ... run i nic nie robi
+    (klon 21.10: 'execute ... run gamerule fall_damage false' -> regula dalej true)."""
+    return f'  - command{{c="execute in minecraft:{POD} run minecraft:{cmd}"}}\n'
 def fill_woda(r, y, na="air"):
     x0, x1, z0, z1 = r
     return ex(f"fill {x0} {y} {z0} {x1} {y} {z1} minecraft:{na} replace minecraft:water")
@@ -621,6 +623,20 @@ S += f"""
 """
 
 # --- SLUZY (caster = korba, delay bezpieczny)
+def zalane(r):
+    """Bloki waterlogged=true w basenie r (z wypieczonego swiata), jako stan z waterlogged=false."""
+    import mca
+    w = mca.World(f"{KUZNIA}/{SWIAT}/region"); x0, x1, z0, z1 = r; out = []
+    for x in range(x0, x1 + 1):
+        for z in range(z0, z1 + 1):
+            for y in range(DNO, YW + 1):
+                st = mca.state(w, x, y, z)
+                pr = dict((st or {}).get("Properties", {}))
+                if pr.get("waterlogged") != "true": continue
+                pr["waterlogged"] = "false"
+                out.append(((x, y, z), st["Name"] + "[" + ",".join(f"{k}={v}" for k, v in sorted(pr.items())) + "]"))
+    return out
+
 def sluza(k, basen, tytul, opis, extra=""):
     r = B[basen]
     s = f"""L002_SLUZA_{k}_RUSZ:
@@ -634,6 +650,10 @@ def sluza(k, basen, tytul, opis, extra=""):
 {extra}"""
     for y in range(YW, DNO, -1):
         s += fill_woda(r, y) + "  - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}\n  - delay 8\n"
+    # bloki zalane przy wypieku (waterlogged: wrak, schody, plotki) nie schodza z fill ... replace water i dalej leja wode:
+    # prad spychal bota pod zachodnia sciane basenu 1 (diag 21.10, -14,97,18) - po osuszeniu ten sam stan bez wody
+    for (x, y, z), b in zalane(r):
+        s += ex(f"setblock {x} {y} {z} {b}")
     s += f"""  - title{{title="";subtitle="<gold>{tytul}</gold>";fadein=5;duration=40;fadeout=15}} @PlayersInRadius{{r=30}}
   - message{{m="<gold>{tytul}.</gold> <gray>{opis}</gray>"}} @PlayersInRadius{{r=30}}
   - command{{c="mmocore admin exp give <target.name> main 20"}} @PlayersInWorld
@@ -694,7 +714,7 @@ S += sekret("dzwon", "dzwon", "world.l002_sluza3", None, "Dzwon Topielców", "Zg
             [("PROF_WATER_ESSENCE", 1)],
             """  - sound{s=block.bell.use;v=2;p=0.7} @PlayersInRadius{r=60}
   - sound{s=block.bell.resonate;v=2;p=0.7} @PlayersInRadius{r=60}
-  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run effect clear @a[distance=..300] minecraft:poison"}
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:effect clear @a[distance=..300] minecraft:poison"}
   - message{m="<aqua>Dźwięk dzwonu niesie się nad bagnem.</aqua> <gray>Do końca lochu zgniła woda i trucizny Topielicy nie działają na drużynę.</gray>"} @PlayersInWorld
 """)
 S += sekret("wywar", "wywar", "world.l002_szeptucha", None, "Wywar Szeptuchy", "+4 serca osłony dla całej drużyny",
@@ -795,13 +815,13 @@ L002_KOKON_ZYCIE:
   Skills:
   - delay 80
   - potion{{type=POISON;duration=60;level=1}} @PlayersInRadius{{r=1.6}} ?variableequals{{var=world.l002_dzwon;value=0}}
-  - command{{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run effect clear @a[distance=..1.8] minecraft:slowness"}}
+  - command{{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:effect clear @a[distance=..1.8] minecraft:slowness"}}
   - remove @self
 L002_KOKON_PEKA:
   Skills:
   - sound{{s=block.wool.break;v=1.5;p=0.7}} @self
   - particles{{p=block;m=COBWEB;a=30;hs=0.5;vs=0.8;y=1}} @self
-  - command{{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run effect clear @a[distance=..2.5] minecraft:slowness"}}
+  - command{{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:effect clear @a[distance=..2.5] minecraft:slowness"}}
 
 # BOREK: kokon rozbity -> rybak, korba, sekret
 L002_BOREK_WOLNY:
@@ -881,7 +901,7 @@ L002_NURT:
   - skill{s=L002_BABLE} @selflocation
   - delay 30
   - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> as @e[tag=l002_boss,distance=..3,limit=1] run minecraft:tp @s ~ ~4 ~"}
-  - command{c="effect clear <caster.uuid> minecraft:invisibility"}
+  - command{c="minecraft:effect clear <caster.uuid> minecraft:invisibility"}
   - sound{s=entity.generic.splash;v=2;p=0.5} @PlayersInRadius{r=30}
   - particles{p=splash;a=120;hs=2;vs=2;y=1} @self
   - damage{amount=5} @PlayersInRadius{r=3}

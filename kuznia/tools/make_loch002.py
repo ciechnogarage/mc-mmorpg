@@ -49,6 +49,11 @@ S = {s["id"]: s for s in SEKCJE}
 TRASA = [(-56, 78), (-42, 70), (-28, 62), (-14, 56), (0, 52), (0, 40), (0, 30), (0, 6), (0, 0), (18, -4), (34, -8),
          (46, -24), (54, -44), (40, -58), (22, -66), (10, -74), (0, -80)]
 ODNOGI = [[(0, 0), (-20, -4), (-32, -6)], [(34, -8), (52, -8), (66, -8)]]
+# dojscie trasy do schodow basenu 1 (otwor w scianie 15,8): bez niego do schodow prowadzil pas wody x=16 i wzgorze +1/+2
+# (trasa.js 21.10: bot krazyl przy stawie 5,101,5). Liczone jak sciezka, ale mangrowce losuja po starej odleglosci (dtr0).
+# drugie: kladka wzdluz sciany basenu od mostu (0,5) do schodow - bez niej najkrotsza droga z mostu szla PO KORONIE sciany
+# (y=103), na ktora bot nie wchodzil z blota przy stawie (diag 21.10: utyk 6,101,5); gracz z mostu widzi schody wprost
+DOJSCIA = [[(18, -4), (17, 2), (16, 8)], [(1, 5), (15, 5)]]
 KOSCIEJ_WYSEPKA = ((14, 68), 4)          # osobna wysepka lucznika za woda (LoS)
 PRZYSTAN_POMOST = [(-56, 90), (-56, 104)]  # pomost na poludnie w wode
 TAMA_Z = (30, 31)                        # mur tamy przez przesmyk
@@ -141,7 +146,8 @@ def kolumna(x, z):
     c = dict(typ="lad", e=e)
     dt = d_line(p, TRASA)
     do = min(d_line(p, o) for o in ODNOGI)
-    c["dtr"] = min(dt, do)
+    c["dtr0"] = min(dt, do)
+    c["dtr"] = min(c["dtr0"], min(d_line(p, d) for d in DOJSCIA))
     # baseny sluz
     for k, r in BASENY.items():
         if w_rect(x, z, r):
@@ -332,8 +338,17 @@ def schody_basenu(k, bok):
     """Schody z brzegu na dno basenu (widoczne dopiero po osuszeniu; pod woda nie przeszkadzaja)."""
     x0, x1, z0, z1 = BASENY[k]
     if bok == "wschod":
+        # spocznik z pelnego bloku przy otworze: schodek w kolumnie wyjscia (skret o 90 st.) zatrzymywal bota w drodze
+        # w gore (diag 21.10: utyk 14,101,9; w dol przechodzil) - wyjscie na plasko, schody od nastepnego bloku
+        for yy in range(DNO_BASENU + 1, YL + 1):
+            W.set(x1, yy, z0 + 1, "mud_bricks")
+        # drugi diag 21.10: z gornego stopnia pathfinder skakal skosem na korone sciany (15,103,7) i utykal; otwor w polnocnej
+        # scianie na wprost schodow tez zawiodl (bot zahaczal o naroznik). Slupki murku na koronie przy otworze i nad
+        # gornymi stopniami: korona jest za wysoka, zostaje przejscie przez otwor (dla gracza: slupki bramki)
+        for zz in (z0, z0 + 2, z0 + 3):
+            W.set(x1 + 1, YL + 2, zz, "mossy_stone_brick_wall[up=true]")
         for i, y in enumerate(range(YL, DNO_BASENU, -1)):
-            z = z0 + 1 + i
+            z = z0 + 2 + i
             W.set(x1, y, z, "mud_brick_stairs[facing=north]")
             for yy in range(DNO_BASENU + 1, y):
                 W.set(x1, yy, z, "mud_bricks")
@@ -444,7 +459,7 @@ def przyroda():
         dojscia.append([p, min(TRASA + [q for o in ODNOGI for q in o], key=lambda q: math.hypot(q[0] - p[0], q[1] - p[1]))])
     for (x, z) in punkty:
         c = W.kol[(x, z)]
-        if c["typ"] not in ("lad", "woda") or c.get("plasko") or c["dtr"] < 5 or c["e"] < 6:
+        if c["typ"] not in ("lad", "woda") or c.get("plasko") or c["dtr0"] < 5 or c["e"] < 6:
             continue
         if any(math.hypot(x - s["xz"][0], z - s["xz"][1]) < s["r"] + 4 for s in SEKCJE):
             continue
@@ -555,7 +570,9 @@ def oczysc_przejscie():
     (68 blokow, takze na pomoscie startowym - sonda trasy 30.09). Czyscimy 2 bloki nad kazda kolumna trasy i polan."""
     n = 0
     for (x, z), c in W.kol.items():
-        if not przejscie(c, x, z):
+        # pas 2.4 od osi: korzen na 36,102,-58 (1.62 od osi, tuz za sciezka 1.6) zatrzymal bota przed Grobla (trasa.js 21.10);
+        # martwe drzewa stoja >= 2.5 od osi (assert w przyrodzie), wiec ich pnie zostaja
+        if not przejscie(c, x, z) and not (c["typ"] == "lad" and c["dtr"] <= 2.4 and (z not in TAMA_Z)):
             continue
         g = W.grunt[(x, z)]
         for y in (g, g + 1):

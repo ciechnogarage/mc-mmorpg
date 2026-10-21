@@ -138,6 +138,22 @@ def _chunk_for(world, x, z):
     reg = world._region(x >> 4, z >> 4)
     return reg.chunk((x >> 4) & 31, (z >> 4) & 31) if reg else None
 
+def state(world, x, y, z):
+    """Pelny wpis palety bloku {'Name':..., 'Properties':{...}} albo None (brak chunka/sekcji)."""
+    ch = _chunk_for(world, x, z)
+    if not ch: return None
+    for sec in ch.get("sections", []):
+        if sec.get("Y", 0) != y >> 4: continue
+        bs = sec.get("block_states") or {}
+        pal = bs.get("palette") or []
+        if not pal: return None
+        if len(pal) == 1 or not bs.get("data"): return pal[0]
+        bits = max(4, (len(pal) - 1).bit_length()); per = 64 // bits
+        lo, sh = divmod((y & 15) * 256 + (z & 15) * 16 + (x & 15), per)
+        v = (bs["data"][lo] >> (sh * bits)) & ((1 << bits) - 1)
+        return pal[v] if v < len(pal) else None
+    return None
+
 def column(world, x, z):
     """Lista (y, blok) wszystkich NIE-powietrznych blokow w kolumnie, od gory."""
     ch = _chunk_for(world, x, z)

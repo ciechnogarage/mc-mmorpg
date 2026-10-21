@@ -41,10 +41,10 @@ scenariusz('sonda-l002', async ({ w, polacz, rcon }) => {
   await sleep(8000);
   ok('bez_kicka_po_wejsciu', !kick, kick || '');
   ok('tytul_loch002', await czeka(async () => tyt(/Loch 002/), 6000));
-  await R.cmd(`effect give ${NICK} minecraft:resistance infinite 4 true`);
-  await R.cmd(`effect give ${NICK} minecraft:regeneration infinite 3 true`);
+  await R.cmd(`minecraft:effect give ${NICK} minecraft:resistance infinite 4 true`);
+  await R.cmd(`minecraft:effect give ${NICK} minecraft:regeneration infinite 3 true`);
   // MD czysci efekty po smierci -> ochrona odnawiana co 5 s (jak trasa.js)
-  const zegar = setInterval(async () => { try { await R.cmd(`effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`effect give ${NICK} minecraft:regeneration infinite 3 true`); } catch {} }, 5000);
+  const zegar = setInterval(async () => { try { await R.cmd(`minecraft:effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`minecraft:effect give ${NICK} minecraft:regeneration infinite 3 true`); } catch {} }, 5000);
   // ---- 2. populacja (@e widzi tylko zaladowane chunki; klon ma view-distance 6 -> moby >96 bl. od wejscia niewidoczne; 140 chunkow < limit 256)
   await R.cmd(`execute in minecraft:${inst} run forceload add -64 -112 95 111`);
   await sleep(2000);

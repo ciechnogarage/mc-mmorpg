@@ -13,13 +13,13 @@ scenariusz('trasa-l002', async ({ w, polacz, rcon }) => {
   bot.loadPlugin(pathfinder);
   let kick = null; bot.on('kicked', r => kick = String(r));
   await sleep(1500);
-  await R.cmd(`effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`effect give ${NICK} minecraft:regeneration infinite 3 true`);
+  await R.cmd(`minecraft:effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`minecraft:effect give ${NICK} minecraft:regeneration infinite 3 true`);
   await R.cmd(`md play loch_002 ${NICK}`);
   let inst = null; for (let i = 0; i < 40 && !inst; i++) { for (let n = 0; n < 8; n++) if ((await R.cmd(`execute in minecraft:loch_002_${n} positioned 0 100 0 if entity @a[name=${NICK},distance=..2000]`)).includes('passed')) inst = `loch_002_${n}`; await sleep(500); }
   ok('wejscie', !!inst, inst);
   await sleep(3000);
   // MD czysci efekty przy wejsciu i po smierci - odpornosc PO wejsciu, odnawiana (sonda nie mierzy walki)
-  const ochrona = async () => { await R.cmd(`effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`effect give ${NICK} minecraft:regeneration infinite 3 true`); };
+  const ochrona = async () => { await R.cmd(`minecraft:effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`minecraft:effect give ${NICK} minecraft:regeneration infinite 3 true`); };
   // test TERENU: moby usuwane co 5 s (odrzut od ciosow resetowal pathfinder - walke mierzy harness gracza, nie ta sonda)
   const czysc = async () => { for (const t of ['endermite', 'drowned', 'bogged', 'witch', 'spider', 'cave_spider'])
       await R.cmd(`execute in minecraft:${inst} positioned 0 100 0 run minecraft:kill @e[type=minecraft:${t},distance=..400,tag=!l002_boss]`); };
@@ -50,6 +50,8 @@ scenariusz('trasa-l002', async ({ w, polacz, rcon }) => {
   ok('korba_widoczna', !!korba);
   if (korba) { await bot.lookAt(korba.position.offset(0, 1.5, 0)); try { bot.activateEntityAt(korba, korba.position.offset(0, 1, 0)); } catch {} await sleep(300); try { bot.activateEntity(korba); } catch {} }
   await sleep(9000);
+  // brama tamy 3 bl.: skos z (2.5,32.5) obok muru blokowal bota w narozniku (diag 21.10, 1 z 3 przebiegow) - podejscie na wprost jak gracz
+  await idz(0, Y, 34, 'przed_brama', 1);
   await idz(0, Y, 20, 'most_przez_basen');
   await idz(17, Y, 8, 'szczyt_schodow');
   await idz(-8, 97, 18, 'dno_basenu_wrak', 2, 60000);
