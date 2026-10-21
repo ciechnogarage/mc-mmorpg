@@ -1,0 +1,13 @@
+# Charaktery (natury): +10% jednego statu, -10% drugiego. Brak plus/minus = neutralny. (właściciel: A)
+SPOKOJNY:      {nazwa: "Spokojny"}
+SMIALY:        {nazwa: "Śmiały",        plus: ATAK,        minus: ATAK_SPEC}
+ROZWAZNY:      {nazwa: "Rozważny",      plus: ATAK_SPEC,   minus: ATAK}
+TWARDY:        {nazwa: "Twardy",        plus: OBRONA,      minus: SZYBKOSC}
+CZUJNY:        {nazwa: "Czujny",        plus: OBRONA_SPEC, minus: ATAK}
+PORYWCZY:      {nazwa: "Porywczy",      plus: SZYBKOSC,    minus: OBRONA}
+ZADZIORNY:     {nazwa: "Zadziorny",     plus: ATAK,        minus: OBRONA}
+MARZYCIELSKI:  {nazwa: "Marzycielski",  plus: ATAK_SPEC,   minus: OBRONA_SPEC}
+OSTROZNY:      {nazwa: "Ostrożny",      plus: OBRONA_SPEC, minus: ATAK_SPEC}
+ZWINNY:        {nazwa: "Zwinny",        plus: SZYBKOSC,    minus: ATAK}
+UPARTY:        {nazwa: "Uparty",        plus: ATAK,        minus: SZYBKOSC}
+LAGODNY:       {nazwa: "Łagodny",       plus: OBRONA_SPEC, minus: OBRONA}

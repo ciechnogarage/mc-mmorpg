@@ -1,0 +1,184 @@
+# Chowance — parametry silnika (właściciel: Agent A). Treść (gatunki, ruchy...) jest w plikach Agenta B.
+# Każda wartość czytana przy starcie i przy /chw admin przeladuj.
+
+# Zachowanie własnego przywołanego chowańca. Limity są wspólne dla graczy na serwerze.
+towarzysz:
+  wlaczony: true
+  glaskanie:
+    wiez: 1                              # przyrost więzi za skuteczne pogłaskanie
+    odstep_s: 600                        # na osobnika, zapisany w profilu
+    efekt_odstep_s: 5                    # najczęstsza animacja bez przyrostu
+  reakcja_odstep_s: 20                   # wspólny odstęp reakcji na zdarzenia
+  bezruch_s: 8                           # czas stania właściciela przed podejściem
+  spoczynek_modele: {chw_grudnik: zwiniecie, chw_muszlik: schowanie, chw_glebiniec: schowanie, chw_skorupien: schowanie}
+  ambient_min_s: 40
+  ambient_max_s: 90
+  ambient_zasieg: 8
+  limit_sygnalow_na_s: 5
+  niski_hp_prog: 0.25
+  niski_hp_reset: 0.30
+
+# Cztery niezależne zadania dla nowych postaci; komendy wykonuje konsola.
+pierwsze_kroki:
+  wlaczone: true
+  nagrody:
+    krok1: ["mi give MATERIAL PROF_KARMA_MIESNA %gracz% 3"]
+    krok2: ["mi give MISCELLANEOUS PIECZEC_KAMIENNA %gracz% 3"]
+    krok3: ["mi give MISCELLANEOUS ELIKSIR_MALY %gracz% 2", "mi give MISCELLANEOUS PIECZEC_KAMIENNA %gracz% 2"]
+    krok4: ["mi give MISCELLANEOUS PIECZEC_KRYSZTALOWA %gracz% 1"]
+  opisy:
+    krok1: "Przywołaj chowańca"
+    krok2: "Pogłaszcz lub nakarm chowańca"
+    krok3: "Wygraj walkę z trenerem"
+    krok4: "Złap dzikiego chowańca"
+  wskazowki:
+    krok1: "Klawisz Q → Chowańce → kliknij swojego chowańca (LPM), by go przywołać."
+    krok2: "PPM pustą ręką na przywołanym chowańcu (albo nakarm go karmą)."
+    krok3: "Strażniczka Ogrodu czeka przy furtce Ogrodu Chowańców (Stolica, północny wschód) — PPM, by walczyć."
+    krok4: "Na Wybiegu w Ogrodzie Chowańców żyją łatwe dzikie — osłab jednego i rzuć pieczęcią (PPM)."
+
+lapanie:
+  # Wzór: KONTRAKT §12.3 / WzorLapania.java
+  status: {SEN: 2.0, SPETANIE: 1.5, OSZOLOMIENIE: 2.0}
+  poziom: {wsp: 0.02, min: 0.4, max: 1.5}     # m = clamp(1 + wsp*(poziomOdniesienia - poziomCelu))
+  profesja: {wsp: 0.01, max: 1.5}              # m = min(1 + wsp*poziomPoskramiacza, max)
+  zbiegly_sekundy: 60                          # po porażce stwór „zbiegły” od gracza
+  szal_sekundy: 0                              # >0 = po nieudanej pieczęci stwór atakuje gracza (wyłączone: łapanie to nie walka)
+  zasieg_rzutu: 1.4                            # prędkość pocisku pieczęci
+  odstep_rzutu_ms: 1500                        # anty-spam
+  poziom_odniesienia: DRUZYNA_MAX              # DRUZYNA_MAX | AKTYWNY
+lsniace:
+  szansa: 0.001                                # 1/1000 (SPEC §3)
+  ogloszenie: true
+wybieg:
+  bez_lupu: true                               # dzikie ze spawnerów Wybiegu nie zostawiają przedmiotów; EXP zostaje
+  spawnery_prefiksy: [chw_wybieg_]
+legendarne:
+  okno_s: 60                                   # po pokonaniu: tyle sekund na złapanie
+  szansa_w_oknie: 0.35                         # stała szansa wymaganą pieczęcią
+oswajanie:
+  zasieg: 4.0
+  odstep_ms: 1000
+
+druzyna:
+  # limit = pierwszy próg <= poziom profesji poskramiacz
+  limit_druzyny: {0: 3, 10: 4, 20: 5, 30: 6}
+  limit_magazynu: {0: 30, 5: 60, 15: 120, 25: 250, 40: 1000}
+  strona_magazynu: 28
+  strona_bestiariusza: 28
+
+przywolanie:
+  odleglosc: 2.5
+  despawn_przy_zmianie_swiata: true
+  teleport_za_graczem_powyzej: 24.0
+  swiaty_zabronione: [creator_limbo]
+  pve_mnoznik_obrazen_niechowance: 0.15        # chwObrazenia na zwykłe moby (skala HP MC)
+  pve_exp_za_zabicie: true
+
+regeneracja:
+  procent_na_minute: 5.0
+  zemdlony_tez: true
+
+statystyki:
+  premia_wiezi: 0.05                           # +5% statów przy więzi 255
+
+poziomy:
+  max: 100
+  limit_bazowy: 20
+  za_odznake: 20                               # 20 + 4 Mistrzów x 20 = 100 (DECYZJE D-08)
+  exp_pve_mnoznik: 1.0
+  exp_trener_mnoznik: 1.5
+  exp_pojedynek: false                         # PvP nie daje exp (anty-farm)
+
+karmienie:
+  odstep_s: 30                                 # karmienie tego samego stwora
+  wiez_max: 255
+
+hodowla:
+  czas_min: 30
+  geny_dziedziczone: 3
+  mnoznik_lsniacego_obcy: 4.0                  # rodzice od różnych pierwotnych właścicieli
+  jaja_max: 3
+  probkowanie_s: 5                             # co ile s liczymy dystans graczy z jajami
+
+walka:
+  zasieg: 24.0                                 # dalej = przegrana/przerwanie
+  czas_tury_s: 60                              # brak wyboru = losowy ruch (PvP) / poddanie przy 3x
+  odleglosc_cial: 5.0
+  max_tur: 150
+  kamera: true                                 # widok areny: tryb widza przypięty do statywu na czas walki
+  arena_szukaj: true                           # miejsce walki szukane w pobliżu: płasko, wolny widok (nie tam, gdzie stoi gracz)
+  arena_zasieg: 9.0                            # jak daleko od gracza może być środek areny
+  widok_odslaniaj: true                        # bloki zasłaniające arenę znikają TYLKO u walczącego (świat bez zmian)
+  widok_bez_reki: true                         # w walce dłoń bez modelu (Dziennik/ręka nie zasłania kadru)
+  hud_mythichud: true                          # panele stworów i lista klawiszy w MythicHUD zamiast trzech pasków u góry
+  odtwarzanie_ticki: 30                        # tempo odgrywania tury (ticki na krok: atak, obrażenia, omdlenie)
+
+pojedynek:
+  arena: []                                    # [swiat,x,y,z, swiat,x,y,z] — puste = w miejscu
+  czas_s: 180
+  bez_ai_mm: true                              # cele AI MythicMobs ciała zdjęte na czas pojedynku (gotoowner ciągnął do trenera)
+  zasieg: 30.0
+  zaproszenie_s: 60
+  auto: true                                   # stwory same dobierają ruchy; klawisze 1–4 = rozkaz trenera
+  mnoznik_obrazen: 0.4                         # real-time: krótsze ciosy = dłuższa, czytelna walka (turowa bez zmian)
+  odstep_ruchow_ms: 2000                       # najczęściej co tyle stwór sam używa ruchu
+  wstep_ms: 2500                               # po starcie: kamera i napis, dopiero potem ciosy
+
+ranking:
+  elo_start: 1000
+  k: 32
+  top: 10
+
+turniej:
+  min_graczy: 4
+  czas_na_mecz_s: 600
+
+handel:
+  zasieg: 12.0
+  zaproszenie_s: 60
+
+bestiariusz:
+  skan_s: 3                                    # co ile s skan „widzianych” wokół graczy
+  skan_zasieg: 12.0
+
+starter:
+  opoznienie_ticki: 60                         # przypomnienie o zagrodzie po wejściu (bez okna — 18.10)
+
+# Zagroda młodych (18.10): pierwszy chowaniec z rąk Strażniczki Ogrodu — Pieczęć Opiekuna + wybrane młode.
+zagroda:
+  wlaczona: true
+  swiat: stolica_odnowa
+  trener: TRENER_OGRODU                        # NPC, który daje Pieczęć Opiekuna graczom bez chowańca
+  model_pieczeci: nexo:chw_pieczec_krysztalowa
+  odrodzenie_ticki: 80                         # po związaniu „kolejny maluch” wraca na stanowisko
+  wskazowka: "Strażniczka Ogrodu w Stolicy powierza młode chowańce nowym opiekunom — Ogród Chowańców, północny wschód Stolicy."
+  # Stanowiska: oferta z startery.yml (wspólna trójka + młode ludowe). napis = wysokość etykiety nad podłogą.
+  # Trawnik 5 bl. na północ od Strażniczki (32.5/101/-48.5), widoczny od ścieżki; yaw 0 = przodem na południe.
+  miejsca:
+    - {gatunek: KUDLACZ, x: 23.5, y: 101, z: -53.5, yaw: 0, napis: 1.2}
+    - {gatunek: ISKRZYK, x: 26.0, y: 101, z: -53.5, yaw: 0, napis: 0.9}
+    - {gatunek: MUSZLIK, x: 28.5, y: 101, z: -53.5, yaw: 0, napis: 1.1}
+    - {gatunek: PEDZIK,  x: 31.0, y: 101, z: -53.5, yaw: 0, napis: 1.3}
+    - {gatunek: UPIOREK, x: 33.5, y: 101, z: -53.5, yaw: 0, napis: 1.4}
+
+profesja:
+  id: poskramiacz
+  exp:
+    zlapanie_bazowe: 20                         # * (1 + poziom/10)
+    lsniacy_mnoznik: 5.0
+    wyklucie: 40
+    ewolucja: 60
+    oswojenie: 30
+
+menu:
+  deluxemenus: chowance_menazeria
+  # Ikona (ID Nexo) zwracana przez %chowance_*_ikona% dla PUSTEGO slotu. DeluxeMenus 1.14.1 nie otwiera okna,
+  # gdy materiał 'nexo-%...%' rozwija się do samego 'nexo-' — nawet jeśli view_requirement ukryłby przedmiot
+  # (PROBLEMY A-017, próba generalna na chw-proba). Musi istnieć w Nexo.
+  ikona_pustego_slotu: hub_chw_magazyn
+
+# Gatunki/ruchy/cechy TESTOWE silnika (zz_silnik_test.yml) — tylko serwery testowe z evalami.
+testowe_gatunki: false
+
+debug: false
