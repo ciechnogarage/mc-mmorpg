@@ -17,7 +17,6 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
   Sakwa sakwa;
   Ksiazka ksiazka;
   Bron bron;
-  Migracja migracja;
   UkrywanieEkwipunku ukrywanie;
   Portal portal;
   PortalPlaceholdery placeholdery;
@@ -29,7 +28,6 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
     sakwa = new Sakwa(this);
     ksiazka = new Ksiazka(this);
     bron = new Bron(this);
-    migracja = new Migracja(this);
     ukrywanie = new UkrywanieEkwipunku(this);
     portal = new Portal(this);
     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -70,7 +68,6 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
       Dane.Record record = dane.current(player);
       if (record == null) return;
       bron.canonical(player);
-      migracja.migrate(player, record);
       bizuteria.show(player);
       sakwa.show(player);
       bron.refresh(player);

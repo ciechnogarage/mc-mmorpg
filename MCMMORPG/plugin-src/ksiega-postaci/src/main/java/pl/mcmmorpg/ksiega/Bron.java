@@ -311,7 +311,7 @@ final class Bron implements Listener {
     // Dawne zaślepki nie są przedmiotami gracza.
     if (Przedmioty.placeholder(item) && Przedmioty.type(item) == null
         && Przedmioty.id(item) == null) return;
-    Migracja.give(player, item);
+    Przedmioty.give(player, item);
   }
 
   // Jedyny zapis właściwej lewej broni podczas operacji na ekwipunku.
@@ -352,7 +352,7 @@ final class Bron implements Listener {
         inventory.setItem(slot, null);
         if (!virtual(item) && !(Przedmioty.placeholder(item)
             && Przedmioty.type(item) == null && Przedmioty.id(item) == null))
-          Migracja.give(player, item);
+          Przedmioty.give(player, item);
       }
     }
     for (int slot = 0; slot < 36; slot++) {
@@ -370,7 +370,7 @@ final class Bron implements Listener {
       }
       if (!Przedmioty.empty(item) && !weapon(item) && !spell(item)) {
         inventory.setItem(slot, null);
-        if (!virtual(item)) Migracja.give(player, item);
+        if (!virtual(item)) Przedmioty.give(player, item);
       }
     }
     for (int slot : new int[] {RIGHT, RIGHT_SPARE, LEFT, LEFT_SPARE}) {
@@ -385,7 +385,7 @@ final class Bron implements Listener {
           && !(right && twoHanded(real(inventory, druga == LEFT ? RIGHT : RIGHT_SPARE)))) {
         inventory.setItem(druga, item);
       } else {
-        Migracja.give(player, item);
+        Przedmioty.give(player, item);
         plugin.message(player, right ? "tylko-lewa" : "dwureczna-do-prawej");
       }
     }
@@ -393,13 +393,13 @@ final class Bron implements Listener {
         && !spell(inventory.getItemInOffHand())) {
       ItemStack left = inventory.getItemInOffHand();
       inventory.setItemInOffHand(null);
-      Migracja.give(player, left);
+      Przedmioty.give(player, left);
     }
     if (twoHanded(inventory.getItem(RIGHT_SPARE))
         && !Przedmioty.empty(real(inventory, LEFT_SPARE))) {
       ItemStack left = real(inventory, LEFT_SPARE);
       inventory.setItem(LEFT_SPARE, null);
-      Migracja.give(player, left);
+      Przedmioty.give(player, left);
     }
     inventory.setItem(LEFT_IMAGE, twoHanded(inventory.getItem(RIGHT))
         ? hiddenInHand(emptyIcon("zajeta-lewa", cloneKey, "§8Zajęta"))
