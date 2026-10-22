@@ -34,6 +34,8 @@ public final class HudDane extends JavaPlugin implements Listener {
     zasieg = getConfig().getInt("druzyna.zasieg", 64);
     niskieHp = getConfig().getDouble("druzyna.niskie-hp", 0.3);
     limitSlug = getConfig().getInt("slugi.limit", 3);
+    zdarzenia.pominProfesje = getConfig().getStringList("zdobycz.pomin-profesje").stream()
+        .map(x -> x.toLowerCase(java.util.Locale.ROOT)).collect(java.util.stream.Collectors.toUnmodifiableSet());
     ConfigurationSection cz = getConfig().getConfigurationSection("slugi.czas-zycia");
     if (cz != null) for (String k : cz.getKeys(false)) czasZycia.put(k, cz.getInt(k));
     ConfigurationSection ef = getConfig().getConfigurationSection("efekty");

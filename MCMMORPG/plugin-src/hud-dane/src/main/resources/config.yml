@@ -3,6 +3,10 @@
 druzyna:
   zasieg: 64
   niskie-hp: 0.3
+# Kanal zdobyczy (prawy dol): EXP profesji z tej listy (id MMOCore, np. herbalism) nie jest pokazywany,
+# bo plugin profesji sam pokazuje nagrode (np. zielarz z zielarz.feeling: mmo/rytual). Puste = wszystkie profesje.
+zdobycz:
+  pomin-profesje: []
 # Przywolance: moby MythicMobs, ktorych rodzicem (parent) jest gracz. Czas zycia w tickach
 # (z umiejetnosci MythicLib/MythicMobs); bez wpisu HUD nie pokazuje odliczania.
 slugi:

@@ -35,6 +35,8 @@ final class Zdarzenia implements Listener {
 
   final Map<UUID, Cel> cele = new ConcurrentHashMap<>();
   final Map<UUID, Deque<Wpis>> zdobycz = new ConcurrentHashMap<>();
+  /** Id profesji MMOCore, ktorych EXP nie trafia do kanalu zdobyczy (plugin profesji pokazuje nagrode sam). */
+  volatile java.util.Set<String> pominProfesje = java.util.Set.of();
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void obrazenia(EntityDamageByEntityEvent e) {
@@ -59,6 +61,7 @@ final class Zdarzenia implements Listener {
   public void exp(PlayerExperienceGainEvent e) {
     Player p = e.getData().getPlayer();
     if (p == null || e.getExperience() < 1) return;
+    if (e.hasProfession() && pominProfesje.contains(e.getProfession().getId().toLowerCase(java.util.Locale.ROOT))) return;
     String co = e.hasProfession() ? e.getProfession().getName() : "EXP";
     dodaj(p, "+" + Math.round(e.getExperience()) + " " + co, e.hasProfession() ? "profesja" : "exp");
   }
