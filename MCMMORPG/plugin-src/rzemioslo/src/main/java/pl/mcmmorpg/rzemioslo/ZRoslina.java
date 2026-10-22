@@ -300,6 +300,18 @@ final class ZRoslina {
         for (Klocek k : c.klocki) animuj(k.d, new Transformation(new Vector3f(k.t0).add(v), k.r0, k.s0, new Quaternionf()), ticki);
     }
 
+    /**
+     * Cala czesc (z korzeniami): obrot q wokol kotwicy i powiekszenie kCzesc, potem skala calej rosliny kSwiat
+     * (zgodna z {@link #skala}) i przesuniecie v — wyjecie korzenia „w reke”.
+     */
+    void przesunObrot(Czesc c, Vector3f v, Quaternionf q, float kSwiat, float kCzesc, int ticki) {
+        Vector3f piv = new Vector3f(c.kotwicaE);
+        for (Klocek kl : c.klocki) {
+            Vector3f t = new Vector3f(kl.t0).sub(piv).rotate(q).mul(kCzesc).add(piv).mul(kSwiat).add(v);
+            animuj(kl.d, new Transformation(t, new Quaternionf(q).mul(kl.r0), new Vector3f(kl.s0).mul(kSwiat * kCzesc), new Quaternionf()), ticki);
+        }
+    }
+
     static void animuj(Display d, Transformation t, int ticki) {
         d.setInterpolationDelay(0);
         d.setInterpolationDuration(ticki);
@@ -313,6 +325,8 @@ final class ZRoslina {
         c.zabrana = true;
     }
 
+    static final String ZASLONA = "rzemioslo_zaslona";
+
     void zaslon(float szer, float wys) {
         zaslona = o.getWorld().spawn(o.clone().subtract(f.clone().multiply(0.1)), org.bukkit.entity.Interaction.class, e -> {
             e.setVisibleByDefault(false);
@@ -320,6 +334,7 @@ final class ZRoslina {
             e.setInteractionWidth(szer);
             e.setInteractionHeight(wys);
             e.setResponsive(false);
+            e.addScoreboardTag(ZASLONA);   // PPM w zaslone nie moze trafic do WorldGuard („can't use that here”)
         });
         p.showEntity(plugin, zaslona);
     }

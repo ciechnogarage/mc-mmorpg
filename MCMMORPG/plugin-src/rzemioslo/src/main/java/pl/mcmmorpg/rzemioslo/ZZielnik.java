@@ -83,6 +83,14 @@ final class ZZielnik {
     /** Odkrycia z trwajacego zbioru czekaja do konca sesji — w trakcie czat zaslanial rosline. */
     private final Map<UUID, List<String>> zalegle = new HashMap<>();
 
+    /** Zalegle odkrycia jako krotki dopisek do jednej linii dziennika (feeling: „zielnik +N”, tresc czeka w zielniku); null = brak. */
+    String zaleglosciTekst(Player p) {
+        List<String> l = zalegle.remove(p.getUniqueId());
+        if (l == null || l.isEmpty()) return null;
+        p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.7f, 1.1f);
+        return "zielnik +" + l.size();
+    }
+
     void wypiszZaleglosci(Player p) {
         List<String> l = zalegle.remove(p.getUniqueId());
         if (l == null || l.isEmpty()) return;

@@ -216,6 +216,9 @@ final class ZKomunikaty {
         if (st == null) return;
         if (st.zad != null) st.zad.cancel();
         if (st.etykieta != null && st.etykieta.isValid()) st.etykieta.remove();
+        // pasek z nazwa kepy gasnie od razu (klient trzymal go jeszcze ~3 s po wstaniu); kolejne zdarzenie ma wlasny numer
+        numer.merge(p.getUniqueId(), 1, Integer::sum);
+        if (p.isOnline()) p.sendActionBar(Component.empty());
     }
 
     void zatrzymajWszystko() {

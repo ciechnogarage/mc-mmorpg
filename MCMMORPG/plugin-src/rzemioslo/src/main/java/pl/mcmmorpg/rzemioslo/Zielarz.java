@@ -154,6 +154,9 @@ final class Zielarz implements Listener {
     private final Rzemioslo plugin;
     private final Map<String, String> kepy = new HashMap<>();
     private final Map<UUID, Sesja> sesje = new java.util.concurrent.ConcurrentHashMap<>();   // czytana tez z watku pakietow
+    /** Koniec sesji: PPM trzymany przy ciagnieciu korzenia leci dalej w swiat (lopata na trawie, zaslona) — WorldGuard odpowiadal „can't use that here”. */
+    private final Map<UUID, Long> poSesji = new HashMap<>();
+    private static final long PO_SESJI_MS = 900;
     private final Map<UUID, Long> poKoncu = new java.util.concurrent.ConcurrentHashMap<>();
     private final Map<UUID, Map<String, Stan>> stany = new HashMap<>();
     private final File plikKep;
@@ -317,6 +320,17 @@ final class Zielarz implements Listener {
             if (a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) ppmWcisniety(s);
             return;
         }
+        Long po = poSesji.get(p.getUniqueId());
+        if (po != null && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR)) {
+            if (System.currentTimeMillis() - po < PO_SESJI_MS) {
+                e.setCancelled(true);
+                e.setUseInteractedBlock(Event.Result.DENY);
+                e.setUseItemInHand(Event.Result.DENY);
+                if (pomiar) plugin.getLogger().info("[pomiar] po-sesji PPM " + e.getAction() + " " + (e.getClickedBlock() == null ? "-" : e.getClickedBlock().getType()) + " zablokowany");
+                return;
+            }
+            poSesji.remove(p.getUniqueId());
+        }
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK || e.getClickedBlock() == null) return;
         String g = kepy.get(klucz(e.getClickedBlock()));
         if (g == null) return;
@@ -325,6 +339,22 @@ final class Zielarz implements Listener {
         e.setUseInteractedBlock(Event.Result.DENY);
         if (e.getHand() != EquipmentSlot.HAND) return;
         rozpocznij(p, e.getClickedBlock(), g);
+    }
+
+    /** PPM w zaslone zbioru (Interaction) po koncu sesji: nasza encja, nie trafia do WorldGuard. */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void naZaslone(org.bukkit.event.player.PlayerInteractEntityEvent e) {
+        if (!e.getRightClicked().getScoreboardTags().contains(ZRoslina.ZASLONA)) return;
+        e.setCancelled(true);
+        if (pomiar) plugin.getLogger().info("[pomiar] PPM w zaslone " + e.getPlayer().getName() + " zablokowany");
+    }
+
+    /** To samo dla PlayerInteractAtEntityEvent: Bukkit ma dla niego osobna HandlerList, a WorldGuard slucha obu. */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void naZasloneAt(org.bukkit.event.player.PlayerInteractAtEntityEvent e) {
+        if (!e.getRightClicked().getScoreboardTags().contains(ZRoslina.ZASLONA)) return;
+        e.setCancelled(true);
+        if (pomiar) plugin.getLogger().info("[pomiar] PPM-at w zaslone " + e.getPlayer().getName() + " zablokowany");
     }
 
     /** Prog poziomu zielarstwa dla gatunku (dziurawiec od 1, szerokolistne od 5, kozlek od 10). */
@@ -429,7 +459,8 @@ final class Zielarz implements Listener {
         boolean pokazRade = rada != null && zielnik.rada(p, widocznyGatunek(s)) <= 3;   // najwyzej 3 razy
         if (s.fx.jest() && radaNowa != null) radaNowa = "§f{LPM} §7opukaj|§f{PPM} §7ciągnij";   // feeling: tylko klawisze, bez zdan
         // v7: nazwa na pasku, rada w podtytule i na czacie; A/B/C: ZKomunikaty (bez tytulu, czat tylko jako dziennik)
-        kom.wejscie(p, s.r.o.clone(), przod, nazwaKepy(s), pokazRade ? rada : null, pokazRade ? radaNowa : null);
+        // feeling: rada tylko jako klawisze na pasku, bez tytulu i linii „Zielarz: …” na czacie
+        kom.wejscie(p, s.r.o.clone(), przod, nazwaKepy(s), pokazRade && !s.fx.jest() ? rada : null, pokazRade ? radaNowa : null);
         zielnik.zobaczono(p, widocznyGatunek(s));
         if (s.fx.jest()) feeling.wejscie(s);
         s.zad = Bukkit.getScheduler().runTaskTimer(plugin, () -> tik(s), 1L, 1L);
@@ -1310,6 +1341,7 @@ final class Zielarz implements Listener {
         s.konczy = true;
         if (s.zad != null) s.zad.cancel();
         sesje.remove(s.p.getUniqueId());
+        poSesji.put(s.p.getUniqueId(), System.currentTimeMillis());
         if (s.fx.jest()) feeling.koniec(s);
         kom.koniec(s.p);   // etykieta B / tabliczka C znika takze przy wyjsciu z gry
         if (!s.zranienie) poKoncu.put(s.p.getUniqueId(), System.currentTimeMillis() + 1200);   // po ciosie tarcza i mikstury od razu
@@ -1373,6 +1405,29 @@ final class Zielarz implements Listener {
             if (odrost > 0) {
                 long ms = odrost * 20;
                 Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline() && p.getWorld() == s.blok.getWorld()) p.sendBlockChange(s.blok.getLocation(), s.blok.getBlockData()); }, ms);
+            }
+            if (s.fx.jest()) {
+                // feeling: nagroda byla na ekranie, czat dostaje JEDNA linie dziennika (zbior · odrost · zielnik)
+                StringBuilder sb = new StringBuilder("§f");   // bez „Zielarstwo:” — linia ma sie miescic w jednym wierszu czatu
+                if (!s.zebrane.isEmpty()) {
+                    boolean pierwszy = true;
+                    for (Map.Entry<String, int[]> e : s.zebrane.entrySet()) {
+                        int[] k = e.getValue();
+                        if (!pierwszy) sb.append("§7; §f");
+                        pierwszy = false;
+                        sb.append(e.getKey()).append(":");
+                        String[] kol = {" §c", " §a", " §6"}, slowo = {"słabe", "dobre", "wyborne"};
+                        boolean pp = true;
+                        for (int i = 2; i >= 0; i--) if (k[i] > 0) { sb.append(pp ? "" : "§7,").append(kol[i]).append(k[i]).append(" ").append(slowo[i]); pp = false; }
+                    }
+                    if (s.pokruszone > 0) sb.append(" §8· §7pokruszone ").append(s.pokruszone);
+                } else sb.append("§7Nic nie zebrane");
+                if (odrost > 0) sb.append(" §8· §7odrośnie za ").append(czas(odrost));
+                String zl = zielnik.zaleglosciTekst(p);
+                if (zl != null) sb.append(" §8· §2✎ ").append(zl);
+                if (!s.zebrane.isEmpty() || zl != null || s.zniszczona) p.sendMessage(sb.toString());
+                kom.koniec(p, komunikat);
+                return;
             }
             if (!s.zebrane.isEmpty()) {
                 StringBuilder sb = new StringBuilder("§2Zielarstwo: §f");
@@ -1632,6 +1687,7 @@ final class Zielarz implements Listener {
     public void naWyjscie(PlayerQuitEvent e) {
         Sesja s = sesje.get(e.getPlayer().getUniqueId());
         if (s != null) zakoncz(s, null);
+        poSesji.remove(e.getPlayer().getUniqueId());
         zielnik.zapisz(Zlecenia.profil(e.getPlayer()));
     }
 

@@ -200,7 +200,7 @@ final class ZFeeling {
         int unies = r ? 16 : 8, wisi = r ? 18 : 6;
         if (r) {
             winieta(s, WINIETA_MOCNA);
-            s.r.skala(1.1f, 20);   // chwila zwalnia: powolne przyblizenie
+            s.r.skala(ZOOM_RYTUAL, 14);   // chwila zwalnia: wyrazne przyblizenie (1.1 bylo niewidoczne na nagraniu)
             for (ZRoslina.Klocek k : roz.klocki) if (k.y1 <= 1e-3) {   // swiecace korzenie
                 k.d.setBrightness(ZRoslina.PODSWIETLENIE);
                 k.d.setGlowing(true);
@@ -208,9 +208,13 @@ final class ZFeeling {
             }
             dz(s, Sound.BLOCK_BEACON_POWER_SELECT, 0.35f, klasa == 2 ? 1.3f : 0.9f);
         }
-        // korzen wychodzi pionowo przed oczy (tor jak dotad, wolniej w rytuale)
-        s.r.przesun(roz, new Vector3f(0, 0.62f, -0.3f), unies);
-        pozniej(s, unies + 1, () -> s.r.przesun(roz, new Vector3f(0, 0.66f, -0.32f), wisi + 2));
+        // korzen wychodzi przed oczy, rosnie i kolysze sie jak wyrwany za rozete (obrot w plaszczyznie ekranu:
+        // karty sa plaskie, obrot w bok pokazalby ich krawedz)
+        float kz = r ? ZOOM_RYTUAL : 1f, kc = r ? 1.25f : 1.2f;
+        s.r.przesunObrot(roz, new Vector3f(0, r ? 0.48f : 0.56f, -0.3f), ZRoslina.obrotZ(-16), kz, kc, unies);
+        int pol = Math.max(3, wisi / 2);
+        pozniej(s, unies + 1, () -> s.r.przesunObrot(roz, new Vector3f(0, r ? 0.53f : 0.61f, -0.33f), ZRoslina.obrotZ(11).mul(ZRoslina.obrotX(-6)), kz, kc, pol));
+        pozniej(s, unies + 1 + pol, () -> s.r.przesunObrot(roz, new Vector3f(0, r ? 0.51f : 0.59f, -0.32f), ZRoslina.obrotZ(-4), kz, kc, wisi - pol + 2));
         // korzonki, ktore zostaly w ziemi: pekaja po kolei (widac grudki i slychac trzask), zamiast zdania
         for (int i = 0, n = 0; i < 4; i++) {
             if (!s.boczne[i] || s.poluzowane[i]) continue;
@@ -228,6 +232,8 @@ final class ZFeeling {
         });
         return lot + czasLotu(s);
     }
+
+    static final float ZOOM_RYTUAL = 1.3f;
 
     /** Tiki od startu lotu do konca chwili: lot do reki, potem (mmo/rytual) napis nagrody do zgaszenia. */
     private static int czasLotu(Zielarz.Sesja s) {
@@ -270,7 +276,7 @@ final class ZFeeling {
             e.setBillboard(Display.Billboard.CENTER);
             e.setBrightness(ZRoslina.PODSWIETLENIE);
             // maly: kamera stoi tuz przy roslinie (zblizenie), 0,42 zaslanialo pol ekranu; bez obrysu glow (gruba, kanciasta ramka)
-            e.setTransformation(new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(0.2f), new Quaternionf()));
+            e.setTransformation(new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(0.32f), new Quaternionf()));
             e.setTeleportDuration(r ? 5 : 3);
         });
         dz(s, Sound.BLOCK_MOSS_STEP, 0.5f, 1.2f);
@@ -284,12 +290,14 @@ final class ZFeeling {
                 Location oko = p.getEyeLocation();
                 Vector dir = oko.getDirection();
                 Vector prawo = new Vector(-dir.getZ(), 0, dir.getX()).normalize();
-                Location reka = oko.clone().add(dir.clone().multiply(0.5)).add(prawo.multiply(0.32)).add(0, -0.36, 0);
-                Location szczyt = start.clone().add(reka).multiply(0.5).add(0, r ? 0.6 : 0.45, 0);
+                // dlon w kadrze (0,5 m przed okiem lecialo poza dolna krawedz ekranu i bylo uciete)
+                Location reka = oko.clone().add(dir.clone().multiply(0.95)).add(prawo.multiply(0.38)).add(0, -0.34, 0);
+                Location szczyt = start.clone().add(reka).multiply(0.5).add(0, r ? 0.7 : 0.55, 0);
                 double a = (1 - tt) * (1 - tt), b = 2 * tt * (1 - tt), c = tt * tt;
                 Location l = start.clone().multiply(a).add(szczyt.toVector().multiply(b)).add(reka.toVector().multiply(c));
                 d.teleport(l);
-                ZRoslina.animuj(d, new Transformation(new Vector3f(), new Quaternionf(), new Vector3f((float) (0.2 - 0.1 * tt)), new Quaternionf()), co);
+                // krec sie w locie (obrot w plaszczyznie ekranu, <180 st. na krok, zeby interpolacja nie zawracala) i maleje do dloni
+                ZRoslina.animuj(d, new Transformation(new Vector3f(), ZRoslina.obrotZ(-kk * (r ? 120 : 95)), new Vector3f((float) (0.32 - 0.2 * tt)), new Quaternionf()), co);
                 if (kk == kroki) Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     d.remove();
                     if (!p.isOnline()) return;
