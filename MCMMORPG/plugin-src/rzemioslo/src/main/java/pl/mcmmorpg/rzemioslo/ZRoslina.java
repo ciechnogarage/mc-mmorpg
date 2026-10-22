@@ -119,6 +119,22 @@ final class ZRoslina {
         return d;
     }
 
+    /** Encje dodatkowe chwili (lecacy przedmiot, napis nagrody): widoczne tylko dla gracza, usuwane razem z roslina. */
+    final List<Display> dodatki = new ArrayList<>();
+
+    <T extends Display> T dodatek(Class<T> typ, Location gdzie, java.util.function.Consumer<T> ustaw) {
+        T d = o.getWorld().spawn(gdzie.clone(), typ, e -> {
+            e.setVisibleByDefault(false);
+            e.setPersistent(false);
+            e.setViewRange(0.5f);
+            e.setShadowRadius(0);
+            ustaw.accept(e);
+        });
+        dodatki.add(d);
+        p.showEntity(plugin, d);
+        return d;
+    }
+
     /** Klocek (BlockDisplay) o srodku podstawy w (lx,ly,lz) wzgledem kotwicy czesci, rozmiar (sx,sy,sz), obrot wokol srodka podstawy. */
     Klocek klocek(Czesc c, Material m, double lx, double ly, double lz, double sx, double sy, double sz, Quaternionf rot) {
         Quaternionf q = rot == null ? new Quaternionf() : new Quaternionf(rot);
@@ -313,6 +329,8 @@ final class ZRoslina {
         if (linia != null) { linia.d.remove(); linia = null; }
         for (Czesc c : czesci) for (Klocek k : c.klocki) k.d.remove();
         czesci.clear();
+        for (Display d : dodatki) d.remove();
+        dodatki.clear();
         podswietlona = null;
     }
 

@@ -94,6 +94,19 @@ def tabliczka_srodek(w):
             else: px(im, x, y, CIEMNE)
     return im
 
+def winieta(alfa_max, w=256, h=144):
+    """Nakladka kamery (equippable.camera_overlay) dla feelingu zielarza: czarne brzegi, przezroczysty srodek.
+    Alfa rosnie od ~0.55 promienia elipsy do brzegu (wygladzona krzywa), srodek ekranu czysty."""
+    im = img(w, h)
+    for y in range(h):
+        for x in range(w):
+            dx, dy = (x + 0.5 - w / 2) / (w / 2), (y + 0.5 - h / 2) / (h / 2)
+            r = (dx * dx + dy * dy) ** 0.5
+            t = max(0.0, min(1.0, (r - 0.55) / 0.75))
+            a = int(alfa_max * t * t * (3 - 2 * t))
+            if a: im.putpixel((x, y), (8, 6, 4, a))
+    return im
+
 def main(pack):
     tex = os.path.join(pack, "assets/zielarz/textures/font"); os.makedirs(tex, exist_ok=True)
     fnt = os.path.join(pack, "assets/zielarz/font"); os.makedirs(fnt, exist_ok=True)
@@ -114,6 +127,9 @@ def main(pack):
         adv[chr(0xE100 + i)] = -(1 << i)   # -1..-256
         adv[chr(0xE110 + i)] = 1 << i      # 1..256
     prov.append({"type": "space", "advances": adv})
+    misc = os.path.join(pack, "assets/zielarz/textures/misc"); os.makedirs(misc, exist_ok=True)
+    winieta(110).save(os.path.join(misc, "winieta.png"))         # feeling: rytual (lekka, cala sesja)
+    winieta(190).save(os.path.join(misc, "winieta_mocna.png"))   # feeling: rytual (chwila wyciagniecia)
     with open(os.path.join(fnt, "ui.json"), "w") as f:
         json.dump({"providers": prov}, f, ensure_ascii=True, indent=1)
     print("zielarz:ui", len(prov), "dostawcow ->", fnt)
