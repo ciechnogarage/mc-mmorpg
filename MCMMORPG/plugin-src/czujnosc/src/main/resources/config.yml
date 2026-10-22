@@ -1,0 +1,71 @@
+# Czujnosc mobow (skradanie). Mob jest czujny TYLKO gdy wymieniony nizej (typ MM, frakcja MM albo typ vanilli).
+# Poziomy: SPOKOJNY (<25) -> ZANIEPOKOJONY "?" (patrzy w strone zrodla) -> SZUKA "?" (idzie do ostatniego miejsca)
+#          -> ALARM "!" (atakuje). Czujny mob nie celuje w gracza przed ALARMEM. Cios w moba = ALARM od razu.
+# Sygnaly MM do moba przy zmianie: CZUJ_SPOKOJNY / CZUJ_ZANIEPOKOJONY / CZUJ_SZUKA / CZUJ_ALARM (~onSignal:CZUJ_ALARM).
+debug: false
+
+profile:
+  domyslny:
+    wzrok:
+      zasieg: 20          # bl.
+      kat: 120            # pelny kat stozka [stopnie]
+      kat_ostry: 60       # srodek stozka; poza nim przyrost x peryferia
+      peryferia: 0.5
+      czas_blisko_s: 0.6  # stojac/chodzac na wprost tuz przed nim: tyle s do alarmu
+      czas_daleko_s: 6    # ... na granicy zasiegu
+    postawa: { kuca: 0.35, stoi: 0.6, biegnie: 1.6 }   # chodzenie = 1
+    swiatlo_min: 0.3      # w ciemnosci (swiatlo 0) przyrost x0.3, w pelnym swietle x1
+    sluch:
+      zasieg: 12          # bl. dla glosnosci 1 (bieg); chodzenie 0.5 = 6 bl.; kucanie i stanie = 0
+      szybkosc: 30        # pkt/s tuz obok
+      limit: 70           # sam halas daje najwyzej SZUKA, nigdy ALARM
+    dotyk: 1.3            # wpadniecie na moba = ALARM (od tylu tylko gdy gracz NIE kuca)
+    zanik_na_s: 12        # spadek bez bodzca (w SZUKA x0.25)
+    zanik_zwloka_s: 2     # zanik rusza po tylu s bez bodzca (mob zerknal w bok != zapomnial; bez tego wolne przyrosty stoja w miejscu)
+    pamiec_s: 8           # tyle s bez widzenia celu w ALARMIE -> SZUKA w miejscu, gdzie go stracil
+    wolanie_sojusznikow: 10   # promien: sojusznicy (ta sama frakcja MM, inaczej ten sam profil) ida SZUKAC
+    predkosc_szukania: 1.0
+  straznik:               # uwazny wartownik: dalej i szerzej widzi, dluzej pamieta
+    wzrok: { zasieg: 26, kat: 140, czas_daleko_s: 5 }
+    pamiec_s: 12
+    wolanie_sojusznikow: 16
+  zwierz:                 # slabo widzi, dobrze slyszy
+    wzrok: { zasieg: 12, kat: 160, czas_blisko_s: 1.0, czas_daleko_s: 5 }
+    sluch: { zasieg: 18, szybkosc: 45 }
+
+moby:                     # typ MM (internal name) -> profil
+  czuj_armoros: straznik   # NIE `armoros` z paczki LR: ma wlasne alertsys, dwa systemy na jednym mobie sie gryza
+frakcje: {}               # frakcja MM -> profil
+vanilla: {}               # typ vanilli (np. ZOMBIE) -> profil; do testow
+
+gracz:
+  niewidzialnosc: 0.15    # mikstura/skill niewidzialnosci (ninja Krok w Cien): wzrok x0.15, sluch bez zmian
+  tagi:                   # tag gracza (scoreboard) -> mnozniki
+    arch_nin: { widocznosc: 0.8, glosnosc: 0.6 }
+  zbroja:                 # przedrostek materialu czesci zbroi -> ciezar dodawany do glosnosci w ruchu
+    CHAINMAIL: 0.08
+    IRON: 0.12
+    GOLDEN: 0.1
+    DIAMOND: 0.12
+    NETHERITE: 0.15
+  swiatlo_w_rece: [TORCH, SOUL_TORCH, LANTERN, SOUL_LANTERN, GLOWSTONE, JACK_O_LANTERN, SEA_LANTERN, SHROOMLIGHT]
+
+halas:                    # promien [bl.]; najwyzej raz na limit_tikow na gracza
+  cios: 10                # gracz uderzyl cokolwiek -> moby ida do gracza
+  pocisk: 12              # strzala/sniezka/kamien w blok -> moby ida w MIEJSCE uderzenia (odwrocenie uwagi)
+  blok: 6                 # zniszczenie bloku
+  limit_tikow: 10
+
+ikony:
+  wlaczone: true
+  typ: tekst              # tekst = "?"/"!" bez paczki; przedmiot = INK_SAC z custom_model_data (paczka LR alertsys)
+  wysokosc: 0.6
+  skala: 2.5             # 1 = znak ~0,25 bl. (z 7 bl. nieczytelny, kadr QA 22.10)
+  wysokosc_typ:           # typ MM -> wysokosc nad hitboxem; model ModelEngine bywa wyzszy niz hitbox (ikona wchodzila w helm)
+    czuj_armoros: 1.4
+  cmd: { ZANIEPOKOJONY: 13371201, SZUKA: 13371201, ALARM: 13371200 }
+
+dzwieki:                  # przy wejsciu na wyzszy poziom; puste = bez dzwieku (mob moze grac swoj przez sygnal MM)
+  ZANIEPOKOJONY: ""
+  SZUKA: ""
+  ALARM: "littleroom_alertsys:alert"

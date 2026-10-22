@@ -1,0 +1,65 @@
+CZUJ_ARMOROS_zaniepokojony:
+  Skills:
+  - setvariable{var=caster.czuj;val=szuka;type=STRING} @self
+  - state{s=notice;lo=5} @self
+  - defaultstate{type=idle;state=notice_idle;lo=5} @self
+  - defaultstate{type=walk;state=notice_walk;lo=5} @self
+
+CZUJ_ARMOROS_alarm:
+  Skills:
+  - setvariable{var=caster.czuj;val=alarm;type=STRING} @self
+  - state{s=alert} @self
+  - defaultstate{type=idle;state=alert_idle;li=5;lo=5} @self
+  - defaultstate{type=walk;state=alert_walk;li=5;lo=5} @self
+
+CZUJ_ARMOROS_spokojny:
+  Skills:
+  - setvariable{var=caster.czuj;val=spokojny;type=STRING} @self
+  - state{s=de_alert;lo=5} @self
+  - defaultstate{type=idle;state=idle;li=5;lo=5} @self
+  - defaultstate{type=walk;state=walk;li=5;lo=5} @self
+
+# Ataki LR bez warunku alertsys (warunek alarmu jest na linii moba).
+CZUJ_ARMOROS_atak_1:
+  TargetConditions:
+  - fieldofview{angle=120;rotation=0} true
+  - distance{d=<6} true
+  Conditions:
+  - offgcd true
+  Skills:
+  - skill{s=ARMOROS_attack_1_bez_warunku}
+
+CZUJ_ARMOROS_atak_2:
+  TargetConditions:
+  - fieldofview{angle=120;rotation=0} true
+  - distance{d=<6} true
+  Conditions:
+  - offgcd true
+  Skills:
+  - skill{s=ARMOROS_attack_2_bez_warunku}
+
+ARMOROS_attack_1_bez_warunku:
+  Skills:
+  - gcd{ticks=30}
+  - state{s=attack_1;lo=10} @self
+  - lockmodel{l=true;delay=15} @self
+  - lockmodel{l=false;delay=23} @self
+  - sound{s=littleroom_armoros:grunt;v=2;sc=HOSTILE;delay=10} @self
+  - sound{s=littleroom_armoros:swing;v=2;sc=HOSTILE;delay=15} @self
+  - velocity{relative=true;z=1;delay=15} @self
+  - totem{drawhitbox=false;md=2;oH=ARMOROS_attack_damage;hr=1;vr=1;y=0;repeat=8;repeati=1;delay=15} @modelpart{pid=glaive_hitbox}
+  - setspeed{s=0} @self
+  - setspeed{s=1.5;delay=30} @self
+
+ARMOROS_attack_2_bez_warunku:
+  Skills:
+  - gcd{ticks=30}
+  - state{s=attack_2;lo=10} @self
+  - lockmodel{l=true;delay=15} @self
+  - lockmodel{l=false;delay=23} @self
+  - sound{s=littleroom_armoros:grunt;v=2;sc=HOSTILE;delay=10} @self
+  - sound{s=littleroom_armoros:swing;v=2;sc=HOSTILE;delay=15} @self
+  - velocity{relative=true;z=1;delay=15} @self
+  - totem{drawhitbox=false;md=2;oH=ARMOROS_attack_damage;hr=1;vr=1;y=0;repeat=8;repeati=1;delay=15} @modelpart{pid=glaive_hitbox}
+  - setspeed{s=0} @self
+  - setspeed{s=1.5;delay=30} @self

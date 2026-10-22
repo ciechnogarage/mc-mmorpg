@@ -1,0 +1,38 @@
+# Armoros (model Little Room) z czujnoscia z wtyczki Czujnosc zamiast skilli alertsys.
+# Roznice wzgledem LR: brak ALERTSYS_* (wtyczka liczy wzrok/sluch), brak `throw @eir ~onTimer:1` (skan encji co tik),
+# animacje notice/alert/de_alert wlaczane sygnalami CZUJ_* z wtyczki, ataki tylko w alarmie (zmienna caster.czuj).
+czuj_armoros:
+  Type: IRON_GOLEM
+  Display: 'Armoros'
+  Health: 40
+  Damage: 4
+  Faction: ARMOROS
+  Options:
+    PreventOtherDrops: true
+    KnockbackResistance: 1
+    Collidable: true
+    Silent: true
+    MovementSpeed: 0.2
+    FollowRange: 24
+    Despawn: persistent
+  AITargetSelectors:
+  - clear
+  - players
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomlookaround
+  Skills:
+  - CancelEvent{sync=true} @self ~onInteract
+  - CancelEvent{sync=true} @self ~onAttack
+  - model{m=armoros;usm=true;step=2;d=false;h=true;ride=true} @self ~onSpawn
+  - model{m=armoros;usm=true;step=2;d=false;h=true;ride=true} @self ~onLoad
+  - segment{m=armoros;p=ribbon;em=false;roll=true;angle=180;extend=0} @self ~onSpawn
+  - skill{s=ARMOROS_init} @self ~onSpawn
+  - skill{s=ARMOROS_hitfx} @self ~onDamaged
+  - skill{s=ARMOROS_death} @self ~onDeath
+  - randomskill{skills=CZUJ_ARMOROS_atak_1,CZUJ_ARMOROS_atak_2} @target ~onTimer:20 ?varequals{var=caster.czuj;val=alarm}
+  - skill{s=CZUJ_ARMOROS_zaniepokojony} @self ~onSignal:CZUJ_ZANIEPOKOJONY
+  - skill{s=CZUJ_ARMOROS_zaniepokojony} @self ~onSignal:CZUJ_SZUKA
+  - skill{s=CZUJ_ARMOROS_alarm} @self ~onSignal:CZUJ_ALARM
+  - skill{s=CZUJ_ARMOROS_spokojny} @self ~onSignal:CZUJ_SPOKOJNY

@@ -1,0 +1,14 @@
+name: Czujnosc
+version: '${version}'
+main: pl.mcmmorpg.czujnosc.Czujnosc
+api-version: '1.21'
+softdepend: [MythicMobs]
+description: Czujnosc mobow - wzrok, sluch, halas, stany spokojny/zaniepokojony/szuka/alarm (skradanie).
+commands:
+  czujnosc:
+    description: Stan i koszt / przeladowanie / debug / mob pod celownikiem
+    usage: /czujnosc [stan [zeruj] | przeladuj | debug | info]
+    permission: czujnosc.admin
+permissions:
+  czujnosc.admin:
+    default: op
