@@ -1,0 +1,21 @@
+Zak_Leczenie_dloni_Start:
+  Skills:
+  - sound{s=block.amethyst_block.chime;v=0.35;p=1.6} @self
+
+Zak_Leczenie_dloni_Stop:
+  Skills:
+  - sound{s=block.amethyst_block.chime;v=0.25;p=1.2} @self
+
+Zak_Leczenie_dloni_Traf_P:
+  Skills:
+  - heal{a=0.1}
+  - effect:particles{p=happy_villager;a=3;hs=0.2;vs=0.35}
+
+Zak_Leczenie_dloni_Traf_L:
+  Skills:
+  - skill{s=Zak_Leczenie_dloni_Traf_P}
+
+Zak_Leczenie_dloni_Traf_Obie:
+  Skills:
+  - heal{a=0.22}
+  - effect:particles{p=happy_villager;a=5;hs=0.3;vs=0.4}

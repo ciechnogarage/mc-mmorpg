@@ -1,0 +1,865 @@
+{
+ "items_total": 6725,
+ "items_by_type": {
+  "armour": 2099,
+  "weapon": 2390,
+  "accessory": 924,
+  "tome": 172,
+  "ingredient": 972,
+  "tool": 52,
+  "material": 112,
+  "charm": 4
+ },
+ "gear_total": 5413,
+ "gear_by_tier": {
+  "legendary": 920,
+  "rare": 1628,
+  "fabled": 252,
+  "unique": 2059,
+  "normal": 469,
+  "mythic": 85
+ },
+ "gear_max_level": 120,
+ "gear_level_counter_top": [
+  [
+   95,
+   135
+  ],
+  [
+   98,
+   83
+  ],
+  [
+   80,
+   82
+  ],
+  [
+   55,
+   81
+  ],
+  [
+   100,
+   80
+  ],
+  [
+   120,
+   73
+  ],
+  [
+   75,
+   70
+  ],
+  [
+   113,
+   69
+  ],
+  [
+   50,
+   69
+  ],
+  [
+   115,
+   67
+  ],
+  [
+   93,
+   67
+  ],
+  [
+   90,
+   67
+  ]
+ ],
+ "distinct_identifications_on_gear": 90,
+ "ids_per_item_by_tier": {
+  "legendary": [
+   5.91,
+   13
+  ],
+  "rare": [
+   5.58,
+   15
+  ],
+  "fabled": [
+   5.94,
+   10
+  ],
+  "unique": [
+   5.29,
+   15
+  ],
+  "normal": [
+   0,
+   0
+  ],
+  "mythic": [
+   7.02,
+   10
+  ]
+ },
+ "id_values_rolled_vs_fixed": [
+  17536,
+  9976
+ ],
+ "roll_range_positive_min_over_raw": [
+  0.25,
+  0.3,
+  1.5
+ ],
+ "roll_range_positive_max_over_raw": [
+  0.5,
+  1.3,
+  1.5
+ ],
+ "roll_range_negative_min_over_raw": [
+  0.2,
+  1.3,
+  1.5
+ ],
+ "roll_range_negative_max_over_raw": [
+  0.5,
+  0.7,
+  1.5
+ ],
+ "items_with_major_ids": 267,
+ "distinct_major_ids": 165,
+ "powder_slots": {
+  "0": 506,
+  "5": 62,
+  "2": 1673,
+  "3": 1270,
+  "4": 141,
+  "1": 824,
+  "8": 3,
+  "10": 2,
+  "15": 2,
+  "6": 4,
+  "7": 1,
+  "18": 1
+ },
+ "restriction": {
+  "none": 4626,
+  "untradable": 698,
+  "null": 1381,
+  "quest_item": 20
+ },
+ "dropRestriction": {
+  "normal": 3139,
+  "never": 1944,
+  "lootchest": 512,
+  "null": 1084,
+  "dungeon": 46
+ },
+ "attackSpeed": {
+  "fast": 473,
+  "superFast": 155,
+  "verySlow": 291,
+  "slow": 493,
+  "superSlow": 176,
+  "normal": 505,
+  "veryFast": 297
+ },
+ "weapon_class": {
+  "mage": 478,
+  "assassin": 490,
+  "archer": 496,
+  "shaman": 438,
+  "warrior": 488
+ },
+ "elements_per_gear": {
+  "2": 1774,
+  "5": 185,
+  "1": 2040,
+  "0": 1128,
+  "3": 225,
+  "4": 61
+ },
+ "icon_base_items": {
+  "minecraft:potion": 4558,
+  "minecraft:leather_chestplate": 544,
+  "minecraft:leather_helmet": 532,
+  "minecraft:leather_boots": 493,
+  "minecraft:leather_leggings": 491,
+  "skin/skin": 103,
+  "minecraft:skull_item": 2,
+  "minecraft:jack_o_lantern": 1,
+  "minecraft:pumpkin": 1
+ },
+ "icon_formats": {
+  "attribute": 6622,
+  "skin": 103
+ },
+ "gear_with_lore_pct": 19.1,
+ "ingredients_total": 972,
+ "ingredient_tiers": {
+  "TIER_2": 294,
+  "TIER_3": 195,
+  "TIER_1": 250,
+  "TIER_0": 233
+ },
+ "ingredient_professions": {
+  "jeweling": 138,
+  "armouring": 255,
+  "tailoring": 252,
+  "scribing": 148,
+  "alchemism": 186,
+  "weaponsmithing": 226,
+  "cooking": 160,
+  "woodworking": 207
+ },
+ "ingredient_levels": {
+  "0-9": 56,
+  "10-19": 51,
+  "20-29": 69,
+  "30-39": 70,
+  "40-49": 61,
+  "50-59": 68,
+  "60-69": 79,
+  "70-79": 94,
+  "80-89": 98,
+  "90-99": 112,
+  "100-109": 127,
+  "110-119": 87,
+  "120-129": 0
+ },
+ "ingredients_with_droppedBy": 824,
+ "ingredients_with_position_mods": 47,
+ "distinct_mobs_dropping_ingredients": 1196,
+ "materials": {
+  "mining": 28,
+  "farming": 28,
+  "fishing": 28,
+  "woodcutting": 28
+ },
+ "tools": {
+  "axe": 13,
+  "pickaxe": 13,
+  "rod": 13,
+  "scythe": 13
+ },
+ "tomes": {
+  "armour_tome": 41,
+  "mysticism_tome": 17,
+  "marathon_tome": 9,
+  "weapon_tome": 60,
+  "expertise_tome": 17,
+  "guild_tome": 16,
+  "lootrun_tome": 12
+ },
+ "charms": [
+  "Charm of the Void",
+  "Charm of the Stone",
+  "Charm of the Light",
+  "Charm of the Worm"
+ ],
+ "recipes_total": 720,
+ "recipes_by_skill": {
+  "tailoring": 96,
+  "woodworking": 144,
+  "jeweling": 144,
+  "armouring": 96,
+  "weaponsmithing": 96,
+  "cooking": 48,
+  "alchemism": 48,
+  "scribing": 48
+ },
+ "recipes_by_type": {
+  "boots": 48,
+  "bow": 48,
+  "bracelet": 48,
+  "chestplate": 48,
+  "dagger": 48,
+  "food": 48,
+  "helmet": 48,
+  "leggings": 48,
+  "necklace": 48,
+  "potion": 48,
+  "relik": 48,
+  "ring": 48,
+  "scroll": 48,
+  "spear": 48,
+  "wand": 48
+ },
+ "recipe_level_bands": [
+  [
+   1,
+   3
+  ],
+  [
+   3,
+   5
+  ],
+  [
+   5,
+   7
+  ],
+  [
+   7,
+   9
+  ],
+  [
+   10,
+   13
+  ],
+  [
+   13,
+   15
+  ],
+  [
+   15,
+   17
+  ],
+  [
+   17,
+   19
+  ],
+  [
+   20,
+   23
+  ],
+  [
+   23,
+   25
+  ],
+  [
+   25,
+   27
+  ],
+  [
+   27,
+   29
+  ],
+  [
+   30,
+   33
+  ],
+  [
+   33,
+   35
+  ],
+  [
+   35,
+   37
+  ],
+  [
+   37,
+   39
+  ],
+  [
+   40,
+   43
+  ],
+  [
+   43,
+   45
+  ],
+  [
+   45,
+   47
+  ],
+  [
+   47,
+   49
+  ],
+  [
+   50,
+   53
+  ],
+  [
+   53,
+   55
+  ],
+  [
+   55,
+   57
+  ],
+  [
+   57,
+   59
+  ],
+  [
+   60,
+   63
+  ],
+  [
+   63,
+   65
+  ],
+  [
+   65,
+   67
+  ],
+  [
+   67,
+   69
+  ],
+  [
+   70,
+   73
+  ],
+  [
+   73,
+   75
+  ],
+  [
+   75,
+   77
+  ],
+  [
+   77,
+   79
+  ],
+  [
+   80,
+   83
+  ],
+  [
+   83,
+   85
+  ],
+  [
+   85,
+   87
+  ],
+  [
+   87,
+   89
+  ],
+  [
+   90,
+   93
+  ],
+  [
+   93,
+   95
+  ],
+  [
+   95,
+   97
+  ],
+  [
+   97,
+   99
+  ],
+  [
+   100,
+   103
+  ],
+  [
+   103,
+   105
+  ],
+  [
+   105,
+   107
+  ],
+  [
+   107,
+   109
+  ],
+  [
+   110,
+   113
+  ],
+  [
+   113,
+   115
+  ],
+  [
+   115,
+   117
+  ],
+  [
+   117,
+   119
+  ]
+ ],
+ "recipe_distinct_materials": 112,
+ "sets_total": 71,
+ "set_sizes": {
+  "4": 29,
+  "2": 16,
+  "3": 14,
+  "8": 2,
+  "1": 2,
+  "7": 2,
+  "5": 3,
+  "0": 2,
+  "58": 1
+ },
+ "spells_with_combo": 35,
+ "aspects_total": 128,
+ "aspects_by_rarity": {
+  "legendary": 59,
+  "fabled": 49,
+  "mythic": 20
+ },
+ "aspect_threshold_patterns": {
+  "legendary|1/5/30/150": 59,
+  "fabled|1/15/75": 49,
+  "mythic|1/5/15": 20
+ },
+ "world_events_total": 70,
+ "world_events_difficulty": {
+  "MEDIUM": 30,
+  "EASY": 9,
+  "HARD": 31
+ },
+ "world_events_length": {
+  "SHORT": 17,
+  "MEDIUM": 32,
+  "LONG": 21
+ },
+ "world_events_scheduled": 13,
+ "loot_pools": [
+  [
+   "Canyon of the Lost Excursion (South)",
+   "CAMP",
+   38
+  ],
+  [
+   "The Corkus Traversal",
+   "CAMP",
+   42
+  ],
+  [
+   "Molten Heights Hike",
+   "CAMP",
+   40
+  ],
+  [
+   "Sky Islands Exploration",
+   "CAMP",
+   38
+  ],
+  [
+   "Silent Expanse Expedition",
+   "CAMP",
+   48
+  ],
+  [
+   "The Fruma Foray (West)",
+   "CAMP",
+   50
+  ],
+  [
+   "The Fruma Foray (East)",
+   "CAMP",
+   45
+  ],
+  [
+   "Nest of the Grootslangs",
+   "RAID",
+   54
+  ],
+  [
+   "Orphion's Nexus of Light",
+   "RAID",
+   60
+  ],
+  [
+   "The Canyon Colossus",
+   "RAID",
+   62
+  ],
+  [
+   "The Nameless Anomaly",
+   "RAID",
+   65
+  ],
+  [
+   "The Wartorn Palace",
+   "RAID",
+   60
+  ]
+ ],
+ "gathering_nodes_total": 16787,
+ "gathering_node_types": {
+  "CORNER": 843,
+  "NODE": 15381,
+  "WALL": 563
+ },
+ "markers_total": 1395,
+ "map_extent_markers": {
+  "x": [
+   -2249,
+   1538
+  ],
+  "z": [
+   -5622,
+   -242
+  ]
+ },
+ "territories_total": 437,
+ "territory_holders_top10": [
+  [
+   "Sequoia",
+   92
+  ],
+  [
+   "Avicia",
+   59
+  ],
+  [
+   "The Nameless Samurai",
+   56
+  ],
+  [
+   "Aequitas",
+   52
+  ],
+  [
+   "Titans Valor",
+   31
+  ],
+  [
+   "KongoBoys",
+   31
+  ],
+  [
+   "Empire of TKW",
+   18
+  ],
+  [
+   "Cyanide Legion",
+   15
+  ],
+  [
+   "Paladins United",
+   15
+  ],
+  [
+   "Pavilion",
+   12
+  ]
+ ],
+ "guilds_holding_territory": 23,
+ "territory_treasury": {
+  "LOW": 272,
+  "MEDIUM": 71,
+  "VERY_LOW": 91,
+  "HIGH": 3
+ },
+ "territory_defences": {
+  "VERY_HIGH": 24,
+  "HIGH": 169,
+  "MEDIUM": 171,
+  "VERY_LOW": 67,
+  "LOW": 6
+ },
+ "territory_resource_basegen": {
+  "CROP:900": 22,
+  "CROP:3600": 411,
+  "CROP:7200": 4,
+  "EMERALD:1800": 22,
+  "EMERALD:9000": 393,
+  "EMERALD:18000": 22,
+  "FISH:900": 22,
+  "FISH:3600": 413,
+  "FISH:7200": 2,
+  "ORE:900": 22,
+  "ORE:3600": 412,
+  "ORE:7200": 3,
+  "WOOD:900": 22,
+  "WOOD:3600": 411,
+  "WOOD:7200": 4
+ },
+ "territory_links_mean_max": [
+  3.17,
+  6
+ ],
+ "guilds_total": 18301,
+ "guild_seasons": 33,
+ "season_latest": {
+  "startDate": "2026-07-24T23:01:00Z",
+  "endDate": "2026-09-27T04:01:00Z",
+  "territoryHoldingSrPerHour": 120,
+  "srPerWar": 40,
+  "leaderboardRewards": [
+   {
+    "type": "EFFECT",
+    "value": "XP_BOOST",
+    "expires": "2026-10-27T00:01:00-04:00",
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 200
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Season 32 - Top 100",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 100
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Snowflake",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 80
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Theorick's Ally",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 50
+    }
+   },
+   {
+    "type": "EFFECT",
+    "value": "XP_BOOST",
+    "expires": "2026-10-27T00:01:00-04:00",
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 25
+    }
+   },
+   {
+    "type": "STRUCTURE",
+    "value": "iceBanner2",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 20
+    }
+   },
+   {
+    "type": "EFFECT",
+    "value": "XP_BOOST",
+    "expires": "2026-10-27T00:01:00-04:00",
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 15
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Season 32 - Top 10",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 10
+    }
+   },
+   {
+    "type": "EFFECT",
+    "value": "XP_BOOST",
+    "expires": "2026-10-27T00:01:00-04:00",
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 5
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Season 32 - 3rd Place",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 3
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Season 32 - 2nd Place",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 2
+    }
+   },
+   {
+    "type": "BADGE",
+    "value": "Season 32 - 1st Place",
+    "expires": null,
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 1
+    }
+   },
+   {
+    "type": "COSMETIC",
+    "value": "GUILD_CROWN",
+    "expires": "2026-12-13T12:00:00-05:00",
+    "condition": {
+     "type": "LEADERBOARD_POSITION",
+     "value": 1
+    }
+   }
+  ]
+ },
+ "lb_combatSoloLevel_top_bottom": [
+  121,
+  121,
+  100
+ ],
+ "lb_combat_classes": {
+  "shaman": 29,
+  "mage": 27,
+  "assassin": 8,
+  "archer": 9,
+  "redacted": 9,
+  "warrior": 18
+ },
+ "lb_combat_support_ranks": {
+  "champion": 85,
+  "null": 9,
+  "vipplus": 2,
+  "hero": 2,
+  "heroplus": 2
+ },
+ "lb_combat_playtime_h": [
+  82,
+  1350,
+  23977
+ ],
+ "lb_totalGlobalLevel_top_bottom": [
+  25575,
+  8379,
+  100
+ ],
+ "lb_guildLevel_top_bottom": [
+  null,
+  null,
+  100
+ ],
+ "lb_playerContent_top_bottom": [
+  1290,
+  1290,
+  100
+ ],
+ "lb_professionsGlobalLevel_top_bottom": [
+  23760,
+  7073,
+  100
+ ],
+ "lb_frumaCompletion_top_bottom": [
+  6354,
+  590,
+  100
+ ],
+ "lb_guildTerritories_top_bottom": [
+  null,
+  null,
+  100
+ ],
+ "online_total": 886,
+ "online_worlds": 52,
+ "online_by_region": {
+  "AS": 278,
+  "NA": 303,
+  "EU": 145
+ },
+ "online_per_world_min_med_max": [
+  1,
+  13.0,
+  36
+ ]
+}

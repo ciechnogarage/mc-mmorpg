@@ -1,0 +1,6 @@
+klasa,nazwa,stron,wezlow,lacznikow,suma_AP_calego_drzewa,rozklad_kosztu_AP,wezly_z_wymog_archetypu,wezly_z_wymog_wezla,wezly_blokujace,wezly_na_archetyp
+archer,Archer (Hunter),9,97,173,139,"{1: 55, 2: 42}",28,60,8,"{""(brak/wspolny)"": 28, ""Boltslinger"": 25, ""Sharpshooter"": 22, ""Trapper"": 22}"
+warrior,Warrior (Knight),9,96,160,139,"{1: 53, 2: 43}",26,54,12,"{""(brak/wspolny)"": 32, ""Fallen"": 20, ""Paladin"": 24, ""Battle Monk"": 20}"
+assassin,Assassin (Ninja),9,96,167,133,"{1: 59, 2: 37}",27,63,11,"{""(brak/wspolny)"": 30, ""Shadestepper"": 20, ""Acrobat"": 23, ""Trickster"": 23}"
+mage,Mage (Dark Wizard),9,88,162,129,"{1: 47, 2: 41}",25,59,14,"{""(brak/wspolny)"": 26, ""Light Bender"": 21, ""Arcanist"": 20, ""Riftwalker"": 21}"
+shaman,Shaman (Skyseer),9,96,174,142,"{1: 50, 2: 46}",32,75,7,"{""(brak/wspolny)"": 24, ""Summoner"": 25, ""Acolyte"": 24, ""Ritualist"": 23}"

@@ -1,0 +1,257 @@
+# Pas przetrwania L1 nad hotbarem (18.10). Kotwica: lewa krawedz hotbara, 51 GUI nad dolem.
+l1-pas:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+  layers:
+    medal:
+      texture: {path: assets/l1/medal.png}
+      scale: 0.5
+      offset: {x: 79, y: -1}
+    absorpcja:
+      texture: {path: assets/l1/absorpcja_fill.png}
+      scale: 0.5
+      offset: {x: 13, y: -13}
+      function: {listener: absorpcja, increment: 67, orientation: horizontal}
+      conditions:
+        - progress{l=absorpcja;o=>;v=0} true hide
+    hp-trucizna:
+      texture: {path: assets/l1/hp_trucizna.png}
+      scale: 0.5
+      offset: {x: 13, y: -13}
+      function: {listener: health, increment: 67, orientation: horizontal}
+      conditions:
+        - effect{e=poison} true hide
+    hp-uschniecie:
+      texture: {path: assets/l1/hp_uschniecie.png}
+      scale: 0.5
+      offset: {x: 13, y: -13}
+      function: {listener: health, increment: 67, orientation: horizontal}
+      conditions:
+        - effect{e=wither} true hide
+    hp:
+      texture: {path: assets/l1/hp_fill.png}
+      scale: 0.5
+      offset: {x: 13, y: -13}
+      function: {listener: health, increment: 67, orientation: horizontal}
+    hp-tlo:
+      texture: {path: assets/l1/pasek_tlo.png}
+      scale: 0.5
+      offset: {x: 12, y: -12}
+    serce:
+      texture: {path: assets/l1/kieszen_serce.png}
+      scale: 0.5
+      offset: {x: 0, y: -12}
+    stamina-niska:
+      texture: {path: assets/l1/stamina_niska.png}
+      scale: 1
+      offset: {x: 0, y: -24}
+      function: {listener: stamina, increment: 10, orientation: horizontal}
+      conditions:
+        - progress{l=stamina-niska;o=<;v=31%} true hide
+    stamina:
+      texture: {path: assets/l1/stamina_fill.png}
+      scale: 1
+      offset: {x: 0, y: -24}
+      function: {listener: stamina, increment: 10, orientation: horizontal}
+    stamina-tlo:
+      texture: {path: assets/l1/stamina_tlo.png}
+      scale: 1
+      offset: {x: 0, y: -24}
+
+l1-poziom-1:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_level%;v=10;o=<} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%mmocore_level%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: -12}
+
+l1-poziom-2:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_level%;v=10;o=>=} true hide
+    - placeholder{ph=%mmocore_level%;v=100;o=<} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%mmocore_level%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: -12}
+
+l1-poziom-3:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_level%;v=100;o=>=} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%mmocore_level%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: -12}
+
+l1-hp-tekst:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - progress{l=hp;o=>=;v=30%} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%player_health_rounded%/%player_max_health_rounded%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 16, y: -14}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+
+l1-hp-niskie:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - progress{l=hp;o=<;v=30%} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%player_health_rounded%/%player_max_health_rounded%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 17, y: -14}
+    alarm:
+      texture: {path: assets/l1/hp_alarm.png}
+      scale: 0.5
+      offset: {x: 0, y: -11}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 1, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+
+l1-zasob-mana:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_mana_name%;val=Szał} false hide
+    - placeholder{ph=%mmocore_mana_name%;val=Skupienie} false hide
+    - placeholder{ph=%mmocore_mana_name%;val=Dusze} false hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%mana-value%/%mana-max%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 4, y: -14}
+    mana:
+      texture: {path: assets/l1/mana_fill.png}
+      scale: 0.5
+      offset: {x: 1, y: -13}
+      function: {listener: mana, increment: 67, orientation: horizontal}
+    tlo:
+      texture: {path: assets/l1/pasek_tlo.png}
+      scale: 0.5
+      offset: {x: 0, y: -12}
+    ikona:
+      texture: {path: assets/l1/kieszen_kropla.png}
+      scale: 0.5
+      offset: {x: 70, y: -12}
+
+l1-zasob-szal:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_mana_name%;val=Szał} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%mana-value%/%mana-max%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 4, y: -14}
+    mana:
+      texture: {path: assets/l1/szal_fill.png}
+      scale: 0.5
+      offset: {x: 1, y: -13}
+      function: {listener: mana, increment: 67, orientation: horizontal}
+    tlo:
+      texture: {path: assets/l1/pasek_tlo.png}
+      scale: 0.5
+      offset: {x: 0, y: -12}
+    ikona:
+      texture: {path: assets/l1/kieszen_szal.png}
+      scale: 0.5
+      offset: {x: 70, y: -12}
+
+l1-zasob-skupienie:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_mana_name%;val=Skupienie} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%mana-value%/%mana-max%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 4, y: -14}
+    mana:
+      texture: {path: assets/l1/skupienie_fill.png}
+      scale: 0.5
+      offset: {x: 1, y: -13}
+      function: {listener: mana, increment: 67, orientation: horizontal}
+    tlo:
+      texture: {path: assets/l1/pasek_tlo.png}
+      scale: 0.5
+      offset: {x: 0, y: -12}
+    ikona:
+      texture: {path: assets/l1/kieszen_skupienie.png}
+      scale: 0.5
+      offset: {x: 70, y: -12}
+
+l1-zasob-dusze:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_mana_name%;val=Dusze} true hide
+  layers:
+    kulki:
+      texture: {path: assets/l1/dusze_fill.png}
+      scale: 0.5
+      offset: {x: 1, y: -13}
+      function: {listener: mana, increment: 10, orientation: horizontal}
+    kulki-tlo:
+      texture: {path: assets/l1/dusze_tlo.png}
+      scale: 0.5
+      offset: {x: 1, y: -13}
+    tlo:
+      texture: {path: assets/l1/pasek_tlo.png}
+      scale: 0.5
+      offset: {x: 0, y: -12}
+    ikona:
+      texture: {path: assets/l1/kieszen_dusza.png}
+      scale: 0.5
+      offset: {x: 70, y: -12}
+
+l1-tlen:
+  conditions:
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - progress{l=tlen;o=<;v=100%} true hide
+  layers:
+    tlen:
+      texture: {path: assets/l1/tlen.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: air, increment: 10, orientation: horizontal}

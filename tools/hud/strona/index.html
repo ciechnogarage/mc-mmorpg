@@ -1,0 +1,109 @@
+<title>Karta Wędrowca HUD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Układ: jedna kolumna jak strona Księgi, duże zrzuty na pełną szerokość, podpisy pod spodem */
+:root{
+  --bg:#f3ece0; --panel:#fffaf1; --fg:#2b1d17; --muted:#6c533f; --gold:#a8792f; --navy:#183650; --line:#d9c7a5;
+  --ok:#3f7a3a; --warn:#b4542c;
+  --display:"Pixelify Sans", "Courier New", monospace; --body:"Source Sans 3", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1c1512; --panel:#261c17; --fg:#efe3cc; --muted:#c4a982; --gold:#d5a96b; --navy:#8fb7d8; --line:#45352a; --ok:#8cc47f; --warn:#f08a5d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1c1512; --panel:#261c17; --fg:#efe3cc; --muted:#c4a982; --gold:#d5a96b; --navy:#8fb7d8; --line:#45352a; --ok:#8cc47f; --warn:#f08a5d; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:28px 60px;display:grid;gap:34px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0;color:var(--fg)}
+h1{font-size:clamp(28px,5vw,44px);letter-spacing:.02em}
+h2{font-size:22px;color:var(--gold)}
+p{margin:0;max-width:68ch}
+.lead{color:var(--muted)}
+section{display:grid;gap:12px}
+figure{margin:0;display:grid;gap:6px;min-width:0}
+figcaption{font-size:14px;color:var(--muted)}
+.px{image-rendering:pixelated;max-width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px;background:#000}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:18px}
+.status{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
+.chip.ok{color:var(--ok)} .chip.warn{color:var(--warn)}
+ul{margin:0;padding-left:20px;display:grid;gap:4px;max-width:72ch}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px;display:grid;gap:8px}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px">
+    <h1>Karta Wędrowca — nowy HUD</h1>
+    <p class="lead">Lewy górny róg: mini karta gracza (twarz z aktualnej skórki, poziom w medalionie, HP, mana, nowa stamina, EXP). Minimapa przeniesiona w prawy górny róg. Dolny pasek podzielony na grupy slotów. Grafika: Codex, ocena i test: Claude.</p>
+    <div class="status">
+      <span class="chip ok">Wdrożone na world1 — 03.10, 14:25</span>
+      <span class="chip ok">Sprawdzone w prawdziwym kliencie na klonie</span>
+      <span class="chip">Cofnięcie: backups/hud-20261003-122427/cofnij.sh</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>W grze (klient Minecraft, GUI 3)</h2>
+    <figure><img class="px" src="img/gra_ekran.jpg" alt="Zrzut z gry z nowym HUD-em"><figcaption>Prawdziwy zrzut z klona po poprawkach: karta w lewym górnym rogu, minimapa w prawym, dolny pasek w grupach. Vanillowe serca, głód i pasek EXP schowane. (Twarz to domyślna skórka konta testowego.)</figcaption></figure>
+    <div class="grid2">
+      <figure><img class="px" src="img/gra_karta.png" alt="Karta w grze"><figcaption>Karta z bliska: pełne HP, mana pusta po śmierci, stamina pełna, poziom 1.</figcaption></figure>
+      <figure><img class="px" src="img/gra_karta_niskie.png" alt="Karta przy zerowym HP"><figcaption>Stan „niskie HP” (ekran śmierci): czerwona liczba, czerwona obwódka portretu, „!” przy pustej staminie.</figcaption></figure>
+    </div>
+    <figure><img class="px" src="img/gra_dol.png" alt="Dolny pasek w grze"><figcaption>Dolny pasek: tarcza z wartością zbroi, grupy slotów (broń · mikstury · użytkowe · mapa i Dziennik), skrzydło głodu.</figcaption></figure>
+    <p class="lead">Poprawione po teście w kliencie: twarz wychodziła nad ramkę, nick leżał na twarzy, „!” świecił przy pełnej staminie (MythicHUD ignoruje warunki na warstwach tekstowych — napisy warunkowe są teraz osobnymi elementami), vanillowe serca nie chowały się (teraz przezroczyste tekstury w paczce), HP pokazywało ułamki (21.6), ramka minimapy znikała. Minimapa jest teraz ukryta w kreatorze i przy wyborze postaci. Tabliczkę współrzędnych usunąłem — mapa i HUD liczą piksele inaczej, więc przy różnych skalach GUI rozjeżdżała się.</p>
+  </section>
+
+  <section>
+    <h2>Makieta karty (×4)</h2>
+    <div class="grid2">
+      <figure><img class="px" src="img/karta_x4.png" alt="Karta Wędrowca powiększona 4 razy"><figcaption>Granatowa tabliczka z nickiem jak tytuł Księgi, złota oprawa portretu, medalion poziomu, paski w trzech tonach. Kropla = mana, błysk = stamina.</figcaption></figure>
+      <figure><img class="px" src="img/karta_poziomy_x4.png" alt="Medalion dla poziomów 1, 10 i 100"><figcaption>Medalion dla poziomu 1, 10 i 100.</figcaption></figure>
+    </div>
+    <p class="lead">Polskie litery (ę, ż) w makiecie odjeżdżają w dół. To błąd skryptu makiet, w grze rysuje je czcionka Minecrafta. Sprawdzę w kliencie.</p>
+  </section>
+
+  <section>
+    <h2>Cały ekran, GUI 3</h2>
+    <figure><img class="px" src="img/B_gui3_pelne_hp.png" alt="Pełny ekran z kartą, minimapą i dolnym paskiem"><figcaption>Pełne HP. Minimapa po prawej z tabliczką współrzędnych; zbroja (tarcza + liczba) i głód (udziec + pasek) przy końcach paska; nazwy zaklęć nad swoją stroną.</figcaption></figure>
+    <div class="grid2">
+      <figure><img class="px" src="img/B_gui3_niskie_hp_trucizna.png" alt="Niskie HP i trucizna"><figcaption>Niskie HP + trucizna: czerwona liczba, czerwona obwódka portretu, zielony pasek.</figcaption></figure>
+      <figure><img class="px" src="img/B_gui3_pusta_stamina.png" alt="Pusta stamina"><figcaption>Stamina poniżej 20%: pasek ciemnieje.</figcaption></figure>
+      <figure><img class="px" src="img/B_gui3_walka_chowancow.png" alt="Walka Chowańców"><figcaption>Walka Chowańców: panele przeciwnika i stwora zjechały pod kartę. W makiecie to szare prostokąty, w grze zostają obecne grafiki.</figcaption></figure>
+      <figure><img class="px" src="img/B_gui4_noc.png" alt="Noc, GUI 4"><figcaption>Noc, GUI 4: czytelność na ciemnym tle.</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dolny pasek: dwa warianty</h2>
+    <figure><img class="px" src="img/dol_x4.png" alt="Dolny pasek powiększony"><figcaption>Wariant B (polecany, jest w plikach): grupy slotów rozdzielone złotymi przegrodami. Broń P/L · 3 mikstury · użytkowe · mapa i Dziennik.</figcaption></figure>
+    <figure><img class="px" src="img/A_gui3_pelne_hp.png" alt="Wariant A z zakładkami"><figcaption>Wariant A: to samo plus małe zakładki z piktogramami nad grupami.</figcaption></figure>
+  </section>
+
+  <section>
+    <h2>Wzory z mcmodels</h2>
+    <div class="grid2">
+      <figure><img src="img/wzor_party.jpg" alt="Party HUD" style="max-width:100%;border-radius:4px"><figcaption>Party HUD (Volya): portret, „poziom | nick”, gruby pasek HP z liczbą, cienka mana. Główny wzór karty.</figcaption></figure>
+      <figure><img src="img/wzor_lumin.jpg" alt="Lumin Citadel HUD" style="max-width:100%;border-radius:4px"><figcaption>Lumin Citadel HUD: portret w ozdobnej ramce w rogu, obudowa paska, ramka współrzędnych.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="box">
+    <h2>Co jeszcze się zmienia</h2>
+    <ul>
+      <li>Znikają stare elementy: tekst „Health/Mana” w lewym górnym rogu, vanillowe serduszka, głód i pasek EXP.</li>
+      <li>Wyłączony pasek MMOCore „♥ | ♦ | ⛨” nad hotbarem, bo dubluje kartę. Komunikaty pluginów idą osobną drogą i zostają.</li>
+      <li>Stamina: pasek z MMOCore (ta sama, którą zużywa mocny cios).</li>
+      <li>Akolita: na razie pokazuje manę, bo Dusze nie mają jeszcze placeholdera.</li>
+    </ul>
+  </section>
+
+  <section class="box">
+    <h2>Do sprawdzenia z prawdziwymi graczami</h2>
+    <ul>
+      <li>Twarz z prawdziwej skórki postaci (konto testowe na klonie nie ma skórki).</li>
+      <li>Twarz po zmianie skórki przez CMI, długie nicki, poziom 100.</li>
+      <li>Wygląd przy GUI 2 i 4 (sprawdzone przy GUI 3).</li>
+      <li>Walka Chowańców: panele pod kartą.</li>
+    </ul>
+  </section>
+</div>

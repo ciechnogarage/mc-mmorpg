@@ -1,0 +1,9 @@
+stamina:
+  value: '%mmocore_stamina%'
+  max: '%mmocore_stat_max_stamina%'
+doswiadczenie:
+  value: '%mmocore_experience%'
+  max: '%mmocore_next_level%'
+absorpcja:
+  value: '%player_absorption%'
+  max: '20'

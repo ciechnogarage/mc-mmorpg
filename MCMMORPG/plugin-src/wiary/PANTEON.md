@@ -2,7 +2,7 @@
 
 Projekt i decyzje: strona https://claude.ai/artifact/JD9X7Mxv6dBTXN3oNjBehR (wersja 3). Imiona przyjęte „na razie” (29.09).
 Loch 001 NIE jest powiązany z wiarami, dopóki właściciel nie potwierdzi jego lore.
-Kopia na serwerze: /opt/docker/mc/data/world1/docs/wiary/panteon.md (kopiowana przy wdrożeniu).
+Kopia na serwerze: /home/dev/Desktop/Przemek/MC/docs/wiary/panteon.md (kopiowana przy wdrożeniu).
 
 ## Panteon
 | Grupa | Bóstwo | Przydomek | Domena |

@@ -1,0 +1,8 @@
+MAG_PUNKT_BURZY:
+  Type: ARMOR_STAND
+  Display: '&eOko Burzy'
+  Health: 1
+  Faction: mag_burza
+  Options: {Invisible: true, NoGravity: true, NoAI: true, Silent: true, PreventOtherDrops: true, Despawn: true, Collidable: false}
+  Skills:
+  - 'skill{s=MAG_Punkt_Burzy_Koniec} @self ~onSpawn'

@@ -1,0 +1,23 @@
+ZAKLECIE_PLOMIENIE:
+  Id: DEBUG_STICK
+  Display: '<!i><#ff9a3c>Płomienie'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Zniszczenie · Nowicjusz'
+  - ''
+  - '<!i><gray>Z dłoni bucha strumień ognia,'
+  - '<!i><gray>który trawi wszystko przed tobą.'
+  - ''
+  - '<!i><#ffcf6b>PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><gray>Obrażenia: <#ff6a3c>8 od ognia/s'
+  - '<!i><gray>Zasięg: <white>6 bloków <gray>· Koszt: <#6ab4ff>1 many/s'
+  - '<!i><gray>Trafieni płoną jeszcze przez chwilę.'
+  - ''
+  - '<!i><#c9a6ff>Oburącz: <gray>obrażenia ×2,2, mana ×2,8'
+  Options:
+    ItemModel: zaklecia:plomienie
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE        # bez machania reka (Q, LPM) — zaklecie to nie bron

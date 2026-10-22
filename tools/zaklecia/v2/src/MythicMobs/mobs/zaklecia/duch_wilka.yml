@@ -1,0 +1,27 @@
+ZAK_DUCH_WILKA:
+  Type: WOLF
+  Display: '&bDuch wilka'
+  Health: 20
+  Damage: 4
+  Faction: zaklecia_przywolane
+  Options:
+    Despawn: true
+    Persistent: false
+    Glowing: true
+    Silent: true
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    MovementSpeed: 0.31
+    FollowRange: 32
+  AIGoalSelectors:
+  - 0 clear
+  - 1 float
+  - 2 meleeattack
+  - 3 gotoowner
+  AITargetSelectors:
+  - 0 clear
+  - 1 ownerattacker
+  - 2 ownertarget
+  Skills:
+  - effect:particles{p=soul;a=10;hs=0.35;vs=0.4} @self ~onSpawn
+  - effect:particles{p=soul;a=3;hs=0.25;vs=0.35} @self ~onTimer:20

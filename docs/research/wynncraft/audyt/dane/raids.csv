@@ -1,0 +1,6 @@
+nazwa,typ,poziom,trudnosc,dlugosc,liczba_nagrod,tiers
+Nest of the Grootslangs,RAID,54,HARD,MEDIUM,54,"{""MYTHIC"": 3, ""CURRENCY"": 2, ""FABLED"": 22, ""LEGENDARY"": 10, ""WARD"": 1, ""INGREDIENT"": 3, ""ITEM"": 13}"
+Orphion's Nexus of Light,RAID,79,HARD,LONG,60,"{""MYTHIC"": 9, ""FABLED"": 22, ""WARD"": 2, ""LEGENDARY"": 8, ""CURRENCY"": 2, ""ITEM"": 14, ""INGREDIENT"": 3}"
+The Canyon Colossus,RAID,95,HARD,MEDIUM,62,"{""MYTHIC"": 9, ""FABLED"": 23, ""WARD"": 3, ""LEGENDARY"": 14, ""CURRENCY"": 1, ""ITEM"": 9, ""INGREDIENT"": 3}"
+The Nameless Anomaly,RAID,103,HARD,MEDIUM,65,"{""MYTHIC"": 9, ""FABLED"": 19, ""WARD"": 2, ""LEGENDARY"": 15, ""CURRENCY"": 2, ""ITEM"": 15, ""INGREDIENT"": 3}"
+The Wartorn Palace,RAID,119,HARD,LONG,60,"{""MYTHIC"": 9, ""FABLED"": 20, ""LEGENDARY"": 10, ""TOME"": 1, ""ITEM"": 14, ""WARD"": 1, ""CURRENCY"": 2, ""INGREDIENT"": 3}"

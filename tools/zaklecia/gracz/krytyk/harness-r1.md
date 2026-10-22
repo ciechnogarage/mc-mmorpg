@@ -1,0 +1,25 @@
+# Runda 1 — wiarygodność harnessu i niezmienniki
+
+## Odkrywanie scenariuszy
+`bot/lib/grupy.js` wylicza `scenariusze/*.js` w chwili uruchomienia; filtr nazw obejmuje sondy Agenta A `N_*`. `bot/run.js` uruchamia wykryte moduły. Testy jednostkowe w nagłówkach `b-1-11.out`, `b-1-12.out`: 16/16 PASS na JAR md5 `bdbdcdd20d53`.
+
+## Kontrola ciosu wręcz
+- `b-1-1.out`, JAR md5 `35bf852378b4`: zwykły kamienny miecz, husk z przodu, 0 obrażeń przy wielu ustawieniach. Próba ręcznego surowego pakietu była błędna i została usunięta z harnessu.
+- `b-1-2.out`, JAR md5 `c9c52d1a16ee`: UUID celu i obrót bota zgadzały się z serwerem, 0 obrażeń. Trzeci pomiar wykazał możliwość nieaktualnego identyfikatora encji po wielokrotnym odtwarzaniu sceny; odświeżenie celu jest konieczne.
+- `b-1-5.out`, `b-1-6.out`, `b-1-7.out`, `b-1-9.out`, JAR md5 `5e7f23263271`: na świeżym koncie, przy x=0/17/30, z NoAI=0/1, z HurtTime=0 i po odczekaniu cooldown, zwykły miecz nadal 0. Serwerowy diagnostyczny `/damage ... player_attack by MagTest` odpowiada „Target is invulnerable to the given damage type”, mimo `Invulnerable:0b`; `/damage ... generic` zmienia HP. To wskazuje na politykę obrażeń serwera, ale nie identyfikuje jeszcze pluginu.
+- `b-1-12.out`, JAR md5 `bdbdcdd20d53`: w PvP allow zwykły miecz, prawidłowy cel w odległości 2,57 bl., 20→20 HP; miecz MMOItems `MIECZ_KAMIENNY`, ten sam bot i cel, 20→15,1 HP. To jest dodatnia kontrola pakietu ataku i pomiaru HP. Nie jest to dodatnia kontrola *zwykłego* miecza ani ataku na huska; C01-LPM na husku pozostaje nieważne jako dowód błędu samego zaklęcia.
+
+## Niezmienniki
+`bot/lib/niezmienniki.js` odczytuje osobno 36 slotów i 5 części wyposażenia z serwera, porównuje przedmiot i liczbę z głównym `bot.inventory` klienta, sprawdza placeholdery dłoni, manę, usunięcie BossBar po zamknięciu, nowe błędy Zaklec w logu i osierocone encje po sprzątaniu. `bot/lib/wynik.js` uruchamia kontrolę po `w.step`; grupy z ręcznym `w.add` wywołują ją jawnie. Otwarte menu MythicMobs ma własny, niepoprawny widok dolnych slotów, więc nie służy już za źródło prawdy o ekwipunku klienta. Po wykryciu dwóch pozostałych encji w `a-r1-07.out` sprzątanie wykonuje dwa przebiegi `/kill` z odstępem.
+
+`b-1-12.out`, JAR md5 `bdbdcdd20d53`, `IB-BossBar-po-Q`: otwarto dwa paski z tytułami Zaklec; po Q w 1,2 s odebrano 19 pakietów BossBar (14 ADD, 5 zmiana procentu), 0 REMOVE. Niezmiennik `INV-IB-BossBar-po-Q` FAIL. To wymaga potwierdzenia, czy Q jest udokumentowanym zamknięciem przy otwartym pasku; obie strony interfejsu pozostają zsynchronizowane co do stanu Q.
+
+## Fuzzer: wczesne kontrole
+`b-1-8.out`, JAR md5 `5e7f23263271`: kontrola Płomieni 20→18 HP i 20→19,2 many, potem wyjątek harnessu przy menu E; obsługa zamknięcia okna poprawiona. `b-1-10.out`, ten sam JAR: zgłoszenie rozbieżności ekwipunku przy Shift+Q w kroku 74 miało nieprawidłową mapę dolnych slotów otwartego okna i minimalizacja wybrała inny rodzaj błędu; oba elementy harnessu poprawiono, więc wynik nie dowodzi utraty przedmiotu. `b-1-13.out`, JAR md5 `bdbdcdd20d53`: śmierć od upadku w kroku 9 dała 17 rozbieżności klient/serwer, minimalizacja do samej śmierci. Kontrola była wykonana bezpośrednio po zdarzeniu `death`; opóźniona synchronizacja ekwipunku jest możliwa, więc dodano oczekiwanie po odrodzeniu i zaplanowano ponowny przebieg.
+
+`b-1-18.out`, JAR md5 `1a1994fbc239`, ziarno `104729`: 300/300 akcji wykonane, pierwsze naruszenie w kroku 9 (`smierc`): serwer nadal ma m.in. papier w slocie 1, Mineflayer widzi pusty slot; minimalizacja bieżącej wersji wskazała pojedynczą śmierć. Wynik wymaga niezależnej kontroli `D`, ponieważ odtworzenia minimalizacji nie zaczynały od świeżego klienta. Nowszy kod `bot/lib/fuzzer.js` już resetuje klienta i minimalizuje tylko prefiks kończący się na pierwszym naruszeniu.
+
+## Korekta interpretacji Inventory po menu i śmierci
+`b-1-19.out`, JAR md5 `1a1994fbc239`: sonda `I2` po kliknięciu E najpierw pokazuje zgodność serwera z głównym `bot.inventory`, po 800 ms otwiera się okno `minecraft:generic_9x6` (90 slotów), którego dolny widok ma puste sloty, choć `bot.inventory` nadal ma książkę zgodną z serwerem. Wtedy stary checker, biorący dolny widok okna, błędnie zgłasza 22 rozbieżności. Sonda `D` przy keepInventory=true widzi po śmierci podobne okno 90 slotów i zgłasza 21 rozbieżności przez 5 s. `b-1-20.out`, ten sam JAR: po zamknięciu tego okna rozbieżności spadają do zera. To rozstrzyga, że wcześniejsze alarmy Inventory z tych scen nie dowodzą utraty przedmiotów; były błędem źródła odczytu klienta. `clientItem` początkowo dawał pierwszeństwo głównemu ekwipunkowi, lecz awaryjny odczyt z aktywnego okna nadal powodował 5–6 fałszywych różnic w `b-1-21.out`. Finalny checker używa wyłącznie `bot.inventory`.
+
+`b-1-23.out`, JAR md5 `1a1994fbc239`, poprawiony checker: D PASS przy 0 rozbieżności po śmierci po 0,5/2/5 s i po zamknięciu okna; I2 PASS przed E, tuż po E i po 800 ms, za każdym razem 0 rozbieżności. Wszystkie 16 testów jednostkowych harnessu PASS. Tym samym wcześniejsze alarmy Inventory w `b-1-18` były fałszywie dodatnie w pomiarze, a nie udokumentowaną utratą przedmiotów.

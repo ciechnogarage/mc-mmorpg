@@ -1,0 +1,30 @@
+# Skopiować do plugins/MythicMobs/mobs/ na klonie world1 i wykonać /mm reload.
+# Oba moby mają osobne nazwy, żeby RCON mógł je jednoznacznie oznaczyć tagami.
+TEST_MANEKIN:
+  Type: ZOMBIE
+  Display: '&7Manekin'
+  Health: 60
+  Damage: 0
+  Options:
+    NoAI: true
+    MovementSpeed: 0
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    Despawn: false
+    Silent: true
+  AIGoalSelectors: ['0 clear']
+  AITargetSelectors: ['0 clear']
+
+TEST_NAPASTNIK:
+  Type: ZOMBIE
+  Display: '&cNapastnik'
+  Health: 200
+  Damage: 1
+  Options:
+    MovementSpeed: 0.28
+    FollowRange: 24
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    Despawn: false
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 players']

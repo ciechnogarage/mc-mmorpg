@@ -1,0 +1,28 @@
+ui_icon_card:
+  itemname: <gold>Karta postaci
+  material: GOLD_NUGGET
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/ui_settings/card
+ui_icon_goal:
+  itemname: <gold>Cel wyprawy
+  material: GOLD_NUGGET
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/ui_settings/goal
+ui_icon_map:
+  itemname: <gold>Minimapa
+  material: GOLD_NUGGET
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/ui_settings/map
+ui_icon_radar:
+  itemname: <gold>Radar istot
+  material: GOLD_NUGGET
+  excludeFromInventory: true
+  excludeFromCommands: true
+  Pack:
+    texture: nexo:item/ui_settings/radar

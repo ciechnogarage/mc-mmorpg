@@ -1,0 +1,18 @@
+ZAKLECIE_USPOKOJENIE:
+  Id: DEBUG_STICK
+  Display: '<!i><#c9a6ff>Uspokojenie'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Iluzja · Nowicjusz'
+  - '<!i><gray>Wycisza wroga do poziomu 9 (oburącz 19) na 15 sekund.'
+  - '<!i><#ffcf6b>PPM — lewa · LPM — prawa'
+  - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><gray>Koszt testowy: <#6ab4ff>3 many'
+  - '<!i><dark_gray>TODO grafika: tymczasowy model dłoni'
+  Options:
+    ItemModel: zaklecia:uspokojenie
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

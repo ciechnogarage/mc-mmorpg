@@ -1,0 +1,3 @@
+Przygotowałem zmiany rundy 3 w obu worktree, bez commitów. Oba pluginy przeszły lokalną kompilację Java, ale **nie potwierdzam PASS na klonie**: runner kolejki nie działa, a sandbox odmawia dostępu do Dockera. Zlecenia `a-r3-01`–`a-r3-04` czekają; A/B, `STAT2`, trzy próby C i końcowy build pozostają niewykonane.
+
+Stan, zmiany i ograniczenia zapisałem w [raporcie](</home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/raport-r3.md>) oraz [szczegółach](</home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/szczegoly-r3.md>).

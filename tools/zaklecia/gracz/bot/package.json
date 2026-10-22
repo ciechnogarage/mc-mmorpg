@@ -1,0 +1,7 @@
+{
+  "name": "zaklecia-gracz-etap1",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {"test": "node --test test/*.test.js", "run": "node run.js"},
+  "dependencies": {"mineflayer": "4.39.0", "minecraft-protocol": "1.68.0", "rcon-client": "4.2.5"}
+}

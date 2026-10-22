@@ -1,0 +1,24 @@
+[Paper Async Task Handler Thread - N/WARN]: *************************************************************************************
+[Paper Async Task Handler Thread - N/WARN]: However, you are N release(s) behind the latest stable release (N)!
+[Paper Async Task Handler Thread - N/WARN]: It is recommended that you update as soon as possible
+[Paper Async Task Handler Thread - N/WARN]: You are running the latest build for your Minecraft version (N.N)
+[Paper Async Task Handler Thread - N/WARN]: https://papermc.io/downloads/paper
+[Server thread/ERROR]: [CharacterCreator] CharacterCreator NIE zostanie wlaczony: config.yml ma bledy, ktore konczylyby sie utrata danych gracza albo NPE w trakcie gry (patrz wyzej).
+[Server thread/ERROR]: [CharacterCreator] Swiat kreatora 'creator_limbo' nie istnieje albo nie jest zaladowany. Sprawdz Multiverse (/mv list) i creator-room.world w config.yml.
+[Server thread/ERROR]: [CharacterCreator] creator-room.spawn / dummy-anchor nie daja sie rozwiazac w swiecie 'creator_limbo'.
+[Server thread/ERROR]: [MMOProfiles] Invalid profile selection location. Make sure the world exists!
+[Server thread/ERROR]: [MMOProfiles] Invalid profile spawn point. Make sure the world exists!
+[Server thread/ERROR]: [Multiverse-Core] Failed to autoload world creator_limbo: Failure{reason=WORLD_FOLDER_INVALID}
+[Server thread/ERROR]: [Multiverse-Core] Failed to autoload world stolica: Failure{reason=WORLD_FOLDER_INVALID}
+[Server thread/ERROR]: [Multiverse-Core] Failed to autoload world stolica_odnowa: Failure{reason=WORLD_FOLDER_INVALID}
+[Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.
+[Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[Server thread/WARN]: [DeluxeMenus] Could not setup a NMS hook for your server version! The following Item options will not work: nbt_int, nbt_ints, nbt_string and nbt_strings.
+[Server thread/WARN]: [Guilds] Foreign keys not fully supported in SQLite for guild
+[Server thread/WARN]: [Guilds] Foreign keys not fully supported in SQLite for rank
+[Server thread/WARN]: [MMOCore] Could not load waypoint 'nexus' from file 'default_waypoints.yml': Could not find world with name 'stolica_odnowa'
+[Server thread/WARN]: [MMOProfiles] Could not hook onto Vault: No economy plugin installed
+[Server thread/WARN]: [Mapa] Mapa o ID N nie istnieje; stare przedmioty czekaja na podmiane.
+[Server thread/WARN]: [ModelEngine] [S] Unable to activate MineSkin skin generation: Empty API Key

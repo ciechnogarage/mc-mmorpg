@@ -1,0 +1,18 @@
+ZAKLECIE_UZDROWIENIE_INNEGO:
+  Id: DEBUG_STICK
+  Display: '<!i><#8ce5a5>Uzdrowienie innego'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Przywracanie'
+  - '<!i><gray>Leczy wskazaną, niewrogą istotę o 8 HP.'
+  - '<!i><#ffcf6b>PPM — lewa · LPM — prawa'
+  - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><#c9a6ff>Oburącz: <gray>leczenie ×2,2; mana ×2,8'
+  - '<!i><dark_gray>TODO grafika: tymczasowy model dłoni'
+  Options:
+    ItemModel: zaklecia:uzdrowienie_innego
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

@@ -1,0 +1,4 @@
+# Wspolne powiadomienie o braku many.
+Zak_BrakMany:
+  Skills:
+  - sound{s=block.fire.extinguish;v=0.6;p=1.8} @self

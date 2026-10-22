@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Loch 002 Bagna Zgnilych Korzeni -> mapa MythicDungeons + moby/skille MythicMobs.
 
-Spec: /opt/docker/mc/data/world1/docs/lochy/loch-002-bagna-zgnilych-korzeni.md
+Spec: /home/dev/Desktop/Przemek/MC/docs/lochy/loch-002-bagna-zgnilych-korzeni.md
 Uzycie: build_loch002_md.py <swiat_kuzni>  -> kuznia/levels/loch_002_md/{md/loch_002, mm/...}
 
 Wzorce przeniesione z build_loch001_md.py (kazdy zmierzony w kuzni/na world1 - pamiec mythicmobs-rozstawione-moby,

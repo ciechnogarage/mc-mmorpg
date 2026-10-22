@@ -1,0 +1,4045 @@
+{
+  "seed": 271828,
+  "trace": [
+    {
+      "kind": "lpm",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "kolko",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "ppm",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "kolko",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 5
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 8
+    },
+    {
+      "kind": "q",
+      "arg": 8
+    },
+    {
+      "kind": "shiftq",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 5
+    },
+    {
+      "kind": "ppm",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 8
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 6
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 8
+    },
+    {
+      "kind": "kolko",
+      "arg": 7
+    },
+    {
+      "kind": "cyfra",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "skok",
+      "arg": 1
+    },
+    {
+      "kind": "ruch",
+      "arg": 5
+    },
+    {
+      "kind": "shiftq",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "kolko",
+      "arg": 0
+    },
+    {
+      "kind": "obie",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 5
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 8
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 5
+    },
+    {
+      "kind": "podwojne",
+      "arg": 2
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 2
+    },
+    {
+      "kind": "cyfra",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 2
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "q",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "skok",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 1
+    },
+    {
+      "kind": "f",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 8
+    },
+    {
+      "kind": "kolko",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "ruch",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "skok",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 6
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 4
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "ruch",
+      "arg": 6
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "shiftq",
+      "arg": 6
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 3
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "podwojne",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 5
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "relog",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 6
+    },
+    {
+      "kind": "cyfra",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "f",
+      "arg": 3
+    },
+    {
+      "kind": "lpm",
+      "arg": 3
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "ppm",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "ruch",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "shiftq",
+      "arg": 1
+    },
+    {
+      "kind": "shiftq",
+      "arg": 4
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 3
+    },
+    {
+      "kind": "shiftq",
+      "arg": 2
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "skradanie",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 1
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 7
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 6
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 3
+    },
+    {
+      "kind": "shiftq",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "ppm",
+      "arg": 7
+    },
+    {
+      "kind": "q",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 7
+    },
+    {
+      "kind": "q",
+      "arg": 0
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 7
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 8
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 4
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 6
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 4
+    },
+    {
+      "kind": "f",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 2
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 2
+    },
+    {
+      "kind": "obie",
+      "arg": 7
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "ppm",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "shiftq",
+      "arg": 1
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 1
+    },
+    {
+      "kind": "q",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "skok",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 4
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 8
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "skok",
+      "arg": 4
+    },
+    {
+      "kind": "smierc",
+      "arg": 4
+    },
+    {
+      "kind": "shiftq",
+      "arg": 4
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "shiftq",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 5
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 8
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 8
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "cyfra",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "sprint",
+      "arg": 4
+    },
+    {
+      "kind": "shiftq",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 3
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "shiftq",
+      "arg": 2
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 2
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 6
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 0
+    },
+    {
+      "kind": "e",
+      "arg": 5
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "relog",
+      "arg": 3
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "f",
+      "arg": 3
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 3
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 6
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "f",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "skradanie",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 4
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "ppm",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "cyfra",
+      "arg": 8
+    },
+    {
+      "kind": "podwojne",
+      "arg": 2
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "ppm",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "relog",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "shiftq",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "shiftq",
+      "arg": 1
+    },
+    {
+      "kind": "q",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 6
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 2
+    },
+    {
+      "kind": "cyfra",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 5
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 6
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "lpm",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "shiftq",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "ppm",
+      "arg": 1
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "sprint",
+      "arg": 0
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "shiftq",
+      "arg": 8
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 1
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "ppm",
+      "arg": 1
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 1
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 5
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 6
+    },
+    {
+      "kind": "e",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 3
+    },
+    {
+      "kind": "skok",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "q",
+      "arg": 6
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 5
+    },
+    {
+      "kind": "shiftq",
+      "arg": 8
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "skradanie",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "smierc",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 5
+    },
+    {
+      "kind": "e",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 8
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 5
+    },
+    {
+      "kind": "f",
+      "arg": 8
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "lpm",
+      "arg": 5
+    },
+    {
+      "kind": "kolko",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "shiftq",
+      "arg": 5
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "q",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 8
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "f",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "skradanie",
+      "arg": 0
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "cyfra",
+      "arg": 1
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "kolko",
+      "arg": 5
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 2
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "ruch",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 7
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "f",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 6
+    },
+    {
+      "kind": "sprint",
+      "arg": 4
+    },
+    {
+      "kind": "podwojne",
+      "arg": 5
+    },
+    {
+      "kind": "podwojne",
+      "arg": 5
+    },
+    {
+      "kind": "cyfra",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 6
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 4
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 1
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "sprint",
+      "arg": 2
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 4
+    },
+    {
+      "kind": "e",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "kolko",
+      "arg": 5
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "obie",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 1
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 4
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "q",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "ruch",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 4
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 7
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 5
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 4
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "ppm",
+      "arg": 0
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 1
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 7
+    },
+    {
+      "kind": "e",
+      "arg": 2
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 3
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 8
+    },
+    {
+      "kind": "ruch",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "skradanie",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "kolko",
+      "arg": 0
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 5
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 6
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "q",
+      "arg": 8
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 2
+    },
+    {
+      "kind": "ruch",
+      "arg": 8
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "e",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 2
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "relog",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 1
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "smierc",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 0
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "ruch",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 5
+    },
+    {
+      "kind": "podwojne",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 1
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 2
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 5
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 3
+    },
+    {
+      "kind": "ppm",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 8
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 5
+    },
+    {
+      "kind": "f",
+      "arg": 8
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "e",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 4
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 2
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "shiftq",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 5
+    },
+    {
+      "kind": "q",
+      "arg": 0
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "lpm",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "skok",
+      "arg": 1
+    },
+    {
+      "kind": "ppm",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 1
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 6
+    },
+    {
+      "kind": "q",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "kolko",
+      "arg": 4
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 6
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 3
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 3
+    },
+    {
+      "kind": "podwojne",
+      "arg": 7
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 7
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 3
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 8
+    },
+    {
+      "kind": "skradanie",
+      "arg": 0
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "cyfra",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 0
+    },
+    {
+      "kind": "relog",
+      "arg": 2
+    },
+    {
+      "kind": "ppm",
+      "arg": 8
+    },
+    {
+      "kind": "ruch",
+      "arg": 3
+    },
+    {
+      "kind": "skradanie",
+      "arg": 7
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "obie",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 4
+    },
+    {
+      "kind": "f",
+      "arg": 4
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 3
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "ppm",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 1
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 5
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "lpm",
+      "arg": 8
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "shiftq",
+      "arg": 8
+    },
+    {
+      "kind": "lpm",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 4
+    },
+    {
+      "kind": "skok",
+      "arg": 0
+    },
+    {
+      "kind": "lpm",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "skok",
+      "arg": 4
+    },
+    {
+      "kind": "lpm",
+      "arg": 7
+    },
+    {
+      "kind": "q",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "podwojne",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 8
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 8
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 4
+    },
+    {
+      "kind": "cyfra",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 8
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 4
+    },
+    {
+      "kind": "ppm",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 2
+    },
+    {
+      "kind": "shiftq",
+      "arg": 0
+    },
+    {
+      "kind": "skradanie",
+      "arg": 7
+    },
+    {
+      "kind": "skradanie",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 5
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "skok",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 8
+    },
+    {
+      "kind": "e",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "ppm",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 7
+    },
+    {
+      "kind": "kolko",
+      "arg": 8
+    },
+    {
+      "kind": "q",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "podwojne",
+      "arg": 5
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 0
+    },
+    {
+      "kind": "podwojne",
+      "arg": 1
+    },
+    {
+      "kind": "obie",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "q",
+      "arg": 3
+    },
+    {
+      "kind": "smierc",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 1
+    },
+    {
+      "kind": "podwojne",
+      "arg": 6
+    },
+    {
+      "kind": "lpm",
+      "arg": 0
+    },
+    {
+      "kind": "shiftq",
+      "arg": 6
+    },
+    {
+      "kind": "ppm",
+      "arg": 2
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "ruch",
+      "arg": 2
+    },
+    {
+      "kind": "e",
+      "arg": 3
+    },
+    {
+      "kind": "przedmiot",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 1
+    },
+    {
+      "kind": "shiftq",
+      "arg": 0
+    },
+    {
+      "kind": "f",
+      "arg": 3
+    },
+    {
+      "kind": "cyfra",
+      "arg": 5
+    },
+    {
+      "kind": "relog",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 2
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 7
+    },
+    {
+      "kind": "sprint",
+      "arg": 5
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "podwojne",
+      "arg": 2
+    },
+    {
+      "kind": "podwojne",
+      "arg": 8
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "sprint",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 1
+    },
+    {
+      "kind": "skradanie",
+      "arg": 6
+    },
+    {
+      "kind": "f",
+      "arg": 0
+    },
+    {
+      "kind": "ruch",
+      "arg": 7
+    },
+    {
+      "kind": "e",
+      "arg": 6
+    },
+    {
+      "kind": "obie",
+      "arg": 4
+    },
+    {
+      "kind": "f",
+      "arg": 6
+    },
+    {
+      "kind": "shiftq",
+      "arg": 1
+    },
+    {
+      "kind": "cyfra",
+      "arg": 6
+    },
+    {
+      "kind": "f",
+      "arg": 5
+    },
+    {
+      "kind": "skok",
+      "arg": 4
+    },
+    {
+      "kind": "obie",
+      "arg": 7
+    },
+    {
+      "kind": "ppm",
+      "arg": 6
+    },
+    {
+      "kind": "skradanie",
+      "arg": 4
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 8
+    },
+    {
+      "kind": "relog",
+      "arg": 0
+    },
+    {
+      "kind": "smierc",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 5
+    },
+    {
+      "kind": "shiftq",
+      "arg": 3
+    },
+    {
+      "kind": "bron_lewa",
+      "arg": 5
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "e",
+      "arg": 7
+    },
+    {
+      "kind": "smierc",
+      "arg": 8
+    },
+    {
+      "kind": "obie",
+      "arg": 0
+    },
+    {
+      "kind": "skok",
+      "arg": 6
+    },
+    {
+      "kind": "skradanie",
+      "arg": 1
+    },
+    {
+      "kind": "kolko",
+      "arg": 3
+    },
+    {
+      "kind": "e",
+      "arg": 3
+    },
+    {
+      "kind": "q",
+      "arg": 4
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "smierc",
+      "arg": 0
+    },
+    {
+      "kind": "sprint",
+      "arg": 6
+    },
+    {
+      "kind": "kolko",
+      "arg": 2
+    },
+    {
+      "kind": "kolko",
+      "arg": 6
+    }
+  ],
+  "violation": {
+    "index": 185,
+    "id": "FZ-271828-185-podwojne",
+    "fingerprint": "inventory:0:minecraft:stone_sword:1:-:0"
+  },
+  "mini": {
+    "trace": [],
+    "attempts": 0,
+    "reproduced": false,
+    "reason": "dlugi prefiks; pelny slad w trace"
+  },
+  "minimized": [
+    {
+      "violation": {
+        "index": 185,
+        "id": "FZ-271828-185-podwojne",
+        "fingerprint": "inventory:0:minecraft:stone_sword:1:-:0"
+      },
+      "mini": {
+        "trace": [],
+        "attempts": 0,
+        "reproduced": false,
+        "reason": "dlugi prefiks; pelny slad w trace"
+      }
+    },
+    {
+      "violation": {
+        "index": 365,
+        "id": "FZ-271828-365-sprint",
+        "fingerprint": "inventory:0:minecraft:paper:1:-:0"
+      },
+      "mini": {
+        "trace": [],
+        "attempts": 0,
+        "reproduced": false,
+        "reason": "dlugi prefiks; pelny slad w trace"
+      }
+    }
+  ],
+  "paperPackets": []
+}

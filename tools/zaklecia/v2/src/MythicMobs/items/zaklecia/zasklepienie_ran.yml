@@ -1,0 +1,18 @@
+ZAKLECIE_ZASKLEPIENIE_RAN:
+  Id: DEBUG_STICK
+  Display: '<!i><#8ce5a5>Zasklepienie ran'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Przywracanie'
+  - '<!i><gray>Leczy rzucającego o 12 HP.'
+  - '<!i><#ffcf6b>PPM — lewa · LPM — prawa'
+  - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><#c9a6ff>Oburącz: <gray>leczenie ×2,2; mana ×2,8'
+  - '<!i><dark_gray>TODO grafika: tymczasowy model dłoni'
+  Options:
+    ItemModel: zaklecia:zasklepienie_ran
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

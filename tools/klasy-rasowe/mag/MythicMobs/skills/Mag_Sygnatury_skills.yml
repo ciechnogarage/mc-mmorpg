@@ -1,0 +1,91 @@
+# Strefy wywołuje gracz; origin jest punktem z chwili rzutu.
+MAG_Wybuch_Strefa:
+  Skills:
+  - 'effect:particles{p=end_rod;a=40;hS=2.8;vS=0.2} @Origin'
+  - 'effect:sound{s=block.beacon.activate;v=0.9;p=1.7} @Origin'
+  - 'delay 16'
+  - 'effect:particles{p=explosion;a=8;hS=1.5;vS=0.3} @Origin'
+  - 'effect:sound{s=entity.generic.explode;v=0.9;p=1.2} @Origin'
+  - 'setvariable{var=skill.mag_burza_wlasna;type=INTEGER;value=0}'
+  - 'skill{s=MAG_Wybuch_Sprawdz_Burze} @EntitiesNearOrigin{r=3;targetarmorstands=true}'
+  - 'skill{s=MAG_Wybuch_Mob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false}'
+  - 'skill{s=MAG_Wybuch_Gracz} @PlayersNearOrigin{r=3}'
+MAG_Wybuch_Sprawdz_Burze:
+  TargetConditions:
+  - 'mythicMobType{type=MAG_PUNKT_BURZY} true'
+  - 'stringEquals{val1="<target.var.mag_owner|NONE>";val2="<caster.uuid>"} true'
+  Skills:
+  - 'setvariable{var=skill.mag_burza_wlasna;type=INTEGER;value=1}'
+MAG_Wybuch_Mob:
+  TargetConditions:
+  - 'isPlayer false'
+  Skills:
+  - 'skill{s=MAG_Wybuch_Cel} @TargetedTarget'
+MAG_Wybuch_Gracz:
+  TargetConditions:
+  - 'isPlayer true'
+  - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+  Skills:
+  - 'skill{s=MAG_Wybuch_Cel} @TargetedTarget'
+MAG_Wybuch_Cel:
+  Skills:
+  - 'setvariable{var=skill.mag_wybuch_premia;type=INTEGER;value=0}'
+  - 'skill{s=MAG_Wybuch_Pieczec} @TargetedTarget'
+  - 'skill{s=MAG_Wybuch_Burza} @TargetedTarget'
+  - 'mmodamage{a="<skill.var.mag_wybuch_damage> * (1 + 0.5 * <skill.var.mag_wybuch_premia>)";types=SKILL,MAGIC}'
+  - 'potion{type=WITHER;duration=60;level=0;force=true;hasParticles=true} ?variableEquals{var=skill.mag_wybuch_wariant;value=0}'
+  - 'effect:lightning ?variableEquals{var=skill.mag_wybuch_wariant;value=1}'
+  - 'throw{velocity=1.5;velocityY=0.25} ?variableEquals{var=skill.mag_wybuch_wariant;value=1}'
+  - 'potion{type=SLOWNESS;duration=40;level=0;force=true;hasParticles=true} ?variableEquals{var=skill.mag_wybuch_wariant;value=2}'
+  - 'ignite{ticks=60} ?variableEquals{var=skill.mag_wybuch_wariant;value=3}'
+MAG_Wybuch_Pieczec:
+  TargetConditions:
+  - 'stringEquals{val1="<target.uuid>";val2="<skill.var.mag_pieczec_cel_uuid|NONE>"} true'
+  Skills:
+  - 'setvariable{var=skill.mag_wybuch_premia;type=INTEGER;value=1}'
+  - 'variableunset{var=caster.mag_pieczec_cel_uuid} @self'
+  - 'effect:particles{p=enchant;a=35;hS=0.5;vS=0.7} @TargetedTarget'
+MAG_Wybuch_Burza:
+  Conditions:
+  - 'variableEquals{var=skill.mag_burza_wlasna;value=1} true'
+  Skills:
+  - 'setvariable{var=skill.mag_wybuch_premia;type=INTEGER;value=1}'
+MAG_Oko_Burzy_Strefa:
+  Skills:
+  - 'delay 20'
+  - 'skill{s=MAG_Oko_Burzy_Impuls} @Origin'
+  - 'delay 20'
+  - 'skill{s=MAG_Oko_Burzy_Impuls} @Origin'
+  - 'delay 20'
+  - 'skill{s=MAG_Oko_Burzy_Impuls} @Origin'
+  - 'delay 20'
+  - 'skill{s=MAG_Oko_Burzy_Impuls} @Origin'
+  - 'delay 20'
+  - 'skill{s=MAG_Oko_Burzy_Impuls} @Origin'
+  - 'delay 20'
+  - 'skill{s=MAG_Oko_Burzy_Impuls} @Origin'
+MAG_Oko_Burzy_Impuls:
+  Skills:
+  - 'effect:particles{p=electric_spark;a=25;hS=1.5;vS=0.3} @Origin'
+  - 'effect:sound{s=block.beacon.ambient;v=0.4;p=1.7} @Origin'
+  - 'skill{s=MAG_Oko_Burzy_Mob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false}'
+  - 'skill{s=MAG_Oko_Burzy_Gracz} @PlayersNearOrigin{r=3}'
+MAG_Oko_Burzy_Mob:
+  TargetConditions:
+  - 'isPlayer false'
+  Skills:
+  - 'skill{s=MAG_Oko_Burzy_Cel} @TargetedTarget'
+MAG_Oko_Burzy_Gracz:
+  TargetConditions:
+  - 'isPlayer true'
+  - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+  Skills:
+  - 'skill{s=MAG_Oko_Burzy_Cel} @TargetedTarget'
+MAG_Oko_Burzy_Cel:
+  Skills:
+  - 'mmodamage{a=3;types=SKILL,MAGIC}'
+  - 'potion{type=SLOWNESS;duration=25;level=0;force=true;hasParticles=true} ?variableEquals{var=skill.mag_eye_bonus;value=1}'
+MAG_Punkt_Burzy_Koniec:
+  Skills:
+  - 'delay 120'
+  - 'remove @self'

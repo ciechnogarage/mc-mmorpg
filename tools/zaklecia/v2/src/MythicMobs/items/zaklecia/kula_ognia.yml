@@ -1,0 +1,20 @@
+ZAKLECIE_KULA_OGNIA:
+  Id: DEBUG_STICK
+  Display: '<!i><#ff9a3c>Kula ognia'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Zniszczenie · Nowicjusz'
+  - ''
+  - '<!i><gray>Pocisk wybucha w promieniu 3 bloków.'
+  - ''
+  - '<!i><#ffcf6b>PPM — lewa · LPM — prawa'
+  - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><gray>Ładowanie: 14 ticków · Koszt: <#6ab4ff>5 many'
+  - '<!i><#c9a6ff>Oburącz: <gray>efekt ×2,2, mana ×2,8'
+  Options:
+    ItemModel: zaklecia:kula_ognia
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

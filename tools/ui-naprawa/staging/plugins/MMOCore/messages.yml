@@ -1,0 +1,484 @@
+###################################################
+# Level & Experience
+###################################################
+
+level-up:
+  sound: ENTITY_PLAYER_LEVELUP,1,2
+  # Runs a script on level up. This script is implemented
+  # inside file MythicLib/scripts/mmocore_scripts.yml
+  script: mmocore_level_up_effect
+  message:
+    - ''
+    - '&eAwans na poziom &6{level}&e!'
+    - '&eOtwórz okno postaci klawiszem &6E&e, aby zobaczyć statystyki.'
+    - ''
+profession-level-up:
+  sound: ENTITY_PLAYER_LEVELUP,1,2
+  message:
+    - ''
+    - '&eAwans w profesji &6{profession}&e na poziom &6{level}&e!'
+    - ''
+exp-notification:
+  message: '&f{profession} &e{progress} &e{ratio}%'
+  priority: 10
+  duration: 20
+  action-bar: true
+  #sound: ENTITY_EXPERIENCE_ORB_PICKUP # Not recommended, can be spammy
+death-exp-loss:
+  - ''
+  - '&cZginąłeś i straciłeś {loss} doświadczenia.'
+  - ''
+
+# Experience boosters
+new-exp-booster-main:
+  message:
+    - '&e'
+    - '&eAktywowano premię doświadczenia &6×{multiplier}&e!'
+    - '&e'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+new-exp-booster-profession:
+  message:
+    - '&e'
+    - '&eAktywowano premię doświadczenia &6×{multiplier}&e dla profesji &6{profession}&e!'
+    - '&e'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+
+###################################################
+# Class selection
+###################################################
+
+already-on-class: '&cMasz już klasę {class}.'
+cant-choose-new-class:
+  message: '&cPotrzebujesz jednego punktu klasy.'
+  sound: ENTITY_VILLAGER_NO
+no-permission-for-class:
+  message: '&cNie możesz wybrać klasy {class}.'
+  sound: ENTITY_VILLAGER_NO
+
+class-select:
+  message: '&eWybrano klasę &6{class}&e!'
+  sound: UI_TOAST_CHALLENGE_COMPLETE
+
+###################################################
+# Misc
+###################################################
+
+not-enough-perms: '&cNie masz uprawnień.'
+close-loot-chest:
+  #message: '&eClosing the loot chest. The content will be dropped on the ground.'
+  sound: ITEM_ARMOR_EQUIP_LEATHER
+
+# Placeholders and holograms
+exp-hologram: '&e+{exp} doświadczenia!' # Can only be a string
+
+caught-fish: '&aZłowiono rybę!' # Can only be a string
+fish-out-water: '&aUdany połów!' # Can only be a string
+fish-out-water-crit: '&aWyjątkowy połów!' # Can only be a string
+
+no-skill-placeholder: 'Brak przypisanej umiejętności' # Can only be a string
+
+###################################################
+# PvP Mode
+###################################################
+pvp-mode:
+  cooldown: '&cPoczekaj jeszcze {remaining} s.'
+
+  # When you cannot hit another player
+  cannot-hit:
+    high-level-difference: '&cRóżnica poziomów jest zbyt duża do tej walki.'
+    low-level-target: '&cPoziom tego gracza jest za niski do walki z Tobą.'
+    low-level-self: '&cTwój poziom jest za niski do walki z graczami.'
+    pvp-mode-disabled-target: '&cTen gracz ma wyłączony tryb PvP.'
+    pvp-mode-disabled-self: '&cMasz wyłączony tryb PvP.'
+    invulnerable-self: '&cPrzez kolejne {left} s nie możesz walczyć.'
+    invulnerable-target: '&cTen gracz jest chroniony jeszcze przez {left} s.'
+
+  # When using /pvpmode
+  toggle:
+    on-safe: '&aMożesz teraz walczyć z graczami w wyznaczonych miejscach.'
+    on-invulnerable: '&aBędziesz mógł walczyć z graczami za {time} s.'
+    off-safe: '&cWyłączono walkę z graczami.'
+
+  # Entering/leaving regions
+  leave:
+    pvp-allowed: '&cOpuszczono strefę PvP. Nadal można Cię zranić przez {remaining} s!'
+    pvp-denied: '&cOpuszczono strefę PvP.'
+  enter:
+    pvp-mode-on: '&aWejście do strefy PvP: ochrona przez {time} s.'
+    pvp-mode-off: '&aWejście do strefy PvP. Włącz PvP w oknie Ustawienia, aby walczyć.'
+
+###################################################
+# Specific Professions
+###################################################
+
+# Mining
+cannot-break: '%&cPotrzebujesz odpowiedniego narzędzia do tego bloku.'
+
+###################################################
+# Player Input
+###################################################
+
+player-input:
+  anvil:
+    friend-request: 'Nazwa gracza...'
+    party-invite: 'Nazwa gracza...'
+    guild-invite: 'Nazwa gracza...'
+    guild-creation-tag: 'Skrót gildii...'
+    guild-creation-name: 'Nazwa gildii...'
+  chat:
+    friend-request:
+      - '&eWpisz na czacie nazwę gracza.'
+      - '&eWpisz &c''cancel''&e, aby anulować.'
+    friend-request-cancel: ''
+    party-invite:
+      - '&eWpisz na czacie nazwę zapraszanego gracza.'
+      - '&eWpisz &c''cancel''&e, aby anulować.'
+    party-invite-cancel: ''
+    guild-invite:
+      - '&eWpisz na czacie nazwę zapraszanego gracza.'
+      - '&eWpisz &c''cancel''&e, aby anulować.'
+    guild-invite-cancel: ''
+    guild-creation-tag:
+      - '&eWpisz na czacie skrót nowej gildii.'
+      - '&eWpisz &c''cancel''&e, aby anulować.'
+    guild-creation-tag-cancel: ''
+    guild-creation-name:
+      - '&eWpisz na czacie nazwę nowej gildii.'
+      - '&eWpisz &c''cancel''&e, aby anulować.'
+    guild-creation-name-cancel: ''
+
+###################################################
+# Combat Log
+###################################################
+
+now-in-combat: '%&cRozpoczęto walkę!'
+leave-combat: '%&aWalka zakończona.'
+
+###################################################
+# Waypoints
+###################################################
+
+waypoint:
+  unlock:
+    # KsięgaPostaci pokazuje własny polski tytuł i odtwarza dźwięk.
+    message: ''
+  unlock-book:
+    message: ''
+  teleport:
+    charge:
+      message: '&ePodróż za {left} s. Ruch przerwie podróż.'
+      action-bar: true
+      priority: 20
+      duration: 25
+      sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    done:
+      message: '&aDotarłeś do punktu &6{waypoint}&a.'
+      action-bar: true
+      priority: 30
+      duration: 40
+      sound: ENTITY_ENDERMAN_TELEPORT,1,0.5
+    cancel:
+      message: '&cPodróż przerwana: poruszyłeś się.'
+      action-bar: true
+      priority: 40
+      duration: 40
+      sound: ENTITY_VILLAGER_NO,1,0.5
+  missing-stellium: '&cBrakuje {more} stellium do tej podróży.'
+  missing-access: '&cNie masz dostępu do tego punktu podróży.'
+  on-cooldown: '&cPoczekaj {cooldown} przed kolejną podróżą.'
+  locked: '&cTen punkt podróży nie został jeszcze odkryty.'
+  standing-on: '&cStoisz już przy tym punkcie podróży.'
+
+###################################################
+# Economy features
+###################################################
+
+gold-pouch-ui-name: 'Sakwa złota'
+deposit:
+  success:
+    message: '&eWpłacono &6{worth} złota&e.'
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+withdraw:
+  prompt: '&eWpisz na czacie, ile &6złota &echcesz wypłacić.'
+  cancel: '&eAnulowano wypłatę.'
+  success:
+    message: '&eWypłacono &6{worth} złota&e.'
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+  invalid-amount: '&c{arg} nie jest prawidłową liczbą.'
+  not-enough-money: '&cBrakuje {left} złota.'
+
+###################################################
+# Friends
+###################################################
+
+friend-not-online-player:
+  message: '&cGracz {player} jest poza grą.'
+  sound: ENTITY_VILLAGER_NO
+friend-request-cooldown:
+  message: '&cPoczekaj {cooldown}.'
+  sound: ENTITY_VILLAGER_NO
+friend-cant-friend-yourself:
+  message: '&cNie możesz wysłać zaproszenia do siebie.'
+  sound: ENTITY_VILLAGER_NO
+friend-already:
+  message: '&cGracz {player} jest już Twoim znajomym.'
+  sound: ENTITY_VILLAGER_NO
+friend-no-pending-invite:
+  message: '&cNie masz oczekujących zaproszeń do znajomych.'
+  sound: ENTITY_VILLAGER_NO
+
+friend-request-denied:
+  message: '&cOdrzucono zaproszenie od &6{player}&c.'
+  sound: ENTITY_VILLAGER_NO
+friend-request-denied-creator:
+  message: '&6{player}&c odrzucił Twoje zaproszenie.'
+  sound: ENTITY_VILLAGER_NO
+friend-removed:
+  message: '&cGracz {unfriend} nie jest już Twoim znajomym.'
+  sound: ENTITY_VILLAGER_NO
+
+friend-sent-request:
+  message: '&eWysłano zaproszenie do &6{player}&e.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+friend-now: '&eGracz &6{player}&e jest teraz Twoim znajomym.'
+friend-request:
+  json: true
+  format:
+    - '{"text":""}'
+    - '{"text":"&6{player} &ewysłał Ci zaproszenie do znajomych!"}'
+    - '[{"text":"        "},{"text":"&8[&a&lPRZYJMIJ&8]","clickEvent":{"action":"run_command","value":"/friends accept {uuid}"},"hoverEvent":{"action":"show_text","value":"&eKliknij, aby przyjąć."}},{"text":"&r             "},{"text":"&8[&c&lODRZUĆ&8]","clickEvent":{"action":"run_command","value":"/friends deny {uuid}"},"hoverEvent":{"action":"show_text","value":"&eKliknij, aby odrzucić."}}]'
+    - '{"text":""}'
+
+###################################################
+# Parties
+###################################################
+
+party-chat: '&5[Drużyna] {player}: {message}'
+party-send-invite:
+  message: '&eZaproszono &6{player}&e do drużyny.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+party-invite:
+  json: true
+  format:
+    - '{"text":""}'
+    - '{"text":"&6{player} &ezaprosił Cię do drużyny!"}'
+    - '[{"text":"        "},{"text":"&8[&a&lPRZYJMIJ&8]","clickEvent":{"action":"run_command","value":"/party accept {uuid}"},"hoverEvent":{"action":"show_text","value":"&eKliknij, aby przyjąć."}},{"text":"&r             "},{"text":"&8[&c&lODRZUĆ&8]","clickEvent":{"action":"run_command","value":"/party deny {uuid}"},"hoverEvent":{"action":"show_text","value":"&eKliknij, aby odrzucić."}}]'
+    - '{"text":""}'
+party-joined: '&eDołączono do drużyny gracza &6{owner}&e.'
+party-joined-other: '&6{player}&e dołączył do Twojej drużyny!'
+party-created:
+  message: '&eUtworzono drużynę.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+
+party-no-pending-invite:
+  message: '&cNie masz oczekujących zaproszeń do drużyny.'
+  sound: ENTITY_VILLAGER_NO
+party-is-full:
+  message: '&cTwoja drużyna jest pełna.'
+  sound: ENTITY_VILLAGER_NO
+party-not-online-player:
+  message: '&cGracz {player} jest poza grą.'
+  sound: ENTITY_VILLAGER_NO
+party-already-in:
+  message: '&cGracz {player} jest już w Twojej drużynie.'
+  sound: ENTITY_VILLAGER_NO
+party-invite-cooldown:
+  message: '&cPoczekaj {cooldown} przed kolejnym zaproszeniem.' # {player}
+  sound: ENTITY_VILLAGER_NO
+party-high-level-difference:
+  message: '&cNie możesz zaprosić gracza {player}: różnica poziomów ({diff}) jest za duża.'
+  sound: ENTITY_VILLAGER_NO
+
+party-leave:
+  message: '&eOpuszczono drużynę.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+party-transfer-ownership: '&ePrzekazano Ci dowództwo drużyny.'
+party-kick-player: '&eUsunięto &6{player}&e z drużyny.'
+party-kicked-from: '&cGracz &6{player}&c usunął Cię z drużyny.'
+
+###################################################
+# Guilds
+###################################################
+
+guild-chat: '&a[{tag}] {player}: {message}'
+sent-guild-invite:
+  message: '&eZaproszono &6{player}&e do gildii.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+guild-not-online-player:
+  message: '&cGracz {player} jest poza grą.'
+  sound: ENTITY_VILLAGER_NO
+guild-no-pending-invite:
+  message: '&cNie masz oczekujących zaproszeń do gildii.'
+  sound: ENTITY_VILLAGER_NO
+already-in-guild: '&cGracz {player} jest już w Twojej gildii.'
+guild-invite:
+  json: true
+  format:
+    - '{"text":""}'
+    - '{"text":"&6{player} &ezaprosił Cię do gildii!"}'
+    - '[{"text":"        "},{"text":"&8[&a&lPRZYJMIJ&8]","clickEvent":{"action":"run_command","value":"/guild accept {uuid}"},"hoverEvent":{"action":"show_text","value":"&eKliknij, aby przyjąć."}},{"text":"&r             "},{"text":"&8[&c&lODRZUĆ&8]","clickEvent":{"action":"run_command","value":"/guild deny {uuid}"},"hoverEvent":{"action":"show_text","value":"&eKliknij, aby odrzucić."}}]'
+    - '{"text":""}'
+guild-is-full: '&cTwoja gildia jest pełna.'
+guild-joined: '&eDołączono do gildii gracza &6{owner}&e.'
+guild-joined-other: '&6{player}&e dołączył do Twojej gildii!'
+transfer-guild-ownership: '&ePrzekazano Ci przywództwo gildii.'
+guild-kick-player:
+  message: '&eUsunięto &6{player}&e z gildii.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+guild-invite-cooldown: '&cPoczekaj {cooldown} przed zaproszeniem gracza {player}.'
+fail-guild-creation:
+  invalid-characters: '&eNiedozwolone znaki w nazwie!'
+  invalid-length: '&eDługość musi wynosić od {min} do {max} znaków!'
+  already-exists: '&eTaki skrót gildii już istnieje!'
+
+###################################################
+# Quests
+###################################################
+
+quest-already-active: '&cMasz już aktywne zadanie.'
+quest-cancel:
+  message: '&eAnulowano aktywne zadanie.'
+  sound: ENTITY_VILLAGER_NO
+quest-level-restriction: '&cPotrzebujesz poziomu {count}.'
+quest-profession-level-restriction: '&cPotrzebujesz poziomu {count} w profesji {profession}.'
+quest-cannot-redo: '&cNie możesz ponownie rozpocząć tego zadania.'
+quest-cooldown: '&cPoczekaj {delay} przed ponownym rozpoczęciem zadania.'
+quest-start:
+  message: '&eRozpoczęto zadanie &6{quest}&e.'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+
+###################################################
+# Attributes
+###################################################
+
+attribute-no-points-spent:
+  message: '&cNie wydano żadnych punktów cech.'
+  sound: ENTITY_VILLAGER_NO
+attribute-missing-reallocation-point:
+  message: '&cPotrzebujesz punktu zmiany cech.'
+  sound: ENTITY_VILLAGER_NO
+attribute-missing-point:
+  message: '&cNie masz punktów cech.'
+  sound: ENTITY_VILLAGER_NO
+attribute-missing-point-shift:
+  message: '&cPotrzebujesz &4{shift_points} &cpunktów cech.'
+  sound: ENTITY_VILLAGER_NO
+attribute-max-points-hit:
+  message: '&cNie możesz dalej rozwijać tej cechy.'
+  sound: ENTITY_VILLAGER_NO
+
+attribute-points-reallocated:
+  message: '&eZresetowano cechy. Masz teraz &6{points} &epunktów cech.'
+  sound: ENTITY_PLAYER_LEVELUP
+attribute-level-up:
+  message: '&eRozwinięto cechę &6{attribute}&e.' # {level}
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP
+
+###################################################
+# Skills
+###################################################
+
+no-class-skill: '&cTwoja klasa nie ma tej umiejętności.'
+not-enough-skill-points:
+  message: '&cPotrzebujesz punktu umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+not-enough-skill-points-shift:
+  message: '&cPotrzebujesz {shift_points} punktów umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+skill-level-not-met:
+  message: '&cNie możesz jeszcze użyć tej umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+cannot-edit-hardbound-slot:
+  message: '&cNie możesz zmienić tego miejsca umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+no-skill-bound:
+  message: '&cW tym miejscu nie ma przypisanej umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+skill-cannot-be-bound:
+  message: '&cTa umiejętność działa stale i nie można jej przypisać.'
+  sound: ENTITY_VILLAGER_NO,1,2
+not-compatible-skill:
+  message: '&cTa umiejętność nie pasuje do wybranego miejsca.'
+  sound: ENTITY_VILLAGER_NO,1,2
+cant-manually-bind:
+  message: '&cNie możesz ręcznie zmienić umiejętności w tym miejscu.'
+  sound: ENTITY_VILLAGER_NO,1,2
+skill-max-level-hit:
+  message: '&cTa umiejętność osiągnęła najwyższy poziom.'
+  sound: ENTITY_VILLAGER_NO,1,2
+not-skill-reallocation-point:
+  message: '&cPotrzebujesz punktu zmiany umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+no-skill-points-spent:
+  message: '&cNie wydano żadnych punktów umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+cannot-upgrade-skill:
+  message: '&cNie możesz rozwinąć tej umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+
+skill-ui-focus:
+  #message: '&eSwitching focus to &6{skill}&e.'
+  sound: UI_BUTTON_CLICK,1,2
+skill-bound-to-slot:
+  message: '&ePrzypisano &6{skill}&e do miejsca &6{slot}&e.' # {index}
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP,1,2
+skill-unbound-from-slot:
+  message: '&eUsunięto &6{skill}&e z miejsca &6{slot}&e.' # {index}
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP,1,2
+skill-points-reallocated:
+  message: '&eZresetowano umiejętności. Masz teraz &6{points} &epunktów umiejętności.'
+  sound: ENTITY_PLAYER_LEVELUP
+upgrade-skill:
+  message: '&eUmiejętność &6{skill}&e: poziom &6{level}&e!'
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP,1,2
+
+
+###################################################
+# Skill casting
+###################################################
+
+casting:
+  no-mana: '&cBrakuje Ci {mana}: potrzeba jeszcze {mana-required}.' # {skill}, {mana-cost}
+  no-stamina: '&cBrakuje wytrzymałości: potrzeba jeszcze {stamina-required}.' # {skill}, {stamina-cost}
+  on-cooldown: '&cTa umiejętność odnawia się jeszcze {cooldown} s.' # {skill}
+
+###################################################
+# Skill Trees
+###################################################
+
+no-skill-tree-points-spent:
+  message: '&cNie wydano żadnych punktów drzewa umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+skill-tree-node-locked:
+  message: '&cTa umiejętność jest zablokowana!'
+  sound: ENTITY_VILLAGER_NO,1,2
+skill-tree-node-max-level-hit:
+  message: '&cTen węzeł osiągnął najwyższy poziom.'
+  sound: ENTITY_VILLAGER_NO,1,2
+missing-skill-node-permission:
+  message: '&cNie możesz odblokować tego węzła umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+not-enough-skill-tree-points:
+  message: '&cPotrzebujesz {point} punktów drzewa umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+not-skill-tree-reallocation-point:
+  message: '&cPotrzebujesz punktu zmiany drzewa umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+no-skill-tree:
+  message: '&cTwoja klasa nie ma drzewa umiejętności.'
+  sound: ENTITY_VILLAGER_NO,1,2
+no-class-skill-tree:
+  message: '&cTo drzewo umiejętności nie jest dostępne dla Twojej klasy.'
+  sound: ENTITY_VILLAGER_NO,1,2
+skill-tree-max-points-spent:
+  message: '&cWydano maksymalną liczbę punktów. Zmień ich przydział, aby cofnąć wybór.'
+  sound: ENTITY_VILLAGER_NO,1,2
+
+skill-tree-switch:
+  #message: '&eSwitching skill tree &6{skill-tree}&e.'
+  sound: ITEM_ARMOR_EQUIP_LEATHER
+
+skill-tree-upgrade-node: '&eWęzeł &6{skill-node}&e: poziom &6{level}&e!'
+skill-tree-reallocate:
+  message: '&eZresetowano drzewo {skill-tree}. Masz teraz &6{points} &epunktów drzewa.'
+  sound: ENTITY_PLAYER_LEVELUP

@@ -6,7 +6,7 @@ N=${1:-profesje}; D=/opt/docker/mc/klony/$N/data; R="$(cd "$(dirname "${BASH_SOU
 [[ -d "$D/plugins" ]] || { echo "brak klonu: /opt/docker/mc/narzedzia/klon.sh start $N"; exit 2; }
 DZIALA=$(docker ps --format "{{.Names}}" | grep -cx "klon-$N" || true)   # restart wlasnego kontenera nie oddaje slotu klonu
 docker run --rm --name "profesje-gen-$$" --memory 768m -u "$(id -u):$(id -g)" -w /tmp -e HOME=/tmp \
-  -v "$D/plugins:/k/plugins" -v "$R:/w:ro" -v /opt/docker/mc/data/world1/tools:/tools:ro \
+  -v "$D/plugins:/k/plugins" -v "$R:/w:ro" -v /home/dev/Desktop/Przemek/MC/tools:/tools:ro \
   -v /opt/docker/mc/backups/mistrzostwa-20260923/wdrozenie:/mst:ro python:3.12-slim sh -c \
   'pip -q install --target /tmp/pp pyyaml pillow >/dev/null 2>&1; PYTHONPATH=/tmp/pp python /w/profesje/generuj.py --plugins /k/plugins --katalog-v2 /tools/przedmioty/katalog.json --ikony-v1 /tools/ikony-profesji --mistrzostwa /mst'
 for j in rzemioslo mistrzostwa; do

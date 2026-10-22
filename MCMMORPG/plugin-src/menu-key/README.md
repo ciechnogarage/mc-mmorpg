@@ -31,5 +31,5 @@ cp build/libs/menu-key-*.jar /opt/docker/mc/data/world1/plugins/
 
 ## Jak to sprawdzic
 
-`/opt/docker/mc/data/world1/tools/menu-hub/run.sh` — eval botowy. Sprawdza m.in. to, po co
+`/home/dev/Desktop/Przemek/MC/tools/menu-hub/run.sh` — eval botowy. Sprawdza m.in. to, po co
 ten plugin powstal: **Q z pusta reka otwiera menu**.

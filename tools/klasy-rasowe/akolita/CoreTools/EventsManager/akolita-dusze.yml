@@ -1,0 +1,6 @@
+# ETAP 2 (prototyp 2026-09-30): Dusze akolity z każdej śmierci w pobliżu (także zabójstw sług i poległych sług).
+# Zmiana w tym pliku = RESTART. Treść w Scripts/akolita-dusze.yml.
+akolita_dusze_smierc:
+  Event: EntityDeathEvent
+  Script: akolita_dusze_smierc
+  run_script_if_event_cancelled: false

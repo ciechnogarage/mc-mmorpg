@@ -1,0 +1,450 @@
+<title>HUD: co zasysa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Układ: jedna kolumna przeglądu; na górze werdykt, potem przyczyny ze zrzutami, schemat stref, kroki. */
+:root{
+  --bg:#f3eee4; --panel:#fffaf0; --ink:#2b211c; --muted:#6c5d52; --line:#d9cbb4;
+  --accent:#7a4a1f; --navy:#183a5a; --bad:#b0362b; --warn:#a06a10; --ok:#3d6b35;
+  --f-disp:"Pixelify Sans", "Courier New", monospace;
+  --f-body:"Source Sans 3", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1714; --panel:#25201b; --ink:#efe5d6; --muted:#b2a291; --line:#3e352c;
+  --accent:#e0a764; --navy:#8fb8e0; --bad:#ef7a6c; --warn:#e8b45a; --ok:#9bcf8b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1714; --panel:#25201b; --ink:#efe5d6; --muted:#b2a291; --line:#3e352c;
+  --accent:#e0a764; --navy:#8fb8e0; --bad:#ef7a6c; --warn:#e8b45a; --ok:#9bcf8b; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+main{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--f-disp);text-wrap:balance;margin:0;letter-spacing:.01em}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.1}
+h2{font-size:26px;color:var(--accent)}
+h3{font-size:19px}
+p{margin:0;max-width:68ch}
+.eyebrow{font:600 12px/1 var(--f-body);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+header{display:flex;flex-direction:column;gap:14px}
+.verdict{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--bad);padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.verdict ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+section{display:flex;flex-direction:column;gap:18px}
+.cause{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px;align-items:start;border-top:1px solid var(--line);padding-top:20px}
+@media (max-width:760px){.cause{grid-template-columns:1fr}}
+.cause .txt{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cause ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px}
+.shots{display:flex;flex-direction:column;gap:10px;min-width:0}
+figure{margin:0;display:flex;flex-direction:column;gap:4px;min-width:0}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--line);background:#000}
+figure img.px{image-rendering:pixelated;width:auto;max-width:100%}
+figcaption{font-size:13.5px;color:var(--muted)}
+.tag{display:inline-block;font:600 11px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:3px;border:1px solid currentColor;vertical-align:2px;margin-right:6px}
+.t-bug{color:var(--bad)} .t-proj{color:var(--warn)} .t-brak{color:var(--navy)}
+.who{font-size:13px;color:var(--muted)}
+.svgwrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);padding:12px}
+.svgwrap svg{display:block;min-width:620px;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:15.5px}
+.tbl{overflow-x:auto}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px/1.2 var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+td.n{font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+.cost{font-family:var(--f-mono);font-weight:400}
+.decide{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.mono{font-family:var(--f-mono);font-size:14px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.pair{grid-template-columns:1fr}}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{font:600 15px/1 var(--f-body);padding:9px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;border-radius:3px}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.wariant{display:flex;flex-direction:column;gap:14px}
+.ocena{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+@media (max-width:760px){.ocena{grid-template-columns:1fr}}
+.ocena ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.plus{color:var(--ok);font-weight:700}.minus{color:var(--bad);font-weight:700}
+.note{font-size:14px;color:var(--muted)}
+</style>
+
+<main>
+<header>
+  <span class="eyebrow">world1 · HUD „Karta Wędrowca” · przegląd 17.10 · Claude + Codex</span>
+  <h1>Co zasysa w HUD-zie</h1>
+  <p>Stan dzisiejszy z prawdziwego klienta 1.21.11 (1920×1080, klon world1 z konfiguracją z produkcji). Codex przeszedł dwie rundy: najpierw same pliki, potem te same zrzuty bez moich wniosków. Czarny portret to skutek konta offline; u gracza będzie twarz, więc nie liczymy go jako wady.</p>
+  <div class="verdict">
+    <strong>Werdykt w trzech zdaniach</strong>
+    <ol>
+      <li>HUD jest zbudowany wokół <b>tożsamości</b> (nick, klasa, portret, poziom), a nie wokół <b>przeżycia</b>. HP, zasób i stamina są cienkimi paskami w najdalszym rogu od celownika.</li>
+      <li>Tryb walki to pogarsza: w chwili, gdy HP się liczy, karta zamienia się w goły tekst bez pasków.</li>
+      <li>Do tego część sygnałów nie działa (trucizna, absorpcja, poziom 100, Dusze), GUI 2 rozsypuje kartę, a na ekranie są cztery różne style naraz. Łatki z 13.10 poprawiły szczegóły, ale nie ruszyły układu.</li>
+    </ol>
+  </div>
+</header>
+
+<section id="v4">
+  <span class="eyebrow">20.10 · v3 + v4 wdrożone na world1</span>
+  <h2>v4: cel walki, zdobycz, ostrzeżenia, loch</h2>
+  <div class="grid2">
+    <figure><img src="img/l4/v4a.jpg" alt="Cel walki i zdobycz" loading="lazy"><figcaption>Ramka celu nad paskiem (imię, poziom, HP), kanał zdobyczy po prawej (EXP, przedmioty), okno przygaszone w walce</figcaption></figure>
+    <figure><img src="img/l4/v4fg.jpg" alt="Zwykły mob i boss" loading="lazy"><figcaption>Zwykły mob: ramka. Boss (Stary Korzeń): tylko jego bossbar u góry, bez dubla. Wyłączony dublujący pasek CMI „19.13/20 (-0.86)”</figcaption></figure>
+  </div>
+  <div class="grid2">
+    <figure><img class="px" src="img/l4/v4dc.png" alt="Zużycie" loading="lazy"><figcaption>Broń ≥ 85% zużycia</figcaption></figure>
+    <figure><img class="px" src="img/l4/v4cc.png" alt="Pełny ekwipunek" loading="lazy"><figcaption>Pełny ekwipunek</figcaption></figure>
+  </div>
+  <p class="note">Panel lochu (nazwa, czas, życia z MythicDungeons) pod celem zadania: zbudowany, ale nieobejrzany, bo na klonie nie ma map lochów.</p>
+</section>
+
+<section id="v3-gra">
+  <span class="eyebrow">20.10 · v3 zbudowana · klon, dwóch klientów · czeka na wdrożenie</span>
+  <h2>v3 w kliencie</h2>
+  <p>Okno nie zwija się już do kwadratu: w walce, walce Chowańców i trybie kompakt przygasa (alfa 45%), plakietki znikają, alarm niskiego HP na portrecie zostaje. Pod oknem: żetony efektów z czasem, panel towarzyszy, drużyna. Panele przesuwają się w górę, gdy któregoś brak (bez dziur). Dane drużyny i sług daje nowy plugin HudDane.</p>
+  <div class="grid2">
+    <figure><img class="px" src="img/l3/zs9.png" alt="Kolumna" loading="lazy"><figcaption>Efekty (Rany 2:33, trucizna, regeneracja), sługa Akolity (HP, 12 s, 1/3), drużyna</figcaption></figure>
+    <figure><img class="px" src="img/l3/zp2b.png" alt="Drużyna" loading="lazy"><figcaption>Sługa zniknął, drużyna podjechała pod efekty; wiersz członka z głową, poziomem, HP i zasobem</figcaption></figure>
+  </div>
+  <div class="grid3">
+    <figure><img class="px" src="img/l3/q2c.png" alt="Przygaszone" loading="lazy"><figcaption>Okno przygaszone (walka / kompakt)</figcaption></figure>
+    <figure><img class="px" src="img/l3/q2p.png" alt="Chowaniec" loading="lazy"><figcaption>Panel Chowańca (test ze stałymi danymi): zwykły i zemdlony</figcaption></figure>
+    <figure><img src="img/l3/gui4.jpg" alt="GUI 4" loading="lazy"><figcaption>GUI 4 (na środku asset testowy Chowańca)</figcaption></figure>
+  </div>
+  <div class="decide">
+    <strong>Zmierzone pułapki MythicHUD (zapisane w pamięci)</strong>
+    <ul>
+      <li>Tekst z <span class="mono">align: left</span> albo placeholder zwracający tagi kolorów psuje szerokość: cały HUD jedzie w bok.</li>
+      <li>Tekstura &gt; 256 px w paczce 2× = brak glifu (▯) i ten sam efekt; generator ma teraz bramkę.</li>
+      <li>Pierwszy element układu rysuje się na wierzchu: tła paneli muszą być na końcu.</li>
+    </ul>
+    <p class="note">Niesprawdzone na klonie: prawdziwy Chowaniec (gracze testowi bez profilu postaci; panel testowany stałymi danymi), drużyna 8 osób przy GUI 4, cel pod minimapą (brak zadania na klonie). Na world1 sprawdzę kontem QA po wdrożeniu.</p>
+  </div>
+</section>
+
+<section id="v3">
+  <span class="eyebrow">19.10 · v3 projekt · makiety · do akceptacji</span>
+  <h2>v3: lewa strona = postacie, prawa = świat</h2>
+  <p>Zasada układu: po lewej wszystko, co jest <b>żywe i moje</b>: ja, moje stwory (Chowaniec, przywołańce) i moja drużyna, ułożone od góry w tej kolejności. Po prawej to, co dotyczy <b>świata</b>: mapa i cel pod nią (tak trzyma zadania Wynn). Puste panele nie zajmują miejsca. W walce okno zwija się do portretu, a reszta zostaje.</p>
+  <div class="grid2">
+    <figure><img src="img/v3/A_solo_akolita_gui3.jpg" alt="Solo Akolita" loading="lazy"><figcaption>Solo, Akolita: Chowaniec (typ, poziom, HP, EXP) i sługi (HP, sekundy do końca, 2/3), cel pod mapą</figcaption></figure>
+    <figure><img src="img/v3/B_druzyna_walka_gui3.jpg" alt="Drużyna w walce" loading="lazy"><figcaption>Walka w drużynie: okno zwinięte, drużyna z twarzami; nisko HP na czerwono, poza zasięgiem na szaro, lider z koroną</figcaption></figure>
+  </div>
+  <div class="grid3">
+    <figure><img src="img/v3/C_druzyna_pelna_gui3.jpg" alt="Pełna drużyna GUI 3" loading="lazy"><figcaption>8 osób, GUI 3; Chowaniec zemdlony, martwy członek z duszkiem</figcaption></figure>
+    <figure><img src="img/v3/C_druzyna_pelna_gui4.jpg" alt="Pełna drużyna GUI 4" loading="lazy"><figcaption>8 osób, GUI 4: najgorszy przypadek, kolumna kończy się nad czatem</figcaption></figure>
+    <figure><img src="img/v3/A_solo_akolita_gui2.jpg" alt="GUI 2" loading="lazy"><figcaption>GUI 2</figcaption></figure>
+  </div>
+  <div class="decide">
+    <strong>Co jest potrzebne poza HUD-em</strong>
+    <ul>
+      <li><b>Mały plugin z placeholderami.</b> MMOCore podaje tylko imiona członków drużyny (bez HP, poziomu i zasięgu), a MythicMobs nie liczy sług gracza. Plugin dawałby: członków drużyny (imię, HP, zasób, poziom, lider, w zasięgu, żywy) i sługi (liczba/limit, HP, sekundy do końca).</li>
+      <li><b>Chowaniec:</b> dane już są w Chowańcach (typ, poziom, HP, EXP, zemdlony). Odnowienie umiejętności peta nie jest wystawione; to drobny dopisek w pluginie Chowańców.</li>
+      <li><b>Drużyna w lochach:</b> MythicDungeons ma własną drużynę, osobną od MMOCore; pokazuję drużynę MMOCore (tę z menu „Drużyna”).</li>
+    </ul>
+  </div>
+</section>
+
+<section id="v2">
+  <span class="eyebrow">19.10 · v2 sprawdzona na klonie · czeka na wdrożenie</span>
+  <h2>v2: przezroczysty cel, pełniejsze okno, poprawki</h2>
+  <div class="grid2">
+    <figure><img class="px" src="img/v2/okno.png" alt="Okno postaci v2" loading="lazy"><figcaption>Okno v2: ikona rasy na rogu portretu, EXP z procentem, dolny rząd: patron/Wiara (albo „Łaska 2:41”), odznaki Chowańców, ★ punkty atrybutów i niebieska księga punktów umiejętności, tylko gdy są do rozdania. Pod spodem cel jako przezroczysta wstęga</figcaption></figure>
+    <figure><img class="px" src="img/v2/cel_warianty.png" alt="Warianty celu" loading="lazy"><figcaption>Trzy warianty celu (dzień / noc): sam tekst, <b>wstęga (wybrana)</b>, zakładka</figcaption></figure>
+  </div>
+  <div class="grid3">
+    <figure><img src="img/v2/gui3.jpg" alt="GUI 3" loading="lazy"><figcaption>GUI 3 z dwoma bossbarami</figcaption></figure>
+    <figure><img src="img/v2/gui4_bossbary.jpg" alt="GUI 4" loading="lazy"><figcaption>GUI 4 z dwoma bossbarami: brak nachodzenia</figcaption></figure>
+    <figure><img class="px" src="img/v2/kompakt.png" alt="Kompakt" loading="lazy"><figcaption>Okno zwinięte (walka / kompakt) i wstęga celu</figcaption></figure>
+  </div>
+  <div class="decide">
+    <strong>Co jeszcze naprawia v2 (z audytu L1)</strong>
+    <ul>
+      <li>Nazwa Chowańca wchodziła na cel zadania: pasek Chowańca przesunięty niżej (y −104).</li>
+      <li>Starzy gracze w trybie widza (kreator) widzieli stare angielskie „Health/Mana” i vanillowe paski: stare układy wyłączone.</li>
+      <li>Skrzydło zbroi zasłaniało slot lewej ręki: przesunięte w lewo.</li>
+      <li>Absorpcja (złote serca) była niewidoczna: złoty pasek na górze HP.</li>
+      <li>Pasek lokalizatora, skoku na koniu i serca wierzchowca nachodziły na staminę: ukryte.</li>
+      <li>HP pokazywało ułamki/dziwne liczby z absorpcją: zaokrąglone wartości.</li>
+      <li>Tlen wpadał na nazwę przedmiotu: małe bąbelki w rzędzie efektów.</li>
+      <li>Na ekranie śmierci HUD znika.</li>
+      <li>Opis „kompaktowa” w Ustawieniach był nieprawdziwy: poprawiony.</li>
+    </ul>
+    <p class="note">Świadomie pominięte: sakiewka (ekonomia na serwerze zwraca $0.00 i błąd komendy, nie pokazuję fałszywej liczby), nazwa krainy (brak źródła danych), czas efektów i nazwa klasy „Human” (MMOCore). Długie cele zadań MMOCore mogą wyjść poza wstęgę; jest przezroczysta, więc tekst zostaje czytelny.</p>
+  </div>
+</section>
+
+<section id="budowa">
+  <span class="eyebrow">19.10 · L1 wdrożony na world1</span>
+  <h2>L1 w prawdziwym kliencie</h2>
+  <figure><img src="img/l1/world1.jpg" alt="HUD L1 na world1" loading="lazy"><figcaption>World1 po wdrożeniu, konto QA: twarz gracza w oknie, cel Chowańców w panelu, pas z zasobem Szał (Miecz Korony)</figcaption></figure>
+  <p>Paczka L1 działa na klonie world1 (MythicHUD 1.3.4, klient 1.21.11, 1920×1080). Zrzuty poniżej są z gry, nie z makiety. Portret jest czarny, bo na klonie offline nie da się pobrać skórki; na world1 będzie twarz gracza.</p>
+  <div class="grid2">
+    <figure><img src="img/l1/walka.jpg" alt="Walka nocą, niskie HP" loading="lazy"><figcaption>Walka nocą: 5/20 HP, czerwona ramka HP i portretu, „Rany po śmierci” nad zasobem, stamina 3/20 na czerwono, okno zwinięte do portretu</figcaption></figure>
+    <figure><img src="img/l1/akolita.jpg" alt="Akolita z Duszami" loading="lazy"><figcaption>Akolita („Nosiciel Relikwii”): Dusze 3/10 jako kulki z ikoną ducha</figcaption></figure>
+  </div>
+  <div class="grid2">
+    <figure><img class="px" src="img/l1/zasoby.png" alt="Zasoby klas i stany" loading="lazy"><figcaption>Szał (Tyran), Skupienie (Kościany Grot), tlen pod wodą, poziom 100, tryb kompakt, okno wyłączone w Ustawieniach</figcaption></figure>
+    <figure><img class="px" src="img/l1/efekty_tlen.png" alt="Efekty i tlen" loading="lazy"><figcaption>Trucizna: zielony pasek HP i ikona; pod wodą bąbelki tlenu rząd wyżej (×2)</figcaption></figure>
+  </div>
+  <div class="grid3">
+    <figure><img src="img/l1/gui2.jpg" alt="GUI 2" loading="lazy"><figcaption>GUI 2: wszystko na miejscu (dzisiejsza karta się tu rozsypuje)</figcaption></figure>
+    <figure><img src="img/l1/gui4_niskie.jpg" alt="GUI 4 niskie HP" loading="lazy"><figcaption>GUI 4, niskie HP</figcaption></figure>
+    <figure><img class="px" src="img/l1/cel.png" alt="Panel celu" loading="lazy"><figcaption>Cel zadania w panelu pod oknem postaci (×2, test ze stałym tekstem)</figcaption></figure>
+  </div>
+  <div class="decide">
+    <strong>Co zostało do sprawdzenia na world1</strong>
+    <ul>
+      <li>Głowa gracza w oknie (na klonie offline skórka się nie wczytuje).</li>
+      <li>Zwijanie okna w walce Chowańców i prawdziwy cel zadania (na klonie Chowańce nie ładują się bez MMOProfiles; panel celu sprawdzony stałym tekstem).</li>
+      <li>Nazwa klasy domyślnej „Human” jest po angielsku: to nazwa z MMOCore, nie HUD.</li>
+    </ul>
+    <p class="note">Poza zakresem L1, osobne kroki z listy: czasy efektów (potrzebny placeholder), ramka i nocny kontrast minimapy (paczka NMinimap), cooldowny zaklęć. Ostatnia linia czatu długości ~310 jednostek GUI może dotknąć medalionu.</p>
+  </div>
+</section>
+
+<section id="makiety">
+  <span class="eyebrow">18.10 · wybrany kierunek B · makiety do wyboru</span>
+  <h2>Makiety: cztery warianty</h2>
+  <p>Okno postaci zostaje, tak jak chciałeś: portret, nick, klasa, poziom, EXP. HP, zasób klasy i stamina schodzą na dół, przy hotbarze. Pokazuję okno w lewym rogu (L) i sklejone z minimapą w prawym (P), każde z dwoma formami dołu. Tła to kadry z gry (wioska na klonie), minimapa jest prawdziwa; HUD jest dorysowany paletą Księgi i czcionką Minecrafta.</p>
+  <div class="tabs" role="tablist"><button role="tab" id="t-L1" aria-controls="w-L1" aria-selected="true">L1</button><button role="tab" id="t-L2" aria-controls="w-L2" aria-selected="false">L2</button><button role="tab" id="t-P1" aria-controls="w-P1" aria-selected="false">P1</button><button role="tab" id="t-P2" aria-controls="w-P2" aria-selected="false">P2</button></div>
+  <div class="wariant" id="w-L1" role="tabpanel" >
+  <h3>L1: Okno postaci w lewym rogu + pas nad hotbarem</h3>
+  <div class="ocena"><ul><li><span class="plus">+</span> Najbliżej Wynna: HP, zasób i poziom w jednym pasie tuż nad slotami.</li><li><span class="plus">+</span> Okno postaci 154×43 GUI, ponad dwa razy niższe niż dziś; w walce zwija się do portretu z czerwoną ramą.</li><li><span class="plus">+</span> Działa tak samo przy GUI 2, 3 i 4.</li></ul><ul><li><span class="minus">−</span> Pas zajmuje 39 GUI nad hotbarem, więc nazwy zaklęć i nazwa przedmiotu muszą zostać tam, gdzie są (zmieściły się).</li><li><span class="minus">−</span> Poziom tylko w medalionie pasa, w oknie go nie ma.</li></ul></div>
+  <div class="grid2"><figure><img src="img/mk/L1_spokoj_gui3.jpg" alt="L1 Spokój, GUI 3" loading="lazy"><figcaption>Spokój, GUI 3</figcaption></figure><figure><img src="img/mk/L1_walka_gui3.jpg" alt="L1 Walka, 14/64 HP, stamina 3/10, GUI 3" loading="lazy"><figcaption>Walka, 14/64 HP, stamina 3/10, GUI 3</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/L1_akolita_gui3.jpg" alt="L1 Akolita: Dusze 3/10, trucizna" loading="lazy"><figcaption>Akolita: Dusze 3/10, trucizna</figcaption></figure><figure><img src="img/mk/L1_woda_gui3.jpg" alt="L1 Pod wodą, tlen 6/10" loading="lazy"><figcaption>Pod wodą, tlen 6/10</figcaption></figure><figure><img src="img/mk/L1_skrajne_gui3.jpg" alt="L1 Poziom 100, nick 16 znaków, „Wołający Przodków”" loading="lazy"><figcaption>Poziom 100, nick 16 znaków, „Wołający Przodków”</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/L1_spokoj_gui2.jpg" alt="L1 GUI 2" loading="lazy"><figcaption>GUI 2</figcaption></figure><figure><img src="img/mk/L1_spokoj_gui4.jpg" alt="L1 GUI 4" loading="lazy"><figcaption>GUI 4</figcaption></figure><figure><img src="img/mk/L1_walka_gui4.jpg" alt="L1 Walka, GUI 4" loading="lazy"><figcaption>Walka, GUI 4</figcaption></figure></div>
+  <figure><img class="px" src="img/mk/L1_walka_zoom.png" alt="L1 powiększenie" loading="lazy"><figcaption>Powiększenie ×2 (walka): okno postaci i pas</figcaption></figure>
+</div><div class="wariant" id="w-L2" role="tabpanel" hidden >
+  <h3>L2: Okno postaci w lewym rogu + skrzydła przy hotbarze</h3>
+  <div class="ocena"><ul><li><span class="plus">+</span> Środek nad hotbarem zostaje pusty: nazwy zaklęć, przedmiotu i action bar mają spokój.</li><li><span class="plus">+</span> Prawe skrzydło mieści efekty z czasem, zbroję i głód; poziom w medalionie na portrecie.</li></ul><ul><li><span class="minus">−</span> Wzrok rozchodzi się na boki: HP jest ~290 px od środka.</li><li><span class="minus">−</span> Lewe skrzydło nachodzi na strefę czatu (dolne ~4 GUI).</li></ul></div>
+  <div class="grid2"><figure><img src="img/mk/L2_spokoj_gui3.jpg" alt="L2 Spokój, GUI 3" loading="lazy"><figcaption>Spokój, GUI 3</figcaption></figure><figure><img src="img/mk/L2_walka_gui3.jpg" alt="L2 Walka, 14/64 HP, stamina 3/10, GUI 3" loading="lazy"><figcaption>Walka, 14/64 HP, stamina 3/10, GUI 3</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/L2_akolita_gui3.jpg" alt="L2 Akolita: Dusze 3/10, trucizna" loading="lazy"><figcaption>Akolita: Dusze 3/10, trucizna</figcaption></figure><figure><img src="img/mk/L2_woda_gui3.jpg" alt="L2 Pod wodą, tlen 6/10" loading="lazy"><figcaption>Pod wodą, tlen 6/10</figcaption></figure><figure><img src="img/mk/L2_skrajne_gui3.jpg" alt="L2 Poziom 100, nick 16 znaków, „Wołający Przodków”" loading="lazy"><figcaption>Poziom 100, nick 16 znaków, „Wołający Przodków”</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/L2_spokoj_gui2.jpg" alt="L2 GUI 2" loading="lazy"><figcaption>GUI 2</figcaption></figure><figure><img src="img/mk/L2_spokoj_gui4.jpg" alt="L2 GUI 4" loading="lazy"><figcaption>GUI 4</figcaption></figure><figure><img src="img/mk/L2_walka_gui4.jpg" alt="L2 Walka, GUI 4" loading="lazy"><figcaption>Walka, GUI 4</figcaption></figure></div>
+  <figure><img class="px" src="img/mk/L2_walka_zoom.png" alt="L2 powiększenie" loading="lazy"><figcaption>Powiększenie ×2 (walka): okno postaci i pas</figcaption></figure>
+</div><div class="wariant" id="w-P1" role="tabpanel" hidden >
+  <h3>P1: Okno postaci przy mapie w prawym rogu + pas nad hotbarem</h3>
+  <div class="ocena"><ul><li><span class="plus">+</span> Jedno okno postać + mapa + cel zadania; lewy górny róg całkiem wolny.</li><li><span class="plus">+</span> W walce okno zwija się do portretu obok mapy.</li></ul><ul><li><span class="minus">−</span> Pasuje idealnie tylko przy jednej skali GUI (tu GUI 4 = auto przy 1080p). Mapa NMinimap liczy w pikselach ekranu, okno w jednostkach GUI, więc przy GUI 2/3 okno wjeżdża na mapę albo odstaje.</li><li><span class="minus">−</span> Naprawa wymaga zmiany sposobu rysowania mapy, nie tylko configu.</li></ul></div>
+  <div class="grid2"><figure><img src="img/mk/P1_spokoj_gui3.jpg" alt="P1 Spokój, GUI 3" loading="lazy"><figcaption>Spokój, GUI 3</figcaption></figure><figure><img src="img/mk/P1_walka_gui3.jpg" alt="P1 Walka, 14/64 HP, stamina 3/10, GUI 3" loading="lazy"><figcaption>Walka, 14/64 HP, stamina 3/10, GUI 3</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/P1_akolita_gui3.jpg" alt="P1 Akolita: Dusze 3/10, trucizna" loading="lazy"><figcaption>Akolita: Dusze 3/10, trucizna</figcaption></figure><figure><img src="img/mk/P1_woda_gui3.jpg" alt="P1 Pod wodą, tlen 6/10" loading="lazy"><figcaption>Pod wodą, tlen 6/10</figcaption></figure><figure><img src="img/mk/P1_skrajne_gui3.jpg" alt="P1 Poziom 100, nick 16 znaków, „Wołający Przodków”" loading="lazy"><figcaption>Poziom 100, nick 16 znaków, „Wołający Przodków”</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/P1_spokoj_gui2.jpg" alt="P1 GUI 2" loading="lazy"><figcaption>GUI 2</figcaption></figure><figure><img src="img/mk/P1_spokoj_gui4.jpg" alt="P1 GUI 4" loading="lazy"><figcaption>GUI 4</figcaption></figure><figure><img src="img/mk/P1_walka_gui4.jpg" alt="P1 Walka, GUI 4" loading="lazy"><figcaption>Walka, GUI 4</figcaption></figure></div>
+  <figure><img class="px" src="img/mk/P1_walka_zoom.png" alt="P1 powiększenie" loading="lazy"><figcaption>Powiększenie ×2 (walka): okno postaci i pas</figcaption></figure>
+</div><div class="wariant" id="w-P2" role="tabpanel" hidden >
+  <h3>P2: Okno postaci przy mapie w prawym rogu + skrzydła</h3>
+  <div class="ocena"><ul><li><span class="plus">+</span> Prawa strona to cała „karta gracza”, dół ma tylko liczby.</li></ul><ul><li><span class="minus">−</span> Te same problemy skali co P1, do tego rozjazd wzroku jak w L2.</li><li><span class="minus">−</span> Najwięcej elementów do pilnowania przy kolizjach.</li></ul></div>
+  <div class="grid2"><figure><img src="img/mk/P2_spokoj_gui3.jpg" alt="P2 Spokój, GUI 3" loading="lazy"><figcaption>Spokój, GUI 3</figcaption></figure><figure><img src="img/mk/P2_walka_gui3.jpg" alt="P2 Walka, 14/64 HP, stamina 3/10, GUI 3" loading="lazy"><figcaption>Walka, 14/64 HP, stamina 3/10, GUI 3</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/P2_akolita_gui3.jpg" alt="P2 Akolita: Dusze 3/10, trucizna" loading="lazy"><figcaption>Akolita: Dusze 3/10, trucizna</figcaption></figure><figure><img src="img/mk/P2_woda_gui3.jpg" alt="P2 Pod wodą, tlen 6/10" loading="lazy"><figcaption>Pod wodą, tlen 6/10</figcaption></figure><figure><img src="img/mk/P2_skrajne_gui3.jpg" alt="P2 Poziom 100, nick 16 znaków, „Wołający Przodków”" loading="lazy"><figcaption>Poziom 100, nick 16 znaków, „Wołający Przodków”</figcaption></figure></div>
+  <div class="grid3"><figure><img src="img/mk/P2_spokoj_gui2.jpg" alt="P2 GUI 2" loading="lazy"><figcaption>GUI 2</figcaption></figure><figure><img src="img/mk/P2_spokoj_gui4.jpg" alt="P2 GUI 4" loading="lazy"><figcaption>GUI 4</figcaption></figure><figure><img src="img/mk/P2_walka_gui4.jpg" alt="P2 Walka, GUI 4" loading="lazy"><figcaption>Walka, GUI 4</figcaption></figure></div>
+  <figure><img class="px" src="img/mk/P2_walka_zoom.png" alt="P2 powiększenie" loading="lazy"><figcaption>Powiększenie ×2 (walka): okno postaci i pas</figcaption></figure>
+</div>
+  <div class="decide">
+    <strong>Moja rekomendacja: L1</strong>
+    <p>Jedyny wariant, który przy każdej skali GUI wygląda tak samo, a w walce całą informację o przeżyciu trzyma w jednym miejscu przy celowniku. P1 jest najładniejszy przy GUI 4, ale przy innych skalach okno nachodzi na mapę; jeśli wolisz P, sprawdzę, czy da się rysować ramkę mapy razem z oknem (osobna praca przy paczce NMinimap).</p>
+    <p class="note">W makietach grafika ma gęstość 1×; w paczce będzie 2× jak Księga. Czas efektów („Rany po śmierci 2:41”, trucizna 0:12) wymaga nowego placeholdera w pluginie. Dusze Akolity już są w MMOCore (przemianowana mana, max 10), więc HUD potrzebuje tylko osobnej ikony zależnej od klasy. Noc nie była potrzebna w makietach; sprawdzę ją w kliencie przy budowie. Codex (do pomysłów i recenzji) był w tej rundzie niedostępny: konto ChatGPT odrzuca wszystkie modele.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Sześć przyczyn</h2>
+
+  <div class="cause">
+    <div class="txt">
+      <h3>1. Odwrócona hierarchia</h3>
+      <ul>
+        <li><span class="tag t-proj">projekt</span>Karta przy GUI 4 ma ~552×256 px, czyli 29% szerokości ekranu. Około 60% jej powierzchni zajmują nick, klasa, portret i medalion.</li>
+        <li>Mana, stamina i EXP to paski 4/4/2 px GUI bez liczb i bez podpisów; trzeba wiedzieć, który jest który.</li>
+        <li>Celownik jest na środku, zaklęcia i hotbar na dole, HP w lewym górnym rogu: oko skacze przez cały ekran.</li>
+        <li>Wynn trzyma HP, manę i poziom przy hotbarze, a róg zostawia na współrzędne.</li>
+      </ul>
+      <span class="who">Zgodne: Claude i Codex (oba rundy). Ten sam zarzut był w audycie 13.10 (#15, #17).</span>
+    </div>
+    <div class="shots">
+      <div class="pair">
+        <figure><img src="img/s1.jpg" alt="Nasz HUD w spokoju, GUI 4"><figcaption>Nasz, GUI 4, spokój</figcaption></figure>
+        <figure><img src="img/wynn.jpg" alt="HUD Wynncrafta"><figcaption>Wynncraft: wszystko przy hotbarze</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="cause">
+    <div class="txt">
+      <h3>2. W walce HUD traci paski</h3>
+      <ul>
+        <li><span class="tag t-proj">projekt</span>Od 13.10 w walce pełna karta przechodzi w panel z tekstem „HP 18/64 Mana 10 / Wytrzymałość 20”: bez paska, bez maksimum staminy.</li>
+        <li>Przy 28% HP liczba jest biała; alarm (czerwień, obwódka portretu) włącza się dopiero poniżej 25% i tylko w karcie spokoju.</li>
+        <li><span class="tag t-bug">błąd</span>Tekst wychodzi poza lewą złotą krawędź panelu („HP” i „W” zaczynają się przed ramką).</li>
+        <li>Panel zadania znika w walce, choć zadanie może dotyczyć walki.</li>
+        <li><span class="tag t-brak">brak</span>Atakujący mob nie ma w HUD-zie żadnej reprezentacji; jest tylko mały pasek nad głową.</li>
+      </ul>
+      <span class="who">Zgodne: Claude i Codex (runda 2, #3).</span>
+    </div>
+    <div class="shots">
+      <figure><img src="img/s5_walka_niskie.jpg" alt="Walka przy 28% HP"><figcaption>Walka, 18/64 HP, zombie obok. Jedyna informacja to biały tekst w rogu.</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="cause">
+    <div class="txt">
+      <h3>3. Sygnały, które nie działają</h3>
+      <ul>
+        <li><span class="tag t-proj">sprostowanie 18.10</span>Trucizna i uschnięcie <b>działają</b>. W teście 17.10 komenda <span class="mono">effect</span> trafiła w alias CMI, który po cichu nic nie robi; z <span class="mono">minecraft:effect</span> pasek zmienia kolor. Absorpcji nie sprawdzałem ponownie.</li>
+        <li><span class="tag t-bug">błąd</span>Poziom 100 nie mieści się w medalionie i wjeżdża na ikonę kropli. README z 03.10 twierdziło, że się zmieści.</li>
+        <li><span class="tag t-bug">błąd</span>Akolita („Nosiciel Relikwii”) ma kroplę many i napis „Mana”, choć jego zasobem są Dusze. (Poprawka 18.10: wartość już jest, to przemianowana mana MMOCore; brakuje tylko ikony i podpisu zależnych od klasy.)</li>
+        <li><span class="tag t-brak">brak</span>Kara „Rany po śmierci: 3 min −15% / −10%” istnieje tylko w czacie. Max HP spadło z 72 do 64, a HUD tego nie wyjaśnia.</li>
+        <li>Klasa domyślna wyświetla się jako angielskie „Human”.</li>
+      </ul>
+      <span class="who">Poziom 100 i Dusze: Claude. Trucizna: zarzut wycofany 18.10, błąd był w moim teście.</span>
+    </div>
+    <div class="shots">
+      <figure><img class="px" src="img/m_karta_stany.png" alt="Karta: trucizna, uschnięcie, absorpcja, zwykła"><figcaption>Trucizna · uschnięcie / absorpcja · zwykła. Cztery identyczne czerwone paski.</figcaption></figure>
+      <figure><img class="px" src="img/z_lvl100.png" alt="Poziom 100 wychodzi z medalionu"><figcaption>„100” wychodzi z medalionu (×2)</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="cause">
+    <div class="txt">
+      <h3>4. Nie skaluje się</h3>
+      <ul>
+        <li><span class="tag t-bug">błąd</span>GUI 2 rozsypuje kartę: nick ląduje pod plakietką, klasa na pasku HP, „64 / 64” na pasku many, „100” pod kartą. Tekst i tekstury skalują się inaczej.</li>
+        <li><span class="tag t-bug">błąd</span>Przy GUI 2 tabliczki zbroi i głodu obok hotbara są ucięte dolną krawędzią ekranu.</li>
+        <li>Minimapa ma stałe ~255 px fizycznych przy każdej skali, więc przy GUI 2 dominuje nad kartą, a przy GUI 4 jest od niej mniejsza.</li>
+      </ul>
+      <span class="who">Zgodne: Claude i Codex. Audyt 13.10 sprawdził GUI 2 dla menu i paska moba, ale nie dla karty.</span>
+    </div>
+    <div class="shots">
+      <figure><img class="px" src="img/z_gui2_karta.png" alt="Karta przy GUI 2, powiększenie"><figcaption>Karta przy GUI 2 (×3)</figcaption></figure>
+      <figure><img src="img/s12_gui2.jpg" alt="Cały ekran GUI 2"><figcaption>GUI 2: maleńka karta, wielka mapa, ucięte boczne tabliczki</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="cause">
+    <div class="txt">
+      <h3>5. Cztery style naraz</h3>
+      <ul>
+        <li>Karta w stylu Księgi (skóra, złoto, granat).</li>
+        <li>Goły tekst z obrysem: panel walki, cel zadania „Pierwsze kroki” (samotny na środku lewej krawędzi).</li>
+        <li>Vanilla: bąbelki powietrza (wiszą nad prawą połową czatu, setki px od HP), ekran śmierci „You Died! Score: 0” po angielsku, tytuł lokacji.</li>
+        <li>Minimapa: szara ramka vanilla, w nocy świeci dzienną zielenią i jest najjaśniejszą plamą na ekranie. <span class="tag t-bug">błąd</span>Po śmierci traci ramkę i znacznik gracza.</li>
+      </ul>
+      <span class="who">Claude; Codex potwierdził bąbelki i ekran śmierci.</span>
+    </div>
+    <div class="shots">
+      <figure><img src="img/s13_gui3.jpg" alt="Noc, GUI 3"><figcaption>Noc, GUI 3: minimapa w dziennej zieleni</figcaption></figure>
+      <figure><img src="img/z_woda.png" alt="Bąbelki powietrza nad czatem"><figcaption>Pod wodą: bąbelki na wysokości czatu, po prawej</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="cause">
+    <div class="txt">
+      <h3>6. Brak ustalonych stref</h3>
+      <ul>
+        <li>Otwarty czat przykrywa dół karty; action bar „Za mało staminy!” ginie pod czatem.</li>
+        <li>Na ekranie śmierci zostaje panel walki i minimapa.</li>
+        <li><span class="tag t-brak">brak</span>Cooldownów zaklęć nie ma: gotowy czar znika z HUD-a.</li>
+        <li><span class="tag t-brak">brak</span>Buffy i debuffy z czasem trwania. Dziś jest tylko kolor paska HP, i ten nie działa.</li>
+      </ul>
+      <span class="who">Zgodne: Claude i Codex.</span>
+    </div>
+    <div class="shots">
+      <figure><img src="img/s11_czat_tytul.jpg" alt="Czat, tytuł, bossbar naraz"><figcaption>Czat + tytuł + bossbar + action bar naraz</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Rekomendacja: pas walki przy hotbarze</h2>
+  <p>Wspólna rekomendacja po dwóch rundach. Wszystko, od czego zależy przeżycie, idzie w jeden moduł nad hotbarem i wygląda tak samo w spokoju i w walce; walka tylko go wzmacnia, niczego nie podmienia. Rogi zostają spokojne: lewy na mały profil (domyślnie ukryty albo bardzo mały), prawy na mapę z celem zadania pod nią, w jednej ramie. Środek ekranu (pas ~270×150 GUI wokół celownika) zostaje wolny dla walki, tytułów i pasków mobów.</p>
+  <div class="svgwrap" role="img" aria-label="Schemat stref ekranu: dziś i po przebudowie">
+    <svg viewBox="0 0 1300 400" xmlns="http://www.w3.org/2000/svg" font-family="Source Sans 3, sans-serif" font-size="13">
+      <g>
+        <text x="10" y="18" fill="var(--muted)" font-weight="700">DZIŚ (GUI 3)</text>
+        <rect x="10" y="28" width="620" height="349" fill="var(--bg)" stroke="var(--line)"/>
+        <rect x="16" y="34" width="137" height="64" fill="var(--bad)" fill-opacity=".25" stroke="var(--bad)"/>
+        <text x="22" y="52" fill="var(--ink)">karta: nick, klasa,</text><text x="22" y="67" fill="var(--ink)">portret, HP/mana/stam.</text>
+        <rect x="16" y="115" width="150" height="26" fill="var(--warn)" fill-opacity=".2" stroke="var(--warn)"/>
+        <text x="22" y="132" fill="var(--ink)">cel zadania (goły tekst)</text>
+        <rect x="537" y="47" width="85" height="85" fill="var(--ok)" fill-opacity=".25" stroke="var(--ok)"/>
+        <text x="548" y="94" fill="var(--ink)">minimapa</text>
+        <line x1="320" y1="195" x2="320" y2="210" stroke="var(--ink)"/><line x1="312" y1="202" x2="328" y2="202" stroke="var(--ink)"/>
+        <rect x="196" y="345" width="248" height="22" fill="var(--navy)" fill-opacity=".2" stroke="var(--navy)"/>
+        <text x="270" y="361" fill="var(--ink)">hotbar</text>
+        <rect x="158" y="345" width="34" height="22" fill="var(--line)" stroke="var(--muted)"/><rect x="448" y="345" width="34" height="22" fill="var(--line)" stroke="var(--muted)"/>
+        <rect x="245" y="318" width="150" height="16" fill="var(--accent)" fill-opacity=".2" stroke="var(--accent)"/>
+        <text x="262" y="331" fill="var(--ink)">nazwy zaklęć</text>
+        <path d="M150 70 Q 240 200 312 202" stroke="var(--bad)" stroke-dasharray="4 4" fill="none"/>
+        <path d="M150 70 Q 230 300 300 345" stroke="var(--bad)" stroke-dasharray="4 4" fill="none"/>
+        <text x="175" y="250" fill="var(--bad)">ruch oka w walce</text>
+      </g>
+      <g transform="translate(660,0)">
+        <text x="10" y="18" fill="var(--muted)" font-weight="700">PO PRZEBUDOWIE (GUI 3)</text>
+        <rect x="10" y="28" width="620" height="349" fill="var(--bg)" stroke="var(--line)"/>
+        <rect x="16" y="34" width="80" height="22" fill="var(--line)" stroke="var(--muted)" stroke-dasharray="3 3"/>
+        <text x="22" y="50" fill="var(--muted)">profil (opcja)</text>
+        <rect x="537" y="34" width="85" height="85" fill="var(--ok)" fill-opacity=".25" stroke="var(--ok)"/>
+        <text x="548" y="80" fill="var(--ink)">minimapa</text>
+        <rect x="497" y="124" width="125" height="40" fill="var(--warn)" fill-opacity=".2" stroke="var(--warn)"/>
+        <text x="505" y="140" fill="var(--ink)">cel zadania, 2 wiersze</text><text x="505" y="155" fill="var(--ink)">ta sama rama co mapa</text>
+        <rect x="185" y="113" width="270" height="150" fill="none" stroke="var(--muted)" stroke-dasharray="2 4"/>
+        <text x="250" y="130" fill="var(--muted)">wolne: walka, tytuły, moby</text>
+        <line x1="320" y1="181" x2="320" y2="196" stroke="var(--ink)"/><line x1="312" y1="188" x2="328" y2="188" stroke="var(--ink)"/>
+        <rect x="236" y="270" width="168" height="16" fill="var(--navy)" fill-opacity=".15" stroke="var(--navy)"/>
+        <text x="245" y="283" fill="var(--ink)">cel walki / zaklęcie / odmowa</text>
+        <rect x="196" y="292" width="248" height="13" fill="var(--warn)" fill-opacity=".15" stroke="var(--warn)"/>
+        <text x="232" y="303" fill="var(--ink)">efekty z czasem (ikony)</text>
+        <rect x="196" y="309" width="112" height="16" fill="var(--bad)" fill-opacity=".35" stroke="var(--bad)"/>
+        <text x="225" y="322" fill="var(--ink)">HP + liczba</text>
+        <circle cx="320" cy="317" r="10" fill="var(--panel)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="314" y="321" fill="var(--ink)" font-size="10">lvl</text>
+        <rect x="332" y="309" width="112" height="16" fill="var(--navy)" fill-opacity=".35" stroke="var(--navy)"/>
+        <text x="342" y="322" fill="var(--ink)">zasób klasy + liczba</text>
+        <rect x="196" y="328" width="248" height="6" fill="var(--ok)" fill-opacity=".5" stroke="var(--ok)"/>
+        <text x="452" y="334" fill="var(--muted)">stamina / EXP / tlen</text>
+        <rect x="196" y="345" width="248" height="22" fill="var(--navy)" fill-opacity=".2" stroke="var(--navy)"/>
+        <text x="270" y="361" fill="var(--ink)">hotbar + cooldowny</text>
+      </g>
+    </svg>
+  </div>
+  <div class="legend"><span>Współrzędne w jednostkach GUI 3 (640×360 przy 1080p).</span><span>Kształty orientacyjne; dokładne liczby po makiecie w kliencie.</span></div>
+  <ul>
+    <li><b>Spokój = walka.</b> Jeden moduł, bez podmiany na tekst. W walce rośnie kontrast; przy &lt;30% HP pasek pulsuje i pojawia się czerwona winieta krawędzi ekranu.</li>
+    <li><b>Zasób klasy z prawdziwą nazwą i ikoną</b> (Dusze, Wiara, mana). Dusze to mana MMOCore o innej nazwie, więc wystarczy asset zależny od klasy.</li>
+    <li><b>Efekty jako rząd ikon z czasem</b> nad HP: trucizna, Rany po śmierci, buffy. Czas efektu też trzeba wystawić w pluginie.</li>
+    <li><b>Jeden styl:</b> rama Księgi także dla mapy, celu zadania, tlenu i panelu walki. Zero gołego tekstu na świecie.</li>
+    <li><b>Projektujemy od GUI 2</b> i każdą zmianę sprawdzamy przy GUI 2/3/4, z poziomem 100 i najdłuższą nazwą klasy.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Kroki</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Co</th><th>Koszt</th><th>Ryzyko</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td><b>Szybkie błędy w obecnej karcie:</b> trucizna/uschnięcie/absorpcja, poziom 100, tekst wychodzący z ramki walki, „Human”, ramka minimapy po śmierci.</td><td class="cost">S</td><td>Niskie; restart world1</td></tr>
+      <tr><td class="n">2</td><td><b>Panel walki z paskami</b> zamiast tekstu (minimum, nawet przed przebudową); alarm od 30%.</td><td class="cost">S</td><td>Średnie: warunki na tekstach są ignorowane (osobne assety)</td></tr>
+      <tr><td class="n">3</td><td><b>Ukrycie HUD-a na ekranie śmierci</b> i karty przy otwartym czacie, o ile da się to wykryć warunkiem.</td><td class="cost">S</td><td>Średnie: może wymagać sygnału z pluginu</td></tr>
+      <tr><td class="n">4</td><td><b>Makieta pasa przy hotbarze</b> (Codex rysuje warianty, wybierasz jeden; bramka obok klatki Wynna, GUI 2/3/4).</td><td class="cost">M</td><td>Niskie: tylko obrazy</td></tr>
+      <tr><td class="n">5</td><td><b>Placeholdery:</b> zasób klasy (Dusze, Wiara), lista efektów z czasem, opcjonalnie cel walki.</td><td class="cost">M</td><td>Średnie: zmiany w jarach Zaklęć/Chowańców</td></tr>
+      <tr><td class="n">6</td><td><b>Budowa pasa</b> w MythicHUD + przezroczyste vanillowe bąbelki/serca; lewy róg zmniejszony do profilu.</td><td class="cost">L</td><td>Wysokie: kolizje z nazwami zaklęć, action barem, czatem</td></tr>
+      <tr><td class="n">7</td><td><b>Prawy róg:</b> rama minimapy w stylu Księgi (przebudowa paczki NMinimap), przyciemnienie mapy nocą, cel zadania pod mapą.</td><td class="cost">M</td><td>Średnie: shader NMinimap, osobna paczka</td></tr>
+      <tr><td class="n">8</td><td><b>Cooldowny zaklęć</b> przy slotach / dłoniach.</td><td class="cost">M</td><td>Średnie: zależy od Zaklęć (gałąź zaklecia-zaslanianie)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="decide">
+    <strong>Decyzja: wybrano B (18.10), makiety wyżej</strong>
+    <p><b>A.</b> Kroki 1–3: naprawić błędy w obecnej karcie (mała paczka, jeden restart).<br>
+       <b>B.</b> A + przebudowa na pas przy hotbarze (kroki 4–8, zaczynając od makiet do wyboru).<br>
+       <b>C.</b> Coś innego, np. zostawić kartę w rogu, ale ją zmniejszyć.</p>
+    <p class="who">Moja rekomendacja: B, z krokiem 1 od razu, bo te błędy widać niezależnie od kierunku.</p>
+  </div>
+</section>
+</main>
+<script>
+(function(){const tabs=[...document.querySelectorAll('[role=tab]')];
+function pokaz(t){tabs.forEach(b=>{const on=b===t;b.setAttribute('aria-selected',on);document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});
+try{localStorage.setItem('hud-wariant',t.id)}catch(e){}}
+tabs.forEach(b=>b.addEventListener('click',()=>pokaz(b)));
+try{const z=localStorage.getItem('hud-wariant');const t=z&&document.getElementById(z);if(t)pokaz(t)}catch(e){}})();
+</script>

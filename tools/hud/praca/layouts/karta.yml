@@ -1,0 +1,23 @@
+# Karta Wedrowca: lewy gorny rog. Napisy warunkowe to osobne assety w tym samym miejscu.
+karta-layout:
+  elements:
+    hp-ok:
+      asset: karta-hp-ok
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -8}
+    hp-niskie:
+      asset: karta-hp-niskie
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -8}
+    stamina-niska:
+      asset: karta-stamina-niska
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -8}
+    karta:
+      asset: karta-wedrowca
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -8}

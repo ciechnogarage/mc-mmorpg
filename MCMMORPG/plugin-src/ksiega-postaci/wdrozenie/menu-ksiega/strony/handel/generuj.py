@@ -8,7 +8,7 @@ Wszystkie pliki wynikowe trafiają do strony/handel/out/gen/.
 import json, os
 
 P = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out', 'gen')
-H = '/opt/docker/mc/data/world1/tools/handel'
+H = '/home/dev/Desktop/Przemek/MC/tools/handel'
 CENY = json.load(open(os.path.join(H, 'ceny.json')))
 REC = json.load(open(os.path.join(H, 'receptury.json')))
 ITEMS = REC['items']

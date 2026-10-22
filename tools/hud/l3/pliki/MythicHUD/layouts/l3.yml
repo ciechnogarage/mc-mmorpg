@@ -1,0 +1,383 @@
+# HUD v3: lewa kolumna (efekty, towarzysze, druzyna) - pozycje wyliczone w v3.py.
+l3-kolumna-layout:
+  elements:
+    pet-e0:
+      asset: l3-pet-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -62}
+    pet-e0-zemdlony:
+      asset: l3-pet-e0-zemdlony
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -62}
+    sluga1-e0:
+      asset: l3-sluga1-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -62}
+    sluga2-e0:
+      asset: l3-sluga2-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 50, y: -62}
+    sluga3-e0:
+      asset: l3-sluga3-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 90, y: -62}
+    slugi-licznik-e0:
+      asset: l3-slugi-licznik-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -62}
+    sluga1-e0p:
+      asset: l3-sluga1-e0p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -77}
+    sluga2-e0p:
+      asset: l3-sluga2-e0p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 50, y: -77}
+    sluga3-e0p:
+      asset: l3-sluga3-e0p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 90, y: -77}
+    slugi-licznik-e0p:
+      asset: l3-slugi-licznik-e0p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -77}
+    pet-e1:
+      asset: l3-pet-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -75}
+    pet-e1-zemdlony:
+      asset: l3-pet-e1-zemdlony
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -75}
+    sluga1-e1:
+      asset: l3-sluga1-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -75}
+    sluga2-e1:
+      asset: l3-sluga2-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 50, y: -75}
+    sluga3-e1:
+      asset: l3-sluga3-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 90, y: -75}
+    slugi-licznik-e1:
+      asset: l3-slugi-licznik-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -75}
+    sluga1-e1p:
+      asset: l3-sluga1-e1p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -90}
+    sluga2-e1p:
+      asset: l3-sluga2-e1p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 50, y: -90}
+    sluga3-e1p:
+      asset: l3-sluga3-e1p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 90, y: -90}
+    slugi-licznik-e1p:
+      asset: l3-slugi-licznik-e1p
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -90}
+    efekt1:
+      asset: l3-efekt1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -62}
+    efekt2:
+      asset: l3-efekt2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 41, y: -62}
+    efekt3:
+      asset: l3-efekt3
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 78, y: -62}
+    efekt4:
+      asset: l3-efekt4
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 115, y: -62}
+    dr-naglowek-e0t0:
+      asset: l3-dr-naglowek-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -62}
+    dr1-e0t0:
+      asset: l3-dr1-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -72}
+    dr2-e0t0:
+      asset: l3-dr2-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -85}
+    dr3-e0t0:
+      asset: l3-dr3-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -98}
+    dr4-e0t0:
+      asset: l3-dr4-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -111}
+    dr5-e0t0:
+      asset: l3-dr5-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -124}
+    dr6-e0t0:
+      asset: l3-dr6-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -137}
+    dr7-e0t0:
+      asset: l3-dr7-e0t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -150}
+    dr-naglowek-e0t1:
+      asset: l3-dr-naglowek-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -87}
+    dr1-e0t1:
+      asset: l3-dr1-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -97}
+    dr2-e0t1:
+      asset: l3-dr2-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -110}
+    dr3-e0t1:
+      asset: l3-dr3-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -123}
+    dr4-e0t1:
+      asset: l3-dr4-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -136}
+    dr5-e0t1:
+      asset: l3-dr5-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -149}
+    dr6-e0t1:
+      asset: l3-dr6-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -162}
+    dr7-e0t1:
+      asset: l3-dr7-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -175}
+    dr-naglowek-e0t2:
+      asset: l3-dr-naglowek-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -102}
+    dr1-e0t2:
+      asset: l3-dr1-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -112}
+    dr2-e0t2:
+      asset: l3-dr2-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -125}
+    dr3-e0t2:
+      asset: l3-dr3-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -138}
+    dr4-e0t2:
+      asset: l3-dr4-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -151}
+    dr5-e0t2:
+      asset: l3-dr5-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -164}
+    dr6-e0t2:
+      asset: l3-dr6-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -177}
+    dr7-e0t2:
+      asset: l3-dr7-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -190}
+    dr-naglowek-e1t0:
+      asset: l3-dr-naglowek-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -75}
+    dr1-e1t0:
+      asset: l3-dr1-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -85}
+    dr2-e1t0:
+      asset: l3-dr2-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -98}
+    dr3-e1t0:
+      asset: l3-dr3-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -111}
+    dr4-e1t0:
+      asset: l3-dr4-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -124}
+    dr5-e1t0:
+      asset: l3-dr5-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -137}
+    dr6-e1t0:
+      asset: l3-dr6-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -150}
+    dr7-e1t0:
+      asset: l3-dr7-e1t0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -163}
+    dr-naglowek-e1t1:
+      asset: l3-dr-naglowek-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -100}
+    dr1-e1t1:
+      asset: l3-dr1-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -110}
+    dr2-e1t1:
+      asset: l3-dr2-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -123}
+    dr3-e1t1:
+      asset: l3-dr3-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -136}
+    dr4-e1t1:
+      asset: l3-dr4-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -149}
+    dr5-e1t1:
+      asset: l3-dr5-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -162}
+    dr6-e1t1:
+      asset: l3-dr6-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -175}
+    dr7-e1t1:
+      asset: l3-dr7-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -188}
+    dr-naglowek-e1t2:
+      asset: l3-dr-naglowek-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -115}
+    dr1-e1t2:
+      asset: l3-dr1-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -125}
+    dr2-e1t2:
+      asset: l3-dr2-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -138}
+    dr3-e1t2:
+      asset: l3-dr3-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -151}
+    dr4-e1t2:
+      asset: l3-dr4-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -164}
+    dr5-e1t2:
+      asset: l3-dr5-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -177}
+    dr6-e1t2:
+      asset: l3-dr6-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -190}
+    dr7-e1t2:
+      asset: l3-dr7-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -203}
+    tow-tlo-e0t1:
+      asset: l3-tow-tlo-e0t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -62}
+    tow-tlo-e0t2:
+      asset: l3-tow-tlo-e0t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -62}
+    tow-tlo-e1t1:
+      asset: l3-tow-tlo-e1t1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -75}
+    tow-tlo-e1t2:
+      asset: l3-tow-tlo-e1t2
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -75}

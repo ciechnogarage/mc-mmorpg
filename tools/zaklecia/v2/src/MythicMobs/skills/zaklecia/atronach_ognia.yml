@@ -1,0 +1,53 @@
+Zak_Atronach_ognia_Laduj_P:
+  Skills:
+  - effect:particles{p=flame;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Atronach_ognia_Gotowe_P:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Atronach_ognia_Wystrzal_P:
+  Skills:
+  - effect:particles{p=flame;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+Zak_Atronach_ognia_Laduj_L:
+  Skills:
+  - effect:particles{p=flame;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Atronach_ognia_Gotowe_L:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Atronach_ognia_Wystrzal_L:
+  Skills:
+  - effect:particles{p=flame;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+Zak_Atronach_ognia_Laduj_Obie:
+  Skills:
+  - effect:particles{p=flame;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Atronach_ognia_Gotowe_Obie:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Atronach_ognia_Wystrzal_Obie:
+  Skills:
+  - effect:particles{p=flame;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+# Atronach strzela sam (cel AI rangedattack nie dziala dla blaze). @target w skillu moba = jego aktualny cel.
+Zak_Atronach_Strzal:
+  Skills:
+  - sound{s=entity.blaze.shoot;v=0.6;p=1.1} @self
+  - projectile{onTick=Zak_Atronach_Ogon;onHit=Zak_Atronach_Traf;v=14;i=1;mr=20;hR=0.4;vR=0.4;syo=1.2;hp=true;hnp=true;hto=true;sE=true;sB=true} @target
+
+Zak_Atronach_Ogon:
+  Skills:
+  - effect:particles{p=flame;a=2;hs=0.05;vs=0.05} @origin
+
+Zak_Atronach_Traf:
+  Skills:
+  - damage{a=4}
+  - ignite{ticks=40}

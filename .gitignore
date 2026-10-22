@@ -172,3 +172,12 @@ Thumbs.db
 # wyniki buildu i pliki tymczasowe narzedzi
 **/build/
 .ashfox/tmp/
+
+# ---- tools/ (przeniesione z world1/tools 22.10): wyniki uruchomień poza gitem ----
+tools/**/zrzuty/
+tools/**/klient/
+tools/**/klient-prod/
+tools/**/wyniki/
+tools/**/*.out
+tools/**/*.jar
+tools/**/*.gz

@@ -1,0 +1,38 @@
+# Dwie dlonie nad paskiem; pozycja od lewego dolnego rogu, y rosnie w gore.
+zaklecia-layout:
+  elements:
+    lewa-rzuca:
+      asset: 'zaklecia-lewa-rzuca'
+      align: left
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -2, y: 104}
+    prawa-przelacznik:
+      asset: 'zaklecia-prawa-przelacznik'
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -10, y: 104}
+    prawa-rzuca:
+      asset: 'zaklecia-prawa-rzuca'
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 2, y: 104}
+    lewa-laduje:
+      asset: 'zaklecia-lewa-laduje'
+      align: left
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -2, y: 104}
+    lewa-gotowe:
+      asset: 'zaklecia-lewa-gotowe'
+      align: left
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -2, y: 104}
+    prawa-laduje:
+      asset: 'zaklecia-prawa-laduje'
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 2, y: 104}
+    prawa-gotowe:
+      asset: 'zaklecia-prawa-gotowe'
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 2, y: 104}

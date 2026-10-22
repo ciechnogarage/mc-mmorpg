@@ -1,0 +1,107 @@
+# Mala karta w narozniku; w walce srodek ekranu pozostaje wolny.
+karta-zasoby-compact:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=compact} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+  layers:
+    tekst:
+      text: '<#FFFFFF>HP %hp-value%/%hp-max%  <#B8E4FF>Mana %mana-value%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 8, y: -5}
+    wytrzymalosc:
+      text: '<#FFE2A3>Wytrzymałość %stamina-value%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 8, y: -18}
+    hp:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: health, increment: 1, orientation: horizontal}
+    mana:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: mana, increment: 1, orientation: horizontal}
+    stamina:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: stamina, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/karta/kompakt.png}
+      scale: 0.5
+
+karta-zasoby-combat:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=compact} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=contrast} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+  layers:
+    tekst:
+      text: '<#FFFFFF>HP %hp-value%/%hp-max%  <#B8E4FF>Mana %mana-value%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 8, y: -5}
+    wytrzymalosc:
+      text: '<#FFE2A3>Wytrzymałość %stamina-value%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 8, y: -18}
+    hp:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: health, increment: 1, orientation: horizontal}
+    mana:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: mana, increment: 1, orientation: horizontal}
+    stamina:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: stamina, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/karta/kompakt.png}
+      scale: 0.5
+
+karta-zasoby-contrast:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=contrast} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+  layers:
+    tekst:
+      text: '<#FFFFFF>HP %hp-value%/%hp-max%  Mana %mana-value%'
+      font: default
+      outlined: true
+      shadow: '#000000FF'
+      align: right
+      offset: {x: 8, y: -5}
+    wytrzymalosc:
+      text: '<#FFFFFF>Wytrzymałość %stamina-value%'
+      font: default
+      outlined: true
+      shadow: '#000000FF'
+      align: right
+      offset: {x: 8, y: -18}
+    hp:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: health, increment: 1, orientation: horizontal}
+    mana:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: mana, increment: 1, orientation: horizontal}
+    stamina:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      function: {listener: stamina, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/karta/kompakt.png}
+      scale: 0.5

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Loch 001 Kwietna Polana: opis 9 sekcji -> obraz sterujacy + pack Irisa + spec (wspolrzedne sekcji).
 
-Spec gry: /opt/docker/mc/data/world1/docs/lochy/loch-001-kwietna-polana.md (sekcja 2).
+Spec gry: /home/dev/Desktop/Przemek/MC/docs/lochy/loch-001-kwietna-polana.md (sekcja 2).
 Zasady z pomiarow (make_poziom.py, pamiec iris-imagemap-progi / iris-wyspa-w-pustce):
   * region[0] = pustka, bez `rarity`, piksele w srodkach pasm 256/N,
   * rockPalette = powietrze -> wiszaca wyspa, czyste urwisko na brzegu,

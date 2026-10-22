@@ -1,0 +1,100 @@
+# Pierwsza warstwa jest na wierzchu; tu kazdy asset ma jedna warstwe.
+zaklecia-lewa-gotowa:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=gotowa} true hide
+  layers:
+    nazwa:
+      text: "<gray>%zaklecia_lewa%"
+      font: "default"
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-lewa-rzuca:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=rzuca} true hide
+  layers:
+    nazwa:
+      text: "<white>%zaklecia_lewa%"
+      font: "default"
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-prawa-gotowa:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=gotowa} true hide
+  layers:
+    nazwa:
+      text: "<gray>%zaklecia_prawa%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-prawa-rzuca:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=rzuca} true hide
+  layers:
+    nazwa:
+      text: "<white>%zaklecia_prawa%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-prawa-przelacznik:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_przelacznik%;val=tak} true hide
+  layers:
+    znacznik:
+      text: "<#f6d87b>●"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-lewa-laduje:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=laduje} true hide
+  layers:
+    nazwa:
+      text: "<#ffbc69>%zaklecia_lewa% · Ładuje"
+      font: "default"
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-lewa-gotowe:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=gotowe} true hide
+  layers:
+    nazwa:
+      text: "<#96ffb1>%zaklecia_lewa% · Gotowe"
+      font: "default"
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-prawa-laduje:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=laduje} true hide
+  layers:
+    nazwa:
+      text: "<#ffbc69>%zaklecia_prawa% · Ładuje"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-prawa-gotowe:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=gotowe} true hide
+  layers:
+    nazwa:
+      text: "<#96ffb1>%zaklecia_prawa% · Gotowe"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}

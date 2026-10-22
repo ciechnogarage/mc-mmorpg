@@ -1,0 +1,49 @@
+# Pierwszy aktywny cel w tej konfiguracji to samouczek Chowancow.
+cel-chowance:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%chowance_kroki_aktywne%;val=true} true hide
+    - placeholder{ph=%chowance_ma_zadanie_mmocore%;val=tak} false hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%luckperms_meta_ui_goal%;val=off} false hide
+  layers:
+    tytul:
+      text: '<#FFE5A1>Pierwsze kroki %chowance_kroki_postep%'
+      font: default
+      scale: 1.25
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+    krok:
+      text: '<#FFFFFF>%chowance_kroki_opis%'
+      font: default
+      scale: 1.25
+      outlined: true
+      align: right
+      offset: {x: 0, y: -12}
+
+# Aktywnie podjete zadanie ma pierwszenstwo przed samouczkiem. Boolean pochodzi z
+# Chowance, bo MMOCore zwraca pusty tekst zamiast stabilnego stanu PAPI.
+cel-mmocore:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%chowance_ma_zadanie_mmocore%;val=tak} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%luckperms_meta_ui_goal%;val=off} false hide
+  layers:
+    tytul:
+      text: '<#FFE5A1>%mmocore_quest% %mmocore_quest_progress%%'
+      font: default
+      scale: 1.25
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+    krok:
+      text: '<#FFFFFF>%mmocore_quest_objective%'
+      font: default
+      scale: 1.25
+      outlined: true
+      align: right
+      offset: {x: 0, y: -12}

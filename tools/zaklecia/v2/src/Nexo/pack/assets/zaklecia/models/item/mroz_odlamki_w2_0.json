@@ -1,0 +1,160 @@
+{
+ "textures": {
+  "k": "zaklecia:item/krysztal",
+  "particle": "zaklecia:item/krysztal"
+ },
+ "elements": [
+  {
+   "from": [
+    11,
+    8,
+    13.0
+   ],
+   "to": [
+    17,
+    8,
+    16.0
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#k",
+     "uv": [
+      0,
+      0,
+      3,
+      6
+     ],
+     "rotation": 90
+    }
+   }
+  },
+  {
+   "from": [
+    15,
+    8,
+    0.0
+   ],
+   "to": [
+    19,
+    8,
+    3.0
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#k",
+     "uv": [
+      4,
+      0,
+      7,
+      4
+     ],
+     "rotation": 90
+    }
+   }
+  }
+ ],
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    0,
+    45
+   ],
+   "translation": [
+    0,
+    -3,
+    -4
+   ],
+   "scale": [
+    0.488,
+    0.488,
+    0.488
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    0,
+    -45
+   ],
+   "translation": [
+    0,
+    -3,
+    -4
+   ],
+   "scale": [
+    0.488,
+    0.488,
+    0.488
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    28,
+    75,
+    45
+   ],
+   "translation": [
+    1.5,
+    2.6,
+    -1
+   ],
+   "scale": [
+    0.2154,
+    0.2154,
+    0.2154
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    28,
+    -75,
+    -45
+   ],
+   "translation": [
+    1.5,
+    2.6,
+    -1
+   ],
+   "scale": [
+    0.2154,
+    0.2154,
+    0.2154
+   ]
+  },
+  "head": {
+   "translation": [
+    0,
+    8,
+    0
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  }
+ }
+}

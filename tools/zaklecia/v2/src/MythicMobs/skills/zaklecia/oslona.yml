@@ -1,0 +1,24 @@
+Zak_Oslona_Start:
+  Skills:
+  - sound{s=block.beacon.power_select;v=0.5;p=1.5} @self
+
+Zak_Oslona_Stop:
+  Skills:
+  - sound{s=block.beacon.deactivate;v=0.3;p=1.8} @self
+
+Zak_Oslona_Tik_P:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=9;hs=0.35;vs=0.4;y=1.2;sso=0.38;sfo=0.3} @self
+
+Zak_Oslona_Tik_L:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=9;hs=0.35;vs=0.4;y=1.2;sso=-0.38;sfo=0.3} @self
+
+Zak_Oslona_Tik_Obie:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=18;hs=0.5;vs=0.5;y=1.2;sfo=0.4} @self
+
+Zak_Oslona_Peka:
+  Skills:
+  - sound{s=block.glass.break;v=0.8;p=0.7} @self
+  - effect:particles{p=enchanted_hit;a=30;hs=0.7;vs=0.7;y=1.2} @self

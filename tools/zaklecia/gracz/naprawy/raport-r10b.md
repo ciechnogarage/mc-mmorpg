@@ -1,0 +1,3 @@
+Runda 10b wykonana bez commitów. Usunąłem cztery wskazane warunki `lineofsight` z kopii skilli MythicMobs w nakładce; `mmoCanTarget` pozostał. Wzmocniony `B6Edge` potwierdził trafienia przy x=0,95 i 0,975 oraz brak trafienia przy pełnej zasłonie. Po ustabilizowaniu zdrowia celu `B6Occlusion` i pozostałe wymagane regresje przeszły.
+
+Wyniki i stan plików dopisałem w [szczegoly-r10.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/szczegoly-r10.md). Zatrzymałem pracę po raporcie, zgodnie z poleceniem.

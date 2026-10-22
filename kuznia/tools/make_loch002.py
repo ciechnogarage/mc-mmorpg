@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Loch 002 Bagna Zgnilych Korzeni: CALY teren proceduralnie (bez Irisa) -> kafelki .nbt + spec + podglad.
 
-Spec gry: /opt/docker/mc/data/world1/docs/lochy/loch-002-bagna-zgnilych-korzeni.md
+Spec gry: /home/dev/Desktop/Przemek/MC/docs/lochy/loch-002-bagna-zgnilych-korzeni.md
 Dlaczego bez Irisa: bagno to baseny wody o dokladnych brzegach (sluzy osuszaja je `fill`), groble, kladki i przesmyk
 z tama - Iris rozmywa waskie formy (pamiec loch001-teren-pieczenie), a woda z imagemap wylewa sie w pustke.
 Tu znamy wysokosc kazdej kolumny, wiec spec od razu podaje grunt dla funkcji MD i mobow (bez mierzenia).

@@ -1,0 +1,76 @@
+{
+ "textures": {
+  "s": "zaklecia:item/strumien_mroz",
+  "particle": "zaklecia:item/strumien_mroz"
+ },
+ "elements": [
+  {
+   "from": [
+    -7.0,
+    8,
+    0
+   ],
+   "to": [
+    23.0,
+    8,
+    16
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#s",
+     "uv": [
+      0,
+      16,
+      16,
+      0
+     ]
+    }
+   }
+  },
+  {
+   "from": [
+    -7.0,
+    8,
+    0
+   ],
+   "to": [
+    23.0,
+    8,
+    16
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": -45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#s",
+     "uv": [
+      0,
+      16,
+      16,
+      0
+     ]
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,3 @@
+Runda 4 jest opisana w [raporcie](</home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/raport-r4.md>) i [szczegółach z tabelą A/B](</home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/szczegoly-r4.md>).
+
+Poprawka N2 zachowuje blokadę zwykłego ciosu ze slotu 5, przepuszcza testowane zaklęcia i nie zmienia wyników `STAT2`. Trzy próby C wskazały zarezerwowany slot 0 jako przyczynę pojawienia się nośnika; nie zmieniałem kodu N3. Ostatni build ma `debug:false`. **Cała grupa B nadal ma FAIL**, w tym zmienne progi czasu przy działających zaklęciach, więc nie oznaczam jej jako zielonej. Bez commitów.

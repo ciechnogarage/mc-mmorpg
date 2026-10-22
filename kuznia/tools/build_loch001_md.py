@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Loch 001 Kwietna Polana - FRAGMENT 1 (sekcje 1-2, starcia A-C) jako mapa MythicDungeons + moby/skille MythicMobs.
 
-Spec: /opt/docker/mc/data/world1/docs/lochy/loch-001-kwietna-polana.md (§2 wersja 2, §3.2 starcia).
+Spec: /home/dev/Desktop/Przemek/MC/docs/lochy/loch-001-kwietna-polana.md (§2 wersja 2, §3.2 starcia).
 Uzycie: build_loch001_md.py <swiat_kuzni>   -> kuznia/levels/loch_001_md/{md/loch_001, mm/...}
 
 Roznice wzgledem build_md.py (poziom_01):

@@ -1,0 +1,144 @@
+SPEC_WILK_STEPU:
+  Type: "WOLF"
+  Display: "&7Wilk Stepu"
+  Health: 18
+  Damage: 3
+  Faction: "akolita_slugi"
+  Options:
+    MovementSpeed: 0.33
+    PreventOtherDrops: true
+    Despawn: true
+    FollowRange: 24
+  AIGoalSelectors:
+  - "0 clear"
+  - "1 float"
+  - "2 meleeattack"
+  - "3 gotoowner"
+  - "4 lookatplayers"
+  AITargetSelectors:
+  - "0 clear"
+  - "1 ownerattacker"
+  - "2 ownertarget"
+  Skills:
+  - "skill{s=SpecSlugaKoniec10} @self ~onSpawn"
+SPEC_PRZODEK:
+  Type: "ZOMBIFIED_PIGLIN"
+  Display: "&cPrzodek Pobojowiska"
+  Health: 18
+  Damage: 3
+  Faction: "akolita_slugi"
+  Options:
+    MovementSpeed: 0.27
+    PreventOtherDrops: true
+    Despawn: true
+    FollowRange: 24
+  AIGoalSelectors:
+  - "0 clear"
+  - "1 float"
+  - "2 meleeattack"
+  - "3 gotoowner"
+  - "4 lookatplayers"
+  AITargetSelectors:
+  - "0 clear"
+  - "1 ownerattacker"
+  - "2 ownertarget"
+  Skills:
+  - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+SPEC_SLUGA_KURHANU:
+  Type: "SKELETON"
+  Display: "&7Głos Kurhanu"
+  Health: 16
+  Damage: 3
+  Faction: "akolita_slugi"
+  Options:
+    MovementSpeed: 0.3
+    PreventOtherDrops: true
+    PreventSunburn: true
+    Despawn: true
+    FollowRange: 24
+  AIGoalSelectors:
+  - "0 clear"
+  - "1 float"
+  - "2 meleeattack"
+  - "3 gotoowner"
+  - "4 lookatplayers"
+  AITargetSelectors:
+  - "0 clear"
+  - "1 ownerattacker"
+  - "2 ownertarget"
+  Skills:
+  - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+SPEC_WILK_STEPU_BRON:
+  Type: "WOLF"
+  Display: "&7Wilk Stepu"
+  Health: 22
+  Damage: 3
+  Faction: "akolita_slugi"
+  Options:
+    MovementSpeed: 0.33
+    PreventOtherDrops: true
+    Despawn: true
+    FollowRange: 24
+  AIGoalSelectors:
+  - "0 clear"
+  - "1 float"
+  - "2 meleeattack"
+  - "3 gotoowner"
+  - "4 lookatplayers"
+  AITargetSelectors:
+  - "0 clear"
+  - "1 ownerattacker"
+  - "2 ownertarget"
+  Skills:
+  - "skill{s=SpecSlugaKoniec10} @self ~onSpawn"
+SPEC_PRZODEK_BRON:
+  Type: "ZOMBIFIED_PIGLIN"
+  Display: "&cPrzodek Pobojowiska"
+  Health: 22
+  Damage: 3
+  Faction: "akolita_slugi"
+  Options:
+    MovementSpeed: 0.27
+    PreventOtherDrops: true
+    Despawn: true
+    FollowRange: 24
+  AIGoalSelectors:
+  - "0 clear"
+  - "1 float"
+  - "2 meleeattack"
+  - "3 gotoowner"
+  - "4 lookatplayers"
+  AITargetSelectors:
+  - "0 clear"
+  - "1 ownerattacker"
+  - "2 ownertarget"
+  Skills:
+  - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+SPEC_SLUGA_KURHANU_BRON:
+  Type: "SKELETON"
+  Display: "&7Głos Kurhanu"
+  Health: 20
+  Damage: 3
+  Faction: "akolita_slugi"
+  Options:
+    MovementSpeed: 0.3
+    PreventOtherDrops: true
+    PreventSunburn: true
+    Despawn: true
+    FollowRange: 24
+  AIGoalSelectors:
+  - "0 clear"
+  - "1 float"
+  - "2 meleeattack"
+  - "3 gotoowner"
+  - "4 lookatplayers"
+  AITargetSelectors:
+  - "0 clear"
+  - "1 ownerattacker"
+  - "2 ownertarget"
+  Skills:
+  - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"

@@ -1,0 +1,53 @@
+# HUD v5: kierunek obrazen, awans, umiejetnosci.
+l5-layout:
+  elements:
+    obrazenia:
+      asset: l5-obrazenia
+      align: right
+      position: {x: 50.0, y: 50.0}
+      offset: {x: -15, y: 15}
+    awans:
+      asset: l5-awans
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -14, y: 53}
+    um1-gotowa:
+      asset: l5-um1-gotowa
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -78, y: 94}
+    um1-odnowienie:
+      asset: l5-um1-odnowienie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -78, y: 94}
+    um2-gotowa:
+      asset: l5-um2-gotowa
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -38, y: 94}
+    um2-odnowienie:
+      asset: l5-um2-odnowienie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -38, y: 94}
+    um3-gotowa:
+      asset: l5-um3-gotowa
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 2, y: 94}
+    um3-odnowienie:
+      asset: l5-um3-odnowienie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 2, y: 94}
+    um4-gotowa:
+      asset: l5-um4-gotowa
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 42, y: 94}
+    um4-odnowienie:
+      asset: l5-um4-odnowienie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 42, y: 94}

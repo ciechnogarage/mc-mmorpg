@@ -30,4 +30,4 @@ Plik: /home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client/client.jar (kla
 
 ## G. Pakiety komercyjne (BuiltByBit) - Wonderland GUI Pack (Oraxen/IA/Nexo)
 - Changelog: autor usunal pszczoly i model Steve'a z UI ekwipunku, bo przycisk craftingu nakladal sie na nie w nowszych wersjach (https://builtbybit.com/resources/wonderland-gui-pack-oraxen-ia-nexo.106693/update/262922/). Jedno zrodlo.
-- Wynncraft 2.1: "Reworked the inventory GUI" (https://forums.wynncraft.com/threads/2-1-rekindled-world-changelog.316880/, wg /opt/docker/mc/data/world1/docs/research/wynncraft/1-research-tekstowy.md l.87).
+- Wynncraft 2.1: "Reworked the inventory GUI" (https://forums.wynncraft.com/threads/2-1-rekindled-world-changelog.316880/, wg /home/dev/Desktop/Przemek/MC/docs/research/wynncraft/1-research-tekstowy.md l.87).

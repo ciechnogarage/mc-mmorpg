@@ -1,0 +1,12 @@
+cel-layout:
+  elements:
+    samouczek:
+      asset: cel-chowance
+      align: right
+      position: {x: 100.0, y: 70.0}
+      offset: {x: -234, y: 0}
+    zadanie:
+      asset: cel-mmocore
+      align: right
+      position: {x: 100.0, y: 70.0}
+      offset: {x: -234, y: 0}

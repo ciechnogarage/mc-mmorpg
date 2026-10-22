@@ -1,0 +1,129 @@
+klasa,aspekt,rzadkosc,tierow,progi_tierow
+archer,Aspect of Bullet Hell,legendary,4,1/5/30/150
+archer,Aspect of Olfactorial Enhancement,legendary,4,1/5/30/150
+archer,Aspect of Clinging Lichen,legendary,4,1/5/30/150
+archer,Aspect of Further Horizons,legendary,4,1/5/30/150
+archer,Aspect of the North Wind,legendary,4,1/5/30/150
+archer,Aspect of Battlement Fortification,legendary,4,1/5/30/150
+archer,Aspect of Dynamic Entry,legendary,4,1/5/30/150
+archer,Aspect of the Thunderbolt,legendary,4,1/5/30/150
+archer,Aspect of the Barley-Woven,legendary,4,1/5/30/150
+archer,Aspect of the Iron String,legendary,4,1/5/30/150
+archer,Aspect of Extreme Firepower,legendary,4,1/5/30/150
+archer,Aspect of Extreme Current,fabled,3,1/15/75
+archer,Aspect of the Heavenly Mandate,fabled,3,1/15/75
+archer,Aspect of Fragmentation Rounds,fabled,3,1/15/75
+archer,Aspect of the Steadying Hand,fabled,3,1/15/75
+archer,Aspect of Undercrank,fabled,3,1/15/75
+archer,Aspect of the Inexhaustible Quiver,fabled,3,1/15/75
+archer,Aspect of Chaotic Demolition,fabled,3,1/15/75
+archer,Aspect of the Poltergeist,fabled,3,1/15/75
+archer,Aspect of the Beastmaster,fabled,3,1/15/75
+archer,Aspect of the Battle-Fletcher,fabled,3,1/15/75
+archer,Trapper's Embodiment of Persistence Predation,mythic,3,1/5/15
+archer,Sharpshooter's Embodiment of Laser Precision,mythic,3,1/5/15
+archer,Archer's Embodiment of Perceptive Finesse,mythic,3,1/5/15
+archer,Boltslinger's Embodiment of Rended Skies,mythic,3,1/5/15
+warrior,Aspect of Deafening Echoes,legendary,4,1/5/30/150
+warrior,Aspect of Steel Chords,legendary,4,1/5/30/150
+warrior,Aspect of the Returning Javelin,legendary,4,1/5/30/150
+warrior,Aspect of Bovine Inspiration,legendary,4,1/5/30/150
+warrior,Aspect of Maniacal Frisson,legendary,4,1/5/30/150
+warrior,Aspect of Turbulence,legendary,4,1/5/30/150
+warrior,Aspect of the Crimson Scrivener,legendary,4,1/5/30/150
+warrior,Aspect of Earthshaking,legendary,4,1/5/30/150
+warrior,Aspect of Skyward Strikes,legendary,4,1/5/30/150
+warrior,Aspect of the Golden Dawn,legendary,4,1/5/30/150
+warrior,Aspect of the Anvil Drop,legendary,4,1/5/30/150
+warrior,Aspect of Overflowing Hope,legendary,4,1/5/30/150
+warrior,Aspect of the Humming Choir,legendary,4,1/5/30/150
+warrior,Aspect of the Megaphone,legendary,4,1/5/30/150
+warrior,Aspect of Unquenching Flames,fabled,3,1/15/75
+warrior,Aspect of Rekindling,fabled,3,1/15/75
+warrior,Aspect of Rallying Fervor,fabled,3,1/15/75
+warrior,Aspect of Seeing Stars,fabled,3,1/15/75
+warrior,Aspect of the Berserker,fabled,3,1/15/75
+warrior,Aspect of Hyper-Perception,fabled,3,1/15/75
+warrior,Aspect of Empowering Fantasy,fabled,3,1/15/75
+warrior,Aspect of the Tightrope Walk,fabled,3,1/15/75
+warrior,Aspect of the Enforcer,fabled,3,1/15/75
+warrior,Paladin's Embodiment of Undying Determination,mythic,3,1/5/15
+warrior,Warrior's Embodiment of Everlasting Perseverance,mythic,3,1/5/15
+warrior,Fallen's Embodiment of Blind Fury,mythic,3,1/5/15
+warrior,Battle Monk's Embodiment of Complete Synchrony,mythic,3,1/5/15
+assassin,Aspect of Redoublement,legendary,4,1/5/30/150
+assassin,Aspect of the Fog Machine,legendary,4,1/5/30/150
+assassin,Aspect of Shadow Armor,legendary,4,1/5/30/150
+assassin,Aspect of Flamboyance,legendary,4,1/5/30/150
+assassin,Aspect of Athleticism,legendary,4,1/5/30/150
+assassin,Aspect of the Chain Knife,legendary,4,1/5/30/150
+assassin,Aspect of the Pinwheel,legendary,4,1/5/30/150
+assassin,Aspect of the Stellar Flurry,legendary,4,1/5/30/150
+assassin,Aspect of Enduring Illusions,legendary,4,1/5/30/150
+assassin,Aspect of Seeking Stars,fabled,3,1/15/75
+assassin,Aspect of the Agile Blade,fabled,3,1/15/75
+assassin,Aspect of Unyielding Fate,fabled,3,1/15/75
+assassin,Aspect of False Coercing,fabled,3,1/15/75
+assassin,Aspect of the Disappearing Act,fabled,3,1/15/75
+assassin,Aspect of the Dagger's Silhouette,fabled,3,1/15/75
+assassin,Aspect of Clouded Vision,fabled,3,1/15/75
+assassin,Aspect of the Calling Card,fabled,3,1/15/75
+assassin,Aspect of the Unstoppable Force,fabled,3,1/15/75
+assassin,Aspect of Sleight-Of-Hand,fabled,3,1/15/75
+assassin,Aspect of Visual Distortion,fabled,3,1/15/75
+assassin,Aspect of the Airborne,fabled,3,1/15/75
+assassin,Aspect of the Pernicious Prankster,fabled,3,1/15/75
+assassin,Assassin's Embodiment of Otherworldly Detachment,mythic,3,1/5/15
+assassin,Acrobat's Embodiment of Gravity Defiance,mythic,3,1/5/15
+assassin,Trickster's Embodiment of Malevolent Mischief,mythic,3,1/5/15
+assassin,Shadestepper's Embodiment of Unseen Execution,mythic,3,1/5/15
+mage,Aspect of Wind Walking,legendary,4,1/5/30/150
+mage,Aspect of a Scorching Sun,legendary,4,1/5/30/150
+mage,Aspect of the Savior,legendary,4,1/5/30/150
+mage,Aspect of Indoctrination,legendary,4,1/5/30/150
+mage,Aspect of the Magic Missile,legendary,4,1/5/30/150
+mage,Aspect of the Ray of Frost,legendary,4,1/5/30/150
+mage,Aspect of the Apprentice's Bolt,legendary,4,1/5/30/150
+mage,Aspect of a Thousand Hours,legendary,4,1/5/30/150
+mage,Aspect of the Vast Emptiness,legendary,4,1/5/30/150
+mage,Aspect of the Dimension's Door,legendary,4,1/5/30/150
+mage,Aspect of the Comet,legendary,4,1/5/30/150
+mage,Aspect of Futures Rewritten,fabled,3,1/15/75
+mage,Aspect of Runic Extravagance,fabled,3,1/15/75
+mage,Aspect of Manaflux,fabled,3,1/15/75
+mage,Aspect of the Forbidden Ritual,fabled,3,1/15/75
+mage,Aspect of the Inescapable Void,fabled,3,1/15/75
+mage,Aspect of Shining Status,fabled,3,1/15/75
+mage,Aspect of Mystic Transfer,fabled,3,1/15/75
+mage,Aspect of the Indescribable,fabled,3,1/15/75
+mage,Aspect of Limitless Knowledge,fabled,3,1/15/75
+mage,Aspect of Burning Providence,fabled,3,1/15/75
+mage,Mage's Embodiment of Morbid Curiosity,mythic,3,1/5/15
+mage,Arcanist's Embodiment of Total Obliteration,mythic,3,1/5/15
+mage,Riftwalker's Embodiment of Reality Alteration,mythic,3,1/5/15
+mage,Light Bender's Embodiment of Celestial Brilliance,mythic,3,1/5/15
+shaman,Aspect of the Alraune's Roots,legendary,4,1/5/30/150
+shaman,Aspect of the Bodyguard,legendary,4,1/5/30/150
+shaman,Aspect of Reverberation,legendary,4,1/5/30/150
+shaman,Aspect of Damnation,legendary,4,1/5/30/150
+shaman,Aspect of the Monolith,legendary,4,1/5/30/150
+shaman,Aspect of Motivation,legendary,4,1/5/30/150
+shaman,Aspect of Acceleration,legendary,4,1/5/30/150
+shaman,Aspect of Surging Presence,legendary,4,1/5/30/150
+shaman,Aspect of Empathy,legendary,4,1/5/30/150
+shaman,Aspect of Emanant Force,legendary,4,1/5/30/150
+shaman,Aspect of Bile Waters,legendary,4,1/5/30/150
+shaman,Aspect of Occupation,legendary,4,1/5/30/150
+shaman,Aspect of Incineration,legendary,4,1/5/30/150
+shaman,Aspect of Gushing Blood,legendary,4,1/5/30/150
+shaman,Aspect of the Amphibian,fabled,3,1/15/75
+shaman,Aspect of the Artisan,fabled,3,1/15/75
+shaman,Aspect of the Eternal Dance,fabled,3,1/15/75
+shaman,Aspect of the Channeler,fabled,3,1/15/75
+shaman,Aspect of Exsanguination,fabled,3,1/15/75
+shaman,Aspect of Stances,fabled,3,1/15/75
+shaman,Aspect of the Beckoned Legion,fabled,3,1/15/75
+shaman,Shaman's Embodiment of Serene Harmony,mythic,3,1/5/15
+shaman,Ritualist's Embodiment of the Ancestral Avatar,mythic,3,1/5/15
+shaman,Summoner's Embodiment of the Omnipotent Overseer,mythic,3,1/5/15
+shaman,Acolyte's Embodiment of Unwavering Adherence,mythic,3,1/5/15

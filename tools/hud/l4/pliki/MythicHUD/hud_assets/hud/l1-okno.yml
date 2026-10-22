@@ -1,0 +1,278 @@
+# Okno postaci v3 (20.10): w walce, walce Chowancow i trybie kompakt PRZYGASA (alfa 45%), nie zwija sie.
+# Stan z %hud_okno% (HudDane), bo MythicHUD nie ma "lub" w warunkach.
+l1-okno:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    nick:
+      text: '<#FFF1CC>%player_name%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 46, y: -8}
+    klasa:
+      text: '<#D5A96B>%mmocore_class%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 43, y: -20}
+    exp-proc:
+      text: '<#D5A96B>%mmocore_level_percent%%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 116, y: -30}
+    rasa-czlowiek:
+      texture: {path: assets/l1/rasa_czlowiek.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=czlowiek} true hide
+    rasa-elf:
+      texture: {path: assets/l1/rasa_elf.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=elf} true hide
+    rasa-ork:
+      texture: {path: assets/l1/rasa_ork.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=ork} true hide
+    rasa-nieumarly:
+      texture: {path: assets/l1/rasa_nieumarly.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=nieumarly} true hide
+    rasa-tlo:
+      texture: {path: assets/l1/rasa_tlo.png}
+      scale: 0.5
+      offset: {x: 30, y: -30}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=brak} false hide
+    exp:
+      texture: {path: assets/l1/exp_fill.png}
+      scale: 0.5
+      offset: {x: 43, y: -32}
+      function: {listener: doswiadczenie, increment: 69, orientation: horizontal}
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 6, y: -34}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+    tlo-b:
+      texture: {path: assets/l1/okno_b.png}
+      scale: 0.5
+      offset: {x: 128, y: 0}
+    tlo:
+      texture: {path: assets/l1/okno_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l1-okno-przygaszone:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%hud_okno%;val=przygaszone} true hide
+  layers:
+    nick:
+      text: '<#A89A8C>%player_name%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 46, y: -8}
+    klasa:
+      text: '<#8F7656>%mmocore_class%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 43, y: -20}
+    exp-proc:
+      text: '<#8F7656>%mmocore_level_percent%%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 116, y: -30}
+    alarm:
+      texture: {path: assets/l1/portret_alarm.png}
+      scale: 0.5
+      offset: {x: 5, y: -5}
+      conditions:
+        - progress{l=hp;o=<;v=30%} true hide
+    rasa-czlowiek:
+      texture: {path: assets/l1/rasa_czlowiek_p.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=czlowiek} true hide
+    rasa-elf:
+      texture: {path: assets/l1/rasa_elf_p.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=elf} true hide
+    rasa-ork:
+      texture: {path: assets/l1/rasa_ork_p.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=ork} true hide
+    rasa-nieumarly:
+      texture: {path: assets/l1/rasa_nieumarly_p.png}
+      scale: 0.5
+      offset: {x: 31, y: -31}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=nieumarly} true hide
+    rasa-tlo:
+      texture: {path: assets/l1/rasa_tlo_p.png}
+      scale: 0.5
+      offset: {x: 30, y: -30}
+      conditions:
+        - placeholder{ph=%wiary_rasa%;val=brak} false hide
+    exp:
+      texture: {path: assets/l1/exp_fill_p.png}
+      scale: 0.5
+      offset: {x: 43, y: -32}
+      function: {listener: doswiadczenie, increment: 69, orientation: horizontal}
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 6, y: -34}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+    tlo-b:
+      texture: {path: assets/l1/okno_b_p.png}
+      scale: 0.5
+      offset: {x: 128, y: 0}
+    tlo:
+      texture: {path: assets/l1/okno_a_p.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l1-pl-patron-brak:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%wiary_patron%;val=brak} true hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    tekst:
+      text: '<#B39066>brak patrona'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -44}
+    ikona:
+      texture: {path: assets/l1/pl_wiara_brak.png}
+      scale: 0.5
+      offset: {x: 0, y: -43}
+
+l1-pl-wiara:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%wiary_patron%;val=brak} false hide
+    - placeholder{ph=%wiary_laska_czas%;val=brak} true hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    tekst:
+      text: '<#D5A96B>Wiara %wiary_wiara%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -44}
+    ikona:
+      texture: {path: assets/l1/pl_wiara.png}
+      scale: 0.5
+      offset: {x: 0, y: -43}
+
+l1-pl-laska:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%wiary_laska_czas%;val=brak} false hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    tekst:
+      text: '<#FFE7AE>Łaska %wiary_laska_czas%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -44}
+    ikona:
+      texture: {path: assets/l1/pl_laska.png}
+      scale: 0.5
+      offset: {x: 0, y: -43}
+
+l1-pl-odznaki:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%chowance_odznaki_liczba%;v=0;o=>} true hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    tekst:
+      text: '<#FFE7AE>%chowance_odznaki_liczba%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -44}
+    ikona:
+      texture: {path: assets/l1/pl_odznaki.png}
+      scale: 0.5
+      offset: {x: 0, y: -43}
+
+l1-pl-atrybuty:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%mmocore_attribute_points%;v=0;o=>} true hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    tekst:
+      text: '<#FFE7AE>+%mmocore_attribute_points%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -44}
+    ikona:
+      texture: {path: assets/l1/pl_atrybuty.png}
+      scale: 0.5
+      offset: {x: 0, y: -43}
+
+l1-pl-umiejetnosci:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%mmocore_skill_points%;v=0;o=>} true hide
+    - placeholder{ph=%hud_okno%;val=pelne} true hide
+  layers:
+    tekst:
+      text: '<#B8E4FF>+%mmocore_skill_points%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -44}
+    ikona:
+      texture: {path: assets/l1/pl_umiejetnosci.png}
+      scale: 0.5
+      offset: {x: 0, y: -43}

@@ -1,0 +1,21 @@
+Pracujesz dla serwera MMORPG Minecraft (Paper 1.21.11, world1). Dane serwera: /opt/docker/mc/data/world1 (TYLKO CZYTAJ, niczego tam nie zmieniaj, zadnych reloadow/restartow/rcon). Zrodla naszych pluginow: /home/dev/Desktop/Przemek/MC (glowne repo + worktree w .claude/worktrees/*, np. zaklecia, animacje-broni, cc-*). Zrodla generowane/configi: /home/dev/Desktop/Przemek/MC/tools/* (np. tools/zaklecia/v2/src). Pisz TYLKO w katalogu wyjsciowym podanym nizej.
+
+Wlasciciel: "prawy przycisk chyba nie pokazuje komunikatu braku many; ogolnie informowanie/komunikaty i ich czytelnosc i przejrzystosc - na razie jest duzo jakichs komunikatow i to jest syf, niech to pokmini".
+
+CZESC A - blad: brak "Za mało many" przy PPM.
+Sterowanie Zaklec (plugin Zaklecia, worktree .claude/worktrees/zaklecia, MCMMORPG/plugin-src/zaklecia): PPM = LEWA dlon (trzymaj), LPM = PRAWA (klik), PPM+klik LPM = obie. Komunikat to skill MM Zak_BrakMany (tools/zaklecia/v2/src/MythicMobs/skills/zaklecia/_wspolne.yml, sendtitle z pustym title i subtitle). Sprawdzenia many: Rzucanie.java ~435 (co 10 tickow w petli) i RzutyOdrzutowe.java ~164. Ustal wszystkie sciezki rzucania (koncentracja, ladowany, runa, na siebie, tarcza, przywolania, lewa vs prawa, pusta prawa + PPM) i wskaz, ktore nie dochodza do komunikatu albo gdzie komunikat jest nadpisywany/niewidoczny (np. tytul nadpisywany przez inny plugin/HUD, petla ponownego startu co tick przy trzymanym PPM, zatrzymanie przed pierwszym tikiem, MythicHUD, pasek MMOCore). Podaj przyczyne z plikiem:linia i minimalna poprawke (opis, nie diff). Nie zgaduj - jesli czegos nie da sie rozstrzygnac z kodu, napisz co trzeba zmierzyc na kliencie.
+
+CZESC B - audyt i projekt komunikatow.
+1. Zinwentaryzuj komunikaty, ktore gracz widzi podczas zwyklej gry (walka, zaklecia, bronie/AnimacjeBroni, Chowance, Wiary, Mapa, Lobby, PaskiMobow, KlasyBron, kreator postaci, MMOCore: EXP/poziom/brak many/cooldown/pasek akcji, MMOItems, MythicMobs skille: message/actionmessage/sendtitle/bossbar, CoreTools skrypty, CMI, DeluxeMenus, MythicHUD). Dla kazdego zrodla: kanal (czat/pasek akcji/tytul/podtytul/BossBar/HUD/dzwiek), mniej wiecej ile komunikatow, czestotliwosc, przyklady. Licz skryptem/grepem i podaj liczby, nie wrazenia.
+2. Wskaz problemy: spam (co tick/ciagle), duplikaty (ta sama informacja w 2 kanalach), konflikty kanalow (pasek MMOCore co 5 tickow nadpisuje sendActionBar - wiemy, ze trzeba uzywac PlayerData.displayActionBar), niespojne kolory/styl/jezyk (angielskie komunikaty pluginow, techniczne/debug), komunikaty bez znaczenia dla gracza, wazne informacje, ktorych BRAK (np. brak many, cooldown, cel poza zasiegiem, pelny ekwipunek).
+3. Zaprojektuj jeden system: hierarchia waznosci (krytyczne / akcja gracza / informacja / tlo), ktory kanal do czego, maks. dlugosc, paleta kolorow i ikony (oszczednie, styl jak Wynncraft - czytelnosc z oszczednosci), zasady anty-spamu (cooldown na ten sam komunikat, laczenie), co wyciszyc/usunac, co przeniesc do czatu vs paska. Zaproponuj wspolny mechanizm (np. maly wspolny helper/klasa w naszych pluginach albo kanal przez jeden plugin), z uwzglednieniem MythicMobs/CoreTools, ktorych nie przepiszemy w Javie.
+4. Plan wdrozenia etapami (najwiekszy zysk najpierw), z lista konkretnych zmian plik po pliku dla etapu 1.
+
+FORMAT RAPORTU (markdown, max 220 linii, bez wklejania diffow i dlugich cytatow kodu):
+## A. Brak many przy PPM (przyczyna, plik:linia, poprawka, co zmierzyc)
+## B1. Inwentarz (tabela: zrodlo | kanal | liczba | czestotliwosc | przyklad)
+## B2. Problemy (posortowane wg dokuczliwosci dla gracza)
+## B3. Projekt systemu komunikatow
+## B4. Plan etapow + lista zmian etapu 1
+## Niepewne / do zmierzenia na kliencie
+Odpowiedz w terminalu: 5 linii max.

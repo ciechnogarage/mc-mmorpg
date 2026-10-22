@@ -1,0 +1,7 @@
+# Listenery pasków Chowańca (MythicHUD: value/max z placeholderów, jak 'mana' w default-listeners.yml).
+chowaniec_hp:
+  value: '%chowance_aktywny_hp%'
+  max: '%chowance_aktywny_hpmax%'
+chowaniec_exp:
+  value: '%chowance_aktywny_exp_procent%'
+  max: '100'

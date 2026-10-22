@@ -1,0 +1,1247 @@
+Compiled from "DamagingMechanic.java"
+public abstract class io.lumine.mythic.core.skills.damage.DamagingMechanic extends io.lumine.mythic.core.skills.SkillMechanic {
+  protected boolean triggerSkills;
+
+  protected boolean ignoresArmor;
+
+  protected boolean preventImmunity;
+
+  protected boolean preventKnockback;
+
+  protected boolean ignoresEnchantments;
+
+  protected io.lumine.mythic.api.skills.placeholders.PlaceholderString element;
+
+  protected org.bukkit.event.entity.EntityDamageEvent$DamageCause cause;
+
+  protected boolean ignoreInvulnerability;
+
+  protected boolean damagesHelmet;
+
+  protected boolean noAnger;
+
+  protected boolean ignoreEffects;
+
+  protected boolean ignoreShield;
+
+  protected boolean ignoreResistance;
+
+  protected boolean powerAffectsDamage;
+
+  protected java.util.Collection<java.lang.String> tags;
+
+  protected java.util.Map<java.lang.String, io.lumine.mythic.api.skills.placeholders.PlaceholderDouble> bonusDamage;
+
+  protected java.util.Map<java.lang.String, io.lumine.mythic.api.skills.placeholders.PlaceholderDouble> bonusDamageMods;
+
+  protected java.util.Map<java.lang.String, io.lumine.mythic.api.skills.placeholders.PlaceholderString> parameters;
+
+  public io.lumine.mythic.core.skills.damage.DamagingMechanic(io.lumine.mythic.core.skills.SkillExecutor, java.lang.String, io.lumine.mythic.api.config.MythicLineConfig);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: new           #1                  // class java/io/File
+       5: dup
+       6: aload_2
+       7: invokespecial #3                  // Method java/io/File."<init>":(Ljava/lang/String;)V
+      10: aload_3
+      11: invokeinterface #7,  1            // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getLine:()Ljava/lang/String;
+      16: aload_3
+      17: invokespecial #13                 // Method "<init>":(Lio/lumine/mythic/core/skills/SkillExecutor;Ljava/io/File;Ljava/lang/String;Lio/lumine/mythic/api/config/MythicLineConfig;)V
+      20: return
+
+  public io.lumine.mythic.core.skills.damage.DamagingMechanic(io.lumine.mythic.core.skills.SkillExecutor, java.io.File, java.lang.String, io.lumine.mythic.api.config.MythicLineConfig);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: invokespecial #18                 // Method io/lumine/mythic/core/skills/SkillMechanic."<init>":(Lio/lumine/mythic/core/skills/SkillExecutor;Ljava/io/File;Ljava/lang/String;Lio/lumine/mythic/api/config/MythicLineConfig;)V
+       9: aload_0
+      10: invokestatic  #21                 // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+      13: putfield      #27                 // Field tags:Ljava/util/Collection;
+      16: aload_0
+      17: invokestatic  #31                 // Method com/google/common/collect/Maps.newTreeMap:()Ljava/util/TreeMap;
+      20: putfield      #37                 // Field bonusDamage:Ljava/util/Map;
+      23: aload_0
+      24: invokestatic  #31                 // Method com/google/common/collect/Maps.newTreeMap:()Ljava/util/TreeMap;
+      27: putfield      #41                 // Field bonusDamageMods:Ljava/util/Map;
+      30: aload_0
+      31: new           #44                 // class java/util/concurrent/ConcurrentHashMap
+      34: dup
+      35: invokespecial #46                 // Method java/util/concurrent/ConcurrentHashMap."<init>":()V
+      38: putfield      #49                 // Field parameters:Ljava/util/Map;
+      41: aload_0
+      42: getstatic     #52                 // Field io/lumine/mythic/api/skills/ThreadSafetyLevel.SYNC_ONLY:Lio/lumine/mythic/api/skills/ThreadSafetyLevel;
+      45: putfield      #58                 // Field threadSafetyLevel:Lio/lumine/mythic/api/skills/ThreadSafetyLevel;
+      48: aload_0
+      49: aload         4
+      51: iconst_2
+      52: anewarray     #61                 // class java/lang/String
+      55: dup
+      56: iconst_0
+      57: ldc           #63                 // String triggerskills
+      59: aastore
+      60: dup
+      61: iconst_1
+      62: ldc           #65                 // String ts
+      64: aastore
+      65: iconst_0
+      66: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+      71: putfield      #71                 // Field triggerSkills:Z
+      74: aload_0
+      75: aload         4
+      77: iconst_3
+      78: anewarray     #61                 // class java/lang/String
+      81: dup
+      82: iconst_0
+      83: ldc           #75                 // String ignorearmor
+      85: aastore
+      86: dup
+      87: iconst_1
+      88: ldc           #77                 // String ia
+      90: aastore
+      91: dup
+      92: iconst_2
+      93: ldc           #79                 // String i
+      95: aastore
+      96: iconst_0
+      97: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     102: putfield      #81                 // Field ignoresArmor:Z
+     105: aload_0
+     106: aload         4
+     108: iconst_2
+     109: anewarray     #61                 // class java/lang/String
+     112: dup
+     113: iconst_0
+     114: ldc           #84                 // String preventimmunity
+     116: aastore
+     117: dup
+     118: iconst_1
+     119: ldc           #86                 // String pi
+     121: aastore
+     122: iconst_0
+     123: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     128: putfield      #88                 // Field preventImmunity:Z
+     131: aload_0
+     132: aload         4
+     134: iconst_3
+     135: anewarray     #61                 // class java/lang/String
+     138: dup
+     139: iconst_0
+     140: ldc           #91                 // String preventknockback
+     142: aastore
+     143: dup
+     144: iconst_1
+     145: ldc           #93                 // String pkb
+     147: aastore
+     148: dup
+     149: iconst_2
+     150: ldc           #95                 // String pk
+     152: aastore
+     153: iconst_0
+     154: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     159: putfield      #97                 // Field preventKnockback:Z
+     162: aload_0
+     163: aload         4
+     165: iconst_3
+     166: anewarray     #61                 // class java/lang/String
+     169: dup
+     170: iconst_0
+     171: ldc           #100                // String ignoreenchantments
+     173: aastore
+     174: dup
+     175: iconst_1
+     176: ldc           #102                // String ignoreenchants
+     178: aastore
+     179: dup
+     180: iconst_2
+     181: ldc           #104                // String ie
+     183: aastore
+     184: iconst_0
+     185: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     190: putfield      #106                // Field ignoresEnchantments:Z
+     193: aload_0
+     194: aload         4
+     196: iconst_3
+     197: anewarray     #61                 // class java/lang/String
+     200: dup
+     201: iconst_0
+     202: ldc           #109                // String element
+     204: aastore
+     205: dup
+     206: iconst_1
+     207: ldc           #111                // String e
+     209: aastore
+     210: dup
+     211: iconst_2
+     212: ldc           #113                // String damagetype
+     214: aastore
+     215: aconst_null
+     216: iconst_0
+     217: anewarray     #61                 // class java/lang/String
+     220: invokeinterface #115,  4          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getPlaceholderString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     225: putfield      #119                // Field element:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     228: aload_0
+     229: aload         4
+     231: iconst_2
+     232: anewarray     #61                 // class java/lang/String
+     235: dup
+     236: iconst_0
+     237: ldc           #122                // String noanger
+     239: aastore
+     240: dup
+     241: iconst_1
+     242: ldc           #124                // String na
+     244: aastore
+     245: iconst_0
+     246: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     251: putfield      #126                // Field noAnger:Z
+     254: aload_0
+     255: aload         4
+     257: iconst_3
+     258: anewarray     #61                 // class java/lang/String
+     261: dup
+     262: iconst_0
+     263: ldc           #129                // String ignoreinvulnerability
+     265: aastore
+     266: dup
+     267: iconst_1
+     268: ldc           #131                // String ignoreinvulnerable
+     270: aastore
+     271: dup
+     272: iconst_2
+     273: ldc           #133                // String ii
+     275: aastore
+     276: iconst_0
+     277: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     282: putfield      #135                // Field ignoreInvulnerability:Z
+     285: aload_0
+     286: aload         4
+     288: iconst_2
+     289: anewarray     #61                 // class java/lang/String
+     292: dup
+     293: iconst_0
+     294: ldc           #138                // String ignoreshield
+     296: aastore
+     297: dup
+     298: iconst_1
+     299: ldc           #140                // String is
+     301: aastore
+     302: iconst_0
+     303: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     308: putfield      #142                // Field ignoreShield:Z
+     311: aload_0
+     312: aload         4
+     314: iconst_2
+     315: anewarray     #61                 // class java/lang/String
+     318: dup
+     319: iconst_0
+     320: ldc           #145                // String damageshelmet
+     322: aastore
+     323: dup
+     324: iconst_1
+     325: ldc           #147                // String dh
+     327: aastore
+     328: iconst_0
+     329: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     334: putfield      #149                // Field damagesHelmet:Z
+     337: aload_0
+     338: aload         4
+     340: iconst_2
+     341: anewarray     #61                 // class java/lang/String
+     344: dup
+     345: iconst_0
+     346: ldc           #152                // String ignoreeffects
+     348: aastore
+     349: dup
+     350: iconst_1
+     351: ldc           #154                // String ieff
+     353: aastore
+     354: iconst_0
+     355: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     360: putfield      #156                // Field ignoreEffects:Z
+     363: aload_0
+     364: aload         4
+     366: iconst_2
+     367: anewarray     #61                 // class java/lang/String
+     370: dup
+     371: iconst_0
+     372: ldc           #159                // String ignoreresistance
+     374: aastore
+     375: dup
+     376: iconst_1
+     377: ldc           #161                // String ir
+     379: aastore
+     380: iconst_0
+     381: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     386: putfield      #163                // Field ignoreResistance:Z
+     389: aload_0
+     390: aload         4
+     392: iconst_3
+     393: anewarray     #61                 // class java/lang/String
+     396: dup
+     397: iconst_0
+     398: ldc           #166                // String damagecause
+     400: aastore
+     401: dup
+     402: iconst_1
+     403: ldc           #168                // String dc
+     405: aastore
+     406: dup
+     407: iconst_2
+     408: ldc           #170                // String cause
+     410: aastore
+     411: ldc           #172                // String ENTITY_ATTACK
+     413: iconst_0
+     414: anewarray     #61                 // class java/lang/String
+     417: invokeinterface #174,  4          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     422: invokevirtual #178                // Method java/lang/String.toUpperCase:()Ljava/lang/String;
+     425: invokestatic  #181                // Method org/bukkit/event/entity/EntityDamageEvent$DamageCause.valueOf:(Ljava/lang/String;)Lorg/bukkit/event/entity/EntityDamageEvent$DamageCause;
+     428: putfield      #187                // Field cause:Lorg/bukkit/event/entity/EntityDamageEvent$DamageCause;
+     431: aload_0
+     432: aload         4
+     434: iconst_2
+     435: anewarray     #61                 // class java/lang/String
+     438: dup
+     439: iconst_0
+     440: ldc           #190                // String poweraffectsdamage
+     442: aastore
+     443: dup
+     444: iconst_1
+     445: ldc           #192                // String pad
+     447: aastore
+     448: iconst_1
+     449: invokeinterface #67,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+     454: putfield      #194                // Field powerAffectsDamage:Z
+     457: aload         4
+     459: iconst_2
+     460: anewarray     #61                 // class java/lang/String
+     463: dup
+     464: iconst_0
+     465: ldc           #197                // String tags
+     467: aastore
+     468: dup
+     469: iconst_1
+     470: ldc           #198                // String tag
+     472: aastore
+     473: aconst_null
+     474: iconst_0
+     475: anewarray     #61                 // class java/lang/String
+     478: invokeinterface #174,  4          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     483: astore        5
+     485: aload         5
+     487: ifnull        542
+     490: aload         5
+     492: ldc           #200                // String ,
+     494: invokevirtual #202                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     497: astore        6
+     499: aload         6
+     501: arraylength
+     502: istore        7
+     504: iconst_0
+     505: istore        8
+     507: iload         8
+     509: iload         7
+     511: if_icmpge     542
+     514: aload         6
+     516: iload         8
+     518: aaload
+     519: astore        9
+     521: aload_0
+     522: getfield      #27                 // Field tags:Ljava/util/Collection;
+     525: aload         9
+     527: invokevirtual #178                // Method java/lang/String.toUpperCase:()Ljava/lang/String;
+     530: invokeinterface #206,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+     535: pop
+     536: iinc          8, 1
+     539: goto          507
+     542: aload         4
+     544: iconst_2
+     545: anewarray     #61                 // class java/lang/String
+     548: dup
+     549: iconst_0
+     550: ldc           #212                // String rawtags
+     552: aastore
+     553: dup
+     554: iconst_1
+     555: ldc           #214                // String rtag
+     557: aastore
+     558: aconst_null
+     559: iconst_0
+     560: anewarray     #61                 // class java/lang/String
+     563: invokeinterface #174,  4          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     568: astore        5
+     570: aload         5
+     572: ifnull        590
+     575: aload_0
+     576: getfield      #27                 // Field tags:Ljava/util/Collection;
+     579: aload         5
+     581: ldc           #200                // String ,
+     583: invokevirtual #202                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     586: invokestatic  #216                // Method java/util/Collections.addAll:(Ljava/util/Collection;[Ljava/lang/Object;)Z
+     589: pop
+     590: aload_0
+     591: getfield      #119                // Field element:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     594: ifnull        616
+     597: invokestatic  #222                // Method io/lumine/mythic/bukkit/MythicBukkit.isVolatile:()Z
+     600: ifne          616
+     603: aload_0
+     604: aload         4
+     606: ldc           #228                // String Custom damage types require MythicMobs Premium to use.
+     608: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     611: aload_0
+     612: aconst_null
+     613: putfield      #119                // Field element:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     616: aload         4
+     618: iconst_1
+     619: anewarray     #61                 // class java/lang/String
+     622: dup
+     623: iconst_0
+     624: ldc           #236                // String bonusdamage
+     626: aastore
+     627: aconst_null
+     628: invokeinterface #238,  3          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getStringList:([Ljava/lang/String;Ljava/lang/String;)Ljava/util/List;
+     633: astore        6
+     635: aload         6
+     637: ifnull        777
+     640: invokestatic  #222                // Method io/lumine/mythic/bukkit/MythicBukkit.isVolatile:()Z
+     643: ifne          657
+     646: aload_0
+     647: aload         4
+     649: ldc           #228                // String Custom damage types require MythicMobs Premium to use.
+     651: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     654: goto          777
+     657: aload         6
+     659: invokeinterface #242,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     664: astore        7
+     666: aload         7
+     668: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     673: ifeq          777
+     676: aload         7
+     678: invokeinterface #253,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     683: checkcast     #61                 // class java/lang/String
+     686: astore        8
+     688: aload         8
+     690: ldc_w         #257                // String [:\\s]+
+     693: invokevirtual #202                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     696: astore        9
+     698: aload         9
+     700: arraylength
+     701: iconst_2
+     702: if_icmpne     761
+     705: aload         9
+     707: iconst_0
+     708: aaload
+     709: getstatic     #259                // Field java/util/Locale.ROOT:Ljava/util/Locale;
+     712: invokevirtual #265                // Method java/lang/String.toUpperCase:(Ljava/util/Locale;)Ljava/lang/String;
+     715: astore        10
+     717: aload         9
+     719: iconst_1
+     720: aaload
+     721: invokestatic  #268                // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.of:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+     724: astore        11
+     726: aload_0
+     727: getfield      #37                 // Field bonusDamage:Ljava/util/Map;
+     730: aload         10
+     732: aload         11
+     734: invokeinterface #274,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     739: pop
+     740: goto          774
+     743: astore        10
+     745: aload_0
+     746: aload         4
+     748: aload         8
+     750: invokedynamic #282,  0            // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     755: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     758: goto          774
+     761: aload_0
+     762: aload         4
+     764: aload         8
+     766: invokedynamic #286,  0            // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     771: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     774: goto          666
+     777: aload         4
+     779: iconst_2
+     780: anewarray     #61                 // class java/lang/String
+     783: dup
+     784: iconst_0
+     785: ldc_w         #287                // String bonusdamagemodifiers
+     788: aastore
+     789: dup
+     790: iconst_1
+     791: ldc_w         #289                // String bonusdamagemods
+     794: aastore
+     795: aconst_null
+     796: invokeinterface #238,  3          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getStringList:([Ljava/lang/String;Ljava/lang/String;)Ljava/util/List;
+     801: astore        7
+     803: aload         7
+     805: ifnull        945
+     808: invokestatic  #222                // Method io/lumine/mythic/bukkit/MythicBukkit.isVolatile:()Z
+     811: ifne          825
+     814: aload_0
+     815: aload         4
+     817: ldc           #228                // String Custom damage types require MythicMobs Premium to use.
+     819: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     822: goto          945
+     825: aload         7
+     827: invokeinterface #242,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     832: astore        8
+     834: aload         8
+     836: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     841: ifeq          945
+     844: aload         8
+     846: invokeinterface #253,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     851: checkcast     #61                 // class java/lang/String
+     854: astore        9
+     856: aload         9
+     858: ldc_w         #257                // String [:\\s]+
+     861: invokevirtual #202                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     864: astore        10
+     866: aload         10
+     868: arraylength
+     869: iconst_2
+     870: if_icmpne     929
+     873: aload         10
+     875: iconst_0
+     876: aaload
+     877: getstatic     #259                // Field java/util/Locale.ROOT:Ljava/util/Locale;
+     880: invokevirtual #265                // Method java/lang/String.toUpperCase:(Ljava/util/Locale;)Ljava/lang/String;
+     883: astore        11
+     885: aload         10
+     887: iconst_1
+     888: aaload
+     889: invokestatic  #268                // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.of:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+     892: astore        12
+     894: aload_0
+     895: getfield      #41                 // Field bonusDamageMods:Ljava/util/Map;
+     898: aload         11
+     900: aload         12
+     902: invokeinterface #274,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     907: pop
+     908: goto          942
+     911: astore        11
+     913: aload_0
+     914: aload         4
+     916: aload         9
+     918: invokedynamic #291,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     923: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     926: goto          942
+     929: aload_0
+     930: aload         4
+     932: aload         9
+     934: invokedynamic #292,  0            // InvokeDynamic #3:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     939: invokestatic  #230                // Method io/lumine/mythic/core/logging/MythicLogger.errorMechanicConfig:(Lio/lumine/mythic/core/skills/SkillMechanic;Lio/lumine/mythic/api/config/MythicLineConfig;Ljava/lang/String;)V
+     942: goto          834
+     945: aload_0
+     946: aload         4
+     948: invokevirtual #293                // Method buildParameters:(Lio/lumine/mythic/api/config/MythicLineConfig;)V
+     951: return
+    Exception table:
+       from    to  target type
+         705   740   743   Class java/lang/NumberFormatException
+         873   908   911   Class java/lang/NumberFormatException
+
+  protected void doDamage(io.lumine.mythic.api.skills.SkillMetadata, io.lumine.mythic.api.adapters.AbstractEntity, double);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: dload_3
+       4: dconst_1
+       5: invokevirtual #297                // Method doDamage:(Lio/lumine/mythic/api/skills/SkillMetadata;Lio/lumine/mythic/api/adapters/AbstractEntity;DD)V
+       8: return
+
+  protected void doDamage(io.lumine.mythic.api.skills.SkillMetadata, io.lumine.mythic.api.adapters.AbstractEntity, double, double);
+    Code:
+       0: aload_1
+       1: invokeinterface #301,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCaster:()Lio/lumine/mythic/api/skills/SkillCaster;
+       6: astore        7
+       8: aload_0
+       9: getfield      #119                // Field element:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+      12: ifnonnull     19
+      15: aconst_null
+      16: goto          30
+      19: aload_0
+      20: getfield      #119                // Field element:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+      23: aload         7
+      25: invokeinterface #307,  2          // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderString.get:(Lio/lumine/mythic/api/skills/SkillCaster;)Ljava/lang/String;
+      30: astore        8
+      32: new           #313                // class java/util/TreeMap
+      35: dup
+      36: invokespecial #315                // Method java/util/TreeMap."<init>":()V
+      39: astore        9
+      41: aload_0
+      42: getfield      #37                 // Field bonusDamage:Ljava/util/Map;
+      45: invokeinterface #316,  1          // InterfaceMethod java/util/Map.entrySet:()Ljava/util/Set;
+      50: invokeinterface #320,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+      55: astore        10
+      57: aload         10
+      59: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      64: ifeq          120
+      67: aload         10
+      69: invokeinterface #253,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      74: checkcast     #323                // class java/util/Map$Entry
+      77: astore        11
+      79: aload         9
+      81: aload         11
+      83: invokeinterface #325,  1          // InterfaceMethod java/util/Map$Entry.getKey:()Ljava/lang/Object;
+      88: checkcast     #61                 // class java/lang/String
+      91: aload         11
+      93: invokeinterface #328,  1          // InterfaceMethod java/util/Map$Entry.getValue:()Ljava/lang/Object;
+      98: checkcast     #269                // class io/lumine/mythic/api/skills/placeholders/PlaceholderDouble
+     101: aload_1
+     102: aload_2
+     103: invokeinterface #331,  3          // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.get:(Lio/lumine/mythic/core/skills/placeholders/PlaceholderMeta;Lio/lumine/mythic/api/adapters/AbstractEntity;)D
+     108: invokestatic  #334                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+     111: invokeinterface #274,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     116: pop
+     117: goto          57
+     120: new           #313                // class java/util/TreeMap
+     123: dup
+     124: invokespecial #315                // Method java/util/TreeMap."<init>":()V
+     127: astore        10
+     129: aload_0
+     130: getfield      #41                 // Field bonusDamageMods:Ljava/util/Map;
+     133: invokeinterface #316,  1          // InterfaceMethod java/util/Map.entrySet:()Ljava/util/Set;
+     138: invokeinterface #320,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+     143: astore        11
+     145: aload         11
+     147: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     152: ifeq          208
+     155: aload         11
+     157: invokeinterface #253,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     162: checkcast     #323                // class java/util/Map$Entry
+     165: astore        12
+     167: aload         10
+     169: aload         12
+     171: invokeinterface #325,  1          // InterfaceMethod java/util/Map$Entry.getKey:()Ljava/lang/Object;
+     176: checkcast     #61                 // class java/lang/String
+     179: aload         12
+     181: invokeinterface #328,  1          // InterfaceMethod java/util/Map$Entry.getValue:()Ljava/lang/Object;
+     186: checkcast     #269                // class io/lumine/mythic/api/skills/placeholders/PlaceholderDouble
+     189: aload_1
+     190: aload_2
+     191: invokeinterface #331,  3          // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.get:(Lio/lumine/mythic/core/skills/placeholders/PlaceholderMeta;Lio/lumine/mythic/api/adapters/AbstractEntity;)D
+     196: invokestatic  #334                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+     199: invokeinterface #274,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     204: pop
+     205: goto          145
+     208: new           #339                // class io/lumine/mythic/api/skills/damage/DamageMetadata
+     211: dup
+     212: aload         7
+     214: aload_1
+     215: aload_1
+     216: invokeinterface #341,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCasterItem:()Lio/lumine/mythic/api/adapters/AbstractItemStack;
+     221: dload_3
+     222: aload         9
+     224: aload         10
+     226: aload         8
+     228: dload         5
+     230: aload_0
+     231: getfield      #81                 // Field ignoresArmor:Z
+     234: invokestatic  #345                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     237: aload_0
+     238: getfield      #88                 // Field preventImmunity:Z
+     241: invokestatic  #345                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     244: aload_0
+     245: getfield      #97                 // Field preventKnockback:Z
+     248: invokestatic  #345                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     251: aload_0
+     252: getfield      #106                // Field ignoresEnchantments:Z
+     255: invokestatic  #345                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     258: aload_0
+     259: getfield      #187                // Field cause:Lorg/bukkit/event/entity/EntityDamageEvent$DamageCause;
+     262: invokespecial #350                // Method io/lumine/mythic/api/skills/damage/DamageMetadata."<init>":(Lio/lumine/mythic/api/skills/SkillCaster;Lio/lumine/mythic/api/skills/SkillMetadata;Lio/lumine/mythic/api/adapters/AbstractItemStack;DLjava/util/Map;Ljava/util/Map;Ljava/lang/String;DLjava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lorg/bukkit/event/entity/EntityDamageEvent$DamageCause;)V
+     265: astore        11
+     267: aload         11
+     269: ldc_w         #355                // String trigger_skills
+     272: aload_0
+     273: getfield      #71                 // Field triggerSkills:Z
+     276: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     279: aload         11
+     281: ldc_w         #361                // String ignore_invulnerability
+     284: aload_0
+     285: getfield      #135                // Field ignoreInvulnerability:Z
+     288: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     291: aload         11
+     293: ldc_w         #363                // String damages_helmet
+     296: aload_0
+     297: getfield      #149                // Field damagesHelmet:Z
+     300: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     303: aload         11
+     305: ldc_w         #365                // String no_anger
+     308: aload_0
+     309: getfield      #126                // Field noAnger:Z
+     312: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     315: aload         11
+     317: ldc_w         #367                // String ignore_shield
+     320: aload_0
+     321: getfield      #142                // Field ignoreShield:Z
+     324: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     327: aload         11
+     329: ldc_w         #369                // String no_impact
+     332: aload_0
+     333: getfield      #97                 // Field preventKnockback:Z
+     336: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     339: aload         11
+     341: ldc_w         #371                // String ignore_effects
+     344: aload_0
+     345: getfield      #156                // Field ignoreEffects:Z
+     348: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     351: aload         11
+     353: ldc_w         #373                // String ignore_resistance
+     356: aload_0
+     357: getfield      #163                // Field ignoreResistance:Z
+     360: invokevirtual #357                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putBoolean:(Ljava/lang/String;Z)V
+     363: aload         8
+     365: ifnull        375
+     368: aload         11
+     370: aload         8
+     372: invokevirtual #375                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putTag:(Ljava/lang/String;)V
+     375: aload_0
+     376: getfield      #27                 // Field tags:Ljava/util/Collection;
+     379: aload         11
+     381: invokedynamic #378,  0            // InvokeDynamic #4:accept:(Lio/lumine/mythic/api/skills/damage/DamageMetadata;)Ljava/util/function/Consumer;
+     386: invokeinterface #382,  2          // InterfaceMethod java/util/Collection.forEach:(Ljava/util/function/Consumer;)V
+     391: aload_0
+     392: getfield      #49                 // Field parameters:Ljava/util/Map;
+     395: aload         11
+     397: aload_1
+     398: invokedynamic #386,  0            // InvokeDynamic #5:accept:(Lio/lumine/mythic/api/skills/damage/DamageMetadata;Lio/lumine/mythic/api/skills/SkillMetadata;)Ljava/util/function/BiConsumer;
+     403: invokeinterface #389,  2          // InterfaceMethod java/util/Map.forEach:(Ljava/util/function/BiConsumer;)V
+     408: invokestatic  #392                // Method io/lumine/mythic/api/adapters/SkillAdapter.get:()Lio/lumine/mythic/api/adapters/AbstractSkillAdapter;
+     411: aload         11
+     413: aload_2
+     414: invokeinterface #397,  3          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractSkillAdapter.doDamage:(Lio/lumine/mythic/api/skills/damage/DamageMetadata;Lio/lumine/mythic/api/adapters/AbstractEntity;)V
+     419: return
+
+  protected void buildParameters(io.lumine.mythic.api.config.MythicLineConfig);
+    Code:
+       0: aload_1
+       1: invokeinterface #402,  1          // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.entrySet:()Ljava/util/Set;
+       6: invokeinterface #320,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+      11: astore_2
+      12: aload_2
+      13: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      18: ifeq          1637
+      21: aload_2
+      22: invokeinterface #253,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      27: checkcast     #323                // class java/util/Map$Entry
+      30: astore_3
+      31: aload_3
+      32: invokeinterface #325,  1          // InterfaceMethod java/util/Map$Entry.getKey:()Ljava/lang/Object;
+      37: checkcast     #61                 // class java/lang/String
+      40: invokevirtual #403                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      43: astore        4
+      45: iconst_m1
+      46: istore        5
+      48: aload         4
+      50: invokevirtual #406                // Method java/lang/String.hashCode:()I
+      53: lookupswitch  { // 52
+           -2145079451: 1227
+           -1773941975: 729
+           -1662836996: 695
+           -1538277128: 905
+           -1421981856: 923
+           -1354811165: 593
+           -1337467056: 1121
+           -1096435829: 1346
+           -1086311082: 887
+           -1075182239: 1067
+           -1008619738: 1157
+            -934531685: 869
+            -846605845: 1085
+            -670258182: 480
+            -546109589: 815
+            -324252117: 1013
+                   101: 712
+                   105: 544
+                  3169: 833
+                  3199: 781
+                  3204: 1295
+                  3273: 1139
+                  3352: 528
+                  3356: 678
+                  3360: 1261
+                  3369: 1363
+                  3507: 1210
+                  3577: 576
+                  3579: 627
+                  3711: 496
+                111047: 610
+               3228380: 1329
+               3545755: 1049
+               3575610: 746
+              94434409: 798
+              95467907: 851
+             106858757: 959
+             163692608: 1175
+             459304245: 995
+             612100207: 977
+             628968204: 661
+             683158609: 1278
+             825964122: 764
+            1080290542: 644
+            1094288942: 941
+            1361621796: 560
+            1428199375: 1103
+            1528969222: 1031
+            1540372141: 512
+            1701854463: 1244
+            1733602032: 1312
+            2111953638: 1193
+               default: 1377
+          }
+     480: aload         4
+     482: ldc           #63                 // String triggerskills
+     484: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     487: ifeq          1377
+     490: iconst_0
+     491: istore        5
+     493: goto          1377
+     496: aload         4
+     498: ldc           #65                 // String ts
+     500: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     503: ifeq          1377
+     506: iconst_1
+     507: istore        5
+     509: goto          1377
+     512: aload         4
+     514: ldc           #75                 // String ignorearmor
+     516: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     519: ifeq          1377
+     522: iconst_2
+     523: istore        5
+     525: goto          1377
+     528: aload         4
+     530: ldc           #77                 // String ia
+     532: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     535: ifeq          1377
+     538: iconst_3
+     539: istore        5
+     541: goto          1377
+     544: aload         4
+     546: ldc           #79                 // String i
+     548: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     551: ifeq          1377
+     554: iconst_4
+     555: istore        5
+     557: goto          1377
+     560: aload         4
+     562: ldc           #84                 // String preventimmunity
+     564: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     567: ifeq          1377
+     570: iconst_5
+     571: istore        5
+     573: goto          1377
+     576: aload         4
+     578: ldc           #86                 // String pi
+     580: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     583: ifeq          1377
+     586: bipush        6
+     588: istore        5
+     590: goto          1377
+     593: aload         4
+     595: ldc           #91                 // String preventknockback
+     597: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     600: ifeq          1377
+     603: bipush        7
+     605: istore        5
+     607: goto          1377
+     610: aload         4
+     612: ldc           #93                 // String pkb
+     614: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     617: ifeq          1377
+     620: bipush        8
+     622: istore        5
+     624: goto          1377
+     627: aload         4
+     629: ldc           #95                 // String pk
+     631: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     634: ifeq          1377
+     637: bipush        9
+     639: istore        5
+     641: goto          1377
+     644: aload         4
+     646: ldc           #100                // String ignoreenchantments
+     648: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     651: ifeq          1377
+     654: bipush        10
+     656: istore        5
+     658: goto          1377
+     661: aload         4
+     663: ldc           #102                // String ignoreenchants
+     665: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     668: ifeq          1377
+     671: bipush        11
+     673: istore        5
+     675: goto          1377
+     678: aload         4
+     680: ldc           #104                // String ie
+     682: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     685: ifeq          1377
+     688: bipush        12
+     690: istore        5
+     692: goto          1377
+     695: aload         4
+     697: ldc           #109                // String element
+     699: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     702: ifeq          1377
+     705: bipush        13
+     707: istore        5
+     709: goto          1377
+     712: aload         4
+     714: ldc           #111                // String e
+     716: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     719: ifeq          1377
+     722: bipush        14
+     724: istore        5
+     726: goto          1377
+     729: aload         4
+     731: ldc           #113                // String damagetype
+     733: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     736: ifeq          1377
+     739: bipush        15
+     741: istore        5
+     743: goto          1377
+     746: aload         4
+     748: ldc_w         #413                // String type
+     751: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     754: ifeq          1377
+     757: bipush        16
+     759: istore        5
+     761: goto          1377
+     764: aload         4
+     766: ldc           #166                // String damagecause
+     768: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     771: ifeq          1377
+     774: bipush        17
+     776: istore        5
+     778: goto          1377
+     781: aload         4
+     783: ldc           #168                // String dc
+     785: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     788: ifeq          1377
+     791: bipush        18
+     793: istore        5
+     795: goto          1377
+     798: aload         4
+     800: ldc           #170                // String cause
+     802: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     805: ifeq          1377
+     808: bipush        19
+     810: istore        5
+     812: goto          1377
+     815: aload         4
+     817: ldc_w         #415                // String cooldown
+     820: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     823: ifeq          1377
+     826: bipush        20
+     828: istore        5
+     830: goto          1377
+     833: aload         4
+     835: ldc_w         #417                // String cd
+     838: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     841: ifeq          1377
+     844: bipush        21
+     846: istore        5
+     848: goto          1377
+     851: aload         4
+     853: ldc_w         #419                // String delay
+     856: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     859: ifeq          1377
+     862: bipush        22
+     864: istore        5
+     866: goto          1377
+     869: aload         4
+     871: ldc_w         #421                // String repeat
+     874: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     877: ifeq          1377
+     880: bipush        23
+     882: istore        5
+     884: goto          1377
+     887: aload         4
+     889: ldc_w         #423                // String targetinterval
+     892: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     895: ifeq          1377
+     898: bipush        24
+     900: istore        5
+     902: goto          1377
+     905: aload         4
+     907: ldc_w         #425                // String targeti
+     910: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     913: ifeq          1377
+     916: bipush        25
+     918: istore        5
+     920: goto          1377
+     923: aload         4
+     925: ldc_w         #427                // String repeatinterval
+     928: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     931: ifeq          1377
+     934: bipush        26
+     936: istore        5
+     938: goto          1377
+     941: aload         4
+     943: ldc_w         #429                // String repeati
+     946: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     949: ifeq          1377
+     952: bipush        27
+     954: istore        5
+     956: goto          1377
+     959: aload         4
+     961: ldc_w         #431                // String power
+     964: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     967: ifeq          1377
+     970: bipush        28
+     972: istore        5
+     974: goto          1377
+     977: aload         4
+     979: ldc_w         #433                // String powersplitbetweentargets
+     982: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     985: ifeq          1377
+     988: bipush        29
+     990: istore        5
+     992: goto          1377
+     995: aload         4
+     997: ldc_w         #435                // String powersplit
+    1000: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1003: ifeq          1377
+    1006: bipush        30
+    1008: istore        5
+    1010: goto          1377
+    1013: aload         4
+    1015: ldc_w         #437                // String splitpower
+    1018: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1021: ifeq          1377
+    1024: bipush        31
+    1026: istore        5
+    1028: goto          1377
+    1031: aload         4
+    1033: ldc_w         #439                // String forcesync
+    1036: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1039: ifeq          1377
+    1042: bipush        32
+    1044: istore        5
+    1046: goto          1377
+    1049: aload         4
+    1051: ldc_w         #441                // String sync
+    1054: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1057: ifeq          1377
+    1060: bipush        33
+    1062: istore        5
+    1064: goto          1377
+    1067: aload         4
+    1069: ldc_w         #443                // String targetisorigin
+    1072: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1075: ifeq          1377
+    1078: bipush        34
+    1080: istore        5
+    1082: goto          1377
+    1085: aload         4
+    1087: ldc_w         #445                // String sourceisorigin
+    1090: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1093: ifeq          1377
+    1096: bipush        35
+    1098: istore        5
+    1100: goto          1377
+    1103: aload         4
+    1105: ldc_w         #447                // String castfromorigin
+    1108: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1111: ifeq          1377
+    1114: bipush        36
+    1116: istore        5
+    1118: goto          1377
+    1121: aload         4
+    1123: ldc_w         #449                // String fromorigin
+    1126: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1129: ifeq          1377
+    1132: bipush        37
+    1134: istore        5
+    1136: goto          1377
+    1139: aload         4
+    1141: ldc_w         #451                // String fo
+    1144: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1147: ifeq          1377
+    1150: bipush        38
+    1152: istore        5
+    1154: goto          1377
+    1157: aload         4
+    1159: ldc_w         #453                // String origin
+    1162: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1165: ifeq          1377
+    1168: bipush        39
+    1170: istore        5
+    1172: goto          1377
+    1175: aload         4
+    1177: ldc_w         #455                // String targetcreative
+    1180: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1183: ifeq          1377
+    1186: bipush        40
+    1188: istore        5
+    1190: goto          1377
+    1193: aload         4
+    1195: ldc           #122                // String noanger
+    1197: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1200: ifeq          1377
+    1203: bipush        41
+    1205: istore        5
+    1207: goto          1377
+    1210: aload         4
+    1212: ldc           #124                // String na
+    1214: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1217: ifeq          1377
+    1220: bipush        42
+    1222: istore        5
+    1224: goto          1377
+    1227: aload         4
+    1229: ldc           #129                // String ignoreinvulnerability
+    1231: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1234: ifeq          1377
+    1237: bipush        43
+    1239: istore        5
+    1241: goto          1377
+    1244: aload         4
+    1246: ldc           #131                // String ignoreinvulnerable
+    1248: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1251: ifeq          1377
+    1254: bipush        44
+    1256: istore        5
+    1258: goto          1377
+    1261: aload         4
+    1263: ldc           #133                // String ii
+    1265: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1268: ifeq          1377
+    1271: bipush        45
+    1273: istore        5
+    1275: goto          1377
+    1278: aload         4
+    1280: ldc           #145                // String damageshelmet
+    1282: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1285: ifeq          1377
+    1288: bipush        46
+    1290: istore        5
+    1292: goto          1377
+    1295: aload         4
+    1297: ldc           #147                // String dh
+    1299: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1302: ifeq          1377
+    1305: bipush        47
+    1307: istore        5
+    1309: goto          1377
+    1312: aload         4
+    1314: ldc           #152                // String ignoreeffects
+    1316: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1319: ifeq          1377
+    1322: bipush        48
+    1324: istore        5
+    1326: goto          1377
+    1329: aload         4
+    1331: ldc           #154                // String ieff
+    1333: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1336: ifeq          1377
+    1339: bipush        49
+    1341: istore        5
+    1343: goto          1377
+    1346: aload         4
+    1348: ldc           #159                // String ignoreresistance
+    1350: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1353: ifeq          1377
+    1356: bipush        50
+    1358: istore        5
+    1360: goto          1377
+    1363: aload         4
+    1365: ldc           #161                // String ir
+    1367: invokevirtual #410                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+    1370: ifeq          1377
+    1373: bipush        51
+    1375: istore        5
+    1377: iload         5
+    1379: tableswitch   { // 0 to 51
+                     0: 1600
+                     1: 1600
+                     2: 1600
+                     3: 1600
+                     4: 1600
+                     5: 1600
+                     6: 1600
+                     7: 1600
+                     8: 1600
+                     9: 1600
+                    10: 1600
+                    11: 1600
+                    12: 1600
+                    13: 1600
+                    14: 1600
+                    15: 1600
+                    16: 1600
+                    17: 1600
+                    18: 1600
+                    19: 1600
+                    20: 1600
+                    21: 1600
+                    22: 1600
+                    23: 1600
+                    24: 1600
+                    25: 1600
+                    26: 1600
+                    27: 1600
+                    28: 1600
+                    29: 1600
+                    30: 1600
+                    31: 1600
+                    32: 1600
+                    33: 1600
+                    34: 1600
+                    35: 1600
+                    36: 1600
+                    37: 1600
+                    38: 1600
+                    39: 1600
+                    40: 1600
+                    41: 1600
+                    42: 1600
+                    43: 1600
+                    44: 1600
+                    45: 1600
+                    46: 1600
+                    47: 1600
+                    48: 1600
+                    49: 1600
+                    50: 1600
+                    51: 1600
+               default: 1603
+          }
+    1600: goto          12
+    1603: aload_0
+    1604: getfield      #49                 // Field parameters:Ljava/util/Map;
+    1607: aload_3
+    1608: invokeinterface #325,  1          // InterfaceMethod java/util/Map$Entry.getKey:()Ljava/lang/Object;
+    1613: checkcast     #61                 // class java/lang/String
+    1616: aload_3
+    1617: invokeinterface #328,  1          // InterfaceMethod java/util/Map$Entry.getValue:()Ljava/lang/Object;
+    1622: checkcast     #61                 // class java/lang/String
+    1625: invokestatic  #457                // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderString.of:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+    1628: invokeinterface #274,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    1633: pop
+    1634: goto          12
+    1637: return
+
+  private static void lambda$doDamage$1(io.lumine.mythic.api.skills.damage.DamageMetadata, io.lumine.mythic.api.skills.SkillMetadata, java.lang.String, io.lumine.mythic.api.skills.placeholders.PlaceholderString);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: aload_3
+       3: aload_1
+       4: invokeinterface #460,  2          // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderString.get:(Lio/lumine/mythic/core/skills/placeholders/PlaceholderMeta;)Ljava/lang/String;
+       9: invokevirtual #463                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putObject:(Ljava/lang/String;Ljava/lang/Object;)V
+      12: return
+
+  private static void lambda$doDamage$0(io.lumine.mythic.api.skills.damage.DamageMetadata, java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #375                // Method io/lumine/mythic/api/skills/damage/DamageMetadata.putTag:(Ljava/lang/String;)V
+       5: return
+}

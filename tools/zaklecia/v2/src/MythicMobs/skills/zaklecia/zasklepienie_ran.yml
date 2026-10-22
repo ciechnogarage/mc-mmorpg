@@ -1,0 +1,38 @@
+Zak_Zasklepienie_ran_Laduj_P:
+  Skills:
+  - effect:particles{p=happy_villager;a=4;hs=0.15;vs=0.15;y=1.2;sso=0.38;sfo=0.4} @self
+
+Zak_Zasklepienie_ran_Gotowe_P:
+  Skills:
+  - sound{s=block.amethyst_block.chime;v=0.4;p=1.5} @self
+
+Zak_Zasklepienie_ran_Wystrzal_P:
+  Skills:
+  - heal{a=12}
+  - effect:particles{p=happy_villager;a=16;hs=0.45;vs=0.6}
+
+Zak_Zasklepienie_ran_Laduj_L:
+  Skills:
+  - effect:particles{p=happy_villager;a=4;hs=0.15;vs=0.15;y=1.2;sso=-0.38;sfo=0.4} @self
+
+Zak_Zasklepienie_ran_Gotowe_L:
+  Skills:
+  - sound{s=block.amethyst_block.chime;v=0.4;p=1.5} @self
+
+Zak_Zasklepienie_ran_Wystrzal_L:
+  Skills:
+  - heal{a=12}
+  - effect:particles{p=happy_villager;a=16;hs=0.45;vs=0.6}
+
+Zak_Zasklepienie_ran_Laduj_Obie:
+  Skills:
+  - effect:particles{p=happy_villager;a=4;hs=0.15;vs=0.15;y=1.2;sso=0;sfo=0.4} @self
+
+Zak_Zasklepienie_ran_Gotowe_Obie:
+  Skills:
+  - sound{s=block.amethyst_block.chime;v=0.4;p=1.5} @self
+
+Zak_Zasklepienie_ran_Wystrzal_Obie:
+  Skills:
+  - heal{a=26.4}
+  - effect:particles{p=happy_villager;a=16;hs=0.45;vs=0.6}

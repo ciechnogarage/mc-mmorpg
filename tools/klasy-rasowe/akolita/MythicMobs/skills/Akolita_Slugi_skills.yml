@@ -1,0 +1,115 @@
+# ETAP 2 (prototyp): Wezwanie z wariantem rasy (parametr MythicLib 'wariant'), Żniwo, Dusza za zabójstwo sługi.
+# Każdy element listy w cudzysłowie — dwukropek ze spacją w tekście psuje YAML (zmierzone 30.09).
+AKO_Zniwo:
+  Skills:
+  - 'signal{s=ZNIWO} @Children{sort=NEAREST;limit=4}'
+# Co najwyżej 3 sługi ofensywne x 2 cele x 7 obrażeń = 42 obrażenia na rzut.
+AKO_Sluga_Zniwo:
+  Skills:
+  - 'effect:particles{p=soul;a=30;hS=1;vS=0.8} @self'
+  - 'skill{s=AKO_Sluga_Zniwo_Obronca} @self ?mythicMobType{type=AKO_SLUGA_OBRONCA}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ognik} @self ?mythicMobType{type=AKO_OGNIK_KSIEZYCA}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ofensywny} @self ?mythicMobType{type=AKO_SLUGA_NIEUMARLY}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ofensywny} @self ?mythicMobType{type=AKO_SLUGA_ORK}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ofensywny} @self ?mythicMobType{type=AKO_SLUGA_ELF}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ofensywny} @self ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ofensywny} @self ?mythicMobType{type=AKO_PRZODEK_MLOTA}'
+  - 'skill{s=AKO_Sluga_Zniwo_Ofensywny} @self ?mythicMobType{type=AKO_KOSIARZ_CISZY}'
+  - 'command{c="mmocore admin resource-mana give <target.name> 1"} @Owner'
+  - 'remove @self'
+AKO_Sluga_Zniwo_Obronca:
+  Skills:
+  - 'heal{a=4} @UniqueIdentifier{uuid=<caster.var.ako_pilnowany>}'
+  - 'shield{amount=4;maxabsorb=100} @UniqueIdentifier{uuid=<caster.var.ako_pilnowany>}'
+AKO_Sluga_Zniwo_Ognik:
+  Skills:
+  - 'heal{a=4} @Owner'
+AKO_Sluga_Zniwo_Ofensywny:
+  Skills:
+  - 'effect:sound{s=entity.wither.shoot;v=0.7;p=1.4} @self'
+  - 'skill{s=AKO_Sluga_Zniwo_Adresuj} @EntitiesInRadius{r=3;ignore=self;targetarmorstands=false;targetsamefaction=false;targetowner=false;sort=NEAREST;limit=2}'
+  - 'heal{a=2} @Owner ?mythicMobType{type=AKO_SLUGA_ELF}'
+  - 'shield{amount=2;maxabsorb=100} @Owner ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
+AKO_Sluga_Zniwo_Adresuj:
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo_Mob} @TargetedTarget'
+  - 'skill{s=AKO_Sluga_Zniwo_Gracz} @TargetedTarget'
+AKO_Sluga_Zniwo_Mob:
+  TargetConditions:
+  - 'isPlayer false'
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo_Cel} @TargetedTarget'
+AKO_Sluga_Zniwo_Cel:
+  Skills:
+  - 'mmodamage{a=6;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_NIEUMARLY}'
+  - 'mmodamage{a=7;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_ORK}'
+  - 'mmodamage{a=4;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_ELF}'
+  - 'mmodamage{a=5;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
+  - 'mmodamage{a=7;types=SKILL,MAGIC} ?mythicMobType{type=AKO_PRZODEK_MLOTA}'
+  - 'mmodamage{a=6;types=SKILL,MAGIC} ?mythicMobType{type=AKO_KOSIARZ_CISZY}'
+AKO_Sluga_Zniwo_Gracz:
+  TargetConditions:
+  - 'isPlayer true'
+  - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo_Cel} @TargetedTarget'
+AKO_Sluga_Atak:
+  Skills:
+  - 'runaitargetselector{target=clear} @self'
+  - 'setTarget @UniqueIdentifier{uuid=<caster.var.ako_cel_uuid>}'
+AKO_Sluga_Utrzymaj_Rozkaz:
+  Skills:
+  - 'setTarget @UniqueIdentifier{uuid=<caster.var.ako_cel_uuid>}'
+AKO_Sluga_Powrot:
+  Skills:
+  - 'variableunset{var=caster.ako_cel_uuid} @self'
+  - 'clearTarget @self'
+  - 'runaitargetselector{target=clear} @self'
+  - 'runaitargetselector{target=ownerattacker} @self'
+  - 'runaitargetselector{target=ownertarget} @self'
+  - 'teleport{spreadh=1;spreadv=1;unsafe=false} @OwnerLocation'
+AKO_Sluga_Obronca_Taunt:
+  Conditions:
+  - 'variableIsSet{var=caster.ako_cel_uuid} false'
+  Skills:
+  - 'effect:particles{p=totem_of_undying;a=8;hS=1;vS=0.4} @self'
+  - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=6;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3} ?variableEquals{var=caster.ako_bron_bonus;value=0}'
+  - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=8;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3} ?variableEquals{var=caster.ako_bron_bonus;value=1}'
+AKO_Sluga_Obronca_Taunt_Cel:
+  Skills:
+  - 'sudoskill{s=AKO_Sluga_Obronca_Provokuj;cat=true} @TargetedTarget'
+AKO_Sluga_Obronca_Provokuj:
+  Skills:
+  - 'setTarget @trigger'
+
+AKO_Sluga_Obronca_Pilnuj:
+  Conditions:
+  - 'variableIsSet{var=caster.ako_cel_uuid} false'
+  Skills:
+  - 'goto{speed=1;sh=2;sv=1} @UniqueIdentifier{uuid=<caster.var.ako_pilnowany>}'
+AKO_Sluga_Obronca_Koniec:
+  Skills:
+  - 'delay 300'
+  - 'remove @self'
+AKO_Sluga_Obronca_Zastap:
+  Skills:
+  - 'remove @self'
+
+AKO_Ognik_Ksiezyca_Leczenie:
+  Skills:
+  - 'skill{s=AKO_Ognik_Ksiezyca_Sojusznik} @PlayersInRadius{r=6;sort=NEAREST;limit=1;conditions=[  - mmoCanTarget{interaction=SUPPORT_SKILL} true ]}'
+  - 'effect:particles{p=end_rod;a=6;hS=0.3;vS=0.3} @self'
+AKO_Ognik_Ksiezyca_Sojusznik:
+  TargetConditions:
+  - 'mmoCanTarget{interaction=SUPPORT_SKILL} true'
+  Skills:
+  - 'heal{a=1} ?variableEquals{var=caster.ako_ognik_premia;value=0}'
+  - 'heal{a=2} ?variableEquals{var=caster.ako_ognik_premia;value=1}'
+AKO_Ognik_Ksiezyca_Koniec:
+  Skills:
+  - 'delay 160'
+  - 'remove @self'
+AKO_Sygnatura_Koniec:
+  Skills:
+  - 'delay 200'
+  - 'remove @self'

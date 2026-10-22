@@ -1,0 +1,388 @@
+# Wojownik, Akt 1. Modyfikatory MythicLib są odczytywane wyłącznie w extra-skills.
+# wariant: 0 nieumarły, 1 ork, 2 elf, 3 człowiek.
+WOJ_SZARZA:
+  source: mythicmobs:WOJ_Szarza
+  name: 'Szarża'
+  icon: {item: IRON_SWORD}
+  lore: ['&7Doskok do celu w 8 blokach.', '&7Daje 15 Szału (ork: 25).', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 0}
+    cooldown: {name: Odnowienie, player: 8}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    WOJ_Szarza:
+      TargetConditions:
+      - 'distance{d=0to8} true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Szarza_Nieumarly} @target ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'skill{s=WOJ_Szarza_Ork} @target ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'skill{s=WOJ_Szarza_Elf} @target ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'skill{s=WOJ_Szarza_Czlowiek} @target ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+    WOJ_Szarza_Nieumarly:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'heal{a="<modifier.damage> * 0.3"} @self'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+    WOJ_Szarza_Ork:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'throw{velocity=2;velocityY=0.3}'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 25"} @self'
+    WOJ_Szarza_Elf:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'potion{type=SPEED;duration=40;level=0;force=true;hasParticles=true} @self'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+    WOJ_Szarza_Czlowiek:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'potion{type=SLOWNESS;duration=20;level=255;force=true;hasParticles=true}'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+
+WOJ_ROZPLATANIE:
+  source: mythicmobs:WOJ_Rozplatanie
+  name: 'Rozpłatanie'
+  icon: {item: IRON_AXE}
+  lore: ['&7Cięcie w łuku do 3 bloków.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 30}
+    cooldown: {name: Odnowienie, player: 5}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    WOJ_Rozplatanie:
+      Skills:
+      - 'skill{s=WOJ_Rozplatanie_Standard} @self ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'skill{s=WOJ_Rozplatanie_Ork} @self ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'skill{s=WOJ_Rozplatanie_Elf} @self ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'skill{s=WOJ_Rozplatanie_Czlowiek} @self ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+    WOJ_Rozplatanie_Standard:
+      Skills:
+      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=100;range=3;ignore=self,players}'
+      - 'skill{s=WOJ_Rozplatanie_Gracz} @EntitiesInCone{angle=100;range=3;target=players}'
+    WOJ_Rozplatanie_Ork:
+      Skills:
+      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=100;range=4;ignore=self,players}'
+      - 'skill{s=WOJ_Rozplatanie_Gracz} @EntitiesInCone{angle=100;range=4;target=players}'
+    WOJ_Rozplatanie_Elf:
+      Skills:
+      - 'skill{s=WOJ_Rozplatanie_Standard} @self'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.5}'
+    WOJ_Rozplatanie_Czlowiek:
+      Skills:
+      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=140;range=3;ignore=self,players}'
+      - 'skill{s=WOJ_Rozplatanie_Gracz} @EntitiesInCone{angle=140;range=3;target=players}'
+    WOJ_Rozplatanie_Cel:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+    WOJ_Rozplatanie_Gracz:
+      TargetConditions:
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Rozplatanie_Cel} @TargetedTarget'
+
+WOJ_OKRZYK:
+  source: mythicmobs:WOJ_Okrzyk
+  name: 'Okrzyk'
+  icon: {item: GOAT_HORN}
+  lore: ['&7Siła dla ciebie i sojuszników w 8 blokach na 6 s.', '&7Daje 20 Szału.', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 0}
+    cooldown: {name: Odnowienie, player: 20}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    WOJ_Okrzyk:
+      Skills:
+      - 'skill{s=WOJ_Okrzyk_Buff} @self'
+      - 'skill{s=WOJ_Okrzyk_Sojusznik} @PlayersInRadius{r=8;ignore=self}'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 20"} @self'
+    WOJ_Okrzyk_Buff:
+      Skills:
+      - 'potion{type=STRENGTH;duration=120;level=0;force=true;hasParticles=true}'
+      - 'potion{type=RESISTANCE;duration=120;level=0;force=true;hasParticles=true} ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+    WOJ_Okrzyk_Sojusznik:
+      TargetConditions:
+      - 'mmoCanTarget{interaction=SUPPORT_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Okrzyk_Buff}'
+
+WOJ_GNIEW:
+  source: mythicmobs:WOJ_Gniew
+  name: 'Gniew'
+  icon: {item: NETHERITE_AXE}
+  lore: ['&7Cios zużywający cały Szał (minimum 40).', '&7Obrażenia rosną z zużytym Szałem.', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 40}
+    cooldown: {name: Odnowienie, player: 10}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+    coefficient: {name: Współczynnik, player: 0.1}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    WOJ_Gniew:
+      Skills:
+      - 'skill{s=WOJ_Gniew_Cel} @target'
+    WOJ_Gniew_Cel:
+      TargetConditions:
+      - 'distance{d=0to4} true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'setvariable{var=skill.woj_gniew_szal;type=DOUBLE;value="<mana>"} @self'
+      - 'skill{s=WOJ_Gniew_Nieumarly} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'skill{s=WOJ_Gniew_Ork} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'skill{s=WOJ_Gniew_Elf} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'skill{s=WOJ_Gniew_Czlowiek} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+      - 'command{c="mmocore admin resource-mana set <caster.name> 0"} @self'
+    WOJ_Gniew_Zwykly:
+      Skills:
+      - 'mmodamage{a="<modifier.damage> + <modifier.coefficient> * <skill.var.woj_gniew_szal>";types=SKILL,PHYSICAL}'
+    WOJ_Gniew_Elf:
+      Skills:
+      - 'skill{s=WOJ_Gniew_Zwykly} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+    WOJ_Gniew_Czlowiek:
+      Skills:
+      - 'skill{s=WOJ_Gniew_Zwykly} @TargetedTarget'
+      - 'shield{amount=4;maxabsorb=100} @self'
+    WOJ_Gniew_Ork:
+      Skills:
+      - 'mmodamage{a="<modifier.damage> + <modifier.coefficient> * 1.5 * <skill.var.woj_gniew_szal>";types=SKILL,PHYSICAL}'
+    WOJ_Gniew_Nieumarly:
+      Skills:
+      - 'mmodamage{a="<modifier.damage> + <modifier.coefficient> * <skill.var.woj_gniew_szal>";types=SKILL,PHYSICAL}'
+      - 'heal{a="(<modifier.damage> + <modifier.coefficient> * <skill.var.woj_gniew_szal>) * 0.3"} @self'
+
+WOJ_PRZELOT_GAJU:
+  source: mythicmobs:WOJ_Przelot_Gaju
+  name: 'Przelot Gaju'
+  icon: {item: IRON_SWORD}
+  lore: ['&8&oLiść opada za plecami wroga.', '&7Przelot przez cel do 8 bl. i cięcie.', '&7Następny cios w 3 s zadaje +50%.', '&7Daje 15 Szału.', '&6◆ Katana: szybkość i 4 s na cios.', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 0}
+    cooldown: {name: Odnowienie, player: 8}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+  extra-skills:
+    WOJ_Przelot_Gaju:
+      TargetConditions:
+      - 'distance{d=0to8} true'
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=KATANA}'
+      - 'skill{s=WOJ_Przelot_Gaju_Mob} @target'
+      - 'skill{s=WOJ_Przelot_Gaju_Gracz} @target'
+    WOJ_Przelot_Gaju_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=WOJ_Przelot_Gaju_Cel} @TargetedTarget'
+    WOJ_Przelot_Gaju_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Przelot_Gaju_Cel} @TargetedTarget'
+    WOJ_Przelot_Gaju_Cel:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'effect:particles{p=sweep_attack;a=15;hS=0.4;vS=0.4} @self'
+      - 'effect:sound{s=entity.player.attack.sweep;v=0.9;p=1.3} @self'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+      - 'onAttack{auraName=woj_przelot_nastepny;duration=60;charges=1;damageMultiplier=1.5} @self ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'onAttack{auraName=woj_przelot_nastepny;duration=80;charges=1;damageMultiplier=1.5} @self ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'potion{type=SPEED;duration=40;level=0;force=true;hasParticles=true} @self ?variableEquals{var=caster.kr_premia;value=1}'
+
+WOJ_PCHNIECIE_KORONY:
+  source: mythicmobs:WOJ_Pchniecie_Korony
+  name: 'Pchnięcie Korony'
+  icon: {item: IRON_SWORD}
+  lore: ['&8&oDrzewce strzeże królewskiej drogi.', '&7Doskok do celu w 8 bl. i 5 obrażeń.', '&7Spowalnia na 1 s; daje 15 Szału.', '&6◆ Broń drzewcowa: spowolnienie 2 s.', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 0}
+    cooldown: {name: Odnowienie, player: 8}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+  extra-skills:
+    WOJ_Pchniecie_Korony:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=HALBERD}'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=LANCE}'
+      - 'skill{s=WOJ_Pchniecie_Korony_Mob} @target'
+      - 'skill{s=WOJ_Pchniecie_Korony_Gracz} @target'
+    WOJ_Pchniecie_Korony_Mob:
+      TargetConditions:
+      - 'distance{d=0to8} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=WOJ_Pchniecie_Korony_Cel} @TargetedTarget'
+    WOJ_Pchniecie_Korony_Gracz:
+      TargetConditions:
+      - 'distance{d=0to8} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Pchniecie_Korony_Cel} @TargetedTarget'
+    WOJ_Pchniecie_Korony_Cel:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'potion{type=SLOWNESS;duration=20;level=0;force=true;hasParticles=true} ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'potion{type=SLOWNESS;duration=40;level=0;force=true;hasParticles=true} ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+      - 'effect:particles{p=crit;a=18;hS=0.4;vS=0.3}'
+
+WOJ_NATARCIE_WODZA:
+  source: mythicmobs:WOJ_Natarcie_Wodza
+  name: 'Natarcie Wodza'
+  icon: {item: IRON_AXE}
+  lore: ['&8&oWódz rozsuwa mur tarcz.', '&7Doskok do 8 bl.; trafia do 3 wrogów', '&7w promieniu 3 bl. po 5 obrażeń.', '&7Daje 15 Szału raz za natarcie.', '&6◆ Topór: promień cięcia 4 bl.', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 0}
+    cooldown: {name: Odnowienie, player: 9}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+  extra-skills:
+    WOJ_Natarcie_Wodza:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=AXE}'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=GREATAXE}'
+      - 'skill{s=WOJ_Natarcie_Wodza_Mob} @target'
+      - 'skill{s=WOJ_Natarcie_Wodza_Gracz} @target'
+    WOJ_Natarcie_Wodza_Mob:
+      TargetConditions:
+      - 'distance{d=0to8} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Cel} @TargetedTarget'
+    WOJ_Natarcie_Wodza_Gracz:
+      TargetConditions:
+      - 'distance{d=0to8} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Cel} @TargetedTarget'
+    WOJ_Natarcie_Wodza_Cel:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
+      - 'setvariable{var=caster.woj_natarcie_cel;type=STRING;value="<target.uuid>";duration=40} @self'
+      - 'setvariable{var=caster.woj_natarcie_licznik;type=INTEGER;value=1;duration=40} @self'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'skill{s=WOJ_Natarcie_Wodza_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=WOJ_Natarcie_Wodza_Topor} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+      - 'effect:particles{p=sweep_attack;a=20;hS=1;vS=0.3} @self'
+    WOJ_Natarcie_Wodza_Zwykly:
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Adresuj} @LivingNearTargetLocation{r=3;ignore=self,armorstands,samefaction,owner;sort=NEAREST}'
+    WOJ_Natarcie_Wodza_Topor:
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Adresuj} @LivingNearTargetLocation{r=4;ignore=self,armorstands,samefaction,owner;sort=NEAREST}'
+    WOJ_Natarcie_Wodza_Adresuj:
+      TargetConditions:
+      - 'stringEquals{val1="<target.uuid>";val2="<caster.var.woj_natarcie_cel|NONE>"} false'
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Uderz_Mob} @TargetedTarget'
+      - 'skill{s=WOJ_Natarcie_Wodza_Uderz_Gracz} @TargetedTarget'
+    WOJ_Natarcie_Wodza_Uderz_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Uderz} @TargetedTarget'
+    WOJ_Natarcie_Wodza_Uderz_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Natarcie_Wodza_Uderz} @TargetedTarget'
+    WOJ_Natarcie_Wodza_Uderz:
+      Conditions:
+      - 'variableInRange{var=caster.woj_natarcie_licznik;value=<3} true'
+      Skills:
+      - 'variableadd{var=caster.woj_natarcie_licznik;amount=1} @self'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+
+WOJ_MARSZ_KRYPTY:
+  source: mythicmobs:WOJ_Marsz_Krypty
+  name: 'Marsz z Krypty'
+  icon: {item: NETHERITE_SWORD}
+  lore: ['&8&oZ krypty wychodzi ciężki krok.', '&7Doskok do 6 bl.; do 3 wrogów', '&7w promieniu 2,5 bl. po 5 obrażeń.', '&7Leczy o 20% obrażeń, do 6 HP.', '&7Daje 15 Szału.', '&6◆ Miecz dwuręczny: pułap leczenia 8 HP.', '', '&e{cooldown}s odnowienia']
+  parameters:
+    mana: {name: Koszt, player: 0}
+    cooldown: {name: Odnowienie, player: 10}
+    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
+  extra-skills:
+    WOJ_Marsz_Krypty:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=GREATSWORD}'
+      - 'skill{s=WOJ_Marsz_Krypty_Mob} @target'
+      - 'skill{s=WOJ_Marsz_Krypty_Gracz} @target'
+    WOJ_Marsz_Krypty_Mob:
+      TargetConditions:
+      - 'distance{d=0to6} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=WOJ_Marsz_Krypty_Cel} @TargetedTarget'
+    WOJ_Marsz_Krypty_Gracz:
+      TargetConditions:
+      - 'distance{d=0to6} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Marsz_Krypty_Cel} @TargetedTarget'
+    WOJ_Marsz_Krypty_Cel:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
+      - 'setvariable{var=caster.woj_marsz_cel;type=STRING;value="<target.uuid>";duration=40} @TargetedTarget'
+      - 'setvariable{var=caster.woj_marsz_licznik;type=INTEGER;value=1;duration=40} @self'
+      - 'setvariable{var=caster.woj_marsz_lecz;type=DOUBLE;value=0;duration=40} @self'
+      - 'setvariable{var=caster.woj_marsz_limit;type=DOUBLE;value=6;duration=40} @self'
+      - 'setvariable{var=caster.woj_marsz_limit;type=DOUBLE;value=8;duration=40} @self ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'skill{s=WOJ_Marsz_Krypty_Leczenie} @TargetedTarget'
+      - 'skill{s=WOJ_Marsz_Krypty_Adresuj} @LivingNearTargetLocation{r=2.5;ignore=self,armorstands,samefaction,owner;sort=NEAREST}'
+      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
+      - 'effect:particles{p=soul;a=24;hS=1;vS=0.3} @self'
+    WOJ_Marsz_Krypty_Adresuj:
+      TargetConditions:
+      - 'stringEquals{val1="<target.uuid>";val2="<caster.var.woj_marsz_cel|NONE>"} false'
+      Skills:
+      - 'skill{s=WOJ_Marsz_Krypty_Uderz_Mob} @TargetedTarget'
+      - 'skill{s=WOJ_Marsz_Krypty_Uderz_Gracz} @TargetedTarget'
+    WOJ_Marsz_Krypty_Uderz_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=WOJ_Marsz_Krypty_Uderz} @TargetedTarget'
+    WOJ_Marsz_Krypty_Uderz_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=WOJ_Marsz_Krypty_Uderz} @TargetedTarget'
+    WOJ_Marsz_Krypty_Uderz:
+      Conditions:
+      - 'variableInRange{var=caster.woj_marsz_licznik;value=<3} true'
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
+      - 'variableadd{var=caster.woj_marsz_licznik;amount=1} @self'
+      - 'skill{s=WOJ_Marsz_Krypty_Leczenie} @TargetedTarget'
+    WOJ_Marsz_Krypty_Leczenie:
+      Skills:
+      - 'setvariable{var=caster.woj_marsz_ostatnie;type=DOUBLE;value="min(<modifier.damage> * 0.2,<caster.var.woj_marsz_limit> - <caster.var.woj_marsz_lecz>)";duration=40} @self'
+      - 'heal{a="<caster.var.woj_marsz_ostatnie>"} @self'
+      - 'variableadd{var=caster.woj_marsz_lecz;amount="<caster.var.woj_marsz_ostatnie>"} @self'

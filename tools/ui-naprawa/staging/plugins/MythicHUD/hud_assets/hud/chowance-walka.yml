@@ -1,0 +1,149 @@
+# HUD walki Chowańców (2026-09-30): panele stworów + pionowa lista klawiszy. Dane: %chowance_walka_*% (HudWalki).
+# Układ MythicHUD (docs Asset-Layers/Layouts + pomiar klientem QA): y dodatnie = W GÓRĘ, tekst i tekstura wiszą
+# Warunki: "<warunek> true hide" = pokaż TYLKO gdy warunek prawdziwy (docs Conditions: hide chowa, gdy wynik ≠ podany).
+# w dół od offsetu, align right = rośnie w prawo, PIERWSZA warstwa rysuje się NA WIERZCHU (tło na końcu listy).
+chowance-walka-on:
+  conditions:
+    - placeholder{ph=%chowance_walka_aktywna%;val=tak} true hide
+  layers:
+    kto:
+      text: "<#E86056>Przeciwnik: <white>%chowance_walka_kto%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 2, y: 10}
+    nazwa:
+      text: "%chowance_walka_on_nazwa%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -4}
+    opis:
+      text: "<white>%chowance_walka_on_hptekst% <dark_gray>|</dark_gray> %chowance_walka_on_opis%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -14}
+    hp:
+      texture:
+        path: assets/chowance/walka_hp_on.png
+      color: white
+      offset: {x: 4, y: -26}
+      function:
+        listener: chowance_walka_on_hp
+        increment: 124
+        orientation: horizontal
+    hp-tlo:
+      texture:
+        path: assets/chowance/walka_hp_tlo.png
+      color: white
+      offset: {x: 4, y: -26}
+    panel:
+      texture:
+        path: assets/chowance/walka_panel.png
+      color: white
+      offset: {x: 0, y: 0}
+chowance-walka-ja:
+  conditions:
+    - placeholder{ph=%chowance_walka_aktywna%;val=tak} true hide
+  layers:
+    kto:
+      text: "<#7ED660>Twój stwór"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 2, y: 10}
+    nazwa:
+      text: "%chowance_walka_ja_nazwa%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -4}
+    opis:
+      text: "<white>%chowance_walka_ja_hptekst% <dark_gray>|</dark_gray> %chowance_walka_ja_opis%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -14}
+    hp:
+      texture:
+        path: assets/chowance/walka_hp_ja.png
+      color: white
+      offset: {x: 4, y: -26}
+      function:
+        listener: chowance_walka_ja_hp
+        increment: 124
+        orientation: horizontal
+    hp-tlo:
+      texture:
+        path: assets/chowance/walka_hp_tlo.png
+      color: white
+      offset: {x: 4, y: -26}
+    panel:
+      texture:
+        path: assets/chowance/walka_panel.png
+      color: white
+      offset: {x: 0, y: 0}
+chowance-walka-klawisze:
+  conditions:
+    - placeholder{ph=%chowance_walka_klawisze%;val=tak} true hide
+  layers:
+    k1:
+      text: "%chowance_walka_k1%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -4}
+    k2:
+      text: "%chowance_walka_k2%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -14}
+    k3:
+      text: "%chowance_walka_k3%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -24}
+    k4:
+      text: "%chowance_walka_k4%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -34}
+    k5:
+      text: "%chowance_walka_k5%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -44}
+    k6:
+      text: "%chowance_walka_k6%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -54}
+    k7:
+      text: "%chowance_walka_k7%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -64}
+    k8:
+      text: "%chowance_walka_k8%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -74}
+    czas:
+      text: "<#FFF1CC>Tura: %chowance_pozostalo_tury%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 5, y: -84}
+    panel:
+      texture:
+        path: assets/chowance/walka_klawisze.png
+      color: white
+      offset: {x: 0, y: 0}

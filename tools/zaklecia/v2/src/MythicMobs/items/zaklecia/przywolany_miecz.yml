@@ -1,0 +1,20 @@
+ZAKLECIE_PRZYWOLANY_MIECZ:
+  Id: DEBUG_STICK
+  Display: '<!i><#c9a6ff>Przywołany miecz'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Przywoływanie · Nowicjusz'
+  - '<!i><gray>Miecz w dłoni rzucającej na 120 sekund.'
+  - '<!i><gray>Dwa rzuty = dwa miecze; lewa nie zadaje ciosów.'
+  - '<!i><gray>Oburącz: jeden miecz w prawej na 240 sekund.'
+  - '<!i><#ffcf6b>PPM — lewa · LPM — prawa'
+  - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><gray>Koszt testowy: <#6ab4ff>2 many'
+  - '<!i><dark_gray>TODO grafika: tymczasowy model dłoni'
+  Options:
+    ItemModel: zaklecia:przywolany_miecz
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

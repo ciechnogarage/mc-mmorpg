@@ -11,5 +11,5 @@ Plugin prowadzi rzucanie zaklęć koncentracji, a MythicMobs rysuje efekty i zad
 - **MM**: warunki `zakDlon{reka;z}`, `zakRece{z;min;max}`, mechanika `zakZasob`, warunek `zakMaZasob`.
 - Konfiguracja: `config.yml` (zaklęcia, koszt many, stożek, nazwy skilli).
 
-Treść (przedmioty, skille, menu), wdrożenie i evale: `world1/tools/zaklecia/v2/` i `tools/zaklecia/README.md`.
+Treść (przedmioty, skille, menu), wdrożenie i evale: `tools/zaklecia/v2/ (repo MC)` i `tools/zaklecia/README.md`.
 Build: `./build.sh` → `build/libs/zaklecia-*.jar`.

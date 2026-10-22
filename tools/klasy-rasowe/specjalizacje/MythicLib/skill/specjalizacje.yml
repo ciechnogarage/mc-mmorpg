@@ -1,0 +1,1416 @@
+SPEC_BASTION_MUR:
+  source: "mythicmobs:SpecBastionMur"
+  name: "Mur Przysięgi"
+  icon:
+    item: "SHIELD"
+  lore:
+  - "&8&oKorona stoi tam, gdzie jej miecz."
+  - "&7Postawa 5 s: -40% obrażeń, bez odrzutu; prowokacja r6."
+  - "&6◆ Tarcza: postawa +1 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 25
+    cooldown:
+      name: "Odnowienie"
+      player: 16
+  extra-skills:
+    SpecBastionMur:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SHIELD}"
+      - "skill{s=SpecBastionMurPose} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecBastionMurPoseShield} @self ?variableEquals{var=caster.kr_premia;value=1}"
+      - "skill{s=SpecBastionMurTaunt} @self"
+    SpecBastionMurPose:
+      Skills:
+      - "potion{type=RESISTANCE;duration=100;level=1;force=true} @self"
+      - "onDamaged{auraName=spec_mur_still;duration=100;onHit=SpecBastionStill} @self"
+    SpecBastionMurPoseShield:
+      Skills:
+      - "potion{type=RESISTANCE;duration=120;level=1;force=true} @self"
+      - "onDamaged{auraName=spec_mur_still;duration=120;onHit=SpecBastionStill} @self"
+    SpecBastionMurTaunt:
+      Skills:
+      - "skill{s=SpecBastionMurTauntMob} @EntitiesInRadius{r=6;ignore=self,players;targetarmorstands=false;sort=NEAREST;limit=5}"
+    SpecBastionMurTauntMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "sudoskill{s=SpecBastionMurSetTarget;cat=true} @TargetedTarget"
+    SpecBastionMurSetTarget:
+      Skills:
+      - "setTarget @trigger"
+    SpecCzempionWyzwanieMob:
+      TargetConditions:
+      - "isPlayer false"
+      - "distance{d=0to5} true"
+      Skills:
+      - "skill{s=SpecCzempionWyzwanieHit} @TargetedTarget"
+    SpecCzempionWyzwaniePlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      - "distance{d=0to5} true"
+      Skills:
+      - "skill{s=SpecCzempionWyzwanieHit} @TargetedTarget"
+    SpecCzempionWyzwanieHit:
+      Skills:
+      - "mmodamage{a=8;types=SKILL,PHYSICAL}"
+      - "shield{amount=4;maxabsorb=100} @self"
+      - "delay 80"
+      - "shield{amount=-4;maxabsorb=100} @self"
+    SpecWidmoJadMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecWidmoJadHit} @TargetedTarget"
+    SpecWidmoJadPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecWidmoJadHit} @TargetedTarget"
+    SpecWidmoJadHit:
+      Skills:
+      - "mmodamage{a=4;types=SKILL,PHYSICAL}"
+      - "skill{s=NIN_Znamie_Dodaj}"
+      - "potion{type=POISON;duration=80;level=0;force=true} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "potion{type=POISON;duration=100;level=0;force=true} ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecJastrzabListMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecJastrzabListHit} @TargetedTarget"
+    SpecJastrzabListPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecJastrzabListHit} @TargetedTarget"
+    SpecJastrzabListHit:
+      Skills:
+      - "skill{s=SpecJastrzabBonus} @TargetedTarget ?variableInRange{var=target.znamiona;value=>0}"
+      - "mmodamage{a=6;types=SKILL,PROJECTILE}"
+      - "skill{s=NIN_Znamie_Dodaj}"
+    SpecPrzywolywaczEchoMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecPrzywolywaczEchoHit} @TargetedTarget"
+    SpecPrzywolywaczEchoPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecPrzywolywaczEchoHit} @TargetedTarget"
+    SpecPrzywolywaczEchoHit:
+      Skills:
+      - "potion{type=SLOWNESS;duration=40;level=0;force=true}"
+      - "delay 60"
+      - "skill{s=SpecPrzywolywaczEchoReturn} @TargetedTarget"
+    SpecSerafinAlly:
+      TargetConditions:
+      - "mmoCanTarget{interaction=SUPPORT_SKILL} true"
+      Skills:
+      - "shield{amount=7;maxabsorb=100}"
+      - "delay 120"
+      - "shield{amount=-7;maxabsorb=100}"
+    SpecHierofantAlly:
+      TargetConditions:
+      - "mmoCanTarget{interaction=SUPPORT_SKILL} true"
+      Skills:
+      - "shield{amount=3;maxabsorb=100}"
+      - "delay 160"
+      - "shield{amount=-3;maxabsorb=100}"
+    SpecHierofantChild:
+      Skills:
+      - "potion{type=SPEED;duration=160;level=0;force=true}"
+      - "skill{s=SpecHierofantChild4} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecHierofantChild6} ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecHierofantChild4:
+      Skills:
+      - "shield{amount=4;maxabsorb=100}"
+      - "delay 160"
+      - "shield{amount=-4;maxabsorb=100}"
+    SpecHierofantChild6:
+      Skills:
+      - "shield{amount=6;maxabsorb=100}"
+      - "delay 160"
+      - "shield{amount=-6;maxabsorb=100}"
+    SpecStraznikCierniMurMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecStraznikCierniMurHit} @TargetedTarget"
+    SpecStraznikCierniMurPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecStraznikCierniMurHit} @TargetedTarget"
+    SpecStraznikCierniMurHit:
+      Skills:
+      - "mmodamage{a=3;types=SKILL,PHYSICAL}"
+      - "potion{type=SLOWNESS;duration=20;level=0;force=true}"
+    SpecStraznikCierniMurPulse:
+      Skills:
+      - "skill{s=SpecStraznikCierniMurMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayer} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayer} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayer} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayer} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayer} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayer} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+    SpecStraznikCierniMurPulseBonus:
+      Skills:
+      - "skill{s=SpecStraznikCierniMurMobBonus} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayerBonus} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMobBonus} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayerBonus} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMobBonus} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayerBonus} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMobBonus} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayerBonus} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMobBonus} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayerBonus} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+      - "skill{s=SpecStraznikCierniMurMobBonus} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;limit=5}"
+      - "skill{s=SpecStraznikCierniMurPlayerBonus} @PlayersInRadius{r=3;ignore=self;limit=5}"
+      - "delay 20"
+    SpecStraznikCierniMurMobBonus:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecStraznikCierniMurHitBonus} @TargetedTarget"
+    SpecStraznikCierniMurPlayerBonus:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecStraznikCierniMurHitBonus} @TargetedTarget"
+    SpecStraznikCierniMurHitBonus:
+      Skills:
+      - "mmodamage{a=4;types=SKILL,PHYSICAL}"
+      - "potion{type=SLOWNESS;duration=20;level=0;force=true}"
+    SpecTancerzCiecieMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecTancerzCiecieHit} @TargetedTarget"
+    SpecTancerzCieciePlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecTancerzCiecieHit} @TargetedTarget"
+    SpecTancerzCiecieHit:
+      Skills:
+      - "mmodamage{a=6;types=SKILL,PHYSICAL}"
+      - "potion{type=SPEED;duration=60;level=0;force=true} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "potion{type=SPEED;duration=80;level=0;force=true} @self ?variableEquals{var=caster.kr_premia;value=1}"
+      - "command{c=\"mmocore admin resource-mana give <caster.name> 15\"} @self"
+    SpecTkaczZywiolowRefrenMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecTkaczZywiolowRefrenHit} @TargetedTarget"
+    SpecTkaczZywiolowRefrenPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecTkaczZywiolowRefrenHit} @TargetedTarget"
+    SpecTkaczZywiolowRefrenHit:
+      Skills:
+      - "mmodamage{a=6;types=SKILL,MAGIC}"
+      - "potion{type=SLOWNESS;duration=40;level=0;force=true}"
+    SpecTkaczZywiolowRefrenLine:
+      Skills:
+      - "skill{s=SpecTkaczZywiolowRefrenMob} @EntitiesInLine{r=1.25;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecTkaczZywiolowRefrenPlayer} @EntitiesInLine{r=1.25;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecTkaczZywiolowRefrenMob} @EntitiesInLine{r=1.75;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=1}"
+      - "skill{s=SpecTkaczZywiolowRefrenPlayer} @EntitiesInLine{r=1.75;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecStraznikZywiolowZwierciadloReflect:
+      Skills:
+      - "mmodamage{a=4;types=SKILL,MAGIC} @trigger ?variableEquals{var=caster.kr_premia;value=0}"
+      - "mmodamage{a=6;types=SKILL,MAGIC} @trigger ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecOstrzeKsiezycaLukMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecOstrzeKsiezycaLukHit} @TargetedTarget"
+    SpecOstrzeKsiezycaLukPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecOstrzeKsiezycaLukHit} @TargetedTarget"
+    SpecOstrzeKsiezycaLukHit:
+      Skills:
+      - "skill{s=SpecOstrzeBonus} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}"
+      - "mmodamage{a=5;types=SKILL,PHYSICAL}"
+    SpecOpiekunAlly:
+      TargetConditions:
+      - "mmoCanTarget{interaction=SUPPORT_SKILL} true"
+      Skills:
+      - "skill{s=SpecOpiekunHeal} @TargetedTarget"
+    SpecOpiekunHeal:
+      Skills:
+      - "heal{a=2} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "heal{a=4} ?variableEquals{var=caster.kr_premia;value=1}"
+      - "delay 40"
+      - "heal{a=2}"
+      - "delay 40"
+      - "heal{a=2}"
+    SpecTyranTaunt:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "sudoskill{s=SpecTyranRozkazSetTarget;cat=true} @TargetedTarget"
+    SpecTyranRozkazSetTarget:
+      Skills:
+      - "threat{amount=1000;mode=add} @trigger"
+      - "setTarget @trigger"
+    SpecTyranRage:
+      Skills:
+      - "command{c=\"mmocore admin resource-mana give <caster.name> 5\"} @self"
+    SpecKrwioburcaSzalMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecKrwioburcaSzalHit} @TargetedTarget"
+    SpecKrwioburcaSzalPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecKrwioburcaSzalHit} @TargetedTarget"
+    SpecKrwioburcaSzalHit:
+      Skills:
+      - "skill{s=SpecKrwioburcaRanny} @TargetedTarget ?health{h=<50%}"
+      - "mmodamage{a=8;types=SKILL,PHYSICAL}"
+    SpecKrwioburcaRanny:
+      Skills:
+      - "mmodamage{a=4;types=SKILL,PHYSICAL}"
+      - "mmodamage{a=2;types=SKILL,PHYSICAL} ?variableEquals{var=caster.kr_premia;value=1}"
+      - "command{c=\"mmocore admin resource-mana give <caster.name> 10\"} @self"
+    SpecSalwaFan:
+      Skills:
+      - "projectile{bulletType=ITEM;material=BONE;onHit=SpecSalwaHit;v=24;mr=16;hR=0.55;vR=0.55;horizontalOffset=-15;hitNonPlayers=true;hitPlayers=true;stopAtEntity=true} @Forward{f=16}"
+      - "projectile{bulletType=ITEM;material=BONE;onHit=SpecSalwaHit;v=24;mr=16;hR=0.55;vR=0.55;horizontalOffset=0;hitNonPlayers=true;hitPlayers=true;stopAtEntity=true} @Forward{f=16}"
+      - "projectile{bulletType=ITEM;material=BONE;onHit=SpecSalwaHit;v=24;mr=16;hR=0.55;vR=0.55;horizontalOffset=15;hitNonPlayers=true;hitPlayers=true;stopAtEntity=true} @Forward{f=16}"
+      - "projectile{bulletType=ITEM;material=BONE;onHit=SpecSalwaHit;v=24;mr=16;hR=0.55;vR=0.55;horizontalOffset=25;hitNonPlayers=true;hitPlayers=true;stopAtEntity=true} @Forward{f=16} ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecSalwaHit:
+      Skills:
+      - "skill{s=SpecSalwaMob} @TargetedTarget"
+      - "skill{s=SpecSalwaPlayer} @TargetedTarget"
+    SpecSalwaMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecSalwaDamage} @TargetedTarget"
+    SpecSalwaPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecSalwaDamage} @TargetedTarget"
+    SpecSalwaDamage:
+      Skills:
+      - "skill{s=SpecSalwaCountReset} @TargetedTarget"
+      - "skill{s=SpecSalwaDoDamage} @TargetedTarget"
+    SpecTotemAlly:
+      TargetConditions:
+      - "mmoCanTarget{interaction=SUPPORT_SKILL} true"
+      Skills:
+      - "potion{type=SPEED;duration=80;level=0;force=true}"
+      - "skill{s=SpecTotemAlly4} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecTotemAlly6} ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecTotemAlly4:
+      Skills:
+      - "shield{amount=4;maxabsorb=100}"
+      - "delay 80"
+      - "shield{amount=-4;maxabsorb=100}"
+    SpecTotemAlly6:
+      Skills:
+      - "shield{amount=6;maxabsorb=100}"
+      - "delay 80"
+      - "shield{amount=-6;maxabsorb=100}"
+    SpecAwatarWojnyMlotMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecAwatarWojnyMlotHit} @TargetedTarget"
+    SpecAwatarWojnyMlotPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecAwatarWojnyMlotHit} @TargetedTarget"
+    SpecAwatarWojnyMlotHit:
+      Skills:
+      - "mmodamage{a=6;types=SKILL,PHYSICAL}"
+    SpecZniwiarzCiecieMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecZniwiarzCiecieHit} @TargetedTarget"
+    SpecZniwiarzCieciePlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecZniwiarzCiecieHit} @TargetedTarget"
+    SpecZniwiarzCiecieHit:
+      Skills:
+      - "mmodamage{a=9;types=SKILL,PHYSICAL}"
+      - "heal{a=2.25} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "heal{a=3.25} @self ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecCienPetlaMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecCienPetlaHit} @TargetedTarget"
+    SpecCienPetlaPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecCienPetlaHit} @TargetedTarget"
+    SpecCienPetlaHit:
+      Skills:
+      - "skill{s=NIN_Znamie_Init} @TargetedTarget"
+      - "skill{s=SpecCienRoot} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecCienRootChain} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}"
+      - "mmodamage{a=2;types=SKILL,PHYSICAL} @TargetedTarget"
+      - "mmodamage{a=\"2 * <target.var.znamiona>\";types=SKILL,PHYSICAL} @TargetedTarget ?variableInRange{var=target.znamiona;value=>0}"
+      - "setvariable{var=target.znamiona;type=INTEGER;value=0} @TargetedTarget"
+    SpecCienPetlaLine:
+      Skills:
+      - "skill{s=SpecCienPetlaMob} @EntitiesInLine{r=1.25;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=1}"
+      - "skill{s=SpecCienPetlaPlayer} @EntitiesInLine{r=1.25;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=1}"
+    SpecStrzelecGrobuStrzalaMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecStrzelecGrobuStrzalaHit} @TargetedTarget"
+    SpecStrzelecGrobuStrzalaPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecStrzelecGrobuStrzalaHit} @TargetedTarget"
+    SpecStrzelecGrobuStrzalaHit:
+      Skills:
+      - "mmodamage{a=7;types=SKILL,PROJECTILE}"
+      - "skill{s=NIN_Znamie_Dodaj}"
+      - "skill{s=SpecStrzelecBlind} @TargetedTarget"
+    SpecDuszozercaWiezMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecDuszozercaWiezHit} @TargetedTarget"
+    SpecDuszozercaWiezPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecDuszozercaWiezHit} @TargetedTarget"
+    SpecDuszozercaWiezHit:
+      Skills:
+      - "mmodamage{a=3;types=SKILL,MAGIC}"
+      - "heal{a=1.5} @self"
+      - "delay 20"
+      - "mmodamage{a=1;types=SKILL,MAGIC}"
+      - "heal{a=0.5} @self"
+      - "delay 20"
+      - "mmodamage{a=1;types=SKILL,MAGIC}"
+      - "heal{a=0.5} @self"
+      - "delay 20"
+      - "mmodamage{a=1;types=SKILL,MAGIC}"
+      - "heal{a=0.5} @self"
+      - "delay 20"
+      - "mmodamage{a=1;types=SKILL,MAGIC}"
+      - "heal{a=0.5} @self"
+    SpecAwatarOtchlaniGlodMob:
+      TargetConditions:
+      - "isPlayer false"
+      Skills:
+      - "skill{s=SpecAwatarOtchlaniGlodHit} @TargetedTarget"
+    SpecAwatarOtchlaniGlodPlayer:
+      TargetConditions:
+      - "isPlayer true"
+      - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+      Skills:
+      - "skill{s=SpecAwatarOtchlaniGlodHit} @TargetedTarget"
+    SpecAwatarOtchlaniGlodHit:
+      Skills:
+      - "mmodamage{a=7;types=SKILL,PHYSICAL}"
+      - "heal{a=2} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "heal{a=3} @self ?variableEquals{var=caster.kr_premia;value=1}"
+    SpecBastionStill:
+      Skills:
+      - "velocity{m=set;x=0;y=0;z=0;delay=1} @self"
+    SpecSalwaInit:
+      Skills:
+      - "skill{s=SpecSalwaInitZero} @self ?variableIsSet{var=caster.spec_salva_nonce} false"
+      - "variableadd{var=caster.spec_salva_nonce;amount=1} @self"
+    SpecSalwaInitZero:
+      Skills:
+      - "setvariable{var=caster.spec_salva_nonce;type=INTEGER;value=0} @self"
+    SpecSalwaCountReset:
+      TargetConditions:
+      - "stringEquals{val1=\"<target.var.spec_salva_cast|NONE>\";val2=\"<caster.uuid>:<caster.var.spec_salva_nonce>\"} false"
+      Skills:
+      - "setvariable{var=target.spec_salva_cast;type=STRING;value=\"<caster.uuid>:<caster.var.spec_salva_nonce>\";duration=80}"
+      - "setvariable{var=target.spec_salva_count;type=INTEGER;value=0;duration=80}"
+    SpecSalwaDoDamage:
+      TargetConditions:
+      - "variableInRange{var=target.spec_salva_count;value=<2} true"
+      Skills:
+      - "mmodamage{a=4;types=SKILL,PROJECTILE}"
+      - "skill{s=NIN_Znamie_Dodaj}"
+      - "variableadd{var=target.spec_salva_count;amount=1}"
+    SpecCienRoot:
+      Skills:
+      - "potion{type=SLOWNESS;duration=30;level=255;force=true}"
+      - "potion{type=JUMP_BOOST;duration=30;level=200;force=true}"
+    SpecCienRootChain:
+      Skills:
+      - "potion{type=SLOWNESS;duration=40;level=255;force=true}"
+      - "potion{type=JUMP_BOOST;duration=40;level=200;force=true}"
+    SpecJastrzabBonus:
+      Skills:
+      - "mmodamage{a=3;types=SKILL,PROJECTILE}"
+    SpecPrzywolywaczEchoReturn:
+      TargetConditions:
+      - "distance{d=0to16} true"
+      Skills:
+      - "mmodamage{a=4;types=SKILL,MAGIC}"
+    SpecSerafinGuardian:
+      TargetConditions:
+      - "mythicMobType{type=AKO_SLUGA_OBRONCA} true"
+      Skills:
+      - "shield{amount=5;maxabsorb=100}"
+    SpecOstrzeBonus:
+      Skills:
+      - "mmodamage{a=2;types=SKILL,PHYSICAL}"
+    SpecOstrzeOgnik:
+      TargetConditions:
+      - "mythicMobType{type=AKO_OGNIK_KSIEZYCA} true"
+      Skills:
+      - "heal{a=2} @Owner"
+    SpecJastrzabListProjectile:
+      Skills:
+      - "skill{s=SpecJastrzabListMob} @TargetedTarget"
+      - "skill{s=SpecJastrzabListPlayer} @TargetedTarget"
+    SpecStrzelecGrobuStrzalaProjectile:
+      Skills:
+      - "skill{s=SpecStrzelecGrobuStrzalaMob} @TargetedTarget"
+      - "skill{s=SpecStrzelecGrobuStrzalaPlayer} @TargetedTarget"
+    SpecStrzelecBlind:
+      TargetConditions:
+      - "distance{d=10to18} true"
+      Skills:
+      - "potion{type=BLINDNESS;duration=40;level=0;force=true} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "potion{type=BLINDNESS;duration=60;level=0;force=true} ?variableEquals{var=caster.kr_premia;value=1}"
+SPEC_CZEMPION_WYZWANIE:
+  source: "mythicmobs:SpecCzempionWyzwanie"
+  name: "Wyzwanie Areny"
+  icon:
+    item: "IRON_SWORD"
+  lore:
+  - "&8&oNa arenie liczy się jedno ostrze."
+  - "&7Cios 8 i własna osłona 4 HP na 4 s."
+  - "&6◆ Broń drzewcowa: zasięg 6 bl."
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 35
+    cooldown:
+      name: "Odnowienie"
+      player: 12
+  extra-skills:
+    SpecCzempionWyzwanie:
+      TargetConditions:
+      - "distance{d=0to6} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=HALBERD}"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=LANCE}"
+      - "skill{s=SpecCzempionWyzwanieMob} @TargetedTarget"
+      - "skill{s=SpecCzempionWyzwaniePlayer} @TargetedTarget"
+SPEC_WIDMO_JAD:
+  source: "mythicmobs:SpecWidmoJad"
+  name: "Jad w Ranie"
+  icon:
+    item: "POTION"
+  lore:
+  - "&8&oW rękawie czeka ostatnia kropla."
+  - "&7Cięcie 4, Znamię i jad 4 s."
+  - "&6◆ Sztylet: jad 5 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 30
+    cooldown:
+      name: "Odnowienie"
+      player: 10
+  extra-skills:
+    SpecWidmoJad:
+      TargetConditions:
+      - "distance{d=0to3} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=DAGGER}"
+      - "skill{s=SpecWidmoJadMob} @TargetedTarget"
+      - "skill{s=SpecWidmoJadPlayer} @TargetedTarget"
+SPEC_JASTRZAB_LIST:
+  source: "mythicmobs:SpecJastrzabList"
+  name: "List Gończy"
+  icon:
+    item: "CROSSBOW"
+  lore:
+  - "&8&oCena zapisana jest na bełcie."
+  - "&7Bełt 6, Znamię; oznaczony cel +3."
+  - "&6◆ Kusza: znacznik 7 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 35
+    cooldown:
+      name: "Odnowienie"
+      player: 12
+  extra-skills:
+    SpecJastrzabList:
+      TargetConditions:
+      - "distance{d=0to18} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=CROSSBOW}"
+      - "projectile{bulletType=ITEM;material=CROSSBOW;onHit=SpecJastrzabListProjectile;v=24;mr=18;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget"
+SPEC_ELEMENTALISTA_KRAG:
+  source: "mythicmobs:SpecElementalistaKrag"
+  name: "Krąg Żywiołów"
+  icon:
+    item: "BLAZE_ROD"
+  lore:
+  - "&8&oTrzy żywioły czekają na rozkaz."
+  - "&7Krąg r3 po 0,8 s: 6 obrażeń, Pieczęć +2."
+  - "&6◆ Grimuar: promień 4 bl."
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 16
+    cooldown:
+      name: "Odnowienie"
+      player: 12
+  extra-skills:
+    SpecElementalistaKrag:
+      TargetConditions:
+      - "distance{d=0to16} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=TOME}"
+      - "setvariable{var=skill.spec_bonus;type=INTEGER;value=\"<caster.var.kr_premia>\"}"
+      - "setvariable{var=skill.spec_seal;type=STRING;value=\"<caster.var.mag_pieczec_cel_uuid|NONE>\"}"
+      - "skill{s=SpecElementalistaKragZone;origin=@TargetedTarget} @self"
+SPEC_PRZYWOLYWACZ_ECHO:
+  source: "mythicmobs:SpecPrzywolywaczEcho"
+  name: "Echo Chwili"
+  icon:
+    item: "CLOCK"
+  lore:
+  - "&8&oWieża pamięta minioną sekundę."
+  - "&7Spowalnia 2 s; po 3 s zadaje 4 obrażenia."
+  - "&6◆ Grimuar: spowolnienie 3 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 12
+    cooldown:
+      name: "Odnowienie"
+      player: 18
+  extra-skills:
+    SpecPrzywolywaczEcho:
+      TargetConditions:
+      - "distance{d=0to16} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=TOME}"
+      - "skill{s=SpecPrzywolywaczEchoMob} @TargetedTarget"
+      - "skill{s=SpecPrzywolywaczEchoPlayer} @TargetedTarget"
+SPEC_SERAFIN_ZASLONA:
+  source: "mythicmobs:SpecSerafinZaslona"
+  name: "Zasłona Relikwii"
+  icon:
+    item: "SHIELD"
+  lore:
+  - "&8&oŚwięte żelazo bierze cios."
+  - "&7Osłona 7 HP na 6 s dla siebie i sojusznika."
+  - "&6◆ Tarcza: własna osłona +3 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 1
+    cooldown:
+      name: "Odnowienie"
+      player: 15
+  extra-skills:
+    SpecSerafinZaslona:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SHIELD}"
+      - "skill{s=SpecSerafinSelf7} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecSerafinSelf10} @self ?variableEquals{var=caster.kr_premia;value=1}"
+      - "skill{s=SpecSerafinAlly} @PlayersInRadius{r=4;ignore=self;sort=NEAREST;limit=1}"
+      - "skill{s=SpecSerafinGuardian} @Children{sort=NEAREST;limit=1}"
+    SpecSerafinSelf7:
+      Skills:
+      - "shield{amount=7;maxabsorb=100} @self"
+      - "delay 120"
+      - "shield{amount=-7;maxabsorb=100} @self"
+    SpecSerafinSelf10:
+      Skills:
+      - "shield{amount=10;maxabsorb=100} @self"
+      - "delay 120"
+      - "shield{amount=-10;maxabsorb=100} @self"
+SPEC_HIEROFANT_CHORAGIEW:
+  source: "mythicmobs:SpecHierofantChoragiew"
+  name: "Chorągiew Warty"
+  icon:
+    item: "WHITE_BANNER"
+  lore:
+  - "&8&oPod sztandarem zbierają się głosy."
+  - "&7Słudzy: 4 HP osłony i szybkość 8 s; sojusznicy: 3 HP."
+  - "&6◆ Tarcza: osłona sług +2 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 2
+    cooldown:
+      name: "Odnowienie"
+      player: 20
+  extra-skills:
+    SpecHierofantChoragiew:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SHIELD}"
+      - "skill{s=SpecHierofantChild} @Children{sort=NEAREST;limit=3}"
+      - "skill{s=SpecHierofantAlly} @PlayersInRadius{r=7;ignore=self;sort=NEAREST;limit=2}"
+SPEC_STRAZNIK_CIERNI_MUR:
+  source: "mythicmobs:SpecStraznikCierniMur"
+  name: "Korona Cierni"
+  icon:
+    item: "ROSE_BUSH"
+  lore:
+  - "&8&oRóża broni miejsca, gdzie rośnie."
+  - "&7Kolce 6 s: impuls co 1 s, 3 obrażenia i spowolnienie r3."
+  - "&6◆ Tarcza: obrażenia kolców +1"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 30
+    cooldown:
+      name: "Odnowienie"
+      player: 16
+  extra-skills:
+    SpecStraznikCierniMur:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SHIELD}"
+      - "potion{type=RESISTANCE;duration=120;level=0;force=true;hasParticles=true} @self"
+      - "effect:particles{p=happy_villager;a=18;hS=0.6;vS=0.8} @self"
+      - "skill{s=SpecStraznikCierniMurPulse} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecStraznikCierniMurPulseBonus} @self ?variableEquals{var=caster.kr_premia;value=1}"
+SPEC_TANCERZ_CIECIE:
+  source: "mythicmobs:SpecTancerzCiecie"
+  name: "Piruet Klingi"
+  icon:
+    item: "IRON_SWORD"
+  lore:
+  - "&8&oKlinga mija cień liścia."
+  - "&7Cięcie 6, szybkość 3 s, 15 Szału po trafieniu."
+  - "&6◆ Katana: szybkość 4 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 25
+    cooldown:
+      name: "Odnowienie"
+      player: 10
+  extra-skills:
+    SpecTancerzCiecie:
+      TargetConditions:
+      - "distance{d=0to4} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=KATANA}"
+      - "skill{s=SpecTancerzCiecieMob} @TargetedTarget"
+      - "skill{s=SpecTancerzCieciePlayer} @TargetedTarget"
+SPEC_CIEN_LISCI_SIDLA:
+  source: "mythicmobs:SpecCienLisciSidla"
+  name: "Sidła Korzeni"
+  icon:
+    item: "VINE"
+  lore:
+  - "&8&oŚcieżka pamięta krok intruza."
+  - "&7Sidło r2 na 8 s: pierwszy wróg dostaje 3 i Znamię."
+  - "&6◆ Łuk długi: sidło trwa 10 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 35
+    cooldown:
+      name: "Odnowienie"
+      player: 14
+  extra-skills:
+    SpecCienLisciSidla:
+      TargetConditions:
+      - "distance{d=0to12} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATBOW}"
+      - "setvariable{var=skill.spec_bonus;type=INTEGER;value=\"<caster.var.kr_premia>\"}"
+      - "skill{s=SpecCienLisciSidlaZone;origin=@TargetedTarget} @self"
+SPEC_SOKOL_DESZCZ:
+  source: "mythicmobs:SpecSokolDeszcz"
+  name: "Deszcz Srebra"
+  icon:
+    item: "BOW"
+  lore:
+  - "&8&oKsiężyc prowadzi grot przez liście."
+  - "&7Po 0,6 s trzy fale co 0,5 s po 3 pociskowe."
+  - "&6◆ Łuk długi: promień 4 bl."
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 40
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecSokolDeszcz:
+      TargetConditions:
+      - "distance{d=0to22} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATBOW}"
+      - "setvariable{var=skill.spec_bonus;type=INTEGER;value=\"<caster.var.kr_premia>\"}"
+      - "skill{s=SpecSokolDeszczZone;origin=@TargetedTarget} @self"
+SPEC_TKACZ_ZYWIOLOW_REFREN:
+  source: "mythicmobs:SpecTkaczZywiolowRefren"
+  name: "Refren Pioruna"
+  icon:
+    item: "LIGHTNING_ROD"
+  lore:
+  - "&8&oGaj podchwytuje pieśń burzy."
+  - "&7Piorun w linii do 18 bl. trafia do 3 wrogów po 6."
+  - "&6◆ Kostur dwuręczny: zasięg +0,5 bl."
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 14
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecTkaczZywiolowRefren:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATSTAFF}"
+      - "skill{s=SpecTkaczZywiolowRefrenLine} @Forward{f=18}"
+SPEC_STRAZNIK_ZYWIOLOW_ZWIERCIADLO:
+  source: "mythicmobs:SpecStraznikZywiolowZwierciadlo"
+  name: "Zwierciadło Gaju"
+  icon:
+    item: "AMETHYST_SHARD"
+  lore:
+  - "&8&oW tafli liścia gaśnie obcy czar."
+  - "&7Osłona 8 HP na 5 s, pierwsze trafienie odbija 4."
+  - "&6◆ Kostur dwuręczny: odbicie +2"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 12
+    cooldown:
+      name: "Odnowienie"
+      player: 18
+  extra-skills:
+    SpecStraznikZywiolowZwierciadlo:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATSTAFF}"
+      - "shield{amount=8;maxabsorb=100} @self"
+      - "onDamaged{auraName=spec_zwierciadlo;duration=100;charges=1;onHit=SpecStraznikZywiolowZwierciadloReflect} @self"
+      - "delay 100"
+      - "shield{amount=-8;maxabsorb=100} @self"
+SPEC_OSTRZE_KSIEZYCA_LUK:
+  source: "mythicmobs:SpecOstrzeKsiezycaLuk"
+  name: "Łuk Pełni"
+  icon:
+    item: "IRON_HOE"
+  lore:
+  - "&8&oPełnia ostrzy srebrny sierp."
+  - "&7Sierp trafia do trzech wrogów po 5."
+  - "&6◆ Sierp: cięcie +2"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 1
+    cooldown:
+      name: "Odnowienie"
+      player: 10
+  extra-skills:
+    SpecOstrzeKsiezycaLuk:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SIERP}"
+      - "skill{s=SpecOstrzeKsiezycaLukMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;sort=NEAREST;limit=3}"
+      - "skill{s=SpecOstrzeKsiezycaLukPlayer} @PlayersInRadius{r=3;ignore=self;sort=NEAREST;limit=3}"
+      - "skill{s=SpecOstrzeOgnik} @Children{sort=NEAREST;limit=1}"
+SPEC_OPIEKUN_DUCHOW_SWIT:
+  source: "mythicmobs:SpecOpiekunDuchowSwit"
+  name: "Ścieżka Ogników"
+  icon:
+    item: "LANTERN"
+  lore:
+  - "&8&oOgniki prowadzą rannych do świtu."
+  - "&7Dwóch sojuszników leczonych po 2 HP co 2 s przez 6 s."
+  - "&6◆ Sierp: pierwsze leczenie +2"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 2
+    cooldown:
+      name: "Odnowienie"
+      player: 16
+  extra-skills:
+    SpecOpiekunDuchowSwit:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SIERP}"
+      - "skill{s=SpecOpiekunHeal} @self"
+      - "skill{s=SpecOpiekunAlly} @PlayersInRadius{r=6;ignore=self;sort=NEAREST;limit=2}"
+      - "skill{s=SpecOpiekunShield} @Children{sort=NEAREST;limit=1;conditions=[  - mythicMobType{type=AKO_OGNIK_KSIEZYCA} true ]}"
+    SpecOpiekunShield:
+      Skills:
+      - "shield{amount=4;maxabsorb=100}"
+      - "delay 120"
+      - "shield{amount=-4;maxabsorb=100}"
+SPEC_TYRAN_ROZKAZ:
+  source: "mythicmobs:SpecTyranRozkaz"
+  name: "Żelazny Rozkaz"
+  icon:
+    item: "SHIELD"
+  lore:
+  - "&8&oWódz rzuca wyzwanie całej hordzie."
+  - "&7Prowokuje 5 wrogów r6; trafienia dają 5 Szału do 25."
+  - "&6◆ Tarcza: okno Szału +1 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 30
+    cooldown:
+      name: "Odnowienie"
+      player: 17
+  extra-skills:
+    SpecTyranRozkaz:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SHIELD}"
+      - "potion{type=RESISTANCE;duration=120;level=0;force=true;hasParticles=true} @self"
+      - "effect:particles{p=angry_villager;a=18;hS=0.7;vS=0.9} @self"
+      - "skill{s=SpecTyranTaunt} @EntitiesInRadius{r=6;ignore=self,players;targetarmorstands=false;sort=NEAREST;limit=5}"
+      - "onDamaged{auraName=spec_tyran_szal;duration=120;charges=5;onHit=SpecTyranRage} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "onDamaged{auraName=spec_tyran_szal;duration=140;charges=5;onHit=SpecTyranRage} @self ?variableEquals{var=caster.kr_premia;value=1}"
+SPEC_KRWIOBURCA_SZAL:
+  source: "mythicmobs:SpecKrwioburcaSzal"
+  name: "Uderzenie Krwi"
+  icon:
+    item: "IRON_SWORD"
+  lore:
+  - "&8&oKrew podsyca huk topora."
+  - "&7Cios 8; poniżej 50% HP dodatkowe 4 i 10 Szału."
+  - "&6◆ Topór: dodatkowe 2 obrażenia"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 40
+    cooldown:
+      name: "Odnowienie"
+      player: 10
+  extra-skills:
+    SpecKrwioburcaSzal:
+      TargetConditions:
+      - "distance{d=0to4} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=AXE}"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATAXE}"
+      - "skill{s=SpecKrwioburcaSzalMob} @TargetedTarget"
+      - "skill{s=SpecKrwioburcaSzalPlayer} @TargetedTarget"
+SPEC_LOWCA_BESTII_WILK:
+  source: "mythicmobs:SpecLowcaBestiiWilk"
+  name: "Gwizd Stepowego Wilka"
+  icon:
+    item: "BONE"
+  lore:
+  - "&8&oStep odpowiada na krótki gwizd."
+  - "&7Przywołuje wilka 18 HP na 10 s, wspólny limit 3."
+  - "&6◆ Włócznia: wilk +4 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 40
+    cooldown:
+      name: "Odnowienie"
+      player: 22
+  extra-skills:
+    SpecLowcaBestiiWilk:
+      Conditions:
+      - "children{a=<3} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SPEAR}"
+      - "summon{type=SPEC_WILK_STEPU;amount=1;radius=0;onSurface=true} @self ?variableEquals{var=caster.kr_premia;value=0}"
+      - "summon{type=SPEC_WILK_STEPU_BRON;amount=1;radius=0;onSurface=true} @self ?variableEquals{var=caster.kr_premia;value=1}"
+SPEC_LOWCA_KOSCI_SALWA:
+  source: "mythicmobs:SpecLowcaKosciSalwa"
+  name: "Salwa Kości"
+  icon:
+    item: "BONE"
+  lore:
+  - "&8&oKości przodków lecą przed łowcą."
+  - "&7Wachlarz trzech grotów do 16 bl.; 4 i Znamię."
+  - "&6◆ Włócznia: czwarty grot"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 35
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecLowcaKosciSalwa:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SPEAR}"
+      - "skill{s=SpecSalwaInit} @self"
+      - "skill{s=SpecSalwaFan} @self"
+SPEC_BURZOWNIK_GROM:
+  source: "mythicmobs:SpecBurzownikGrom"
+  name: "Grom z Totemu"
+  icon:
+    item: "LIGHTNING_ROD"
+  lore:
+  - "&8&oNad totemem pęka niebo."
+  - "&7Grom r3 po 0,8 s: 6 obrażeń magicznych."
+  - "&6◆ Totem: promień 4 bl."
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 12
+    cooldown:
+      name: "Odnowienie"
+      player: 12
+  extra-skills:
+    SpecBurzownikGrom:
+      TargetConditions:
+      - "distance{d=0to16} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=TALISMAN}"
+      - "setvariable{var=skill.spec_bonus;type=INTEGER;value=\"<caster.var.kr_premia>\"}"
+      - "skill{s=SpecBurzownikGromZone;origin=@TargetedTarget} @self"
+SPEC_TOTEMISTA_RYTM:
+  source: "mythicmobs:SpecTotemistaRytm"
+  name: "Rytm Przodków"
+  icon:
+    item: "NOTE_BLOCK"
+  lore:
+  - "&8&oBęben niesie krok przez step."
+  - "&7Szybkość I na 4 s i osłona 4 HP dla drużyny."
+  - "&6◆ Totem: osłona sojuszników +2 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 10
+    cooldown:
+      name: "Odnowienie"
+      player: 16
+  extra-skills:
+    SpecTotemistaRytm:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=TALISMAN}"
+      - "potion{type=SPEED;duration=80;level=0;force=true} @self"
+      - "shield{amount=4;maxabsorb=100} @self"
+      - "skill{s=SpecTotemAlly} @PlayersInRadius{r=6;ignore=self;sort=NEAREST;limit=2}"
+      - "delay 80"
+      - "shield{amount=-4;maxabsorb=100} @self"
+SPEC_AWATAR_WOJNY_MLOT:
+  source: "mythicmobs:SpecAwatarWojnyMlot"
+  name: "Ofiara Młota"
+  icon:
+    item: "MACE"
+  lore:
+  - "&8&oBóg bitwy przemawia żelazem."
+  - "&7Uderza do trzech wrogów po 6."
+  - "&6◆ Młot dwuręczny: promień 3 bl."
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 1
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecAwatarWojnyMlot:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATHAMMER}"
+      - "skill{s=SpecAwatarWojnyMlotMob} @EntitiesInRadius{r=2;ignore=self,players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecAwatarWojnyMlotMob} @EntitiesInRadius{r=3;ignore=self,players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=1}"
+      - "skill{s=SpecAwatarWojnyMlotPlayer} @PlayersInRadius{r=2;ignore=self;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=0}"
+      - "skill{s=SpecAwatarWojnyMlotPlayer} @PlayersInRadius{r=3;ignore=self;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=1}"
+      - "potion{type=SPEED;duration=80;level=0;force=true} @Children{sort=NEAREST;limit=1;conditions=[  - mythicMobType{type=AKO_PRZODEK_MLOTA} true ]}"
+SPEC_SZEPT_PRZODKOW_WEZWANIE:
+  source: "mythicmobs:SpecSzeptPrzodkowWezwanie"
+  name: "Zew Pobojowiska"
+  icon:
+    item: "GOLDEN_AXE"
+  lore:
+  - "&8&oImiona poległych wracają w bębnie."
+  - "&7Wzywa przodka 18 HP na 12 s, limit 3 sług."
+  - "&6◆ Młot dwuręczny: przodek +4 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 2
+    cooldown:
+      name: "Odnowienie"
+      player: 18
+  extra-skills:
+    SpecSzeptPrzodkowWezwanie:
+      Conditions:
+      - "children{a=<3} true"
+      TargetConditions:
+      - "distance{d=0to12} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATHAMMER}"
+      - "shield{amount=3;maxabsorb=100} @Children{sort=NEAREST;limit=2}"
+      - "summon{type=SPEC_PRZODEK;amount=1;radius=0;onSurface=true} @target ?variableEquals{var=caster.kr_premia;value=0}"
+      - "summon{type=SPEC_PRZODEK_BRON;amount=1;radius=0;onSurface=true} @target ?variableEquals{var=caster.kr_premia;value=1}"
+SPEC_STRAZNIK_GROBU_PROG:
+  source: "mythicmobs:SpecStraznikGrobuProg"
+  name: "Próg Krypty"
+  icon:
+    item: "DEEPSLATE_BRICKS"
+  lore:
+  - "&8&oMartwy strażnik zamyka przejście."
+  - "&7Próg r3 na 6 s: odpycha i spowalnia wrogów."
+  - "&6◆ Tarcza: trwa 1 s dłużej"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 30
+    cooldown:
+      name: "Odnowienie"
+      player: 16
+  extra-skills:
+    SpecStraznikGrobuProg:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=SHIELD}"
+      - "setvariable{var=skill.spec_bonus;type=INTEGER;value=\"<caster.var.kr_premia>\"}"
+      - "potion{type=RESISTANCE;duration=15;level=0;force=true;hasParticles=true} @self"
+      - "skill{s=SpecStraznikGrobuProgZone;origin=@Forward{f=2}} @self"
+SPEC_ZNIWIARZ_CIECIE:
+  source: "mythicmobs:SpecZniwiarzCiecie"
+  name: "Cięcie Żniwiarza"
+  icon:
+    item: "NETHERITE_SWORD"
+  lore:
+  - "&8&oKażde ostrze zbiera oddech."
+  - "&7Cios 9, leczy do 5 HP zależnie od obrażeń."
+  - "&6◆ Miecz dwuręczny: pułap leczenia 7 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 40
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecZniwiarzCiecie:
+      TargetConditions:
+      - "distance{d=0to4} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=GREATSWORD}"
+      - "skill{s=SpecZniwiarzCiecieMob} @TargetedTarget"
+      - "skill{s=SpecZniwiarzCieciePlayer} @TargetedTarget"
+SPEC_CIEN_PETLA:
+  source: "mythicmobs:SpecCienPetla"
+  name: "Zacisk Pętli"
+  icon:
+    item: "IRON_CHAIN"
+  lore:
+  - "&8&oŁańcuch ucisza ostatni oddech."
+  - "&7Unieruchamia 1,5 s; 2 obrażenia +2 za Znamię i zużywa je."
+  - "&6◆ Łańcuch: unieruchomienie 2 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 35
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecCienPetla:
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=WHIP}"
+      - "skill{s=SpecCienPetlaLine} @Forward{f=6}"
+SPEC_STRZELEC_GROBU_STRZALA:
+  source: "mythicmobs:SpecStrzelecGrobuStrzala"
+  name: "Strzała Bez Głosu"
+  icon:
+    item: "BOW"
+  lore:
+  - "&8&oMrok wypuszcza grot bez szelestu."
+  - "&7Grot 7 i Znamię, z daleka oślepia."
+  - "&6◆ Łańcuch: oślepienie 3 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 35
+    cooldown:
+      name: "Odnowienie"
+      player: 10
+  extra-skills:
+    SpecStrzelecGrobuStrzala:
+      TargetConditions:
+      - "distance{d=0to18} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=WHIP}"
+      - "projectile{bulletType=ITEM;material=BOW;onHit=SpecStrzelecGrobuStrzalaProjectile;v=24;mr=18;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget"
+SPEC_DUSZOZERCA_WIEZ:
+  source: "mythicmobs:SpecDuszozercaWiez"
+  name: "Głód Filakterium"
+  icon:
+    item: "ECHO_SHARD"
+  lore:
+  - "&8&oFilakterium pije cudzy oddech."
+  - "&7Więź: 3 od razu i 1 co s przez 4 s."
+  - "&6◆ Filakterium: pułap leczenia 5 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 12
+    cooldown:
+      name: "Odnowienie"
+      player: 12
+  extra-skills:
+    SpecDuszozercaWiez:
+      TargetConditions:
+      - "distance{d=0to15} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=FILAKTERIUM}"
+      - "skill{s=SpecDuszozercaWiezMob} @TargetedTarget"
+      - "skill{s=SpecDuszozercaWiezPlayer} @TargetedTarget"
+SPEC_NEKROMANTA_ZARAZA:
+  source: "mythicmobs:SpecNekromantaZaraza"
+  name: "Zaraza Kurhanu"
+  icon:
+    item: "ROTTEN_FLESH"
+  lore:
+  - "&8&oTam, gdzie staje, gnije ziemia."
+  - "&7Strefa r3 przez 6 s, co 2 s zadaje 2 i spowalnia."
+  - "&6◆ Filakterium: strefa 8 s"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 18
+    cooldown:
+      name: "Odnowienie"
+      player: 17
+  extra-skills:
+    SpecNekromantaZaraza:
+      TargetConditions:
+      - "distance{d=0to14} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=FILAKTERIUM}"
+      - "setvariable{var=skill.spec_bonus;type=INTEGER;value=\"<caster.var.kr_premia>\"}"
+      - "skill{s=SpecNekromantaZarazaZone;origin=@TargetedTarget} @self"
+SPEC_AWATAR_OTCHLANI_GLOD:
+  source: "mythicmobs:SpecAwatarOtchlaniGlod"
+  name: "Głód Otchłani"
+  icon:
+    item: "NETHERITE_HOE"
+  lore:
+  - "&8&oKosa karmi pustkę i nosiciela."
+  - "&7Własny cios 7 i leczenie do 4 HP."
+  - "&6◆ Kosa: pułap leczenia 6 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 1
+    cooldown:
+      name: "Odnowienie"
+      player: 11
+  extra-skills:
+    SpecAwatarOtchlaniGlod:
+      TargetConditions:
+      - "distance{d=0to4} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=KOSA}"
+      - "skill{s=SpecAwatarOtchlaniGlodMob} @TargetedTarget"
+      - "skill{s=SpecAwatarOtchlaniGlodPlayer} @TargetedTarget"
+      - "shield{amount=3;maxabsorb=100} @Children{sort=NEAREST;limit=1}"
+SPEC_PASTERZ_UMARLYCH_GLOS:
+  source: "mythicmobs:SpecPasterzUmarlychGlos"
+  name: "Głosy Kurhanów"
+  icon:
+    item: "SOUL_LANTERN"
+  lore:
+  - "&8&oZ kurhanów wstają cudze głosy."
+  - "&7Wzywa sługę 16 HP na 12 s, limit 3."
+  - "&6◆ Kosa: sługa +4 HP"
+  - ""
+  - "&e{cooldown}s odnowienia"
+  - "&9Koszt: {mana} {mana_name}"
+  parameters:
+    mana:
+      name: "Koszt"
+      player: 2
+    cooldown:
+      name: "Odnowienie"
+      player: 18
+  extra-skills:
+    SpecPasterzUmarlychGlos:
+      Conditions:
+      - "children{a=<3} true"
+      TargetConditions:
+      - "distance{d=0to12} true"
+      Skills:
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=200} @self"
+      - "setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=200} @self ?bronRasowa{typ=KOSA}"
+      - "shield{amount=4;maxabsorb=100} @Children{sort=NEAREST;limit=2}"
+      - "summon{type=SPEC_SLUGA_KURHANU;amount=1;radius=0;onSurface=true} @target ?variableEquals{var=caster.kr_premia;value=0}"
+      - "summon{type=SPEC_SLUGA_KURHANU_BRON;amount=1;radius=0;onSurface=true} @target ?variableEquals{var=caster.kr_premia;value=1}"

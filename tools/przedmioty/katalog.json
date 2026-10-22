@@ -1,0 +1,5205 @@
+{
+ "przedmioty": [
+  {
+   "id": "PRZ_WOJ_HELM_1",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "HELM",
+   "nazwa": "Czepiec kolczy",
+   "rodz": "m",
+   "poziom": 1,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_KLATA_1",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "KLATA",
+   "nazwa": "Kolczuga",
+   "rodz": "f",
+   "poziom": 1,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_NOGI_1",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "NOGI",
+   "nazwa": "Kolcze nogawice",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_BUTY_1",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "BUTY",
+   "nazwa": "Kolcze trzewiki",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_HELM_2",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "HELM",
+   "nazwa": "Hełm skórzany",
+   "rodz": "m",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_KLATA_2",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "KLATA",
+   "nazwa": "Kaftan skórzany",
+   "rodz": "m",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_NOGI_2",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "NOGI",
+   "nazwa": "Skórzane spodnie",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_BUTY_2",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "BUTY",
+   "nazwa": "Skórzane buty",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_HELM_3",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "HELM",
+   "nazwa": "Szyszak",
+   "rodz": "m",
+   "poziom": 5,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_KLATA_3",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "KLATA",
+   "nazwa": "Brygantyna",
+   "rodz": "f",
+   "poziom": 5,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_NOGI_3",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "NOGI",
+   "nazwa": "Nagolenniki",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_BUTY_3",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "BUTY",
+   "nazwa": "Sabatony",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_HELM_4",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "HELM",
+   "nazwa": "Hełm łuskowy",
+   "rodz": "m",
+   "poziom": 7,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_KLATA_4",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "KLATA",
+   "nazwa": "Zbroja łuskowa",
+   "rodz": "f",
+   "poziom": 7,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_NOGI_4",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "NOGI",
+   "nazwa": "Łuskowe nagolenniki",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_BUTY_4",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "BUTY",
+   "nazwa": "Okute buty",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_HELM_5",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "HELM",
+   "nazwa": "Przyłbica",
+   "rodz": "f",
+   "poziom": 10,
+   "waga": "ciezka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_KLATA_5",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "KLATA",
+   "nazwa": "Napierśnik płytowy",
+   "rodz": "m",
+   "poziom": 10,
+   "waga": "ciezka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_NOGI_5",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "NOGI",
+   "nazwa": "Płytowe nagolenniki",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "ciezka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_BUTY_5",
+   "typ": "ARMOR",
+   "arch": "woj",
+   "slot": "BUTY",
+   "nazwa": "Płytowe sabatony",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "ciezka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_HELM_1",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "HELM",
+   "nazwa": "Chusta",
+   "rodz": "f",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_KLATA_1",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "KLATA",
+   "nazwa": "Kurta",
+   "rodz": "f",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_NOGI_1",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "NOGI",
+   "nazwa": "Luźne spodnie",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_BUTY_1",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "BUTY",
+   "nazwa": "Miękkie buty",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_HELM_2",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "HELM",
+   "nazwa": "Kaptur",
+   "rodz": "m",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_KLATA_2",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "KLATA",
+   "nazwa": "Kaftan",
+   "rodz": "m",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_NOGI_2",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "NOGI",
+   "nazwa": "Nogawice",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_BUTY_2",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "BUTY",
+   "nazwa": "Buty z cholewą",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_HELM_3",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "HELM",
+   "nazwa": "Maska",
+   "rodz": "f",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_KLATA_3",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "KLATA",
+   "nazwa": "Kamizela",
+   "rodz": "f",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_NOGI_3",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "NOGI",
+   "nazwa": "Obcisłe spodnie",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_BUTY_3",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "BUTY",
+   "nazwa": "Ciżmy",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_HELM_4",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "HELM",
+   "nazwa": "Kaptur łotrzyka",
+   "rodz": "m",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_KLATA_4",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "KLATA",
+   "nazwa": "Kurta łotrzyka",
+   "rodz": "f",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_NOGI_4",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "NOGI",
+   "nazwa": "Spodnie łotrzyka",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_BUTY_4",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "BUTY",
+   "nazwa": "Buty łotrzyka",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_HELM_5",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "HELM",
+   "nazwa": "Maska mroku",
+   "rodz": "f",
+   "poziom": 10,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_KLATA_5",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "KLATA",
+   "nazwa": "Pancerz mroku",
+   "rodz": "m",
+   "poziom": 10,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_NOGI_5",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "NOGI",
+   "nazwa": "Nogawice mroku",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_BUTY_5",
+   "typ": "ARMOR",
+   "arch": "nin",
+   "slot": "BUTY",
+   "nazwa": "Ciżmy mroku",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_HELM_1",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "HELM",
+   "nazwa": "Kaptur",
+   "rodz": "m",
+   "poziom": 1,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_KLATA_1",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "KLATA",
+   "nazwa": "Szata",
+   "rodz": "f",
+   "poziom": 1,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_NOGI_1",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "NOGI",
+   "nazwa": "Spodnie",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_BUTY_1",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "BUTY",
+   "nazwa": "Sandały",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_HELM_2",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "HELM",
+   "nazwa": "Czapka",
+   "rodz": "f",
+   "poziom": 3,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_KLATA_2",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "KLATA",
+   "nazwa": "Toga",
+   "rodz": "f",
+   "poziom": 3,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_NOGI_2",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "NOGI",
+   "nazwa": "Szarawary",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_BUTY_2",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "BUTY",
+   "nazwa": "Trzewiki",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_HELM_3",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "HELM",
+   "nazwa": "Kaptur runiczny",
+   "rodz": "m",
+   "poziom": 5,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_KLATA_3",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "KLATA",
+   "nazwa": "Szata runiczna",
+   "rodz": "f",
+   "poziom": 5,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_NOGI_3",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "NOGI",
+   "nazwa": "Spodnie runiczne",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_BUTY_3",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "BUTY",
+   "nazwa": "Trzewiki runiczne",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_HELM_4",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "HELM",
+   "nazwa": "Diadem",
+   "rodz": "m",
+   "poziom": 7,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_KLATA_4",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "KLATA",
+   "nazwa": "Szata haftowana",
+   "rodz": "f",
+   "poziom": 7,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_NOGI_4",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "NOGI",
+   "nazwa": "Nogawice haftowane",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_BUTY_4",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "BUTY",
+   "nazwa": "Buty haftowane",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_HELM_5",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "HELM",
+   "nazwa": "Korona",
+   "rodz": "f",
+   "poziom": 10,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_KLATA_5",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "KLATA",
+   "nazwa": "Szata gwiezdna",
+   "rodz": "f",
+   "poziom": 10,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_NOGI_5",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "NOGI",
+   "nazwa": "Spodnie gwiezdne",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_BUTY_5",
+   "typ": "ARMOR",
+   "arch": "mag",
+   "slot": "BUTY",
+   "nazwa": "Trzewiki gwiezdne",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "tkanina",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_HELM_1",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "HELM",
+   "nazwa": "Kaptur",
+   "rodz": "m",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_KLATA_1",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "KLATA",
+   "nazwa": "Habit",
+   "rodz": "m",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_NOGI_1",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "NOGI",
+   "nazwa": "Spodnie",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_BUTY_1",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "BUTY",
+   "nazwa": "Sandały",
+   "rodz": "p",
+   "poziom": 1,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_HELM_2",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "HELM",
+   "nazwa": "Kaptur podróżny",
+   "rodz": "m",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_KLATA_2",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "KLATA",
+   "nazwa": "Płaszcz podróżny",
+   "rodz": "m",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_NOGI_2",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "NOGI",
+   "nazwa": "Spodnie podróżne",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_BUTY_2",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "BUTY",
+   "nazwa": "Buty podróżne",
+   "rodz": "p",
+   "poziom": 3,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_HELM_3",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "HELM",
+   "nazwa": "Welon",
+   "rodz": "m",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_KLATA_3",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "KLATA",
+   "nazwa": "Habit żałobny",
+   "rodz": "m",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_NOGI_3",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "NOGI",
+   "nazwa": "Nogawice żałobne",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_BUTY_3",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "BUTY",
+   "nazwa": "Trzewiki żałobne",
+   "rodz": "p",
+   "poziom": 5,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_HELM_4",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "HELM",
+   "nazwa": "Kaptur święcony",
+   "rodz": "m",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_KLATA_4",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "KLATA",
+   "nazwa": "Ornat",
+   "rodz": "m",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_NOGI_4",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "NOGI",
+   "nazwa": "Spodnie święcone",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_BUTY_4",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "BUTY",
+   "nazwa": "Buty święcone",
+   "rodz": "p",
+   "poziom": 7,
+   "waga": "lekka",
+   "kat": "zbroja",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_HELM_5",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "HELM",
+   "nazwa": "Hełm kapłański",
+   "rodz": "m",
+   "poziom": 10,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_KLATA_5",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "KLATA",
+   "nazwa": "Kolczy ornat",
+   "rodz": "m",
+   "poziom": 10,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_NOGI_5",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "NOGI",
+   "nazwa": "Kolcze nagolenniki",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_BUTY_5",
+   "typ": "ARMOR",
+   "arch": "ako",
+   "slot": "BUTY",
+   "nazwa": "Okute sandały",
+   "rodz": "p",
+   "poziom": 10,
+   "waga": "srednia",
+   "kat": "zbroja",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_1",
+   "typ": "SWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz",
+   "grupa": "miecz",
+   "rasa": null,
+   "nazwa": "Krótki miecz",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_2",
+   "typ": "SWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz",
+   "grupa": "miecz",
+   "rasa": null,
+   "nazwa": "Miecz żołnierski",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_3",
+   "typ": "SWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz",
+   "grupa": "miecz",
+   "rasa": null,
+   "nazwa": "Pałasz",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_4",
+   "typ": "SWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz",
+   "grupa": "miecz",
+   "rasa": null,
+   "nazwa": "Szabla",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_5",
+   "typ": "SWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz",
+   "grupa": "miecz",
+   "rasa": null,
+   "nazwa": "Miecz rycerski",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_DRZEWCOWA_1",
+   "typ": "HALBERD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "drzewcowa",
+   "grupa": "drzewcowa",
+   "rasa": "Człowiek",
+   "nazwa": "Gizarma",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_DRZEWCOWA_2",
+   "typ": "HALBERD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "drzewcowa",
+   "grupa": "drzewcowa",
+   "rasa": "Człowiek",
+   "nazwa": "Halabarda strażnicza",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_DRZEWCOWA_3",
+   "typ": "HALBERD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "drzewcowa",
+   "grupa": "drzewcowa",
+   "rasa": "Człowiek",
+   "nazwa": "Berdysz",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_DRZEWCOWA_4",
+   "typ": "HALBERD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "drzewcowa",
+   "grupa": "drzewcowa",
+   "rasa": "Człowiek",
+   "nazwa": "Glewia",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_DRZEWCOWA_5",
+   "typ": "HALBERD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "drzewcowa",
+   "grupa": "drzewcowa",
+   "rasa": "Człowiek",
+   "nazwa": "Kopia korony",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_KLINGA_1",
+   "typ": "KATANA",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "klinga",
+   "grupa": "klinga",
+   "rasa": "Elf",
+   "nazwa": "Ostrze wierzby",
+   "rodz": "n",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_KLINGA_2",
+   "typ": "KATANA",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "klinga",
+   "grupa": "klinga",
+   "rasa": "Elf",
+   "nazwa": "Klinga zmierzchu",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_KLINGA_3",
+   "typ": "KATANA",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "klinga",
+   "grupa": "klinga",
+   "rasa": "Elf",
+   "nazwa": "Ostrze jesionu",
+   "rodz": "n",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_KLINGA_4",
+   "typ": "KATANA",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "klinga",
+   "grupa": "klinga",
+   "rasa": "Elf",
+   "nazwa": "Klinga pieśni",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_KLINGA_5",
+   "typ": "KATANA",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "klinga",
+   "grupa": "klinga",
+   "rasa": "Elf",
+   "nazwa": "Ostrze starszyzny",
+   "rodz": "n",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_TOPOR_1",
+   "typ": "AXE",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "topor",
+   "grupa": "topor",
+   "rasa": "Ork",
+   "nazwa": "Toporek",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_TOPOR_2",
+   "typ": "AXE",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "topor",
+   "grupa": "topor",
+   "rasa": "Ork",
+   "nazwa": "Topór rzeźnika",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_TOPOR_3",
+   "typ": "AXE",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "topor",
+   "grupa": "topor",
+   "rasa": "Ork",
+   "nazwa": "Czekan",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_TOPOR_4",
+   "typ": "AXE",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "topor",
+   "grupa": "topor",
+   "rasa": "Ork",
+   "nazwa": "Topór wodza",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_TOPOR_5",
+   "typ": "AXE",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "topor",
+   "grupa": "topor",
+   "rasa": "Ork",
+   "nazwa": "Wielki topór krwi",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_DWURECZNY_1",
+   "typ": "GREATSWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz_dwureczny",
+   "grupa": "miecz_dwureczny",
+   "rasa": "Nieumarły",
+   "nazwa": "Kościany dwuręcznik",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_DWURECZNY_2",
+   "typ": "GREATSWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz_dwureczny",
+   "grupa": "miecz_dwureczny",
+   "rasa": "Nieumarły",
+   "nazwa": "Miecz katowski",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_DWURECZNY_3",
+   "typ": "GREATSWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz_dwureczny",
+   "grupa": "miecz_dwureczny",
+   "rasa": "Nieumarły",
+   "nazwa": "Espadon krypty",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_DWURECZNY_4",
+   "typ": "GREATSWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz_dwureczny",
+   "grupa": "miecz_dwureczny",
+   "rasa": "Nieumarły",
+   "nazwa": "Miecz żałobny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_MIECZ_DWURECZNY_5",
+   "typ": "GREATSWORD",
+   "arch": "woj",
+   "slot": "BRON",
+   "rodzaj": "miecz_dwureczny",
+   "grupa": "miecz_dwureczny",
+   "rasa": "Nieumarły",
+   "nazwa": "Ostrze kurhanu",
+   "rodz": "n",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_NIN_SZTYLET_1",
+   "typ": "DAGGER",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "sztylet",
+   "grupa": "sztylet",
+   "rasa": null,
+   "nazwa": "Kordzik",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_SZTYLET_2",
+   "typ": "DAGGER",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "sztylet",
+   "grupa": "sztylet",
+   "rasa": null,
+   "nazwa": "Sztylet",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_SZTYLET_3",
+   "typ": "DAGGER",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "sztylet",
+   "grupa": "sztylet",
+   "rasa": null,
+   "nazwa": "Mizerykordia",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_SZTYLET_4",
+   "typ": "DAGGER",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "sztylet",
+   "grupa": "sztylet",
+   "rasa": null,
+   "nazwa": "Sztylet jadowity",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_SZTYLET_5",
+   "typ": "DAGGER",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "sztylet",
+   "grupa": "sztylet",
+   "rasa": null,
+   "nazwa": "Kieł nocy",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LUK_1",
+   "typ": "BOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk",
+   "grupa": "luk",
+   "rasa": null,
+   "nazwa": "Łuk krótki",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LUK_2",
+   "typ": "BOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk",
+   "grupa": "luk",
+   "rasa": null,
+   "nazwa": "Łuk refleksyjny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LUK_3",
+   "typ": "BOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk",
+   "grupa": "luk",
+   "rasa": null,
+   "nazwa": "Łuk tropiciela",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LUK_4",
+   "typ": "BOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk",
+   "grupa": "luk",
+   "rasa": null,
+   "nazwa": "Łuk kompozytowy",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LUK_5",
+   "typ": "BOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk",
+   "grupa": "luk",
+   "rasa": null,
+   "nazwa": "Łuk cienia",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_KUSZA_1",
+   "typ": "CROSSBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "kusza",
+   "grupa": "kusza",
+   "rasa": "Człowiek",
+   "nazwa": "Kusza ręczna",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_KUSZA_2",
+   "typ": "CROSSBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "kusza",
+   "grupa": "kusza",
+   "rasa": "Człowiek",
+   "nazwa": "Kusza wojskowa",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_KUSZA_3",
+   "typ": "CROSSBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "kusza",
+   "grupa": "kusza",
+   "rasa": "Człowiek",
+   "nazwa": "Arbalet",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_KUSZA_4",
+   "typ": "CROSSBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "kusza",
+   "grupa": "kusza",
+   "rasa": "Człowiek",
+   "nazwa": "Kusza z zapadką",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_KUSZA_5",
+   "typ": "CROSSBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "kusza",
+   "grupa": "kusza",
+   "rasa": "Człowiek",
+   "nazwa": "Kusza oblężnicza",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LUK_DLUGI_1",
+   "typ": "GREATBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk_dlugi",
+   "grupa": "luk_dlugi",
+   "rasa": "Elf",
+   "nazwa": "Łuk długi",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_NIN_LUK_DLUGI_2",
+   "typ": "GREATBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk_dlugi",
+   "grupa": "luk_dlugi",
+   "rasa": "Elf",
+   "nazwa": "Łuk z cisu",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_NIN_LUK_DLUGI_3",
+   "typ": "GREATBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk_dlugi",
+   "grupa": "luk_dlugi",
+   "rasa": "Elf",
+   "nazwa": "Łuk wierzbowy",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_NIN_LUK_DLUGI_4",
+   "typ": "GREATBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk_dlugi",
+   "grupa": "luk_dlugi",
+   "rasa": "Elf",
+   "nazwa": "Łuk z rogu",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_NIN_LUK_DLUGI_5",
+   "typ": "GREATBOW",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "luk_dlugi",
+   "grupa": "luk_dlugi",
+   "rasa": "Elf",
+   "nazwa": "Łuk księżyca",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_NIN_WLOCZNIA_1",
+   "typ": "SPEAR",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "wlocznia",
+   "grupa": "wlocznia",
+   "rasa": "Ork",
+   "nazwa": "Oszczep myśliwski",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_WLOCZNIA_2",
+   "typ": "SPEAR",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "wlocznia",
+   "grupa": "wlocznia",
+   "rasa": "Ork",
+   "nazwa": "Włócznia stepowa",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_WLOCZNIA_3",
+   "typ": "SPEAR",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "wlocznia",
+   "grupa": "wlocznia",
+   "rasa": "Ork",
+   "nazwa": "Dzida",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_WLOCZNIA_4",
+   "typ": "SPEAR",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "wlocznia",
+   "grupa": "wlocznia",
+   "rasa": "Ork",
+   "nazwa": "Włócznia z kości",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_WLOCZNIA_5",
+   "typ": "SPEAR",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "wlocznia",
+   "grupa": "wlocznia",
+   "rasa": "Ork",
+   "nazwa": "Grot stepowy",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LANCUCH_1",
+   "typ": "WHIP",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "lancuch",
+   "grupa": "lancuch",
+   "rasa": "Nieumarły",
+   "nazwa": "Łańcuch więzienny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LANCUCH_2",
+   "typ": "WHIP",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "lancuch",
+   "grupa": "lancuch",
+   "rasa": "Nieumarły",
+   "nazwa": "Kiścień",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LANCUCH_3",
+   "typ": "WHIP",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "lancuch",
+   "grupa": "lancuch",
+   "rasa": "Nieumarły",
+   "nazwa": "Łańcuch z hakiem",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LANCUCH_4",
+   "typ": "WHIP",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "lancuch",
+   "grupa": "lancuch",
+   "rasa": "Nieumarły",
+   "nazwa": "Łańcuch żałobny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_NIN_LANCUCH_5",
+   "typ": "WHIP",
+   "arch": "nin",
+   "slot": "BRON",
+   "rodzaj": "lancuch",
+   "grupa": "lancuch",
+   "rasa": "Nieumarły",
+   "nazwa": "Okowy ciszy",
+   "rodz": "p",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_ROZDZKA_1",
+   "typ": "WAND",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "rozdzka",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Różdżka z leszczyny",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_ROZDZKA_2",
+   "typ": "WAND",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "rozdzka",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Różdżka runiczna",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_ROZDZKA_3",
+   "typ": "WAND",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "rozdzka",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Różdżka iskier",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_ROZDZKA_4",
+   "typ": "WAND",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "rozdzka",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Różdżka szronu",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_ROZDZKA_5",
+   "typ": "WAND",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "rozdzka",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Berło adepta",
+   "rodz": "n",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_1",
+   "typ": "STAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Kostur wędrowca",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_2",
+   "typ": "STAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Kostur runiczny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_3",
+   "typ": "STAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Kostur żaru",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_4",
+   "typ": "STAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Kostur burzy",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_5",
+   "typ": "STAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur",
+   "grupa": "kostur",
+   "rasa": null,
+   "nazwa": "Laska arcymaga",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_GRIMUAR_1",
+   "typ": "TOME",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "grimuar",
+   "grupa": "grimuar",
+   "rasa": "Człowiek",
+   "nazwa": "Księga zaklęć",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_GRIMUAR_2",
+   "typ": "TOME",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "grimuar",
+   "grupa": "grimuar",
+   "rasa": "Człowiek",
+   "nazwa": "Grimuar żywiołów",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_GRIMUAR_3",
+   "typ": "TOME",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "grimuar",
+   "grupa": "grimuar",
+   "rasa": "Człowiek",
+   "nazwa": "Kodeks wieży",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_GRIMUAR_4",
+   "typ": "TOME",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "grimuar",
+   "grupa": "grimuar",
+   "rasa": "Człowiek",
+   "nazwa": "Foliał czasu",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_GRIMUAR_5",
+   "typ": "TOME",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "grimuar",
+   "grupa": "grimuar",
+   "rasa": "Człowiek",
+   "nazwa": "Księga świtu",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_DWURECZNY_1",
+   "typ": "GREATSTAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur_dwureczny",
+   "grupa": "kostur_dwureczny",
+   "rasa": "Elf",
+   "nazwa": "Kostur z jesionu",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_DWURECZNY_2",
+   "typ": "GREATSTAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur_dwureczny",
+   "grupa": "kostur_dwureczny",
+   "rasa": "Elf",
+   "nazwa": "Kostur gaju",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_DWURECZNY_3",
+   "typ": "GREATSTAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur_dwureczny",
+   "grupa": "kostur_dwureczny",
+   "rasa": "Elf",
+   "nazwa": "Laska zwierciadeł",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_DWURECZNY_4",
+   "typ": "GREATSTAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur_dwureczny",
+   "grupa": "kostur_dwureczny",
+   "rasa": "Elf",
+   "nazwa": "Kostur pieśni burz",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_MAG_KOSTUR_DWURECZNY_5",
+   "typ": "GREATSTAFF",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "kostur_dwureczny",
+   "grupa": "kostur_dwureczny",
+   "rasa": "Elf",
+   "nazwa": "Kostur starszyzny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_MAG_TOTEM_1",
+   "typ": "TALISMAN",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "totem",
+   "grupa": "totem",
+   "rasa": "Ork",
+   "nazwa": "Totem kości",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_TOTEM_2",
+   "typ": "TALISMAN",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "totem",
+   "grupa": "totem",
+   "rasa": "Ork",
+   "nazwa": "Totem wilka",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_TOTEM_3",
+   "typ": "TALISMAN",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "totem",
+   "grupa": "totem",
+   "rasa": "Ork",
+   "nazwa": "Bęben wojenny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_TOTEM_4",
+   "typ": "TALISMAN",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "totem",
+   "grupa": "totem",
+   "rasa": "Ork",
+   "nazwa": "Totem burzy",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_TOTEM_5",
+   "typ": "TALISMAN",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "totem",
+   "grupa": "totem",
+   "rasa": "Ork",
+   "nazwa": "Totem przodków",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_FILAKTERIUM_1",
+   "typ": "FILAKTERIUM",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "filakterium",
+   "grupa": "filakterium",
+   "rasa": "Nieumarły",
+   "nazwa": "Urna popiołów",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_FILAKTERIUM_2",
+   "typ": "FILAKTERIUM",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "filakterium",
+   "grupa": "filakterium",
+   "rasa": "Nieumarły",
+   "nazwa": "Filakterium zarazy",
+   "rodz": "n",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_FILAKTERIUM_3",
+   "typ": "FILAKTERIUM",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "filakterium",
+   "grupa": "filakterium",
+   "rasa": "Nieumarły",
+   "nazwa": "Czaszka lisza",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_FILAKTERIUM_4",
+   "typ": "FILAKTERIUM",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "filakterium",
+   "grupa": "filakterium",
+   "rasa": "Nieumarły",
+   "nazwa": "Serce krypty",
+   "rodz": "n",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_MAG_FILAKTERIUM_5",
+   "typ": "FILAKTERIUM",
+   "arch": "mag",
+   "slot": "BRON",
+   "rodzaj": "filakterium",
+   "grupa": "filakterium",
+   "rasa": "Nieumarły",
+   "nazwa": "Filakterium ciszy",
+   "rodz": "n",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_BULAWA_1",
+   "typ": "HAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "bulawa",
+   "grupa": "bulawa",
+   "rasa": null,
+   "nazwa": "Kropacz",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_BULAWA_2",
+   "typ": "HAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "bulawa",
+   "grupa": "bulawa",
+   "rasa": null,
+   "nazwa": "Buława",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_BULAWA_3",
+   "typ": "HAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "bulawa",
+   "grupa": "bulawa",
+   "rasa": null,
+   "nazwa": "Pernacz",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_BULAWA_4",
+   "typ": "HAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "bulawa",
+   "grupa": "bulawa",
+   "rasa": null,
+   "nazwa": "Buława kolczasta",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_BULAWA_5",
+   "typ": "HAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "bulawa",
+   "grupa": "bulawa",
+   "rasa": null,
+   "nazwa": "Gwiazda poranna",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_TARCZA_1",
+   "typ": "SHIELD",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "tarcza",
+   "grupa": "tarcza",
+   "rasa": "Człowiek",
+   "nazwa": "Puklerz",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_TARCZA_2",
+   "typ": "SHIELD",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "tarcza",
+   "grupa": "tarcza",
+   "rasa": "Człowiek",
+   "nazwa": "Tarcza okuta",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_TARCZA_3",
+   "typ": "SHIELD",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "tarcza",
+   "grupa": "tarcza",
+   "rasa": "Człowiek",
+   "nazwa": "Pawęż",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_TARCZA_4",
+   "typ": "SHIELD",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "tarcza",
+   "grupa": "tarcza",
+   "rasa": "Człowiek",
+   "nazwa": "Tarcza z relikwią",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_TARCZA_5",
+   "typ": "SHIELD",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "tarcza",
+   "grupa": "tarcza",
+   "rasa": "Człowiek",
+   "nazwa": "Tarcza świętych",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_SIERP_1",
+   "typ": "SIERP",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "sierp",
+   "grupa": "sierp",
+   "rasa": "Elf",
+   "nazwa": "Sierp żniwny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_SIERP_2",
+   "typ": "SIERP",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "sierp",
+   "grupa": "sierp",
+   "rasa": "Elf",
+   "nazwa": "Sierp srebrny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_SIERP_3",
+   "typ": "SIERP",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "sierp",
+   "grupa": "sierp",
+   "rasa": "Elf",
+   "nazwa": "Sierp księżyca",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_SIERP_4",
+   "typ": "SIERP",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "sierp",
+   "grupa": "sierp",
+   "rasa": "Elf",
+   "nazwa": "Sierp rytualny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_SIERP_5",
+   "typ": "SIERP",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "sierp",
+   "grupa": "sierp",
+   "rasa": "Elf",
+   "nazwa": "Półksiężyc",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": false
+  },
+  {
+   "id": "PRZ_AKO_MLOT_DWURECZNY_1",
+   "typ": "GREATHAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "mlot_dwureczny",
+   "grupa": "mlot_dwureczny",
+   "rasa": "Ork",
+   "nazwa": "Młot kapłański",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_MLOT_DWURECZNY_2",
+   "typ": "GREATHAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "mlot_dwureczny",
+   "grupa": "mlot_dwureczny",
+   "rasa": "Ork",
+   "nazwa": "Młot krwi",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_MLOT_DWURECZNY_3",
+   "typ": "GREATHAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "mlot_dwureczny",
+   "grupa": "mlot_dwureczny",
+   "rasa": "Ork",
+   "nazwa": "Młot przodków",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_MLOT_DWURECZNY_4",
+   "typ": "GREATHAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "mlot_dwureczny",
+   "grupa": "mlot_dwureczny",
+   "rasa": "Ork",
+   "nazwa": "Młot wojenny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_MLOT_DWURECZNY_5",
+   "typ": "GREATHAMMER",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "mlot_dwureczny",
+   "grupa": "mlot_dwureczny",
+   "rasa": "Ork",
+   "nazwa": "Młot kurhanu",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_KOSA_1",
+   "typ": "KOSA",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "kosa",
+   "grupa": "kosa",
+   "rasa": "Nieumarły",
+   "nazwa": "Kosa żniwiarza",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "bron",
+   "baza": 1,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_KOSA_2",
+   "typ": "KOSA",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "kosa",
+   "grupa": "kosa",
+   "rasa": "Nieumarły",
+   "nazwa": "Kosa grobowa",
+   "rodz": "f",
+   "poziom": 3,
+   "kat": "bron",
+   "baza": 2,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_KOSA_3",
+   "typ": "KOSA",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "kosa",
+   "grupa": "kosa",
+   "rasa": "Nieumarły",
+   "nazwa": "Kosa ciszy",
+   "rodz": "f",
+   "poziom": 5,
+   "kat": "bron",
+   "baza": 3,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_KOSA_4",
+   "typ": "KOSA",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "kosa",
+   "grupa": "kosa",
+   "rasa": "Nieumarły",
+   "nazwa": "Kosa cmentarna",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "bron",
+   "baza": 4,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_AKO_KOSA_5",
+   "typ": "KOSA",
+   "arch": "ako",
+   "slot": "BRON",
+   "rodzaj": "kosa",
+   "grupa": "kosa",
+   "rasa": "Nieumarły",
+   "nazwa": "Kosa otchłani",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "bron",
+   "baza": 5,
+   "dwureczna": true
+  },
+  {
+   "id": "PRZ_WOJ_NECKLACE_1",
+   "typ": "NECKLACE",
+   "arch": "woj",
+   "slot": "NECKLACE",
+   "nazwa": "Rzemyk stalowy",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_NECKLACE_2",
+   "typ": "NECKLACE",
+   "arch": "woj",
+   "slot": "NECKLACE",
+   "nazwa": "Naszyjnik stalowy",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_NECKLACE_3",
+   "typ": "NECKLACE",
+   "arch": "woj",
+   "slot": "NECKLACE",
+   "nazwa": "Amulet stalowy",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_NECKLACE_4",
+   "typ": "NECKLACE",
+   "arch": "woj",
+   "slot": "NECKLACE",
+   "nazwa": "Wisior stalowy",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_NECKLACE_5",
+   "typ": "NECKLACE",
+   "arch": "woj",
+   "slot": "NECKLACE",
+   "nazwa": "Medalion stalowy",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_RING_1",
+   "typ": "RING",
+   "arch": "woj",
+   "slot": "RING",
+   "nazwa": "Obrączka stalowa",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_RING_2",
+   "typ": "RING",
+   "arch": "woj",
+   "slot": "RING",
+   "nazwa": "Pierścień stalowy",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_RING_3",
+   "typ": "RING",
+   "arch": "woj",
+   "slot": "RING",
+   "nazwa": "Sygnet stalowy",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_RING_4",
+   "typ": "RING",
+   "arch": "woj",
+   "slot": "RING",
+   "nazwa": "Pierścień z oczkiem stalowy",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_RING_5",
+   "typ": "RING",
+   "arch": "woj",
+   "slot": "RING",
+   "nazwa": "Pierścień pieczętny stalowy",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_GLOVES_1",
+   "typ": "GLOVES",
+   "arch": "woj",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice stalowe",
+   "rodz": "p",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_GLOVES_2",
+   "typ": "GLOVES",
+   "arch": "woj",
+   "slot": "GLOVES",
+   "nazwa": "Mitenki stalowe",
+   "rodz": "p",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_GLOVES_3",
+   "typ": "GLOVES",
+   "arch": "woj",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice okute stalowe",
+   "rodz": "p",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_GLOVES_4",
+   "typ": "GLOVES",
+   "arch": "woj",
+   "slot": "GLOVES",
+   "nazwa": "Karwasze stalowe",
+   "rodz": "p",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_GLOVES_5",
+   "typ": "GLOVES",
+   "arch": "woj",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice wysadzane stalowe",
+   "rodz": "p",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_BELT_1",
+   "typ": "BELT",
+   "arch": "woj",
+   "slot": "BELT",
+   "nazwa": "Rzemień stalowy",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_BELT_2",
+   "typ": "BELT",
+   "arch": "woj",
+   "slot": "BELT",
+   "nazwa": "Pas stalowy",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_BELT_3",
+   "typ": "BELT",
+   "arch": "woj",
+   "slot": "BELT",
+   "nazwa": "Pas z sakwami stalowy",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_BELT_4",
+   "typ": "BELT",
+   "arch": "woj",
+   "slot": "BELT",
+   "nazwa": "Pas bojowy stalowy",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_BELT_5",
+   "typ": "BELT",
+   "arch": "woj",
+   "slot": "BELT",
+   "nazwa": "Pas z klamrą stalowy",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_WOJ_CHARM_1",
+   "typ": "CHARM",
+   "arch": "woj",
+   "slot": "CHARM",
+   "nazwa": "Talizman stalowy",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_WOJ_CHARM_2",
+   "typ": "CHARM",
+   "arch": "woj",
+   "slot": "CHARM",
+   "nazwa": "Amulet ochronny stalowy",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_WOJ_CHARM_3",
+   "typ": "CHARM",
+   "arch": "woj",
+   "slot": "CHARM",
+   "nazwa": "Znak stalowy",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_WOJ_CHARM_4",
+   "typ": "CHARM",
+   "arch": "woj",
+   "slot": "CHARM",
+   "nazwa": "Relikwia stalowa",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_WOJ_CHARM_5",
+   "typ": "CHARM",
+   "arch": "woj",
+   "slot": "CHARM",
+   "nazwa": "Pieczęć stalowa",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_NECKLACE_1",
+   "typ": "NECKLACE",
+   "arch": "nin",
+   "slot": "NECKLACE",
+   "nazwa": "Rzemyk czarny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_NECKLACE_2",
+   "typ": "NECKLACE",
+   "arch": "nin",
+   "slot": "NECKLACE",
+   "nazwa": "Naszyjnik czarny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_NECKLACE_3",
+   "typ": "NECKLACE",
+   "arch": "nin",
+   "slot": "NECKLACE",
+   "nazwa": "Amulet czarny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_NECKLACE_4",
+   "typ": "NECKLACE",
+   "arch": "nin",
+   "slot": "NECKLACE",
+   "nazwa": "Wisior czarny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_NECKLACE_5",
+   "typ": "NECKLACE",
+   "arch": "nin",
+   "slot": "NECKLACE",
+   "nazwa": "Medalion czarny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_RING_1",
+   "typ": "RING",
+   "arch": "nin",
+   "slot": "RING",
+   "nazwa": "Obrączka czarna",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_RING_2",
+   "typ": "RING",
+   "arch": "nin",
+   "slot": "RING",
+   "nazwa": "Pierścień czarny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_RING_3",
+   "typ": "RING",
+   "arch": "nin",
+   "slot": "RING",
+   "nazwa": "Sygnet czarny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_RING_4",
+   "typ": "RING",
+   "arch": "nin",
+   "slot": "RING",
+   "nazwa": "Pierścień z oczkiem czarny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_RING_5",
+   "typ": "RING",
+   "arch": "nin",
+   "slot": "RING",
+   "nazwa": "Pierścień pieczętny czarny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_GLOVES_1",
+   "typ": "GLOVES",
+   "arch": "nin",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice czarne",
+   "rodz": "p",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_GLOVES_2",
+   "typ": "GLOVES",
+   "arch": "nin",
+   "slot": "GLOVES",
+   "nazwa": "Mitenki czarne",
+   "rodz": "p",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_GLOVES_3",
+   "typ": "GLOVES",
+   "arch": "nin",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice okute czarne",
+   "rodz": "p",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_GLOVES_4",
+   "typ": "GLOVES",
+   "arch": "nin",
+   "slot": "GLOVES",
+   "nazwa": "Karwasze czarne",
+   "rodz": "p",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_GLOVES_5",
+   "typ": "GLOVES",
+   "arch": "nin",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice wysadzane czarne",
+   "rodz": "p",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_BELT_1",
+   "typ": "BELT",
+   "arch": "nin",
+   "slot": "BELT",
+   "nazwa": "Rzemień czarny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_BELT_2",
+   "typ": "BELT",
+   "arch": "nin",
+   "slot": "BELT",
+   "nazwa": "Pas czarny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_BELT_3",
+   "typ": "BELT",
+   "arch": "nin",
+   "slot": "BELT",
+   "nazwa": "Pas z sakwami czarny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_BELT_4",
+   "typ": "BELT",
+   "arch": "nin",
+   "slot": "BELT",
+   "nazwa": "Pas bojowy czarny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_BELT_5",
+   "typ": "BELT",
+   "arch": "nin",
+   "slot": "BELT",
+   "nazwa": "Pas z klamrą czarny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_NIN_CHARM_1",
+   "typ": "CHARM",
+   "arch": "nin",
+   "slot": "CHARM",
+   "nazwa": "Talizman czarny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_NIN_CHARM_2",
+   "typ": "CHARM",
+   "arch": "nin",
+   "slot": "CHARM",
+   "nazwa": "Amulet ochronny czarny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_NIN_CHARM_3",
+   "typ": "CHARM",
+   "arch": "nin",
+   "slot": "CHARM",
+   "nazwa": "Znak czarny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_NIN_CHARM_4",
+   "typ": "CHARM",
+   "arch": "nin",
+   "slot": "CHARM",
+   "nazwa": "Relikwia czarna",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_NIN_CHARM_5",
+   "typ": "CHARM",
+   "arch": "nin",
+   "slot": "CHARM",
+   "nazwa": "Pieczęć czarna",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_NECKLACE_1",
+   "typ": "NECKLACE",
+   "arch": "mag",
+   "slot": "NECKLACE",
+   "nazwa": "Rzemyk srebrny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_NECKLACE_2",
+   "typ": "NECKLACE",
+   "arch": "mag",
+   "slot": "NECKLACE",
+   "nazwa": "Naszyjnik srebrny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_NECKLACE_3",
+   "typ": "NECKLACE",
+   "arch": "mag",
+   "slot": "NECKLACE",
+   "nazwa": "Amulet srebrny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_NECKLACE_4",
+   "typ": "NECKLACE",
+   "arch": "mag",
+   "slot": "NECKLACE",
+   "nazwa": "Wisior srebrny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_NECKLACE_5",
+   "typ": "NECKLACE",
+   "arch": "mag",
+   "slot": "NECKLACE",
+   "nazwa": "Medalion srebrny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_RING_1",
+   "typ": "RING",
+   "arch": "mag",
+   "slot": "RING",
+   "nazwa": "Obrączka srebrna",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_RING_2",
+   "typ": "RING",
+   "arch": "mag",
+   "slot": "RING",
+   "nazwa": "Pierścień srebrny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_RING_3",
+   "typ": "RING",
+   "arch": "mag",
+   "slot": "RING",
+   "nazwa": "Sygnet srebrny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_RING_4",
+   "typ": "RING",
+   "arch": "mag",
+   "slot": "RING",
+   "nazwa": "Pierścień z oczkiem srebrny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_RING_5",
+   "typ": "RING",
+   "arch": "mag",
+   "slot": "RING",
+   "nazwa": "Pierścień pieczętny srebrny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_GLOVES_1",
+   "typ": "GLOVES",
+   "arch": "mag",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice srebrne",
+   "rodz": "p",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_GLOVES_2",
+   "typ": "GLOVES",
+   "arch": "mag",
+   "slot": "GLOVES",
+   "nazwa": "Mitenki srebrne",
+   "rodz": "p",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_GLOVES_3",
+   "typ": "GLOVES",
+   "arch": "mag",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice okute srebrne",
+   "rodz": "p",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_GLOVES_4",
+   "typ": "GLOVES",
+   "arch": "mag",
+   "slot": "GLOVES",
+   "nazwa": "Karwasze srebrne",
+   "rodz": "p",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_GLOVES_5",
+   "typ": "GLOVES",
+   "arch": "mag",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice wysadzane srebrne",
+   "rodz": "p",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_BELT_1",
+   "typ": "BELT",
+   "arch": "mag",
+   "slot": "BELT",
+   "nazwa": "Rzemień srebrny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_BELT_2",
+   "typ": "BELT",
+   "arch": "mag",
+   "slot": "BELT",
+   "nazwa": "Pas srebrny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_BELT_3",
+   "typ": "BELT",
+   "arch": "mag",
+   "slot": "BELT",
+   "nazwa": "Pas z sakwami srebrny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_BELT_4",
+   "typ": "BELT",
+   "arch": "mag",
+   "slot": "BELT",
+   "nazwa": "Pas bojowy srebrny",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_BELT_5",
+   "typ": "BELT",
+   "arch": "mag",
+   "slot": "BELT",
+   "nazwa": "Pas z klamrą srebrny",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_MAG_CHARM_1",
+   "typ": "CHARM",
+   "arch": "mag",
+   "slot": "CHARM",
+   "nazwa": "Talizman srebrny",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_MAG_CHARM_2",
+   "typ": "CHARM",
+   "arch": "mag",
+   "slot": "CHARM",
+   "nazwa": "Amulet ochronny srebrny",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_MAG_CHARM_3",
+   "typ": "CHARM",
+   "arch": "mag",
+   "slot": "CHARM",
+   "nazwa": "Znak srebrny",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_MAG_CHARM_4",
+   "typ": "CHARM",
+   "arch": "mag",
+   "slot": "CHARM",
+   "nazwa": "Relikwia srebrna",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_MAG_CHARM_5",
+   "typ": "CHARM",
+   "arch": "mag",
+   "slot": "CHARM",
+   "nazwa": "Pieczęć srebrna",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_NECKLACE_1",
+   "typ": "NECKLACE",
+   "arch": "ako",
+   "slot": "NECKLACE",
+   "nazwa": "Rzemyk kościany",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_NECKLACE_2",
+   "typ": "NECKLACE",
+   "arch": "ako",
+   "slot": "NECKLACE",
+   "nazwa": "Naszyjnik kościany",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_NECKLACE_3",
+   "typ": "NECKLACE",
+   "arch": "ako",
+   "slot": "NECKLACE",
+   "nazwa": "Amulet kościany",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_NECKLACE_4",
+   "typ": "NECKLACE",
+   "arch": "ako",
+   "slot": "NECKLACE",
+   "nazwa": "Wisior kościany",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_NECKLACE_5",
+   "typ": "NECKLACE",
+   "arch": "ako",
+   "slot": "NECKLACE",
+   "nazwa": "Medalion kościany",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_RING_1",
+   "typ": "RING",
+   "arch": "ako",
+   "slot": "RING",
+   "nazwa": "Obrączka kościana",
+   "rodz": "f",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_RING_2",
+   "typ": "RING",
+   "arch": "ako",
+   "slot": "RING",
+   "nazwa": "Pierścień kościany",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_RING_3",
+   "typ": "RING",
+   "arch": "ako",
+   "slot": "RING",
+   "nazwa": "Sygnet kościany",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_RING_4",
+   "typ": "RING",
+   "arch": "ako",
+   "slot": "RING",
+   "nazwa": "Pierścień z oczkiem kościany",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_RING_5",
+   "typ": "RING",
+   "arch": "ako",
+   "slot": "RING",
+   "nazwa": "Pierścień pieczętny kościany",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_GLOVES_1",
+   "typ": "GLOVES",
+   "arch": "ako",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice kościane",
+   "rodz": "p",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_GLOVES_2",
+   "typ": "GLOVES",
+   "arch": "ako",
+   "slot": "GLOVES",
+   "nazwa": "Mitenki kościane",
+   "rodz": "p",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_GLOVES_3",
+   "typ": "GLOVES",
+   "arch": "ako",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice okute kościane",
+   "rodz": "p",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_GLOVES_4",
+   "typ": "GLOVES",
+   "arch": "ako",
+   "slot": "GLOVES",
+   "nazwa": "Karwasze kościane",
+   "rodz": "p",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_GLOVES_5",
+   "typ": "GLOVES",
+   "arch": "ako",
+   "slot": "GLOVES",
+   "nazwa": "Rękawice wysadzane kościane",
+   "rodz": "p",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_BELT_1",
+   "typ": "BELT",
+   "arch": "ako",
+   "slot": "BELT",
+   "nazwa": "Rzemień kościany",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_BELT_2",
+   "typ": "BELT",
+   "arch": "ako",
+   "slot": "BELT",
+   "nazwa": "Pas kościany",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_BELT_3",
+   "typ": "BELT",
+   "arch": "ako",
+   "slot": "BELT",
+   "nazwa": "Pas z sakwami kościany",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_BELT_4",
+   "typ": "BELT",
+   "arch": "ako",
+   "slot": "BELT",
+   "nazwa": "Pas bojowy kościany",
+   "rodz": "m",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_BELT_5",
+   "typ": "BELT",
+   "arch": "ako",
+   "slot": "BELT",
+   "nazwa": "Pas z klamrą kościany",
+   "rodz": "m",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  },
+  {
+   "id": "PRZ_AKO_CHARM_1",
+   "typ": "CHARM",
+   "arch": "ako",
+   "slot": "CHARM",
+   "nazwa": "Talizman kościany",
+   "rodz": "m",
+   "poziom": 1,
+   "kat": "ozdoba",
+   "baza": 1
+  },
+  {
+   "id": "PRZ_AKO_CHARM_2",
+   "typ": "CHARM",
+   "arch": "ako",
+   "slot": "CHARM",
+   "nazwa": "Amulet ochronny kościany",
+   "rodz": "m",
+   "poziom": 3,
+   "kat": "ozdoba",
+   "baza": 2
+  },
+  {
+   "id": "PRZ_AKO_CHARM_3",
+   "typ": "CHARM",
+   "arch": "ako",
+   "slot": "CHARM",
+   "nazwa": "Znak kościany",
+   "rodz": "m",
+   "poziom": 5,
+   "kat": "ozdoba",
+   "baza": 3
+  },
+  {
+   "id": "PRZ_AKO_CHARM_4",
+   "typ": "CHARM",
+   "arch": "ako",
+   "slot": "CHARM",
+   "nazwa": "Relikwia kościana",
+   "rodz": "f",
+   "poziom": 7,
+   "kat": "ozdoba",
+   "baza": 4
+  },
+  {
+   "id": "PRZ_AKO_CHARM_5",
+   "typ": "CHARM",
+   "arch": "ako",
+   "slot": "CHARM",
+   "nazwa": "Pieczęć kościana",
+   "rodz": "f",
+   "poziom": 10,
+   "kat": "ozdoba",
+   "baza": 5
+  }
+ ],
+ "sety": [
+  {
+   "id": "SLUB_ZELAZNEJ_STRAZY",
+   "arch": "woj",
+   "nazwa": "Ślub Żelaznej Straży",
+   "poziom": 5,
+   "czesci": [
+    {
+     "id": "PRZ_SET_SLUB_ZELAZNEJ_STRAZY_HELM",
+     "typ": "ARMOR",
+     "slot": "HELM",
+     "nazwa": "Hełm ślubowania"
+    },
+    {
+     "id": "PRZ_SET_SLUB_ZELAZNEJ_STRAZY_KLATA",
+     "typ": "ARMOR",
+     "slot": "KLATA",
+     "nazwa": "Kolczuga ślubowania"
+    },
+    {
+     "id": "PRZ_SET_SLUB_ZELAZNEJ_STRAZY_NOGI",
+     "typ": "ARMOR",
+     "slot": "NOGI",
+     "nazwa": "Nagolenniki ślubowania"
+    },
+    {
+     "id": "PRZ_SET_SLUB_ZELAZNEJ_STRAZY_BUTY",
+     "typ": "ARMOR",
+     "slot": "BUTY",
+     "nazwa": "Sabatony ślubowania"
+    }
+   ],
+   "progi": {
+    "2": "+4 życia, +2 pancerza",
+    "4": "-5% otrzymywanych obrażeń; gdy obrywasz, co 12 s fala uderzeniowa odrzuca wrogów"
+   },
+   "docelowo": "4 cz.: przyjęty cios daje podwójny Szał",
+   "bonusy": {
+    "2": {
+     "max-health": 4,
+     "armor": 2
+    },
+    "4": {
+     "damage-reduction": 5,
+     "ability": [
+      "SHOCKWAVE",
+      "WHEN_HIT",
+      12
+     ]
+    }
+   }
+  },
+  {
+   "id": "REGALIA_PIERWSZEGO_WODZA",
+   "arch": "woj",
+   "nazwa": "Regalia Pierwszego Wodza",
+   "poziom": 10,
+   "czesci": [
+    {
+     "id": "PRZ_SET_REGALIA_PIERWSZEGO_WODZA_BRON",
+     "typ": "SWORD",
+     "slot": "BRON",
+     "nazwa": "Miecz Pierwszego Wodza"
+    },
+    {
+     "id": "PRZ_SET_REGALIA_PIERWSZEGO_WODZA_NECKLACE",
+     "typ": "NECKLACE",
+     "slot": "NECKLACE",
+     "nazwa": "Naszyjnik Pierwszego Wodza"
+    },
+    {
+     "id": "PRZ_SET_REGALIA_PIERWSZEGO_WODZA_RING",
+     "typ": "RING",
+     "slot": "RING",
+     "nazwa": "Sygnet Pierwszego Wodza"
+    },
+    {
+     "id": "PRZ_SET_REGALIA_PIERWSZEGO_WODZA_CHARM",
+     "typ": "CHARM",
+     "slot": "CHARM",
+     "nazwa": "Znak Pierwszego Wodza"
+    }
+   ],
+   "progi": {
+    "2": "+6% obrażeń fizycznych",
+    "3": "+12% mocy krytyka, +4 życia",
+    "4": "co 6 s trafienie zadaje głęboką ranę (krwawienie)"
+   },
+   "docelowo": "4 cz.: po wydaniu 100 Szału następny cios ogłusza",
+   "bonusy": {
+    "2": {
+     "physical-damage": 6
+    },
+    "3": {
+     "critical-strike-power": 12,
+     "max-health": 4
+    },
+    "4": {
+     "ability": [
+      "DEEP_WOUND",
+      "ON_HIT",
+      6
+     ]
+    }
+   }
+  },
+  {
+   "id": "CALUN_NOCNEGO_LISA",
+   "arch": "nin",
+   "nazwa": "Całun Nocnego Lisa",
+   "poziom": 5,
+   "czesci": [
+    {
+     "id": "PRZ_SET_CALUN_NOCNEGO_LISA_HELM",
+     "typ": "ARMOR",
+     "slot": "HELM",
+     "nazwa": "Kaptur Nocnego Lisa"
+    },
+    {
+     "id": "PRZ_SET_CALUN_NOCNEGO_LISA_KLATA",
+     "typ": "ARMOR",
+     "slot": "KLATA",
+     "nazwa": "Kurta Nocnego Lisa"
+    },
+    {
+     "id": "PRZ_SET_CALUN_NOCNEGO_LISA_NOGI",
+     "typ": "ARMOR",
+     "slot": "NOGI",
+     "nazwa": "Spodnie Nocnego Lisa"
+    },
+    {
+     "id": "PRZ_SET_CALUN_NOCNEGO_LISA_BUTY",
+     "typ": "ARMOR",
+     "slot": "BUTY",
+     "nazwa": "Ciżmy Nocnego Lisa"
+    }
+   ],
+   "progi": {
+    "2": "+5% szansy uniku",
+    "4": "+6% szansy na krytyk, szybszy ruch; gdy obrywasz, co 20 s znikasz w cieniu"
+   },
+   "docelowo": "4 cz.: detonacja 3 Znamion zwraca 20 Skupienia",
+   "bonusy": {
+    "2": {
+     "dodge-rating": 5
+    },
+    "4": {
+     "critical-strike-chance": 6,
+     "movement-speed": 0.01,
+     "ability": [
+      "SHADOW_VEIL",
+      "WHEN_HIT",
+      20
+     ]
+    }
+   }
+  },
+  {
+   "id": "BRACTWO_BEZIMIENNYCH",
+   "arch": "nin",
+   "nazwa": "Bractwo Bezimiennych",
+   "poziom": 10,
+   "czesci": [
+    {
+     "id": "PRZ_SET_BRACTWO_BEZIMIENNYCH_BRON",
+     "typ": "DAGGER",
+     "slot": "BRON",
+     "nazwa": "Kieł Bezimiennych"
+    },
+    {
+     "id": "PRZ_SET_BRACTWO_BEZIMIENNYCH_NECKLACE",
+     "typ": "NECKLACE",
+     "slot": "NECKLACE",
+     "nazwa": "Wisior Bezimiennych"
+    },
+    {
+     "id": "PRZ_SET_BRACTWO_BEZIMIENNYCH_RING",
+     "typ": "RING",
+     "slot": "RING",
+     "nazwa": "Pierścień Bezimiennych"
+    },
+    {
+     "id": "PRZ_SET_BRACTWO_BEZIMIENNYCH_CHARM",
+     "typ": "CHARM",
+     "slot": "CHARM",
+     "nazwa": "Znak Bezimiennych"
+    }
+   ],
+   "progi": {
+    "2": "+4% szansy na krytyk",
+    "3": "+8% obrażeń pocisków, +10% mocy krytyka",
+    "4": "co 5 s trafienie w plecy zadaje podwójne obrażenia"
+   },
+   "docelowo": "4 cz.: trafienie krytyczne nakłada Znamię",
+   "bonusy": {
+    "2": {
+     "critical-strike-chance": 4
+    },
+    "3": {
+     "projectile-damage": 8,
+     "critical-strike-power": 10
+    },
+    "4": {
+     "ability": [
+      "BACKSTAB",
+      "ON_HIT",
+      5
+     ]
+    }
+   }
+  },
+  {
+   "id": "SZATY_KREGU_POPIOLOW",
+   "arch": "mag",
+   "nazwa": "Szaty Kręgu Popiołów",
+   "poziom": 5,
+   "czesci": [
+    {
+     "id": "PRZ_SET_SZATY_KREGU_POPIOLOW_HELM",
+     "typ": "ARMOR",
+     "slot": "HELM",
+     "nazwa": "Kaptur Kręgu Popiołów"
+    },
+    {
+     "id": "PRZ_SET_SZATY_KREGU_POPIOLOW_KLATA",
+     "typ": "ARMOR",
+     "slot": "KLATA",
+     "nazwa": "Szata Kręgu Popiołów"
+    },
+    {
+     "id": "PRZ_SET_SZATY_KREGU_POPIOLOW_NOGI",
+     "typ": "ARMOR",
+     "slot": "NOGI",
+     "nazwa": "Spodnie Kręgu Popiołów"
+    },
+    {
+     "id": "PRZ_SET_SZATY_KREGU_POPIOLOW_BUTY",
+     "typ": "ARMOR",
+     "slot": "BUTY",
+     "nazwa": "Trzewiki Kręgu Popiołów"
+    }
+   ],
+   "progi": {
+    "2": "+8 many, +0,2 regeneracji many",
+    "4": "+10% obrażeń magicznych; co 8 s trafienie wystrzeliwuje ognisty pocisk"
+   },
+   "docelowo": "4 cz.: zaklęcie za ≥40 many ma 25% szansy na darmowe echo",
+   "bonusy": {
+    "2": {
+     "max-mana": 8,
+     "mana-regeneration": 0.2
+    },
+    "4": {
+     "magic-damage": 10,
+     "ability": [
+      "FIREBOLT",
+      "ON_HIT",
+      8
+     ]
+    }
+   }
+  },
+  {
+   "id": "INSYGNIA_WIEZY_SWITU",
+   "arch": "mag",
+   "nazwa": "Insygnia Wieży Świtu",
+   "poziom": 10,
+   "czesci": [
+    {
+     "id": "PRZ_SET_INSYGNIA_WIEZY_SWITU_BRON",
+     "typ": "STAFF",
+     "slot": "BRON",
+     "nazwa": "Kostur Wieży Świtu"
+    },
+    {
+     "id": "PRZ_SET_INSYGNIA_WIEZY_SWITU_NECKLACE",
+     "typ": "NECKLACE",
+     "slot": "NECKLACE",
+     "nazwa": "Medalion Wieży Świtu"
+    },
+    {
+     "id": "PRZ_SET_INSYGNIA_WIEZY_SWITU_RING",
+     "typ": "RING",
+     "slot": "RING",
+     "nazwa": "Pierścień Wieży Świtu"
+    },
+    {
+     "id": "PRZ_SET_INSYGNIA_WIEZY_SWITU_CHARM",
+     "typ": "CHARM",
+     "slot": "CHARM",
+     "nazwa": "Pieczęć Wieży Świtu"
+    }
+   ],
+   "progi": {
+    "2": "-5% czasu odnowienia",
+    "3": "+8% obrażeń magicznych, +6 many",
+    "4": "gdy obrywasz, co 25 s magiczna tarcza pochłania ciosy"
+   },
+   "docelowo": "4 cz.: nadwyżka many ponad maksimum zamienia się w tarczę",
+   "bonusy": {
+    "2": {
+     "cooldown-reduction": 5
+    },
+    "3": {
+     "magic-damage": 8,
+     "max-mana": 6
+    },
+    "4": {
+     "ability": [
+      "MAGICAL_SHIELD",
+      "WHEN_HIT",
+      25
+     ]
+    }
+   }
+  },
+  {
+   "id": "ODZIENIE_PASTERZA_DUSZ",
+   "arch": "ako",
+   "nazwa": "Odzienie Pasterza Dusz",
+   "poziom": 5,
+   "czesci": [
+    {
+     "id": "PRZ_SET_ODZIENIE_PASTERZA_DUSZ_HELM",
+     "typ": "ARMOR",
+     "slot": "HELM",
+     "nazwa": "Kaptur Pasterza Dusz"
+    },
+    {
+     "id": "PRZ_SET_ODZIENIE_PASTERZA_DUSZ_KLATA",
+     "typ": "ARMOR",
+     "slot": "KLATA",
+     "nazwa": "Ornat Pasterza Dusz"
+    },
+    {
+     "id": "PRZ_SET_ODZIENIE_PASTERZA_DUSZ_NOGI",
+     "typ": "ARMOR",
+     "slot": "NOGI",
+     "nazwa": "Spodnie Pasterza Dusz"
+    },
+    {
+     "id": "PRZ_SET_ODZIENIE_PASTERZA_DUSZ_BUTY",
+     "typ": "ARMOR",
+     "slot": "BUTY",
+     "nazwa": "Sandały Pasterza Dusz"
+    }
+   ],
+   "progi": {
+    "2": "+3 życia, +0,1 regeneracji",
+    "4": "+8% obrażeń umiejętności; gdy obrywasz, co 15 s leczysz się"
+   },
+   "docelowo": "4 cz.: śmierć sługi daje Duszę, a sługa wybucha",
+   "bonusy": {
+    "2": {
+     "max-health": 3,
+     "health-regeneration": 0.1
+    },
+    "4": {
+     "skill-damage": 8,
+     "ability": [
+      "MINOR_HEALINGS",
+      "WHEN_HIT",
+      15
+     ]
+    }
+   }
+  },
+  {
+   "id": "RELIKWIARZ_MILCZACYCH",
+   "arch": "ako",
+   "nazwa": "Relikwiarz Milczących",
+   "poziom": 10,
+   "czesci": [
+    {
+     "id": "PRZ_SET_RELIKWIARZ_MILCZACYCH_BRON",
+     "typ": "HAMMER",
+     "slot": "BRON",
+     "nazwa": "Buława Milczących"
+    },
+    {
+     "id": "PRZ_SET_RELIKWIARZ_MILCZACYCH_NECKLACE",
+     "typ": "NECKLACE",
+     "slot": "NECKLACE",
+     "nazwa": "Różaniec Milczących"
+    },
+    {
+     "id": "PRZ_SET_RELIKWIARZ_MILCZACYCH_RING",
+     "typ": "RING",
+     "slot": "RING",
+     "nazwa": "Obrączka Milczących"
+    },
+    {
+     "id": "PRZ_SET_RELIKWIARZ_MILCZACYCH_CHARM",
+     "typ": "CHARM",
+     "slot": "CHARM",
+     "nazwa": "Relikwia Milczących"
+    }
+   ],
+   "progi": {
+    "2": "+6% obrażeń umiejętności",
+    "3": "+4 życia, +2% kradzieży życia",
+    "4": "co 8 s trafienie wysysa życie z wroga"
+   },
+   "docelowo": "4 cz.: +1 maks. sługa, słudzy dziedziczą 20% twojej odporności",
+   "bonusy": {
+    "2": {
+     "skill-damage": 6
+    },
+    "3": {
+     "max-health": 4,
+     "lifesteal": 2
+    },
+    "4": {
+     "ability": [
+      "VAMPIRISM",
+      "ON_HIT",
+      8
+     ]
+    }
+   }
+  }
+ ],
+ "affiksy": {
+  "a_byka": {
+   "typ": "S",
+   "nazwa": "Byka",
+   "stat": "additional-strength",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_celny_m": {
+   "typ": "P",
+   "nazwa": "Celny",
+   "stat": "projectile-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_celny_f": {
+   "typ": "P",
+   "nazwa": "Celna",
+   "stat": "projectile-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_celny_n": {
+   "typ": "P",
+   "nazwa": "Celne",
+   "stat": "projectile-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_chyzy_m": {
+   "typ": "P",
+   "nazwa": "Chyży",
+   "stat": "attack-speed",
+   "wartosci": [
+    0.05,
+    0.1,
+    0.15
+   ],
+   "przyrost": 0.0
+  },
+  "a_chyzy_f": {
+   "typ": "P",
+   "nazwa": "Chyża",
+   "stat": "attack-speed",
+   "wartosci": [
+    0.05,
+    0.1,
+    0.15
+   ],
+   "przyrost": 0.0
+  },
+  "a_chyzy_n": {
+   "typ": "P",
+   "nazwa": "Chyże",
+   "stat": "attack-speed",
+   "wartosci": [
+    0.05,
+    0.1,
+    0.15
+   ],
+   "przyrost": 0.0
+  },
+  "a_cienia": {
+   "typ": "S",
+   "nazwa": "Cienia",
+   "stat": "dodge-rating",
+   "wartosci": [
+    2,
+    3,
+    5
+   ],
+   "przyrost": 0.15
+  },
+  "a_druzgocacy_m": {
+   "typ": "P",
+   "nazwa": "Druzgocący",
+   "stat": "critical-strike-power",
+   "wartosci": [
+    5,
+    9,
+    14
+   ],
+   "przyrost": 0.3
+  },
+  "a_druzgocacy_f": {
+   "typ": "P",
+   "nazwa": "Druzgocąca",
+   "stat": "critical-strike-power",
+   "wartosci": [
+    5,
+    9,
+    14
+   ],
+   "przyrost": 0.3
+  },
+  "a_druzgocacy_n": {
+   "typ": "P",
+   "nazwa": "Druzgocące",
+   "stat": "critical-strike-power",
+   "wartosci": [
+    5,
+    9,
+    14
+   ],
+   "przyrost": 0.3
+  },
+  "a_krwawy_m": {
+   "typ": "P",
+   "nazwa": "Krwawy",
+   "stat": "lifesteal",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.05
+  },
+  "a_krwawy_f": {
+   "typ": "P",
+   "nazwa": "Krwawa",
+   "stat": "lifesteal",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.05
+  },
+  "a_krwawy_n": {
+   "typ": "P",
+   "nazwa": "Krwawe",
+   "stat": "lifesteal",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.05
+  },
+  "a_krzepki_m": {
+   "typ": "P",
+   "nazwa": "Krzepki",
+   "stat": "max-health",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.08
+  },
+  "a_krzepki_f": {
+   "typ": "P",
+   "nazwa": "Krzepka",
+   "stat": "max-health",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.08
+  },
+  "a_krzepki_n": {
+   "typ": "P",
+   "nazwa": "Krzepkie",
+   "stat": "max-health",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.08
+  },
+  "a_lisa": {
+   "typ": "S",
+   "nazwa": "Lisa",
+   "stat": "additional-dexterity",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_medrca": {
+   "typ": "S",
+   "nazwa": "Mędrca",
+   "stat": "cooldown-reduction",
+   "wartosci": [
+    2,
+    4,
+    6
+   ],
+   "przyrost": 0.1
+  },
+  "a_okrutny_m": {
+   "typ": "P",
+   "nazwa": "Okrutny",
+   "stat": "physical-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_okrutny_f": {
+   "typ": "P",
+   "nazwa": "Okrutna",
+   "stat": "physical-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_okrutny_n": {
+   "typ": "P",
+   "nazwa": "Okrutne",
+   "stat": "physical-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_ostry_m": {
+   "typ": "P",
+   "nazwa": "Ostry",
+   "stat": "attack-damage",
+   "wartosci": [
+    0.8,
+    1.4,
+    2.2
+   ],
+   "przyrost": 0.1
+  },
+  "a_ostry_f": {
+   "typ": "P",
+   "nazwa": "Ostra",
+   "stat": "attack-damage",
+   "wartosci": [
+    0.8,
+    1.4,
+    2.2
+   ],
+   "przyrost": 0.1
+  },
+  "a_ostry_n": {
+   "typ": "P",
+   "nazwa": "Ostre",
+   "stat": "attack-damage",
+   "wartosci": [
+    0.8,
+    1.4,
+    2.2
+   ],
+   "przyrost": 0.1
+  },
+  "a_pancerny_m": {
+   "typ": "P",
+   "nazwa": "Pancerny",
+   "stat": "armor",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_pancerny_f": {
+   "typ": "P",
+   "nazwa": "Pancerna",
+   "stat": "armor",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_pancerny_n": {
+   "typ": "P",
+   "nazwa": "Pancerne",
+   "stat": "armor",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_pielgrzyma": {
+   "typ": "S",
+   "nazwa": "Pielgrzyma",
+   "stat": "additional-wiara",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_plynny_m": {
+   "typ": "P",
+   "nazwa": "Płynny",
+   "stat": "mana-regeneration",
+   "wartosci": [
+    0.1,
+    0.2,
+    0.3
+   ],
+   "przyrost": 0.01
+  },
+  "a_plynny_f": {
+   "typ": "P",
+   "nazwa": "Płynna",
+   "stat": "mana-regeneration",
+   "wartosci": [
+    0.1,
+    0.2,
+    0.3
+   ],
+   "przyrost": 0.01
+  },
+  "a_plynny_n": {
+   "typ": "P",
+   "nazwa": "Płynne",
+   "stat": "mana-regeneration",
+   "wartosci": [
+    0.1,
+    0.2,
+    0.3
+   ],
+   "przyrost": 0.01
+  },
+  "a_skaly": {
+   "typ": "S",
+   "nazwa": "Skały",
+   "stat": "knockback-resistance",
+   "wartosci": [
+    0.05,
+    0.1,
+    0.15
+   ],
+   "przyrost": 0.0
+  },
+  "a_sowy": {
+   "typ": "S",
+   "nazwa": "Sowy",
+   "stat": "additional-intelligence",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.1
+  },
+  "a_tajemny_m": {
+   "typ": "P",
+   "nazwa": "Tajemny",
+   "stat": "magic-damage",
+   "wartosci": [
+    4,
+    6,
+    9
+   ],
+   "przyrost": 0.25
+  },
+  "a_tajemny_f": {
+   "typ": "P",
+   "nazwa": "Tajemna",
+   "stat": "magic-damage",
+   "wartosci": [
+    4,
+    6,
+    9
+   ],
+   "przyrost": 0.25
+  },
+  "a_tajemny_n": {
+   "typ": "P",
+   "nazwa": "Tajemne",
+   "stat": "magic-damage",
+   "wartosci": [
+    4,
+    6,
+    9
+   ],
+   "przyrost": 0.25
+  },
+  "a_twierdzy": {
+   "typ": "S",
+   "nazwa": "Twierdzy",
+   "stat": "damage-reduction",
+   "wartosci": [
+    1,
+    2,
+    3
+   ],
+   "przyrost": 0.05
+  },
+  "a_wiatru": {
+   "typ": "S",
+   "nazwa": "Wiatru",
+   "stat": "movement-speed",
+   "wartosci": [
+    0.002,
+    0.004,
+    0.006
+   ],
+   "przyrost": 0.0
+  },
+  "a_wieszczy_m": {
+   "typ": "P",
+   "nazwa": "Wieszczy",
+   "stat": "max-mana",
+   "wartosci": [
+    4,
+    7,
+    10
+   ],
+   "przyrost": 0.4
+  },
+  "a_wieszczy_f": {
+   "typ": "P",
+   "nazwa": "Wieszcza",
+   "stat": "max-mana",
+   "wartosci": [
+    4,
+    7,
+    10
+   ],
+   "przyrost": 0.4
+  },
+  "a_wieszczy_n": {
+   "typ": "P",
+   "nazwa": "Wieszcze",
+   "stat": "max-mana",
+   "wartosci": [
+    4,
+    7,
+    10
+   ],
+   "przyrost": 0.4
+  },
+  "a_zabojczy_m": {
+   "typ": "P",
+   "nazwa": "Zabójczy",
+   "stat": "critical-strike-chance",
+   "wartosci": [
+    2,
+    3,
+    5
+   ],
+   "przyrost": 0.1
+  },
+  "a_zabojczy_f": {
+   "typ": "P",
+   "nazwa": "Zabójcza",
+   "stat": "critical-strike-chance",
+   "wartosci": [
+    2,
+    3,
+    5
+   ],
+   "przyrost": 0.1
+  },
+  "a_zabojczy_n": {
+   "typ": "P",
+   "nazwa": "Zabójcze",
+   "stat": "critical-strike-chance",
+   "wartosci": [
+    2,
+    3,
+    5
+   ],
+   "przyrost": 0.1
+  },
+  "a_zarliwy_m": {
+   "typ": "P",
+   "nazwa": "Żarliwy",
+   "stat": "skill-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_zarliwy_f": {
+   "typ": "P",
+   "nazwa": "Żarliwa",
+   "stat": "skill-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_zarliwy_n": {
+   "typ": "P",
+   "nazwa": "Żarliwe",
+   "stat": "skill-damage",
+   "wartosci": [
+    3,
+    5,
+    8
+   ],
+   "przyrost": 0.2
+  },
+  "a_zolwia": {
+   "typ": "S",
+   "nazwa": "Żółwia",
+   "stat": "armor-toughness",
+   "wartosci": [
+    0.5,
+    1,
+    1.5
+   ],
+   "przyrost": 0.03
+  },
+  "a_zrodla": {
+   "typ": "S",
+   "nazwa": "Źródła",
+   "stat": "health-regeneration",
+   "wartosci": [
+    0.05,
+    0.1,
+    0.2
+   ],
+   "przyrost": 0.005
+  }
+ },
+ "rarity": [
+  {
+   "id": "ZWYKLY",
+   "nazwa": "Zwykły",
+   "kolor": "&f",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.6
+  },
+  {
+   "id": "MAGICZNY",
+   "nazwa": "Magiczny",
+   "kolor": "&9",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.28
+  },
+  {
+   "id": "RZADKI",
+   "nazwa": "Rzadki",
+   "kolor": "&e",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.09
+  },
+  {
+   "id": "EPICKI",
+   "nazwa": "Epicki",
+   "kolor": "&d",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.025
+  },
+  {
+   "id": "LEGENDARNY",
+   "nazwa": "Legendarny",
+   "kolor": "&6",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.005
+  },
+  {
+   "id": "UNIKATOWY",
+   "nazwa": "Unikatowy",
+   "kolor": "&c",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.0
+  },
+  {
+   "id": "ZESTAW",
+   "nazwa": "Część zestawu",
+   "kolor": "&a",
+   "pojemnosc": [
+    0,
+    0
+   ],
+   "udzial": 0.0
+  }
+ ],
+ "kamienie": [
+  {
+   "id": "PRZ_OSELKA",
+   "nazwa": "Osełka płatnerza",
+   "ref": "bron",
+   "stacja": "profession-smithing",
+   "skladniki": [
+    [
+     "PROF_REFINED_IRON",
+     2
+    ],
+    [
+     "PROF_CUT_STONE",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "PRZ_LATA",
+   "nazwa": "Łata płatnerska",
+   "ref": "zbroja",
+   "stacja": "profession-tailoring",
+   "skladniki": [
+    [
+     "PROF_LEATHER_PANEL",
+     1
+    ],
+    [
+     "PROF_CLOTH_BOLT",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "PRZ_PYL_JUBILERSKI",
+   "nazwa": "Pył jubilerski",
+   "ref": "ozdoba",
+   "stacja": "profession-jewelcrafting",
+   "skladniki": [
+    [
+     "PROF_CUT_GEM",
+     1
+    ],
+    [
+     "PROF_ENCHANT_DUST",
+     1
+    ]
+   ]
+  }
+ ],
+ "wiara": true,
+ "legendarne": {},
+ "pule": {
+  "woj": {
+   "bron": [
+    "ostry",
+    "okrutny",
+    "krwawy",
+    "druzgocacy",
+    "byka",
+    "skaly",
+    "twierdzy"
+   ],
+   "zbroja": [
+    "krzepki",
+    "pancerny",
+    "okrutny",
+    "zolwia",
+    "twierdzy",
+    "skaly",
+    "zrodla",
+    "byka"
+   ],
+   "ozdoba": [
+    "okrutny",
+    "krwawy",
+    "druzgocacy",
+    "krzepki",
+    "twierdzy",
+    "zrodla",
+    "wiatru",
+    "byka"
+   ]
+  },
+  "nin": {
+   "bron": [
+    "ostry",
+    "zabojczy",
+    "druzgocacy",
+    "celny",
+    "chyzy",
+    "lisa",
+    "wiatru",
+    "cienia"
+   ],
+   "zbroja": [
+    "krzepki",
+    "pancerny",
+    "zabojczy",
+    "cienia",
+    "wiatru",
+    "zolwia",
+    "lisa"
+   ],
+   "ozdoba": [
+    "zabojczy",
+    "druzgocacy",
+    "celny",
+    "krzepki",
+    "cienia",
+    "wiatru",
+    "lisa"
+   ]
+  },
+  "mag": {
+   "bron": [
+    "tajemny",
+    "wieszczy",
+    "plynny",
+    "zarliwy",
+    "sowy",
+    "medrca",
+    "zrodla"
+   ],
+   "zbroja": [
+    "krzepki",
+    "wieszczy",
+    "plynny",
+    "tajemny",
+    "zolwia",
+    "medrca",
+    "cienia",
+    "sowy"
+   ],
+   "ozdoba": [
+    "tajemny",
+    "wieszczy",
+    "plynny",
+    "zarliwy",
+    "krzepki",
+    "medrca",
+    "sowy",
+    "zrodla"
+   ]
+  },
+  "ako": {
+   "bron": [
+    "ostry",
+    "okrutny",
+    "zarliwy",
+    "krwawy",
+    "pielgrzyma",
+    "zrodla",
+    "twierdzy"
+   ],
+   "zbroja": [
+    "krzepki",
+    "pancerny",
+    "zarliwy",
+    "zolwia",
+    "twierdzy",
+    "zrodla",
+    "pielgrzyma"
+   ],
+   "ozdoba": [
+    "zarliwy",
+    "krwawy",
+    "krzepki",
+    "twierdzy",
+    "zrodla",
+    "medrca",
+    "pielgrzyma"
+   ]
+  }
+ },
+ "warianty": {
+  "MAGICZNY": {
+   "sklad": [
+    [
+     1,
+     0,
+     0.3
+    ],
+    [
+     0,
+     1,
+     0.3
+    ],
+    [
+     1,
+     1,
+     0.4
+    ]
+   ],
+   "pasmo": "n"
+  },
+  "RZADKI": {
+   "sklad": [
+    [
+     2,
+     1,
+     0.35
+    ],
+    [
+     1,
+     2,
+     0.35
+    ],
+    [
+     2,
+     2,
+     0.3
+    ]
+   ],
+   "pasmo": "n"
+  },
+  "EPICKI": {
+   "sklad": [
+    [
+     2,
+     2,
+     0.4
+    ],
+    [
+     3,
+     2,
+     0.3
+    ],
+    [
+     2,
+     3,
+     0.3
+    ]
+   ],
+   "pasmo": "e"
+  },
+  "LEGENDARNY": {
+   "sklad": [
+    [
+     3,
+     2,
+     0.35
+    ],
+    [
+     2,
+     3,
+     0.35
+    ],
+    [
+     3,
+     3,
+     0.3
+    ]
+   ],
+   "pasmo": "l"
+  }
+ },
+ "pasma": {
+  "n": [
+   0.08,
+   0.3
+  ],
+  "e": [
+   0.25,
+   0.6
+  ],
+  "l": [
+   0.55,
+   0.85
+  ]
+ },
+ "unikaty": [
+  {
+   "id": "PRZ_UNI_KLINGA_TYSIACA_BLIZN",
+   "typ": "SWORD",
+   "arch": "woj",
+   "nazwa": "Klinga Tysiąca Blizn",
+   "umiejetnosc": "Rozpłatanie",
+   "opis": "co 8 s cios tnie wszystkich wokół",
+   "fabula": "Każda blizna to lekcja. Ta klinga nauczyła wielu."
+  },
+  {
+   "id": "PRZ_UNI_SZEPT_OSTATNIEGO_TCHU",
+   "typ": "DAGGER",
+   "arch": "nin",
+   "nazwa": "Szept Ostatniego Tchu",
+   "umiejetnosc": "Znak śmierci",
+   "opis": "co 10 s trafienie znaczy cel na śmierć",
+   "fabula": "Nikt nie słyszał, jak nadchodzi. Wszyscy słyszeli, jak odchodzi."
+  },
+  {
+   "id": "PRZ_UNI_KOSTUR_SPADAJACEGO_NIEBA",
+   "typ": "STAFF",
+   "arch": "mag",
+   "nazwa": "Kostur Spadającego Nieba",
+   "umiejetnosc": "Grad arkanów",
+   "opis": "co 10 s trafienie sprowadza grad arkanów",
+   "fabula": "Gwiazdy też kiedyś spadają. Ten kostur pomaga im wybrać cel."
+  },
+  {
+   "id": "PRZ_UNI_MLOT_SEDZIEGO_UMARLYCH",
+   "typ": "HAMMER",
+   "arch": "ako",
+   "nazwa": "Młot Sędziego Umarłych",
+   "umiejetnosc": "Wyrok",
+   "opis": "co 8 s trafienie ściąga piorun na wroga",
+   "fabula": "Umarli też mają swój sąd. I tylko jednego sędziego."
+  }
+ ],
+ "rozbiorka": {
+  "ZWYKLY": [
+   [
+    "PROF_ORE_CHUNK",
+    100,
+    "1-1"
+   ],
+   [
+    "PROF_ENCHANT_DUST",
+    20,
+    "1-1"
+   ]
+  ],
+  "MAGICZNY": [
+   [
+    "PROF_ENCHANT_DUST",
+    100,
+    "1-2"
+   ],
+   [
+    "PROF_REFINED_IRON",
+    50,
+    "1-1"
+   ],
+   [
+    "PROF_LEATHER_PANEL",
+    30,
+    "1-1"
+   ]
+  ],
+  "RZADKI": [
+   [
+    "PROF_ENCHANT_DUST",
+    100,
+    "2-3"
+   ],
+   [
+    "PROF_CUT_GEM",
+    50,
+    "1-1"
+   ],
+   [
+    "PROF_REFINED_IRON",
+    60,
+    "1-2"
+   ],
+   [
+    "PROF_CLOTH_BOLT",
+    40,
+    "1-1"
+   ]
+  ],
+  "EPICKI": [
+   [
+    "PROF_ENCHANT_DUST",
+    100,
+    "3-4"
+   ],
+   [
+    "PROF_CUT_GEM",
+    100,
+    "1-2"
+   ],
+   [
+    "PROF_CHARGED_RUNE",
+    30,
+    "1-1"
+   ]
+  ],
+  "LEGENDARNY": [
+   [
+    "PROF_AWAKENING_SEAL",
+    100,
+    "1-1"
+   ],
+   [
+    "PROF_CUT_GEM",
+    100,
+    "2-3"
+   ],
+   [
+    "PROF_ENCHANT_DUST",
+    100,
+    "4-6"
+   ]
+  ]
+ },
+ "lup": {
+  "pasma": {
+   "T1": {
+    "bazy": [
+     1,
+     3
+    ],
+    "szansa": 0.05,
+    "ile": 1
+   },
+   "T2": {
+    "bazy": [
+     3,
+     5,
+     7
+    ],
+    "szansa": 0.1,
+    "ile": 1
+   },
+   "T3": {
+    "bazy": [
+     5,
+     7,
+     10
+    ],
+    "szansa": 0.3,
+    "ile": 1
+   },
+   "BOSS": {
+    "bazy": [
+     7,
+     10
+    ],
+    "szansa": 1.0,
+    "ile": 2
+   }
+  },
+  "sety": {
+   "A": 0.2,
+   "B": 0.08
+  },
+  "smart": null,
+  "wpiecie": {
+   "DT_BEST_T1_": "T1",
+   "DT_BEST_T2_": "T2",
+   "DT_BEST_T3_": "T3",
+   "DT_BEST_BOSS_": "BOSS"
+  }
+ }
+}

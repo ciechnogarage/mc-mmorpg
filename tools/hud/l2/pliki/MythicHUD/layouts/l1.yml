@@ -1,0 +1,111 @@
+# HUD L1 (18.10): okno postaci lewy gorny rog + pas przetrwania nad hotbarem.
+l1-pas-layout:
+  elements:
+    poziom-1:
+      asset: l1-poziom-1
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -2, y: 51}
+    poziom-2:
+      asset: l1-poziom-2
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -5, y: 51}
+    poziom-3:
+      asset: l1-poziom-3
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -8, y: 51}
+    hp-niskie:
+      asset: l1-hp-niskie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -92, y: 51}
+    hp-tekst:
+      asset: l1-hp-tekst
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -91, y: 51}
+    zasob-dusze:
+      asset: l1-zasob-dusze
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 11, y: 51}
+    zasob-mana:
+      asset: l1-zasob-mana
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 11, y: 51}
+    zasob-szal:
+      asset: l1-zasob-szal
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 11, y: 51}
+    zasob-skupienie:
+      asset: l1-zasob-skupienie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 11, y: 51}
+    tlen:
+      asset: l1-tlen
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 46, y: 51}
+    pas:
+      asset: l1-pas
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -91, y: 51}
+
+l1-okno-layout:
+  elements:
+    pl-patron-brak:
+      asset: l1-pl-patron-brak
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 12, y: -4}
+    pl-wiara:
+      asset: l1-pl-wiara
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 12, y: -4}
+    pl-laska:
+      asset: l1-pl-laska
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 12, y: -4}
+    pl-odznaki:
+      asset: l1-pl-odznaki
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 79, y: -4}
+    pl-atrybuty:
+      asset: l1-pl-atrybuty
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 101, y: -4}
+    pl-umiejetnosci:
+      asset: l1-pl-umiejetnosci
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 123, y: -4}
+    okno:
+      asset: l1-okno
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -4}
+    okno-walka:
+      asset: l1-okno-walka
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -4}
+    okno-chowance:
+      asset: l1-okno-chowance
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -4}
+    okno-kompakt:
+      asset: l1-okno-kompakt
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -4}

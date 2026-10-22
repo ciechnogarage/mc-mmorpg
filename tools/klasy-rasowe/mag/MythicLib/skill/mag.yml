@@ -1,0 +1,345 @@
+# Mag, Akt 1. Wariant: 0 nieumarły, 1 ork, 2 elf, 3 człowiek.
+# Modyfikatory MythicLib są odczytywane wyłącznie w extra-skills.
+MAG_POCISK:
+  source: mythicmobs:MAG_Pocisk
+  name: 'Pocisk Many'
+  icon: {item: AMETHYST_SHARD}
+  lore: ['&7Magiczny pocisk do 20 bloków.', '&7Żywioł zależy od rasy.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 4}
+    cooldown: {name: Odnowienie, player: 1}
+    damage: {name: Obrażenia, player: {base: 6, per-level: 1}}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    MAG_Pocisk:
+      TargetConditions:
+      - 'distance{d=0to20} true'
+      Skills:
+      - 'skill{s=MAG_Pocisk_Rzuc_Mob} @target'
+      - 'skill{s=MAG_Pocisk_Rzuc_Gracz} @target'
+      - 'effect:sound{s=entity.evoker.cast_spell;v=0.6;p=1.5} @self'
+    MAG_Pocisk_Rzuc_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Pocisk_Pocisk} @TargetedTarget'
+    MAG_Pocisk_Rzuc_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Pocisk_Pocisk} @TargetedTarget'
+    MAG_Pocisk_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=AMETHYST_SHARD;onTick=MAG_Pocisk_Slad;onHit=MAG_Pocisk_Trafienie;v=24;i=1;mr=20;hR=0.5;vR=0.5;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    MAG_Pocisk_Slad:
+      Skills:
+      - 'effect:particles{p=witch;a=3;hS=0.08;vS=0.08} @origin'
+    MAG_Pocisk_Trafienie:
+      Skills:
+      - 'skill{s=MAG_Pocisk_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=MAG_Pocisk_Trafienie_Gracz} @TargetedTarget'
+    MAG_Pocisk_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Pocisk_Trafienie_Efekt} @TargetedTarget'
+    MAG_Pocisk_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Pocisk_Trafienie_Efekt} @TargetedTarget'
+    MAG_Pocisk_Trafienie_Efekt:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,MAGIC}'
+      - 'potion{type=WITHER;duration=60;level=0;force=true;hasParticles=true} ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'effect:lightning ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'throw{velocity=1.5;velocityY=0.25} ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'potion{type=SLOWNESS;duration=40;level=0;force=true;hasParticles=true} ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'ignite{ticks=60} ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+
+MAG_BARIERA:
+  source: mythicmobs:MAG_Bariera
+  name: 'Bariera Many'
+  icon: {item: SHIELD}
+  lore: ['&7Pochłania 10 obrażeń przez maks. 6 s.', '&7Nieumarły: 13 obrażeń.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 10}
+    cooldown: {name: Odnowienie, player: 12}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    MAG_Bariera:
+      Skills:
+      - 'skill{s=MAG_Bariera_Nieumarly} @self ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'skill{s=MAG_Bariera_Zwykla} @self ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'skill{s=MAG_Bariera_Zwykla} @self ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'skill{s=MAG_Bariera_Zwykla} @self ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+      - 'effect:particles{p=enchant;a=30;hS=0.8;vS=1} @self'
+      - 'effect:sound{s=block.amethyst_block.chime;v=0.8;p=1} @self'
+    MAG_Bariera_Zwykla:
+      Skills:
+      - 'shield{amount=10;maxabsorb=100} @self'
+      - 'delay 120'
+      - 'shield{amount=-10;maxabsorb=100} @self'
+    MAG_Bariera_Nieumarly:
+      Skills:
+      - 'shield{amount=13;maxabsorb=100} @self'
+      - 'delay 120'
+      - 'shield{amount=-13;maxabsorb=100} @self'
+
+MAG_WYBUCH:
+  source: mythicmobs:MAG_Wybuch
+  name: 'Wybuch Arkanów'
+  icon: {item: FIRE_CHARGE}
+  lore: ['&7Wybuch w miejscu celu, promień 3 bl.', '&7Zapowiedź 0,8 s; żywioł zależy od rasy.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 15}
+    cooldown: {name: Odnowienie, player: 6}
+    damage: {name: Obrażenia, player: {base: 6, per-level: 1.5}}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    MAG_Wybuch:
+      TargetConditions:
+      - 'distance{d=0to20} true'
+      Skills:
+      # Origin zapamietuje pozycje celu w chwili rzutu; delay i obrazenia wykonuje gracz.
+      - 'setvariable{var=skill.mag_wybuch_damage;type=DOUBLE;value="<modifier.damage>"}'
+      - 'setvariable{var=skill.mag_wybuch_wariant;type=INTEGER;value="<modifier.int.wariant>"}'
+      - 'setvariable{var=skill.mag_pieczec_cel_uuid;type=STRING;value="<caster.var.mag_pieczec_cel_uuid|NONE>"}'
+      - 'skill{s=MAG_Wybuch_Strefa;origin=@TargetedTarget} @self'
+
+MAG_MRUGNIECIE:
+  source: mythicmobs:MAG_Mrugniecie
+  name: 'Mrugnięcie'
+  icon: {item: ENDER_PEARL}
+  lore: ['&7Bezpieczny skok: nieumarły 5 bl. w tył,', '&7ork 4 bl., człowiek 6, elf 8 bl. w przód.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 8}
+    cooldown: {name: Odnowienie, player: 8}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    MAG_Mrugniecie:
+      Skills:
+      - 'effect:particles{p=portal;a=25;hS=0.4;vS=0.8} @self'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-5} ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=4} ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=8} ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=6} ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+      - 'effect:particles{p=portal;a=25;hS=0.4;vS=0.8} @self'
+      - 'effect:sound{s=entity.enderman.teleport;v=0.7;p=1.4} @self'
+
+MAG_OKO_BURZY:
+  source: mythicmobs:MAG_Oko_Burzy
+  name: 'Oko Burzy'
+  icon: {item: TOTEM_OF_UNDYING}
+  lore: ['&8&oNad totemem gęstnieje powietrze.', '&7Pocisk tworzy punkt burzy na 6 s.', '&7Co 1 s rani za 3 w promieniu 3 bl.', '&7Własny Wybuch przy burzy: +50%.', '&6◆ Totem: burza także spowalnia.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 6}
+    cooldown: {name: Odnowienie, player: 8}
+  extra-skills:
+    MAG_Oko_Burzy:
+      TargetConditions:
+      - 'distance{d=0to20} true'
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=TALISMAN}'
+      - 'setvariable{var=caster.mag_oko_bonus;type=INTEGER;value="<caster.var.kr_premia>";duration=120} @self'
+      - 'skill{s=MAG_Oko_Burzy_Rzuc_Mob} @target'
+      - 'skill{s=MAG_Oko_Burzy_Rzuc_Gracz} @target'
+      - 'effect:sound{s=entity.evoker.cast_spell;v=0.8;p=0.6} @self'
+    MAG_Oko_Burzy_Rzuc_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Oko_Burzy_Pocisk} @TargetedTarget'
+    MAG_Oko_Burzy_Rzuc_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Oko_Burzy_Pocisk} @TargetedTarget'
+    MAG_Oko_Burzy_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=TOTEM_OF_UNDYING;onTick=MAG_Oko_Burzy_Slad;onHit=MAG_Oko_Burzy_Trafienie;v=24;i=1;mr=20;hR=0.5;vR=0.5;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    MAG_Oko_Burzy_Slad:
+      Skills:
+      - 'effect:particles{p=electric_spark;a=4;hS=0.1;vS=0.1} @origin'
+    MAG_Oko_Burzy_Przekaz:
+      Skills:
+      - 'setvariable{var=target.mag_owner;type=STRING;value="<caster.uuid>";duration=130}'
+    MAG_Oko_Burzy_Trafienie:
+      Skills:
+      - 'setvariable{var=skill.mag_eye_bonus;type=INTEGER;value="<caster.var.mag_oko_bonus|0>"}'
+      - 'summon{type=MAG_PUNKT_BURZY;amount=1;radius=0;onSurface=false;summonerIsParent=false;onSummon=MAG_Oko_Burzy_Przekaz} @origin'
+      - 'skill{s=MAG_Oko_Burzy_Strefa;origin=@origin} @self'
+      - 'effect:sound{s=entity.lightning_bolt.thunder;v=0.5;p=1.5} @origin'
+
+MAG_PIECZEC_WIEZY:
+  source: mythicmobs:MAG_Pieczec_Wiezy
+  name: 'Pieczęć Wieży'
+  icon: {item: BOOK}
+  lore: ['&8&oW księdze czeka znak wieży.', '&7Pocisk rani za 2 i znaczy cel na 6 s.', '&7Własny Wybuch zużywa znak: +50%.', '&6◆ Grimuar: trafienie spowalnia.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 6}
+    cooldown: {name: Odnowienie, player: 2}
+  extra-skills:
+    MAG_Pieczec_Wiezy:
+      TargetConditions:
+      - 'distance{d=0to20} true'
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=TOME}'
+      - 'skill{s=MAG_Pieczec_Wiezy_Rzuc_Mob} @target'
+      - 'skill{s=MAG_Pieczec_Wiezy_Rzuc_Gracz} @target'
+      - 'effect:sound{s=block.enchantment_table.use;v=0.7;p=1.3} @self'
+    MAG_Pieczec_Wiezy_Rzuc_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Pieczec_Wiezy_Pocisk} @TargetedTarget'
+    MAG_Pieczec_Wiezy_Rzuc_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Pieczec_Wiezy_Pocisk} @TargetedTarget'
+    MAG_Pieczec_Wiezy_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=BOOK;onTick=MAG_Pieczec_Wiezy_Slad;onHit=MAG_Pieczec_Wiezy_Trafienie;v=24;i=1;mr=20;hR=0.5;vR=0.5;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    MAG_Pieczec_Wiezy_Slad:
+      Skills:
+      - 'effect:particles{p=enchant;a=4;hS=0.1;vS=0.1} @origin'
+    MAG_Pieczec_Wiezy_Trafienie:
+      Skills:
+      - 'skill{s=MAG_Pieczec_Wiezy_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=MAG_Pieczec_Wiezy_Trafienie_Gracz} @TargetedTarget'
+    MAG_Pieczec_Wiezy_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Pieczec_Wiezy_Trafienie_Efekt} @TargetedTarget'
+    MAG_Pieczec_Wiezy_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Pieczec_Wiezy_Trafienie_Efekt} @TargetedTarget'
+    MAG_Pieczec_Wiezy_Trafienie_Efekt:
+      Skills:
+      - 'mmodamage{a=2;types=SKILL,MAGIC}'
+      - 'setvariable{var=caster.mag_pieczec_cel_uuid;type=STRING;value="<target.uuid>";duration=120} @self'
+      - 'potion{type=SLOWNESS;duration=30;level=0;force=true;hasParticles=true} ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'effect:particles{p=enchant;a=30;hS=0.4;vS=0.8}'
+
+MAG_NIC_ARKANOW:
+  source: mythicmobs:MAG_Nic_Arkanow
+  name: 'Nić Arkanów'
+  icon: {item: BLAZE_ROD}
+  lore: ['&8&oNić biegnie między konarami.', '&7Linia do 20 bl. trafia do 3 wrogów', '&7po 4 obrażenia.', '&6◆ Kostur dwuręczny: szersza linia.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 6}
+    cooldown: {name: Odnowienie, player: 2}
+    damage: {name: Obrażenia, player: {base: 4, per-level: 1}}
+  extra-skills:
+    MAG_Nic_Arkanow:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=GREATSTAFF}'
+      - 'skill{s=MAG_Nic_Arkanow_Linia} @Forward{f=20}'
+      - 'effect:sound{s=entity.evoker.cast_spell;v=0.7;p=1.4} @self'
+    MAG_Nic_Arkanow_Linia:
+      Skills:
+      - 'skill{s=MAG_Nic_Arkanow_Adresuj} @EntitiesInLine{r=1.25;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=MAG_Nic_Arkanow_Adresuj} @EntitiesInLine{r=1.75;ignore=self,armorstands,samefaction,owner;sort=NEAREST;limit=3} ?variableEquals{var=caster.kr_premia;value=1}'
+    MAG_Nic_Arkanow_Adresuj:
+      Skills:
+      - 'skill{s=MAG_Nic_Arkanow_Cel_Mob} @TargetedTarget'
+      - 'skill{s=MAG_Nic_Arkanow_Cel_Gracz} @TargetedTarget'
+    MAG_Nic_Arkanow_Cel_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Nic_Arkanow_Cel} @TargetedTarget'
+    MAG_Nic_Arkanow_Cel_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Nic_Arkanow_Cel} @TargetedTarget'
+    MAG_Nic_Arkanow_Cel:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,MAGIC}'
+
+MAG_SPLOT_DUSZY:
+  source: mythicmobs:MAG_Splot_Duszy
+  name: 'Splot Duszy'
+  icon: {item: ECHO_SHARD}
+  lore: ['&8&oKość pamięta cudzy oddech.', '&7Cel do 15 bl. otrzymuje 3 obrażenia.', '&7Przez 4 s otrzymuje 1 co 1 s;', '&7rzucający odzyskuje 1 HP na impuls.', '&7Więź słabnie poza zasięgiem 15 bl.', '&6◆ Filakterium: więź trwa 6 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 8}
+    cooldown: {name: Odnowienie, player: 10}
+  extra-skills:
+    MAG_Splot_Duszy:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=FILAKTERIUM}'
+      - 'skill{s=MAG_Splot_Duszy_Mob} @target'
+      - 'skill{s=MAG_Splot_Duszy_Gracz} @target'
+    MAG_Splot_Duszy_Mob:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Splot_Duszy_Zwiaz} @TargetedTarget'
+    MAG_Splot_Duszy_Gracz:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Splot_Duszy_Zwiaz} @TargetedTarget'
+    MAG_Splot_Duszy_Zwiaz:
+      Skills:
+      - 'setvariable{var=caster.mag_splot_cel;type=STRING;value="<target.uuid>";duration=130} @TargetedTarget'
+      - 'mmodamage{a=3;types=SKILL,MAGIC}'
+      - 'skill{s=MAG_Splot_Duszy_Wiez} @self'
+    MAG_Splot_Duszy_Wiez:
+      Skills:
+      - 'delay 20'
+      - 'skill{s=MAG_Splot_Duszy_Impuls} @UniqueIdentifier{uuid=<caster.var.mag_splot_cel>}'
+      - 'delay 20'
+      - 'skill{s=MAG_Splot_Duszy_Impuls} @UniqueIdentifier{uuid=<caster.var.mag_splot_cel>}'
+      - 'delay 20'
+      - 'skill{s=MAG_Splot_Duszy_Impuls} @UniqueIdentifier{uuid=<caster.var.mag_splot_cel>}'
+      - 'delay 20'
+      - 'skill{s=MAG_Splot_Duszy_Impuls} @UniqueIdentifier{uuid=<caster.var.mag_splot_cel>}'
+      - 'skill{s=MAG_Splot_Duszy_Wiez_Premia} @self ?variableEquals{var=caster.kr_premia;value=1}'
+    MAG_Splot_Duszy_Wiez_Premia:
+      Skills:
+      - 'delay 20'
+      - 'skill{s=MAG_Splot_Duszy_Impuls} @UniqueIdentifier{uuid=<caster.var.mag_splot_cel>}'
+      - 'delay 20'
+      - 'skill{s=MAG_Splot_Duszy_Impuls} @UniqueIdentifier{uuid=<caster.var.mag_splot_cel>}'
+    MAG_Splot_Duszy_Impuls:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      Skills:
+      - 'skill{s=MAG_Splot_Duszy_Impuls_Mob} @TargetedTarget'
+      - 'skill{s=MAG_Splot_Duszy_Impuls_Gracz} @TargetedTarget'
+    MAG_Splot_Duszy_Impuls_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=MAG_Splot_Duszy_Trafienie} @TargetedTarget'
+    MAG_Splot_Duszy_Impuls_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=MAG_Splot_Duszy_Trafienie} @TargetedTarget'
+    MAG_Splot_Duszy_Trafienie:
+      Skills:
+      - 'mmodamage{a=1;types=SKILL,MAGIC}'
+      - 'heal{a=1} @self'
+      - 'effect:particles{p=soul;a=8;hS=0.3;vS=0.5}'

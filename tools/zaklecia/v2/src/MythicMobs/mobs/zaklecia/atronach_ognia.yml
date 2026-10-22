@@ -1,0 +1,23 @@
+ZAK_ATRONACH_OGNIA:
+  Type: BLAZE
+  Display: '&6Atronach ognia'
+  Health: 24
+  Damage: 3
+  Faction: zaklecia_przywolane
+  Options:
+    Despawn: true
+    Persistent: false
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    FollowRange: 32
+  AIGoalSelectors:
+  - 0 clear
+  - 1 float
+  - 3 gotoowner
+  AITargetSelectors:
+  - 0 clear
+  - 1 ownerattacker
+  - 2 ownertarget
+  Skills:
+  - effect:particles{p=flame;a=15;hs=0.4;vs=0.5} @self ~onSpawn
+  - effect:particles{p=flame;a=3;hs=0.25;vs=0.35} @self ~onTimer:20

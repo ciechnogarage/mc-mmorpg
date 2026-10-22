@@ -1,0 +1,2 @@
+R4-1 poprawione; [zrzut POMOCY GUI 3](/home/dev/Desktop/Przemek/MC/tools/ui-naprawa/zrzuty/r5-gui3-pomoc.png) po wgraniu potwierdza ciągłą ramkę.
+`wgraj`: START OK, 0 nowych WARN/ERROR; zaktualizowano [raport](/home/dev/Desktop/Przemek/MC/tools/ui-naprawa/RAPORT.md) i [spis z MD5](/home/dev/Desktop/Przemek/MC/tools/ui-naprawa/STAGING-PLIKI.txt).

@@ -1,0 +1,308 @@
+# Obszary liczy gracz wokół origin z chwili rzutu.
+
+SpecElementalistaKragZone:
+  Skills:
+  - "effect:particles{p=enchant;a=24;hS=2.5;vS=0.2} @Origin"
+  - "delay 16"
+  - "skill{s=SpecElementalistaKragPulse} @Origin"
+
+SpecElementalistaKragPulse:
+  Skills:
+  - "skill{s=SpecElementalistaKragMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecElementalistaKragPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecElementalistaKragMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "skill{s=SpecElementalistaKragPlayer} @PlayersNearOrigin{r=4;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
+
+SpecCienLisciSidlaZone:
+  Skills:
+  - "setvariable{var=skill.spec_sidla_triggered;type=INTEGER;value=0}"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "delay 10"
+  - "skill{s=SpecCienLisciSidlaPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+SpecCienLisciSidlaPulse:
+  Conditions:
+  - "variableEquals{var=skill.spec_sidla_triggered;value=0} true"
+  Skills:
+  - "effect:particles{p=happy_villager;a=8;hS=1.5;vS=0.1} @Origin"
+  - "skill{s=SpecCienLisciSidlaMob} @EntitiesNearOrigin{r=2;ignore=players;targetarmorstands=false;sort=NEAREST;limit=1}"
+  - "skill{s=SpecCienLisciSidlaPlayer} @PlayersNearOrigin{r=2;sort=NEAREST;limit=1}"
+
+SpecSokolDeszczZone:
+  Skills:
+  - "effect:particles{p=end_rod;a=28;hS=2.7;vS=0.2} @Origin"
+  - "delay 12"
+  - "skill{s=SpecSokolDeszczPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecSokolDeszczPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecSokolDeszczPulse} @Origin"
+
+SpecSokolDeszczPulse:
+  Skills:
+  - "skill{s=SpecSokolDeszczMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecSokolDeszczPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecSokolDeszczMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "skill{s=SpecSokolDeszczPlayer} @PlayersNearOrigin{r=4;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=1}"
+
+SpecBurzownikGromZone:
+  Skills:
+  - "effect:particles{p=electric_spark;a=24;hS=2.5;vS=0.2} @Origin"
+  - "delay 16"
+  - "skill{s=SpecBurzownikGromPulse} @Origin"
+
+SpecBurzownikGromPulse:
+  Skills:
+  - "setvariable{var=skill.spec_w_oku;type=INTEGER;value=0}"
+  - "skill{s=SpecBurzownikOwnEye} @EntitiesNearOrigin{r=3;targetarmorstands=true}"
+  - "skill{s=SpecBurzownikGromMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecBurzownikGromPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecBurzownikGromMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "skill{s=SpecBurzownikGromPlayer} @PlayersNearOrigin{r=4;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
+
+SpecStraznikGrobuProgZone:
+  Skills:
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "delay 10"
+  - "skill{s=SpecStraznikGrobuProgPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+SpecStraznikGrobuProgPulse:
+  Skills:
+  - "effect:particles{p=soul;a=12;hS=2.5;vS=0.2} @Origin"
+  - "skill{s=SpecStraznikGrobuProgMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5}"
+  - "skill{s=SpecStraznikGrobuProgPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=5}"
+  - "skill{s=SpecProgOwner} @PlayersNearOrigin{r=3;limit=5}"
+
+SpecNekromantaZarazaZone:
+  Skills:
+  - "delay 40"
+  - "skill{s=SpecNekromantaZarazaPulse} @Origin"
+  - "delay 40"
+  - "skill{s=SpecNekromantaZarazaPulse} @Origin"
+  - "delay 40"
+  - "skill{s=SpecNekromantaZarazaPulse} @Origin"
+  - "delay 40"
+  - "skill{s=SpecNekromantaZarazaPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
+SpecNekromantaZarazaPulse:
+  Skills:
+  - "skill{s=SpecNekromantaZarazaMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5}"
+  - "skill{s=SpecNekromantaZarazaPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=5}"
+
+SpecElementalistaKragMob:
+  TargetConditions:
+  - "isPlayer false"
+  Skills:
+  - "skill{s=SpecElementalistaKragHit} @TargetedTarget"
+
+SpecElementalistaKragPlayer:
+  TargetConditions:
+  - "isPlayer true"
+  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  Skills:
+  - "skill{s=SpecElementalistaKragHit} @TargetedTarget"
+
+SpecElementalistaKragHit:
+  Skills:
+  - "mmodamage{a=6;types=SKILL,MAGIC}"
+  - "skill{s=SpecElementalistaSeal} @TargetedTarget ?stringEquals{val1=\"<target.uuid>\";val2=\"<skill.var.spec_seal|NONE>\"}"
+
+SpecCienLisciSidlaMob:
+  TargetConditions:
+  - "isPlayer false"
+  Skills:
+  - "skill{s=SpecCienLisciSidlaHit} @TargetedTarget"
+
+SpecCienLisciSidlaPlayer:
+  TargetConditions:
+  - "isPlayer true"
+  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  Skills:
+  - "skill{s=SpecCienLisciSidlaHit} @TargetedTarget"
+
+SpecCienLisciSidlaHit:
+  Conditions:
+  - "variableEquals{var=skill.spec_sidla_triggered;value=0} true"
+  Skills:
+  - "mmodamage{a=3;types=SKILL,PHYSICAL}"
+  - "potion{type=SLOWNESS;duration=60;level=0;force=true}"
+  - "skill{s=SpecZnamieDodaj} @TargetedTarget"
+  - "setvariable{var=skill.spec_sidla_triggered;type=INTEGER;value=1}"
+
+SpecSokolDeszczMob:
+  TargetConditions:
+  - "isPlayer false"
+  Skills:
+  - "skill{s=SpecSokolDeszczHit} @TargetedTarget"
+
+SpecSokolDeszczPlayer:
+  TargetConditions:
+  - "isPlayer true"
+  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  Skills:
+  - "skill{s=SpecSokolDeszczHit} @TargetedTarget"
+
+SpecSokolDeszczHit:
+  Skills:
+  - "mmodamage{a=3;types=SKILL,PROJECTILE}"
+  - "skill{s=SpecZnamieDodaj} @TargetedTarget"
+
+SpecBurzownikGromMob:
+  TargetConditions:
+  - "isPlayer false"
+  Skills:
+  - "skill{s=SpecBurzownikGromHit} @TargetedTarget"
+
+SpecBurzownikGromPlayer:
+  TargetConditions:
+  - "isPlayer true"
+  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  Skills:
+  - "skill{s=SpecBurzownikGromHit} @TargetedTarget"
+
+SpecBurzownikGromHit:
+  Skills:
+  - "mmodamage{a=6;types=SKILL,MAGIC}"
+  - "mmodamage{a=2;types=SKILL,MAGIC} ?variableEquals{var=skill.spec_w_oku;value=1}"
+
+SpecStraznikGrobuProgMob:
+  TargetConditions:
+  - "isPlayer false"
+  Skills:
+  - "skill{s=SpecStraznikGrobuProgHit} @TargetedTarget"
+
+SpecStraznikGrobuProgPlayer:
+  TargetConditions:
+  - "isPlayer true"
+  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  Skills:
+  - "skill{s=SpecStraznikGrobuProgHit} @TargetedTarget"
+
+SpecStraznikGrobuProgHit:
+  Skills:
+  - "throw{velocity=2;velocityY=0.2;fromOrigin=true}"
+  - "potion{type=SLOWNESS;duration=40;level=0;force=true}"
+
+SpecNekromantaZarazaMob:
+  TargetConditions:
+  - "isPlayer false"
+  Skills:
+  - "skill{s=SpecNekromantaZarazaHit} @TargetedTarget"
+
+SpecNekromantaZarazaPlayer:
+  TargetConditions:
+  - "isPlayer true"
+  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  Skills:
+  - "skill{s=SpecNekromantaZarazaHit} @TargetedTarget"
+
+SpecNekromantaZarazaHit:
+  Skills:
+  - "mmodamage{a=2;types=SKILL,MAGIC}"
+  - "potion{type=SLOWNESS;duration=20;level=0;force=true}"
+
+SpecSlugaKoniec10:
+  Skills:
+  - "delay 200"
+  - "remove @self"
+
+SpecSlugaKoniec12:
+  Skills:
+  - "delay 240"
+  - "remove @self"
+
+SpecProgOwner:
+  TargetConditions:
+  - "stringEquals{val1=\"<target.uuid>\";val2=\"<caster.uuid>\"} true"
+  Skills:
+  - "potion{type=RESISTANCE;duration=15;level=0;force=true}"
+
+SpecElementalistaSeal:
+  Skills:
+  - "mmodamage{a=2;types=SKILL,MAGIC}"
+
+SpecBurzownikOwnEye:
+  TargetConditions:
+  - "mythicMobType{type=MAG_PUNKT_BURZY} true"
+  - "stringEquals{val1=\"<target.var.mag_owner|NONE>\";val2=\"<caster.uuid>\"} true"
+  Skills:
+  - "setvariable{var=skill.spec_w_oku;type=INTEGER;value=1}"
+
+# Lokalna kopia NIN_Znamie_Dodaj: plik MM wczytuje się przed extra-skills MythicLib.
+
+SpecZnamieDodaj:
+  Skills:
+  - "skill{s=SpecZnamieInit} @TargetedTarget"
+  - "variableadd{var=target.znamiona;amount=1} @TargetedTarget"
+  - "skill{s=SpecZnamieOgranicz} @TargetedTarget"
+  - "effect:particles{p=crit;a=12;hS=0.25;vS=0.3} @TargetedTarget"
+
+SpecZnamieInit:
+  TargetConditions:
+  - "variableIsSet{var=target.znamiona} false"
+  Skills:
+  - "setvariable{var=target.znamiona;type=INTEGER;value=0} @TargetedTarget"
+
+SpecZnamieOgranicz:
+  TargetConditions:
+  - "variableInRange{var=target.znamiona;value=>5} true"
+  Skills:
+  - "setvariable{var=target.znamiona;type=INTEGER;value=5} @TargetedTarget"

@@ -1,0 +1,10 @@
+ZAKLECIE_PUSTA:
+  Id: DEBUG_STICK
+  Display: '<!i><gray>Pusta dłoń'
+  Options:
+    ItemModel: zaklecia:pusta
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

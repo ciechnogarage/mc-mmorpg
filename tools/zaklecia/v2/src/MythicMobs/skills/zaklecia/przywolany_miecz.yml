@@ -1,0 +1,38 @@
+Zak_Przywolany_miecz_Laduj_P:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Przywolany_miecz_Gotowe_P:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Przywolany_miecz_Wystrzal_P:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+Zak_Przywolany_miecz_Laduj_L:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Przywolany_miecz_Gotowe_L:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Przywolany_miecz_Wystrzal_L:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+Zak_Przywolany_miecz_Laduj_Obie:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Przywolany_miecz_Gotowe_Obie:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Przywolany_miecz_Wystrzal_Obie:
+  Skills:
+  - effect:particles{p=enchanted_hit;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin

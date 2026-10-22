@@ -1,0 +1,304 @@
+{
+ "model": {
+  "type": "minecraft:select",
+  "property": "minecraft:display_context",
+  "cases": [
+   {
+    "when": [
+     "gui",
+     "ground",
+     "fixed"
+    ],
+    "model": {
+     "type": "minecraft:model",
+     "model": "zaklecia:item/oslona_ikona"
+    }
+   },
+   {
+    "when": "firstperson_righthand",
+    "model": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.use",
+     "on_true": {
+      "type": "minecraft:composite",
+      "models": [
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_3"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_3"
+       }
+      ]
+     },
+     "on_false": {
+      "type": "minecraft:composite",
+      "models": [
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_3"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_3"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "when": "firstperson_lefthand",
+    "model": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.attack",
+     "on_true": {
+      "type": "minecraft:composite",
+      "models": [
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_p0_3"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_o0_3"
+       }
+      ]
+     },
+     "on_false": {
+      "type": "minecraft:composite",
+      "models": [
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/odmrozenie_s_3"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_0"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_1"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_2"
+       },
+       {
+        "type": "minecraft:model",
+        "model": "zaklecia:item/mroz_odlamki_s_3"
+       }
+      ]
+     }
+    }
+   }
+  ],
+  "fallback": {
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.use",
+    "on_true": {
+     "type": "minecraft:composite",
+     "models": [
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_k_0"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_k_1"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_k_2"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_k_3"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_k_0"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_k_1"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_k_2"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_k_3"
+      }
+     ]
+    },
+    "on_false": {
+     "type": "minecraft:composite",
+     "models": [
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_s_0"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_s_1"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_s_2"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/odmrozenie_s_3"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_s_0"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_s_1"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_s_2"
+      },
+      {
+       "type": "minecraft:model",
+       "model": "zaklecia:item/mroz_odlamki_s_3"
+      }
+     ]
+    }
+   },
+   "on_false": {
+    "type": "minecraft:composite",
+    "models": [
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/odmrozenie_s_0"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/odmrozenie_s_1"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/odmrozenie_s_2"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/odmrozenie_s_3"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/mroz_odlamki_s_0"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/mroz_odlamki_s_1"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/mroz_odlamki_s_2"
+     },
+     {
+      "type": "minecraft:model",
+      "model": "zaklecia:item/mroz_odlamki_s_3"
+     }
+    ]
+   }
+  }
+ },
+ "hand_animation_on_swap": false
+}

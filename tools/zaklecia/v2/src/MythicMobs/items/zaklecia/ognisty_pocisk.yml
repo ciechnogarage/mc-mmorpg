@@ -1,0 +1,20 @@
+ZAKLECIE_OGNISTY_POCISK:
+  Id: DEBUG_STICK
+  Display: '<!i><#ff9a3c>Ognisty pocisk'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Zniszczenie · Nowicjusz'
+  - ''
+  - '<!i><gray>Ognisty pocisk z dłoni.'
+  - ''
+  - '<!i><#ffcf6b>PPM — lewa · LPM — prawa'
+  - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><gray>Ładowanie: 8 ticków · Koszt: <#6ab4ff>3 many'
+  - '<!i><#c9a6ff>Oburącz: <gray>efekt ×2,2, mana ×2,8'
+  Options:
+    ItemModel: zaklecia:ognisty_pocisk
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

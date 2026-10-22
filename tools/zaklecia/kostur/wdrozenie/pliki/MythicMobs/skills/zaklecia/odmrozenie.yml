@@ -1,0 +1,144 @@
+# Skille tylko zaklecia odmrozenie. _P = prawa, _L = lewa, _Obie = to samo w obu dloniach.
+Zak_Odmrozenie_Start:
+  Skills:
+  - sound{s=entity.player.hurt_freeze;v=0.5;p=1.4} @self
+
+Zak_Odmrozenie_Start_Obie:
+  Skills:
+  - effect:particles{p=snowflake;a=4;hs=0.15;vs=0.15;y=1.3;sfo=1.0} @self
+
+Zak_Odmrozenie_Start_P:
+  Skills:
+  - effect:particles{audience=@PlayersInRadius{r=32};p=snowflake;a=6;hs=0.1;vs=0.1;s=0.02;y=1.3;sso=0.38;sfo=0.5} @self
+  - effect:particles{audience=@PlayersInRadius{r=32};p=end_rod;a=3;hs=0.1;vs=0.1;s=0.03;y=1.3;sso=0.38;sfo=0.5} @self
+
+Zak_Odmrozenie_Start_L:
+  Skills:
+  - effect:particles{audience=@PlayersInRadius{r=32};p=snowflake;a=6;hs=0.1;vs=0.1;s=0.02;y=1.3;sso=-0.38;sfo=0.5} @self
+  - effect:particles{audience=@PlayersInRadius{r=32};p=end_rod;a=3;hs=0.1;vs=0.1;s=0.03;y=1.3;sso=-0.38;sfo=0.5} @self
+
+Zak_Odmrozenie_Stop:
+  Skills:
+  - sound{s=block.amethyst_block.chime;v=0.5;p=1.8} @self
+
+Zak_Odmrozenie_Stop_P:
+  Skills:
+  - effect:particles{audience=@PlayersInRadius{r=32};p=snowflake;a=5;hs=0.1;vs=0.05;s=0.01;y=1.3;sso=0.38;sfo=0.5} @self
+  - effect:particles{audience=@PlayersInRadius{r=32};p=snowflake;a=4;hs=0.12;vs=0.08;s=0.01;y=1.3;sso=0.38;sfo=0.5} @self
+
+Zak_Odmrozenie_Stop_L:
+  Skills:
+  - effect:particles{audience=@PlayersInRadius{r=32};p=snowflake;a=5;hs=0.1;vs=0.05;s=0.01;y=1.3;sso=-0.38;sfo=0.5} @self
+  - effect:particles{audience=@PlayersInRadius{r=32};p=snowflake;a=4;hs=0.12;vs=0.08;s=0.01;y=1.3;sso=-0.38;sfo=0.5} @self
+
+Zak_Odmrozenie_Tik:
+  Skills:
+  - sound{s=block.powder_snow.step;v=1;p=0.6} @self
+
+Zak_Odmrozenie_Tik_P:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Tik}
+
+Zak_Odmrozenie_Tik_L:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Tik}
+
+Zak_Odmrozenie_Tik_Obie:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Tik}
+
+Zak_Odmrozenie_Obraz_P:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Strumien_P}
+
+Zak_Odmrozenie_Obraz_L:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Strumien_L}
+
+Zak_Odmrozenie_Obraz_Obie:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Rdzen}
+
+Zak_Odmrozenie_Dlon_P:
+  Skills:
+  - effect:particles{p=snowflake;a=1;hs=0.05;vs=0.05;y=1.1;sso=0.4;sfo=0.3} @self
+
+Zak_Odmrozenie_Dlon_L:
+  Skills:
+  - effect:particles{p=snowflake;a=1;hs=0.05;vs=0.05;y=1.1;sso=-0.4;sfo=0.3} @self
+
+Zak_Odmrozenie_Strumien_P:
+  Skills:
+  - projectile{onTick=Zak_Odmrozenie_Ogon;v=16;i=1;ti=1;mr=6.2;hR=0.25;vR=0.4;syo=1.3;sfo=0.55;sso=0.38;hn=11;vn=6;hp=true;hnp=true;ht=true;sE=true;sB=true;hitConditions=[ - faction{faction=zaklecia_przywolane} false ]} @Forward{f=7;y=1.3}
+
+Zak_Odmrozenie_Strumien_L:
+  Skills:
+  - projectile{onTick=Zak_Odmrozenie_Ogon;v=16;i=1;ti=1;mr=6.2;hR=0.25;vR=0.4;syo=1.3;sfo=0.55;sso=-0.38;hn=11;vn=6;hp=true;hnp=true;ht=true;sE=true;sB=true;hitConditions=[ - faction{faction=zaklecia_przywolane} false ]} @Forward{f=7;y=1.3}
+
+Zak_Odmrozenie_Rdzen:
+  Skills:
+  - projectile{onTick=Zak_Odmrozenie_OgonRdzen;v=18;i=1;ti=1;mr=7.2;hR=0.3;vR=0.5;syo=1.3;sfo=0.7;sso=0;hn=7;vn=4;hp=true;hnp=true;ht=true;sE=true;sB=true;hitConditions=[ - faction{faction=zaklecia_przywolane} false ]} @Forward{f=8;y=1.3}
+
+Zak_Odmrozenie_Ogon:
+  Skills:
+  - effect:particles{p=snowflake;a=3;hs=0.12;vs=0.1;s=0.015} @origin
+  - effect:particles{p=item_snowball;a=1;hs=0.1;vs=0.08;s=0.01} @origin
+  - effect:particles{p=end_rod;a=1;hs=0.12;vs=0.1;s=0.005} @origin 0.2
+
+Zak_Odmrozenie_OgonRdzen:
+  Skills:
+  - effect:particles{p=snowflake;a=4;hs=0.2;vs=0.15;s=0.02} @origin
+  - effect:particles{p=end_rod;a=1;hs=0.15;vs=0.12;s=0.01} @origin 0.4
+  - effect:particles{p=item_snowball;a=2;hs=0.15;vs=0.1;s=0.02} @origin
+
+Zak_Odmrozenie_Traf:
+  TargetConditions:
+  - mmoCanTarget{interaction=OFFENSE_ACTION} true
+  - lineofsight true
+  Skills:
+  - mmodamage{a=3.5;t=SKILL,MAGIC;element=ICE}
+  - potion{type=SLOWNESS;duration=30;level=1;hasParticles=false}
+  - freeze{ticks=160}
+  - effect:particles{p=snowflake;a=10;hs=0.35;vs=0.6;s=0.02;y=1}
+  - effect:particles{p=item_snowball;a=6;hs=0.3;vs=0.5;s=0.05;y=1}
+  - zakZasob{zasob=stamina;a=3}
+
+Zak_Odmrozenie_Traf2:
+  TargetConditions:
+  - mmoCanTarget{interaction=OFFENSE_ACTION} true
+  - lineofsight true
+  Skills:
+  - mmodamage{a=7.7;t=SKILL,MAGIC;element=ICE}
+  - potion{type=SLOWNESS;duration=40;level=2;hasParticles=false}
+  - freeze{ticks=220}
+  - effect:particles{p=snowflake;a=18;hs=0.45;vs=0.7;s=0.03;y=1}
+  - effect:particles{p=item_snowball;a=10;hs=0.4;vs=0.6;s=0.06;y=1}
+  - zakZasob{zasob=stamina;a=6}
+
+# Strumien rysuje plugin jako obiekt wyswietlany (model zaklecia:strumien_<id>); tu tylko male uderzenie w punkcie
+# trafienia, wolane przez plugin co 4 ticki z lokacja trafienia jako @origin. Zak_Obraz (pociski) wylaczony w configu.
+
+Zak_Odmrozenie_Traf_P:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Traf;sync=true}
+
+Zak_Odmrozenie_Traf_L:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Traf;sync=true}
+
+Zak_Odmrozenie_Traf_Obie:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Traf2;sync=true}
+
+Zak_Odmrozenie_Uderzenie:
+  Skills:
+  - effect:particles{p=snowflake;a=4;hs=0.15;vs=0.15;s=0.02} @origin
+  - effect:particles{p=item_snowball;a=2;hs=0.1;vs=0.1;s=0.03} @origin
+
+Zak_Odmrozenie_Uderzenie_P:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Uderzenie}
+
+Zak_Odmrozenie_Uderzenie_L:
+  Skills:
+  - skill{s=Zak_Odmrozenie_Uderzenie}

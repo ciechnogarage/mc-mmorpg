@@ -1,0 +1,19 @@
+ZAKLECIE_LECZENIE_DLONI:
+  Id: DEBUG_STICK
+  Display: '<!i><#c9a6ff>Leczenie dłoni'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Przywracanie · Nowicjusz'
+  - '<!i><gray>Leczy niewrogą żywą istotę pod celownikiem.'
+  - '<!i><#ffcf6b>PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
+  - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
+  - '<!i><gray>Nie działa na nieumarłych, atronachy i golemy.'
+  - '<!i><gray>Mana ubywa także bez celu.'
+  - '<!i><gray>Koszt testowy: <#6ab4ff>0,5 many / 0,5 s'
+  - '<!i><dark_gray>TODO grafika: tymczasowy model dłoni'
+  Options:
+    ItemModel: zaklecia:leczenie_dloni
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  SwingAnimation:
+    Type: NONE

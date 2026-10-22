@@ -1,0 +1,678 @@
+# Loch 001, fragment 1. Skille wolane przez funkcje MD (caster = punkt funkcji): BEZ delay, summon level=1 + os=true.
+# Skille mobow (caster = mob) moga miec delay.
+loch_001_przybycie:
+  Skills:
+  # gamerules.yml nie jest stosowany do recznego szablonu (zmierzone) - reguly z konsoli na swiecie instancji
+  - command{c="execute in minecraft:<caster.l.w> run gamerule fall_damage false"}
+  - command{c="execute in minecraft:<caster.l.w> run gamerule keep_inventory true"}
+  - command{c="execute in minecraft:<caster.l.w> run gamerule advance_time false"}
+  - command{c="execute in minecraft:<caster.l.w> run gamerule advance_weather false"}
+  - command{c="execute in minecraft:<caster.l.w> run gamerule mob_griefing false"}
+  - command{c="execute in minecraft:<caster.l.w> run weather clear"}
+  - setvariable{var=world.l001_sekrety;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_bl_kwiat;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_bl_kora;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_ziola;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_napar;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_zagadka;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_latarnia;val=0;type=INTEGER} @self
+  - title{title="<light_purple>Loch 001</light_purple>";subtitle="<green>Kwietna Polana</green>";fadein=15;duration=60;fadeout=20} @PlayersInRadius{r=40}
+  - sound{s=block.amethyst_block.chime;v=1;p=1.2} @PlayersInRadius{r=40}
+  - message{m="<green>Ranny druid</green> <gray>woła cię od ogniska - Strażnik Gaju oszalał. Podejdź, zanim ruszysz na szlak.</gray>"} @PlayersInRadius{r=40}
+
+# A: horda Pniaczkow - chwila mocy. Wariant B: mniej Pniaczkow + ukryta Purchawka (fragment 1 nie ma jeszcze Purchawki
+# -> B = 8 Pniaczkow z drugiej strony sciezki).
+loch_001_starcie_A:
+  Skills:
+  - sound{s=block.azalea_leaves.break;v=1.2;p=0.7} @PlayersInRadius{r=30}
+  - particles{p=block;m=OAK_LEAVES;a=60;hs=6;vs=1;s=0.05} @self
+  - randomskill{skills=loch_001_A1,loch_001_A2} @self
+# horda w 3 kepach NA SCIEZCE (rozrzut r=7 w lesie wsadzal Pniaczka w pien - "suffocated in a wall", zmierzone na world1)
+loch_001_A1:
+  Skills:
+  - summon{m=L001_PNIACZEK;level=1;a=4;r=1.5;yr=8;os=true} @Location{c=14,102,100}
+  - summon{m=L001_PNIACZEK;level=1;a=4;r=1.5;yr=8;os=true} @Location{c=20,102,94}
+  - summon{m=L001_PNIACZEK;level=1;a=4;r=1.5;yr=8;os=true} @Location{c=26,102,88}
+loch_001_A2:
+  Skills:
+  - summon{m=L001_PNIACZEK;level=1;a=3;r=1.5;yr=8;os=true} @Location{c=14,102,100}
+  - summon{m=L001_PNIACZEK;level=1;a=3;r=1.5;yr=8;os=true} @Location{c=20,102,94}
+  - summon{m=L001_PNIACZEK;level=1;a=2;r=1.5;yr=8;os=true} @Location{c=26,102,88}
+
+# POPULACJA na starcie: moby stoja na mapie i atakuja z bliska (FollowRange), wezly zasobow do zebrania.
+# Wspolrzedne @Location z pomiaru gruntu (loch001_rekwizyty.py / sonda); os=true + yr=8 dosadza na grunt.
+loch_001_populacja:
+  Skills:
+  # LOSOWANIA PRZY WEJSCIU (powtorki): nastroj dnia, kierunek zagadki, miejsce skrytki; zmienne oceny na zero
+  - setvariable{var=world.l001_zag_blad;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_zag_ok;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_kora_ok;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_ocena;val=0;type=INTEGER} @self
+  # pora dnia TU, przed nastrojem: w przybyciu nadpisywala "Noc Swietlikow" (oba skille startuja w dowolnej kolejnosci)
+  - command{c="execute in minecraft:<caster.l.w> run time set 12000"}
+  - randomskill{skills=L001_MOD_1,L001_MOD_2,L001_MOD_3,L001_MOD_4} @self
+  - randomskill{skills=L001_ZAG_0,L001_ZAG_1} @self
+  - randomskill{skills=L001_SKR_1,L001_SKR_2} @self
+  - skill{s=L001_OKRUSZKI_TARCZA} @self
+  - randomskill{skills=loch_001_B1,loch_001_B2} @self
+  # C: Korzeniak na sciezce przed szczatkami (lekcja strefy) - razem z zasadzka, a przy szczatkach spokoj na dziennik
+  - summon{m=L001_KORZENIAK;level=1;a=1;r=1;yr=8;os=true} @Location{c=52,102,62}
+  # samotny wilk strzeze latarni w lesie
+  - summon{m=L001_WILK;level=1;a=1;r=1;yr=8;os=true} @Location{c=52,103,93}
+  # patrol Pniaczkow miedzy obozem a lasem - pierwsza, latwa walka
+  - summon{m=L001_PNIACZEK;level=1;a=3;r=1.5;yr=8;os=true} @Location{c=16,102,112}
+  # szabrownicy: 2 Pniaczki grzebia w rozbitym wozie przy obozie (pierwsza, latwa walka i usmiech)
+  - summon{m=L001_PNIACZEK;level=1;a=2;r=1;yr=8;os=true} @Location{c=13,102,108}
+  # straz skrytki w lesie
+  - summon{m=L001_PNIACZEK;level=1;a=2;r=1;yr=8;os=true} @Location{c=8,103,96}
+  # legowisko (plaski grunt x29-36 z63-69; (30,70) przy progu - wilczyca sie dusila): wilczyca ze szczeniakami (nie atakuja) - klimat, walka tylko z wilczyca
+  - summon{m=L001_WILCZYCA;level=1;a=1;r=1;yr=8;os=true} @Location{c=33,102,64}
+  - summon{m=L001_WILCZE;level=1;a=2;r=1;yr=8;os=true} @Location{c=33,102,65}
+  # straz Kwiatu Gaju
+  - summon{m=L001_PNIACZEK;level=1;a=2;r=1;yr=8;os=true} @Location{c=59,102,72}
+  # kulminacja fragmentu: Stary Korzen stoi na lace przed Obozem Ciernia - widac go z daleka
+  - summon{m=L001_STARY_KORZEN;level=1;a=1;r=0;yr=8;os=true} @Location{c=58,102,40}
+  # zwierzeta (zycie na mapie)
+  - summon{m=FOX;level=1;a=2;r=2;yr=8;os=true} @Location{c=44,102,84}
+  - summon{m=RABBIT;level=1;a=3;r=3;yr=8;os=true} @Location{c=-4,102,114}
+  - summon{m=BEE;level=1;a=3;r=2;yr=6;os=true} @Location{c=6,103,120}
+  # blogoslawienstwa (srodek fragmentu - chunk zawsze w zasiegu symulacji)
+  - command{c="mm mobs spawn L001_BLOGOSLAWIENSTWA 1 <caster.l.w>,30.5,102,85.5"}
+  - command{c="mm mobs spawn L001_BLOGOSLAWIENSTWA 1 <caster.l.w>,4.5,101,118.5"}
+  - command{c="mm mobs spawn L001_BLOGOSLAWIENSTWA 1 <caster.l.w>,52.5,102,56.5"}
+  # okruszki poprzednikow: stawiane w L001_SKR_1/2 (wariant skrytki), NIE w szablonie - item_display z szablonu dublowal sie
+  # ranny druid przy ognisku obozu (klik prawym)
+  # UWAGA: moby z ~onInteract/~onTimer przyzywane skillem funkcji MD bywaly martwe (krysztaly, ziele, emitery - zmierzone);
+  # przez konsole (mm mobs spawn) dzialaja zawsze. Wysokosci = grunt+1 zmierzony w swiecie kuzni.
+  - command{c="mm mobs spawn L001_DRUID 1 <caster.l.w>,4.5,101,117.5"}
+  # Ziele Gaju: 3 swiecace kepy przy trasie (druid chce 2)
+  - command{c="mm mobs spawn L001_ZIELE 1 <caster.l.w>,-3.5,102,108.5"}
+  - command{c="mm mobs spawn L001_ZIELE 1 <caster.l.w>,22.5,103,104.5"}
+  - command{c="mm mobs spawn L001_ZIELE 1 <caster.l.w>,36.5,103,90.5"}
+  # zrodla klimatu
+  - summon{m=L001_KLIMAT_LAS;level=1;a=1;r=0;yr=8;os=true} @Location{c=30,102,90}
+  - summon{m=L001_KLIMAT_LAS;level=1;a=1;r=0;yr=8;os=true} @Location{c=44,102,78}
+  - summon{m=L001_KLIMAT_LAS;level=1;a=1;r=0;yr=8;os=true} @Location{c=52,102,62}
+  - summon{m=L001_KLIMAT_LAKA;level=1;a=1;r=0;yr=8;os=true} @Location{c=4,102,112}
+  - summon{m=L001_KLIMAT_LAKA;level=1;a=1;r=0;yr=8;os=true} @Location{c=58,102,50}
+  # wezly zasobow v2 (bloki Nexo, plugin Rzemioslo — PPM z narzedziem): ziola przy obozie i na skraju lasu, grzyby w lesie, powalony dab
+  - command{c="rzemioslo postaw wezel_t1_herbalism <caster.l.w> -8 101 114"}
+  - command{c="rzemioslo postaw wezel_t1_herbalism <caster.l.w> 36 101 58"}
+  - command{c="rzemioslo postaw wezel_t1_grzyby <caster.l.w> 33 102 94"}
+  - command{c="rzemioslo postaw wezel_t1_woodworking <caster.l.w> 58 102 78"}
+# B: wataha odpoczywa na polanie w lesie. 2 Wilki + 3 Pniaczki albo 3 Wilki. Srodek plaskiego wnetrza polany (x34-43, z71-77 na y=100); przy krawedzi wilki wchodzily hitboxem w prog terenu i dusily sie (zmierzone).
+loch_001_B1:
+  Skills:
+  - summon{m=L001_WILK_WATAHA;level=1;a=2;r=1.5;yr=8;os=true} @Location{c=39,101,74}
+  - summon{m=L001_PNIACZEK;level=1;a=3;r=1.5;yr=8;os=true} @Location{c=39,101,74}
+loch_001_B2:
+  Skills:
+  - summon{m=L001_WILK_WATAHA;level=1;a=3;r=1.5;yr=8;os=true} @Location{c=39,101,74}
+
+# C: ZASADZKA przy szczatkach poszukiwacza - polowa wejsc: 2 Wilki wyskakuja z krzakow (Korzeniak stoi od startu).
+loch_001_zasadzka_C:
+  Skills:
+  - message{m="<gray>Coś szeleści w krzakach przy ścieżce.</gray>"} @PlayersInRadius{r=20}
+  - randomskill{skills=loch_001_C1,loch_001_C2} @self
+loch_001_C1:
+  Skills:
+  - sound{s=block.sweet_berry_bush.break;v=1;p=0.7} @PlayersInRadius{r=20}
+loch_001_C2:
+  Skills:
+  - sound{s=entity.wolf.growl;v=1;p=0.8} @PlayersInRadius{r=20}
+  - particles{p=block;m=OAK_LEAVES;a=40;hs=4;vs=1;s=0.05} @self
+  # dwa punkty przy sciezce, przed i za graczem (rozrzut r=7 w lesie wsadzal wilka w drzewo - suffocated, zmierzone)
+  - summon{m=L001_WILK;level=1;a=1;r=1;yr=8;os=true} @Location{c=45,102,67}
+  - summon{m=L001_WILK;level=1;a=1;r=1;yr=8;os=true} @Location{c=54,102,62}
+
+loch_001_skarb:
+  Skills:
+  - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
+  - variableadd{var=world.l001_sekrety;amount=1} @self
+  - command{c="execute in minecraft:<caster.l.w> run setblock 64 102 82 minecraft:barrel[facing=up,open=true]"}
+  - sound{s=block.amethyst_block.resonate;v=1.2;p=1.2} @PlayersInRadius{r=8}
+  - particles{p=end_rod;a=40;hs=1;vs=1.5;s=0.03;y=1} @self
+  - title{title="<gold>Skarb Latarni</gold>";subtitle="<gray>Gaj wynagradza tych, którzy niosą światło</gray>";fadein=5;duration=60;fadeout=15} @PlayersInRadius{r=8}
+  - message{m="<gold>Skarb Latarni.</gold> <gray>Sekrety lochu <gold><world.var.l001_sekrety>/5</gold></gray>"} @PlayersInRadius{r=8}
+  - command{c="mi give MATERIAL PROF_ROUGH_CRYSTAL <target.name> 2"} @PlayersInWorld
+  - command{c="mi give MATERIAL PROF_ENCHANT_DUST <target.name> 2"} @PlayersInWorld
+
+# --- SZEPT GAJU (strzepy historii w miejscach) i OKRUSZKI poprzednikow (item_display z loch001_okruszki.py)
+loch_001_latarnia_budz:
+  Skills:
+  # knot przyzwany z konsoli, gdy gracz jest blisko (moby z ~onInteract z populacji bywaly martwe - pamiec)
+  - command{c="mm mobs spawn L001_LATARNIA_KNOT 1 <caster.l.w>,56.5,106,90.5"}
+  - sound{s=block.sculk_sensor.clicking;v=0.8;p=0.6} @PlayersInRadius{r=10}
+  - message{m="<gray>Na omszałym słupku wisi zgaszona latarnia. Może da się ją rozpalić.</gray>"} @PlayersInRadius{r=10}
+
+loch_001_szept_kwiat:
+  Skills:
+  # krysztaly zagadki budza sie dopiero przy podejsciu: przyzwane na starcie (daleko od gracza) nie odbieraly klikniec
+  # (~onInteract martwy w nr 1 i 2); przyzwane z konsoli, gdy gracz jest obok - dzialaja (zmierzone w kuzni 2026-09-28)
+  - command{c="mm mobs spawn L001_KAMIEN_1 1 <caster.l.w>,58.5,104,71.5"}
+  - command{c="mm mobs spawn L001_KAMIEN_2 1 <caster.l.w>,61.5,104,74.5"}
+  - command{c="mm mobs spawn L001_KAMIEN_3 1 <caster.l.w>,64.5,105,71.5"}
+  - particles{p=end_rod;a=30;hs=3;vs=1;s=0.02;y=3} @self
+  - sound{s=block.amethyst_cluster.place;v=1.2;p=0.8} @PlayersInRadius{r=10}
+  - sound{s=ambient.cave;v=0.6;p=1.4} @PlayersInRadius{r=10}
+  - message{m="<dark_aqua><italic>Szept Gaju... kamienie rosną ku światłu. Od najmniejszego.</italic></dark_aqua>"} @PlayersInRadius{r=10} ?variableequals{var=world.l001_zag_kier;value=0}
+  - message{m="<dark_aqua><italic>Szept Gaju... kamienie kłaniają się ziemi. Od największego.</italic></dark_aqua>"} @PlayersInRadius{r=10} ?variableequals{var=world.l001_zag_kier;value=1}
+loch_001_szept_zakatek:
+  Skills:
+  - sound{s=ambient.cave;v=0.6;p=1.2} @PlayersInRadius{r=8}
+  - message{m="<dark_aqua><italic>Szept Gaju... tu spałem, zanim korzenie oszalały.</italic></dark_aqua>"} @PlayersInRadius{r=8}
+loch_001_szept_boss:
+  Skills:
+  - sound{s=ambient.cave;v=0.7;p=0.8} @PlayersInRadius{r=12}
+  - message{m="<dark_aqua><italic>Szept Gaju... był strażnikiem. Teraz jest więźniem własnych korzeni.</italic></dark_aqua>"} @PlayersInRadius{r=12}
+loch_001_skrytki_budz:
+  Skills:
+  - skill{s=L001_SKR_1_BUDUJ} @self ?variableequals{var=world.l001_skr_w;value=1}
+  - skill{s=L001_SKR_2_BUDUJ} @self ?variableequals{var=world.l001_skr_w;value=2}
+loch_001_skrytka_w1:
+  Skills:
+  - command{c="execute in minecraft:<caster.l.w> run setblock 10 103 92 minecraft:barrel[facing=up,open=true]"} ?variableequals{var=world.l001_skr_w;value=1}
+  - skill{s=loch_001_skrytka} @self ?variableequals{var=world.l001_skr_w;value=1}
+loch_001_skrytka_w2:
+  Skills:
+  - command{c="execute in minecraft:<caster.l.w> run setblock 20 103 78 minecraft:barrel[facing=up,open=true]"} ?variableequals{var=world.l001_skr_w;value=2}
+  - skill{s=loch_001_skrytka} @self ?variableequals{var=world.l001_skr_w;value=2}
+loch_001_okruszek_plecak_w1:
+  Skills:
+  - skill{s=loch_001_okruszek_plecak} @self ?variableequals{var=world.l001_skr_w;value=1}
+loch_001_okruszek_plecak_w2:
+  Skills:
+  - sound{s=item.bundle.drop_contents;v=1;p=0.8} @PlayersInRadius{r=6} ?variableequals{var=world.l001_skr_w;value=2}
+  - message{m="<gray>Porzucony plecak poszukiwacza. Ślady prowadzą w gąszcz na północny zachód.</gray>"} @PlayersInRadius{r=6} ?variableequals{var=world.l001_skr_w;value=2}
+loch_001_okruszek_plecak:
+  Skills:
+  - sound{s=item.bundle.drop_contents;v=1;p=0.8} @PlayersInRadius{r=6}
+  - message{m="<gray>Porzucony plecak poszukiwacza. Ślady prowadzą w gęstwinę na północny zachód.</gray>"} @PlayersInRadius{r=6}
+loch_001_okruszek_tarcza:
+  Skills:
+  - sound{s=item.shield.break;v=0.8;p=0.8} @PlayersInRadius{r=6}
+  - message{m="<gray>Pęknięta tarcza. Ktoś bronił się tu przed czymś dużym... ślady prowadzą między omszałe kamienie na wschód.</gray>"} @PlayersInRadius{r=6}
+
+# --- ZNAJDZKI (sekrety do oceny): nagrody = nasze materialy PROF_* (mi give: typ, id, gracz, ilosc)
+loch_001_kwiat_A:
+  Skills:
+  - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
+  - variableadd{var=world.l001_sekrety;amount=1} @self
+  - particles{p=cherry_leaves;a=60;hs=1.5;vs=1.5;s=0.02;y=1} @self
+  - sound{s=block.amethyst_block.chime;v=1;p=1.5} @PlayersInRadius{r=8}
+  - setvariable{var=world.l001_bl_kwiat;val=1;type=INTEGER} @self
+  # od razu na 10 min (emiter tylko odnawia po smierci - pojedynczy emiter bywal martwy, zmierzone na world1)
+  - potion{type=REGENERATION;duration=12000;level=0;hasParticles=false} @PlayersInRadius{r=10}
+  - 'title{title="<light_purple>Kwiat Gaju</light_purple>";subtitle="<gray>Błogosławieństwo: regeneracja do końca lochu</gray>";fadein=5;duration=60;fadeout=15} @PlayersInRadius{r=8}'
+  - message{m="<light_purple>Kwiat Gaju odnaleziony.</light_purple> <gray>Sekrety lochu <gold><world.var.l001_sekrety>/5</gold></gray>"} @PlayersInRadius{r=8}
+  - command{c="mi give MATERIAL PROF_MOONLEAF <target.name> 2"} @PlayersInWorld
+loch_001_skrytka:
+  Skills:
+  - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
+  - variableadd{var=world.l001_sekrety;amount=1} @self
+  - sound{s=block.barrel.open;v=1;p=0.9} @PlayersInRadius{r=8}
+  - particles{p=happy_villager;a=15;hs=0.5;vs=0.5;y=1} @self
+  - setvariable{var=world.l001_bl_kora;val=1;type=INTEGER} @self
+  - potion{type=RESISTANCE;duration=12000;level=0;hasParticles=false} @PlayersInRadius{r=10}
+  - 'title{title="<gold>Skrytka pod korzeniami</gold>";subtitle="<gray>Błogosławieństwo Kory: odporność do końca lochu</gray>";fadein=5;duration=60;fadeout=15} @PlayersInRadius{r=8}'
+  - message{m="<gold>Skrytka pod korzeniami.</gold> <gray>Ktoś tu schował zapasy. Sekrety lochu <gold><world.var.l001_sekrety>/5</gold></gray>"} @PlayersInRadius{r=8}
+  - command{c="mi give MATERIAL PROF_RAW_TIMBER <target.name> 2"} @PlayersInWorld
+  - command{c="mi give MATERIAL PROF_ROUGH_CRYSTAL <target.name> 1"} @PlayersInWorld
+loch_001_dziennik:
+  Skills:
+  - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
+  - variableadd{var=world.l001_sekrety;amount=1} @self
+  - command{c="execute in minecraft:<caster.l.w> run setblock 55 102 56 minecraft:barrel[facing=up,open=true]"}
+  - sound{s=item.book.page_turn;v=1;p=1} @PlayersInRadius{r=8}
+  - message{m="<yellow>Dziennik poszukiwacza:</yellow> <gray><italic>Latarnia Gaju stoi w lesie, na wschód od ścieżki, niedaleko wejścia do lasu. Jej światło pali korzenie - nawet te Starego Korzenia...</italic></gray>"} @PlayersInRadius{r=8}
+  - message{m="<gray>Sekrety lochu <gold><world.var.l001_sekrety>/5</gold></gray>"} @PlayersInRadius{r=8}
+  - command{c="mi give MATERIAL PROF_BEAST_SCRAP <target.name> 1"} @PlayersInWorld
+  # slad swietlikow od szczatkow do latarni - podpowiedz z dziennika staje sie widoczna
+  # slad tylko, gdy latarnia jeszcze nie plonie; kierunek PRAWDZIWY: swietliki z=64->86 = na poludnie (MC: +Z)
+  - summon{m=L001_SWIETLIK;level=1;a=1;r=0} @Location{c=53,103,64} ?variableequals{var=world.l001_latarnia;value=0}
+  - summon{m=L001_SWIETLIK;level=1;a=1;r=0} @Location{c=52,103,72} ?variableequals{var=world.l001_latarnia;value=0}
+  - summon{m=L001_SWIETLIK;level=1;a=1;r=0} @Location{c=53,103,80} ?variableequals{var=world.l001_latarnia;value=0}
+  - summon{m=L001_SWIETLIK;level=1;a=1;r=0} @Location{c=55,103,86} ?variableequals{var=world.l001_latarnia;value=0}
+  - message{m="<yellow>Między drzewami zapalają się świetliki - prowadzą z powrotem na południe, do lasu.</yellow>"} @PlayersInWorld ?variableequals{var=world.l001_latarnia;value=0}
+  - message{m="<yellow>Latarnia, o której pisał, już płonie. Stary Korzeń czuje jej światło.</yellow>"} @PlayersInWorld ?variableequals{var=world.l001_latarnia;value=1}
+
+# Latarnia Gaju 1 (opcjonalna, schowana w lesie). Docelowo: licznik + filar swiatla na arenie (spec §2 wersja 2).
+loch_001_latarnia_1:
+  Skills:
+  # wspolrzedne wpisane na sztywno: <caster.l.x> daje "56.0" (setblock chce int), a <caster.l.y+1> nie jest rozwijane
+  - command{c="execute in minecraft:<caster.l.w> run setblock 56 106 90 minecraft:lantern"}
+  - variableadd{var=world.l001_sekrety;amount=1} @self
+  - particles{p=end_rod;a=40;hs=0.6;vs=1.2;s=0.05;y=1.5} @self
+  # slup swiatla w niebo - widac go z calej wyspy
+  - particles{p=end_rod;a=260;hs=0.25;vs=18;s=0;y=19} @self
+  - effect:lightning @self
+  # swiatlo zmusza korzenie do poslusznosci: Stary Korzen traci 30 HP (widac na pasku bossa)
+  # vanilla damage po znaczniku: @MobsInRadius{types=...} raz trafial, raz nie (zmierzone na world1) - znacznik pewny
+  - command{c="execute in minecraft:<caster.l.w> run damage @e[tag=l001_boss,limit=1] 30 minecraft:magic"}
+  # swiatlo wypala sciane korzeni - otwiera zakatek ze Skarbem Latarni (loch001_zakatek.py)
+  - command{c="execute in minecraft:<caster.l.w> run setblock 60 102 85 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 60 103 85 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 60 104 85 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 60 102 86 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 60 103 86 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 60 104 86 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 61 102 86 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 61 103 86 minecraft:air destroy"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 61 104 86 minecraft:air destroy"}
+  - sound{s=block.roots.break;v=1.4;p=0.6} @PlayersInRadius{r=20}
+  - message{m="<gold>Korzenie na wschodzie kurczą się przed światłem.</gold> <gray>Coś odsłoniły.</gray>"} @PlayersInRadius{r=16}
+  - message{m="<green>Gdzieś na północy Stary Korzeń zawył z bólu.</green> <gray>Światło latarni go osłabiło.</gray>"} @PlayersInRadius{r=16}
+  - sound{s=block.beacon.activate;v=1;p=1.6} @PlayersInRadius{r=16}
+  - title{title="";subtitle="<gold>Latarnia Gaju płonie</gold>";fadein=5;duration=40;fadeout=15} @PlayersInRadius{r=16}
+  - message{m="<gold>Latarnia Gaju zapłonęła.</gold> <gray>Jej światło sięga aż do Starego Korzenia.</gray>"} @PlayersInWorld
+  - setvariable{var=world.l001_latarnia;val=1;type=INTEGER} @self
+  - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
+  - remove @caster
+
+loch_001_boss_intro:
+  Skills:
+  - title{title="<dark_green><bold>Stary Korzeń</bold></dark_green>";subtitle="<gray>Gaj nie wypuści cię dalej</gray>";fadein=5;duration=50;fadeout=15} @PlayersInRadius{r=30}
+  - sound{s=entity.ravager.roar;v=1.3;p=0.5} @PlayersInRadius{r=40}
+  - particles{p=block;m=ROOTED_DIRT;a=150;hs=6;vs=0.5;s=0.1} @self
+
+loch_001_koniec:
+  Skills:
+  - summon{m=L001_BEBNY;level=1;a=1;r=0} @Location{c=46,106,24}
+  - message{m="<green>Stary Korzeń pada.</green> <gray>Gaj oddycha, korzenie puszczają ziemię.</gray>"} @PlayersInRadius{r=60}
+
+# --- skille mobow (caster = mob, delay bezpieczny)
+# Wilk: skok z zapowiedzia ~0.8 s (warczenie + czasteczki + zastygniecie) - unik w bok (spec §3).
+L001_WILK_SKOK:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=9}
+  Skills:
+  - sound{s=entity.wolf.growl;v=1.2;p=0.7} @self
+  - particles{p=angry_villager;a=8;hs=0.5;vs=0.4;y=1} @self
+  - potion{type=SLOWNESS;duration=16;level=6;hasParticles=false} @self
+  - delay 16
+  - leap{velocity=110} @target
+  - delay 8
+  - damage{amount=3} @PlayersInRadius{r=1.8}
+
+# Stary Korzen: uderzenie korzeniami z zapowiedzia 1.2 s (krag czasteczek + dzwiek), unik = wyjsc z kregu r=3.
+L001_KORZEN_SLAM:
+  Cooldown: 5
+  Conditions:
+  - targetwithin{d=6}
+  Skills:
+  - sound{s=entity.warden.dig;v=1.2;p=1.2} @self
+  - potion{type=SLOWNESS;duration=26;level=10;hasParticles=false} @self
+  - particlering{p=block;m=ROOTED_DIRT;radius=3;points=32;a=2;y=0.1} @self
+  - delay 12
+  - particlering{p=block;m=ROOTED_DIRT;radius=3;points=32;a=2;y=0.1} @self
+  - delay 12
+  - particles{p=explosion;a=3;hs=2;vs=0.2} @self
+  - sound{s=entity.generic.explode;v=0.8;p=0.6} @self
+  - damage{amount=6} @PlayersInRadius{r=3}
+  - throw{velocity=6;velocityY=3} @PlayersInRadius{r=3}
+L001_KORZEN_STREFA:
+  Cooldown: 9
+  Conditions:
+  - playerwithin{d=7}
+  Skills:
+  - sound{s=block.rooted_dirt.place;v=1.4;p=0.4} @self
+  - skill{s=L001_KORZEN_PULS} @self
+  - delay 20
+  - skill{s=L001_KORZEN_PULS} @self
+  - delay 20
+  - skill{s=L001_KORZEN_PULS} @self
+L001_KORZEN_PULS:
+  Skills:
+  - particlering{p=block;m=ROOTED_DIRT;radius=4;points=36;a=2;y=0.1} @self
+  - potion{type=SLOWNESS;duration=25;level=2;hasParticles=false} @PlayersInRadius{r=4}
+# KORA: kanal 4 s (leczy +30 HP), 3 ciosy w trakcie go kruszą (sprawdzane co 5 tickow w mobie)
+L001_KORA:
+  Cooldown: 18
+  Conditions:
+  - playerwithin{d=12}
+  Skills:
+  - setvariable{var=caster.kora;val=1;type=INTEGER} @self
+  - setvariable{var=caster.kora_ciosy;val=0;type=INTEGER} @self
+  - message{m="<dark_green>Stary Korzeń</dark_green> <gray>obrasta korą i zaczyna się leczyć - uderz go trzy razy, zanim skończy!</gray>"} @PlayersInRadius{r=30}
+  - sound{s=block.wood.place;v=1.5;p=0.5} @self
+  - potion{type=SLOWNESS;duration=80;level=10;hasParticles=false} @self
+  - particles{p=block;m=OAK_LOG;a=40;hs=1.2;vs=2;s=0.05;y=2} @self
+  - delay 20
+  - particles{p=block;m=OAK_LOG;a=40;hs=1.2;vs=2;s=0.05;y=2} @self ?variableequals{var=caster.kora;value=1}
+  - delay 20
+  - particles{p=block;m=OAK_LOG;a=40;hs=1.2;vs=2;s=0.05;y=2} @self ?variableequals{var=caster.kora;value=1}
+  - delay 20
+  - particles{p=block;m=OAK_LOG;a=40;hs=1.2;vs=2;s=0.05;y=2} @self ?variableequals{var=caster.kora;value=1}
+  - delay 20
+  - heal{amount=30} @self ?variableequals{var=caster.kora;value=1}
+  - particles{p=happy_villager;a=40;hs=1.2;vs=2;y=2} @self ?variableequals{var=caster.kora;value=1}
+  - message{m="<dark_green>Stary Korzeń</dark_green> <gray>zasklepił rany korą (+30).</gray>"} @PlayersInRadius{r=30} ?variableequals{var=caster.kora;value=1}
+  - setvariable{var=caster.kora;val=0;type=INTEGER} @self
+L001_KORA_PEKA:
+  Skills:
+  - setvariable{var=world.l001_kora_ok;val=1;type=INTEGER} @self
+  - setvariable{var=caster.kora;val=0;type=INTEGER} @self
+  - sound{s=block.wood.break;v=2;p=0.6} @self
+  - particles{p=block;m=OAK_LOG;a=80;hs=1.5;vs=2;s=0.2;y=2} @self
+  - message{m="<gold>Kora pęka!</gold> <gray>Stary Korzeń traci równowagę.</gray>"} @PlayersInRadius{r=30}
+  - potion{type=SLOWNESS;duration=60;level=10;hasParticles=false} @self
+# WYRWA: korzenie wyrywaja sie pod graczem (zapowiedz: krag 1.2 s) - karze za stanie w miejscu i kitowanie z dystansu
+L001_KORZEN_WYRWA:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=22}
+  Skills:
+  - sound{s=block.rooted_dirt.break;v=1.5;p=0.5} @self
+  - skill{s=L001_WYRWA_MIEJSCE} @targetlocation
+L001_WYRWA_MIEJSCE:
+  Skills:
+  - particlering{p=block;m=ROOTED_DIRT;radius=2;points=24;a=2;y=0.1} @origin
+  - delay 12
+  - particlering{p=block;m=ROOTED_DIRT;radius=2;points=24;a=2;y=0.1} @origin
+  - delay 12
+  - particles{p=block;m=OAK_LOG;a=50;hs=1;vs=1.2;s=0.15;y=0.5} @origin
+  - sound{s=entity.evoker_fangs.attack;v=1.2;p=0.7} @origin
+  - damage{amount=5} @PlayersNearOrigin{r=2}
+  - potion{type=SLOWNESS;duration=40;level=3;hasParticles=false} @PlayersNearOrigin{r=2}
+
+# w polowie zycia wzywa dziatwe z ziemi (raz)
+L001_KORZEN_DZIATWA:
+  Cooldown: 9999
+  Skills:
+  - message{m="<dark_green>Stary Korzeń</dark_green> <gray>wyrywa z ziemi swoje potomstwo!</gray>"} @PlayersInRadius{r=30}
+  - sound{s=entity.ravager.roar;v=1;p=0.8} @self
+  - particles{p=block;m=ROOTED_DIRT;a=80;hs=3;vs=0.5;s=0.1} @self
+  - summon{m=L001_PNIACZEK;level=1;a=4;r=3;yr=6;os=true} @self
+  - signal{s=wataha} @MobsInRadius{r=150;types=L001_WILK_WATAHA}
+L001_WATAHA_WEZWANIE:
+  Skills:
+  - teleport @MobsInRadius{r=150;types=L001_STARY_KORZEN;limit=1}
+  - sound{s=entity.wolf.howl;v=1.4;p=0.8} @self
+  - message{m="<gold>Wilk z polany odpowiada na wezwanie Starego Korzenia!</gold>"} @PlayersInRadius{r=60}
+
+# Bebny Plemienia Ciernia: rytm z palisady + strzaly spadajace obok gracza, potem emiter znika.
+L001_BEBNY_SEKWENCJA:
+  Skills:
+  # --- swit: niebo przechodzi w poranek, zarodniki ustepuja platkom
+  - command{c="execute in minecraft:<caster.l.w> run time set 22800"}
+  - sound{s=block.amethyst_block.resonate;v=2;p=0.7} @PlayersInRadius{r=120}
+  - delay 6
+  - command{c="execute in minecraft:<caster.l.w> run time set 23400"}
+  - delay 6
+  - command{c="execute in minecraft:<caster.l.w> run time set 0"}
+  - remove @MobsInRadius{r=200;types=L001_KLIMAT_LAS}
+  - summon{m=L001_KLIMAT_SWIT;level=1;a=1;r=0} @Location{c=30,103,90}
+  - summon{m=L001_KLIMAT_SWIT;level=1;a=1;r=0} @Location{c=44,103,78}
+  - summon{m=L001_KLIMAT_SWIT;level=1;a=1;r=0} @Location{c=56,103,52}
+  - delay 6
+  - command{c="execute in minecraft:<caster.l.w> run time set 600"}
+  - delay 6
+  - command{c="execute in minecraft:<caster.l.w> run time set 1200"}
+  - title{title="<yellow>Świt nad Kwietną Polaną</yellow>";subtitle="<gray>Gaj odzyskał oddech</gray>";fadein=10;duration=50;fadeout=15} @PlayersInRadius{r=120}
+  - delay 70
+  # --- cliffhanger: Plemie Ciernia
+  - sound{s=block.note_block.basedrum;v=3;p=0.6} @PlayersInRadius{r=80}
+  - delay 8
+  - sound{s=block.note_block.basedrum;v=3;p=0.6} @PlayersInRadius{r=80}
+  - delay 8
+  - sound{s=block.note_block.basedrum;v=3;p=0.8} @PlayersInRadius{r=80}
+  - delay 14
+  - sound{s=block.note_block.basedrum;v=3;p=0.6} @PlayersInRadius{r=80}
+  - delay 8
+  - sound{s=block.note_block.basedrum;v=3;p=0.6} @PlayersInRadius{r=80}
+  - delay 8
+  - sound{s=block.note_block.basedrum;v=3;p=0.8} @PlayersInRadius{r=80}
+  - delay 10
+  - sound{s=entity.arrow.shoot;v=2;p=0.8} @PlayersInRadius{r=80}
+  - command{c="execute in minecraft:<caster.l.w> positioned <target.l.x> <target.l.y> <target.l.z> run summon arrow ~3 ~14 ~-2 {Motion:[0.0,-1.4,0.0],pickup:0b}"} @PlayersInRadius{r=80}
+  - command{c="execute in minecraft:<caster.l.w> positioned <target.l.x> <target.l.y> <target.l.z> run summon arrow ~-3 ~14 ~1 {Motion:[0.0,-1.4,0.0],pickup:0b}"} @PlayersInRadius{r=80}
+  - command{c="execute in minecraft:<caster.l.w> positioned <target.l.x> <target.l.y> <target.l.z> run summon arrow ~1 ~14 ~4 {Motion:[0.0,-1.4,0.0],pickup:0b}"} @PlayersInRadius{r=80}
+  - delay 12
+  - sound{s=block.note_block.basedrum;v=3;p=0.6} @PlayersInRadius{r=80}
+  - delay 8
+  - sound{s=block.note_block.basedrum;v=3;p=0.8} @PlayersInRadius{r=80}
+  # --- NAGRODA KONCOWA (krytyka: boss dawal 3 drewna): baza + premia za sekrety, dla calej druzyny
+  - command{c="mmocore admin exp give <target.name> main 50"} @PlayersInWorld
+  - command{c="mi give MATERIAL PROF_OAK_TIMBER <target.name> 4"} @PlayersInWorld
+  - command{c="mi give MATERIAL PROF_SPRUCE_RESIN <target.name> 2"} @PlayersInWorld
+  - command{c="mi give MATERIAL PROF_ENCHANT_DUST <target.name> 1"} @PlayersInWorld
+  - command{c="mi give MATERIAL PROF_ROUGH_CRYSTAL <target.name> 2"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=3}
+  - command{c="mi give MATERIAL PROF_ROUGH_CRYSTAL <target.name> 2"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=4}
+  - command{c="mi give MATERIAL PROF_ROUGH_CRYSTAL <target.name> 3"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=5}
+  - command{c="mi give MATERIAL PROF_ENCHANT_DUST <target.name> 3"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=5}
+  - command{c="mmocore admin exp give <target.name> main 100"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=5}
+  # --- OCENA (powtorki): 4 wyzwania -> S/A/B/C; od oceny zalezy dodatkowy lup
+  - setvariable{var=world.l001_ocena;val=0;type=INTEGER} @self
+  - variableadd{var=world.l001_ocena;amount=1} @self ?variableequals{var=world.l001_sekrety;value=5}
+  - variableadd{var=world.l001_ocena;amount=1} @self ?variableequals{var=world.l001_kora_ok;value=1}
+  - variableadd{var=world.l001_ocena;amount=1} @self ?variableequals{var=world.l001_zag_ok;value=1}
+  - variableadd{var=world.l001_ocena;amount=1} @self ?variableequals{var=world.l001_latarnia;value=1}
+  # Domyslna litera C zapewnia widoczna ocene takze przy 0/4 (inline value=0 nie emitowalo wiadomosci).
+  - setvariable{var=world.l001_ocena_znak;val=C;type=STRING} @self
+  - setvariable{var=world.l001_ocena_znak;val=B;type=STRING} @self ?variableequals{var=world.l001_ocena;value=2}
+  - setvariable{var=world.l001_ocena_znak;val=A;type=STRING} @self ?variableequals{var=world.l001_ocena;value=3}
+  - setvariable{var=world.l001_ocena_znak;val=S;type=STRING} @self ?variableequals{var=world.l001_ocena;value=4}
+  - command{c="mi give MATERIAL PROF_ENCHANT_DUST <target.name> 3"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=4}
+  - command{c="mmocore admin exp give <target.name> main 100"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=4}
+  - command{c="mi give MATERIAL PROF_ENCHANT_DUST <target.name> 2"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=3}
+  - command{c="mmocore admin exp give <target.name> main 50"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=3}
+  - command{c="mmocore admin exp give <target.name> main 25"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=2}
+  # lup nastroju dnia
+  - command{c="mi give MATERIAL PROF_MOONLEAF <target.name> 2"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=1}
+  - command{c="mi give MATERIAL PROF_RAW_TIMBER <target.name> 4"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=2}
+  - command{c="mi give MATERIAL PROF_BEAST_SCRAP <target.name> 3"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=3}
+  - command{c="mi give MATERIAL PROF_MEDICINAL_HERB <target.name> 3"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=4}
+  # Jeden zwarty wpis po przyznaniu lupow. Warunki pokazuja tylko faktycznie przyznane premie.
+  - message{m="<gold><bold>KWIETNA POLANA</bold></gold> <gray>• wynik wyprawy</gray>"} @PlayersInWorld
+  # Cala linia jest w apostrofach YAML: dwukropek ze spacja w tresci komunikatu inaczej jest cicho pomijany.
+  - 'message{m="<gray>Ocena: <gold><world.var.l001_ocena_znak></gold> — <world.var.l001_ocena>/4 wyzwania.</gray>"} @PlayersInWorld'
+  - message{m="<gold>Łup:</gold> <white>4× twarde drewno dębowe, 2× żywiczne drewno świerkowe,</white>"} @PlayersInWorld
+  - message{m="<white>1× pył zaklęć i 50 PD.</white>"} @PlayersInWorld
+  - message{m="<gray>Premia za sekrety:</gray> <white>2× surowy kryształ.</white>"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=3}
+  - message{m="<gray>Premia za sekrety:</gray> <white>2× surowy kryształ.</white>"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=4}
+  - message{m="<gray>Premia za sekrety:</gray> <white>3× surowy kryształ, 3× pył zaklęć, 100 PD.</white>"} @PlayersInWorld ?variableequals{var=world.l001_sekrety;value=5}
+  - message{m="<gray>Premia za ocenę:</gray> <white>3× pył zaklęć i 100 PD.</white>"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=4}
+  - message{m="<gray>Premia za ocenę:</gray> <white>2× pył zaklęć i 50 PD.</white>"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=3}
+  - message{m="<gray>Premia za ocenę:</gray> <white>25 PD.</white>"} @PlayersInWorld ?variableequals{var=world.l001_ocena;value=2}
+  - message{m="<gray>Łup nastroju:</gray> <white>2× Księżycowy liść.</white>"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=1}
+  - message{m="<gray>Łup nastroju:</gray> <white>4× Surowe drewno.</white>"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=2}
+  - message{m="<gray>Łup nastroju:</gray> <white>3× Łup z bestii.</white>"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=3}
+  - message{m="<gray>Łup nastroju:</gray> <white>3× Zioło lecznicze.</white>"} @PlayersInWorld ?variableequals{var=world.l001_mod;value=4}
+  - message{m="<dark_red>Plemię Ciernia wie, że tu jesteś.</dark_red> <gray>Dalszy szlak powstaje.</gray>"} @PlayersInWorld
+  - delay 40
+  - remove @self
+
+# Korzeniak: przysiada (nie rusza sie 4 s) i rozlewa strefe korzeni r=2.5 ze spowolnieniem. Kontra: wyjsc ze strefy,
+# bic w czasie przysiadu.
+L001_KORZENIAK_STREFA:
+  Cooldown: 7
+  Conditions:
+  - playerwithin{d=5}
+  Skills:
+  - sound{s=block.rooted_dirt.place;v=1.2;p=0.6} @self
+  - potion{type=SLOWNESS;duration=80;level=10;hasParticles=false} @self
+  - skill{s=L001_KORZENIAK_PULS} @self
+  - delay 20
+  - skill{s=L001_KORZENIAK_PULS} @self
+  - delay 20
+  - skill{s=L001_KORZENIAK_PULS} @self
+  - delay 20
+  - skill{s=L001_KORZENIAK_PULS} @self
+L001_KORZENIAK_PULS:
+  Skills:
+  - particlering{p=block;m=ROOTED_DIRT;radius=2.5;points=24;a=2;y=0.1} @self
+  - particles{p=block;m=ROOTED_DIRT;a=20;hs=1.4;vs=0.1;s=0.02} @self
+  - potion{type=SLOWNESS;duration=25;level=2;hasParticles=false} @PlayersInRadius{r=2.5}
+
+# Uwaga: w podskillach wolanych z @trigger "@self" = mob (druid/krysztal/kepa); linie do gracza bez targetera (dziedzicza @trigger)
+# ---------- DRUID: prosba -> napar za 2 garscie Ziela (raz), potem pozegnanie
+L001_DRUID_ROZMOWA:
+  Cooldown: 1
+  Skills:
+  - skill{s=L001_DRUID_JUZ} @trigger ?variableequals{var=world.l001_napar;value=1}
+  - skill{s=L001_DRUID_NAPAR} @trigger ?variableequals{var=world.l001_napar;value=0} ?variableequals{var=world.l001_ziola;value=2}
+  - skill{s=L001_DRUID_NAPAR} @trigger ?variableequals{var=world.l001_napar;value=0} ?variableequals{var=world.l001_ziola;value=3}
+  # warunki pozytywne: linia z zaprzeczeniami (?~) nie odpalala sie wcale (zmierzone)
+  - skill{s=L001_DRUID_PROSBA} @trigger ?variableequals{var=world.l001_napar;value=0} ?variableequals{var=world.l001_ziola;value=0}
+  - skill{s=L001_DRUID_PROSBA} @trigger ?variableequals{var=world.l001_napar;value=0} ?variableequals{var=world.l001_ziola;value=1}
+L001_DRUID_PROSBA:
+  Skills:
+  - message{m="<green>Ranny druid</green> <gray>- Przynieś mi dwie garście Ziela Gaju, świeci przy ścieżce. Zaparzę ci napar na Stary Korzeń. (<world.var.l001_ziola>/2)</gray>"}
+  - sound{s=entity.villager.ambient;v=1;p=0.8}
+L001_DRUID_NAPAR:
+  Skills:
+  - setvariable{var=world.l001_napar;val=1;type=INTEGER} @self
+  - potion{type=ABSORPTION;duration=12000;level=1;hasParticles=false} @PlayersInWorld
+  - particles{p=happy_villager;a=20;hs=0.6;vs=1;y=1}
+  - sound{s=entity.generic.drink;v=1;p=1}
+  - sound{s=entity.villager.yes;v=1;p=0.8}
+  - title{title="<green>Napar druida</green>";subtitle="<gray>+4 serca osłony dla całej drużyny</gray>";fadein=5;duration=60;fadeout=15} @PlayersInWorld
+  - message{m="<green>Ranny druid</green> <gray>- Wypij. Gorzkie, ale Stary Korzeń poczuje waszą siłę.</gray>"} @PlayersInWorld
+L001_DRUID_JUZ:
+  Skills:
+  - message{m="<green>Ranny druid</green> <gray>- Idź. Gaj czeka.</gray>"}
+
+# ---------- ZIELE GAJU (funkcja MD przy kepie; caster = punkt funkcji)
+loch_001_ziele_zbior:
+  Skills:
+  - variableadd{var=world.l001_ziola;amount=1} @self
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run kill @e[type=zombie,distance=..2.5,limit=1,sort=nearest]"}
+  - sound{s=block.azalea_leaves.break;v=1;p=1.2} @PlayersInRadius{r=4}
+  - particles{p=happy_villager;a=12;hs=0.4;vs=0.4;y=1} @self
+  - message{m="<green>Ziele Gaju</green> <gray>(1/2) - druid potrzebuje jeszcze jednej garści.</gray>"} @PlayersInRadius{r=4} ?variableequals{var=world.l001_ziola;value=1}
+  - message{m="<green>Ziele Gaju</green> <gray>(2/2) - zanieś je rannemu druidowi przy ognisku.</gray>"} @PlayersInRadius{r=4} ?variableequals{var=world.l001_ziola;value=2}
+  - message{m="<green>Ziele Gaju</green> <gray>- zapas na drogę. Druid ma już dość.</gray>"} @PlayersInRadius{r=4} ?variableequals{var=world.l001_ziola;value=3}
+  - command{c="mi give MATERIAL PROF_MEDICINAL_HERB <target.name> 1"} @PlayersInWorld
+
+
+# ---------- ZAGADKA KAMIENI: kierunek LOSOWANY przy wejsciu (world.l001_zag_kier: 0 = od najnizszego, 1 = od najwyzszego)
+# - przy kolejnym wejsciu zagadka nie jest juz "rozwiazana w glowie". Blad = korzenie oplataja nogi, reset, znacznik do oceny.
+L001_ZAGADKA_1:
+  Cooldown: 1
+  Skills:
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=1}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=2}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=0}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=1}
+  - skill{s=L001_ZAGADKA_KROK_1} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=0}
+  - skill{s=L001_ZAGADKA_KROK_3} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=2}
+L001_ZAGADKA_2:
+  Cooldown: 1
+  Skills:
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=0}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=2}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=0}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=2}
+  - skill{s=L001_ZAGADKA_KROK_2} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=1}
+  - skill{s=L001_ZAGADKA_KROK_2} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=1}
+L001_ZAGADKA_3:
+  Cooldown: 1
+  Skills:
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=0}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=1}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=1}
+  - skill{s=L001_ZAGADKA_ZLE} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=2}
+  - skill{s=L001_ZAGADKA_KROK_3} @trigger ?variableequals{var=world.l001_zag_kier;value=0} ?variableequals{var=world.l001_zagadka;value=2}
+  - skill{s=L001_ZAGADKA_KROK_1} @trigger ?variableequals{var=world.l001_zag_kier;value=1} ?variableequals{var=world.l001_zagadka;value=0}
+L001_ZAGADKA_KROK_1:
+  Skills:
+  - setvariable{var=world.l001_zagadka;val=1;type=INTEGER} @self
+  - sound{s=block.amethyst_block.chime;v=1.5;p=1.1}
+  - particles{p=end_rod;a=25;hs=0.3;vs=0.6;y=1.8} @caster
+L001_ZAGADKA_KROK_2:
+  Skills:
+  - setvariable{var=world.l001_zagadka;val=2;type=INTEGER} @self
+  - sound{s=block.amethyst_block.chime;v=1.5;p=1.4}
+  - particles{p=end_rod;a=25;hs=0.3;vs=0.6;y=1.8} @caster
+L001_ZAGADKA_KROK_3:
+  Skills:
+  - setvariable{var=world.l001_zagadka;val=3;type=INTEGER} @self
+  - sound{s=block.amethyst_block.chime;v=1.5;p=1.7}
+  - particles{p=end_rod;a=25;hs=0.3;vs=0.6;y=1.8} @caster
+  - message{m="<light_purple>Kamienie Gaju rozbrzmiewają razem.</light_purple> <gray>Kwiat Gaju budzi się.</gray>"}
+  - setvariable{var=world.l001_zag_ok;val=1;type=INTEGER} @self ?variableequals{var=world.l001_zag_blad;value=0}
+  - command{c="mmocore admin exp give <target.name> main 30"} @PlayersInWorld
+  - skill{s=loch_001_kwiat_A} @self
+L001_ZAGADKA_ZLE:
+  Skills:
+  - setvariable{var=world.l001_zagadka;val=0;type=INTEGER} @self
+  - setvariable{var=world.l001_zag_blad;val=1;type=INTEGER} @self
+  - sound{s=block.rooted_dirt.place;v=1.4;p=0.5}
+  - potion{type=SLOWNESS;duration=60;level=3;hasParticles=false}
+  - particles{p=block;m=ROOTED_DIRT;a=30;hs=0.6;vs=0.2} @self
+  - message{m="<dark_green>Korzenie oplatają ci nogi.</dark_green> <gray>Kamienie gasną - zacznij od nowa.</gray>"}
+
+# wariant 1 skrytki: stara skrytka (10,103,92) + okruszki spod wejscia do lasu
+L001_SKR_1:
+  Skills:
+  - setvariable{var=world.l001_skr_w;val=1;type=INTEGER} @self
+L001_SKR_1_BUDUJ:
+  Skills:
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 16.5 103.30 98.5 {item:{id:'minecraft:arrow',count:1},Tags:['l001_okruszek','strzala'],transformation:{left_rotation:[0f,0f,0.3827f,0.9239f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 17.5 102.30 99.5 {item:{id:'minecraft:arrow',count:1},Tags:['l001_okruszek','strzala'],transformation:{left_rotation:[0.2706f,0.2706f,0.6533f,0.6533f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 15.5 103.30 96.5 {item:{id:'minecraft:arrow',count:1},Tags:['l001_okruszek','strzala'],transformation:{left_rotation:[0f,0f,0.3827f,0.9239f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 13.5 103.05 95.5 {item:{id:'minecraft:bundle',count:1},Tags:['l001_okruszek','plecak'],transformation:{left_rotation:[0.7071f,0f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.9f,0.9f,0.9f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 11.5 103.02 94.5 {item:{id:'minecraft:paper',count:1},Tags:['l001_okruszek','list'],transformation:{left_rotation:[0.7071f,0f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.7f,0.7f,0.7f]}}"}
+# wariant 2: stara beczka znika w lisciach, nowa skrytka w gaszczu (20,78) + okruszki od polany
+L001_SKR_2:
+  Skills:
+  - setvariable{var=world.l001_skr_w;val=2;type=INTEGER} @self
+L001_SKR_2_BUDUJ:
+  Skills:
+  - command{c="execute in minecraft:<caster.l.w> run setblock 10 103 92 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 20 103 78 minecraft:barrel[facing=up,open=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 21 103 78 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 19 103 78 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 20 103 77 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 21 103 77 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 20 104 77 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run setblock 21 104 78 minecraft:oak_leaves[persistent=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 25.5 102.30 86.5 {item:{id:'minecraft:arrow',count:1},Tags:['l001_okruszek','strzala'],transformation:{left_rotation:[0f,0f,0.3827f,0.9239f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 24.5 102.30 84.5 {item:{id:'minecraft:arrow',count:1},Tags:['l001_okruszek','strzala'],transformation:{left_rotation:[0.2706f,0.2706f,0.6533f,0.6533f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 25.5 102.30 85.5 {item:{id:'minecraft:arrow',count:1},Tags:['l001_okruszek','strzala'],transformation:{left_rotation:[0f,0f,0.3827f,0.9239f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 24.5 103.05 83.5 {item:{id:'minecraft:bundle',count:1},Tags:['l001_okruszek','plecak'],transformation:{left_rotation:[0.7071f,0f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.9f,0.9f,0.9f]}}"}
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 22.5 103.02 80.5 {item:{id:'minecraft:paper',count:1},Tags:['l001_okruszek','list'],transformation:{left_rotation:[0.7071f,0f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.7f,0.7f,0.7f]}}"}
+
+L001_OKRUSZKI_TARCZA:
+  Skills:
+  - command{c="execute in minecraft:<caster.l.w> run summon item_display 57.5 103.10 66.5 {item:{id:'minecraft:shield',count:1},Tags:['l001_okruszek','tarcza'],transformation:{left_rotation:[0.5f,0.5f,0.5f,0.5f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]}}"}
+
+L001_MOD_1:
+  Skills:
+  - setvariable{var=world.l001_mod;val=1;type=INTEGER} @self
+  - command{c="execute in minecraft:<caster.l.w> run time set 18000"}
+  - sound{s=entity.allay.ambient_without_item;v=1;p=0.6} @PlayersInWorld
+  - message{m="<gold>✦ Dziś w Gaju</gold> <aqua>Noc Świetlików</aqua> <gray>- ciemno, las lśni. W finale nocny łup (Księżycowy liść).</gray>"} @PlayersInWorld
+L001_MOD_2:
+  Skills:
+  - setvariable{var=world.l001_mod;val=2;type=INTEGER} @self
+  - sound{s=entity.creeper.primed;v=1;p=1.4} @PlayersInWorld
+  - message{m="<gold>✦ Dziś w Gaju</gold> <red>Wybuchowe Pniaczki</red> <gray>- nie stój przy nich, gdy padają. Więcej drewna w finale.</gray>"} @PlayersInWorld
+L001_MOD_3:
+  Skills:
+  - setvariable{var=world.l001_mod;val=3;type=INTEGER} @self
+  - sound{s=entity.wolf.howl;v=1;p=0.7} @PlayersInWorld
+  - message{m="<gold>✦ Dziś w Gaju</gold> <gold>Wściekła Wataha</gold> <gray>- wilki szybsze i silniejsze. Więcej łupu z bestii.</gray>"} @PlayersInWorld
+L001_MOD_4:
+  Skills:
+  - setvariable{var=world.l001_mod;val=4;type=INTEGER} @self
+  - potion{type=REGENERATION;duration=12000;level=0;hasParticles=false} @PlayersInWorld
+  - sound{s=block.amethyst_block.chime;v=1;p=1.3} @PlayersInWorld
+  - message{m="<gold>✦ Dziś w Gaju</gold> <light_purple>Kwitnący Gaj</light_purple> <gray>- gaj ci sprzyja (regeneracja). Więcej ziół w finale.</gray>"} @PlayersInWorld
+L001_ZAG_0:
+  Skills:
+  - setvariable{var=world.l001_zag_kier;val=0;type=INTEGER} @self
+L001_ZAG_1:
+  Skills:
+  - setvariable{var=world.l001_zag_kier;val=1;type=INTEGER} @self
+# efekty nastroju na mobach (trigger bez warunku -> metaskill z warunkami: wzorzec, ktory dziala)
+L001_PNIACZEK_SMIERC:
+  Skills:
+  - particles{p=explosion;a=2;hs=0.5;vs=0.3} @self ?variableequals{var=world.l001_mod;value=2}
+  - sound{s=entity.generic.explode;v=0.7;p=1.6} @self ?variableequals{var=world.l001_mod;value=2}
+  - damage{amount=3} @PlayersInRadius{r=2.2} ?variableequals{var=world.l001_mod;value=2}
+L001_WILK_WSCIEKLY:
+  Skills:
+  - potion{type=SPEED;duration=999999;level=1;hasParticles=false} @self ?variableequals{var=world.l001_mod;value=3}
+  - potion{type=STRENGTH;duration=999999;level=0;hasParticles=false} @self ?variableequals{var=world.l001_mod;value=3}

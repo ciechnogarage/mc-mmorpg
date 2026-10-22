@@ -9,7 +9,7 @@ K=${K:?podaj K=<katalog danych klona>}
 NAZWA=wiary-klon
 SIEC=wiary-net
 EVAL=/home/dev/Desktop/Przemek/MC/MCMMORPG/plugin-src/character-creator/eval
-RCON=/opt/docker/mc/data/world1/tools/klasy-rasowe/poligon
+RCON=/home/dev/Desktop/Przemek/MC/tools/klasy-rasowe/poligon
 
 docker rm -f $NAZWA >/dev/null 2>&1 || true
 docker network create $SIEC >/dev/null 2>&1 || true

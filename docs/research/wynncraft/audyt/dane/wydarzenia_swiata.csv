@@ -1,0 +1,71 @@
+nazwa,poziom,trudnosc,dlugosc,harmonogram,lokacje
+Haywire Defender,3,MEDIUM,SHORT,null,1
+Approaching Raid,5,EASY,MEDIUM,null,1
+Skittering Spiders,6,EASY,SHORT,"""2026-09-23T07:17:00+00:00""",1
+Arachnid Ambush,8,MEDIUM,MEDIUM,null,2
+Overtaken Farm,8,MEDIUM,SHORT,null,1
+Encroaching Blaze,10,MEDIUM,LONG,"""2026-09-23T07:19:00+00:00""",1
+Corrupted Spring,15,HARD,MEDIUM,null,1
+Dark Deacons,15,HARD,SHORT,null,1
+Encroaching Destruction,15,MEDIUM,LONG,null,3
+Necromantic Site,18,MEDIUM,MEDIUM,null,1
+Encroaching Misery,20,MEDIUM,LONG,null,2
+Risen Return,20,HARD,LONG,null,1
+Tainted Shoreline,24,EASY,MEDIUM,null,1
+Aeon Origin,25,HARD,LONG,"""2026-09-23T07:17:00+00:00""",3
+Bowels of the Roots,30,HARD,MEDIUM,"""2026-09-23T07:18:00+00:00""",1
+Encroaching Reanimation,30,MEDIUM,MEDIUM,null,1
+Improper Burial Rites,35,HARD,MEDIUM,null,1
+Blood-Encrusted Mastaba,36,MEDIUM,MEDIUM,null,1
+Encroaching Conflagration,40,HARD,SHORT,null,1
+Failed Hunt,40,EASY,SHORT,null,1
+Canine Ambush,42,MEDIUM,MEDIUM,null,3
+Blazing Combustion,43,HARD,MEDIUM,null,1
+Lonely Islet,45,MEDIUM,MEDIUM,"""2026-09-23T07:20:00+00:00""",1
+Encroaching Ablation,46,HARD,MEDIUM,null,1
+Resting Grounds,47,HARD,SHORT,null,1
+Rogue Wyrmling,50,MEDIUM,MEDIUM,"""2026-09-23T07:20:00+00:00""",2
+Slimy Schism,50,EASY,MEDIUM,"""2026-09-23T07:18:00+00:00""",1
+Swashbuckling Brawl,50,MEDIUM,MEDIUM,null,1
+Desperate Ambush,56,MEDIUM,LONG,null,1
+A Burning Memory,60,HARD,LONG,null,1
+Encroaching Extinction,65,MEDIUM,MEDIUM,null,1
+Light Emissaries,70,HARD,MEDIUM,null,1
+Peculiar Grotto,70,EASY,MEDIUM,null,1
+Unsettling Encounters,70,HARD,MEDIUM,null,1
+Visit from Beyond,70,HARD,MEDIUM,null,1
+Abandoned Sentinels,75,HARD,LONG,null,3
+Colossi Ingrain,85,HARD,MEDIUM,null,1
+Despermech Occupation,85,EASY,MEDIUM,"""2026-09-23T07:21:00+00:00""",1
+Enraged Eagle,85,MEDIUM,SHORT,null,1
+Realmic Antigen,85,HARD,LONG,null,1
+Ruff & Tumble,85,HARD,LONG,"""2026-09-23T07:17:00+00:00""",1
+Territorial Trolls,85,HARD,MEDIUM,null,3
+Bubbling Terrace,90,MEDIUM,SHORT,"""2026-09-23T07:22:00+00:00""",1
+Decommissioned War Machines,90,HARD,LONG,null,1
+Infernal Caldera,92,MEDIUM,MEDIUM,null,1
+Maar Ashpit,94,HARD,LONG,null,1
+Ahms Monuments,95,MEDIUM,SHORT,null,1
+Shattered Roosts,95,HARD,MEDIUM,null,1
+Incomprehensible Cynosure,100,HARD,LONG,null,2
+All Eyes on Me,101,MEDIUM,LONG,null,2
+Monument to Loss,101,MEDIUM,SHORT,null,1
+Shapes in the Dark,101,HARD,SHORT,null,2
+Pestilential Downpour,102,HARD,MEDIUM,null,1
+Otherworldly Exhibition,104,HARD,LONG,null,1
+Autumn Poachers,105,HARD,LONG,null,1
+Prelude to Annihilation,105,HARD,LONG,null,1
+Swampland Squabble,105,MEDIUM,MEDIUM,null,1
+Karoshi Union,108,MEDIUM,MEDIUM,"""2026-09-23T07:20:00+00:00""",1
+Stackpeak Pinnacle,108,MEDIUM,SHORT,null,1
+Biohazardous Bloom,110,HARD,MEDIUM,null,1
+Steel Skirmish,110,MEDIUM,MEDIUM,null,1
+Apiary Hive,115,MEDIUM,SHORT,"""2026-09-23T07:19:00+00:00""",1
+Fossil Fighters,115,HARD,LONG,null,1
+Tree-Top Cradle,115,MEDIUM,SHORT,null,1
+Citadel Barracks,117,EASY,SHORT,null,1
+Glacial Training,118,MEDIUM,SHORT,null,1
+Patrolling Soldiers,118,MEDIUM,LONG,null,3
+Mole Meet-Up,119,EASY,MEDIUM,null,1
+Royal Alchemists,119,MEDIUM,LONG,null,1
+Palace Guards,120,HARD,LONG,"""2026-09-23T07:19:00+00:00""",1

@@ -1,0 +1,55 @@
+# Listenery v3: paski druzyny i slug (HudDane).
+druzyna_1_hp:
+  value: '%hud_druzyna_1_hp%'
+  max: '%hud_druzyna_1_hpmax%'
+druzyna_1_zasob:
+  value: '%hud_druzyna_1_zasob%'
+  max: '%hud_druzyna_1_zasobmax%'
+druzyna_2_hp:
+  value: '%hud_druzyna_2_hp%'
+  max: '%hud_druzyna_2_hpmax%'
+druzyna_2_zasob:
+  value: '%hud_druzyna_2_zasob%'
+  max: '%hud_druzyna_2_zasobmax%'
+druzyna_3_hp:
+  value: '%hud_druzyna_3_hp%'
+  max: '%hud_druzyna_3_hpmax%'
+druzyna_3_zasob:
+  value: '%hud_druzyna_3_zasob%'
+  max: '%hud_druzyna_3_zasobmax%'
+druzyna_4_hp:
+  value: '%hud_druzyna_4_hp%'
+  max: '%hud_druzyna_4_hpmax%'
+druzyna_4_zasob:
+  value: '%hud_druzyna_4_zasob%'
+  max: '%hud_druzyna_4_zasobmax%'
+druzyna_5_hp:
+  value: '%hud_druzyna_5_hp%'
+  max: '%hud_druzyna_5_hpmax%'
+druzyna_5_zasob:
+  value: '%hud_druzyna_5_zasob%'
+  max: '%hud_druzyna_5_zasobmax%'
+druzyna_6_hp:
+  value: '%hud_druzyna_6_hp%'
+  max: '%hud_druzyna_6_hpmax%'
+druzyna_6_zasob:
+  value: '%hud_druzyna_6_zasob%'
+  max: '%hud_druzyna_6_zasobmax%'
+druzyna_7_hp:
+  value: '%hud_druzyna_7_hp%'
+  max: '%hud_druzyna_7_hpmax%'
+druzyna_7_zasob:
+  value: '%hud_druzyna_7_zasob%'
+  max: '%hud_druzyna_7_zasobmax%'
+slugi_1_hp:
+  value: '%hud_slugi_1_hp%'
+  max: '%hud_slugi_1_hpmax%'
+slugi_2_hp:
+  value: '%hud_slugi_2_hp%'
+  max: '%hud_slugi_2_hpmax%'
+slugi_3_hp:
+  value: '%hud_slugi_3_hp%'
+  max: '%hud_slugi_3_hpmax%'
+cel_walki_hp:
+  value: '%hud_cel_hp%'
+  max: '%hud_cel_hpmax%'
