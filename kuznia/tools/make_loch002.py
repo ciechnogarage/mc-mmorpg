@@ -354,6 +354,16 @@ def schody_basenu(k, bok):
                 W.set(x1, yy, z, "mud_bricks")
         # przejscie w scianie na szczycie schodow
         W.set(x1 + 1, YL + 1, z0 + 1, "air"); W.grunt[(x1 + 1, z0 + 1)] = YL + 1
+        # utwardzone dojscie przed otworem: bloto (mud, 14/16 wysokosci) obok pelnych blokow dawalo skosny krok w dol tuz przy
+        # narozniku muru (15,102,6) - bot stal 40 s w 15.6,102,5.7 z gotowa sciezka (diag-wrak 22.10)
+        for xx in (x1 + 1, x1 + 2, x1 + 3):
+            for zz in range(z0 - 3, z0 + 2):
+                if xx == x1 + 1 and zz >= z0 - 1:           # naroznik i sciana muru zostaja
+                    continue
+                W.set(xx, YL, zz, "packed_mud")
+                for yy in (YL + 1, YL + 2):
+                    W.set(xx, yy, zz, "air")
+                W.grunt[(xx, zz)] = YL + 1
     else:  # polnoc
         for i, y in enumerate(range(YL, DNO_BASENU, -1)):
             x = x0 + 1 + i
@@ -730,6 +740,11 @@ if __name__ == "__main__":
     tama(); most_b1()
     schody_basenu("b1", "wschod"); schody_basenu("b2", "polnoc"); schody_basenu("b3", "polnoc")
     budowle(); wieza_archiwum(); arena()
+    # wrak, beczki i klapy z .iob sa waterlogged: po sluzie (fill air replace water) zostaja zrodlami i woda wraca na dno
+    # (35 blokow w b1, trasa 22.10: bot brodzil przy wraku) - w osuszanych basenach bez waterlogged
+    for k, v in list(W.b.items()):
+        if "waterlogged=true" in v and any(w_rect(k[0], k[2], r) for r in BASENY.values()):
+            W.b[k] = v.replace("waterlogged=true", "waterlogged=false")
     # budowle celowo stoja na polanach (ognisko, lawy, beczki, oslony, obramowania studni, krata) - dozwolone
     zle_p = sprawdz_przejscie(W.slad); W.slad = None
     assert not zle_p, f"przejscie zablokowane w {len(zle_p)} miejscach, np. {zle_p[:6]}"

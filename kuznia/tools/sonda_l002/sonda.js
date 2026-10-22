@@ -29,14 +29,16 @@ scenariusz('sonda-l002', async ({ w, polacz, rcon }) => {
   const klik = async (e) => { await bot.lookAt(e.position.offset(0, 1.5, 0)); try { bot.activateEntityAt(e, e.position.offset(0, 1, 0)); } catch {} await sleep(200); try { bot.activateEntity(e); } catch {} };
   const bij = async (e, n) => { for (let i = 0; i < n && e.isValid !== false && bot.entities[e.id]; i++) { await bot.lookAt(e.position.offset(0, 1.2, 0)); bot.attack(e); await sleep(650); } };
 
-  // ---- 1. wejscie
+  // ---- 1. wejscie (/leave: rozlaczony gracz trzyma stara instancje i md play wpuszcza go tam z powrotem, 22.10)
+  bot.chat('/leave'); await sleep(2500);
   await R.cmd(`md play loch_002 ${NICK}`);
   // bot.game.dimension to TYP wymiaru ("overworld"), nie nazwa swiata - instancje szukamy RCON-em
   var inst = null;
   const weszl = await czeka(async () => { for (let n = 0; n < 8; n++) {
       const o = await R.cmd(`execute in minecraft:loch_002_${n} positioned 0 100 0 if entity @a[name=${NICK},distance=..2000]`);
       if (o.includes('passed')) { inst = `loch_002_${n}`; return true; } } return false; }, 20000);
-  ok('wejscie', weszl, inst);
+  await sleep(3000);
+  ok('wejscie', weszl && Math.hypot(bot.entity.position.x + 56, bot.entity.position.z - 100) < 6, `${inst} poz=${bot.entity.position.floored()}`);
   await sleep(1500); bot.setControlState('forward', true); await sleep(600); bot.setControlState('forward', false);
   await sleep(8000);
   ok('bez_kicka_po_wejsciu', !kick, kick || '');
