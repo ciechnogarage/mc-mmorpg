@@ -168,6 +168,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Set<Material> modele = new HashSet<>();
   private String przestrzen = "bron";
   private int wersja;
+  private static final NamespacedKey KLUCZ_CZUJNOSCI = new NamespacedKey("czujnosc", "stan");
   private NamespacedKey kluczStanu;
   private NamespacedKey kluczZamachu;
 
@@ -1341,9 +1342,13 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         if (u.ukrycie() == null) return;
         Vector patrzy = cel.getLocation().getDirection().setY(0);
         Vector doGracza = p.getLocation().toVector().subtract(cel.getLocation().toVector()).setY(0);
-        if (patrzy.lengthSquared() < 1e-4 || doGracza.lengthSquared() < 1e-4
-            || Math.toDegrees(patrzy.angle(doGracza)) <= 120) return;
+        boolean zTylu = patrzy.lengthSquared() > 1e-4 && doGracza.lengthSquared() > 1e-4
+            && Math.toDegrees(patrzy.angle(doGracza)) > 120;
         boolean ukryty = ukryty(p, cel, u.ukrycie());
+        // mob z Czujnoscia sam ocenil, czy widzial gracza: nieswiadomy = cios z ukrycia z kazdej strony
+        // (randomlookaround obraca cialo, wiec kat do ciala nie mowi, czy mob widzial; zmierzone 22.10: 1 z 2 ciosow bez premii)
+        boolean czujny = cel.getPersistentDataContainer().has(KLUCZ_CZUJNOSCI, PersistentDataType.BYTE);
+        if (!zTylu && !(ukryty && czujny)) return;
         e.setDamage(e.getDamage() * (ukryty ? u.ukrycie().ukrycie() : u.ukrycie().plecy()));
         Location punkt = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
         cel.getWorld().spawnParticle(Particle.ENCHANTED_HIT, punkt, 8, 0.15, 0.15, 0.15, 0.05);
@@ -1591,11 +1596,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   }
 
   /** Cios z ukrycia (premia `ukrycie` zamiast `plecy`): kucanie i cel nieswiadomy atakujacego.
-   *  Mob: nie celuje w gracza. Gracz (D 21.10): atakujacy niewidzialny, albo ofiara go nie widzi
+   *  Mob: nie celuje w gracza (mob czujny: poziom Czujnosci ponizej ALARMU). Gracz (D 21.10): atakujacy niewidzialny, albo ofiara go nie widzi
    *  (poza stozkiem wzroku lub bez linii wzroku) i nie wymieniali ciosow w ostatnich `swiadomosc_s`. */
   boolean ukryty(Player p, LivingEntity cel, Ukrycie u) {
     if (!p.isSneaking()) return false;
-    if (cel instanceof Mob mob) return !p.equals(mob.getTarget());
+    if (cel instanceof Mob mob) {   // mob z wtyczki Czujnosc: nieswiadomy, dopoki nie ma ALARMU (PDC czujnosc:stan == 3)
+      Byte cz = mob.getPersistentDataContainer().get(KLUCZ_CZUJNOSCI, PersistentDataType.BYTE);
+      return cz != null ? cz < 3 : !p.equals(mob.getTarget());
+    }
     if (!(cel instanceof Player ofiara)) return true;
     if (p.isInvisible() || p.hasPotionEffect(PotionEffectType.INVISIBILITY)) return true;
     Vector wzrok = ofiara.getEyeLocation().getDirection();
