@@ -1,0 +1,14 @@
+name: Licho
+version: '${version}'
+main: pl.mcmmorpg.licho.LichoPlugin
+api-version: '1.21'
+depend: [MythicLib, packetevents]
+softdepend: [MMOProfiles, Multiverse-Core]
+commands:
+  licho:
+    description: Licho nie śpi (prop hunt) — sterowanie z menu (konsola).
+    usage: /licho <dolacz|wyjdz|rekordy|zbuduj|stan|start|obserwuj|przeladuj> ...
+    permission: licho.console
+permissions:
+  licho.console:
+    default: op
