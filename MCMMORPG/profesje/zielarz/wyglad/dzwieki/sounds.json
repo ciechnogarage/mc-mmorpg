@@ -1,0 +1,48 @@
+{
+ "kozlek.szelest": {
+  "sounds": [
+   {
+    "name": "zielarz:kozlek/szelest1"
+   },
+   {
+    "name": "zielarz:kozlek/szelest2"
+   },
+   {
+    "name": "zielarz:kozlek/szelest3"
+   }
+  ]
+ },
+ "kozlek.napiecie": {
+  "sounds": [
+   {
+    "name": "zielarz:kozlek/napiecie1"
+   },
+   {
+    "name": "zielarz:kozlek/napiecie2"
+   },
+   {
+    "name": "zielarz:kozlek/napiecie3"
+   }
+  ]
+ },
+ "kozlek.wyrwanie": {
+  "sounds": [
+   {
+    "name": "zielarz:kozlek/wyrwanie1"
+   },
+   {
+    "name": "zielarz:kozlek/wyrwanie2"
+   },
+   {
+    "name": "zielarz:kozlek/wyrwanie3"
+   }
+  ]
+ },
+ "kozlek.wyborny": {
+  "sounds": [
+   {
+    "name": "zielarz:kozlek/wyborny1"
+   }
+  ]
+ }
+}

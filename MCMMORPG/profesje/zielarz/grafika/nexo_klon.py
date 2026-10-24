@@ -12,6 +12,7 @@ KRZYZ = ['dziurawiec_dol', 'dziurawiec_srodek', 'dziurawiec_srodek_chory', 'dziu
          'dziurawiec_kwiat', 'dziurawiec_pak', 'dziurawiec_przekwit', 'kozlek_lodyga', 'kozlek_baldach',
          'czosnek_lodyzka', 'wzora_dziurawiec']
 PRZEDMIOTY = ['rekawice']   # zwykly przedmiot (wyglad w dloni)
+MODELE3D = ['korzen3d_a', 'korzen3d_b', 'korzen3d_c']   # korzen kozlka 3D (korzen3d.py; feeling: wyrwanie i lot do reki)
 PLASKIE = ['wzorb_tyl', 'wzorb_srodek', 'wzorb_przod', 'wzor_ziemia', 'kozlek_korzonek', 'czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
 
 KOMP = 0.85   # gamma rozjasnienia kart zblizenia (patrz main)
@@ -75,6 +76,9 @@ def main(tex, out):
     for k in PRZEDMIOTY:
         y += [f'zielarz_{k}:', '  itemname: <white>Rękawice zielarza', '  material: PAPER', '  excludeFromInventory: true', '  Pack:',
               '    parent_model: item/handheld', '    textures:', f'      layer0: nexo:block/zielarz/{k}']
+    for k in MODELE3D:   # ItemDisplay (transform NONE): pelny model z korzen3d.py, bez stringblocka
+        y += [f'zielarz_k_kozlek_{k}:', f'  itemname: <white>{k}', '  material: PAPER', '  excludeFromInventory: true', '  Pack:',
+              f'    model: nexo:zielarz/{k}']
     open(f'{out}/items/zielarz.yml', 'w').write('\n'.join(y) + '\n')
     print(len(BLOKI), 'blokow,', len(KRZYZ) + len(PLASKIE), 'kart')
 

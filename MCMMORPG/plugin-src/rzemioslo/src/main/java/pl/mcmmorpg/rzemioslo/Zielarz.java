@@ -141,6 +141,7 @@ final class Zielarz implements Listener {
         ZFeeling.Tryb fx = ZFeeling.Tryb.BRAK;
         NamespacedKey winieta;
         ItemStack ostatniPrzedmiot;
+        String korzen3d;   // id Nexo modelu 3D korzenia kozlka (feeling), null = karty
         int ostatniaKlasa, ostatniWyd;
         String ostatniaNazwa = "";
         double ostatnieXp;
@@ -944,9 +945,13 @@ final class Zielarz implements Listener {
             r.karta(roz, "zielarz_k_kozlek_lodyga", lx, seg, lz, seg, ZRoslina.obrotY(ob + 40));
             r.karta(roz, "zielarz_k_kozlek_baldach", lx, seg * 2 - 0.12, lz, seg * 1.15, ZRoslina.obrotY(ob + 20));
         }
-        // korzen pod ziemia (dwie skrzyzowane karty), wychodzi przy ciagnieciu
-        r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(20));
-        r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(110));
+        // korzen pod ziemia, wychodzi przy ciagnieciu: feeling = JEDNA bryla 3D (zielarz.korzen3d), inaczej dwie skrzyzowane karty
+        s.korzen3d = s.fx.jest() ? feeling.korzen3d() : null;
+        if (s.korzen3d != null) r.kartaSrodek(roz, s.korzen3d, 0, -0.31, 0, 0.62, ZRoslina.obrotY(20));
+        else {
+            r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(20));
+            r.karta(roz, "zielarz_k_kozlek_korzen", 0, -0.62, 0, 0.62, ZRoslina.obrotY(110));
+        }
     }
 
     /** Gorna granica pasma: przy wodzie szersze, w suchej ziemi wezsze; kazdy nieodkopany korzonek i kazde puste
@@ -1093,7 +1098,7 @@ final class Zielarz implements Listener {
         if (s.fx.jest()) {
             Location base0 = s.r.swiat(0, 0.05, 0);
             s.p.spawnParticle(Particle.DUST, base0, 30, 0.22, 0.08, 0.22, GRUDKA);
-            dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 1.1f);
+            if (ZFeeling.wlasne(s)) ZFeeling.dzW(s, "wyrwanie", 1f, 1f); else dzwiek(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 1f, 1.1f);   // mokre pekniecie ziemi
             dzwiek(s, Sound.BLOCK_MOSS_BREAK, 0.8f, 0.8f);
             int wyd = daj(s, "PROF_KORZEN_KOZLKA", otw == 0 ? 2 : 1, q);
             s.zajetyDo = s.t + feeling.wyciagniety(s, roz, s.ostatniaKlasa, Math.max(1, wyd), s.ostatniaNazwa, s.ostatnieXp, otw);

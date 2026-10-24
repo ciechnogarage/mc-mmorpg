@@ -26,7 +26,7 @@ import org.joml.Vector3f;
 
 /**
  * „Feeling” chwili zbioru kozlka: swiat reaguje zamiast tekstu. Trzy natezenia z configu `zielarz.feeling`
- * (subtelny | mmo | rytual; puste = stare zachowanie). Wszystko tylko dla gracza w minigrze (cząstki i dzwieki
+ * (subtelny | mmo | rytual | brak; bez klucza = mmo, decyzja wlasciciela 24.10). Wszystko tylko dla gracza w minigrze (cząstki i dzwieki
  * wysylane do niego, encje widoczne tylko dla niego), encje dodatkowe w ZRoslina.dodatki — znikaja z rosliną
  * (koniec, wyjscie, smierc, wylaczenie pluginu). Zadnych wlasnych zadan co tick: tik() wola sesja zielarza.
  */
@@ -56,13 +56,31 @@ final class ZFeeling {
     ZFeeling(Rzemioslo plugin) { this.plugin = plugin; }
 
     Tryb tryb() {
-        String w = plugin.getConfig().getString("zielarz.feeling", "");
+        String w = plugin.getConfig().getString("zielarz.feeling", "mmo");   // domyslnie mmo (wlasciciel 24.10: „mmo, rób model 3D i dźwięki”)
         return switch (w == null ? "" : w.trim().toLowerCase()) {
+            case "brak", "off", "nie" -> Tryb.BRAK;
             case "subtelny" -> Tryb.SUBTELNY;
-            case "mmo" -> Tryb.MMO;
             case "rytual", "rytuał" -> Tryb.RYTUAL;
-            default -> Tryb.BRAK;
+            default -> Tryb.MMO;
         };
+    }
+
+    /** Id przedmiotu Nexo modelu 3D korzenia (zielarz.korzen3d: a|b|c, „karta” = dwie stare karty). Warianty: grafika/korzen3d.py. */
+    String korzen3d() {
+        String w = plugin.getConfig().getString("zielarz.korzen3d", "b");
+        w = w == null ? "b" : w.trim().toLowerCase();
+        return switch (w) {
+            case "a", "b", "c" -> "zielarz_k_kozlek_korzen3d_" + w;
+            default -> null;
+        };
+    }
+
+    /** Wlasne dzwieki (paczka Nexo, assets/zielarz/sounds.json) zamiast odpowiednikow vanilli: natezenie mmo i rytual. */
+    static boolean wlasne(Zielarz.Sesja s) { return s.fx.nagroda(); }
+
+    /** Wlasny dzwiek z paczki (klucz zielarz:kozlek.*) przy roslinie, tylko dla gracza w minigrze. */
+    static void dzW(Zielarz.Sesja s, String klucz, float vol, float pitch) {
+        s.p.playSound(s.r.o.clone(), "zielarz:kozlek." + klucz, SoundCategory.BLOCKS, vol, pitch);
     }
 
     // ================================================================ pomocnicze
@@ -95,7 +113,7 @@ final class ZFeeling {
 
     void wejscie(Zielarz.Sesja s) {
         podloze(s, true);
-        dz(s, Sound.BLOCK_AZALEA_LEAVES_STEP, 0.5f, 0.85f);   // szelest rozety pod dlonia
+        if (wlasne(s)) dzW(s, "szelest", 0.5f, 1f); else dz(s, Sound.BLOCK_AZALEA_LEAVES_STEP, 0.5f, 0.85f);   // szelest rozety pod dlonia
         s.p.spawnParticle(Particle.DUST, s.r.swiat(0, 0.75, 0), 4, 0.15, 0.08, 0.15, PYLEK);
         if (s.fx.rytual()) {
             winieta(s, WINIETA);
@@ -171,16 +189,20 @@ final class ZFeeling {
 
     // ================================================================ ciagniecie
     void ciagnij(Zielarz.Sesja s, int dl, boolean wPasmie, boolean zaMocno) {
-        if (wPasmie && dl % 5 == 0) dz(s, Sound.BLOCK_AZALEA_LEAVES_STEP, 0.3f, 0.75f);   // rozeta szarpie liscmi
+        if (wPasmie && dl % 5 == 0) {   // rozeta szarpie liscmi
+            if (wlasne(s)) dzW(s, "szelest", 0.3f, 0.9f); else dz(s, Sound.BLOCK_AZALEA_LEAVES_STEP, 0.3f, 0.75f);
+        }
         if (wPasmie && dl % 6 == 3) s.p.spawnParticle(Particle.DUST, s.r.swiat(0, 0.75 + s.postep * 0.5, 0), 1, 0.12, 0.05, 0.12, PYLEK);
-        if (zaMocno && dl % 6 == 0) dz(s, Sound.BLOCK_BAMBOO_HIT, 0.45f, 0.55f);   // lodyga trzeszczy pod palcami
+        if (zaMocno && dl % 6 == 0) {   // lodyga trzeszczy pod palcami
+            if (wlasne(s)) dzW(s, "napiecie", 0.45f, 0.95f + (dl % 12) * 0.01f); else dz(s, Sound.BLOCK_BAMBOO_HIT, 0.45f, 0.55f);
+        }
         if (s.fx.rytual() && wPasmie && dl % 8 == 0)
             s.p.spawnParticle(Particle.DUST, s.r.swiat(0, 0.04, 0), 2, 0.12, 0.02, 0.12, KORZEN_SWIATLO);
     }
 
     /** Ostrzezenie (dawniej „Korzen trzeszczy… popusc”): lodyga gnie sie na bok i trzeszczy. */
     void trzeszczy(Zielarz.Sesja s) {
-        dz(s, Sound.BLOCK_BAMBOO_BREAK, 0.55f, 0.6f);
+        if (wlasne(s)) dzW(s, "napiecie", 0.7f, 0.85f); else dz(s, Sound.BLOCK_BAMBOO_BREAK, 0.55f, 0.6f);
         dz(s, Sound.BLOCK_HANGING_ROOTS_BREAK, 0.7f, 0.5f);
         s.p.spawnParticle(Particle.BLOCK_CRUMBLE, s.r.swiat(0, 0.05, 0), 10, 0.15, 0.03, 0.15, B_ROOTED);
     }
@@ -228,7 +250,7 @@ final class ZFeeling {
         int lot = unies + wisi;
         pozniej(s, lot, () -> {
             for (ZRoslina.Klocek k : roz.klocki) k.d.setViewRange(0f);   // korzen „staje sie” przedmiotem, ktory leci do reki
-            lotDoReki(s, klasa, ile, nazwa, xp, s.r.swiat(0, 0.36, -0.3));
+            lotDoReki(s, klasa, ile, nazwa, xp, s.r.swiat(0, 0.36, -0.3), false);
         });
         return lot + czasLotu(s);
     }
@@ -245,7 +267,7 @@ final class ZFeeling {
     /** Korzen sie urwal: gluchy trzask, rozeta wiednie i opada na bok, szary pyl; kawalek (gdy jest) leci do reki. */
     int urwany(Zielarz.Sesja s, ZRoslina.Czesc roz, boolean kawalek, int klasa, String nazwa, double xp) {
         dz(s, Sound.BLOCK_BAMBOO_BREAK, 0.8f, 0.45f);
-        dz(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 0.8f, 0.45f);
+        if (wlasne(s)) dzW(s, "wyrwanie", 0.8f, 0.7f); else dz(s, Sound.BLOCK_ROOTED_DIRT_BREAK, 0.8f, 0.45f);   // urwany: gluche, nizsze pekniecie
         s.p.spawnParticle(Particle.DUST, s.r.swiat(0, 0.1, 0), 18, 0.18, 0.08, 0.18, POPIOL);
         s.p.spawnParticle(Particle.BLOCK_CRUMBLE, s.r.swiat(0, 0.05, 0), 16, 0.16, 0.03, 0.16, B_DIRT);
         // wiedniecie: liscie ciemnieja i kladą sie (obrot na bok, rozeta opada)
@@ -260,23 +282,26 @@ final class ZFeeling {
             dz(s, Sound.BLOCK_AMETHYST_CLUSTER_BREAK, 0.6f, 0.5f);
             pozniej(s, 30, () -> winieta(s, WINIETA));
         }
-        if (kawalek) pozniej(s, 12, () -> lotDoReki(s, klasa, 1, nazwa, xp, s.r.swiat(0, 0.12, -0.1)));
+        if (kawalek) pozniej(s, 12, () -> lotDoReki(s, klasa, 1, nazwa, xp, s.r.swiat(0, 0.12, -0.1), true));
         return kawalek ? 12 + czasLotu(s) : 26;
     }
 
     /** Przedmiot zbioru leci lukiem z rosliny do dloni; mmo/rytual: blysk w kolorze jakosci, dzwiek nagrody, napis +N i EXP. */
-    private void lotDoReki(Zielarz.Sesja s, int klasa, int ile, String nazwa, double xp, Location start) {
+    private void lotDoReki(Zielarz.Sesja s, int klasa, int ile, String nazwa, double xp, Location start, boolean kawalek) {
         boolean r = s.fx.rytual();
         Player p = s.p;
-        ItemStack it = s.ostatniPrzedmiot != null ? s.ostatniPrzedmiot.clone() : new ItemStack(Material.SHORT_GRASS);
+        // model 3D korzenia (gdy jest): leci bryla, ktora gracz wlasnie wyrwal; kawalek urwanego = mniejszy. Inaczej plaski obrazek przedmiotu.
+        boolean m3d = s.korzen3d != null;
+        float s0 = m3d ? (kawalek ? 0.3f : 0.5f) : 0.32f, s1 = m3d ? (kawalek ? 0.12f : 0.18f) : 0.12f;
+        ItemStack it = m3d ? ZRoslina.przedmiot(s.korzen3d) : s.ostatniPrzedmiot != null ? s.ostatniPrzedmiot.clone() : new ItemStack(Material.SHORT_GRASS);
         it.setAmount(1);
         ItemDisplay d = s.r.dodatek(ItemDisplay.class, start, e -> {
             e.setItemStack(it);
-            e.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.GUI);
-            e.setBillboard(Display.Billboard.CENTER);
+            e.setItemDisplayTransform(m3d ? ItemDisplay.ItemDisplayTransform.NONE : ItemDisplay.ItemDisplayTransform.GUI);
+            e.setBillboard(m3d ? Display.Billboard.FIXED : Display.Billboard.CENTER);
             e.setBrightness(ZRoslina.PODSWIETLENIE);
             // maly: kamera stoi tuz przy roslinie (zblizenie), 0,42 zaslanialo pol ekranu; bez obrysu glow (gruba, kanciasta ramka)
-            e.setTransformation(new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(0.32f), new Quaternionf()));
+            e.setTransformation(new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(s0), new Quaternionf()));
             e.setTeleportDuration(r ? 5 : 3);
         });
         dz(s, Sound.BLOCK_MOSS_STEP, 0.5f, 1.2f);
@@ -296,8 +321,11 @@ final class ZFeeling {
                 double a = (1 - tt) * (1 - tt), b = 2 * tt * (1 - tt), c = tt * tt;
                 Location l = start.clone().multiply(a).add(szczyt.toVector().multiply(b)).add(reka.toVector().multiply(c));
                 d.teleport(l);
-                // krec sie w locie (obrot w plaszczyznie ekranu, <180 st. na krok, zeby interpolacja nie zawracala) i maleje do dloni
-                ZRoslina.animuj(d, new Transformation(new Vector3f(), ZRoslina.obrotZ(-kk * (r ? 120 : 95)), new Vector3f((float) (0.32 - 0.2 * tt)), new Quaternionf()), co);
+                // krec sie w locie (<180 st. na krok, zeby interpolacja nie zawracala) i maleje do dloni; bryla 3D obraca sie wokol
+                // pionu z lekkim przechylem (widac korzenie z kazdej strony), plaski obrazek w plaszczyznie ekranu
+                Quaternionf obr = m3d ? ZRoslina.obrotY(kk * (r ? 110 : 85)).mul(ZRoslina.obrotX(-18 * kk / (double) kroki))
+                        : ZRoslina.obrotZ(-kk * (r ? 120 : 95));
+                ZRoslina.animuj(d, new Transformation(new Vector3f(), obr, new Vector3f((float) (s0 + (s1 - s0) * tt)), new Quaternionf()), co);
                 if (kk == kroki) Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     d.remove();
                     if (!p.isOnline()) return;
@@ -315,8 +343,11 @@ final class ZFeeling {
         Location ucho = p.getLocation();
         switch (klasa) {
             case 2 -> {
-                p.playSound(ucho, Sound.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.9f, 1.0f);
-                p.playSound(ucho, Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.35f, 1.7f);
+                if (wlasne(s)) p.playSound(ucho, "zielarz:kozlek.wyborny", SoundCategory.PLAYERS, 0.9f, 1.0f);
+                else {
+                    p.playSound(ucho, Sound.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.9f, 1.0f);
+                    p.playSound(ucho, Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.35f, 1.7f);
+                }
                 if (r) {   // akord: kwinta i oktawa na dzwonku
                     pozniej(s, 3, () -> p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 0.5f, 1.0f));
                     pozniej(s, 6, () -> p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.PLAYERS, 0.5f, 1.5f));
