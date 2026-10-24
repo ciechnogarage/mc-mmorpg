@@ -1,0 +1,6 @@
+name: LochyPoprawki
+version: '${version}'
+main: pl.mcmmorpg.lochypoprawki.LochyPoprawki
+api-version: '1.21'
+depend: [MythicDungeons]
+description: Poprawki bledow MythicDungeons 2.0.1 (instancja gracza solo po rozlaczeniu nigdy sie nie zamykala).
