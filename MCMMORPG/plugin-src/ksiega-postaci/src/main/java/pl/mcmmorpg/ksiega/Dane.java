@@ -18,7 +18,6 @@ final class Dane {
   static final class Record {
     final UUID key;
     final ItemStack[] jewelry = new ItemStack[4];
-    boolean migrated;
     Record(UUID key) { this.key = key; }
   }
 
@@ -59,7 +58,6 @@ final class Dane {
     File file = file(key);
     if (!file.isFile()) return result;
     YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-    result.migrated = yaml.getBoolean("migrated", false);
     for (int i = 0; i < 4; i++) result.jewelry[i] = yaml.getItemStack("jewelry." + i);
     return result;
   }
@@ -68,7 +66,6 @@ final class Dane {
     File target = file(record.key);
     target.getParentFile().mkdirs();
     YamlConfiguration yaml = new YamlConfiguration();
-    yaml.set("migrated", record.migrated);
     for (int i = 0; i < 4; i++) yaml.set("jewelry." + i, record.jewelry[i]);
     File tmp = new File(target.getParentFile(), target.getName() + ".tmp");
     try {
