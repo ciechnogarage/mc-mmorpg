@@ -698,8 +698,11 @@ function arrow(g,a,b,u,fire,h){
 function groundRing(g,x,y,r,stroke,fill,dash,lw){const [px,py]=P(x,y,1);g.beginPath();g.ellipse(px,py,r*HW*1.414,r*QH*1.414,0,0,7);if(fill){g.fillStyle=fill;g.fill();}if(stroke){g.setLineDash(dash||[]);g.strokeStyle=stroke;g.lineWidth=lw||1.2;g.stroke();g.setLineDash([]);}}
 function flame(g,px,py,h,w,a){const gr=g.createLinearGradient(px,py,px,py-h);gr.addColorStop(0,`rgba(255,120,40,${a})`);gr.addColorStop(.5,`rgba(255,176,70,${a*.9})`);gr.addColorStop(1,'rgba(255,230,150,0)');
   g.fillStyle=gr;g.beginPath();g.moveTo(px-w,py);g.quadraticCurveTo(px-w*.9,py-h*.55,px,py-h);g.quadraticCurveTo(px+w*.9,py-h*.55,px+w,py);g.closePath();g.fill();}
-function floatText(g,x,y,z,txt,t0,t,col,dur=1.6){if(t<t0||t>t0+dur)return;const u=(t-t0)/dur;const [px,py]=P(x,y,z);g.globalAlpha=clamp(Math.min(u*5,(1-u)*2.5),0,1);
-  g.font='700 12px "Alegreya Sans",system-ui,sans-serif';g.textAlign='center';g.lineWidth=3;g.strokeStyle='rgba(10,14,20,.85)';g.strokeText(txt,px,py-u*18);g.fillStyle=col;g.fillText(txt,px,py-u*18);g.globalAlpha=1;}
+let FQ=[];
+function floatText(g,x,y,z,txt,t0,t,col,dur=1.6){if(t<t0||t>t0+dur)return;const u=(t-t0)/dur;const [px,py]=P(x,y,z);
+  g.font='700 12px "Alegreya Sans",system-ui,sans-serif';FQ.push({px,py,u,txt,col,w:g.measureText(txt).width+8,a:clamp(Math.min(u*5,(1-u)*2.5),0,1)});}
+function drawFloats(g){g.font='700 12px "Alegreya Sans",system-ui,sans-serif';g.textAlign='center';g.lineWidth=3;g.strokeStyle='rgba(10,14,20,.85)';
+  for(const f of FQ){g.globalAlpha=f.a;const y=f.py+(f.dy||0)-f.u*18;g.strokeText(f.txt,f.px,y);g.fillStyle=f.col;g.fillText(f.txt,f.px,y);}g.globalAlpha=1;}
 
 const towerTop=tw=>P(tw.x,tw.y,5.6);
 function attackersAt(t){const r=[];for(const u of U){if(u.side!=='a')continue;const s=unitState(u,t);if(s&&!s.lying)r.push(s);}return r;}
@@ -816,6 +819,7 @@ function draw(){
   /* liny jeńców */
   if(t>=61.1&&t<74.8){const caps=U.filter(u=>u.capT&&u._s);const esc=[groupB[4],groupB[6]];caps.forEach((u,i)=>{const e=esc[i]._s;if(!e)return;const a=P(u._s.x,u._s.y,1.5),b=P(e.x,e.y,1.5);g.strokeStyle='rgba(200,180,138,.8)';g.lineWidth=.9;g.beginPath();g.moveTo(a[0],a[1]);g.quadraticCurveTo((a[0]+b[0])/2,(a[1]+b[1])/2+6,b[0],b[1]);g.stroke();});}
   /* napisy w świecie */
+  FQ=[];
   for(let i=0;i<12;i++){const c=CRATES[LOOT_ORDER[i]];floatText(g,c[0]+.5,c[1]+.5,c[2]+1.4,'+98',CRATE_T(i),t,S_BRASS,1.3);}
   floatText(g,C-1.5,C+3.5,4.6,'+60 · magazyn chroni 95%',62.6,t,S_BRASS,2.6);
   floatText(g,C+11.5,C-6,5.2,'stodoła płonie',37,t,S_EMBER,2.2);
@@ -838,10 +842,12 @@ function draw(){
     g.setTransform(DPR*sc,0,0,DPR*sc,DPR*(W/2-cw[0]*sc),DPR*(H*.52-cw[1]*sc));}
   /* podpisy bohaterów */
   LR=[];if(t>=40&&t<53){const [px,py]=P(C+8,C+1,4.3);LR.push([px-30,py-14,60,18]);}
+  for(const f of FQ){f.dy=0;for(const dy of [0,-15,-30,15]){const r=[f.px-f.w/2,f.py+dy-18-13,f.w,18+16];if(!hit(r)){f.dy=dy;break;}}LR.push([f.px-f.w/2,f.py+f.dy-18-13,f.w,18+16]);} /* wylatujące napisy mają pierwszeństwo przed podpisami */
   const PRI={'Ty':0,'Bolesław Siwy':1,'Mszczuj':2,'Matka Iwa':3,'Wilga':4};
   for(const u of U.filter(u=>u.name).sort((a,b)=>PRI[a.name]-PRI[b.name])){const s=u._s;if(!s||s.alpha<.3)continue;if(fogA>.5&&u.side==='d')continue;g.globalAlpha=s.alpha;label(g,u,s);g.globalAlpha=1;}
   {const lb=(x,y,z,txt,a0,a1)=>{if(t<a0||t>a1)return;const [px,py]=P(x,y,z);g.globalAlpha=clamp((t-a0)/.5,0,1)*clamp((a1-t)/.5,0,1);g.font='700 9.5px "Alegreya Sans",sans-serif';const w=g.measureText(txt.toUpperCase()).width+12;const d=place(px,py+1,w,15);if(d===null){g.globalAlpha=1;return;}const yy=py+d;g.fillStyle='rgba(10,14,20,.8)';rr(g,px-w/2,yy-14,w,15,2);g.fill();g.fillStyle='#c9a55c';g.textAlign='center';g.fillText(txt.toUpperCase(),px,yy-3.5);g.globalAlpha=1;};
     lb(C+11.5,C-3,3.4,'Skład · poza magazynem',30,44.5);lb(C-3,C+3.5,5.6,'Magazyn · chroni 95%',57,64.5);lb(C+11.5,C-6,5.8,'Stodoła',33,36.5);}
+  drawFloats(g);
   /* winieta */
   g.setTransform(DPR,0,0,DPR,0,0);const vg=g.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);vg.addColorStop(0,'rgba(6,9,14,0)');vg.addColorStop(1,'rgba(6,9,14,.55)');g.fillStyle=vg;g.fillRect(0,0,W,H);
 }
