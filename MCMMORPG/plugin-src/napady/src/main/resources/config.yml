@@ -1,12 +1,30 @@
-# Napady, etap 2. Liczby do strojenia na klonie.
+# Napady, etap 2 + poziom szczegolow (LOD). Liczby do strojenia na klonie.
 swiat: napady           # osobny plaski swiat; w spigot.yml world-settings.napady.entity-activation-range monsters/raiders 0
-cialo: mm               # mm (MythicMobs NAP_<STRONA>_<ROLA> z mythicmobs/mobs/Napady.yml, AI vanilla) | manekin (bez AI, ruch liczy plugin)
 przebrania: true        # skora gracza na ciele MM przez LibsDisguises
-ranny-prog: 0.3         # ponizej tej czesci HP jednostka MM wycofuje sie (wraca od 70%)
-limit-naraz: 1          # ile napadow liczy sie jednoczesnie (kolejka "po kolei")
+ranny-prog: 0.3         # ponizej tej czesci HP jednostka wycofuje sie (wraca od 70%)
+limit-naraz: 4          # ile napadow liczy sie jednoczesnie (bez widza to symulacja: prawie nic nie kosztuje)
 mspt-prog: 40.0         # nowy napad startuje tylko gdy srednie MSPT ponizej
-ruch: predkosc          # tylko manekin: predkosc (setVelocity) | teleport
-predkosc: 0.2           # blokow na tick (gracz chodzi ~0.216)
+areny: 4                # tyle aren budowanych zawczasu przy starcie (asynchroniczne chunki + kolejka pracy)
+budzet-ms: 2.0          # kolejka pracy (budowa, spawn/usuwanie cial): najwyzej tyle ms na tik, min. 1 pozycja
+lod:
+  tryb: auto            # auto | ciala (zawsze ciala) | symulacja (nigdy cial; gracz moze tylko dolaczyc i wymusza ciala)
+  r-wejscia: 64         # gracz w swiecie napadow blizej srodka areny = ciala
+  r-wyjscia: 96         # symulacja dopiero, gdy nikogo blizej przez zwloka-s i nikt nie dolaczyl
+  zwloka-s: 10
+  sciezki-na-tik: 6     # nowe sciezki A* cial na tik dla calego serwera (reszta czeka do nastepnej decyzji)
+  krok-sciezki: 6       # dlugosc krotkiego skoku pathfindera w kratkach pola przeplywu
+# symulacja (bez cial): ustawiac z pomiaru cial - testy/kalibracja.py
+sym:
+  predkosc: 0.144       # bl./tik marszu (kalibracja 25.10 z cial: zmierzone 0.14, symulacja mierzy ~0.97 configu)
+  szarza: 0.93          # mnoznik predkosci do celu wrecz (cialo 0.81; tlok w symulacji zjada ~13%)
+  wrecz-zasieg: 1.7
+  wrecz-co: 20          # tikow miedzy ciosami
+  luk-zasieg: 15.9
+  luk-co: 53            # tikow miedzy strzalami (+ do 1/4 losowo)
+  celnosc: 0.5
+  strzala: 3.2          # obrazenia strzaly po pancerzu
+  wrecz: 2.3            # obrazenia ciosu po pancerzu (cialo bije 'obrazenia', pancerz celu zdejmuje czesc)
+  odstep: 1.3           # promien rozpychania swoich (tlok przy bramie i drzwiach; cialo zderza sie mocniej niz punkt)
 atak:
   wojownicy: 8
   lucznicy: 2

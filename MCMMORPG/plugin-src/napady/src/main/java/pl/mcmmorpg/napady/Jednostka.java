@@ -1,44 +1,58 @@
 package pl.mcmmorpg.napady;
 
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 
 /**
- * Postac napadu. Cialo to manekin (bez AI, ruch liczy napad) albo mob MythicMobs (AI vanilla,
- * napad tylko dowodzi: cel, punkt marszu, odwrot rannych).
+ * Postac napadu = model (pozycja w arenie, HP, rozkaz), niezalezny od ciala. Gdy napad jest
+ * zmaterializowany, model ma cialo MythicMobs i co tik przepisuje z niego pozycje i HP; bez ciala
+ * model liczy {@link Symulacja}. Dowodca czyta i rozkazuje tylko modelowi, wiec obie drogi graja tak samo.
  */
 final class Jednostka {
   enum Rola { WOJOWNIK, LUCZNIK }
 
+  final Napad napad;
   final int id;
   final Strona strona;
   final Rola rola;
-  final LivingEntity cialo;
   final double postX, postZ;      // posterunek obroncy / punkt startu napastnika
   final boolean naMurze;
   /** miejsce w szyku swojej strony i roli (0..n-1) */
   final int slot;
-  LivingEntity cel;
-  int gotowyOd;                   // tik, od ktorego moze uderzyc/strzelic
+  /** skora LD (indeks w skory.yml): ta sama po kazdej materializacji */
+  final int skora;
+
+  // model (wspolrzedne wzgledem rogu areny)
+  double x, z, yaw;
+  double hp, maxHp;
+  boolean zywa = true;
+  int gotowyOd;                   // tik, od ktorego moze uderzyc/strzelic (symulacja i brama)
   String akcja = "stoi";
   boolean ranny;
-  /** ostatni punkt, do ktorego wyslano pathfinder (tylko cialo MM) */
-  double ruchX = Double.NaN, ruchZ = Double.NaN;
-  int ruchOd;
 
-  Jednostka(int id, Strona strona, Rola rola, LivingEntity cialo, double postX, double postZ, boolean naMurze, int slot) {
-    this.id = id; this.strona = strona; this.rola = rola; this.cialo = cialo;
-    this.postX = postX; this.postZ = postZ; this.naMurze = naMurze; this.slot = slot;
+  // cel od dowodcy (gracz tylko w napadzie z cialami)
+  Jednostka cel;
+  Player celGracz;
+
+  // rozkaz dowodcy: punkt marszu (NaN = brak) z promieniem dojscia
+  double px = Double.NaN, pz = Double.NaN, pr;
+
+  /** cialo MM albo null (symulacja) */
+  Mob cialo;
+  /** ostatni punkt (posredni), do ktorego wyslano pathfinder, i kiedy; ruchDo = punkt docelowy rozkazu */
+  double ruchX = Double.NaN, ruchZ = Double.NaN, ruchDoX = Double.NaN, ruchDoZ = Double.NaN;
+  int ruchOd, ruchWstrzymanyDo;
+
+  Jednostka(Napad napad, int id, Strona strona, Rola rola, double x, double z, boolean naMurze, int slot, double hp, int skora) {
+    this.napad = napad; this.id = id; this.strona = strona; this.rola = rola;
+    this.postX = x; this.postZ = z; this.naMurze = naMurze; this.slot = slot; this.skora = skora;
+    this.x = x + 0.5; this.z = z + 0.5; this.hp = hp; this.maxHp = hp;
+    this.yaw = strona == Strona.ATAK ? -90 : 90;
   }
 
-  boolean zywa() { return cialo.isValid() && !cialo.isDead(); }
+  double hpUlamek() { return maxHp <= 0 ? 0 : hp / maxHp; }
 
-  /** true = cialo MM z wlasnym AI */
-  boolean mm() { return !(cialo instanceof Mannequin) && cialo instanceof Mob; }
+  boolean lucznik() { return rola == Rola.LUCZNIK; }
 
-  double hpUlamek() {
-    var a = cialo.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
-    return a == null ? 1 : cialo.getHealth() / a.getValue();
-  }
+  double odl(double ox, double oz) { return Math.hypot(ox - x, oz - z); }
 }

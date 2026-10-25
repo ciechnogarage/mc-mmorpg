@@ -2,7 +2,7 @@ package pl.mcmmorpg.napady;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Arrow;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -11,31 +11,41 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 
 /**
  * Brak friendly fire, brak lupu z cial napadu, strzaly znikaja po trafieniu, cele cial wybiera tylko
- * napad; gracz, ktory padl w napadzie, nic nie traci i oglada do konca jako widz.
+ * napad; gracz, ktory padl w napadzie, nic nie traci i oglada do konca jako widz. Ciosy i strzaly cial
+ * ida do zapisu ("traf", "strzal") - z nich testy/kalibracja.py liczy liczby symulacji.
  */
 final class Zdarzenia implements Listener {
   private final Napady pl;
 
   Zdarzenia(Napady pl) { this.pl = pl; }
 
-  private Napad napadEncji(Entity e) {
-    if (e == null) return null;
-    for (Napad n : pl.aktywne.values()) {
-      if (e instanceof Player p) { if (pl.napadGracza(p) == n) return n; }
-      else for (Jednostka j : n.jednostki) if (j.cialo == e) return n;
-    }
-    return null;
+  /** Jednostka ciala (mapa, bez petli po napadach) albo null. */
+  private Jednostka jednostka(Entity e) {
+    if (e == null || e instanceof Player) return null;
+    Jednostka j = pl.cialaJednostek.get(e.getUniqueId());
+    return j != null && !j.napad.skonczony() ? j : null;
   }
 
-  private boolean cialo(Entity e) { return e != null && !(e instanceof Player) && napadEncji(e) != null; }
+  private Napad napadEncji(Entity e) {
+    if (e instanceof Player p) return pl.napadGracza(p);
+    Jednostka j = jednostka(e);
+    return j == null ? null : j.napad;
+  }
+
+  private static Entity sprawca(EntityDamageByEntityEvent ev) {
+    Entity s = ev.getDamager();
+    return s instanceof Projectile pr && pr.getShooter() instanceof Entity e ? e : s;
+  }
 
   /**
    * Cialo MM zmienia cel tylko na rozkaz napadu (Mob#setTarget = CUSTOM). Reszta (np. vanilla po ciosie,
@@ -45,68 +55,76 @@ final class Zdarzenia implements Listener {
   public void cel(EntityTargetEvent ev) {
     if (ev.getReason() == EntityTargetEvent.TargetReason.CUSTOM) return;
     if (ev.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED) return;
-    if (cialo(ev.getEntity())) ev.setCancelled(true);
+    if (jednostka(ev.getEntity()) != null) ev.setCancelled(true);
   }
 
   @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
   public void obrazenia(EntityDamageByEntityEvent ev) {
-    Entity sprawca = ev.getDamager();
-    if (sprawca instanceof Projectile pr && pr.getShooter() instanceof Entity s) sprawca = s;
+    Entity sprawca = sprawca(ev);
     Napad nOfiara = napadEncji(ev.getEntity()), nSprawca = napadEncji(sprawca);
     if (nOfiara == null && nSprawca == null) return;
-    // manekiny napadu bije tylko druga strona tego samego napadu
+    // ciala napadu bije tylko druga strona tego samego napadu
     if (nOfiara != nSprawca) { ev.setCancelled(true); return; }
     Strona a = nOfiara.stronaEncji(sprawca), b = nOfiara.stronaEncji(ev.getEntity());
     if (a == null || a == b) ev.setCancelled(true);
   }
 
   /**
-   * Cios gracza z napadu w manekina drugiej strony przepuszczamy mimo ochrony terenu: WorldGuard
-   * traktuje manekina jak zwierze (nie potwora) i w regionie bez czlonkostwa anuluje cios na NORMAL.
-   * Dotyczy tylko manekinow napadu, nic poza nimi.
+   * Cios gracza z napadu w cialo drugiej strony przepuszczamy mimo ochrony terenu (WorldGuard w regionie
+   * bez czlonkostwa anuluje cios na NORMAL). Dotyczy tylko cial napadu.
    */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void przepuscCiosNapadu(EntityDamageByEntityEvent ev) {
-    if (!ev.isCancelled() || !cialo(ev.getEntity())) return;
-    Entity sprawca = ev.getDamager();
-    if (sprawca instanceof Projectile pr && pr.getShooter() instanceof Entity s) sprawca = s;
+    if (!ev.isCancelled() || jednostka(ev.getEntity()) == null) return;
+    Entity sprawca = sprawca(ev);
     if (!(sprawca instanceof Player)) return;
     Napad n = napadEncji(ev.getEntity());
-    if (n == null || napadEncji(sprawca) != n) return;
+    if (napadEncji(sprawca) != n) return;
     Strona a = n.stronaEncji(sprawca), b = n.stronaEncji(ev.getEntity());
     if (a != null && b != null && a != b) ev.setCancelled(false);
   }
 
-  /** Do zapisu: ciosy graczy w manekiny (po wszystkich pluginach) i ciosy manekinow w graczy. */
+  /** Do zapisu (po wszystkich pluginach): ciosy graczy w ciala, cial w graczy i cial miedzy soba. */
   @EventHandler(priority = EventPriority.MONITOR)
-  public void ciosGracza(EntityDamageByEntityEvent ev) {
-    Entity sprawca = ev.getDamager();
-    if (sprawca instanceof Projectile pr && pr.getShooter() instanceof Entity s) sprawca = s;
-    if (sprawca instanceof Player p && cialo(ev.getEntity())) {
-      Napad n = napadEncji(ev.getEntity());
-      if (n == null) return;
+  public void cios(EntityDamageByEntityEvent ev) {
+    Entity sprawca = sprawca(ev);
+    Jednostka ofiara = jednostka(ev.getEntity()), napastnik = jednostka(sprawca);
+    String dmg = Napad.r1(ev.getFinalDamage());
+    if (sprawca instanceof Player p && ofiara != null) {
+      Napad n = ofiara.napad;
       if (ev.isCancelled()) n.ciosyGraczyBlok++; else n.ciosyGraczy++;
-      n.zdarzenie(ev.isCancelled() ? "cios-blok" : "cios", p.getName() + ">" + n.idJednostki(ev.getEntity())
-          + (ev.isCancelled() ? "" : ":" + Math.round(ev.getFinalDamage() * 10) / 10.0));
-    } else if (cialo(sprawca) && ev.getEntity() instanceof Player p && !ev.isCancelled()) {
-      Napad n = napadEncji(sprawca);
-      if (n != null) n.zdarzenie("trafia-gracza", n.idJednostki(sprawca) + ">" + p.getName() + ":" + Math.round(ev.getFinalDamage() * 10) / 10.0);
+      n.zdarzenie(ev.isCancelled() ? "cios-blok" : "cios", p.getName() + ">" + ofiara.id + (ev.isCancelled() ? "" : ":" + dmg));
+    } else if (napastnik != null && ev.getEntity() instanceof Player p && !ev.isCancelled()) {
+      napastnik.napad.zdarzenie("trafia-gracza", napastnik.id + ">" + p.getName() + ":" + dmg);
+    } else if (napastnik != null && ofiara != null && !ev.isCancelled()) {
+      double d = sprawca.getLocation().distance(ev.getEntity().getLocation());
+      napastnik.napad.zdarzenie("traf", napastnik.id + ">" + ofiara.id + ":" + dmg + ":" + Napad.r1(d) + ":"
+          + (ev.getDamager() instanceof Projectile ? "strzala" : "wrecz"));
     }
+  }
+
+  /** Strzal ciala: strzala nietrwala (nie zostaje w chunku) i wpis do kalibracji celnosci/tempa. */
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void strzal(EntityShootBowEvent ev) {
+    Jednostka j = jednostka(ev.getEntity());
+    if (j == null) return;
+    ev.getProjectile().setPersistent(false);
+    Jednostka c = j.cel;
+    j.napad.zdarzenie("strzal", j.id + ">" + (c != null ? String.valueOf(c.id) : j.celGracz != null ? j.celGracz.getName() : "?"));
   }
 
   @EventHandler
   public void smierc(EntityDeathEvent ev) {
-    if (ev.getEntity() instanceof Player) return;
-    Napad n = napadEncji(ev.getEntity());
-    if (n == null) return;
+    Jednostka j = jednostka(ev.getEntity());
+    if (j == null) return;
     ev.getDrops().clear();
     ev.setDroppedExp(0);
-    for (Jednostka j : n.jednostki) if (j.cialo == ev.getEntity()) n.zdarzenie("padl", String.valueOf(j.id));
+    j.napad.padl(j);
   }
 
   @EventHandler
   public void strzala(ProjectileHitEvent ev) {
-    if (ev.getEntity() instanceof Arrow a && a.getShooter() instanceof Entity s && cialo(s)) a.remove();
+    if (ev.getEntity() instanceof AbstractArrow a && a.getShooter() instanceof Entity s && jednostka(s) != null) a.remove();
   }
 
   /** Smierc w napadzie: bez utraty rzeczy i poziomu (decyzja wlasciciela 25.10: "gracz jak pada to pada może obserwować"). */
@@ -144,12 +162,18 @@ final class Zdarzenia implements Listener {
     });
   }
 
+  /** Koniec startu serwera: jednorazowy koszt pierwszego ciala MM (Napady#rozgrzej). */
+  @EventHandler
+  public void start(ServerLoadEvent ev) {
+    if (ev.getType() == ServerLoadEvent.LoadType.STARTUP) pl.rozgrzej();
+  }
+
   /** Wyjscie z gry w trakcie napadu: przywroc tryb i miejsce, zeby nie zostac widzem w swiecie napadow. */
   @EventHandler
   public void wyjscie(PlayerQuitEvent ev) {
     Player p = ev.getPlayer();
     var d = pl.dolaczeni.remove(p.getUniqueId());
     if (d == null) d = pl.doPrzywrocenia.remove(p.getUniqueId());
-    if (d != null && !p.isDead()) pl.przywroc(p, d);
+    if (d != null && !p.isDead()) pl.przywroc(p, d, false);
   }
 }

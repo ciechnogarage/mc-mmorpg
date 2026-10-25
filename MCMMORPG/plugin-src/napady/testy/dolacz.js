@@ -1,7 +1,8 @@
 'use strict';
 // Napady: gracz (bot bez OP) dolacza do trwajacego napadu po stronie obrony i walczy z cialami napadu
-// (manekin albo mob MM w przebraniu gracza LD - bot widzi wtedy encje `player`).
-// Strony rozpoznaje po helmie (napastnik: kolczy, obronca: zelazny; Equipment w mobs/Napady.yml i ubierz() manekina).
+// (moby MM w przebraniu gracza LD - bot widzi wtedy encje `player`). Bez gracza napad liczy sie symulacja,
+// dolaczenie najpierw materializuje ciala, potem teleportuje (LOD, testy/lod.js).
+// Strony rozpoznaje po helmie (napastnik: kolczy, obronca: zelazny; Equipment w mobs/Napady.yml).
 // Sciezki nieidealne: nieistniejacy napad, cios we wlasna strone (zablokowany), smierc w napadzie
 // (decyzja wlasciciela 25.10: "gracz jak pada to pada może obserwować"): respawn jako widz, brak ponownego
 // dolaczenia, po koncu napadu powrot do trybu i miejsca sprzed dolaczenia.
@@ -18,10 +19,13 @@ scenariusz('napady-dolacz', async ({ w, polacz, rcon }) => {
   const nick = 'BotNap' + (Date.now() % 100000);
   await rcon('napad stop');
   await rcon('napad limit 1');
-  await rcon('napad cialo mm');          // wariant A; seria A/B zostawia klon na manekinach
+  await rcon('napad lod auto');          // ciala wstaja dopiero, gdy gracz dolacza (LOD)
   await rcon('napad przebrania true');
   await rcon('minecraft:difficulty easy');   // w peaceful ciosy mobow w gracza = 0, a MM zombie/szkielety znikaja
   const bot = await polacz({ nick, plugins: [pathfinder] });
+  // mineflayer liczy grawitacje takze w trybie widza i odsyla serwerowi opadanie (widz w grze wisi; 25.10:
+  // serwer stawia widza na y -49, bot spadal do -55,6 przed odczytem i do ziemi po 3 s) -> fizyka jak u widza
+  bot.on('game', () => { bot.physicsEnabled = bot.game.gameMode !== 'spectator'; });
   // bez kopania: inaczej pathfinder rozbiera mur i brame areny (24.10: ~40 machniec w bloki)
   const { Movements } = require('mineflayer-pathfinder');
   const mv = new Movements(bot); mv.canDig = false; mv.allow1by1towers = false; bot.pathfinder.setMovements(mv);
@@ -41,11 +45,15 @@ scenariusz('napady-dolacz', async ({ w, polacz, rcon }) => {
   const id = await czekaj(async () => { const s = await rcon('napad stan'); const m = s.match(/#(\d+) /); return m && m[1]; }, 15000, 500);
   w.sprawdz('napad-ruszyl', !!id, `id ${id}`);
   if (!id) return;
-  const cialo = ((await rcon('napad stan')).match(/cialo (\S+)$/m) || [])[1];
+  const lodPrzed = ((await rcon('napad stan')).match(/\| lod (\S+) ciala/) || [])[1];
+  const t0 = Date.now();
   bot.chat(`/napad dolacz ${id} obrona`);
-  await sleep(1500);
-  const p = await stan.poz(nick);
-  w.sprawdz('dolaczenie-teleport', p && Math.abs(p.x - 30.5) < 2 && Math.abs(p.z - 26.5) < 2, JSON.stringify(p));
+  const blisko = (q) => q && Math.abs(q.x - 30.5) < 2 && Math.abs(q.z - 26.5) < 2;
+  const p = await czekaj(async () => { const q = await stan.poz(nick); return blisko(q) && q; }, 20000, 300);
+  w.sprawdz('dolaczenie-teleport', !!p, `${JSON.stringify(p || await stan.poz(nick))} po ${Date.now() - t0} ms (lod przed: ${lodPrzed})`);
+  const sCial = await rcon('napad stan');
+  const cialo = (sCial.match(/\| lod (\S+) ciala (\d+)/) || []).slice(1).join(' ');
+  w.sprawdz('dolaczenie-ciala', /^CIALA [1-9]/.test(cialo), cialo);
 
   const sword = bot.inventory.items().find((i) => i.name === 'iron_sword');
   if (sword) await bot.equip(sword, 'hand');

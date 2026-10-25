@@ -16,10 +16,10 @@ NAP_ATAK_WOJOWNIK:
     PreventOtherDrops: true
     PreventRandomEquipment: true
     MovementSpeed: 0.25
-    FollowRange: 32
+    FollowRange: 20
     KnockbackResistance: 0.3
   Equipment:
-  - iron_axe HAND
+  - NAP_TOPOR HAND
   - NAP_KAMIZELKA_ATAK CHEST
   - chainmail_helmet HEAD
   AIGoalSelectors:
@@ -41,7 +41,7 @@ NAP_ATAK_LUCZNIK:
     PreventOtherDrops: true
     PreventRandomEquipment: true
     MovementSpeed: 0.25
-    FollowRange: 32
+    FollowRange: 24
     KnockbackResistance: 0.3
   Equipment:
   - bow HAND
@@ -66,10 +66,10 @@ NAP_OBRONA_WOJOWNIK:
     PreventOtherDrops: true
     PreventRandomEquipment: true
     MovementSpeed: 0.25
-    FollowRange: 32
+    FollowRange: 20
     KnockbackResistance: 0.3
   Equipment:
-  - iron_sword HAND
+  - NAP_MIECZ HAND
   - shield OFFHAND
   - NAP_KAMIZELKA_OBRONA CHEST
   - iron_helmet HEAD
@@ -92,7 +92,7 @@ NAP_OBRONA_LUCZNIK:
     PreventOtherDrops: true
     PreventRandomEquipment: true
     MovementSpeed: 0.25
-    FollowRange: 32
+    FollowRange: 24
     KnockbackResistance: 0.3
   Equipment:
   - bow HAND

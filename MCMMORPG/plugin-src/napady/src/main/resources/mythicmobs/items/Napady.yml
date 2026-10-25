@@ -9,3 +9,18 @@ NAP_KAMIZELKA_OBRONA:
   Display: '<aqua>Kaftan obrońcy'
   Options:
     Color: 50,85,168
+# Bron cial bez wlasnych obrazen: cios ciala = ATTACK_DAMAGE moba = config obrazenia (ten sam co model).
+# Bez tego modyfikator zelaznego topora/miecza dodawal sie do Damage moba (25.10 klon: cios 10.3 / 7.0 zamiast 3).
+# Format: items-attributes.md (MM wiki Items/Attributes).
+NAP_TOPOR:
+  Id: iron_axe
+  Display: '<red>Topór najeźdźcy'
+  Attributes:
+    MainHand:
+      ATTACK_DAMAGE: 0 ADD
+NAP_MIECZ:
+  Id: iron_sword
+  Display: '<aqua>Miecz obrońcy'
+  Attributes:
+    MainHand:
+      ATTACK_DAMAGE: 0 ADD

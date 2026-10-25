@@ -3,11 +3,11 @@ version: '${version}'
 main: pl.mcmmorpg.napady.Napady
 api-version: '1.21'
 softdepend: [MythicMobs, LibsDisguises]
-description: Napady - jednostki MythicMobs walcza na serwerze, dowodzi plugin (etap 2, klon)
+description: Napady - jednostki MythicMobs walcza na serwerze, dowodzi plugin, bez widza symulacja (etap 2, klon)
 commands:
   napad:
-    description: Napady - start/stan/dolacz/stop/limit/ruch
-    usage: /napad start [n] | stan | dolacz <id> atak|obrona | opusc | stop [id] | limit <n> | ruch predkosc|teleport | cialo mm|manekin | przebrania true|false | pomiar [s] | ai <napad> <jednostka>
+    description: Napady - start/stan/dolacz/obserwuj/stop/limit/lod
+    usage: /napad start [n] [ziarno] | stan | dolacz <id> atak|obrona | obserwuj <id> | opusc | stop [id] | limit <n> | lod auto|ciala|symulacja | przebrania true|false | pomiar [s] | ai <napad> <jednostka>
 permissions:
   napady.admin:
     default: op
