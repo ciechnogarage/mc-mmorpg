@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -105,7 +106,6 @@ final class SzybkiParser implements ParserManager {
   /** Glowny watek: PAPI dla tekstow uzytych od ostatniego cyklu, dla kazdego gracza online (jak PlaceholderAPIParser.run). */
   private void licz() {
     if (++cykle % cyklePokolenia == 0) for (Wartosci w : wartosci.values()) { w.stare = w.nowe; w.nowe = new ConcurrentHashMap<>(); }
-    if (doLiczenia.isEmpty()) return;
     String[] teksty = new String[doLiczenia.size()];
     int n = 0;
     for (Iterator<String> it = doLiczenia.iterator(); it.hasNext() && n < teksty.length; ) { teksty[n++] = it.next(); it.remove(); }
@@ -118,8 +118,12 @@ final class SzybkiParser implements ParserManager {
           Bukkit.getLogger().warning("[HudDane] Failed to parse placeholder '" + teksty[i] + "' for '" + p.getName() + "'");
         }
       }
+      if (poGraczu != null) poGraczu.accept(p);   // wariant kolumny l3 z wartosci tego samego cyklu (Uklady)
     }
   }
+
+  /** Na glownym watku po policzeniu wartosci gracza w cyklu (HudDane: Uklady.odswiez). */
+  Consumer<Player> poGraczu;
 
   /** Wartosci od razu przy wejsciu (cele glow druzyny), zanim zegar je policzy - inaczej head dostaje surowy tekst. */
   void zasiej(Player p, String text) {

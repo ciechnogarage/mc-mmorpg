@@ -48,7 +48,12 @@ public final class HudDane extends JavaPlugin implements Listener {
     getServer().getPluginManager().registerEvents(nawigacja, this);
     new Placeholdery(this).register();
     var hud = getServer().getPluginManager().getPlugin("MythicHUD");
-    if (hud != null && hud.isEnabled()) parser = SzybkiParser.zainstaluj(this, hud);
+    if (hud != null && hud.isEnabled()) {
+      parser = SzybkiParser.zainstaluj(this, hud);
+      uklady = new Uklady();
+      if (parser != null) parser.poGraczu = uklady::odswiez;
+      else getServer().getScheduler().runTaskTimer(this, () -> { for (Player p : getServer().getOnlinePlayers()) uklady.odswiez(p); }, 1L, 5L);
+    }
     getLogger().info("HudDane: druzyna zasieg " + zasieg + ", " + czasZycia.size() + " typow slug, " + efekty.size() + " efektow");
   }
 
@@ -64,6 +69,7 @@ public final class HudDane extends JavaPlugin implements Listener {
 
   @EventHandler public void wyjscie(PlayerQuitEvent e) {
     migawki.remove(e.getPlayer().getUniqueId());
+    if (uklady != null) uklady.wyszedl(e.getPlayer().getUniqueId());
     if (parser != null) parser.wyjscie(e.getPlayer().getUniqueId());
   }
 
@@ -72,11 +78,14 @@ public final class HudDane extends JavaPlugin implements Listener {
   // przy kazdym wejsciu (24.10: 14 na logowanie). Cele glow liczymy od razu przy wejsciu - do naszego parsera,
   // a gdy sie nie zainstalowal, do cache oryginalnego PlaceholderAPIParser.
   private SzybkiParser parser;
+  /** Wariant kolumny l3 na gracza (null bez MythicHUD). */
+  private Uklady uklady;
   private Map<UUID, ConcurrentHashMap<String, String>> cacheMythicHud;
   private boolean cacheBrak;
 
   @SuppressWarnings("unchecked")
   @EventHandler public void wejscie(PlayerJoinEvent e) {
+    if (uklady != null) uklady.wszedl(e.getPlayer());
     if (parser != null) {
       for (int n = 1; n <= 7; n++) parser.zasiej(e.getPlayer(), "%hud_druzyna_" + n + "_nazwa%");
       return;
