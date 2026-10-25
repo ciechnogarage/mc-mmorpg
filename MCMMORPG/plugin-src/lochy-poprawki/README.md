@@ -30,7 +30,8 @@ Brak zapisu na dysk i w bazie, tylko RAM (mapy w `LochyPoprawki.java:62-73`). Kl
 ## Znane pułapki i decyzje
 - Po zmianie wersji MythicDungeons sprawdzić poprawkę testem `test/instancja-mapa.js` na klonie (oczekiwane 9/9), opis błędu z dekompilacji: `~/.claude/skills/mc-swiat-lochy/SKILL.md:47`.
 - Decyzja właściciela 22.10: instancja zamyka się po ukończeniu i braku graczy, po rozsądnym czasie (dziś 300 s): `~/.claude/skills/mc-swiat-lochy/SKILL.md:59`.
-- Stan wdrożenia i cofnięcie (paczka `/opt/docker/mc/backups/nagroda-mistrza-20261024/`): `SKILL.md:68`.
+- Stan wdrożenia i cofnięcie (paczki `/opt/docker/mc/backups/lochy-koniec-20261024/` — sygnał, `nagroda-mistrza-20261024/` — zamiatacz; `wdroz.sh`/`cofnij.sh`): `SKILL.md:68`.
+- Wyrzucenie gracza OFFLINE (tak samo przez samo MD) daje w logu stack trace FAWE/LuckPerms `ServerThreadLookupException` (FAWE pyta Vault przy `setGameMode`) — niegroźne (z README na main, 7403fa3).
 - Najdłuższe zamknięcie osieroconej instancji po rozłączeniu: 300 s + 2 x 30 s = 360 s (`test/sierota.js:1-5`).
 - Poprawione 25.10: kontrola uprawnienia w kodzie (`:94-97`); `wyslijSygnal` loguje WARN (gracz offline / nie w aktywnej instancji), nie częściej niż raz na 30 s dla tej samej pary gracz+sygnał (`ostrzez`, `:121-131`). Do decyzji właściciela: czy zawęzić komendę do samej konsoli (dziś OP-gracz może ją wywołać).
 

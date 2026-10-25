@@ -1,0 +1,16 @@
+# Swiat zagrody: pustka (VoidGen), bez mobow, pogody i cyklu dnia. Zagrode buduje plugin: `licho zbuduj`.
+mv create licho normal --generator VoidGen --world-type flat
+mv gamerule set minecraft:keep_inventory true licho
+mv gamerule set minecraft:fall_damage false licho
+mv gamerule set minecraft:pvp false licho
+mv gamerule set minecraft:spawn_mobs false licho
+mv gamerule set minecraft:spawn_monsters false licho
+mv gamerule set minecraft:spawn_phantoms false licho
+mv gamerule set minecraft:spawn_patrols false licho
+mv gamerule set minecraft:spawn_wandering_traders false licho
+mv gamerule set minecraft:spawn_wardens false licho
+mv gamerule set minecraft:mob_griefing false licho
+mv gamerule set minecraft:advance_time false licho
+mv gamerule set minecraft:advance_weather false licho
+mv gamerule set minecraft:show_death_messages false licho
+mv gamerule set minecraft:spawn_chunk_radius 0 licho
