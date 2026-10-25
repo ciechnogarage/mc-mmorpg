@@ -238,7 +238,11 @@ final class ZRoslina {
         return hit == null ? null : hit.getHitPosition();
     }
 
-    /** Czesc pod celownikiem swieci pelnym swiatlem (puls skali 7% byl niewidoczny na kadrach). */
+    /** Czesc pod celownikiem: o kilka poziomow jasniej niz swiat (pelne 15/15 swiecilo w cieniu jak lampa, ocena 24.10). */
+    Display.Brightness wyroznienie() {
+        return new Display.Brightness(Math.min(15, jasnosc.getBlockLight() + 4), Math.min(15, jasnosc.getSkyLight() + 3));
+    }
+
     void podswietl(Czesc c, Color kolor) {
         if (c == podswietlona) return;
         podswietlona = c;
@@ -246,8 +250,8 @@ final class ZRoslina {
         // lekki cien (-2): mocniejsze przygaszenie (-6) robilo z kwitnacej kepy brunatna (klient v6)
         Display.Brightness przygas = new Display.Brightness(Math.max(0, jasnosc.getBlockLight() - 1), Math.max(0, jasnosc.getSkyLight() - 2));
         for (Czesc x : czesci) {
-            if (x.typ.equals("gleba")) continue;
-            Display.Brightness b = c == null ? jasnosc : x == c ? PODSWIETLENIE : przygas;
+            if (x.typ.equals("gleba") || x.typ.equals("nasada")) continue;   // ziemia nie mruga z celownikiem
+            Display.Brightness b = c == null ? jasnosc : x == c ? wyroznienie() : przygas;
             for (Klocek k : x.klocki) k.d.setBrightness(b);
         }
     }
@@ -267,7 +271,7 @@ final class ZRoslina {
             if (linia != null) linia.d.remove();
             Czesc tmp = new Czesc("linia", 0, new Vector());
             linia = klocek(tmp, kolor, 0, 0, 0, sx, sy, sz, null);
-            linia.d.setBrightness(PODSWIETLENIE);
+            linia.d.setBrightness(wyroznienie());   // w swietle rosliny: pelna jasnosc odrywala kreske od lodygi
             liniaKolor = kolor;
         }
         linia.d.setViewRange(0.5f);

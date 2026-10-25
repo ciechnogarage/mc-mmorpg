@@ -44,6 +44,9 @@ R "minecraft:difficulty peaceful"; V "fill 143 98 191 155 98 203 stone"   # spaw
 V "fill 30 $((Y+1)) 30 80 $((Y+8)) 80 air"
 # laka w sloncu: dziurawiec
 for xz in "42 42" "45 44" "48 41" "44 48" "50 46"; do set -- $xz; V "setblock $1 $((Y+1)) $2 air"; R "rzemioslo postaw zielarz_dziurawiec world $1 $((Y+1)) $2"; R "rzemioslo kepa-xyz dziurawiec world $1 $((Y+1)) $2"; done
+# laka nie jak stol (ocena 24.10 pkt 7): kepy trawy i kwiatow wokol; kepy zielarza (tripwire) zostaja, feature sadzi tylko na powietrzu
+for xz in "40 40" "47 39" "52 44" "41 47" "47 50" "53 50" "38 44"; do set -- $xz; V "place feature minecraft:patch_grass $1 $((Y+1)) $2"; done
+for xz in "44 37" "51 39" "38 50"; do set -- $xz; V "place feature minecraft:flower_meadow $1 $((Y+1)) $2"; done
 # staw z brzegiem: kozlek
 V "fill 58 $((Y-1)) 40 64 $Y 46 water"; V "fill 57 $Y 39 65 $Y 39 mud"
 # kozlek: 4 przy stawie + 4 w suchej ziemi (K2)

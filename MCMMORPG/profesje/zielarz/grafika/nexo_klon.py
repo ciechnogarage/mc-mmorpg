@@ -12,8 +12,13 @@ KRZYZ = ['dziurawiec_dol', 'dziurawiec_srodek', 'dziurawiec_srodek_chory', 'dziu
          'dziurawiec_kwiat', 'dziurawiec_pak', 'dziurawiec_przekwit', 'kozlek_lodyga', 'kozlek_baldach',
          'czosnek_lodyzka', 'wzora_dziurawiec']
 PRZEDMIOTY = ['rekawice']   # zwykly przedmiot (wyglad w dloni)
+# narzedzie w dloni w czasie zblizenia (tylko pakiet do gracza): vanilla handheld (skala 0,68) zajmowal pol ekranu i byl
+# wiekszy od rosliny (ocena 24.10, pkt 6) -> te same modele vanilli, mniejsze i nizej w pierwszej osobie
+DLON = {'lopatka': 'minecraft:item/iron_shovel', **{f'sierp_{m}': f'minecraft:item/{m}_hoe' for m in ('wooden', 'stone', 'iron', 'golden', 'diamond', 'netherite')}}
+DLON_FP = {'firstperson_righthand': {'rotation': [0, -90, 25], 'translation': [1.6, 1.0, 1.0], 'scale': [0.4, 0.4, 0.4]},
+           'firstperson_lefthand': {'rotation': [0, 90, -25], 'translation': [1.6, 1.0, 1.0], 'scale': [0.4, 0.4, 0.4]}}
 MODELE3D = ['korzen3d_a', 'korzen3d_b', 'korzen3d_c']   # korzen kozlka 3D (korzen3d.py; feeling: wyrwanie i lot do reki)
-PLASKIE = ['wzorb_tyl', 'wzorb_srodek', 'wzorb_przod', 'wzor_ziemia', 'kozlek_korzonek', 'czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
+PLASKIE = ['dziurawiec_nasada', 'wzorb_tyl', 'wzorb_srodek', 'wzorb_przod', 'wzor_ziemia', 'kozlek_korzonek', 'czosnek_baldach', 'konwalia_kwiat', 'kozlek_lisc', 'kozlek_korzen', 'kozlek_gleba', 'kozlek_gleba_rozkopana', 'czosnek_lisc', 'czosnek_lisc_stary', 'konwalia_lisc', 'konwalia_lisc_stary']
 
 KOMP = 0.85   # gamma rozjasnienia kart zblizenia (patrz main)
 NASYC = 1.08  # nasycenie kart (1,3 dawalo neonowa zielen, recenzja v4)
@@ -74,8 +79,14 @@ def main(tex, out):
               '      drop:', '        silktouch: false', '        loots: []']
         var += 1
     for k in PRZEDMIOTY:
+        json.dump({'parent': 'minecraft:item/handheld', 'textures': {'layer0': f'nexo:block/zielarz/{k}'}, 'display': DLON_FP},
+                  open(f'{m}/{k}.json', 'w'), indent=1)
         y += [f'zielarz_{k}:', '  itemname: <white>Rękawice zielarza', '  material: PAPER', '  excludeFromInventory: true', '  Pack:',
-              '    parent_model: item/handheld', '    textures:', f'      layer0: nexo:block/zielarz/{k}']
+              f'    model: nexo:zielarz/{k}']
+    for k, rodzic in DLON.items():
+        json.dump({'parent': rodzic, 'display': DLON_FP}, open(f'{m}/dlon_{k}.json', 'w'), indent=1)
+        y += [f'zielarz_dlon_{k}:', f'  itemname: <white>{k}', '  material: PAPER', '  excludeFromInventory: true', '  Pack:',
+              f'    model: nexo:zielarz/dlon_{k}']
     for k in MODELE3D:   # ItemDisplay (transform NONE): pelny model z korzen3d.py, bez stringblocka
         y += [f'zielarz_k_kozlek_{k}:', f'  itemname: <white>{k}', '  material: PAPER', '  excludeFromInventory: true', '  Pack:',
               f'    model: nexo:zielarz/{k}']

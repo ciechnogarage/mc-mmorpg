@@ -145,7 +145,10 @@ final class ZKomunikaty {
                 String[] rr = radaStara.split("\\|", 2);
                 p.showTitle(net.kyori.adventure.title.Title.title(Component.empty(), Component.text(rr[0], net.kyori.adventure.text.format.NamedTextColor.WHITE),
                         net.kyori.adventure.title.Title.Times.times(java.time.Duration.ofMillis(300), java.time.Duration.ofSeconds(4), java.time.Duration.ofMillis(600))));
-                p.sendMessage("§2Zielarz: §f" + rr[rr.length - 1]);
+                // pelna rada na czat dopiero po zgasnieciu podtytulu i tylko w scenie (ocena 24.10 pkt 5: pasek + podtytul + czat naraz)
+                if (rr.length > 1) org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (p.isOnline() && plugin.zielarz() != null && plugin.zielarz().wSesji(p)) p.sendMessage("§2Zielarz: §f" + rr[1]);
+                }, 100L);
             }
             return;
         }

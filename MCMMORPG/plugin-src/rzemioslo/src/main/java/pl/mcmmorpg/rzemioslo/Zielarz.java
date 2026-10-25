@@ -155,6 +155,7 @@ final class Zielarz implements Listener {
     private final Rzemioslo plugin;
     private final Map<String, String> kepy = new HashMap<>();
     private final Map<UUID, Sesja> sesje = new java.util.concurrent.ConcurrentHashMap<>();   // czytana tez z watku pakietow
+    boolean wSesji(Player p) { return sesje.containsKey(p.getUniqueId()); }
     /** Koniec sesji: PPM trzymany przy ciagnieciu korzenia leci dalej w swiat (lopata na trawie, zaslona) — WorldGuard odpowiadal „can't use that here”. */
     private final Map<UUID, Long> poSesji = new HashMap<>();
     private static final long PO_SESJI_MS = 900;
@@ -168,6 +169,8 @@ final class Zielarz implements Listener {
     final ZKomunikaty kom;
     final ZSuszarnia suszarnia;
     final ZFeeling feeling;
+    /** HUD MMO i minimapa schowane na czas zblizenia. */
+    final ZScena scena;
 
     Zielarz(Rzemioslo plugin) {
         this.plugin = plugin;
@@ -181,6 +184,7 @@ final class Zielarz implements Listener {
         this.kom = new ZKomunikaty(plugin);
         this.suszarnia = new ZSuszarnia(plugin);
         this.feeling = new ZFeeling(plugin);
+        this.scena = new ZScena(plugin);
         Bukkit.getPluginManager().registerEvents(suszarnia, plugin);
         Bukkit.getScheduler().runTaskLater(plugin, suszarnia::pokazWszystko, 40L);
         wczytajKepy();
@@ -436,6 +440,7 @@ final class Zielarz implements Listener {
         // bez teleportu (kamera nie skacze): gracz zostaje, gdzie stal, i zastyga nad roslina
         s.stoi = p.getLocation().clone();
         zamroz(p, true);
+        scena.schowaj(p);   // zblizenie to chwila "ja i roslina": bez karty postaci, zadania i minimapy
         r.skalaStartu = SKALA_SWIATA.getOrDefault(gatunek, 0.7f);   // karty rodza sie w rozmiarze kepy w swiecie
         try {
             switch (gatunek) {
@@ -534,6 +539,13 @@ final class Zielarz implements Listener {
             ItemStack it = inv.getItem(i);
             if (it != null && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(kUchwyt, PersistentDataType.BYTE)) inv.setItem(i, null);
         }
+        // scena przerwana wyjsciem albo awaria serwera: HUD i minimapa wracaja (MythicHUD wstaje z graczem, stad opoznienie)
+        Bukkit.getScheduler().runTaskLater(plugin, () -> przywrocWGrze(p), 40L);
+    }
+
+    /** Nie w scenie wyboru postaci (creator_limbo): tam HUD by wyskoczyl nad kreatorem; wraca przy wejsciu do swiata gry. */
+    private void przywrocWGrze(Player p) {
+        if (p.isOnline() && !sesje.containsKey(p.getUniqueId()) && !p.getWorld().getName().equals("creator_limbo")) scena.przywroc(p);
     }
 
     private ItemStack wyglad(Sesja s, Material m, String nazwa) {
@@ -542,11 +554,22 @@ final class Zielarz implements Listener {
         return it;
     }
 
+    /** Narzedzie w zblizeniu: maly model "dloni" z paczki (vanilla zaslanial pol ekranu); bez paczki zwykly przedmiot. */
+    private ItemStack dlon(String nexoId, ItemStack zapas) {
+        ItemStack r = ZRoslina.przedmiot(nexoId);
+        if (r.getType() == Material.SHORT_GRASS) r = zapas;
+        r.setData(DataComponentTypes.CUSTOM_NAME, Component.empty());
+        return r;
+    }
+
     private void pokazWDloni(Sesja s, String co) {
         ItemStack it = switch (co) {
-            case "lopatka" -> wyglad(s, Material.IRON_SHOVEL, "Łopatka");
-            case "rece-ciagnij", "rece-rozcieraj", "rece" -> { ItemStack r = ZRoslina.przedmiot("zielarz_rekawice"); r.setData(DataComponentTypes.CUSTOM_NAME, Component.empty()); yield r; }
-            default -> wyglad(s, null, null);
+            case "lopatka" -> dlon("zielarz_dlon_lopatka", wyglad(s, Material.IRON_SHOVEL, "Łopatka"));
+            case "rece-ciagnij", "rece-rozcieraj", "rece" -> dlon("zielarz_rekawice", new ItemStack(Material.SHORT_GRASS));   // bez paczki jak dawniej
+            default -> {
+                String m = s.sierp.getType().name();   // IRON_HOE -> zielarz_dlon_sierp_iron; inne narzedzie: ono samo
+                yield m.endsWith("_HOE") ? dlon("zielarz_dlon_sierp_" + m.substring(0, m.length() - 4).toLowerCase(), wyglad(s, null, null)) : wyglad(s, null, null);
+            }
         };
         s.widok = co;
         try {
@@ -775,6 +798,8 @@ final class Zielarz implements Listener {
         boolean slaba = s.stan.slaba;
         if (slaba) n -= 2;   // po chciwym zbiorze: mniej pedow, czesc cienkich
         int faza = fazaKepy(s.blok);
+        // nasada: ciemna plama ziemi i sciolki pod kepa (ocena 24.10: pedy staly na golej trawie, jak wbite); bez box = nie do wskazania
+        r.kartaSrodek(r.czesc("nasada", 0, 0, 0, 0), "zielarz_k_dziurawiec_nasada", 0, 0.008, 0, 0.9, ZRoslina.obrotY(rnd.nextDouble() * 360).mul(ZRoslina.obrotX(-90)));
         for (int i = 0; i < n; i++) {
             // kepa w kole (nie rzad tyczek): spirala zlotego kata, wyzsze pedy w srodku
             double kat = Math.toRadians(i * 137.5 + rnd.nextDouble() * 20), rr = 0.06 + 0.28 * Math.sqrt((i + 0.5) / n);
@@ -1320,7 +1345,7 @@ final class Zielarz implements Listener {
     private void wstrzas(Sesja s) {
         // drzy roslina i ziemia, nie kamera (animacja zranienia czytala sie jak "dostalem")
         for (ZRoslina.Czesc c : s.r.czesci) {
-            if (c.zabrana || c == s.chwyt) continue;
+            if (c.zabrana || c == s.chwyt || c.typ.equals("nasada")) continue;   // ziemia sie nie kolysze
             float a = (float) (ThreadLocalRandom.current().nextBoolean() ? 3.5 : -3.5);
             s.r.przechyl(c, ZRoslina.obrotZ(a), new Vector3f(), 0f, 1);
             Bukkit.getScheduler().runTaskLater(plugin, () -> { if (!s.konczy && !c.zabrana) s.r.przechyl(c, new org.joml.Quaternionf(), new Vector3f(), 0f, 3); }, 2L);
@@ -1358,6 +1383,7 @@ final class Zielarz implements Listener {
         }
         Player p = s.p;
         if (p.isOnline()) zamroz(p, false);
+        if (p.isOnline()) scena.przywroc(p);
         if (p.isOnline()) p.updateInventory();
         // konsekwencje: odrost zalezy od tego, co zostalo
         boolean ruszona = s.postep > 0.05 || s.zleKopanie > 0 || nieruszoneBoczne(s) < liczBoczne(s)
@@ -1685,8 +1711,26 @@ final class Zielarz implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void naZamianeRak(PlayerSwapHandItemsEvent e) { if (sesje.containsKey(e.getPlayer().getUniqueId())) e.setCancelled(true); }
 
+    // LPM w kepe albo w trawe obok tuz po zbiorze to natychmiastowe zniszczenie bloku (tripwire, trawa) -> BlockBreakEvent
+    // -> WorldGuard „Hey! Sorry, but you can't break that block here.” po angielsku. WorldGuard slucha na NORMAL
+    // z ignoreCancelled, wiec anulowanie na LOWEST go wycisza. Pakiet kopania po sesji przechodzi (poKoncu lapie tylko
+    // machniecie i PPM), dlatego okno po sesji obejmuje tez LPM.
+    private boolean blokZielarza(Player p, Block b) {
+        if (sesje.containsKey(p.getUniqueId())) return true;
+        Long po = poSesji.get(p.getUniqueId());
+        if (po != null && System.currentTimeMillis() - po < PO_SESJI_MS * 2) return true;
+        return p.getGameMode() != GameMode.CREATIVE && kepy.containsKey(klucz(b));   // kepa to wezel zbioru, nie blok do kopania
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
-    public void naUderzenieBloku(BlockDamageEvent e) { if (sesje.containsKey(e.getPlayer().getUniqueId())) e.setCancelled(true); }
+    public void naUderzenieBloku(BlockDamageEvent e) { if (blokZielarza(e.getPlayer(), e.getBlock())) e.setCancelled(true); }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void naNiszczenieBloku(org.bukkit.event.block.BlockBreakEvent e) {
+        if (!blokZielarza(e.getPlayer(), e.getBlock())) return;
+        e.setCancelled(true);
+        if (pomiar) plugin.getLogger().info("[pomiar] zniszczenie " + e.getBlock().getType() + " przez " + e.getPlayer().getName() + " zablokowane");
+    }
 
     @EventHandler
     public void naWyjscie(PlayerQuitEvent e) {
@@ -1706,6 +1750,7 @@ final class Zielarz implements Listener {
     public void naSwiat(PlayerChangedWorldEvent e) {
         Sesja s = sesje.get(e.getPlayer().getUniqueId());
         if (s != null) zakoncz(s, null);
+        else Bukkit.getScheduler().runTaskLater(plugin, () -> przywrocWGrze(e.getPlayer()), 20L);   // z wyboru postaci do gry
     }
 
     World swiatKepy(String k) { return Bukkit.getWorld(k.split(";")[0]); }

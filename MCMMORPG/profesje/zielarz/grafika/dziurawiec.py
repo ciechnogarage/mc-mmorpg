@@ -146,6 +146,25 @@ T['kwiat'] = szczyt([KWIAT, KWIAT_K, KWIAT, KWIAT, KWIAT, KWIAT_K, KWIAT])
 T['pak'] = szczyt([PAK] * 7)
 T['przekwit'] = szczyt([PRZEK, PRZEK, PAK, PRZEK, PRZEK, PRZEK, PRZEK])
 
+T['nasada'] = [  # plaska karta u nasady kepy (ocena 24.10 pkt 4: pedy wisialy nad trawa): ziemia, cien, sciolka
+    "................",
+    "......2...1.....",
+    "...1....2....2..",
+    "....2.h1.12.....",
+    "..2..1h2n1h.1...",
+    ".1..h2bn1nh2....",
+    "...21nbbn1h.2...",
+    "..1.hnbBbn12..1.",
+    "...2hnbbnbh1....",
+    ".2..1hnnb1h2.1..",
+    "....2h1nh12.....",
+    "..1...2h1..2....",
+    ".....2...2...1..",
+    "...1....1.......",
+    "......2.....2...",
+    "................",
+]
+
 def obraz(rows):
     g = siatka(rows)
     im = Image.new('RGBA', (16, 16), (0, 0, 0, 0)); px = im.load()
@@ -153,6 +172,18 @@ def obraz(rows):
         for x, ch in enumerate(r):
             if ch != '.': px[x, y] = tuple(int(PAL[ch][i:i+2], 16) for i in (0, 2, 4)) + (255,)
     return im
+
+def zgrubnij(im):
+    """Piksel 2x wiekszy (komorka 2x2 -> najczestszy kolor, przy remisie ciemniejszy). Karty segmentow pedu maja ~0,16 bloku,
+    wiec przy 16 px piksel wychodzil 0,01 bloku: 2x drobniej niz kwiat i 6x niz trawa obok (ocena 24.10 pkt 2)."""
+    out = im.copy(); src = im.load(); px = out.load()
+    for cy in range(0, 16, 2):
+        for cx in range(0, 16, 2):
+            kol = [src[x, y] for y in (cy, cy + 1) for x in (cx, cx + 1) if src[x, y][3]]
+            c = (0, 0, 0, 0) if not kol else max(set(kol), key=lambda k: (kol.count(k), -sum(k[:3])))
+            for y in (cy, cy + 1):
+                for x in (cx, cx + 1): px[x, y] = c
+    return out
 
 def chory(im):
     """Plamy choroby 2x2: rdzawy srodek, jasniejsza obwodka — tylko na lisciach (nie lodydze x=7)."""
@@ -168,5 +199,6 @@ if __name__ == '__main__':
     out = sys.argv[1]; os.makedirs(out, exist_ok=True)
     ims = {k: obraz(v) for k, v in T.items()}
     ims['srodek_chory'] = chory(ims['srodek']); ims['gora_chory'] = chory(ims['gora'])
+    for k in ('dol', 'srodek', 'gora', 'srodek_chory', 'gora_chory'): ims[k] = zgrubnij(ims[k])
     for k, im in ims.items(): im.save(f'{out}/dziurawiec_{k}.png')
     print(' '.join(sorted(ims)))
