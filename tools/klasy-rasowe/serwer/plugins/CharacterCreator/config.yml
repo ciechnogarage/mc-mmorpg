@@ -1,0 +1,937 @@
+# CharacterCreator configuration.
+# See docs at repo root: character-sector-contract.md and character-stage-architecture.md
+# are ARCHIVED (old/character-creator-v1) — this plugin does not follow them.
+
+creator-room:
+  world: 'creator_limbo'
+  # pitch 6: lekko w dol. Podnosi postac w kadrze (nogi przestaja wpadac pod przycisk
+  # "Stworz") i pokazuje mniej pustego sufitu — ten zajmowal 20% ekranu.
+  spawn: { x: 0.5, y: 100.0, z: 0.5, yaw: 180.0, pitch: 6.0 }
+  # 2.7 bloku od gracza — STALE. Zoomu nie ma celowo: kadr ma byc zawsze taki sam
+  # i bliski. Klaster sterowania to teraz jeden rzad u dolu, wiec model ma na siebie
+  # caly pas miedzy paskiem imienia u gory a sterowaniem u dolu.
+  dummy-anchor: { x: 0.5, y: 100.0, z: -2.2 }
+  # NIEUZYWANY od 0.2.0-1a8f820: byl czytany i walidowany jako FATAL, a w kodzie nie mial
+  # ani jednego uzycia poza getterem. Klucz ZOSTAJE, bo starsze jary (0.2.0-f0f9526 i
+  # wczesniejsze) bez niego sie NIE WLACZA — usunac dopiero, gdy powrot do tamtej wersji
+  # przestanie wchodzic w gre.
+  confirm-anchor: { x: 0.5, y: 100.0, z: -1.5 }
+
+  # DOKAD wychodzi gracz po utworzeniu postaci.
+  #
+  # Wczesniej bylo to na sztywno Bukkit.getWorlds().get(0).getSpawnLocation(), czyli surowy
+  # spawn swiata. Konto testowe ginelo tam od mobow w DWOCH niezaleznych sesjach QA:
+  # world1 36 s po zatwierdzeniu, world3 9 s. Wspolrzedne ponizej to celowo TE SAME, co
+  # 'new-profile-spawn-point' w plugins/MMOProfiles/config.yml — nowa postac ma ladowac
+  # tam, gdzie MMOProfiles juz obiecuje ja postawic. Przy zmianie jednego poprawic drugie.
+  #
+  # Usuniecie calej sekcji 'exit' = powrot do zachowania sprzed poprawki.
+  exit:
+    world: 'stolica_odnowa'
+    # 2026-09-30: start nowej postaci = spawn Stolicy (stolica_odnowa, spawn Multiverse), decyzja wlasciciela. Te same wspolrzedne w 3 miejscach.
+    x: 0.5
+    y: 101.0
+    z: 59.5
+    yaw: 180.0
+    pitch: 0.0
+
+  # Nietykalnosc po wyjsciu z kreatora, w tickach (100 = 5 s). Gracz laduje w swiecie bez
+  # ekwipunku bojowego, czesto w nocy. MMOProfiles robi to samo na czas wyboru profilu
+  # ('profile-selection-invulnerability: true'), wiec gracz nie zauwazy szwu. 0 = wylaczone.
+  exit-invulnerability-ticks: 100
+
+  # SPRZATANIE SALI PRZY STARCIE SERWERA.
+  #
+  # Podglad postaci nalezy do sesji i powstaje dopiero, gdy gracz wejdzie do kreatora.
+  # Cokolwiek innego stoi w tej sali, stoi w kadrze: na produkcji byl to recznie
+  # wsummonowany armor stand i mannequin DOKLADNIE w punkcie 'dummy-anchor' (pozostalosc
+  # po porownywaniu tej wersji z prototypem config-only) — armor stand wystawal zza ramion
+  # postaci, a mannequin bylo widac przez ulamek sekundy przy kazdej zmianie rasy.
+  #
+  # true = przy kazdym starcie plugin usuwa z tego swiata WSZYSTKIE encje poza graczami
+  # i melduje w logu, co usunal. false = nie rusza niczego (wtedy sprzatanie recznie:
+  # /execute in minecraft:creator_limbo run minecraft:kill @e[type=!player] — uwaga,
+  # samo 'kill' przechwytuje CMI i po cichu nic nie robi).
+  sweep-stray-entities: true
+
+  # RESPONSYWNOSC WEJSCIA DO SALI.
+  #
+  # Sala jest osobnym swiatem, wiec wejscie to zmiana wymiaru i klient zawsze pokaze
+  # "Loading terrain..." — tego sie nie obejdzie. Mozna za to skrocic czekanie:
+  #
+  # view-distance: ile chunkow sali wysylac. Sala ma kilkanascie blokow, a globalny zasieg
+  #   (server.properties, view-distance=10) kazal klientowi czekac na 21x21 = 441 chunkow
+  #   pustki. 4 daje 81. 0 = nie ruszaj, zostaje globalny.
+  # keep-loaded: trzymaj chunki sali w pamieci na stale (3x3 wokol 'spawn' i 'dummy-anchor').
+  #   Bez tego serwer wczytuje je z dysku przy KAZDYM wejsciu, bo po wyjsciu ostatniego
+  #   gracza sala sie wyladowuje.
+  view-distance: 4
+  keep-loaded: true
+
+# Rotation update tick rate for the preview dummy (packetevents fallback path).
+# Polozenie grafiki UI w tytule okna (piksele GUI).
+# title-shift: tytul rysuje sie od x = 8 wzgledem panelu; glify maja 256 px szerokosci
+#   i maja wychodzic 40 px poza panel z kazdej strony, wiec -48 stawia je na panel x = -40.
+# Trzymane w configu, zeby dostrajac polozenie bez przebudowy jara.
+creator-menu:
+  title-shift: -48
+  # Tryb pomiarowy szerokosci glifu — wlaczac tylko na czas pomiaru.
+  probe-advance: false
+  # Cofniecie kursora po glifie, zeby nazwa trafila na pasek u gory.
+  # Zmierzone sonda: advance glifu = 257 px GUI (szerokosc 256 + 1).
+  name-shift: -147
+
+
+preview:
+  rotation-interval-ticks: 2
+
+  # ROZGRZEWKA SKOREK ZNIKNELA razem z kluczem 'skin-warmup-ticks' i to jest zmiana
+  # zachowania, a nie porzadkowa. Podglad to teraz STAJNIA nosicieli: po jednym na skorke,
+  # wszyscy stoja od poczatku sesji 20 blokow pod sala, a klikniecie rasy albo klasy tylko
+  # wystawia wlasciwego na kotwice. Nie ma wiec czego rozgrzewac ani na co czekac — i, co
+  # wazniejsze, klient nie dostaje przy kliknieciu NOWEJ encji, wiec nie ma tez chwili,
+  # w ktorej rysuje skorke domyslna. Szczegoly: javadoc PreviewDummyManager.
+
+# WYMUSZENIE WYBORU POSTACI PRZY WEJSCIU.
+#
+# Dotad nikt tego nie pilnowal: MMOProfiles otwiera ekran profili po zalogowaniu
+# ('no-gui-on-login: false'), ale gracz mogl go zamknac Escape'em i grac bez postaci —
+# bez rasy, bez klasy MMOCore, bez rekordu. Widac to w logu: KreatorQA zalogowal sie
+# o 11:50:03, a kreator otworzyl sie dopiero 19 s pozniej, po recznym kliknieciu.
+#
+# Nie budujemy wlasnej pulapki. MMOProfiles ma na to wlasna, wspierana droge:
+# '/mmoprofiles open <gracz>' — jego argument 'force-select' ma fallback ustawiony na
+# !hasChosenProfile(), wiec dla gracza BEZ wybranego profilu wymuszenie wlacza sie samo.
+# Wolamy to z konsoli, wiec permisja 'mmoprofiles.command' (default: op) nie wchodzi w gre.
+profile-selection:
+  # false = plugin nie pilnuje wejscia i mowi o tym ostrzezeniem przy starcie.
+  enforce: true
+  # Ile czekac po wejsciu gracza, zanim sprawdzimy, czy ma wybrany profil. Musi byc
+  # DLUZSZE niz 'resource-pack-load-delay: 40' z configu MMOProfiles.
+  first-check-delay-ticks: 10
+  # Co ile tickow ponawiac dla graczy, ktorzy nadal nie wybrali. 0 = jednorazowo.
+  recheck-interval-ticks: 200
+
+# UWAGA co do 'description' i 'bonus':
+# Oba pola sa WYLACZNIE OPISOWE — ladują w podpowiedzi (lore) ikony i nigdzie indziej.
+# NIE WOLNO wpisywac tu obietnic mechanicznych
+# ("+10% dosw.", "+2 Sila"), dopoki nie stoi za nimi realny efekt w grze — wczesniejsza
+# wersja to robila i interfejs klamal graczowi.
+# Teksty ponizej sa placeholderem napisanym przez asystenta — do zastapienia wlasnym lore.
+# Limitu dlugosci nie ma: od czasu minimalistycznego UI tekst rysuje vanillowy font
+# w tooltipie, a nie generator wypalajacy go w teksture panelu.
+# UWAGA co do 'permission': flaga race.* jest DZIŚ WRITE-ONLY — grep po wszystkich
+# pluginach w tym stacku pokazuje, że jedynym plikiem zawierającym np. 'race.czlowiek' jest
+# ten config. Ustawiamy ją mimo to (tanio, idempotentnie) jako punkt zaczepienia dla
+# przyszłych warunków LuckPerms. Jeśli po jakimś czasie nadal nikt jej nie czyta, usunąć
+# razem z gałęzią w ConfirmService — nie pojedynczo.
+races:
+  czlowiek:
+    icon: 'cc:race_czlowiek'
+    description: 'Wszechstronni i ambitni.'
+    bonus: 'Ludzie Przymierza'
+    traits:
+      - '+5% krótsze odnowienie umiejętności'
+    helmet-color: '#C8B48C'
+    display: '&fCzłowiek'
+    permission: 'race.czlowiek'
+    # 'none' = rasa bez modelu 3D — i tak zostaje dla WSZYSTKICH ras. Rase ma pokazywac
+    # SKORKA, nie ModelEngine. Ktora skorka: skins.yml, klucz '<rasa>_<klasa>' (patrz sekcja
+    # 'skins' na koncu pliku). Dummy w podgladzie nosi dokladnie te sama teksture, ktora
+    # gracz dostanie po zatwierdzeniu — az do 0.2.0-4b3cef5 nosil skorke PATRZACEGO GRACZA,
+    # wiec wyboru rasy nie bylo na postaci widac w ogole.
+    model-id: 'none'
+  ork:
+    icon: 'cc:race_ork'
+    description: 'Siła ponad wszystko.'
+    bonus: 'Klany Stepu'
+    traits:
+      - '+15% życia'
+      - '+10% obrażeń fizycznych'
+      - '-20% many (tylko mag)'
+    helmet-color: '#6E9B4E'
+    display: '&2Ork'
+    permission: 'race.ork'
+    # Patrz komentarz przy rasie 'czlowiek'.
+    model-id: 'none'
+  elf:
+    icon: 'cc:race_elf'
+    description: 'Celni łucznicy i magowie.'
+    bonus: 'Dzieci Świtu'
+    traits:
+      - '+10% szybkości ruchu'
+      - 'szybsza regeneracja zasobu (poza akolitą)'
+      - '-10% życia'
+    helmet-color: '#E8DCA8'
+    display: '&bElf'
+    permission: 'race.elf'
+    # Patrz komentarz przy rasie 'czlowiek'.
+    model-id: 'none'
+  nieumarly:
+    icon: 'cc:race_nieumarly'
+    description: 'Nie znają bólu ni strachu.'
+    bonus: 'Powstali z grobu'
+    traits:
+      - '+3% kradzieży życia (mag i akolita: wampiryzm czarów)'
+      - '-5% szybkości ruchu'
+    helmet-color: '#8FA0A0'
+    display: '&8Nieumarły'
+    permission: 'race.nieumarly'
+    # Blueprint race_nieumarly LEZY w plugins/ModelEngine/blueprints/, ale NIE jest uzywany:
+    # decyzja jest taka, ze rasy pokazuje SKORKA, nie model 3D. Model wrocilby tu tylko wtedy,
+    # gdyby powstal komplet blueprintow dla wszystkich ras — jedna rasa z modelem i trzy bez
+    # wygladaly w kadrze jak blad, a nie jak wybor.
+    model-id: 'none'
+
+# UWAGA co do 'gear': to jest WYŁĄCZNIE strój dummy'ego w podglądzie. Gracz po utworzeniu
+# postaci NIE dostaje z tego ani jednego przedmiotu; ekwipunku startowego w tym pluginie nie ma
+# (README kiedyś twierdził inaczej).
+#
+# Odkąd para rasa+klasa ma własną skórkę, z tej sekcji używany jest tylko 'hand': zbroja
+# zakrywała strój klasy wypalony w skórce, a barwiony helm rasy — głowę. Pozostałe sloty
+# wracają do gry tylko dla par BEZ skórki w skins.yml (podgląd używa wtedy skórki gracza).
+classes:
+  wojownik:
+    icon: 'cc:class_wojownik'
+    description: 'Pierwsza linia: stal, zbroja i Szał.'
+    bonus: 'Obrońca'
+    gear: { chest: IRON_CHESTPLATE, legs: IRON_LEGGINGS, boots: IRON_BOOTS, hand: IRON_SWORD }
+    display: '&cWojownik'
+    mmocore-id: 'warrior'
+    races:
+      czlowiek:
+        display: '&cMiecz Korony'
+        role: 'Obrońca, walka wręcz'
+        difficulty: 1
+        start-skill: 'Pchnięcie Korony'
+        start-skill-level: 1
+        start-skill-text: 'doskok do celu w 8 bl. i 5 obrażeń'
+        description: "Zaprzysiężony obrońca Korony.\nStal, halabarda i dane słowo.\n\nZbroja: lekka, średnia\nBroń: miecze, broń drzewcowa"
+        bonus: 'Na 10 poz.: Nieugięty albo Czempion Areny'
+        lore: 'Zaprzysiężony obrońca Korony. Stal, halabarda i dane słowo.'
+        armor: 'lekka, średnia'
+        weapons: 'miecze, broń drzewcowa'
+        specializations:
+          - name: '&fNieugięty'
+            description: 'Mur, o który rozbija się szarża. Nie cofa się ani o krok.'
+            perks: 'więcej obrony, ciężka zbroja, tarcze'
+          - name: '&eCzempion Areny'
+            description: 'Mistrz pojedynków i areny. Każdy cios waży więcej.'
+            perks: 'obrażenia fizyczne'
+      elf:
+        display: '&cKlinga Gaju'
+        role: 'Obrażenia wręcz, zwinność'
+        difficulty: 2
+        start-skill: 'Przelot Gaju'
+        start-skill-level: 1
+        start-skill-text: 'przelot przez cel do 8 bl. i cięcie'
+        description: "Szermierz świętych gajów.\nLekki krok, elfia klinga.\n\nZbroja: lekka, średnia\nBroń: miecze, elfie klingi"
+        bonus: 'Na 10 poz.: Różany Rycerz albo Tancerz Ostrzy'
+        lore: 'Szermierz świętych gajów. Lekki krok, elfia klinga.'
+        armor: 'lekka, średnia'
+        weapons: 'miecze, elfie klingi'
+        specializations:
+          - name: '&2Różany Rycerz'
+            description: 'Obrońca różanego gaju. Piękny i kolczasty.'
+            perks: 'więcej obrony, ciężka zbroja, tarcze'
+          - name: '&aTancerz Ostrzy'
+            description: 'Taniec klingi. Szybki i nieuchwytny.'
+            perks: 'uniki'
+      ork:
+        display: '&cWódz Wojny'
+        role: 'Obrażenia wręcz, obrońca'
+        difficulty: 1
+        start-skill: 'Natarcie Wodza'
+        start-skill-level: 1
+        start-skill-text: 'doskok do 8 bl.; trafia do 3 wrogów w promieniu 3 bl. po 5 obrażeń'
+        description: "Prowadzi szarżę na czele hordy\ni nie zna odwrotu.\n\nZbroja: lekka, średnia\nBroń: miecze, topory"
+        bonus: 'Na 10 poz.: Tyran albo Krwioburca'
+        lore: 'Prowadzi szarżę na czele hordy i nie zna odwrotu.'
+        armor: 'lekka, średnia'
+        weapons: 'miecze, topory'
+        specializations:
+          - name: '&cTyran'
+            description: 'Ściana żelaza. Przyjmuje ciosy, żeby drużyna mogła zadawać.'
+            perks: 'więcej obrony, ciężka zbroja, tarcze'
+          - name: '&4Krwioburca'
+            description: 'Szał bitewny. Im więcej krwi, tym mocniej bije.'
+            perks: 'trafienia krytyczne'
+      nieumarly:
+        display: '&cRycerz Śmierci'
+        role: 'Obrażenia wręcz, kradzież życia'
+        difficulty: 1
+        start-skill: 'Marsz z Krypty'
+        start-skill-level: 1
+        start-skill-text: 'doskok do 6 bl.; do 3 wrogów w promieniu 2,5 bl. po 5 obrażeń'
+        description: "Rycerz, którego śmierć\nnie zatrzymała.\n\nZbroja: lekka, średnia\nBroń: miecze, miecze dwuręczne"
+        bonus: 'Na 10 poz.: Kustosz Krypt albo Żniwiarz'
+        lore: 'Rycerz, którego śmierć nie zatrzymała.'
+        armor: 'lekka, średnia'
+        weapons: 'miecze, miecze dwuręczne'
+        specializations:
+          - name: '&7Kustosz Krypt'
+            description: 'Strzeże krypt. Nie ustępuje.'
+            perks: 'więcej obrony, ciężka zbroja, tarcze'
+          - name: '&5Żniwiarz'
+            description: 'Zbiera życie z każdym cięciem.'
+            perks: 'kradzież życia'
+  mag:
+    icon: 'cc:class_mag'
+    description: 'Wielka moc, kruche ciało.'
+    bonus: 'Zaklinacz'
+    gear: { chest: LEATHER_CHESTPLATE, legs: LEATHER_LEGGINGS, boots: LEATHER_BOOTS, hand: BLAZE_ROD }
+    display: '&dMag'
+    mmocore-id: 'mage'
+    races:
+      czlowiek:
+        display: '&dMagister Wieży'
+        role: 'Obrażenia magiczne z dystansu'
+        difficulty: 2
+        start-skill: 'Pieczęć Wieży'
+        start-skill-level: 1
+        start-skill-text: 'pocisk rani za 2 i znaczy cel na 6 s'
+        description: "Uczony Wieży Magów.\nRóżdżka w dłoni, grimuar przy pasie.\n\nZbroja: tylko tkanina\nBroń: różdżki i kostury, grimuary"
+        bonus: 'Na 10 poz.: Władca Żywiołów albo Chronomanta'
+        lore: 'Uczony Wieży Magów. Różdżka w dłoni, grimuar przy pasie.'
+        armor: 'tylko tkanina'
+        weapons: 'różdżki i kostury, grimuary'
+        specializations:
+          - name: '&bWładca Żywiołów'
+            description: 'Ogień, lód i piorun posłuszne jednemu słowu.'
+            perks: 'obrażenia czarów'
+          - name: '&dChronomanta'
+            description: 'Mag, który nagina czas. Jego zaklęcia wracają szybciej.'
+            perks: 'krótsze odnowienie umiejętności'
+      elf:
+        display: '&dTkacz Arkanów'
+        role: 'Obrażenia magiczne z dystansu'
+        difficulty: 3
+        start-skill: 'Nić Arkanów'
+        start-skill-level: 1
+        start-skill-text: 'linia do 20 bl. trafia do 3 wrogów po 4 obrażenia'
+        description: "Przędzie magię jak nić.\nKostur z żywego drewna.\n\nZbroja: tylko tkanina\nBroń: różdżki i kostury, kostury dwuręczne"
+        bonus: 'Na 10 poz.: Pieśniarz Burz albo Władca Zwierciadeł'
+        lore: 'Przędzie magię jak nić. Kostur z żywego drewna.'
+        armor: 'tylko tkanina'
+        weapons: 'różdżki i kostury, kostury dwuręczne'
+        specializations:
+          - name: '&bPieśniarz Burz'
+            description: 'Śpiewa, a niebo odpowiada piorunem.'
+            perks: 'obrażenia czarów'
+          - name: '&3Władca Zwierciadeł'
+            description: 'Magia odbija się od niego jak od lustra.'
+            perks: 'odporność na magię, lekka zbroja'
+      ork:
+        display: '&dSzaman'
+        role: 'Obrażenia magiczne, kontrola'
+        difficulty: 2
+        start-skill: 'Oko Burzy'
+        start-skill-level: 1
+        start-skill-text: 'pocisk tworzy punkt burzy na 6 s'
+        description: "Głos duchów burzy.\nKostur i totem.\n\nZbroja: lekka\nBroń: różdżki i kostury, totemy"
+        bonus: 'Na 10 poz.: Burzownik albo Głos Bębna'
+        lore: 'Głos duchów burzy. Kostur i totem.'
+        armor: 'lekka'
+        weapons: 'różdżki i kostury, totemy'
+        specializations:
+          - name: '&eBurzownik'
+            description: 'Woła pioruny na wrogów.'
+            perks: 'obrażenia czarów'
+          - name: '&2Głos Bębna'
+            description: 'Bęben wojny niesie głos przodków.'
+            perks: 'krótsze odnowienie umiejętności'
+      nieumarly:
+        display: '&dLisz'
+        role: 'Obrażenia magiczne, wampiryzm'
+        difficulty: 3
+        start-skill: 'Splot Duszy'
+        start-skill-level: 1
+        start-skill-text: 'cel do 15 bl. otrzymuje 3 obrażenia'
+        description: "Mag, który oszukał śmierć.\nJego dusza czeka w filakterium.\n\nZbroja: tylko tkanina\nBroń: różdżki i kostury, filakteria"
+        bonus: 'Na 10 poz.: Duszożerca albo Zwiastun Zarazy'
+        lore: 'Mag, który oszukał śmierć. Jego dusza czeka w filakterium.'
+        armor: 'tylko tkanina'
+        weapons: 'różdżki i kostury, filakteria'
+        specializations:
+          - name: '&5Duszożerca'
+            description: 'Pożera dusze. Czary go leczą.'
+            perks: 'wampiryzm czarów'
+          - name: '&8Zwiastun Zarazy'
+            description: 'Tam, gdzie przejdzie, wszystko gnije.'
+            perks: 'więcej many'
+  akolita:
+    icon: 'cc:class_akolita'
+    description: 'Leczy i chroni drużynę.'
+    bonus: 'Wsparcie'
+    gear: { chest: GOLDEN_CHESTPLATE, legs: GOLDEN_LEGGINGS, boots: GOLDEN_BOOTS, hand: GOLDEN_SHOVEL }
+    display: '&eAkolita'
+    mmocore-id: 'paladin'
+    races:
+      czlowiek:
+        display: '&eNosiciel Relikwii'
+        role: 'Wsparcie, drugi szereg'
+        difficulty: 1
+        start-skill: 'Straż Relikwii'
+        start-skill-level: 1
+        start-skill-text: 'stawia obrońcę przy sojuszniku do 10 bl.'
+        description: "Niesie relikwie świętych\ni ich tarczę wiary.\n\nZbroja: lekka, średnia\nBroń: buławy, tarcze"
+        bonus: 'Na 10 poz.: Żywa Relikwia albo Chorąży Świętych'
+        lore: 'Niesie relikwie świętych i ich tarczę wiary.'
+        armor: 'lekka, średnia'
+        weapons: 'buławy, tarcze'
+        specializations:
+          - name: '&fŻywa Relikwia'
+            description: 'Święta moc w ludzkim ciele. Staje w pierwszym szeregu.'
+            perks: 'więcej obrony, ciężka zbroja'
+          - name: '&eChorąży Świętych'
+            description: 'Niesie sztandar świętych. Duchy obrońców słuchają jego głosu.'
+            perks: 'więcej many'
+      elf:
+        display: '&eWyrocznia'
+        role: 'Wsparcie, walka wręcz'
+        difficulty: 2
+        start-skill: 'Sierp Księżyca'
+        start-skill-level: 1
+        start-skill-text: 'cięcie do 3 bl. za 3 obrażenia'
+        description: "Kapłanka księżyca.\nWidzi to, co nadejdzie.\n\nZbroja: lekka\nBroń: buławy, sierpy"
+        bonus: 'Na 10 poz.: Ostrze Księżyca albo Przewodnik Ogników'
+        lore: 'Kapłanka księżyca. Widzi to, co nadejdzie.'
+        armor: 'lekka'
+        weapons: 'buławy, sierpy'
+        specializations:
+          - name: '&fOstrze Księżyca'
+            description: 'Sierp księżyca w walce wręcz.'
+            perks: 'trafienia krytyczne, średnia zbroja'
+          - name: '&bPrzewodnik Ogników'
+            description: 'Ogniki gaju idą za jego światłem.'
+            perks: 'większa pula Dusz'
+      ork:
+        display: '&eKapłan Krwi'
+        role: 'Wsparcie, walka wręcz'
+        difficulty: 2
+        start-skill: 'Przodek Młota'
+        start-skill-level: 1
+        start-skill-text: 'cel do 4 bl. otrzymuje 4 obrażenia; pobliscy wrogowie w promieniu 2 bl. także'
+        description: "Składa ofiary\nbogom wojny.\n\nZbroja: lekka\nBroń: buławy, młoty dwuręczne"
+        bonus: 'Na 10 poz.: Awatar Wojny albo Wołający Przodków'
+        lore: 'Składa ofiary bogom wojny.'
+        armor: 'lekka'
+        weapons: 'buławy, młoty dwuręczne'
+        specializations:
+          - name: '&cAwatar Wojny'
+            description: 'Wcielony bóg bitwy. Młot na froncie.'
+            perks: 'obrażenia fizyczne, średnia zbroja'
+          - name: '&5Wołający Przodków'
+            description: 'Woła duchy wojowników z pól dawnych bitew.'
+            perks: 'więcej many'
+      nieumarly:
+        display: '&ePasterz Ciszy'
+        role: 'Wsparcie, kradzież życia'
+        difficulty: 2
+        start-skill: 'Kosiarz Ciszy'
+        start-skill-level: 1
+        start-skill-text: 'cięcie do 4 bl. za 4 obrażenia'
+        description: "Odstępca Spaczonej Ciszy.\nUkradł ciszę śmierci i tka z niej sługi.\n\nZbroja: lekka\nBroń: buławy, kosy"
+        bonus: 'Na 10 poz.: Awatar Otchłani albo Pan Kurhanów'
+        lore: 'Odstępca Spaczonej Ciszy. Ukradł ciszę śmierci i tka z niej sługi.'
+        armor: 'lekka'
+        weapons: 'buławy, kosy'
+        specializations:
+          - name: '&5Awatar Otchłani'
+            description: 'Nosi skradzioną ciszę jak pancerz. Karmi nią ostrze i własne rany.'
+            perks: 'kradzież życia, średnia zbroja'
+          - name: '&8Pan Kurhanów'
+            description: 'Wykrada głosy z kurhanów. Umarli idą za jego szeptem.'
+            perks: 'większa pula Dusz'
+  ninja:
+    icon: 'cc:class_ninja'
+    description: 'Szybkie ciosy zza pleców.'
+    bonus: 'Zabójca'
+    gear: { chest: CHAINMAIL_CHESTPLATE, legs: CHAINMAIL_LEGGINGS, boots: LEATHER_BOOTS, hand: IRON_SWORD }
+    display: '&7Ninja'
+    mmocore-id: 'rogue'
+    races:
+      czlowiek:
+        display: '&7Lis Zaułków'
+        role: 'Obrażenia z bliska i z dystansu'
+        difficulty: 2
+        start-skill: 'Bełt Listu Gończego'
+        start-skill-level: 1
+        start-skill-text: 'bełt trafia do 15 bl. za 3,5 obrażeń i nakłada 1 Znamię'
+        description: "Cień miejskich zaułków.\nSztylet w rękawie, kusza pod płaszczem.\n\nZbroja: lekka\nBroń: sztylety i pięściaki, łuki, kusze i muszkiety"
+        bonus: 'Na 10 poz.: Truciciel albo Łowca Nagród'
+        lore: 'Cień miejskich zaułków. Sztylet w rękawie, kusza pod płaszczem.'
+        armor: 'lekka'
+        weapons: 'sztylety i pięściaki, łuki, kusze i muszkiety'
+        specializations:
+          - name: '&8Truciciel'
+            description: 'Ostrze umoczone w jadzie. Zabija, zanim ofiara zrozumie.'
+            perks: 'trafienia krytyczne'
+          - name: '&6Łowca Nagród'
+            description: 'Za każdą głowę jest cena. Bełt trafia, zanim wróg dobiegnie.'
+            perks: 'obrażenia pocisków'
+      elf:
+        display: '&7Szept Kniei'
+        role: 'Obrażenia z dystansu'
+        difficulty: 2
+        start-skill: 'Strzała z Korony'
+        start-skill-level: 1
+        start-skill-text: 'po 0,6 s trafia do 20 bl. za 4 obrażenia i nakłada 1 Znamię'
+        description: "Nikt go nie słyszy w lesie.\nŁuk długi i sztylet.\n\nZbroja: lekka\nBroń: sztylety i pięściaki, łuki, łuki długie"
+        bonus: 'Na 10 poz.: Tkacz Sideł albo Srebrna Cięciwa'
+        lore: 'Nikt go nie słyszy w lesie. Łuk długi i sztylet.'
+        armor: 'lekka'
+        weapons: 'sztylety i pięściaki, łuki, łuki długie'
+        specializations:
+          - name: '&2Tkacz Sideł'
+            description: 'Las jest jego pułapką. Każda ścieżka kończy się sidłem.'
+            perks: 'trafienia krytyczne'
+          - name: '&6Srebrna Cięciwa'
+            description: 'Strzała w blasku księżyca. Trafia z koron drzew.'
+            perks: 'obrażenia pocisków'
+      ork:
+        display: '&7Kieł Stepu'
+        role: 'Obrażenia z dystansu i wręcz'
+        difficulty: 2
+        start-skill: 'Ślad Kła'
+        start-skill-level: 1
+        start-skill-text: 'trafia do 12 bl. za 3,5 obrażeń'
+        description: "Łowca stepów, szybki jak wiatr.\nWłócznia i łuk.\n\nZbroja: lekka, średnia\nBroń: sztylety i pięściaki, łuki, włócznie"
+        bonus: 'Na 10 poz.: Zaklinacz Bestii albo Kościany Grot'
+        lore: 'Łowca stepów, szybki jak wiatr. Włócznia i łuk.'
+        armor: 'lekka, średnia'
+        weapons: 'sztylety i pięściaki, łuki, włócznie'
+        specializations:
+          - name: '&6Zaklinacz Bestii'
+            description: 'Bestie stepu słuchają jego gwizdu.'
+            perks: 'więcej życia'
+          - name: '&7Kościany Grot'
+            description: 'Grot z kości wroga. Rzuca, zanim wróg podejdzie.'
+            perks: 'obrażenia pocisków'
+      nieumarly:
+        display: '&7Upiór'
+        role: 'Kontrola, obrażenia z bliska'
+        difficulty: 3
+        start-skill: 'Pętla Grobu'
+        start-skill-level: 1
+        start-skill-text: 'trafia cel do 10 bl., przyciąga go i nakłada 1 Znamię'
+        description: "Upiór cmentarnych mgieł.\nŁańcuch i sztylet.\n\nZbroja: lekka\nBroń: sztylety i pięściaki, łuki, łańcuchy"
+        bonus: 'Na 10 poz.: Dusiciel albo Łucznik Ciszy'
+        lore: 'Upiór cmentarnych mgieł. Łańcuch i sztylet.'
+        armor: 'lekka'
+        weapons: 'sztylety i pięściaki, łuki, łańcuchy'
+        specializations:
+          - name: '&8Dusiciel'
+            description: 'Łańcuch owija się wokół szyi ofiary.'
+            perks: 'trafienia krytyczne'
+          - name: '&7Łucznik Ciszy'
+            description: 'Strzały z mroku, bez jednego dźwięku.'
+            perks: 'obrażenia pocisków'
+
+# HISTORIA (zostaje, żeby nikt nie wrócił tą drogą): poprzednia wersja miała sekcję 'skin'
+# odsyłającą do klasy SkinProvider, której NIGDY nie było w źródłach — cała "abstrakcja"
+# sprowadzała się do `cmi skin <gracz> <gracz> -s`, czyli nakładania graczowi jego WŁASNEJ
+# skórki przy każdym wyborze profilu. Dzisiejsze skórki nie pytają Mojanga o nic: gotowe,
+# podpisane tekstury leżą w skins.yml i idą prosto do profilu gracza.
+# SKÓRKI POSTACI
+#
+# Skórka jest JEDNĄ teksturą na parę RASA x KLASA — protokół nie ma drugiej warstwy, którą
+# serwer mógłby podmienić osobno, więc "podskin klasy" jest wypalony w tę samą teksturę:
+# rasa trzyma głowę i karnację, klasa tors, ręce, nogi i warstwę zewnętrzną (kaptur, maska,
+# naramienniki, tabard). Same tekstury leżą w skins.yml (obok tego pliku) i są czytane
+# Z DYSKU — poprawka skórki to podmiana tamtego pliku i '/cc reload', bez przebudowy jara.
+#
+# Skąd biorą się pliki: tools/gen_race_skins.py generuje 16 PNG, tools/upload_skins.sh wgrywa
+# je na mineskin.org (wprost przez jego API) i zapisuje stamtąd podpisane tekstury do
+# skins.yml. Własny hosting PNG odpada: klient Javy pobiera skórki wyłącznie
+# z textures.minecraft.net, także przy online-mode=false.
+skins:
+  # false = kreator nadal pokazuje skórkę rasy i klasy na podglądzie, ale gracz zostaje
+  # w skórce swojego konta. To JEDYNA rzecz w tym pluginie, która zmienia profil gracza —
+  # wyłącznik jest po to, żeby przy sporze z innym pluginem od skórek (CMI, SkinsRestorer)
+  # dało się to rozdzielić bez przebudowy jara.
+  apply-to-player: true
+
+  # SKORKA JUZ PRZY WEJSCIU, a nie dopiero przy wyborze postaci.
+  #
+  # Bez tego gracz od wejscia do kliknięcia postaci chodzi w skorce swojego KONTA —
+  # kilkanascie sekund, w ktorych patrzy na ekran wyboru i widzi za nim siebie. Z tym
+  # wlacznikiem plugin naklada mu skorke postaci granej OSTATNIO (pole 'last-used'
+  # w characters.yml), a po wyborze i tak poprawia ja na skorke wybranej postaci.
+  # Najgorszy mozliwy skutek pomylki: skorka poprzedniej postaci przez chwile.
+  #
+  # Nakladamy dwa razy (10 i 40 tickow po wejsciu), bo plugin od skorek moze nalozyc swoja
+  # PO nas — CMI robilo to ~1 s po wejsciu. Nalozenie jest idempotentne, wiec drugie
+  # podejscie przy niezmienionej skorce nie kosztuje nic.
+  #
+  # false = zachowanie sprzed 2026-09-20: skorka wchodzi dopiero przy wyborze postaci.
+  apply-on-join: true
+
+  # Głowy na ekranie wyboru postaci (MMOProfiles) — bez tego każda postać ma tam głowę
+  # Steve'a, bo MMOProfiles rysuje PLAYER_HEAD bez tekstury i nie ma placeholdera, którym
+  # dałoby się to ustawić z jego configu. Dopisujemy je już po zbudowaniu okna, czyli
+  # wchodzimy w CUDZE okno — dlatego osobny wyłącznik. Mapowanie slot -> postać bierzemy
+  # z jego własnego pliku language/gui/profile-list.yml; przy stronicowaniu (więcej postaci
+  # niż slotów) nie ruszamy niczego, żeby nie wstawić komuś cudzej głowy.
+  profile-heads: true
+
+# SCENA KREATORA (wdrozona 2026-09-28, projekt claude.ai/artifact/7Le7N9VeAKLc2JfdjZYwWq).
+# Kopia sprzed: backups/kreator-scena-20260928. Scenerie: plugin-src/character-creator/tools/scen*.sh
+# Losowe imie w ksiedze "Nowa postac" (przycisk Losuj): poczatek + koncowka, wg rasy.
+# Wynik musi przejsc zasady imion (3-16 znakow) i byc wolny — inaczej losowanie idzie dalej.
+names:
+  # Losowe imiona w klimacie rasy (przycisk "Losuj imie" w ksiedze "Nowa postac"): poczatek + koncowka.
+  # Naprawa 2026-09-30: wieksza pula (ok. 500-700 kombinacji na rase, bylo ~170), zadnych cyfr.
+  # Kazde wylosowane imie przechodzi NameRules (dlugosc, filtr names.blocked) i nie moze byc zajete.
+  czlowiek:
+    start: [Bor, Rad, Jar, Mir, Sta, Dobr, Wit, Bol, Zby, Ciech, Przem, Wal, Gost, Lech, Mies, Sob,
+            Święt, Krze, Mści, Dziers, Racib, Siem, Bogu, Jaro, Ziem, Tom, Wład, Czes, Grzy]
+    end: [osław, omir, owit, ogost, obor, ek, an, imir, idar, ko, uch, osz, ota, isz, ard, omił, ierz, aw, ysław, ian]
+  elf:
+    start: [Ae, Ela, Fae, Gal, Ith, Lae, Mir, Syl, Thal, Ely, Cae, Nim, Ser, Ara, Lue,
+            Ere, Ilu, Oro, Qui, Tae, Ven, Yla, Aur, Cel, Fin, Lir, Nae, Rho, Vae]
+    end: [rion, wen, dril, thas, riel, lith, nor, ael, andil, iel, ara, ethil, orin, wyn, las, mir, dhel, ion, quen, sara, thiel]
+  ork:
+    start: [Gro, Kra, Mug, Thra, Zog, Gor, Brak, Urg, Dur, Snag, Grim, Rok, Yaz, Mog,
+            Bol, Drak, Ghaz, Hrum, Kag, Lug, Nar, Ruk, Skar, Tuk, Vor, Zar, Bur, Grut]
+    end: [gash, nak, dush, rok, gul, thak, mok, zug, grub, bag, ok, ash, gor, tar, ruk, dak, muk, zor, hul, kar]
+  nieumarly:
+    start: [Mor, Vex, Sil, Kar, Nyx, Ash, Grav, Vel, Mal, Sor, Ze, Obs, Cryp, Um,
+            Dre, Gho, Lich, Mourn, Rav, Sep, Tho, Vor, Wra, Xal, Yrg, Hal, Kor, Nec]
+    end: [grim, thul, mar, vane, rik, ius, oth, ane, ekh, ul, is, orn, thas, ra, mos, eth, oon, ax, iel, ur]
+  # Filtr imion (NameRules): slowo z listy gdziekolwiek w imieniu = odmowa. Porownanie bez wielkosci
+  # liter, polskich znakow, podkreslnikow i powtorzen, z podstawowym leetspeakiem (0=o, 1=i, 3=e, 4=a,
+  # 5=s, 7=t, 8=b, 9=g). Unikac krotkich slow, ktore siedza w zwyklych imionach (ass, cum, nazi, suka).
+  # Pusta lista = lista wbudowana w plugin.
+  blocked: [kurw, chuj, huj, pierdol, pierdziel, jeban, jebac, jebie, zajeb, wyjeb, pojeb, spierdal,
+            skurwysyn, skurwiel, cipa, cipsk, pizda, pizdzi, dziwk, szmata, fiut, kutas, pedal, cwel,
+            debil, kretyn, sukinsyn, hitler, fuck, shit, bitch, whore, slut, cunt, pussy, nigger, nigga,
+            faggot, retard, porn, penis, vagina]
+
+scene:
+  replace-creator: true
+  replace-selector: true
+  world: 'creator_limbo'
+  shield-distance: 1.4
+  target-delay-ticks: 5
+  fade:
+    glyph: '䈀'
+    in-ticks: 3
+    stay-ticks: 4
+    out-ticks: 6
+  # HUD innych pluginow na czas sceny (komendy z konsoli, %player% = gracz).
+  # Spectator chowa vanillowy HUD, ale nie paski MythicHUD ani action bara MMOCore
+  # (zycie/mana), ktory nadpisywal podpowiedz sterowania. Po zamknieciu — on-close.
+  hud:
+    on-open:
+      - 'hud layout %player% remove default-layout -s'
+      - 'hud layout %player% remove sword-layout -s'
+      - 'hud layout %player% remove chowance-layout -s'
+    repeat:
+      - 'mmocore admin hideab %player% 60'
+    repeat-ticks: 40
+    on-close:
+      - 'hud layout %player% add default-layout -s'
+      - 'hud layout %player% add sword-layout -s'
+      - 'hud layout %player% add chowance-layout -s'
+  # Dzwieki interfejsu (tylko dla gracza w scenie). Brak wpisu = cisza.
+  ui-sounds:
+    race:      { sound: 'item.book.page_turn', volume: 0.9, pitch: 0.9 }
+    class:     { sound: 'ui.button.click', volume: 0.35, pitch: 1.4 }
+    character: { sound: 'item.book.page_turn', volume: 0.8, pitch: 1.1 }
+    select:    { sound: 'block.enchantment_table.use', volume: 0.6, pitch: 1.2 }
+    back:      { sound: 'item.book.put', volume: 0.8, pitch: 1.0 }
+    create:    { sound: 'ui.toast.challenge_complete', volume: 0.5, pitch: 1.0 }
+    flyover:   { sound: 'item.elytra.flying', volume: 0.25, pitch: 1.3 }
+  # KLIMAT KADRU (2026-09-30): wszystkie postacie ta sama prosta animacja — rozgladanie glowa na boki.
+  #   idle.rest-pitch  pochylenie glowy w spoczynku (+ w dol)
+  #   idle.speed       predkosc obrotu glowy (stopnie/tick), gest moze miec wlasna
+  #   idle.pause       [min, max] tickow miedzy gestami
+  #   idle.gestures    yaw (+ w lewo postaci) / pitch / hold (ticki trzymania) / speed
+  #   music            podklad kadru (gra od wejscia w kadr, gasnie przy zmianie)
+  #   sounds           odglosy tla: every ticki + jitter losowy rozrzut
+  points:
+    default:
+      camera:  { x: 301.5, y: 101.62, z: 285.5 }
+      subject: { x: 301.5, y: 100.0, z: 282.5 }
+      card:    { x: 303.6, y: 100.45, z: 282.4 }
+      list:    { x: 299.4, y: 100.95, z: 282.4 }
+      look:    { x: 301.5, y: 101.0, z: 282.5 }
+      time: 6000
+      idle:
+        speed: 2
+        pause: [80, 140]
+        gestures:
+          - { yaw: 20, pitch: 0, hold: 40 }
+          - { yaw: -20, pitch: 0, hold: 40 }
+    czlowiek:
+      camera:  { x: 301.5, y: 101.62, z: 285.5 }
+      subject: { x: 301.5, y: 100.0, z: 282.5 }
+      card:    { x: 303.6, y: 100.45, z: 282.4 }
+      list:    { x: 299.4, y: 100.95, z: 282.4 }
+      look:    { x: 301.5, y: 101.0, z: 282.5 }
+      # Czlowiek: grod w poludnie.
+      time: 6000
+      idle:
+        speed: 2
+        pause: [80, 140]
+        gestures:
+          - { yaw: 20, pitch: 0, hold: 40 }
+          - { yaw: -20, pitch: 0, hold: 40 }
+      music: { sound: 'music.overworld.meadow', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'entity.villager.ambient', volume: 0.35, pitch: 1.0, every: 240, jitter: 200 }
+        - { sound: 'block.bell.use', volume: 0.2, pitch: 0.7, every: 700, jitter: 400 }
+        - { sound: 'entity.chicken.ambient', volume: 0.3, pitch: 1.0, every: 300, jitter: 300 }
+    elf:
+      camera:  { x: 601.5, y: 101.62, z: 285.5 }
+      subject: { x: 601.5, y: 100.0, z: 282.5 }
+      card:    { x: 603.6, y: 100.45, z: 282.4 }
+      list:    { x: 599.4, y: 100.95, z: 282.4 }
+      look:    { x: 601.5, y: 101.0, z: 282.5 }
+      # Elf: gaj wisniowy o poranku, spadajace platki.
+      time: 1000
+      particles:
+        - { type: CHERRY_LEAVES, dx: 4.0, dy: 1.5, dz: 3.0, y: 3.5, count: 2, every: 5 }
+      idle:
+        speed: 2
+        pause: [80, 140]
+        gestures:
+          - { yaw: 20, pitch: 0, hold: 40 }
+          - { yaw: -20, pitch: 0, hold: 40 }
+      music: { sound: 'music.overworld.cherry_grove', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'block.amethyst_block.chime', volume: 0.3, pitch: 1.2, every: 120, jitter: 120 }
+        - { sound: 'block.cherry_leaves.fall', volume: 0.5, pitch: 1.0, every: 60, jitter: 60 }
+    ork:
+      camera:  { x: 901.5, y: 101.62, z: 285.5 }
+      subject: { x: 901.5, y: 100.0, z: 282.5 }
+      card:    { x: 903.6, y: 100.45, z: 282.4 }
+      list:    { x: 899.4, y: 100.95, z: 282.4 }
+      look:    { x: 901.5, y: 101.0, z: 282.5 }
+      # Ork: obozowisko o zachodzie, iskry nad ogniskami.
+      time: 12300
+      particles:
+        - { type: LAVA, at: { x: 894.5, y: 100.6, z: 274.5 }, dx: 0.1, dy: 0.1, dz: 0.1, count: 1, every: 25 }
+        - { type: LAVA, at: { x: 908.5, y: 100.6, z: 272.5 }, dx: 0.1, dy: 0.1, dz: 0.1, count: 1, every: 31 }
+        - { type: ASH, dx: 4.0, dy: 2.0, dz: 3.0, y: 2.0, count: 3, every: 6 }
+      idle:
+        speed: 2
+        pause: [80, 140]
+        gestures:
+          - { yaw: 20, pitch: 0, hold: 40 }
+          - { yaw: -20, pitch: 0, hold: 40 }
+      music: { sound: 'music.overworld.badlands', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'block.campfire.crackle', volume: 0.8, pitch: 1.0, every: 30, jitter: 30 }
+        - { sound: 'entity.piglin_brute.ambient', volume: 0.3, pitch: 0.7, every: 400, jitter: 300 }
+        - { sound: 'block.note_block.basedrum', volume: 0.35, pitch: 0.6, every: 160, jitter: 120 }
+    nieumarly:
+      camera:  { x: 1201.5, y: 101.62, z: 285.5 }
+      subject: { x: 1201.5, y: 100.0, z: 282.5 }
+      card:    { x: 1203.6, y: 100.45, z: 282.4 }
+      list:    { x: 1199.4, y: 100.95, z: 282.4 }
+      look:    { x: 1201.5, y: 101.0, z: 282.5 }
+      # Nieumarly: cmentarzysko o polnocy, dusze u stop.
+      time: 18000
+      particles:
+        - { type: SOUL, dx: 0.6, dy: 0.1, dz: 0.6, y: 0.2, count: 1, every: 12 }
+        - { type: WHITE_ASH, dx: 5.0, dy: 2.5, dz: 4.0, y: 2.5, count: 4, every: 4 }
+      idle:
+        speed: 2
+        pause: [80, 140]
+        gestures:
+          - { yaw: 20, pitch: 0, hold: 40 }
+          - { yaw: -20, pitch: 0, hold: 40 }
+      music: { sound: 'music.overworld.deep_dark', volume: 0.5, category: MUSIC }
+      sounds:
+        - { sound: 'ambient.soul_sand_valley.additions', volume: 0.6, pitch: 1.0, every: 120, jitter: 100 }
+        - { sound: 'entity.zombie.ambient', volume: 0.2, pitch: 0.5, every: 500, jitter: 300 }
+  flyover:
+    # 2026-09-30 wieczor: WYLACZONE na prosbe wlasciciela ("wyjeb to ze leci"); trasa i tak celowala
+    # w stary start 149/197 w 'world', a spawn przenosi sie do Stolicy (osobna sesja).
+    enabled: false
+    world: 'world'
+    # pora dnia na czas lotu (tylko dla gracza); -1 = czas swiata
+    time: 1000
+    # ile tickow ekran zostaje czarny po przeniesieniu do swiata gry (wczytanie terenu)
+    hold-ticks: 40
+    look: { x: 149.5, y: 99.0, z: 197.5 }
+    title: '&6&l{imie}'
+    subtitle: '&7Twoja droga zaczyna się tutaj'
+    path:
+      - { x: 222.5, y: 96.0, z: 160.5 }
+      - { x: 196.5, y: 104.0, z: 178.5, ticks: 55 }
+      - { x: 176.5, y: 108.0, z: 194.5, ticks: 50 }
+      - { x: 163.5, y: 104.0, z: 203.5, ticks: 45 }
+
+# ---------------------------------------------------------------------------------------------
+# WYBOR POSTACI (scena wyboru, lista pod PPM i w menu Q, zarzadzanie) — 2026-09-30; kosz usuniety 2026-10-01
+# ---------------------------------------------------------------------------------------------
+wybor-postaci:
+  # Od ilu aktywnych postaci lista (kafelki, klik = graj) otwiera sie sama po wejsciu do sceny.
+  # 0 = nigdy (lista zawsze pod PPM).
+  lista-od: 0
+  # Od ktorego poziomu usuniecie (zawsze ostateczne) wymaga wpisania imienia postaci.
+  imie-od-poziomu: 10
+  # Napis "Miejsce" na karcie. Najpierw region WorldGuard z greeting-title, potem nazwa mapy
+  # MythicDungeons (swiat <mapa>_<n>), na koncu te wpisy: nazwa swiata (regex) -> napis.
+  miejsca:
+    - { swiat: 'world', nazwa: 'Kraina' }
+  # Pliki postaci, ktore inne pluginy zostawiaja po trwalym usunieciu ({id} = UUID profilu).
+  # Przenoszone (nie kasowane) do CharacterCreator/usuniete/<id>/ — cofniecie = przeniesc z powrotem.
+  po-usunieciu:
+    - 'CoreTools/userdata/{id}.yml'
+    - 'MMOCore/userdata/{id}.yml'
+    - 'MMOItems/userdata/{id}.yml'
+    - 'MMOInventory/userdata/{id}.yml'
+
+# TEKSTY DLA GRACZA (2026-09-30). Zmiana tutaj + /cc reload — bez nowego jara.
+# Kolory kodami & (&6 zloty, &a zielony, &c czerwony, &7 szary, &f bialy, &l pogrubienie, &r reset).
+# {nazwa} to wstawki podmieniane przez plugin (np. {imie}, {dni}, {ile}) — zostaw je w tekscie.
+# \n = nowa linia. Brak wpisu = tekst domyslny z kodu.
+teksty:
+  imie:
+    duplicate: "Postać o tym imieniu już istnieje — wybierz inne."
+    empty: "Imię nie może być puste."
+    illegal-chars: "Dozwolone są tylko litery (w tym polskie), cyfry i podkreślnik."
+    no-letter: "Imię musi zawierać przynajmniej jedną literę."
+    offensive: "To imię jest niedozwolone — wybierz inne."
+    reserved-prefix: "To imię jest zarezerwowane dla obsługi serwera."
+    too-long: "Imię może mieć najwyżej 16 znaków."
+    too-short: "Imię musi mieć co najmniej 3 znaki."
+  kreator:
+    imie-zajete-zmienione: "&eImię było już zajęte — twoja postać nazywa się {imie}."
+    karta:
+      bron: "&7Broń: "
+      na-start: "&7Na start: "
+      od-poziomu: "&7Od {poziom}. poz.: "
+      rola: "&7Rola: "
+      specjalizacje: "&6Od 10. poziomu jedna z dwóch:"
+      trudnosc: "&7Trudność: "
+      zbroja: "&7Zbroja: "
+    ksiega:
+      albo: "&7 albo "
+      od-10: "&7Od 10. poziomu: "
+    najpierw-stworz: "&eNajpierw stwórz postać  &6[LPM] &fDalej"
+    panel:
+      klasy: "&fKlasy  &6[W/S]"
+    przerwane: "&eTworzenie postaci przerwane."
+    przerwij:
+      nie: "&aNie, tworzę dalej"
+      opis: "&fWybrana rasa i klasa nie zostaną zapisane."
+      tak: "&cTak, przerwij"
+      tytul: "&6Przerwać tworzenie postaci?"
+    utworzona: "&aPostać utworzona: {imie}"
+  ksiega:
+    kolor:
+      czerwony: "Czerwony"
+      fioletowy: "Fioletowy"
+      niebieski: "Niebieski"
+      pomaranczowy: "Pomarańczowy"
+      rozowy: "Różowy"
+      szary: "Szary"
+      turkusowy: "Turkusowy"
+      zielony: "Zielony"
+      zolty: "Żółty"
+    losuj: "&e⚄ Losuj imię"
+    losuj-dymek: "Imię pasujące do rasy — możesz je potem zmienić"
+    pole-imie: "Imię postaci"
+    pole-kolor: "Kolor ikony"
+    stworz: "&a✔ Stwórz postać"
+    stworz-dymek: "Tworzy postać i wpuszcza cię do gry"
+    tytul: "&6Nowa postać"
+    wroc: "Wróć"
+    wroc-dymek: "Z powrotem do wyboru rasy i klasy"
+  podpowiedz:
+    usun-postac: "Usuń postać"
+    dalej: "Dalej"
+    graj: "Graj"
+    klasa: "Klasa"
+    lista: "Lista i zarządzanie"
+    postac: "Postać {nr}"
+    przegladaj: "Przeglądaj"
+    rasa: "Rasa"
+    stworz: "Stwórz postać"
+    wroc: "Wróć"
+  wybor:
+    brak-miejsc-licznik: "&eLimit postaci: {zajete}/{wszystkie} — usuń postać, żeby stworzyć nową."
+    grasz-teraz: "&7Grasz teraz postacią {imie}&7."
+    juz-grasz: "&eJuż grasz postacią {imie}."
+    karta:
+      czas-gry: "&7Czas gry: "
+      grasz-teraz: "&a  ▶ grasz teraz"
+      miejsce: "&7Miejsce: "
+      ostatnio: "&7Ostatnio: "
+      ostatnio-grana: "&6  ★ ostatnio grana"
+      poziom: "&7Poziom: "
+      specjalizacja: "&7Specjalizacja: "
+      teraz: "teraz"
+    kosz:
+      blad-usuwania: "&cNie udało się usunąć: {imiona} — zgłoś to administracji."
+      usunieto: "&aUsunięto na zawsze: {imiona}."
+    lista:
+      zarzadzaj-dymek-usun: "Usuń jedną albo kilka postaci naraz"
+      brak-miejsc-licznik: "&8Limit postaci {zajete}/{wszystkie}"
+      brak-miejsc-dymek: "Usuń postać w „Zarządzaj”, żeby zrobić miejsce."
+      brak-postaci: "&fNie masz jeszcze postaci — stwórz pierwszą."
+      nowa: "&a+ Nowa postać"
+      opis: "&fKliknij postać, żeby grać. &6★&f = ostatnio grana."
+      opis-w-grze: "&fKliknij postać, żeby od razu nią grać. &a▶&f = grasz teraz."
+      tytul: "&6Twoje postacie  &7{zajete}/{wszystkie}"
+      wolne-miejsca: "Wolne miejsca: {ile}"
+      zarzadzaj: "&6Zarządzaj postaciami"
+    nic-nie-zaznaczono: "&eNic nie zaznaczono — kliknij postać na liście."
+    nowa:
+      karta-limit: "&c&lLimit postaci: {zajete}/{wszystkie}\n\n&r&fMasz już wszystkie miejsca na postacie. Usuń którąś, żeby stworzyć nową."
+      karta: "&a&l+ Nowa postać\n\n&r&fWybierz rasę i klasę, nadaj imię i ruszaj w drogę."
+    panel:
+      nowa-limit: "+ Nowa postać (limit)"
+      naglowek-licznik: "&fTwoje postacie &7{zajete}/{wszystkie}  &6[A/D]"
+      nowa: "+ Nowa postać"
+      usun: "✖ Usuń postacie"
+    potwierdz:
+      na-zawsze: "&cTe postacie znikną NA ZAWSZE razem z ekwipunkiem i postępem. Tego nie da się cofnąć."
+      przycisk-na-zawsze: "&cUsuń na zawsze"
+      tytul-na-zawsze: "&cUsunąć na zawsze?"
+      wpisz-imie: "Wpisz imię „{imie}” (poziom {poziom})"
+      zle-imie: "&cImię „{imie}” się nie zgadza — nic nie usunięto."
+    przycisk:
+      anuluj: "Anuluj"
+      wroc: "Wróć"
+      wroc-do-sceny: "Wróć do sceny"
+      zamknij: "Zamknij"
+    pyta-o-potwierdzenie: "Pyta o potwierdzenie"
+    tytul: "&6&lWybierz postać"
+    usun:
+      karta-na-zawsze: "&c&lUsuń postacie\n\n&r&fZaznacz jedną lub kilka postaci. Usunięcie jest ostateczne — postać znika razem z ekwipunkiem i postępem."
+    zarzadzaj:
+      opis-na-zawsze: "&fKliknij postacie, żeby je zaznaczyć. Usunięcie jest ostateczne ({zajete}/{wszystkie} miejsc zajętych)."
+      brak-postaci: "&fNie masz aktywnych postaci."
+      tytul: "&6Zarządzaj postaciami"
+      usun-zaznaczone: "Usuń zaznaczone ({ile})"
+
+# POKRETLA (2026-09-30). Zmiana + /cc reload. Ticki: 20 = 1 s. Brak wpisu = wartosc z kodu.
+#  wybor.kafelek-szerokosc   szerokosc kafelka listy postaci (2 kolumny; >200 wyjezdza przy GUI 3-4)
+#  wybor.scena-po-ticki      po ilu tickach od ostatniego A/D dochodzi sceneria i podglad
+#  wybor.lista-sama-po-ticki opoznienie automatycznej listy po wejsciu (od wybor-postaci.lista-od postaci)
+#  wybor.ad-nowa-postac / ad-usun-postacie  pozycje "+ Nowa postac" / "Usun postacie" pod A/D
+#  kreator.scena-po-ticki    to samo dla zmiany rasy w kreatorze
+#  scena.panel-szerokosc / panel-skala  panele z tekstem w scenie (karta i lista)
+#  scena.podpowiedz-co-ticki  odswiezanie podpowiedzi na pasku akcji
+#  scena.cisza-na-czacie     czat wyciszony w wyborze postaci i kreatorze
+ustawienia:
+  kreator:
+    scena-po-ticki: 6
+  scena:
+    cisza-na-czacie: true
+    panel-skala: 0.5
+    panel-szerokosc: 230
+    podpowiedz-co-ticki: 30
+  wybor:
+    ad-nowa-postac: true
+    ad-usun-postacie: true
+    kafelek-szerokosc: 150
+    lista-sama-po-ticki: 30
+    scena-po-ticki: 6
+    schowaj-podglad-bloki: 6.0

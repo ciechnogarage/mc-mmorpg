@@ -1,0 +1,40 @@
+#####################################
+# Atrybuty gracza (etap 0 przebudowy klas, 2026-09-29; plan: strona Xy7cJTFt)
+#####################################
+# Id zostają angielskie (strength/dexterity/intelligence siedzą w danych graczy), nazwy są polskie.
+# Każdy archetyp ma swój główny atrybut: wojownik Siła, ninja Zręczność, mag Intelekt, akolita Wiara.
+# Przedmioty MMOItems wymagają ich jako required-strength / -dexterity / -intelligence / -wiara
+# (generator przedmiotów tools/przedmioty/). NOWY atrybut = RESTART serwera (MMOItems rejestruje
+# statystyki required-<atrybut> tylko przy starcie).
+# Wygląd okna: gui/attribute-view.yml — każdy nowy bonus dopisać też tam.
+
+strength:
+    name: Siła
+    max-points: 40
+    buff:
+        weapon_damage: 2
+        max_health: 1%
+
+dexterity:
+    name: Zręczność
+    max-points: 40
+    buff:
+        physical_damage: 1.5 # procentowa
+        projectile_damage: 1 # procentowa
+        attack_speed: 0.5%
+
+intelligence:
+    name: Intelekt
+    max-points: 40
+    buff:
+        magic_damage: 2 # procentowa
+        cooldown_reduction: 1 # procentowa
+
+# Wiara (D3, 2026-09-29): moc umiejętności i pula zasobu akolity (Dusze w etapie 2 — wtedy bonusy
+# do przeglądu). skill_damage to procentowa statystyka MythicLib (SKILL_DAMAGE), max_mana płaska.
+wiara:
+    name: Wiara
+    max-points: 40
+    buff:
+        skill_damage: 1.5
+        max_mana: 0.5

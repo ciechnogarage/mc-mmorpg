@@ -1,0 +1,451 @@
+id: 'rogue-marksman'
+name: '&4Ninja'
+type: CUSTOM
+lore:
+  - '&6Dla ninja'
+max-point-spent: 21
+
+icon:
+  material: BOW
+  item_flags: [HIDE_ATTRIBUTES]
+  #custom_model_data: 10
+  #custom_model_data_string: 'off_hand'
+  #item_model: 'minecraft:dirt'
+  #tooltip_style: 'myplugin:tooltip_style_1'
+
+nodes:
+
+#### A
+  a1:
+    name: 'Doświadczenie klasy I'
+    coordinates:
+      x: -3
+      y: 0
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Doświadczenie klasy: &a+2%"
+      1:
+        - "&7Doświadczenie klasy: &a+2%"
+  a2:
+    name: 'Doświadczenie klasy II'
+    coordinates:
+      x: -2
+      y: 0
+
+    parents: 
+      strong: 
+        a1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Doświadczenie klasy: &a+3%"
+      1:
+        - "&7Doświadczenie klasy: &a+3%"
+  a3:
+    name: 'Doświadczenie klasy III'
+    coordinates:
+      x: -1
+      y: 0
+      
+    parents: 
+      strong: 
+        a2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Doświadczenie klasy: &a+5%"
+      1:
+        - "&7Doświadczenie klasy: &a+5%"
+
+## B
+
+  b1:
+    name: 'Prędkość strzał I'
+    coordinates:
+      x: -1
+      y: -1
+
+    parents: 
+      strong: 
+        a3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ARROW_VELOCITY";amount=10;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Prędkość strzał: &a+10%"
+      1:
+        - "&7Prędkość strzał: &a+10%"
+  b2:
+    name: 'Prędkość strzał II'
+    coordinates:
+      x: -1
+      y: -2
+
+    parents: 
+      strong: 
+        b1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ARROW_VELOCITY";amount=15;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Prędkość strzał: &a+15%"
+      1:
+        - "&7Prędkość strzał: &a+15%"
+  b3:
+    name: 'Prędkość strzał III'
+    coordinates:
+      x: 0
+      y: -2
+      
+    parents: 
+      strong: 
+        b2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ARROW_VELOCITY";amount=25;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Prędkość strzał: &a+25%"
+      1:
+        - "&7Prędkość strzał: &a+25%"
+
+## C
+
+  c1:
+    name: 'Kradzież życia I'
+    coordinates:
+      x: 1
+      y: -2
+      
+    parents: 
+      strong: 
+        b3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="LIFESTEAL";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Kradzież życia: &a+2%"
+      1:
+        - "&7Kradzież życia: &a+2%"
+  c2:
+    name: 'Kradzież życia II'
+    coordinates:
+      x: 2
+      y: -2
+      
+    parents: 
+      strong: 
+        c1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="LIFESTEAL";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Kradzież życia: &a+2%"
+      1:
+        - "&7Kradzież życia: &a+2%"
+  c3:
+    name: 'Kradzież życia III'
+    coordinates:
+      x: 3
+      y: -2
+      
+    parents: 
+      strong: 
+        c2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="LIFESTEAL";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Kradzież życia: &a+2%"
+      1:
+        - "&7Kradzież życia: &a+2%"
+
+## D
+
+  d1:
+    name: 'Odporność na odrzut I'
+    coordinates:
+      x: 3
+      y: -1
+      
+    parents: 
+      strong: 
+        c3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na odrzut: &a+5%"
+      1:
+        - "&7Odporność na odrzut: &a+5%"
+  d2:
+    name: 'Odporność na odrzut II'
+    coordinates:
+      x: 4
+      y: -1
+      
+    parents: 
+      strong: 
+        d1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na odrzut: &a+5%"
+      1:
+        - "&7Odporność na odrzut: &a+5%"
+  d3:
+    name: 'Odporność na odrzut III'
+    coordinates:
+      x: 4
+      y: 0
+      
+    parents: 
+      strong: 
+        d2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na odrzut: &a+5%"
+      1:
+        - "&7Odporność na odrzut: &a+5%"
+
+## E
+
+  e1:
+    name: 'Szansa na cios krytyczny I'
+    coordinates:
+      x: 4
+      y: 1
+      
+    parents: 
+      strong: 
+        d3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na cios krytyczny: &a+2%"
+      1:
+        - "&7Szansa na cios krytyczny: &a+2%"
+  e2:
+    name: 'Szansa na cios krytyczny II'
+    coordinates:
+      x: 4
+      y: 2
+      
+    parents: 
+      strong: 
+        e1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na cios krytyczny: &a+3%"
+      1:
+        - "&7Szansa na cios krytyczny: &a+3%"
+  e3:
+    name: 'Szansa na cios krytyczny III'
+    coordinates:
+      x: 3
+      y: 2
+      
+    parents: 
+      strong: 
+        e2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na cios krytyczny: &a+5%"
+      1:
+        - "&7Szansa na cios krytyczny: &a+5%"
+
+## F
+
+  f1:
+    name: 'Prędkość ruchu I'
+    coordinates:
+      x: 2
+      y: 2
+      
+    parents: 
+      strong: 
+        e3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MOVEMENT_SPEED";amount=2;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Prędkość ruchu: &a+2%"
+      1:
+        - "&7Prędkość ruchu: &a+2%"
+  f2:
+    name: 'Prędkość ruchu II'
+    coordinates:
+      x: 2
+      y: 1
+      
+    parents: 
+      strong: 
+        f1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MOVEMENT_SPEED";amount=2;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Prędkość ruchu: &a+2%"
+      1:
+        - "&7Prędkość ruchu: &a+2%"
+  f3:
+    name: 'Prędkość ruchu III'
+    coordinates:
+      x: 1
+      y: 1
+      
+    parents: 
+      strong: 
+        f2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MOVEMENT_SPEED";amount=6;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Prędkość ruchu: &a+6%"
+      1:
+        - "&7Prędkość ruchu: &a+6%"
+
+## G
+
+  g1:
+    name: 'Obrażenia pocisków I'
+    coordinates:
+      x: 0
+      y: 1
+      
+    parents: 
+      strong: 
+        f3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Obrażenia pocisków: &a+2%"
+      1:
+        - "&7Obrażenia pocisków: &a+2%"
+  g2:
+    name: 'Obrażenia pocisków II'
+    coordinates:
+      x: 0
+      y: 2
+      
+    parents: 
+      strong: 
+        g1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Obrażenia pocisków: &a+2%"
+      1:
+        - "&7Obrażenia pocisków: &a+2%"
+  g3:
+    name: 'Obrażenia pocisków III'
+    coordinates:
+      x: -1
+      y: 2
+      
+    parents: 
+      strong: 
+        g2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=6;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Obrażenia pocisków: &a+6%"
+      1:
+        - "&7Obrażenia pocisków: &a+6%"
+
+# This section is to change display options for nodes and paths depending on:
+# - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.
+# - their state: is the node/path unlocked, locked, maxed out... ?
+#
+# All of this is to "hide" the grid pattern of the chest inventory UI and give the
+# impression of a clean 2D skill tree UI.
+#
+# This config section is optional; if you do not provide it the one provided in the skill tree CUSTOM GUI CONFIG will be used.
+#
+# Please refer to the default config file 'combat.yml' for syntax examples and explanations.
+#########################
+#display:
+#  paths:
+#    unlocked:
+#      up: 'WHITE_DYE:0'
+#      ....
+#    ...
+#  nodes:
+#    ....

@@ -1,0 +1,210 @@
+# Zaklecia w dloni (Skyrim). Plugin prowadzi rzucanie i wyswietla strumien, MythicMobs odtwarza efekty oraz zadaje obrazenia.
+#
+# id zaklecia -> typ, przedmiot MythicMobs, koszt (mana-za-tik = 0,5 s lub mana jednorazowo), nazwa.
+zaklecia:
+  plomienie:
+    szkola: ogien
+    typ: koncentracja
+    cel: stozek
+    oburacz: {efekt: 2.2, mana: 2.8}
+    przedmiot: ZAKLECIE_PLOMIENIE
+    mana-za-tik: 0.5   # TEST (30.09, wlasciciel: "niski koszt zeby testowac"); docelowo 2.0
+    nazwa: 'Płomienie'
+    skille:
+      obraz: ''
+      dlon: ''
+  odmrozenie:
+    szkola: mroz
+    typ: koncentracja
+    cel: stozek
+    oburacz: {efekt: 2.2, mana: 2.8}
+    przedmiot: ZAKLECIE_ODMROZENIE
+    mana-za-tik: 0.5   # TEST; docelowo 2.5
+    nazwa: 'Odmrożenie'
+    skille:
+      obraz: ''
+      dlon: ''
+
+  ognisty_pocisk:
+    szkola: ogien
+    typ: ladowany
+    przedmiot: ZAKLECIE_OGNISTY_POCISK
+    nazwa: 'Ognisty pocisk'
+    czas-ladowania-t: 8
+    mana: 3
+    oburacz: {efekt: 2.2, mana: 2.8}
+  kula_ognia:
+    szkola: ogien
+    typ: ladowany
+    przedmiot: ZAKLECIE_KULA_OGNIA
+    nazwa: 'Kula ognia'
+    czas-ladowania-t: 14
+    mana: 5
+    oburacz: {efekt: 2.2, mana: 2.8}
+  leczenie:
+    szkola: leczenie
+    typ: koncentracja
+    cel: siebie
+    przedmiot: ZAKLECIE_LECZENIE
+    nazwa: 'Leczenie'
+    mana-za-tik: 0.5
+    oburacz: {efekt: 2.2, mana: 2.8}
+  runa_ognia:
+    szkola: ogien
+    typ: runa
+    przedmiot: ZAKLECIE_RUNA_OGNIA
+    nazwa: 'Runa ognia'
+    czas-ladowania-t: 16
+    mana: 6
+    zasieg: 8
+    promien: 2
+    limit-aktywnych: 1
+    czas-zycia-t: 1200
+    oburacz: {efekt: 2.2, mana: 2.8}
+  oslona:
+    szkola: ochrona
+    typ: tarcza
+    cel: siebie
+    przedmiot: ZAKLECIE_OSLONA
+    nazwa: 'Osłona'
+    mana-za-tik: 0.5
+    sila: 40
+    redukcja-magia: 0.6
+    redukcja-fizyczne: 0.3
+    narastanie-t: 10
+    oburacz: {efekt: 2.2, mana: 2.8}
+  przywolany_miecz:
+    szkola: przywolanie
+    typ: bron
+    przedmiot: ZAKLECIE_PRZYWOLANY_MIECZ
+    bron: ZAK_BRON_PRZYWOLANY_MIECZ
+    nazwa: 'Przywołany miecz'
+    czas-ladowania-t: 12
+    czas-trwania-t: 2400
+    mana: 2
+    oburacz: {efekt: 2.0, mana: 2.8}
+  duch_wilka:
+    szkola: przywolanie
+    typ: przywolanie
+    przedmiot: ZAKLECIE_DUCH_WILKA
+    mob: ZAK_DUCH_WILKA
+    nazwa: 'Duch wilka'
+    czas-ladowania-t: 12
+    czas-trwania-t: 1200
+    zasieg: 8
+    mana: 3
+    oburacz: {efekt: 2.0, mana: 2.8}
+  atronach_ognia:
+    szkola: przywolanie
+    typ: przywolanie
+    przedmiot: ZAKLECIE_ATRONACH_OGNIA
+    mob: ZAK_ATRONACH_OGNIA
+    nazwa: 'Atronach ognia'
+    czas-ladowania-t: 12
+    czas-trwania-t: 1200
+    zasieg: 8
+    mana: 3
+    oburacz: {efekt: 2.0, mana: 2.8}
+    strzal: Zak_Atronach_Strzal   # plugin strzela co 30 t w cel (AI MM gubi cel)
+  leczenie_dloni:
+    szkola: leczenie
+    typ: koncentracja
+    cel: inni
+    przedmiot: ZAKLECIE_LECZENIE_DLONI
+    nazwa: 'Leczenie dłoni'
+    zasieg: 6
+    mana-za-tik: 0.5
+    oburacz: {efekt: 2.2, mana: 2.8}
+  uspokojenie:
+    szkola: iluzja
+    typ: na_cel
+    przedmiot: ZAKLECIE_USPOKOJENIE
+    nazwa: 'Uspokojenie'
+    czas-ladowania-t: 12
+    czas-trwania-t: 300
+    maks-poziom: 9
+    zasieg: 8
+    mana: 3
+    oburacz: {efekt: 2.2, mana: 2.8}
+  uzdrowienie_innego:
+    szkola: leczenie
+    typ: ladowany
+    cel: inny
+    przedmiot: ZAKLECIE_UZDROWIENIE_INNEGO
+    nazwa: 'Uzdrowienie innego'
+    czas-ladowania-t: 12
+    zasieg: 6
+    mana: 2
+    oburacz: {efekt: 2.2, mana: 2.8}
+  zasklepienie_ran:
+    szkola: leczenie
+    typ: ladowany
+    cel: siebie
+    przedmiot: ZAKLECIE_ZASKLEPIENIE_RAN
+    nazwa: 'Zasklepienie ran'
+    czas-ladowania-t: 14
+    mana: 3
+    oburacz: {efekt: 2.2, mana: 2.8}
+  wielkie_uzdrowienie:
+    szkola: leczenie
+    typ: ladowany
+    cel: obszar
+    przedmiot: ZAKLECIE_WIELKIE_UZDROWIENIE
+    nazwa: 'Wielkie uzdrowienie'
+    czas-ladowania-t: 24
+    promien: 5
+    mana: 5
+    oburacz: {efekt: 2.2, mana: 2.8}
+
+przywolania:
+  limit: 1   # globalnie na gracza; perk Twin Souls moze ustawic 2
+
+# Podwojne rzucanie (to samo zaklecie w obu dloniach): mnozniki w oburacz wpisu.
+# Ponizsza wartosc jest zgodnoscia wsteczna dla starszych wpisow bez oburacz.mana.
+podwojne-mnoznik-many: 2.5
+
+# Kazde zaklecie ma wlasne skille w MythicMobs/skills/zaklecia/<id>.yml.
+# Domyslnie Zak_<Id>_Start/Stop/Tik/Traf/Uderzenie. Start, Stop, Traf i Uderzenie
+# uzywaja odmian _P/_L; Traf i Start maja tez _Obie. Nadpisz baze w skille.<typ>.
+# Opcjonalne skille obraz i dlon sa domyslnie puste.
+skille:
+  brak-many: Zak_BrakMany
+
+# Stozek obrazen liczony przez plugin (od oczu gracza): zasieg w blokach, pol-kat w stopniach.
+stozek:
+  zasieg: 6
+  pol-kat: 20
+stozek-podwojny:
+  zasieg: 7
+  pol-kat: 22.5
+
+# Klawisz Q (plugin MenuKey wola "zaklecia q <gracz>"): bez Shiftu hub, z Shiftem szybkie ulubione (jak Q w Skyrimie).
+klawisz-q:
+  zwykle: 'menugracza q %gracz%'
+
+# Wejscie przytrzymanego PPM i atrybuty trybu zaklec.
+ppm-tolerancja: 7
+rowno: 4
+zasieg-blokow: 0
+kotwica:
+  wlaczona: false
+  min: 3
+  max: 16
+  wyprzedzenie: 1.0
+spowolnienie: -0.5
+
+debug: false
+
+# Węższy i krótszy model widoczny tylko dla rzucającego.
+strumien:
+  waski-dla-rzucajacego: true
+
+# Kostur = ognisko zaklec (13.10): dwureczny, jedno zaklecie (lewa, PPM), dopoki kostur w prawej - premia MAGIC_DAMAGE (%).
+kostur:
+  typy: [STAFF, GREATSTAFF]
+  premia-magii: 50
+
+zaslanianie:
+  wlaczone: true
+  wlasne-przywolania-zaslaniaja: true
+ppm-puszczenie-gasi-obie: true
