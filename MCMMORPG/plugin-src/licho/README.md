@@ -1,6 +1,6 @@
 # Licho — minigra „Licho nie śpi” (prop hunt)
 
-**WDROŻONE na world1 25.10 01:24 UTC** z gałęzi `licho` (f3b986f), jar `licho-0.1.0-202610250042.jar`
+**WDROŻONE na world1 25.10 01:24 UTC** z kodu f3b986f (w `main` od 030821e), jar `licho-0.1.0-202610250042.jar`
 md5 `25c0c63ed05f7a98fe0b5bfa9b92e342`. Cofnięcie: `/opt/docker/mc/data/world1/backups/licho-20261025-012313/cofnij.sh`.
 
 Projekt gry (role, punkty, tytuły, koszt serwera): `PROJEKT.md`. Ten plik opisuje plugin.
