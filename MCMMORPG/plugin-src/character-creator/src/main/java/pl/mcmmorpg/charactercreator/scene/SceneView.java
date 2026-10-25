@@ -33,6 +33,11 @@ public final class SceneView {
   Interaction shield;
   TextDisplay card;
   TextDisplay list;
+  /** Ostatnie teksty paneli i paska (kontroler) oraz flaga schowania na czas okna. */
+  Component cardText;
+  Component listText;
+  Component topBarText;
+  boolean panelsHidden;
   net.kyori.adventure.bossbar.BossBar topBar;
   SceneSettings.Point currentPoint;
   String currentPointId;
@@ -128,17 +133,55 @@ public final class SceneView {
 
   /** Tresc karty obok postaci. {@code null} chowa karte. */
   public void card(Component text) {
-    manager.setPanel(card, text);
+    cardText = text;
+    if (!panelsHidden) {
+      manager.setPanel(card, text);
+    }
   }
 
   /** Panel po lewej stronie postaci (lista do wyboru). {@code null} chowa panel. */
   public void list(Component text) {
-    manager.setPanel(list, text);
+    listText = text;
+    if (!panelsHidden) {
+      manager.setPanel(list, text);
+    }
   }
 
   /** Napis u gory ekranu (np. pasek ras). {@code null} chowa. */
   public void topBar(Component text) {
-    manager.setTopBar(this, text);
+    topBarText = text;
+    if (!panelsHidden) {
+      manager.setTopBar(this, text);
+    }
+  }
+
+  /**
+   * Chowa panele opisu (karta, lista), pasek u gory i podpowiedz na action barze na czas
+   * natywnego okna Papera (ksiega "Nowa postac"): okno ma polprzezroczyste tlo, a TextDisplay
+   * rysuja sie w swiecie POD nim, wiec ich tekst prześwitywalby przez pole imienia. Biezace
+   * teksty sa pamietane, zeby {@link #restorePanels()} oddalo je bez udzialu kontrolera.
+   */
+  public void hidePanels() {
+    panelsHidden = true;
+    manager.setPanel(card, null);
+    manager.setPanel(list, null);
+    manager.setTopBar(this, null);
+    manager.pushHint(this);
+  }
+
+  /** Oddaje panele schowane przez {@link #hidePanels()} (anulowanie okna, "Wroc"). */
+  public void restorePanels() {
+    if (!panelsHidden) {
+      return;
+    }
+    panelsHidden = false;
+    if (closed) {
+      return;
+    }
+    manager.setPanel(card, cardText);
+    manager.setPanel(list, listText);
+    manager.setTopBar(this, topBarText);
+    manager.pushHint(this);
   }
 
   /** Podpowiedz sterowania na action barze, odswiezana przez scene. */

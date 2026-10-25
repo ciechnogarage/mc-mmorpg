@@ -965,3 +965,20 @@ teraz prawdziwa definicje, `get("HUMAN")` ja znajduje (id bierze sie z nazwy pli
 pasuje takze do wpisow zapisanych wczesniej), a `save-default-class-info: false` zaczyna
 dzialac. Po obu zmianach: wczytanie tego samego profilu daje **0 NPE**, a nowo utworzony
 profil nie ma juz sekcji `class-info` w ogole.
+
+## Okna dialogowe a panele sceny (2026-10-25, paczka P5/F5)
+
+Natywne okna Paper Dialog (ksiega "Nowa postac" `NewCharacterBook` oraz dialogi `SceneMenu`:
+lista postaci, zarzadzaj, usun na zawsze, przerwij) maja polprzezroczyste tlo, a panele sceny
+(`TextDisplay` karta i lista, bossbar topBar, action bar hint) rysuja sie w swiecie POD nim,
+wiec przeswitywaly przez okno.
+
+- `SceneView.hidePanels()` / `restorePanels()`: ukrywa panele (czysci tekst/tlo, topBar, hint) i
+  przywraca je z zapamietanego tekstu (`cardText`, `listText`, `topBarText`). Podczas ukrycia
+  `card()/list()/topBar()` tylko zapisuja tekst, a `SceneManager.pushHint` wysyla pusty action bar.
+- `SceneManager.setPanelsHidden(Player, boolean)`: wejscie dla innych klas.
+- `SceneMenu.setPanelHook(BiConsumer<Player,Boolean>)`: haczyk wolany z `true` przy otwarciu
+  dialogu i z `false` po akcji, ktora go zamyka (anuluj, wroc do sceny, wybor). `forget()` zwalnia haczyk.
+- Ksiega "Nowa postac": `hidePanels()` przed `book.open(...)` (`CharacterProfileModule.startInScene`
+  i podglad `/cc scena`), `restorePanels()` w `back()` (przycisk Wroc / powrot do sceny).
+- Wyjscie z serwera w oknie: widok sceny jest zamykany, po wejsciu scena wraca z widocznymi panelami.

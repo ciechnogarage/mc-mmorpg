@@ -175,6 +175,7 @@ public final class CharacterProfileModule implements ProfileDataModule {
             : pl.mcmmorpg.charactercreator.scene.NameGenerator.generate(
                 plugin.getConfig().getConfigurationSection("names"), race.id(),
                 candidate -> store.isNameTaken(candidate, profileId));
+        view.hidePanels();
         book.open(player, flow[0].summary(race, clazz), initialName == null ? "" : initialName, draft[1],
             new pl.mcmmorpg.charactercreator.scene.NewCharacterBook.Handler() {
               @Override
@@ -213,7 +214,8 @@ public final class CharacterProfileModule implements ProfileDataModule {
 
               @Override
               public void back(Player p) {
-                // Scena stoi dalej pod oknem — gracz wraca do wyboru bez zadnego ruchu.
+                // Scena stoi dalej pod oknem — gracz wraca do wyboru; panele wracaja z pamieci widoku.
+                view.restorePanels();
               }
             });
       }

@@ -366,6 +366,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
     NewCharacterBook book = new NewCharacterBook(this, getLogger());
     getServer().getPluginManager().registerEvents(book, this);
     SceneMenu sceneMenu = new SceneMenu(this, getLogger());
+    sceneMenu.setPanelHook(sceneManager::setPanelsHidden);
     getServer().getPluginManager().registerEvents(sceneMenu, this);
     // Wybor postaci: kosz (trash.yml), straznik kosza i ustawienia 'wybor-postaci'.
     pl.mcmmorpg.charactercreator.persist.TrashStore trashStore =
@@ -437,6 +438,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
         if (player == null) {
           return;
         }
+        view.hidePanels();
         book.open(player, preview[0].summary(race, clazz), player.getName(),
             NewCharacterBook.DEFAULT_COLOR, new NewCharacterBook.Handler() {
               @Override
@@ -451,6 +453,7 @@ public final class CharacterCreatorPlugin extends JavaPlugin {
 
               @Override
               public void back(Player p) {
+                view.restorePanels();
               }
             });
       }

@@ -71,6 +71,16 @@ public final class SceneMenu implements Listener {
   private final Map<UUID, Open> open = new ConcurrentHashMap<>();
   private final AtomicInteger nonces = new AtomicInteger();
 
+  /**
+   * Hak sceny: chowa ({@code true}) i oddaje ({@code false}) panele opisu na czas okna.
+   * Natywne okno Papera ma polprzezroczyste tlo, a TextDisplay paneli rysuja sie pod nim.
+   */
+  private java.util.function.BiConsumer<Player, Boolean> panelHook = (p, hidden) -> { };
+
+  public void setPanelHook(java.util.function.BiConsumer<Player, Boolean> hook) {
+    this.panelHook = hook == null ? (p, hidden) -> { } : hook;
+  }
+
   public SceneMenu(Plugin plugin, Logger logger) {
     this.plugin = plugin;
     this.logger = logger;
@@ -94,6 +104,7 @@ public final class SceneMenu implements Listener {
       List<Button> buttons, int columns) {
     int nonce = nonces.incrementAndGet();
     open.put(player.getUniqueId(), new Open(nonce, List.copyOf(buttons)));
+    panelHook.accept(player, true);
     List<ActionButton> actions = new ArrayList<>();
     for (int i = 0; i < buttons.size() - 1; i++) {
       actions.add(button(buttons.get(i), nonce, i));
@@ -129,6 +140,7 @@ public final class SceneMenu implements Listener {
 
   public void forget(Player player) {
     open.remove(player.getUniqueId());
+    panelHook.accept(player, false);
   }
 
   @EventHandler
@@ -171,6 +183,10 @@ public final class SceneMenu implements Listener {
     } catch (RuntimeException ex) {
       logger.severe("Menu sceny: blad przycisku " + index + " dla " + player.getName() + ": " + ex);
       ex.printStackTrace();
+    }
+    // Przycisk nie otworzyl kolejnego okna (to robi w akcji show/form) — wracamy do sceny z panelami.
+    if (!open.containsKey(player.getUniqueId()) && player.isOnline()) {
+      panelHook.accept(player, false);
     }
   }
 }

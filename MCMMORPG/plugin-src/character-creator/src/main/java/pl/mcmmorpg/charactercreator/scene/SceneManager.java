@@ -131,6 +131,19 @@ public final class SceneManager {
     return views.containsKey(playerId);
   }
 
+  /** Chowa/oddaje panele opisu gracza na czas natywnego okna (SceneMenu); brak sceny = nic. */
+  public void setPanelsHidden(Player player, boolean hidden) {
+    SceneView view = player == null ? null : views.get(player.getUniqueId());
+    if (view == null || view.isClosed()) {
+      return;
+    }
+    if (hidden) {
+      view.hidePanels();
+    } else {
+      view.restorePanels();
+    }
+  }
+
   public Iterable<SceneView> views() {
     return new ArrayList<>(views.values());
   }
@@ -839,7 +852,7 @@ public final class SceneManager {
   void pushHint(SceneView view) {
     Player player = view.player();
     if (player != null) {
-      player.sendActionBar(view.hint);
+      player.sendActionBar(view.panelsHidden ? Component.empty() : view.hint);
     }
   }
 
