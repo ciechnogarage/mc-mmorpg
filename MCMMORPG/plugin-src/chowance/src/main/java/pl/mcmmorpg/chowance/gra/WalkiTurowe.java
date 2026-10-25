@@ -1039,11 +1039,16 @@ public final class WalkiTurowe implements Listener {
     }
     if (w.trener != null) {
       Trener t = w.trener;
-      if (t.rodzaj() == Trener.Rodzaj.MISTRZ && d.odznaki.add(t.odznaka())) {
+      Map<String, String> ph = Map.of("gracz", zw.getName(), "profil", d.profil);
+      boolean nowaOdznaka = t.rodzaj() == Trener.Rodzaj.MISTRZ && d.odznaki.add(t.odznaka());
+      if (nowaOdznaka) {
         c.msg(zw, "<gold>Zdobywasz odznakę <yellow>" + t.odznaka() + "</yellow>! Limit poziomu chowańców: <yellow>" + c.limitPoziomu(d));
         c.zdarzenie("ODZNAKA", Map.of("gracz", zw.getName(), "odznaka", t.odznaka()));
       }
-      c.komendyKonsoli(t.nagrodaKomendy(), Map.of("gracz", zw.getName(), "profil", d.profil));
+      // nagroda mistrza raz, z odznaka (24.10: powtorna wygrana dawala kamien przemiany i exp bez konca)
+      if (t.rodzaj() != Trener.Rodzaj.MISTRZ || nowaOdznaka) c.komendyKonsoli(t.nagrodaKomendy(), ph);
+      else c.msg(zw, "<gray>Odznakę " + t.odznaka() + " już masz — nagroda mistrza jest jednorazowa.");
+      c.komendyKonsoli(t.komendyPoWalce(), ph);
       d.brudne = true;
     }
     if (w.wieza != null) {
