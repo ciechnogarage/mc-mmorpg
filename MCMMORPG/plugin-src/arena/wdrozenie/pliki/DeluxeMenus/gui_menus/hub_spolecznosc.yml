@@ -7,7 +7,7 @@ items:
     slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     update: true
-    display_name: '&dSpołeczność'
+    display_name: '&dDrużyna'
     lore:
       - '&7Drużyna: wspólne doświadczenie i łup.'
       - '&7Gildia: twoi członkowie i wspólnota.'
@@ -32,7 +32,7 @@ items:
       - '[player] friends'
   gildia:
     material: nexo-mmo_icon_blank
-    slots: [24, 25, 33, 34]
+    slots: [23, 24, 32, 33]
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
     display_name: '&6Gildia'
     lore:
@@ -78,3 +78,23 @@ items:
     left_click_commands:
       - '[console] arena wyjdz %player_name%'
       - '[close]'
+  wyscigi_kafel:
+    material: nexo-mmo_icon_blank
+    slots: [43, 44, 52, 53]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Wyścigi Chowańców'
+    lore:
+      - '&7Czasówka albo wyścig z innymi.'
+      - '&7Wierzchowiec z wypożyczalni, równe szanse.'
+    left_click_commands:
+      - '[openguimenu] wyscigi'
+  licho_kafel:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&2Licho nie śpi'
+    lore:
+      - '&7Chowanie się w beczkach i snopkach.'
+      - '&7Licho kontra Zamawiacze, 2-12 graczy.'
+    left_click_commands:
+      - '[openguimenu] licho'
