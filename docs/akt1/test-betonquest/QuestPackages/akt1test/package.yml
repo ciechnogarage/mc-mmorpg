@@ -1,12 +1,7 @@
 # Zadanie testowe Aktu 1 (etap 1): czy BetonQuest 3.2.0 robi to, czego potrzebuje wycinek wyspy.
 # Składnia: docs/ref/betonquest/strony/*.txt (BetonQuest 3.2). Świat klona płaski, spawn 0 -59 0.
-npcs:
-  soltys: mythicmobs MYTHIC_MOB AKT1_NPC_PROSTY
-  straz: mythicmobs MYTHIC_MOB AKT1_NPC_MODEL
-
-npc_conversations:
-  soltys: rozmowaSoltys
-  straz: rozmowaStraz
+# Bez sekcji npcs: (wariant B, docs/akt1/STAN.md): rozmowę startuje skill MythicMobs `~onInteract` -> `bq action`.
+# Gdy pakiet ma NPC typu mythicmobs, BQ słucha KAŻDEGO ruchu każdego moba MM (EntityMoveEvent); bez nich nie.
 
 items:
   sciegno: "mmoitem MATERIAL PROF_SINEW"
@@ -48,6 +43,8 @@ actions:
   expNagroda: "command mmocore admin exp give %player% main 120"
   tagStraz: "tag add rozmowaStraz"
   rozmowa: "conversation rozmowaSoltys"
+  rozmowaS: "conversation rozmowaStraz"
+  anuluj: "cancelconversation"
 
 journal:
   zadanieStart: "&0Sołtys prosi: zabić 3 cele, przynieść 2 ścięgna, sprawdzić znacznik na północy."

@@ -15,7 +15,7 @@ tor 6 startuje teraz; wycinek przed resztą wyspy) — właściciel może zmieni
 | Etap | Stan |
 |---|---|
 | 0 dług | Stolica: robi INNA sesja (klon `stolica-archipelag`, 25.10) — nie ruszać. Loch 001 gamerule, wdrożenie Lochu 002: czekają |
-| 1 silnik zadań | w toku: test BQ 3.2.0 na klonie 25.10 — wyniki niżej |
+| 1 silnik zadań | ZAKOŃCZONY 25.10: BetonQuest 3.2.0, wariant B + MostNpc (wyniki niżej) |
 | 2 rozpiska wycinka | w zakładce (W1/W2, pytanie w Spisie; bez odpowiedzi W1) |
 | 3 moby | czeka |
 | 4 wycinek | czeka |
@@ -31,19 +31,21 @@ tor 6 startuje teraz; wycinek przed resztą wyspy) — właściciel może zmieni
 - BetonQuest + MythicMobs NPC: `docs/ref/betonquest/mythicmobs-npc.md` (gałąź `ref-betonquest`): ryzyka = NPC z modelem ME
   (MythicMobInteractEvent), koszt EntityMoveEvent.
 
-## Etap 1: wyniki (klon akt1-zadania, 25.10 03:24–03:29, bot bez OP)
-- BQ 3.2.0 startuje czysto, integracje MM/MMOItems/MMOCore/packetevents/Nexo włączone; pakiet `akt1test` wczytany bez błędów.
-- MythicDungeons: „Incompatible BetonQuest version” → integracja MD↔BQ wyłączona (zadania z lochów przez mmobkill/location/command).
-- NPC z modelem ME (`AKT1_NPC_MODEL`, styl chest): PPM bota (INTERACT_AT+INTERACT) → okno rozmowy, tag ustawiony: PASS.
-- Styl `dialog` (Paper Dialog) działa: `bq action <nick> akt1test>rozmowa` → show_dialog „Sołtys Testowy”, przyciski „1. Pomogę.”, „2. Nie teraz.”.
-- FAIL: PPM w NPC BEZ modelu (`AKT1_NPC_PROSTY`, VILLAGER NoAI) nie startuje rozmowy; debug BQ (`bq debug true`) nie loguje żadnej interakcji.
-  BQ łapie PPM przez `MythicMobInteractEvent` (mythicmobs-npc.md:24). Hipoteza (NIE sprawdzona): PPM w villagera otwiera/anuluje handel
-  zanim MM wyśle zdarzenie albo MM nie wysyła go dla villagera bez `~onInteract`. Następny test: inny Type (np. ARMOR_STAND/ZOMBIE NoAI) albo
-  skill `~onInteract` na sołtysie; potem całe `zadanie.js` (cele zabij/zbierz/dojdź, nagroda, journal).
-- Separator pakietu w komendach i odwołaniach = `>` (`akt1test>rozmowa`), nie kropka (Packages-and-Templates.txt:47).
-- Do zrobienia w etapie 1: spark z BQ i bez (EntityMoveEvent), tabela kryteriów do zakładki.
-- Klon `akt1-zadania` USUNIĘTY po teście (odtworzenie: klon.sh start, jar z modrinth wg docs/ref/betonquest/README.md,
-  AKT1_test.yml → MythicMobs/mobs, restart, QuestPackages/akt1test, `bq reload`, difficulty easy).
+## Etap 1: wyniki (klon akt1-zadania, 25.10, bot bez OP) — ZAKOŃCZONY, wybrany wariant B
+- BQ 3.2.0 startuje czysto, integracje MM/MMOItems/MMOCore/packetevents/Nexo włączone. MythicDungeons: „Incompatible BetonQuest version”
+  → zadania z lochów przez mmobkill/location/command.
+- **Wariant B**: NPC zadań = moby MM POZA rejestrem BQ (pakiet bez `npcs:`); rozmowę startuje skill
+  `command{c="bq action <trigger.name> <pakiet>><akcja>"} @self ~onInteract` (`test-betonquest/AKT1_test.yml`).
+  Powód: przy NPC typu mythicmobs BQ słucha KAŻDEGO ruchu każdego moba MM (EntityMoveEvent; javap, README most-npc);
+  pomiar MSPT (~95 mobów, średnia 1 min): z BQ+NPC mythicmobs +2,3/+3,5 ms, bez BQ +0,9/+1,8 (szum duży).
+  Minus: bez funkcji BQ przypiętych do NPC (ukrywanie NPC, warunki npc) — zastępujemy warunkami w skillu/akcjach.
+- NPC z modelem ME wymaga pluginu `MostNpc` (`MCMMORPG/plugin-src/most-npc`, README): bez niego 0/2, z nim 2/2.
+- `zadanie.js` (rozmowa dialog → zabij 3 → zbierz 2 → dojdź → nagroda, journal, NPC z modelem styl chest): **18/18 dwa razy pod rząd**.
+- `diag-koniec.js`: BQ trzyma gracza w rozmowie ~2,5–6 s po ostatniej kwestii bez odpowiedzi (2/2, wolny po 6 s);
+  zgodne z `conversation.interceptor.delay: 50` w config BQ, przyczyny nie udowodniono. Kolejne NPC tuż po rozmowie = „in conversation”.
+- Pułapki testu: bot klika `activateEntityAt` (MM `~onInteract` = PlayerInteractAtEntityEvent); `difficulty peaceful` usuwa cele-zombie;
+  odłożony jar BQ + `klon.sh restart` = BQ wyłączony (fałszywe FAIL); scena sprzątana dopiero z botem w świecie; separator pakietu `>`.
 
 ## Następny krok
-1. Etap 1: diagnoza PPM sołtysa (wyżej), pełne `zadanie.js`, spark. 2. Tor 6: projekt testu proxy-based. 3. Skrzynka wiedzy już uzupełniona (20261025-reczny-akt1-plan.md).
+1. Commit etapu 1 (+ PR draft). 2. Etap 2: beat chart wycinka W1 (bez fabuły). 3. Tor 6: projekt testu proxy-based profiles.
+4. Klon `akt1-zadania` stoi (BQ+MostNpc, difficulty easy) — usunąć przed końcem sesji.

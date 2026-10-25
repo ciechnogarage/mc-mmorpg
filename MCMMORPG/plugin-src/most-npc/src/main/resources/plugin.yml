@@ -1,0 +1,6 @@
+name: MostNpc
+version: '${version}'
+main: pl.mcmmorpg.mostnpc.MostNpc
+api-version: '1.21'
+depend: [MythicMobs, ModelEngine]
+description: PPM w model ModelEngine na mobie MythicMobs = MythicMobInteractEvent (~onInteract, NPC BetonQuest typu mythicmobs).

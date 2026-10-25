@@ -1,11 +1,25 @@
 # Moby TYLKO do testu BetonQuest na klonie (etap 1 Aktu 1). Nie wgrywać na world1.
-# AKT1_NPC_PROSTY: NPC bez modelu (VILLAGER). AKT1_NPC_MODEL: ten sam NPC z modelem ModelEngine (race_nieumarly).
+# AKT1_NPC_PROSTY: NPC bez modelu (VILLAGER). AKT1_NPC_MODEL: ten sam NPC z modelem ModelEngine (race_nieumarly;
+# klik w model przekazuje do ~onInteract plugin MostNpc). Rozmowę startuje `bq action` z konsoli (wariant B).
 # AKT1_CEL: cel „zabij 3”, zawsze upuszcza PROF_SINEW (cel „zbierz 2”).
 AKT1_NPC_PROSTY:
   Type: VILLAGER
   Display: '&eSołtys Testowy'
   Health: 100
   Options: {NoAI: true, Invincible: true, Silent: true, Despawn: false, PreventOtherDrops: true, Collidable: false, AlwaysShowName: true}
+  Skills:
+  - message{m="MM_KLIK_PROSTY"} @trigger ~onInteract
+  - command{c="bq action <trigger.name> akt1test>rozmowa"} @self ~onInteract
+
+# Diagnoza: ten sam NPC na ZOMBIE (bez okna handlu villagera).
+AKT1_NPC_ZOMBIE:
+  Type: ZOMBIE
+  Display: '&eSołtys Zombie'
+  Health: 100
+  Options: {NoAI: true, Invincible: true, Silent: true, Despawn: false, PreventOtherDrops: true, Collidable: false, AlwaysShowName: true, PreventSunburn: true}
+  Skills:
+  - message{m="MM_KLIK_ZOMBIE"} @trigger ~onInteract
+  - command{c="bq action <trigger.name> akt1test>rozmowa"} @self ~onInteract
 
 AKT1_NPC_MODEL:
   Type: VILLAGER
@@ -14,6 +28,7 @@ AKT1_NPC_MODEL:
   Options: {NoAI: true, Invincible: true, Silent: true, Despawn: false, PreventOtherDrops: true, Collidable: false, AlwaysShowName: true}
   Skills:
   - model{m=race_nieumarly;n=tag_name} @self ~onSpawn
+  - command{c="bq action <trigger.name> akt1test>rozmowaS"} @self ~onInteract
 
 AKT1_CEL:
   Type: ZOMBIE
