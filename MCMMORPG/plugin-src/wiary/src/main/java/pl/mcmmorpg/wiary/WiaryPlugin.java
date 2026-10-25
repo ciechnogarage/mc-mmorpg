@@ -236,6 +236,11 @@ public final class WiaryPlugin extends JavaPlugin implements Listener {
       m.register(mmo, ticki);
       s.mody.add(m);
     }
+    // Siatka bezpieczeństwa: MythicLib sam kończy modyfikator po 'ticki', ale nie polegamy na tym (atrybut vanilli, np. max_health,
+    // zostaje podbity, jeśli zdjęcie nie przeliczy statystyki). Po czasie zdejmujemy wszystko, o ile łaska nie została odnowiona.
+    Bukkit.getScheduler().runTaskLater(this, () -> {
+      if (p.isOnline() && aktywne.get(p.getUniqueId()) == s && s.dane.laskaDo <= System.currentTimeMillis()) zdejmijMody(p);
+    }, ticki + 2);
   }
 
   // ---- akcje gracza (z menu) ----

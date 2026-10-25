@@ -8,12 +8,12 @@ Gracz wybiera w menu Q (Postać, slot 14, menu DeluxeMenus `wiara`) patrona: jed
 ## Komendy i uprawnienia
 | komenda | kto | co robi | źródło |
 |---|---|---|---|
-| `/wiary wybierz <gracz> <bóstwo>` | konsola (menu DM `[console]`) lub OP | ustawia patrona | `Komenda.java:47-53`, menu `.../DeluxeMenus/gui_menus/wiara.yml:46` |
-| `/wiary modlitwa <gracz>` | j.w. | nakłada łaskę na 30 min | `Komenda.java:54` |
-| `/wiary info <gracz>` | j.w. | wypisuje patrona, łaskę, staty | `Komenda.java:56-59, 71-86` |
-| `/wiary reset <gracz>` | j.w. | kasuje patrona i łaskę | `Komenda.java:55` |
-| `/wiary reload` | j.w. | przeładowuje config i panteon, zwraca liczbę problemów | `Komenda.java:31-35` |
-Jedyna komenda w plugin.yml to `wiary`, uprawnienie `wiary.admin` (default op): `src/main/resources/plugin.yml:9-14`. Gracz nie wpisuje komendy sam (`Komenda.java:15-16`).
+| `/wiary wybierz <gracz> <bóstwo>` | konsola (menu DM `[console]`) lub OP | ustawia patrona | `Komenda.java:51-57`, menu `.../DeluxeMenus/gui_menus/wiara.yml:46` |
+| `/wiary modlitwa <gracz>` | j.w. | nakłada łaskę na 30 min | `Komenda.java:58` |
+| `/wiary info <gracz>` | j.w. | wypisuje patrona, łaskę, staty; gracz offline: patron/łaska z plików `profile/` po nicku (bez klasy, rasy, statów) | `Komenda.java:60-63, 108-123`; offline: `:76-106` |
+| `/wiary reset <gracz>` | j.w. | kasuje patrona i łaskę; gracz offline: kasuje plik jego postaci, a przy kilku postaciach odmawia (offline nie znamy aktywnej) | `Komenda.java:59`; offline: `:76-106` |
+| `/wiary reload` | j.w. | przeładowuje config i panteon, zwraca liczbę problemów | `Komenda.java:34-38` |
+Jedyna komenda w plugin.yml to `wiary`, uprawnienie `wiary.admin` (default op): `src/main/resources/plugin.yml:9-14`. Gracz nie wpisuje komendy sam (`Komenda.java:18-19`).
 Placeholdery PAPI `%wiary_...%`: rasa, rasa_nazwa, patron, patron_imie, wiara, laska, laska_czas, modlitwa, zmiana, opis_patrona, dostepny_/wybrany_/opis_/domena_/status_`<id>` (`Placeholdery.java:8-11, 33-70`). Zwracają "" dla offline.
 
 ## Konfiguracja
@@ -27,23 +27,24 @@ Reload ostrzega, gdy rasa nie ma 6 bóstw do wyboru (`WiaryPlugin.java:86-113`).
 ## Jak działa
 - Start: `saveDefaultConfig`, rejestracja modułu `ProfilModul` w MMOProfiles, listenery, komenda, ekspansja PAPI (`WiaryPlugin.java:60-69`).
 - `ProfilModul` (zdarzenia MMOProfiles): Create/Select/Unload/Remove; każde kończy się `validate(this)`, inaczej MMOProfiles czeka (`ProfilModul.java:13-14, 29-63`). Select wczytuje stan i nakłada łaskę, Unload zdejmuje, Remove archiwizuje plik do `profile/usuniete/` (`ProfilModul.java:37, 48, 59`).
-- Łaska to `TemporaryStatModifier` MythicLib o kluczu `wiary_laska` (`WiaryPlugin.java:40`), nakładany z opóźnieniem 20 ticków po wejściu (`WiaryPlugin.java:165-177, 226-239`). Zdejmowanie: `zdejmijMody` `WiaryPlugin.java:189-223` (komentarz o pułapce podwójnego `close()`).
-- `wybierz` (`WiaryPlugin.java:246-270`): sprawdza odnowienie, zdejmuje łaskę. `modlitwa` (`:272-292`): wiara liczona w chwili modlitwy, nowa dopiero po wygaśnięciu. `reset` (`:295-305`).
+- Łaska to `TemporaryStatModifier` MythicLib o kluczu `wiary_laska` (`WiaryPlugin.java:40`), nakładany z opóźnieniem 20 ticków po wejściu (`WiaryPlugin.java:165-177, 226-244`). Zdejmowanie: `zdejmijMody` `WiaryPlugin.java:189-223` (komentarz o pułapce podwójnego `close()`).
+- `wybierz` (`WiaryPlugin.java:251-275`): sprawdza odnowienie, zdejmuje łaskę. `modlitwa` (`:277-297`): wiara liczona w chwili modlitwy, nowa dopiero po wygaśnięciu. `reset` (`:300-310`).
 - Profil-duch (id profilu równe UUID gracza) nie dostaje wiary (`WiaryPlugin.java:121, 167`).
 - Integracje: MythicLib/MMOCore/MMOProfiles (depend), PlaceholderAPI (softdepend), DeluxeMenus (menu wołają komendy z konsoli). Arena czyta `%wiary_patron%` (`plugin-src/arena` MenuGracza.java:194).
-Zadań okresowych brak, poza jednorazowym `runTaskLater` (`WiaryPlugin.java:174`); wygasanie łaski liczone znacznikiem czasu (`laska.do`), nie tickiem — nie sprawdzone, czy coś zdejmuje modyfikator w chwili wygaśnięcia przy graczu online.
+Zadań okresowych brak, poza jednorazowym `runTaskLater` po wejściu postaci (`WiaryPlugin.java:174`) i jednym po nałożeniu łaski, który po jej czasie zdejmuje modyfikatory, jeśli łaska nie została odnowiona (`WiaryPlugin.java:241-243`).
 
 ## Koszt dla serwera
 Nie mierzone. Z kodu: brak tykających zadań, praca na zdarzeniach profilu i na żądanie (menu/PAPI); małe pliki czytane na wątku głównym (`ProfilModul.java:15`).
 
 ## Dane
-`plugins/Wiary/profile/<uuid-profilu>.yml` (pola: gracz, patron, zmiana, laska.do, laska.wiara, laska.bostwo), zapis tmp+rename (`Magazyn.java`). Klucz = UUID PROFILU, więc dane są per postać, a nie per UUID konta (MMOProfiles daje wszystkim postaciom jeden UUID gracza, profil ma własny). Usunięte postacie: `profile/usuniete/` (na world1 dziś 2 pliki).
+`plugins/Wiary/profile/<uuid-profilu>.yml` (pola: gracz, patron, zmiana, laska.do, laska.wiara, laska.bostwo), zapis tmp+rename (`Magazyn.java`). Klucz = UUID PROFILU, więc dane są per postać, a nie per UUID konta (MMOProfiles daje wszystkim postaciom jeden UUID gracza, profil ma własny). Plik powstaje dopiero przy wyborze patrona lub łasce (`WiaryPlugin.java:270,291`); postać bez wyboru nie ma pliku, więc `/wiary info` offline odpowiada „nie ma zapisanej wiary”. Usunięte postacie: `profile/usuniete/` (na world1 dziś 2 pliki).
 
 ## Znane pułapki i decyzje
 - Wdrożone 30.09 jako 0.1.0-202609301200; lekcje: DM przy równym priority sprawdza jeden przedmiot; nie wołać `close()` TemporaryStatModifier przed `unregister`; generator `menu/generuj_menu.py` STARY: `~/.claude/skills/mc-systemy-gracza/stan.md:22-23`.
 - Surowe `%wiary_*%` na klonie bez `--z-kreatorem` (brak MMOProfiles): `~/.claude/skills/mc-gui-pack-dialogi/SKILL.md:10`.
 - Strażnik placeholdera w MythicHUD: `~/.claude/skills/mc-mythicmobs/mythichud-i-bronie.md:18`.
-- Podejrzane: `info` nie sprawdza pozycji `profil=brak` poza wypisem; `reset` i `wybierz` wymagają gracza online (`Komenda.java:40-44`).
+- Wygasanie łaski: wg dokumentacji MythicLib modyfikator czasowy ma czas życia w tickach (`docs/Plugins-wiki-local/mythiclib/wiki/md/player-statistics.md:81`), co nakładamy (`WiaryPlugin.java:233-238`). Bytecodu MythicLib nie badałem, więc dodano drugą linię obrony: zadanie po `ticki + 2` zdejmuje modyfikatory o kluczu `wiary_laska` (idempotentnie, z przeliczeniem statów), gdy łaska nie została odnowiona. Po wyjściu gracza `zdejmijMody` (`:189-223`), po wejściu/restarcie `aktywuj` nakłada tylko pozostały czas (`laska.do` w pliku). Dryf: przy lagu serwera czas w tickach jest dłuższy niż czas rzeczywisty `laska.do` (łaska może trwać dłużej niż 30 min zegarowych); nie zmieniano.
+- `info`/`reset` przyjmują gracza offline po nicku (pole `gracz` w `profile/<uuid-profilu>.yml`, `Magazyn.profileGracza`); `wybierz`/`modlitwa` nadal wymagają gracza online (potrzebują jego atrybutu Wiara i rasy z klasy).
 
 ## Budowanie i wdrożenie
 Build: `build.sh` (Gradle w kontenerze, `build.gradle.kts:10-42`, jary MMOProfiles/MythicLib/MMOCore/PlaceholderAPI przypięte po nazwie z `/serverplugins`). Test: `src/test/java/pl/mcmmorpg/wiary/PanteonTest.java` (7 testów @Test). Wdrożenie: `menu/wdroz-world1.sh` (kopia, stop przy 0 graczy, `instaluj.py`, start, kontrola logu; cofnięcie `backups/wiary-<czas>/cofnij.sh`; `menu/wdroz-world1.sh:1-4`). Eval na klonie: `eval/run-klon.sh`.

@@ -1,9 +1,12 @@
 package pl.mcmmorpg.wiary;
 
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,7 +42,8 @@ final class Komenda implements CommandExecutor, TabCompleter {
     }
     Player p = Bukkit.getPlayerExact(a[1]);
     if (p == null) {
-      s.sendMessage("Gracz " + a[1] + " nie jest online.");
+      if (sub.equals("info") || sub.equals("reset")) offline(s, sub, a[1]);
+      else s.sendMessage("Gracz " + a[1] + " nie jest online.");
       return true;
     }
     WiaryPlugin.Wynik w;
@@ -66,6 +70,39 @@ final class Komenda implements CommandExecutor, TabCompleter {
     plugin.getLogger().info("[" + sub + "] " + p.getName() + ": " + (w.ok() ? "OK " : "ODMOWA ") + w.konsoli());
     if (s != Bukkit.getConsoleSender()) s.sendMessage((w.ok() ? "OK: " : "ODMOWA: ") + w.konsoli());
     return true;
+  }
+
+  /** info/reset dla gracza offline: dane są w profile/<uuid-profilu>.yml z polem "gracz" (nick); aktywnej postaci offline nie znamy. */
+  private void offline(CommandSender s, String sub, String nick) {
+    Map<UUID, String> profile = plugin.magazyn().profileGracza(nick);
+    if (profile.isEmpty()) {
+      s.sendMessage("Gracz " + nick + " nie jest online i nie ma zapisanej wiary (brak pliku profile/ z tym nickiem).");
+      return;
+    }
+    if (sub.equals("reset")) {
+      if (profile.size() > 1) {
+        s.sendMessage("Gracz " + nick + " jest offline i ma " + profile.size() + " postaci (profile " + profile.keySet()
+            + ") — nie wiem, która jest aktywna. Poczekaj, aż wejdzie na serwer, i powtórz.");
+        return;
+      }
+      Map.Entry<UUID, String> e = profile.entrySet().iterator().next();
+      try {
+        plugin.magazyn().zapisz(e.getKey(), e.getValue(), new Magazyn.Dane());
+        plugin.getLogger().info("[reset] " + e.getValue() + " (offline, profil " + e.getKey() + "): wyczyszczono");
+        s.sendMessage("OK: wyczyszczono wiarę " + e.getValue() + " (offline, profil " + e.getKey() + ").");
+      } catch (IOException ex) {
+        plugin.getLogger().severe("Zapis wiary " + e.getValue() + " (" + e.getKey() + "): " + ex);
+        s.sendMessage("Błąd zapisu: " + ex.getMessage());
+      }
+      return;
+    }
+    s.sendMessage("Wiary " + nick + " (offline, bez klasy/rasy/wiary i statów): postaci z zapisaną wiarą: " + profile.size());
+    for (Map.Entry<UUID, String> e : profile.entrySet()) {
+      Magazyn.Dane d = plugin.magazyn().wczytaj(e.getKey());
+      long zostalo = d.laskaDo - System.currentTimeMillis();
+      s.sendMessage(" profil=" + e.getKey() + " patron=" + d.patron + " łaska=" + d.laskaBostwo + " ("
+          + (zostalo > 0 ? Panteon.czas(zostalo) : "brak") + ", wiara " + d.laskaWiara + ")");
+    }
   }
 
   private void info(CommandSender s, Player p) {

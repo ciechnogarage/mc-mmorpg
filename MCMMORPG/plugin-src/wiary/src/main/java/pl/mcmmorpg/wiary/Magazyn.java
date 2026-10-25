@@ -2,6 +2,9 @@ package pl.mcmmorpg.wiary;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -53,6 +56,24 @@ public final class Magazyn {
       // Na części systemów plików rename nie nadpisuje — wtedy kasujemy stary i próbujemy raz jeszcze.
       if (!cel.delete() || !tmp.renameTo(cel)) throw new IOException("Nie mogę zapisać " + cel);
     }
+  }
+
+  /**
+   * Profile (pliki w profile/), które zapisano z danym nickiem (pole "gracz", bez względu na wielkość liter).
+   * Dla graczy offline: plugin nie zna wtedy aktywnej postaci, więc zwraca wszystkie. Wartość = nick zapisany w pliku.
+   */
+  public Map<UUID, String> profileGracza(String nick) {
+    Map<UUID, String> out = new LinkedHashMap<>();
+    File[] pliki = dir.listFiles((d, n) -> n.endsWith(".yml"));
+    if (pliki == null) return out;
+    for (File f : pliki) {
+      try {
+        UUID id = UUID.fromString(f.getName().substring(0, f.getName().length() - 4));
+        String g = YamlConfiguration.loadConfiguration(f).getString("gracz");
+        if (g != null && g.toLowerCase(Locale.ROOT).equals(nick.toLowerCase(Locale.ROOT))) out.put(id, g);
+      } catch (IllegalArgumentException ignored) { }
+    }
+    return out;
   }
 
   /** Usunięta postać: plik do archiwum, nie kasujemy danych na ślepo. */
