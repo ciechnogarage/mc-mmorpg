@@ -58,14 +58,29 @@ class_exp_table:
     period: 1
     triggers:
       - 'command{format="mmocore admin attribute-points give %player_name% 1"}'
+      # Paczka B 25.10 (B12): każdy poziom mówi, co dał — wcześniej poziomy bez nowego skilla były „puste”.
+      # message/sound: docs mmocore misc-triggers.md (message, sound; PAPI w message).
+      # Bez numeru poziomu: trigger liczy się PRZED awansem (%mmocore_level% = stary, test 25.10 „Poziom 1!” przy 2),
+      # a numer podaje i tak MMOCore (messages.yml level-up „Awans na poziom N!”).
+      - 'message{format="&6✦ &7+1 punkt atrybutu, +1 punkt umiejętności &8(menu Q)"}'
   punkt_drzewka:
     period: 2
     triggers:
       - 'command{format="mmocore admin skill-tree-points give %player_name% 1 global"}'
+      - 'message{format="&a  +1 punkt drzewka talentów"}'
+  # B12: dodatkowy punkt drzewka na 9 poz. (przedostatni poziom Aktu 1 nie jest pusty); razem do 10 poz. 6 pkt
+  # (2,4,6,8,9,10). docs level-tables.md „Fixed Level”: level: N = tylko ten poziom.
+  punkt_drzewka_9:
+    level: 9
+    triggers:
+      - 'command{format="mmocore admin skill-tree-points give %player_name% 1 global"}'
+      - 'message{format="&a  +1 punkt drzewka talentów &7(premia przed specjalizacją)"}'
   punkt_klasy_specjalizacja:
     level: 10
     triggers:
       - 'command{format="mmocore admin class-points give %player_name% 1"}'
+      - 'message{format="&6&l  Poziom 10: wybierz specjalizację! &7(+1 punkt klasy, menu Q → Postać)"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=1;pitch=1}'
 
 second_exp_table:
 

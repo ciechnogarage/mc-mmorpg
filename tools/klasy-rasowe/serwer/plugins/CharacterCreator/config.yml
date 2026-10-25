@@ -361,8 +361,8 @@ classes:
             perks: 'więcej many'
   akolita:
     icon: 'cc:class_akolita'
-    description: 'Leczy i chroni drużynę.'
-    bonus: 'Wsparcie'
+    description: 'Przywołuje sługi i włada Duszami.'
+    bonus: 'Przywoływacz'
     gear: { chest: GOLDEN_CHESTPLATE, legs: GOLDEN_LEGGINGS, boots: GOLDEN_BOOTS, hand: GOLDEN_SHOVEL }
     display: '&eAkolita'
     mmocore-id: 'paladin'
@@ -445,9 +445,9 @@ classes:
             perks: 'większa pula Dusz'
   ninja:
     icon: 'cc:class_ninja'
-    description: 'Szybkie ciosy zza pleców.'
+    description: 'Sztylet z bliska, łuk z cienia.'
     bonus: 'Zabójca'
-    gear: { chest: CHAINMAIL_CHESTPLATE, legs: CHAINMAIL_LEGGINGS, boots: LEATHER_BOOTS, hand: IRON_SWORD }
+    gear: { chest: CHAINMAIL_CHESTPLATE, legs: CHAINMAIL_LEGGINGS, boots: LEATHER_BOOTS, hand: BOW }
     display: '&7Ninja'
     mmocore-id: 'rogue'
     races:

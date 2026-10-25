@@ -38,6 +38,11 @@ min-max-values:
   SKILL_CRITICAL_STRIKE_CHANCE: '0 = 80'
   SKILL_CRITICAL_STRIKE_POWER: '0 = 500'
 
+  # Paczka B 25.10 (B4, Z3): górny limit skrócenia odnowienia. Źródła w Akcie 1: człowiek 5, drzewko general
+  # do 10, spec. Chronomanta/Głos Bębna 5-6, Intelekt 10 pkt x 0.5 = 5 -> ok. 26%; limit chroni przed
+  # sumowaniem z przedmiotami w kolejnych aktach (było do ~60%).
+  COOLDOWN_REDUCTION: '0 = 35'
+
   # Mitigation
   BLOCK_RATING: '0 = 80'
   DODGE_RATING: '0 = 80'

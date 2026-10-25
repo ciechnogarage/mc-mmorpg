@@ -73,7 +73,7 @@ nodes:
 ## B
 
   b1:
-    name: 'Prędkość strzał I'
+    name: 'Siła krytyka I'
     coordinates:
       x: -1
       y: -1
@@ -85,14 +85,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ARROW_VELOCITY";amount=10;type="RELATIVE"}'
+          - 'stat{stat="CRITICAL_STRIKE_POWER";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&7Prędkość strzał: &a+10%"
+        - "&7Siła ciosu krytycznego: &a+5%"
       1:
-        - "&7Prędkość strzał: &a+10%"
+        - "&7Siła ciosu krytycznego: &a+5%"
   b2:
-    name: 'Prędkość strzał II'
+    name: 'Siła krytyka II'
     coordinates:
       x: -1
       y: -2
@@ -104,14 +104,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ARROW_VELOCITY";amount=15;type="RELATIVE"}'
+          - 'stat{stat="CRITICAL_STRIKE_POWER";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&7Prędkość strzał: &a+15%"
+        - "&7Siła ciosu krytycznego: &a+5%"
       1:
-        - "&7Prędkość strzał: &a+15%"
+        - "&7Siła ciosu krytycznego: &a+5%"
   b3:
-    name: 'Prędkość strzał III'
+    name: 'Siła krytyka III'
     coordinates:
       x: 0
       y: -2
@@ -123,12 +123,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ARROW_VELOCITY";amount=25;type="RELATIVE"}'
+          - 'stat{stat="CRITICAL_STRIKE_POWER";amount=10;type="FLAT"}'
     lores:
       0:
-        - "&7Prędkość strzał: &a+25%"
+        - "&7Siła ciosu krytycznego: &a+10%"
       1:
-        - "&7Prędkość strzał: &a+25%"
+        - "&7Siła ciosu krytycznego: &a+10%"
 
 ## C
 
@@ -205,7 +205,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
         - "&7Odporność na odrzut: &a+5%"
@@ -224,7 +224,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
         - "&7Odporność na odrzut: &a+5%"
@@ -243,7 +243,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
         - "&7Odporność na odrzut: &a+5%"
@@ -385,7 +385,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="RELATIVE"}'
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
         - "&7Obrażenia pocisków: &a+2%"
@@ -404,7 +404,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="RELATIVE"}'
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
         - "&7Obrażenia pocisków: &a+2%"
@@ -423,7 +423,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PROJECTILE_DAMAGE";amount=6;type="RELATIVE"}'
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=6;type="FLAT"}'
     lores:
       0:
         - "&7Obrażenia pocisków: &a+6%"

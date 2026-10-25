@@ -123,12 +123,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="COOLDOWN_REDUCTION";amount=5;type="FLAT"}'
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&7Skrócenie odnowienia: &a+5%"
+        - "&7Skrócenie odnowienia: &a+2%"
       1:
-        - "&7Skrócenie odnowienia: &a+5%"
+        - "&7Skrócenie odnowienia: &a+2%"
 
   c2:
     name: 'Skrócenie odnowienia II'
@@ -141,12 +141,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="COOLDOWN_REDUCTION";amount=10;type="FLAT"}'
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&7Skrócenie odnowienia: &a+10%"
+        - "&7Skrócenie odnowienia: &a+3%"
       1:
-        - "&7Skrócenie odnowienia: &a+10%"
+        - "&7Skrócenie odnowienia: &a+3%"
 
   c3:
     name: 'Skrócenie odnowienia III'
@@ -159,12 +159,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="COOLDOWN_REDUCTION";amount=15;type="FLAT"}'
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&7Skrócenie odnowienia: &a+15%"
+        - "&7Skrócenie odnowienia: &a+5%"
       1:
-        - "&7Skrócenie odnowienia: &a+15%"
+        - "&7Skrócenie odnowienia: &a+5%"
 
 #### D
   d1:
@@ -374,7 +374,7 @@ nodes:
         - "&7Maksymalne zdrowie: &a+5%"
 
   h1:
-    name: 'Obrażenia magiczne I'
+    name: 'Odporność na magię I'
     coordinates: 4,1
       
     parents:
@@ -384,12 +384,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE";amount=3;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&7Obrażenia magiczne: &a+3%"
+        - "&7Odporność na magię: &a+3%"
       1:
-        - "&7Obrażenia magiczne: &a+3%"
+        - "&7Odporność na magię: &a+3%"
 
 # This section is to change display options for nodes and paths depending on:
 # - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.

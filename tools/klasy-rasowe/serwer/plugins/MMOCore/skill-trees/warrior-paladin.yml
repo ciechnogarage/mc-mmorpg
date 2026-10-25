@@ -1,8 +1,8 @@
 id: 'warrior-paladin'
-name: '&4Wojownik i akolita'
-type: 'custom'
+name: '&4Wojownik'
+type: CUSTOM
 lore:
-  - '&6Dla wojowników i akolitów'
+  - '&6Dla wojowników (akolita ma drzewko Przywoływacza)'
 max-point-spent: 21
 
 icon:
@@ -145,12 +145,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&7Redukcja obrażeń fizycznych: &a+5%"
+        - "&7Redukcja obrażeń fizycznych: &a+2%"
       1:
-        - "&7Redukcja obrażeń fizycznych: &a+5%"
+        - "&7Redukcja obrażeń fizycznych: &a+2%"
   c2:
     name: 'Redukcja obrażeń fizycznych II'
     coordinates:
@@ -164,12 +164,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=10;type="FLAT"}'
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&7Redukcja obrażeń fizycznych: &a+10%"
+        - "&7Redukcja obrażeń fizycznych: &a+3%"
       1:
-        - "&7Redukcja obrażeń fizycznych: &a+10%"
+        - "&7Redukcja obrażeń fizycznych: &a+3%"
   c3:
     name: 'Redukcja obrażeń fizycznych III'
     coordinates:
@@ -183,12 +183,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=15;type="FLAT"}'
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&7Redukcja obrażeń fizycznych: &a+15%"
+        - "&7Redukcja obrażeń fizycznych: &a+5%"
       1:
-        - "&7Redukcja obrażeń fizycznych: &a+15%"
+        - "&7Redukcja obrażeń fizycznych: &a+5%"
 
 ## D
 
@@ -265,7 +265,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
         - "&7Odporność na odrzut: &a+5%"
@@ -284,7 +284,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
         - "&7Odporność na odrzut: &a+5%"
@@ -303,7 +303,7 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=10;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.1;type="FLAT"}'
     lores:
       0:
         - "&7Odporność na odrzut: &a+10%"

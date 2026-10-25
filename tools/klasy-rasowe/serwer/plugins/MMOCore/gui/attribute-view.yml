@@ -89,7 +89,7 @@ items:
       - ''
       - '&8Za każdy punkt:'
       - '&7  +{buff_skill_damage}% obrażeń umiejętności (&a+{total_skill_damage}%&7)'
-      - '&7  +{buff_max_mana} do puli zasobu (&a+{total_max_mana}&7)'
+      - '&7  +{buff_max_mana}% puli zasobu (&a+{total_max_mana}%&7)'
       - ''
       - '&eKliknij, aby wydać 1 punkt.'
       - '&e◆ Wolne punkty: {attribute_points}'
