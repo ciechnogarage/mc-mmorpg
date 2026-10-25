@@ -1,0 +1,11 @@
+# Barwy stron napadu (plugin Napady). Kopiuj do plugins/MythicMobs/items/. Kolor: items-items.md "Options: Color".
+NAP_KAMIZELKA_ATAK:
+  Id: leather_chestplate
+  Display: '<red>Kaftan najeźdźcy'
+  Options:
+    Color: 168,50,50
+NAP_KAMIZELKA_OBRONA:
+  Id: leather_chestplate
+  Display: '<aqua>Kaftan obrońcy'
+  Options:
+    Color: 50,85,168

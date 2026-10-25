@@ -26,6 +26,8 @@ final class Arena {
   final int ox, oz;
   final boolean[] chodliwe = new boolean[W * H];
   int[] doBramy, doMagazynu, doOdwrotu;
+  /** numer spojnej skladowej pola chodliwego (-1 = niechodliwe); zamknieta brama dzieli pole od wnetrza */
+  final int[] skladowa = new int[W * H];
 
   Arena(World swiat, int ox, int oz) { this.swiat = swiat; this.ox = ox; this.oz = oz; }
 
@@ -86,6 +88,46 @@ final class Arena {
     doBramy = bfs(new int[][]{{BRAMA_X - 1, BRAMA_Z0}, {BRAMA_X - 1, BRAMA_Z0 + 1}, {BRAMA_X - 1, BRAMA_Z1}});
     doMagazynu = bfs(new int[][]{{MAG_X0 - 1, DRZWI_Z}, {MAG_X0, DRZWI_Z}});
     doOdwrotu = bfs(new int[][]{{3, 18}, {3, 20}, {3, 22}});
+    oznaczSkladowe();
+  }
+
+  private void oznaczSkladowe() {
+    Arrays.fill(skladowa, -1);
+    int nr = 0;
+    ArrayDeque<Integer> q = new ArrayDeque<>();
+    for (int s0 = 0; s0 < W * H; s0++) {
+      if (!chodliwe[s0] || skladowa[s0] >= 0) continue;
+      skladowa[s0] = nr;
+      q.add(s0);
+      while (!q.isEmpty()) {
+        int k = q.poll(), i = k / H, j = k % H;
+        int[][] sas = {{i + 1, j}, {i - 1, j}, {i, j + 1}, {i, j - 1}};
+        for (int[] n : sas) {
+          if (n[0] < 0 || n[1] < 0 || n[0] >= W || n[1] >= H) continue;
+          int m = n[0] * H + n[1];
+          if (chodliwe[m] && skladowa[m] < 0) { skladowa[m] = nr; q.add(m); }
+        }
+      }
+      nr++;
+    }
+  }
+
+  /** Skladowa pola pod punktem areny; encja przy scianie bywa na granicy kratki, wiec bierze sasiada. */
+  int skladowa(double x, double z) {
+    int bx = (int) Math.floor(x), bz = (int) Math.floor(z);
+    for (int r = 0; r <= 1; r++)
+      for (int dx = -r; dx <= r; dx++)
+        for (int dz = -r; dz <= r; dz++) {
+          int i = bx + dx - MIN_X, j = bz + dz - MIN_Z;
+          if (i >= 0 && j >= 0 && i < W && j < H && skladowa[i * H + j] >= 0) return skladowa[i * H + j];
+        }
+    return -1;
+  }
+
+  /** Czy piechota dojdzie z punktu do punktu (ta sama skladowa). */
+  boolean osiagalne(double x0, double z0, double x1, double z1) {
+    int a = skladowa(x0, z0);
+    return a >= 0 && a == skladowa(x1, z1);
   }
 
   boolean chodliwe(int x, int z) {

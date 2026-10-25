@@ -1,0 +1,106 @@
+# Ciala napadow (plugin Napady, cialo: mm). Kopiuj do plugins/MythicMobs/mobs/ (+ items/Napady.yml) i `mm reload`.
+# Cele wybiera plugin (Mob#setTarget), dlatego AITargetSelectors: clear - mob sam nikogo nie namierza.
+# Despawn CHUNK: znika przy restarcie i wyladowaniu chunka (NORMAL = znika bez graczy w poblizu,
+# a napad trwa bez graczy); mobs-options.md "Despawn".
+# Sprzet TYLKO tutaj (Equipment): MM przy spawnie nadpisuje sprzet nadany z pluginu (25.10 klon napady:
+# luk z setItemInMainHand znikal, szkielet dostawal skeleton_melee i nie strzelal).
+NAP_ATAK_WOJOWNIK:
+  Type: ZOMBIE
+  Display: 'NAP_ATAK_WOJOWNIK'
+  Health: 20
+  Damage: 3
+  Options:
+    Despawn: CHUNK
+    PreventSunburn: true
+    PreventItemPickup: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    MovementSpeed: 0.25
+    FollowRange: 32
+    KnockbackResistance: 0.3
+  Equipment:
+  - iron_axe HAND
+  - NAP_KAMIZELKA_ATAK CHEST
+  - chainmail_helmet HEAD
+  AIGoalSelectors:
+  - clear
+  - float
+  - meleeattack{s=1.2;fu=true}
+  AITargetSelectors:
+  - clear
+
+NAP_ATAK_LUCZNIK:
+  Type: SKELETON
+  Display: 'NAP_ATAK_LUCZNIK'
+  Health: 20
+  Damage: 2
+  Options:
+    Despawn: CHUNK
+    PreventSunburn: true
+    PreventItemPickup: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    MovementSpeed: 0.25
+    FollowRange: 32
+    KnockbackResistance: 0.3
+  Equipment:
+  - bow HAND
+  - NAP_KAMIZELKA_ATAK CHEST
+  - chainmail_helmet HEAD
+  AIGoalSelectors:
+  - clear
+  - float
+  - bowattack{s=1;r=20;smax=40}
+  AITargetSelectors:
+  - clear
+
+NAP_OBRONA_WOJOWNIK:
+  Type: ZOMBIE
+  Display: 'NAP_OBRONA_WOJOWNIK'
+  Health: 20
+  Damage: 3
+  Options:
+    Despawn: CHUNK
+    PreventSunburn: true
+    PreventItemPickup: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    MovementSpeed: 0.25
+    FollowRange: 32
+    KnockbackResistance: 0.3
+  Equipment:
+  - iron_sword HAND
+  - shield OFFHAND
+  - NAP_KAMIZELKA_OBRONA CHEST
+  - iron_helmet HEAD
+  AIGoalSelectors:
+  - clear
+  - float
+  - meleeattack{s=1.2;fu=true}
+  AITargetSelectors:
+  - clear
+
+NAP_OBRONA_LUCZNIK:
+  Type: SKELETON
+  Display: 'NAP_OBRONA_LUCZNIK'
+  Health: 20
+  Damage: 2
+  Options:
+    Despawn: CHUNK
+    PreventSunburn: true
+    PreventItemPickup: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    MovementSpeed: 0.25
+    FollowRange: 32
+    KnockbackResistance: 0.3
+  Equipment:
+  - bow HAND
+  - NAP_KAMIZELKA_OBRONA CHEST
+  - iron_helmet HEAD
+  AIGoalSelectors:
+  - clear
+  - float
+  - bowattack{s=1;r=20;smax=40}
+  AITargetSelectors:
+  - clear

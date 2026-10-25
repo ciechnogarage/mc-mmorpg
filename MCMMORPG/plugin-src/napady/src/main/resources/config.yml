@@ -1,7 +1,11 @@
-# Prototyp etapu 1. Liczby do strojenia na klonie.
+# Napady, etap 2. Liczby do strojenia na klonie.
+swiat: napady           # osobny plaski swiat; w spigot.yml world-settings.napady.entity-activation-range monsters/raiders 0
+cialo: mm               # mm (MythicMobs NAP_<STRONA>_<ROLA> z mythicmobs/mobs/Napady.yml, AI vanilla) | manekin (bez AI, ruch liczy plugin)
+przebrania: true        # skora gracza na ciele MM przez LibsDisguises
+ranny-prog: 0.3         # ponizej tej czesci HP jednostka MM wycofuje sie (wraca od 70%)
 limit-naraz: 1          # ile napadow liczy sie jednoczesnie (kolejka "po kolei")
 mspt-prog: 40.0         # nowy napad startuje tylko gdy srednie MSPT ponizej
-ruch: predkosc          # predkosc (setVelocity) | teleport
+ruch: predkosc          # tylko manekin: predkosc (setVelocity) | teleport
 predkosc: 0.2           # blokow na tick (gracz chodzi ~0.216)
 atak:
   wojownicy: 8

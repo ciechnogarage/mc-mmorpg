@@ -2,7 +2,11 @@ package pl.mcmmorpg.napady;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.GameRules;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,7 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * Prototyp napadow (etap 1): manekiny walcza na serwerze, gracz moze dolaczyc.
+ * Napady: jednostki walcza na serwerze (ciala MythicMobs z AI vanilla, dowodzi plugin; awaryjnie manekiny),
+ * gracz moze dolaczyc, a po smierci oglada do konca jako widz.
  * Napady ida w kolejce: najwyzej {@code limit-naraz} liczonych jednoczesnie, nowy startuje
  * tylko gdy srednie MSPT ponizej progu.
  */
@@ -32,11 +37,28 @@ public final class Napady extends JavaPlugin {
   int pomiarDo;
   CommandSender pomiarDla;
 
-  record Dolaczenie(int napad, Strona strona) {}
+  /** Gracz w napadzie: skad przyszedl i w jakim trybie (przywracane po napadzie, po smierci jest widzem). */
+  static final class Dolaczenie {
+    final int napad;
+    final Strona strona;
+    final Location powrot;
+    final GameMode tryb;
+    boolean polegl;
+    Dolaczenie(int napad, Strona strona, Location powrot, GameMode tryb) {
+      this.napad = napad; this.strona = strona; this.powrot = powrot; this.tryb = tryb;
+    }
+  }
+
+  /** polegli, ktorych napad skonczyl sie, gdy byli na ekranie smierci: przywracani przy odrodzeniu */
+  final Map<UUID, Dolaczenie> doPrzywrocenia = new HashMap<>();
+  World swiat;
+  private Boolean mm;
 
   @Override public void onEnable() {
     saveDefaultConfig();
     wczytajSkory();
+    swiat = swiatNapadow();
+    sprawdzAktywacje();
     getServer().getPluginManager().registerEvents(new Zdarzenia(this), this);
     getServer().getPluginManager().registerEvents(new org.bukkit.event.Listener() {
       @org.bukkit.event.EventHandler
@@ -50,6 +72,61 @@ public final class Napady extends JavaPlugin {
   @Override public void onDisable() {
     for (Napad n : new ArrayList<>(aktywne.values())) n.zakoncz("wylaczenie pluginu");
     aktywne.clear();
+  }
+
+  /**
+   * Osobny swiat "napady": plaski (4 warstwy), bez spawnu mobow, staly dzien. Osobny, bo w spigot.yml
+   * activation range ustawia sie per swiat, a moby MM bez gracza w 24 bl. inaczej prawie stoja.
+   */
+  private World swiatNapadow() {
+    String n = getConfig().getString("swiat", "napady");
+    World w = Bukkit.getWorld(n);
+    if (w == null) w = new WorldCreator(n).generator(new PlaskiGenerator()).generateStructures(false).createWorld();
+    if (w == null) { getLogger().severe("Nie da sie stworzyc swiata " + n + " - napady w swiecie glownym"); return Bukkit.getWorlds().get(0); }
+    w.setGameRule(GameRules.SPAWN_MOBS, false);
+    w.setGameRule(GameRules.ADVANCE_TIME, false);
+    w.setGameRule(GameRules.ADVANCE_WEATHER, false);
+    w.setGameRule(GameRules.KEEP_INVENTORY, true);
+    w.setTime(6000);
+    w.setSpawnLocation(0, -59, 0);
+    return w;
+  }
+
+  /** Bez activation range 0 jednostki MM daleko od gracza dostaja AI raz na 20 s (wake-up-inactive). */
+  private void sprawdzAktywacje() {
+    var y = YamlConfiguration.loadConfiguration(new java.io.File("spigot.yml"));
+    String k = "world-settings." + swiat.getName() + ".entity-activation-range.monsters";
+    int v = y.getInt(k, y.getInt("world-settings.default.entity-activation-range.monsters", 32));
+    if (v > 0) getLogger().warning("spigot.yml: " + k + " = " + v + " (powinno byc 0) - jednostki MM bez gracza w "
+        + v + " bl. beda prawie stac. Dopisz world-settings." + swiat.getName() + ".entity-activation-range: {monsters: 0, raiders: 0}");
+    else getLogger().info("activation range dla " + swiat.getName() + ": monsters " + v + " (wylaczone dla napadow)");
+  }
+
+  /** cialo: mm (domyslnie, gdy MythicMobs jest) albo manekin */
+  boolean cialaMM() {
+    if (mm == null) mm = !"manekin".equals(getConfig().getString("cialo", "mm")) && CialaMM.dostepne();
+    return mm;
+  }
+
+  boolean przebrania() { return getConfig().getBoolean("przebrania", true) && CialaMM.przebrania(); }
+
+  /** Koniec napadu: kazdy dolaczony wraca tam, skad przyszedl, w swoim trybie gry. */
+  void zwolnijGraczy(int napad, String powod) {
+    for (var it = dolaczeni.entrySet().iterator(); it.hasNext(); ) {
+      var e = it.next();
+      if (e.getValue().napad != napad) continue;
+      it.remove();
+      Player p = Bukkit.getPlayer(e.getKey());
+      if (p == null) continue;
+      if (p.isDead()) { doPrzywrocenia.put(p.getUniqueId(), e.getValue()); continue; }
+      przywroc(p, e.getValue());
+      p.sendMessage("Napad " + napad + " zakonczony: " + powod + ". Wracasz.");
+    }
+  }
+
+  void przywroc(Player p, Dolaczenie d) {
+    if (p.getGameMode() != d.tryb) p.setGameMode(d.tryb);
+    if (d.powrot != null && d.powrot.getWorld() != null) p.teleport(d.powrot);
   }
 
   private void wczytajSkory() {
@@ -88,7 +165,7 @@ public final class Napady extends JavaPlugin {
     String w = String.format(Locale.ROOT,
         "POMIAR %d tikow, napadow %d: MSPT sr %.2f p50 %.2f p95 %.2f max %.2f | napady sr %.3f ms/tik | encji %d",
         t.size(), aktywne.size(), sr, t.get(t.size() / 2), t.get((int) (t.size() * 0.95)), t.get(t.size() - 1),
-        napadyNsWPomiarze / 1e6 / t.size(), Bukkit.getWorlds().get(0).getEntityCount());
+        napadyNsWPomiarze / 1e6 / t.size(), swiat.getEntityCount());
     getLogger().info(w);
     if (pomiarDla != null) pomiarDla.sendMessage(w);
     tikiSerwera = null;
@@ -100,8 +177,7 @@ public final class Napady extends JavaPlugin {
     while (!kolejka.isEmpty() && aktywne.size() < limit && Bukkit.getAverageTickTime() < prog) {
       int id = kolejka.poll();
       int slot = wolnySlot();
-      World w = Bukkit.getWorlds().get(0);
-      Napad n = new Napad(this, id, new Arena(w, slot * 200, 0));
+      Napad n = new Napad(this, id, new Arena(swiat, slot * 200, 0));
       aktywne.put(id, n);
       n.start();
     }
@@ -127,9 +203,9 @@ public final class Napady extends JavaPlugin {
         cs.sendMessage("Napady: w kolejce " + kolejka.size() + ", aktywne " + aktywne.size());
       }
       case "stan" -> {
-        cs.sendMessage(String.format(Locale.ROOT, "MSPT %.1f | aktywne %d/%d | kolejka %d | ruch %s",
+        cs.sendMessage(String.format(Locale.ROOT, "MSPT %.1f | aktywne %d/%d | kolejka %d | ruch %s | cialo %s%s",
             Bukkit.getAverageTickTime(), aktywne.size(), getConfig().getInt("limit-naraz"), kolejka.size(),
-            getConfig().getString("ruch")));
+            getConfig().getString("ruch"), cialaMM() ? "mm" : "manekin", przebrania() ? "+lib" : ""));
         for (Napad n : aktywne.values()) cs.sendMessage(n.opis());
       }
       case "dolacz" -> {
@@ -138,13 +214,19 @@ public final class Napady extends JavaPlugin {
         Napad n = aktywne.get(Integer.parseInt(a[1]));
         if (n == null) { cs.sendMessage("Nie ma takiego napadu."); return true; }
         Strona s = a[2].startsWith("o") ? Strona.OBRONA : Strona.ATAK;
-        dolaczeni.put(p.getUniqueId(), new Dolaczenie(n.id, s));
+        Dolaczenie stare = dolaczeni.get(p.getUniqueId());
+        if (stare != null && stare.polegl) { cs.sendMessage("Polegles w tym napadzie - obserwujesz do konca (/napad opusc)."); return true; }
+        dolaczeni.put(p.getUniqueId(), stare != null ? new Dolaczenie(n.id, s, stare.powrot, stare.tryb)
+            : new Dolaczenie(n.id, s, p.getLocation(), p.getGameMode()));
         p.teleport(n.punktDolaczenia(s));
         n.zdarzenie("dolacza", p.getName() + ":" + s.name());
         p.sendMessage("Dolaczasz do napadu " + n.id + " po stronie: " + s.nazwa);
       }
       case "opusc" -> {
-        if (cs instanceof Player p && dolaczeni.remove(p.getUniqueId()) != null) p.sendMessage("Opuszczasz napad.");
+        if (cs instanceof Player p) {
+          Dolaczenie d = dolaczeni.remove(p.getUniqueId());
+          if (d != null) { przywroc(p, d); p.sendMessage("Opuszczasz napad."); }
+        }
       }
       case "stop" -> {
         if (!admin) return brak(cs);
@@ -161,6 +243,35 @@ public final class Napady extends JavaPlugin {
         if (!admin || a.length < 2) return brak(cs);
         getConfig().set("ruch", a[1]);
         cs.sendMessage("Ruch: " + a[1]);
+      }
+      case "cialo" -> {
+        if (!admin || a.length < 2) return brak(cs);
+        getConfig().set("cialo", a[1]);
+        mm = null;
+        cs.sendMessage("Cialo nowych napadow: " + (cialaMM() ? "mm" : "manekin") + (przebrania() ? " + skora LD" : ""));
+      }
+      case "przebrania" -> {
+        if (!admin || a.length < 2) return brak(cs);
+        getConfig().set("przebrania", Boolean.parseBoolean(a[1]));
+        cs.sendMessage("Przebrania LD: " + przebrania());
+      }
+      case "ai" -> {
+        // diagnoza ciala: /napad ai <napad> <jednostka> - cele AI (Paper MobGoals), target, linia wzroku
+        if (!admin || a.length < 3) return brak(cs);
+        Napad n = aktywne.get(Integer.parseInt(a[1]));
+        int jid = Integer.parseInt(a[2]);
+        Jednostka j = n == null ? null : n.jednostki.stream().filter(x -> x.id == jid).findFirst().orElse(null);
+        if (j == null) { cs.sendMessage("Brak jednostki."); return true; }
+        cs.sendMessage(j.strona + " " + j.rola + " " + j.cialo.getType() + " akcja=" + j.akcja + " hp=" + j.cialo.getHealth()
+            + " reka=" + j.cialo.getEquipment().getItemInMainHand().getType());
+        if (j.cialo instanceof org.bukkit.entity.Mob m) {
+          var t = m.getTarget();
+          cs.sendMessage("target=" + (t == null ? "-" : t.getType() + "@" + Math.round(t.getLocation().distance(m.getLocation())))
+              + " widzi=" + (t != null && m.hasLineOfSight(t)) + " sciezka=" + m.getPathfinder().hasPath()
+              + " aware=" + m.isAware());
+          for (var g : Bukkit.getMobGoals().getRunningGoals(m)) cs.sendMessage(" biegnie: " + g.getKey().getNamespacedKey().getKey());
+          for (var g : Bukkit.getMobGoals().getAllGoals(m)) cs.sendMessage(" cel: " + g.getKey().getNamespacedKey().getKey() + " " + g.getTypes());
+        }
       }
       case "pomiar" -> {
         if (!admin) return brak(cs);
@@ -183,6 +294,6 @@ public final class Napady extends JavaPlugin {
 
   Napad napadGracza(Player p) {
     Dolaczenie d = dolaczeni.get(p.getUniqueId());
-    return d == null ? null : aktywne.get(d.napad());
+    return d == null ? null : aktywne.get(d.napad);
   }
 }

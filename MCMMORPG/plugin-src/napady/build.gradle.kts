@@ -10,6 +10,8 @@ repositories {
 
 dependencies {
   compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+  // jary z serwera (libs/ poza gitem, kopiuje build.sh): MythicMobs 5.11.2, LibsDisguises 11.0.15, packetevents 2.11.2
+  compileOnly(fileTree("libs") { include("*.jar") })
 }
 
 version = "${providers.gradleProperty("pmVersion").get()}-${providers.gradleProperty("pmRev").orNull ?: "dev"}"
