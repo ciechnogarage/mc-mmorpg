@@ -8,7 +8,7 @@ softdepend: [PlaceholderAPI, Vault, Mistrzostwa]
 commands:
   rzemioslo:
     description: Profesje v2 (menu wola z konsoli; admin).
-    usage: /rzemioslo <reload|info|zlecenie|start|przeprawa|narzedzie|wezel>
+    usage: /rzemioslo <reload|info|zlecenie|start|przeprawa|narzedzie|wezel|postaw|doreki|oboz>
     permission: rzemioslo.admin
 permissions:
   rzemioslo.admin:

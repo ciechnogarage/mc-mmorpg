@@ -102,6 +102,7 @@ public final class Rzemioslo extends JavaPlugin implements Listener {
         if (oprawianie != null) oprawianie.sprzatnij();
         if (buffy != null) buffy.sprzatnij();
         if (papi != null) papi.unregister();
+        if (zlecenia != null) zlecenia.zamknij();
         HandlerList.unregisterAll((org.bukkit.plugin.Plugin) this);
     }
 

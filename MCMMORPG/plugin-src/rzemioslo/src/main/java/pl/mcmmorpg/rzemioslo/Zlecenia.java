@@ -10,6 +10,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,12 +20,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /** Zlecenia dnia (3 na profesje z biezacego tieru) i zlecenia startowe zbieractwa — per POSTAC (profil MMOProfiles). */
 final class Zlecenia {
     private final Rzemioslo plugin;
     private final File katalog;
     private final Map<UUID, YamlConfiguration> cache = new HashMap<>();
+    // Zapis plikow poza glownym watkiem: zrzut (saveToString) na glownym, plik pisze jeden watek (kolejnosc zapisow zachowana).
+    // 'oczekujace' trzyma zrzut do czasu zapisu, zeby ponowny odczyt (relog) nie zobaczyl starego pliku.
+    private final ExecutorService zapisy = Executors.newSingleThreadExecutor(r -> new Thread(r, "Rzemioslo-zapis"));
+    private final Map<UUID, String> oczekujace = new ConcurrentHashMap<>();
+    private volatile boolean zamkniete;
 
     Zlecenia(Rzemioslo plugin) {
         this.plugin = plugin;
@@ -41,24 +52,62 @@ final class Zlecenia {
 
     private YamlConfiguration dane(Player p) {
         UUID u = profil(p);
-        return cache.computeIfAbsent(u, k -> YamlConfiguration.loadConfiguration(new File(katalog, k + ".yml")));
+        return cache.computeIfAbsent(u, this::wczytaj);
+    }
+
+    private YamlConfiguration wczytaj(UUID u) {
+        String zrzut = oczekujace.get(u);
+        if (zrzut != null) {
+            try {
+                YamlConfiguration y = new YamlConfiguration();
+                y.loadFromString(zrzut);
+                return y;
+            } catch (org.bukkit.configuration.InvalidConfigurationException ignored) { }
+        }
+        return YamlConfiguration.loadConfiguration(new File(katalog, u + ".yml"));
     }
 
     private void zapisz(Player p) {
         UUID u = profil(p);
         YamlConfiguration y = cache.get(u);
         if (y == null) return;
+        String zrzut = y.saveToString();
+        if (zamkniete) { zapiszPlik(u, zrzut); return; }
+        oczekujace.put(u, zrzut);
         try {
-            y.save(new File(katalog, u + ".yml"));
+            zapisy.execute(() -> zapiszPlik(u, zrzut));
+        } catch (java.util.concurrent.RejectedExecutionException e) {
+            zapiszPlik(u, zrzut);
+        }
+    }
+
+    private void zapiszPlik(UUID u, String zrzut) {
+        try {
+            Files.writeString(new File(katalog, u + ".yml").toPath(), zrzut, StandardCharsets.UTF_8);
         } catch (IOException e) {
             plugin.getLogger().warning("Nie zapisano zlecen " + u + ": " + e);
+        } finally {
+            oczekujace.remove(u, zrzut);
         }
+    }
+
+    /** onDisable: dokancza kolejke zapisow, potem zapisuje synchronicznie to, co jeszcze w pamieci. */
+    void zamknij() {
+        zamkniete = true;
+        zapisy.shutdown();
+        try {
+            if (!zapisy.awaitTermination(30, TimeUnit.SECONDS)) plugin.getLogger().warning("Zapis zlecen nie skonczyl sie w 30 s.");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        for (Map.Entry<UUID, String> e : new ArrayList<>(oczekujace.entrySet())) zapiszPlik(e.getKey(), e.getValue());
     }
 
     void zapomnij(Player p) { cache.remove(profil(p)); }
 
     // ------------------------------------------------------------------ zlecenia dnia
-    record Pozycja(Dane.Zlec z, int tier, boolean oddane) {}
+    /** idx = indeks w liscie "wybrane" (zapisany w pliku), nie na liscie pokazanej graczowi. */
+    record Pozycja(Dane.Zlec z, int tier, boolean oddane, int idx) {}
 
     List<Pozycja> dzisiejsze(Player p, String prof) {
         YamlConfiguration y = dane(p);
@@ -87,7 +136,7 @@ final class Zlecenia {
         pula = plugin.dane().zlecenia.getOrDefault(prof, Map.of()).getOrDefault(tier, List.of());
         List<Integer> oddane = s.getIntegerList("oddane");
         List<Pozycja> l = new ArrayList<>();
-        for (int i : s.getIntegerList("wybrane")) if (i < pula.size()) l.add(new Pozycja(pula.get(i), tier, oddane.contains(i)));
+        for (int i : s.getIntegerList("wybrane")) if (i < pula.size()) l.add(new Pozycja(pula.get(i), tier, oddane.contains(i), i));
         return l;
     }
 
@@ -102,9 +151,8 @@ final class Zlecenia {
             return;
         }
         YamlConfiguration y = dane(p);
-        List<Integer> wyb = y.getIntegerList("zlecenia." + prof + ".wybrane");
         List<Integer> odd = new ArrayList<>(y.getIntegerList("zlecenia." + prof + ".oddane"));
-        odd.add(wyb.get(n - 1));
+        odd.add(poz.idx());
         y.set("zlecenia." + prof + ".oddane", odd);
         zapisz(p);
         double xp = plugin.profesje().daj(p, prof, poz.tier(), poz.z().xp(), p.getLocation());
