@@ -36,6 +36,7 @@ public final class Mistrzostwa extends JavaPlugin {
         var cmd = getCommand("mistrzostwo");
         cmd.setExecutor(k);
         cmd.setTabCompleter(k);
+        Bukkit.getPluginManager().registerEvents(k, this);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(this).register();
         else getLogger().warning("Brak PlaceholderAPI — menu nie pokaze stanu mistrzostw.");
         if (ekonomia() == null) getLogger().severe("Brak dostawcy ekonomii Vault — platna zmiana mistrzostwa bedzie odrzucana.");

@@ -7,8 +7,13 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -34,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Dlatego plugin ZAPAMIETUJE cel okna per gracz (i per profil postaci) w chwili jego otwarcia,
  * okno czyta go z %mistrz_cel_*% / %mistrz_z_*%, a przycisk "Tak" wola 'potwierdz' bez argumentow.
  */
-final class Komenda implements CommandExecutor, TabCompleter {
+final class Komenda implements CommandExecutor, TabCompleter, Listener {
     private final Mistrzostwa plugin;
     private final Map<UUID, Long> ostatniaOperacja = new ConcurrentHashMap<>();
     /** cel otwartego okna: profesja do zdobycia, porzucana (albo null) i profil, dla ktorego okno otwarto */
@@ -50,8 +55,19 @@ final class Komenda implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
     }
 
+    @EventHandler
+    public void naWyjscie(PlayerQuitEvent e) {
+        ostatniaOperacja.remove(e.getPlayer().getUniqueId());
+        oczekujace.remove(e.getPlayer().getUniqueId());
+    }
+
     @Override
     public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
+        // komendy wola menu z konsoli albo admin (gracz / RCON); blok komend, minecart itp. nie
+        if (!(s instanceof Player) && !(s instanceof ConsoleCommandSender) && !(s instanceof RemoteConsoleCommandSender)) {
+            s.sendMessage("[Mistrzostwa] komenda dostepna tylko z konsoli albo dla gracza");
+            return true;
+        }
         if (a.length == 0) { pomoc(s); return true; }
         String sub = a[0].toLowerCase(Locale.ROOT);
         if (sub.equals("reload")) { plugin.przeladuj(); s.sendMessage("[Mistrzostwa] przeladowano config.yml"); return true; }
@@ -64,7 +80,7 @@ final class Komenda implements CommandExecutor, TabCompleter {
             case "wybierz" -> { if (a.length >= 3) wybierz(s, p, a[2].toLowerCase(Locale.ROOT), u); else pomoc(s); }
             case "zmien" -> { if (a.length >= 4) zmien(s, p, a[2].toLowerCase(Locale.ROOT), a[3].toLowerCase(Locale.ROOT), u); else pomoc(s); }
             case "info" -> info(s, p, u);
-            case "porzuc" -> { if (a.length >= 3) porzuc(p, a[2], u); else pomoc(s); }
+            case "porzuc" -> { if (a.length >= 3) porzuc(s, p, a[2], u); else pomoc(s); }
             case "potwierdz" -> potwierdz(s, p, u);
             case "nadaj" -> {
                 if (a.length < 3) { pomoc(s); break; }
@@ -79,7 +95,7 @@ final class Komenda implements CommandExecutor, TabCompleter {
                 s.sendMessage("[Mistrzostwa] odbierz " + id + ": " + (plugin.stan().usun(p, id) ? "OK" : "nie bylo"));
                 log("ADMIN odbierz", p, id, "-", 0);
             }
-            case "kamien" -> { if (a.length >= 4) kamien(p, a[2].toLowerCase(Locale.ROOT), a[3], u); else pomoc(s); }
+            case "kamien" -> { if (a.length >= 4) kamien(s, p, a[2].toLowerCase(Locale.ROOT), a[3], u); else pomoc(s); }
             case "zdejmij-cooldown" -> s.sendMessage("[Mistrzostwa] cooldown: " + (plugin.stan().zdejmijCooldown(p) ? "zdjety" : "nie bylo"));
             default -> pomoc(s);
         }
@@ -88,6 +104,7 @@ final class Komenda implements CommandExecutor, TabCompleter {
 
     private void pomoc(CommandSender s) {
         s.sendMessage("/mistrzostwo okno <gracz> <profesja> | wybierz <gracz> <profesja> | zmien <gracz> <z> <na>");
+        s.sendMessage("/mistrzostwo porzuc <gracz> <nr 1..limit> | potwierdz <gracz> | kamien <gracz> <prof> <poziom>");
         s.sendMessage("/mistrzostwo info <gracz> | nadaj <gracz> <prof> | odbierz <gracz> <prof> | zdejmij-cooldown <gracz> | reload");
     }
 
@@ -109,12 +126,12 @@ final class Komenda implements CommandExecutor, TabCompleter {
     }
 
     /** Okno zamiany: gracz wskazal, ktore (1..limit) mistrzostwo porzuca -> okno "Czy na pewno?". */
-    private void porzuc(Player p, String nr, Ustawienia u) {
+    private void porzuc(CommandSender s, Player p, String nr, Ustawienia u) {
         Oczekujace o = oczekujace(p);
-        if (o == null) { zamknij(p); return; }
+        if (o == null) { if (s != p) s.sendMessage("[Mistrzostwa] " + p.getName() + " nie ma oczekujacej zmiany."); zamknij(p); return; }
         java.util.List<String> m = new java.util.ArrayList<>(plugin.stan().mistrzostwa(p));
         int n;
-        try { n = Integer.parseInt(nr); } catch (NumberFormatException e) { return; }
+        try { n = Integer.parseInt(nr); } catch (NumberFormatException e) { s.sendMessage("[Mistrzostwa] <nr> musi byc liczba calkowita: " + nr); return; }
         if (n < 1 || n > m.size()) { odmowa(p, "Brak mistrzostwa na tej pozycji."); zamknij(p); return; }
         oczekujace.put(p.getUniqueId(), new Oczekujace(o.cel(), m.get(n - 1), o.profil()));
         otworz(p, u.menuZmiana + "_potw " + p.getName());
@@ -123,7 +140,7 @@ final class Komenda implements CommandExecutor, TabCompleter {
     /** Przycisk "Tak" w oknie wyboru albo zamiany. Bez oczekujacego celu = cisza (np. drugie klikniecie). */
     private void potwierdz(CommandSender s, Player p, Ustawienia u) {
         Oczekujace o = oczekujace(p);
-        if (o == null) { if (!zablokowane(p)) zamknij(p); return; }
+        if (o == null) { if (s != p) s.sendMessage("[Mistrzostwa] " + p.getName() + " nie ma oczekujacej zmiany."); if (!zablokowane(p)) zamknij(p); return; }
         if (!u.sab("klikniecia")) oczekujace.remove(p.getUniqueId());
         if (o.z() == null) wybierz(s, p, o.cel(), u);
         else zmien(s, p, o.z(), o.cel(), u);
@@ -202,9 +219,9 @@ final class Komenda implements CommandExecutor, TabCompleter {
     }
 
     /** Wolane z exp-table MMOCore (command{}) przy kamieniu milowym; oglasza nowy tytul. */
-    private void kamien(Player p, String id, String poziomTxt, Ustawienia u) {
+    private void kamien(CommandSender s, Player p, String id, String poziomTxt, Ustawienia u) {
         int poz;
-        try { poz = Integer.parseInt(poziomTxt); } catch (NumberFormatException e) { return; }
+        try { poz = Integer.parseInt(poziomTxt); } catch (NumberFormatException e) { s.sendMessage("[Mistrzostwa] <poziom> musi byc liczba calkowita: " + poziomTxt); return; }
         String t = u.tytul(id, poz);
         if (t.isEmpty() || !u.tytuly.containsKey(poz)) return;
         if (poz >= u.ogloszenieOd)
@@ -268,12 +285,29 @@ final class Komenda implements CommandExecutor, TabCompleter {
         return m + " min";
     }
 
+    private static final List<String> PODKOMENDY = List.of("okno", "porzuc", "potwierdz", "wybierz", "zmien", "info", "nadaj", "odbierz",
+            "zdejmij-cooldown", "kamien", "reload");
+
     @Override
     public List<String> onTabComplete(CommandSender s, Command c, String l, String[] a) {
         List<String> w = new ArrayList<>();
-        if (a.length == 1) w.addAll(List.of("okno", "porzuc", "potwierdz", "wybierz", "zmien", "info", "nadaj", "odbierz", "zdejmij-cooldown", "kamien", "reload"));
-        else if (a.length == 2) Bukkit.getOnlinePlayers().forEach(p -> w.add(p.getName()));
-        else w.addAll(plugin.ustawienia().mistrzowskie);
+        if (!s.hasPermission("mistrzostwa.admin")) return w;
+        String sub = a[0].toLowerCase(Locale.ROOT);
+        if (a.length == 1) w.addAll(PODKOMENDY);
+        else if (a.length == 2) { if (!sub.equals("reload")) Bukkit.getOnlinePlayers().forEach(p -> w.add(p.getName())); }
+        else if (a.length == 3) {
+            switch (sub) {
+                case "okno", "wybierz", "zmien", "nadaj", "odbierz", "kamien" -> w.addAll(plugin.ustawienia().mistrzowskie);
+                case "porzuc" -> { for (int i = 1; i <= plugin.ustawienia().limit; i++) w.add(String.valueOf(i)); }
+                default -> { }
+            }
+        } else if (a.length == 4) {
+            switch (sub) {
+                case "zmien" -> w.addAll(plugin.ustawienia().mistrzowskie);
+                case "kamien" -> plugin.ustawienia().tytuly.keySet().forEach(k -> w.add(String.valueOf(k)));
+                default -> { }
+            }
+        }
         String pref = a[a.length - 1].toLowerCase(Locale.ROOT);
         w.removeIf(x -> !x.toLowerCase(Locale.ROOT).startsWith(pref));
         return w;
