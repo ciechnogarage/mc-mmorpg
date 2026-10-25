@@ -57,6 +57,7 @@ final class Rzucanie implements Listener {
   private final Strumien strumien;
   private final Skille skille;
   private final Komunikat komunikat;
+  private final Nosnik nosnik;
   private final RzutyOdrzutowe odrzutowe;
   private final EfektyCzasowe efekty;
   private final Zaslanianie zaslanianie;
@@ -81,6 +82,7 @@ final class Rzucanie implements Listener {
 
   Rzucanie(Zaklecia plugin, Ksiega ksiega, Nosnik nosnik) {
     this.plugin = plugin;
+    this.nosnik = nosnik;
     this.ksiega = ksiega;
     this.skille = new Skille(plugin, ksiega.skBrakMany);
     this.komunikat = new Komunikat(skille, ksiega.skBrakMany);
@@ -223,6 +225,7 @@ final class Rzucanie implements Listener {
       Player p = e.getPlayer();
       if (swiezeQ(p)) return;
       Ksiega.Zaklecie prawa = zak(p, true);
+      if (prawa != null && !plugin.bramka.wolno(p)) { nosnik.komunikat(p, Bramka.ODMOWA); return; }
       if (prawa != null && prawa.odrzutowe()) {
         odrzutowe.lpm(p, prawa, rowno());
         return;
@@ -255,6 +258,7 @@ final class Rzucanie implements Listener {
     ostatniPpm.put(p.getUniqueId(), teraz);
     Ksiega.Zaklecie lewa = zak(p, false);
     if (lewa == null) return;
+    if (!plugin.bramka.wolno(p)) { nosnik.komunikat(p, Bramka.ODMOWA); return; }
     if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, rowno()); return; }
     if (zablokowanePpm(p)) return;
     ppmLewa.put(p.getUniqueId(), teraz);
@@ -280,6 +284,7 @@ final class Rzucanie implements Listener {
     } else if (e.getHand() == EquipmentSlot.OFF_HAND
         && ksiega.w(e.getItem()) != null && (wybor == null || !wybor.otwarty(p))) {
       Ksiega.Zaklecie lewa = ksiega.w(e.getItem());
+      if (!plugin.bramka.wolno(p)) { nosnik.komunikat(p, Bramka.ODMOWA); return; }
       if (lewa.odrzutowe()) { odrzutowe.ppm(p, lewa, rowno()); return; }
       if (zablokowanePpm(p)) return;
       ppmLewa.put(p.getUniqueId(), teraz);

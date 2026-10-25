@@ -38,6 +38,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Ulubione ulubione;
   private Rzucanie rzucanie;
   private Wybor wybor;
+  Bramka bramka;
   private Kotwica kotwica;
   private Kostur kostur;
 
@@ -53,6 +54,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   public void onEnable() {
     saveDefaultConfig();
     ksiega = new Ksiega(getConfig());
+    bramka = new Bramka(this);
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
     rzucanie = new Rzucanie(this, ksiega, nosnik);
