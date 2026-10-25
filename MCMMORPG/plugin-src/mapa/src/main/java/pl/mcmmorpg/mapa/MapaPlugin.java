@@ -46,7 +46,7 @@ import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class MapaPlugin extends JavaPlugin implements Listener {
+public final class MapaPlugin extends JavaPlugin implements Listener, org.bukkit.command.TabCompleter {
   private static final NamespacedKey EMPTY_MODEL = new NamespacedKey("mapa", "pusty");
   private final Map<UUID, Double> handZooms = new HashMap<>();
   private final Map<UUID, AtlasState> atlases = new HashMap<>();
@@ -594,6 +594,21 @@ public final class MapaPlugin extends JavaPlugin implements Listener {
     }
     sender.sendMessage("Użycie: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa cel <gracz> <swiat> <x> <z> <nazwa> | /mapa cel <gracz> wyczysc | /mapa przeladuj");
     return true;
+  }
+
+  @Override
+  public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    if (!sender.hasPermission("mapa.admin")) return List.of();
+    List<String> opcje = new ArrayList<>();
+    if (args.length == 1) opcje.addAll(List.of("otworz", "pelna", "cel", "przeladuj"));
+    else if (args.length == 2 && List.of("otworz", "pelna", "cel").contains(args[0].toLowerCase(java.util.Locale.ROOT)))
+      Bukkit.getOnlinePlayers().forEach(p -> opcje.add(p.getName()));
+    else if (args.length == 3 && args[0].equalsIgnoreCase("cel")) {
+      opcje.add("wyczysc");
+      Bukkit.getWorlds().forEach(w -> opcje.add(w.getName()));
+    }
+    String pref = args[args.length - 1].toLowerCase(java.util.Locale.ROOT);
+    return opcje.stream().filter(x -> x.toLowerCase(java.util.Locale.ROOT).startsWith(pref)).sorted().toList();
   }
 
   private void openFull(Player player, String world, double x, double z) {

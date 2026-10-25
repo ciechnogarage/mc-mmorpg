@@ -2,11 +2,11 @@ name: Mapa
 main: pl.mcmmorpg.mapa.MapaPlugin
 version: ${version}
 api-version: '1.21'
-description: Mapa świata i atlas kafelków
+description: Mapa świata w ręce (osobny widok na gracza), pełnoekranowa mapa (MapEngine), atlas kafelków z zakładkami światów, znaczniki serwerowe i własne pinezki graczy, prowadzenie do celu i ikony na minimapie NMinimap
 softdepend: [MapEngine, NMinimap, MMOProfiles, MMOCore, packetevents]
 commands:
   mapa:
-    description: Otwiera lub przeładowuje mapę
+    description: Administracja mapy - otwiera atlas lub pełną mapę graczowi, ustawia i czyści cel prowadzenia, przeładowuje dane mapy
     usage: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa cel <gracz> <swiat> <x> <z> <nazwa> | /mapa cel <gracz> wyczysc | /mapa przeladuj
     permission: mapa.admin
 permissions:

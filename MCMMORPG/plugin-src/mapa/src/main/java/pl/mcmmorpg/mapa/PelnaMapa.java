@@ -96,7 +96,7 @@ final class PelnaMapa implements Listener {
     close(player);
     int mapsWide = MapaMath.clamp(plugin.getConfig().getInt("pelna.szerokosc", 4), 1, 12);
     int mapsHigh = MapaMath.clamp(plugin.getConfig().getInt("pelna.wysokosc", 3), 1, 8);
-    double distance = Math.max(1.0, Math.min(5.0, plugin.getConfig().getDouble("pelna.odleglosc", 2.2)));
+    double distance = Math.max(1.0, Math.min(5.0, plugin.getConfig().getDouble("pelna.odleglosc", 3.0)));
     Location initial = player.getLocation();
     float yaw = PelnaMath.kierunek(initial.getYaw());
     Location aligned = initial.clone();

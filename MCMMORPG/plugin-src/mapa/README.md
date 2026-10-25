@@ -13,12 +13,13 @@ Parser `plugin.yml`: 1 komenda `mapa`, 1 uprawnienie `mapa.admin` (default op), 
 | Komenda | Kto | Co robi | Źródło |
 |---|---|---|---|
 | `/mapa otworz <gracz>` | OP/konsola | otwiera graczowi atlas | `MapaPlugin.java:552-557` |
-| `/mapa pelna <gracz>` | OP/konsola | otwiera pełną mapę w pozycji gracza (wymaga MapEngine) | `MapaPlugin.java:558-564`, `:598-610` |
+| `/mapa pelna <gracz>` | OP/konsola | otwiera pełną mapę w pozycji gracza (wymaga MapEngine) | `MapaPlugin.java:558-564`, `:614-626` |
 | `/mapa cel <gracz> <swiat> <x> <z> <nazwa...>` | OP/konsola | ustawia cel prowadzenia (świat musi pasować do `[a-z0-9_.-]+`) | `MapaPlugin.java:565-582` |
 | `/mapa cel <gracz> wyczysc` | OP/konsola | wyłącza prowadzenie | `MapaPlugin.java:568-572` |
 | `/mapa przeladuj` | OP/konsola | zamyka mapy i atlasy, `loadAll()` (config, kafle, tekstury, rejestr map), podmiana map graczy | `MapaPlugin.java:584-594` |
 
-Rozbieżności: brak (`usage` w `plugin.yml:10` i tekst `MapaPlugin.java:595` wymieniają te same 5 form). Tab-complete: brak (`grep onTabComplete|TabCompleter` w `src/main` bez trafień).
+Rozbieżności: brak (`usage` w `plugin.yml:10` i tekst `MapaPlugin.java` wymieniają te same 5 form). Tab-complete: `MapaPlugin.onTabComplete` (podkomendy, nick gracza, `wyczysc` i nazwy światów dla `cel`; tylko dla `mapa.admin`).
+Kto wydaje graczowi przedmiot mapy (sprawdzone, plugin Mapa sam nie tworzy mapy, tylko podmienia `map_id` istniejącej): skrypt CoreTools `plugins/CoreTools/Scripts/stale-sloty.yml` (`stale_sloty_wstaw_mapa_teraz`, wiersze 62-65) wstawia do pustego slotu 7 paska przedmiot MMOItems `MISCELLANEOUS:UI_MAPA` (`plugins/MMOItems/item/miscellaneous.yml:354`, materiał FILLED_MAP) i komendą konsoli `item modify ... map_id 30000`; potem `MapaPlugin.replaceLegacyMaps` (`:324-337`) podmienia 30000 na osobisty numer gracza. Klik w ten przedmiot w ekwipunku = konsola `mapa otworz <gracz>` (`stale-sloty.yml:123`); `mapa pelna <gracz>` wołają menu DeluxeMenus `hub_glowne.yml:21`, `hub_przygoda.yml:72`.
 
 ## Konfiguracja
 Plik: `/opt/docker/mc/data/world1/plugins/Mapa/config.yml` (identyczny ze źródłem `src/main/resources/config.yml`). Odczyt: `MapaPlugin.loadAll()` `:222-262`. 12 kluczy najwyższego poziomu (parser), wszystkie użyte w kodzie:
@@ -30,11 +31,11 @@ Plik: `/opt/docker/mc/data/world1/plugins/Mapa/config.yml` (identyczny ze źród
 | `zoom-reka-domyslny` | `1` (gdy nie na liście: pierwszy z listy) | 1 | `MapaPlugin.java:231-232` |
 | `zoom-reka-swiat` | zoom na świat: `stolica_odnowa: 0.5`, `loch_001: 0.5` | domyślny | `MapaPlugin.java:206-207,215-216` |
 | `odswiezanie-ms` | odstęp odświeżania renderera mapy w ręce: `250` | 250 | `MapaPlugin.java:233` |
-| `pelna` | pełna mapa: `szerokosc 4` (1-12), `wysokosc 3` (1-8), `odleglosc 3.0` (1.0-5.0) | 4 / 3 / 2.2 | `PelnaMapa.java:97-99` |
+| `pelna` | pełna mapa: `szerokosc 4` (1-12), `wysokosc 3` (1-8), `odleglosc 3.0` (1.0-5.0) | 4 / 3 / 3.0 | `PelnaMapa.java:97-99` |
 | `minimapa.promien` | promień (bloki) ikon na minimapie NMinimap: `256` | 256 | `MinimapaZnaczniki.java:21` |
 | `wlasne` | `limit` 30 pinezek na postać; `ikony` (10 kluczy -> nazwa w dialogu) | limit 30 | `ZnacznikDialog.java:62,73,123,133`, `PelnaMapa.java:75` |
-| `tytul-okna` | glif tytułu atlasu (`䅐`, Nexo) | pusty | `MapaPlugin.java:637` |
-| `nazwy-swiatow` | nazwy w UI: world=Kraina, stolica_odnowa=Stolica, loch_001=Loch 001 · Kwietna Polana | nazwa świata | `MapaPlugin.java:683-684` |
+| `tytul-okna` | glif tytułu atlasu (`䅐`, Nexo) | pusty | `MapaPlugin.java:652` |
+| `nazwy-swiatow` | nazwy w UI: world=Kraina, stolica_odnowa=Stolica, loch_001=Loch 001 · Kwietna Polana | nazwa świata | `MapaPlugin.java:698-699` |
 | `zakladki` | zakładki atlasu (świat, nazwa, ikona): 3 sztuki | brak | `MapaData.java:108` |
 | `znaczniki` | znaczniki serwerowe (świat, x, z, nazwa, typ, ikona, opis) | brak | `MapaData.java:116` |
 
@@ -42,7 +43,7 @@ Parser: `znaczniki` 21 wpisów, `zakladki` 3, `wlasne.ikony` 10. Dodatkowo plugi
 
 ## Jak działa
 - `onEnable` (`MapaPlugin.java:106-138`): config, własne znaczniki, `loadAll()`; PelnaMapa tylko gdy MapEngine aktywny (inaczej ostrzeżenie), panel atlasu tylko z packetevents, `MinimapaZnaczniki` tylko z NMinimap (`:110-126`).
-- Zadania okresowe: `refreshPlayerTiles` co 20 ticków (kafel gracza w otwartym atlasie, `:134,927-938`); `refreshOwnerKeys` co 20 ticków (klucz postaci MMOProfiles, `:137-143`); `Prowadzenie.tick` co 10 ticków (`Prowadzenie.java:23,79`); `PelnaMapa.tick` co 1 tick (`PelnaMapa.java:67`), przy braku sesji pełnej mapy kończy się od razu (`PelnaMapa.java:255`).
+- Zadania okresowe: `refreshPlayerTiles` co 20 ticków (kafel gracza w otwartym atlasie, `:134,942-953`); `refreshOwnerKeys` co 20 ticków (klucz postaci MMOProfiles, `:137-143`); `Prowadzenie.tick` co 10 ticków (`Prowadzenie.java:23,79`); `PelnaMapa.tick` co 1 tick (`PelnaMapa.java:67`), przy braku sesji pełnej mapy kończy się od razu (`PelnaMapa.java:255`).
 - Zdarzenia (`MapaPlugin.java`): Join (+40 ticków opis i podmiana map) `:366-373`, Respawn `:375`, ItemHeld `:380`, Interact (PPM mapą) `:407-431`, Join (klucz) `:433`, Quit (sprzątanie map stanu) `:436-448`, InventoryClick/Drag/Close atlasu `:450-545`. Brak priorytetów ustawionych jawnie (domyślne NORMAL; nie sprawdzone w pełni).
 - Dane map: kafle atlasu z `kafle.json` (poziomy bpp/kol/wier na świat), kolory z `swiaty/<swiat>.bin|.blk|.json`, tekstury `tekstury.bin` (`MapaData.java:129-194`). Generator poza pluginem (spec: `SPEC.md`).
 - Prowadzenie: waypoint packetevents (`WaypointMost.java:16-32`) + napis kierunek/odległość; cel osiągnięty <= 8 bloków (`Prowadzenie.java:100-103`).
@@ -60,7 +61,7 @@ Stałe: dwa timery co 20 ticków (pętla po graczach online / atlasach), jeden c
 ## Znane pułapki i decyzje
 - Pułapki zmierzone (MapPalette 248 kolorów, ramki MapEngine, oversized_in_gui): `~/.claude/skills/mc-swiat-lochy/mapa-swiata.md:19-27`.
 - "Mapa znika": numer map-id NMinimap = pierwsza osobista mapa (v10): `mapa-swiata.md:15`; w kodzie `reserved`, `MapaPlugin.java:65-67,240-243`.
-- Podejrzane w kodzie (nie poprawiane): `pelna.odleglosc` na world1 = 3.0, domyślna w kodzie 2.2 (`PelnaMapa.java:99`, świadoma zmiana nieudokumentowana); plugin.yml `description` mówi "Otwiera lub przeładowuje mapę" a komenda robi też cele; nie sprawdzono, kto poza menu daje graczowi przedmiot mapy.
+- Poprawione (25.10): domyślna `pelna.odleglosc` w kodzie 3.0 (jak plik i world1), `description` w `plugin.yml` opisuje plugin i komendę, dodany tab-complete. Do decyzji właściciela (nie zmieniane): `mapy-graczy.yml` kluczowany UUID konta (jeden `MapView` na konto), a pinezki (`gracze/<uuid>.yml`) UUID profilu postaci (`ProfilMost.java`) - rozjazd kluczowania konto vs postać.
 
 ## Budowanie i wdrożenie
 `./build.sh` w katalogu pluginu (Gradle w kontenerze `build-mapa-$$`, `--memory 2g`; zależności przypięte w `build.gradle.kts`: paper-api 1.21.11, mapengine-api 1.8.12, MMOProfiles, MythicLib, MMOCore, packetevents; `libs/` NMinimap-1.0.9, AnvilORM-1.0.2). Testy jednostkowe JUnit 5 w `src/test/java/pl/mcmmorpg/mapa/` (7 plików: MapaData, MapaMath, MapyGraczy, PanelMath, PelnaMath, Prowadzenie, WlasneZnaczniki). Wdrożenia v1-v12 robiły skrypty z `backups/mapa*/cofnij.sh` (`mapa-swiata.md:6-18`).
