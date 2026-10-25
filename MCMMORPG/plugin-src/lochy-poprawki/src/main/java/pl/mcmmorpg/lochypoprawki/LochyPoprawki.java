@@ -90,6 +90,11 @@ public final class LochyPoprawki extends JavaPlugin implements Listener {
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    // plugin.yml tez wymaga tego uprawnienia; sprawdzenie w kodzie jest drugim zabezpieczeniem (zwykly OP/konsola: bez zmian)
+    if (!sender.hasPermission("lochypoprawki.sygnal")) {
+      sender.sendMessage("Brak uprawnien do tej komendy.");
+      return true;
+    }
     if (args.length == 1 && args[0].equalsIgnoreCase("stan")) {
       sender.sendMessage(stan());
       return true;
@@ -113,13 +118,25 @@ public final class LochyPoprawki extends JavaPlugin implements Listener {
     return true;
   }
 
+  /** Ostatnie ostrzezenie wg klucza (powod|nick|nazwa): jedno na 30 s, zeby zepsuta mapa nie zasypala logu. */
+  private final Map<String, Long> ostrzezenia = new HashMap<>();
+
+  private void ostrzez(String powod, String nick, String nazwa) {
+    long teraz = System.currentTimeMillis();
+    if (ostrzezenia.size() > 64) ostrzezenia.values().removeIf(t -> teraz - t > 30_000L);
+    Long ostatnio = ostrzezenia.get(powod + "|" + nick + "|" + nazwa);
+    if (ostatnio != null && teraz - ostatnio < 30_000L) return;
+    ostrzezenia.put(powod + "|" + nick + "|" + nazwa, teraz);
+    getLogger().warning("sygnal " + nazwa + " dla " + nick + " nie dotarl: " + powod);
+  }
+
   private void wyslijSygnal(String nick, String nazwa) {
     Player p = Bukkit.getPlayerExact(nick);
-    if (p == null) return;
+    if (p == null) { ostrzez("gracz offline", nick, nazwa); return; }
     MythicPlayer mp = MythicDungeons.inst().getPlayerManager().get(p.getUniqueId());
     AbstractInstance inst = mp == null ? null : mp.getInstance();
     InstancePlayable play = inst == null ? null : inst.asPlayInstance();
-    if (play == null || !MythicDungeons.inst().getActiveInstances().containsValue(inst)) return;
+    if (play == null || !MythicDungeons.inst().getActiveInstances().containsValue(inst)) { ostrzez("gracz nie jest w aktywnej instancji lochu", nick, nazwa); return; }
     Bukkit.getPluginManager().callEvent(new RemoteTriggerEvent(nazwa, null, play, 0, null, mp));
     getLogger().info("sygnal " + nazwa + " od " + nick + " w lochu " + inst.getInstanceWorld().getName());
   }
