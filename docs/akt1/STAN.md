@@ -48,4 +48,4 @@ tor 6 startuje teraz; wycinek przed resztą wyspy) — właściciel może zmieni
 
 ## Następny krok
 1. Commit etapu 1 (+ PR draft). 2. Etap 2: beat chart wycinka W1 (bez fabuły). 3. Tor 6: projekt testu proxy-based profiles.
-4. Klon `akt1-zadania` stoi (BQ+MostNpc, difficulty easy) — usunąć przed końcem sesji.
+4. Klon `akt1-zadania` USUNIĘTY 25.10 (odtworzenie: klon.sh start, jar BQ 3.2.0 z modrinth wg docs/ref/betonquest/README.md + jar most-npc z build.sh, AKT1_test.yml do MythicMobs/mobs, QuestPackages/akt1test, restart, difficulty easy).
