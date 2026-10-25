@@ -1,0 +1,423 @@
+# Drzewko archetypu (paczka B naprawy klas, 25.10). Źródło: tools/klasy-rasowe/serwer/plugins/MMOCore/skill-trees/.
+# Układ węzłów = rogue-marksman.yml (łańcuch 21 węzłów od a1). Bez COOLDOWN_REDUCTION (sufit CDR: README serwer/).
+id: 'akolita-przywolywacz'
+name: '&eAkolita'
+type: CUSTOM
+lore:
+  - '&6Dla akolity: Dusze i przetrwanie przywoływacza'
+max-point-spent: 21
+
+icon:
+  material: WITHER_SKELETON_SKULL
+  item_flags: [HIDE_ATTRIBUTES]
+
+nodes:
+
+#### A
+  a1:
+    name: 'Naczynie dusz I'
+    coordinates:
+      x: -3
+      y: 0
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_MANA";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Pula Dusz: &a+1"
+      1:
+        - "&7Pula Dusz: &a+1"
+  a2:
+    name: 'Naczynie dusz II'
+    coordinates:
+      x: -2
+      y: 0
+
+    parents:
+      strong:
+        a1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_MANA";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Pula Dusz: &a+1"
+      1:
+        - "&7Pula Dusz: &a+1"
+  a3:
+    name: 'Naczynie dusz III'
+    coordinates:
+      x: -1
+      y: 0
+
+    parents:
+      strong:
+        a2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_MANA";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Pula Dusz: &a+2"
+      1:
+        - "&7Pula Dusz: &a+2"
+
+#### B
+  b1:
+    name: 'Wola przywoływacza I'
+    coordinates:
+      x: -1
+      y: -1
+
+    parents:
+      strong:
+        a3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SKILL_DAMAGE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia umiejętności: &a+2%"
+      1:
+        - "&7Obrażenia umiejętności: &a+2%"
+  b2:
+    name: 'Wola przywoływacza II'
+    coordinates:
+      x: -1
+      y: -2
+
+    parents:
+      strong:
+        b1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SKILL_DAMAGE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia umiejętności: &a+3%"
+      1:
+        - "&7Obrażenia umiejętności: &a+3%"
+  b3:
+    name: 'Wola przywoływacza III'
+    coordinates:
+      x: 0
+      y: -2
+
+    parents:
+      strong:
+        b2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SKILL_DAMAGE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia umiejętności: &a+5%"
+      1:
+        - "&7Obrażenia umiejętności: &a+5%"
+
+#### C
+  c1:
+    name: 'Krzepa kapłana I'
+    coordinates:
+      x: 1
+      y: -2
+
+    parents:
+      strong:
+        b3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalne zdrowie: &a+2"
+      1:
+        - "&7Maksymalne zdrowie: &a+2"
+  c2:
+    name: 'Krzepa kapłana II'
+    coordinates:
+      x: 2
+      y: -2
+
+    parents:
+      strong:
+        c1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalne zdrowie: &a+3"
+      1:
+        - "&7Maksymalne zdrowie: &a+3"
+  c3:
+    name: 'Krzepa kapłana III'
+    coordinates:
+      x: 3
+      y: -2
+
+    parents:
+      strong:
+        c2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=4;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalne zdrowie: &a+4"
+      1:
+        - "&7Maksymalne zdrowie: &a+4"
+
+#### D
+  d1:
+    name: 'Szata pancerna I'
+    coordinates:
+      x: 3
+      y: -1
+
+    parents:
+      strong:
+        c3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DEFENSE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrona: &a+3"
+      1:
+        - "&7Obrona: &a+3"
+  d2:
+    name: 'Szata pancerna II'
+    coordinates:
+      x: 4
+      y: -1
+
+    parents:
+      strong:
+        d1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DEFENSE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrona: &a+5"
+      1:
+        - "&7Obrona: &a+5"
+  d3:
+    name: 'Szata pancerna III'
+    coordinates:
+      x: 4
+      y: 0
+
+    parents:
+      strong:
+        d2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DEFENSE";amount=7;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrona: &a+7"
+      1:
+        - "&7Obrona: &a+7"
+
+#### E
+  e1:
+    name: 'Opieka zza grobu I'
+    coordinates:
+      x: 4
+      y: 1
+
+    parents:
+      strong:
+        d3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja zdrowia: &a+0,1 HP/s"
+      1:
+        - "&7Regeneracja zdrowia: &a+0,1 HP/s"
+  e2:
+    name: 'Opieka zza grobu II'
+    coordinates:
+      x: 4
+      y: 2
+
+    parents:
+      strong:
+        e1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.15;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja zdrowia: &a+0,15 HP/s"
+      1:
+        - "&7Regeneracja zdrowia: &a+0,15 HP/s"
+  e3:
+    name: 'Opieka zza grobu III'
+    coordinates:
+      x: 3
+      y: 2
+
+    parents:
+      strong:
+        e2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.25;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja zdrowia: &a+0,25 HP/s"
+      1:
+        - "&7Regeneracja zdrowia: &a+0,25 HP/s"
+
+#### F
+  f1:
+    name: 'Tarcza wiary I'
+    coordinates:
+      x: 2
+      y: 2
+
+    parents:
+      strong:
+        e3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na magię: &a+2%"
+      1:
+        - "&7Odporność na magię: &a+2%"
+  f2:
+    name: 'Tarcza wiary II'
+    coordinates:
+      x: 2
+      y: 1
+
+    parents:
+      strong:
+        f1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na magię: &a+3%"
+      1:
+        - "&7Odporność na magię: &a+3%"
+  f3:
+    name: 'Tarcza wiary III'
+    coordinates:
+      x: 1
+      y: 1
+
+    parents:
+      strong:
+        f2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na magię: &a+5%"
+      1:
+        - "&7Odporność na magię: &a+5%"
+
+#### G
+  g1:
+    name: 'Żer z ofiary I'
+    coordinates:
+      x: 0
+      y: 1
+
+    parents:
+      strong:
+        f3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SPELL_VAMPIRISM";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Wampiryzm czarów: &a+1%"
+      1:
+        - "&7Wampiryzm czarów: &a+1%"
+  g2:
+    name: 'Żer z ofiary II'
+    coordinates:
+      x: 0
+      y: 2
+
+    parents:
+      strong:
+        g1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SPELL_VAMPIRISM";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Wampiryzm czarów: &a+1%"
+      1:
+        - "&7Wampiryzm czarów: &a+1%"
+  g3:
+    name: 'Żer z ofiary III'
+    coordinates:
+      x: -1
+      y: 2
+
+    parents:
+      strong:
+        g2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SPELL_VAMPIRISM";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Wampiryzm czarów: &a+2%"
+      1:
+        - "&7Wampiryzm czarów: &a+2%"

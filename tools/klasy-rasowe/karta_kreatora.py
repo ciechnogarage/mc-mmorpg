@@ -1,5 +1,5 @@
 """Karta klasy w scenie kreatora postaci (CharacterCreator) — SAMODZIELNY skrypt, uruchamiany PO generatorze:
-    cd /opt/docker/mc/data/world1 && python3 tools/klasy-rasowe/karta_kreatora.py
+    KLASY_ROOT=<dane serwera-kopii> python3 tools/klasy-rasowe/karta_kreatora.py
 Dopisuje do CharacterCreator/config.yml pola, ktorych generuj_klasy.py nie pisze (i ktore jego kreator()
 zachowuje jako "obce klucze"): classes.<arch>.races.<rasa>.{role,difficulty,start-skill,start-skill-level,
 start-skill-text} oraz races.<rasa>.traits. generuj_klasy.py NIE jest zmieniany (tabele KLASY i rasowe()
@@ -16,7 +16,7 @@ uruchomieniu generatora), inaczej generator odmawia.
 """
 import os, re
 
-ROOT = '/opt/docker/mc/data/world1'  # serwer (narzędzie przeniesione z world1/tools do repo MC 22.10)
+ROOT = os.environ.get('KLASY_ROOT', '')  # jak generuj_klasy.py (paczka B 25.10): katalog serwera-kopii
 
 # (rasa, archetyp) -> (rola, trudność 1-3). Rola: Obrońca / Obrażenia / Wsparcie / Kontrola (+ druga).
 # Trudność: 1 = wybacza błędy (zbroja, życie), 3 = kruchy albo wymaga pilnowania zasobu/dystansu.
@@ -24,34 +24,33 @@ ROLA = {
     ('czlowiek', 'wojownik'): ('Obrońca, walka wręcz', 1),
     ('czlowiek', 'ninja'):    ('Obrażenia z bliska i z dystansu', 2),
     ('czlowiek', 'mag'):      ('Obrażenia magiczne z dystansu', 2),
-    ('czlowiek', 'akolita'):  ('Wsparcie, drugi szereg', 1),
+    ('czlowiek', 'akolita'):  ('Przywoływacz, drugi szereg', 1),
     ('elf', 'wojownik'):      ('Obrażenia wręcz, zwinność', 2),
     ('elf', 'ninja'):         ('Obrażenia z dystansu', 2),
     ('elf', 'mag'):           ('Obrażenia magiczne z dystansu', 3),
-    ('elf', 'akolita'):       ('Wsparcie, walka wręcz', 2),
+    ('elf', 'akolita'):       ('Przywoływacz, walka wręcz', 2),
     ('ork', 'wojownik'):      ('Obrażenia wręcz, obrońca', 1),
     ('ork', 'ninja'):         ('Obrażenia z dystansu i wręcz', 2),
     ('ork', 'mag'):           ('Obrażenia magiczne, kontrola', 2),
-    ('ork', 'akolita'):       ('Wsparcie, walka wręcz', 2),
+    ('ork', 'akolita'):       ('Przywoływacz, walka wręcz', 2),
     ('nieumarly', 'wojownik'): ('Obrażenia wręcz, kradzież życia', 1),
     ('nieumarly', 'ninja'):   ('Kontrola, obrażenia z bliska', 3),
     ('nieumarly', 'mag'):     ('Obrażenia magiczne, wampiryzm', 3),
-    ('nieumarly', 'akolita'): ('Wsparcie, kradzież życia', 2),
+    ('nieumarly', 'akolita'): ('Przywoływacz, kradzież życia', 2),
 }
 
 # Cechy rasy słowami gracza — MUSZĄ odpowiadać generuj_klasy.rasowe() (klucze w CECHY_KLUCZE).
 CECHY = {
     'czlowiek':  ['+5% krótsze odnowienie umiejętności'],
-    # zasięg cech jak w rasowe(): elfia regeneracja omija Dusze akolity, orcze -20% dotyczy tylko many maga
-    # (Szał, Skupienie i Dusze mają stałą pulę) — 2026-10-03 karta mówiła "poza wojownikiem"
-    'elf':       ['+10% szybkości ruchu', 'szybsza regeneracja zasobu (poza akolitą)', '-10% życia'],
-    'ork':       ['+15% życia', '+10% obrażeń fizycznych', '-20% many (tylko mag)'],
+    # zasięg cech jak w rasowe() (B11, paczka B 25.10): premia elfa i kara orka w zasobie archetypu
+    'elf':       ['+10% szybkości ruchu', 'zasób archetypu wolniej ucieka lub szybciej wraca (poza akolitą)', '-10% życia'],
+    'ork':       ['+15% życia', '+10% obrażeń fizycznych', '-20% zasobu archetypu (mana, Skupienie, Szał, Dusze)'],
     'nieumarly': ['+3% kradzieży życia (mag i akolita: wampiryzm czarów)', '-5% szybkości ruchu'],
 }
 CECHY_KLUCZE = {
     'czlowiek':  {'cooldown-reduction'},
     'elf':       {'movement-speed', 'mana-regeneration', 'max-health'},
-    'ork':       {'max-health', 'physical-damage', 'max-mana'},
+    'ork':       {'max-health', 'physical-damage', 'max-mana', 'mana-regeneration'},
     'nieumarly': {'lifesteal', 'spell-vampirism', 'movement-speed'},
 }
 
@@ -206,6 +205,8 @@ def main():
     brak = [x for x in kid if x not in ROLA]
     if brak:
         raise SystemExit(f'karta_kreatora: brak ROLA dla {brak}')
+    if not ROOT or not os.path.isdir(os.path.join(ROOT, 'plugins', 'CharacterCreator')):
+        raise SystemExit('Ustaw KLASY_ROOT=<katalog danych serwera-kopii> (z plugins/CharacterCreator).')
     cc = os.path.join(ROOT, 'plugins', 'CharacterCreator', 'config.yml')
     tekst = open(cc, encoding='utf-8').read()
     nowy = wstaw(tekst, kid)

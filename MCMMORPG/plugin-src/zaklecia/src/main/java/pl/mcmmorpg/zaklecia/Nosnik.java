@@ -164,6 +164,7 @@ final class Nosnik implements Listener {
   String przypisz(Player p, String id, boolean prawa) {
     Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
     if (id != null && z == null) return "§cNieznane zaklęcie: " + id;
+    if (id != null && !plugin.bramka.wolno(p)) return Bramka.ODMOWA;
     PlayerInventory inv = p.getInventory();
     if (!prawa) {
       ItemStack teraz = inv.getItemInOffHand();

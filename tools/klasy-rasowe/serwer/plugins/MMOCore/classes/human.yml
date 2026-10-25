@@ -1,0 +1,28 @@
+# KLASA DOMYSLNA MMOCore — istnieje po to, zeby przestal lecec NPE przy wczytywaniu profilu.
+#
+# Dlaczego: ClassManager#initialize szuka wsrod klas z plikow tej, ktora ma opcje 'default',
+# a gdy zadnej nie znajdzie, tworzy w locie PlayerClass("HUMAN", "Human", LEATHER_BOOTS)
+# i przypisuje ja WYLACZNIE do pola defaultClass — NIE rejestrujac jej w mapie klas.
+# Skutek byl taki, ze kazdy profil z wpisem 'class-info: HUMAN' konczyl sie przy wczytywaniu
+# wyjatkiem `NullPointerException: Could not find class 'HUMAN'`
+# (YAMLDatabaseImpl:118 -> Validate.notNull(classManager.get("HUMAN"))).
+#
+# Wpis 'class-info: HUMAN' powstaje przy KAZDYM wyborze klasy przez gracza, ktory jeszcze
+# zadnej nie ma — i klucz 'save-default-class-info: false' w config.yml tego NIE wylacza:
+# warunek w SavedClassInformation brzmi `!profess.hasOption(DEFAULT) || saveDefaultClassInfo`,
+# a syntetyczna klasa HUMAN nie ma ZADNYCH opcji, wiec hasOption(DEFAULT) jest falszywe
+# i zapis idzie mimo wszystko. Sprawdzone pomiarem: po przestawieniu klucza swiezo utworzony
+# profil nadal dostawal 'class-info: HUMAN', a jego wczytanie nadal rzucalo NPE.
+#
+# Ten plik daje tej klasie prawdziwa definicje, wiec classManager.get("HUMAN") ja znajduje.
+# Identyfikator bierze sie z nazwy pliku (human.yml -> HUMAN), czyli pasuje takze do wpisow
+# zapisanych wczesniej. Klasa jest celowo PUSTA: gracz siedzi w niej tylko do chwili, w
+# ktorej kreator postaci nada mu wlasciwa (mmocore class select), i nic z niej nie dostaje.
+display:
+    name: 'Human'
+    item: LEATHER_BOOTS
+    lore:
+    - 'Postać bez wybranej klasy.'
+
+options:
+    default: true

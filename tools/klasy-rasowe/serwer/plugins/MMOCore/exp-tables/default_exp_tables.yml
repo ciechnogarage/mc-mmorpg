@@ -1,0 +1,98 @@
+
+# Experience tables are separated into multiple items.
+
+example_exp_table:
+
+  # Every item is fully independent and has its own chance
+  # of dropping every time a player passes a level! When an
+  # item drops, all its triggers are called.
+  first_table_item:
+
+    # This item will drop every 3 level ups
+    period: 3
+
+    # This item has a 80% chance to drop every 3 level ups
+    chance: 80
+
+    # Every successive drop failure the item will reduce the
+    # future risk by X%. With a 80% failure reduction rate,
+    # risks become:
+    # - 80%
+    # - 96% (almost guaranteed)
+    # - 99.2% (almost guaranteed+)
+    # - 99.84% (almost guaranteed++)
+    # so on forever..
+    #
+    # This is better than just increasing the claim chance by a
+    # certain amount each time because otherwise the claim chance
+    # just becomes/surpasses 100% at some point.
+    fail-reduction: 80
+
+    # What happens when that item is claimed. Does it give exp?
+    # Does it perform a command, unlocks a skill? etc
+    # You can find the list of available triggers on the wiki
+    triggers:
+      - 'exp{amount=20}'
+
+  # This is a second item, fully independent of the previous one.
+  second_table_item:
+    period: 2
+    triggers:
+      - 'exp{amount=80}'
+      - 'command{format="broadcast Boy, %player_name% level up twice one of their professions!"}'
+
+# Exp table used by class to provide
+# one skill point every level up
+class_exp_table:
+  skill_point:
+    period: 1
+    triggers:
+      - 'command{format="mmocore admin skill-points give %player_name% 1"}'
+
+  # 2026-09-26 — punkty za poziom (decyzja właściciela):
+  #   atrybut co poziom, drzewko co 2 poziomy, punkt klasy RAZ na 10 poziomie.
+  # Punkt klasy służy wyłącznie do wyboru specjalizacji (okno /class, subclass-select.yml).
+  # Stare klasy (warrior/mage/paladin/rogue) mają display:false, żeby tym punktem nie dało
+  # się zmienić klasy bazowej z pominięciem kreatora.
+  punkt_atrybutu:
+    period: 1
+    triggers:
+      - 'command{format="mmocore admin attribute-points give %player_name% 1"}'
+      # Paczka B 25.10 (B12): każdy poziom mówi, co dał — wcześniej poziomy bez nowego skilla były „puste”.
+      # message/sound: docs mmocore misc-triggers.md (message, sound; PAPI w message).
+      # Bez numeru poziomu: trigger liczy się PRZED awansem (%mmocore_level% = stary, test 25.10 „Poziom 1!” przy 2),
+      # a numer podaje i tak MMOCore (messages.yml level-up „Awans na poziom N!”).
+      - 'message{format="&6✦ &7+1 punkt atrybutu, +1 punkt umiejętności &8(menu Q)"}'
+  punkt_drzewka:
+    period: 2
+    triggers:
+      - 'command{format="mmocore admin skill-tree-points give %player_name% 1 global"}'
+      - 'message{format="&a  +1 punkt drzewka talentów"}'
+  # B12: dodatkowy punkt drzewka na 9 poz. (przedostatni poziom Aktu 1 nie jest pusty); razem do 10 poz. 6 pkt
+  # (2,4,6,8,9,10). docs level-tables.md „Fixed Level”: level: N = tylko ten poziom.
+  punkt_drzewka_9:
+    level: 9
+    triggers:
+      - 'command{format="mmocore admin skill-tree-points give %player_name% 1 global"}'
+      - 'message{format="&a  +1 punkt drzewka talentów &7(premia przed specjalizacją)"}'
+  punkt_klasy_specjalizacja:
+    level: 10
+    triggers:
+      - 'command{format="mmocore admin class-points give %player_name% 1"}'
+      - 'message{format="&6&l  Poziom 10: wybierz specjalizację! &7(+1 punkt klasy, menu Q → Postać)"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=1;pitch=1}'
+
+second_exp_table:
+
+  # Base exp every level up, sweet.
+  some_item:
+    period: 1
+    triggers:
+      - 'exp{amount=100}'
+
+    # Extra exp every 3 levels
+    some_other_item:
+      period: 3
+      triggers:
+        - 'exp{amount=100}'
+

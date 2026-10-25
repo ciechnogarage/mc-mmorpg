@@ -8,14 +8,22 @@ JEDNO źródło prawdy: tabela KLASY poniżej. Wytwarza:
   plugins/CoreTools/Scripts/klasy-rasowe.yml    (mapowanie rasa x archetyp)
 Broń MMOItems łata osobno latacz_broni.py (bierze BRON stąd).
 
-Uruchomienie z katalogu world1: python3 tools/klasy-rasowe/generuj_klasy.py, potem
+Uruchomienie: KLASY_ROOT=<katalog danych serwera-KOPII> python3 tools/klasy-rasowe/generuj_klasy.py, potem
 `mmocore reload`, `ct reload`. NOWE atrybuty => RESTART (MMOItems rejestruje statystyki
 required-<atrybut> tylko przy starcie). Rozpiska: docs/klasy-rasowe/rozpiska-16-klas.md.
 Bez pyyaml (brak na hoście) — szkielet przerabiany tekstowo, sekcjami najwyższego poziomu.
 """
 import json, os, re
 
-ROOT = '/opt/docker/mc/data/world1'  # serwer (narzędzie przeniesione z world1/tools do repo MC 22.10)
+# Katalog danych serwera, który generator NADPISUJE (paczka B 25.10: bez domyślnego world1 — generator pisze 50+
+# plików naraz, więc uruchamiamy go na kopii/klonie, a world1 dostaje gotowe pliki przez wdrożenie z cofnij.sh).
+ROOT = os.environ.get('KLASY_ROOT', '')
+if __name__ == '__main__':
+    if not ROOT or not os.path.isdir(os.path.join(ROOT, 'plugins', 'MMOCore')):
+        raise SystemExit('Ustaw KLASY_ROOT=<katalog danych serwera> (z plugins/MMOCore), np. dane klonu.')
+    if os.path.realpath(ROOT) == '/opt/docker/mc/data/world1' and os.environ.get('KLASY_WORLD1') != 'tak':
+        raise SystemExit('KLASY_ROOT wskazuje world1: generuj na klonie i wdrażaj kopią z cofnij.sh '
+                         '(świadomie: KLASY_WORLD1=tak).')
 P = lambda *a: os.path.join(ROOT, 'plugins', *a)
 
 # ---- biegłości broni: grupa -> (nazwa, typy MMOItems) ------------------------------------------
@@ -45,7 +53,9 @@ BRON = {
 ZBROJA = {'lekka': 'lekka', 'srednia': 'średnia', 'ciezka': 'ciężka'}
 
 ARCH = {  # szkielet, id MMOCore archetypu, zbroja, broń
-    'wojownik': ('warrior.yml',   'WARRIOR', ['lekka', 'srednia'], ['miecz']),
+    # Z5 (paczka B 25.10, docs/klasy-rasowe/analiza-spojnosci-2026-10-03.md:81-84): wojownik każdej rasy od
+    # poz. 1 nosi lekką, średnią i ciężką zbroję oraz tarczę — ciężka/tarcza nie są nagrodą dopiero na 10 poz.
+    'wojownik': ('warrior.yml',   'WARRIOR', ['lekka', 'srednia', 'ciezka'], ['miecz', 'tarcza']),
     'ninja':    ('rogue.yml',     'ROGUE',   ['lekka'],            ['sztylet', 'luk']),
     'mag':      ('mage/mage.yml', 'MAGE',    [],                   ['kostur']),
     'akolita':  ('paladin.yml',   'PALADIN', ['lekka'],            ['bulawa']),
@@ -76,12 +86,18 @@ STAT_OPIS = {
     'kradziez': 'kradzież życia', 'wampiryzm': 'wampiryzm czarów', 'zdrowie': 'więcej życia',
     'obrona_mag': 'odporność na magię',
 }
+# Akolita nie ma many: jego pula to Dusze (stała, bez regeneracji — etap 2). Premia 'mana' i 'regen_many'
+# specjalizacji akolity = większa pula Dusz, mniejsza niż 8 many maga, bo jedna Dusza to jedno przywołanie
+# (pula 10 -> 14, +40%; paczka B 25.10, B9).
+DUSZE_PREMIA = ('max-mana', 4, 0)
+def opis_statu(arch, stat):
+    return 'większa pula Dusz' if arch == 'akolita' and stat in ('mana', 'regen_many') else STAT_OPIS[stat]
 
 # (rasa, archetyp, id, nazwa, [opis x2], +zbroja rasowa, broń rasowa, ikona,
 #   [(id, nazwa, kolor, [opis x2], +zbroja, +broń, stat), x2])
 KLASY = [
  ('czlowiek', 'wojownik', 'rycerz', 'Miecz Korony', ['Zaprzysiężony obrońca Korony.', 'Stal, halabarda i dane słowo.'], [], ['drzewcowa'], 'IRON_SWORD', [
-   ('bastion', 'Nieugięty', '&f', ['Mur, o który rozbija się szarża.', 'Nie cofa się ani o krok.'], ['ciezka'], ['tarcza'], 'obrona'),
+   ('bastion', 'Nieugięty', '&f', ['Mur, o który rozbija się szarża.', 'Nie cofa się ani o krok.'], [], [], 'obrona'),
    ('czempion', 'Czempion Areny', '&e', ['Mistrz pojedynków i areny.', 'Każdy cios waży więcej.'], [], [], 'fizyczne')]),
  ('czlowiek', 'ninja', 'agent', 'Lis Zaułków', ['Cień miejskich zaułków.', 'Sztylet w rękawie, kusza pod płaszczem.'], [], ['kusza'], 'CROSSBOW', [
    ('widmo', 'Truciciel', '&8', ['Ostrze umoczone w jadzie.', 'Zabija, zanim ofiara zrozumie.'], [], [], 'kryt'),
@@ -90,11 +106,11 @@ KLASY = [
    ('elementalista', 'Władca Żywiołów', '&b', ['Ogień, lód i piorun', 'posłuszne jednemu słowu.'], [], [], 'czary'),
    ('przywolywacz', 'Chronomanta', '&d', ['Mag, który nagina czas.', 'Jego zaklęcia wracają szybciej.'], [], [], 'odnowienie')]),
  ('czlowiek', 'akolita', 'swiety_akolita', 'Nosiciel Relikwii', ['Niesie relikwie świętych', 'i ich tarczę wiary.'], ['srednia'], ['tarcza'], 'SHIELD', [
-   ('serafin', 'Żywa Relikwia', '&f', ['Święta moc w ludzkim ciele.', 'Staje w pierwszym szeregu.'], ['ciezka'], [], 'obrona'),
+   ('serafin', 'Żywa Relikwia', '&f', ['Święta moc w ludzkim ciele.', 'Staje w pierwszym szeregu.'], [], [], 'obrona'),
    ('hierofant', 'Chorąży Świętych', '&e', ['Niesie sztandar świętych.', 'Duchy obrońców słuchają jego głosu.'], [], [], 'mana')]),
 
  ('elf', 'wojownik', 'ostrze_gaju', 'Klinga Gaju', ['Szermierz świętych gajów.', 'Lekki krok, elfia klinga.'], [], ['klinga'], 'IRON_SWORD', [
-   ('straznik_cierni', 'Różany Rycerz', '&2', ['Obrońca różanego gaju.', 'Piękny i kolczasty.'], ['ciezka'], ['tarcza'], 'obrona'),
+   ('straznik_cierni', 'Różany Rycerz', '&2', ['Obrońca różanego gaju.', 'Piękny i kolczasty.'], [], [], 'obrona'),
    ('tancerz_ostrzy', 'Tancerz Ostrzy', '&a', ['Taniec klingi. Szybki', 'i nieuchwytny.'], [], [], 'unik')]),
  ('elf', 'ninja', 'straznik_kniei', 'Szept Kniei', ['Nikt go nie słyszy w lesie.', 'Łuk długi i sztylet.'], [], ['luk_dlugi'], 'BOW', [
    ('cien_lisci', 'Tkacz Sideł', '&2', ['Las jest jego pułapką.', 'Każda ścieżka kończy się sidłem.'], [], [], 'kryt'),
@@ -107,7 +123,7 @@ KLASY = [
    ('opiekun_duchow', 'Przewodnik Ogników', '&b', ['Ogniki gaju idą', 'za jego światłem.'], [], [], 'regen_many')]),
 
  ('ork', 'wojownik', 'wodz_wojny', 'Wódz Wojny', ['Prowadzi szarżę na czele hordy', 'i nie zna odwrotu.'], [], ['topor'], 'IRON_AXE', [
-   ('tyran', 'Tyran', '&c', ['Ściana żelaza. Przyjmuje ciosy,', 'żeby drużyna mogła zadawać.'], ['ciezka'], ['tarcza'], 'obrona'),
+   ('tyran', 'Tyran', '&c', ['Ściana żelaza. Przyjmuje ciosy,', 'żeby drużyna mogła zadawać.'], [], [], 'obrona'),
    ('krwioburca', 'Krwioburca', '&4', ['Szał bitewny. Im więcej krwi,', 'tym mocniej bije.'], [], [], 'kryt')]),
  ('ork', 'ninja', 'tropiciel', 'Kieł Stepu', ['Łowca stepów, szybki jak wiatr.', 'Włócznia i łuk.'], ['srednia'], ['wlocznia'], 'TRIDENT', [
    ('lowca_bestii', 'Zaklinacz Bestii', '&6', ['Bestie stepu słuchają', 'jego gwizdu.'], [], [], 'zdrowie'),
@@ -120,7 +136,7 @@ KLASY = [
    ('szept_przodkow', 'Wołający Przodków', '&5', ['Woła duchy wojowników', 'z pól dawnych bitew.'], [], [], 'mana')]),
 
  ('nieumarly', 'wojownik', 'rycerz_smierci', 'Rycerz Śmierci', ['Rycerz, którego śmierć', 'nie zatrzymała.'], [], ['miecz_dwureczny'], 'NETHERITE_SWORD', [
-   ('straznik_grobu', 'Kustosz Krypt', '&7', ['Strzeże krypt.', 'Nie ustępuje.'], ['ciezka'], ['tarcza'], 'obrona'),
+   ('straznik_grobu', 'Kustosz Krypt', '&7', ['Strzeże krypt.', 'Nie ustępuje.'], [], [], 'obrona'),
    ('zniwiarz', 'Żniwiarz', '&5', ['Zbiera życie', 'z każdym cięciem.'], [], [], 'kradziez')]),
  ('nieumarly', 'ninja', 'widmo_grobu', 'Upiór', ['Upiór cmentarnych mgieł.', 'Łańcuch i sztylet.'], [], ['lancuch'], 'IRON_CHAIN', [
    ('cien', 'Dusiciel', '&8', ['Łańcuch owija się', 'wokół szyi ofiary.'], [], [], 'kryt'),
@@ -203,6 +219,7 @@ ARCH_STAT = {
 # Przyrost Szału z ciosu razem ze skalą 0-100: dwa wyzwalacze na cios (weapon- i physical-damage) po 8-12
 # = ok. 20/cios, pełny pasek po ~5 ciosach, jak dawniej przy maksimum 20 i 2-3 na wyzwalacz.
 SZAL_Z_CIOSU = ('amount=2-3', 'amount=8-12')
+SZAL_Z_CIOSU_ORK = ('amount=2-3', 'amount=6-10')  # B11: kara orka w zasobie wojownika (~-20%)
 # ...a koszty skilli demo razy tyle samo (przegląd 30.09: pasek x5, przyrost x4, koszty stare = skille ~4x tańsze).
 # Nadpisanie w pliku klasy jak u maga (skills.<SKILL>.mana). Do czasu własnych skilli (etap 3).
 SZAL_MNOZNIK_KOSZTU = 4
@@ -260,14 +277,25 @@ def rasowe(attr, rasa, arch):
     """Delty rasy na bazie archetypu (rozpiska, 'Rasa')."""
     if rasa == 'czlowiek':
         dodaj(attr, 'cooldown-reduction', 5)
+    # B11 (paczka B 25.10, analiza-spojnosci-2026-10-03.md:19): kara orka i premia elfa działają na ZASÓB
+    # archetypu, nie na „manę” — wcześniej ork tracił coś tylko jako mag, elf zyskiwał 0.1 przy regeneracji 8/s.
+    # Szał wojownika (przyrost z ciosu) liczy main(): SZAL_Z_CIOSU_ORK.
     elif rasa == 'elf':
         razy(attr, 'movement-speed', 1.10); razy(attr, 'max-health', 0.90)
-        if arch != 'akolita':  # Dusze akolity się nie regenerują (etap 2)
-            dodaj(attr, 'mana-regeneration', 0.1)
+        if arch == 'mag':
+            dodaj(attr, 'mana-regeneration', 0.1)       # 2.0 -> 2.1 /s (+5%)
+        elif arch == 'ninja':
+            razy(attr, 'mana-regeneration', 1.15)       # Skupienie 8 -> 9.2 /s
+        elif arch == 'wojownik':
+            razy(attr, 'mana-regeneration', 0.80)       # Szał opada 2.5 -> 2.0 /s (dłużej trzyma pasek)
+        # akolita: Dusze bez regeneracji — premią elfa jest tylko ruch
     elif rasa == 'ork':
         razy(attr, 'max-health', 1.15); dodaj(attr, 'physical-damage', 10)
-        if arch not in ('wojownik', 'akolita', 'ninja'):  # Zasoby archetypów mają własną stałą pulę.
-            razy(attr, 'max-mana', 0.80)
+        if arch in ('mag', 'akolita'):
+            razy(attr, 'max-mana', 0.80)                # mana 40 -> 32; Dusze 10 -> 8
+        elif arch == 'ninja':
+            razy(attr, 'mana-regeneration', 0.80)       # Skupienie 8 -> 6.4 /s
+        # wojownik: Szał z ciosu 8-12 -> 6-10 (main, SZAL_Z_CIOSU_ORK)
     elif rasa == 'nieumarly':
         dodaj(attr, 'spell-vampirism' if arch in ('mag', 'akolita') else 'lifesteal', 3)
         razy(attr, 'movement-speed', 0.95)
@@ -404,7 +432,7 @@ def kreator(dane):
                           f'        weapons: {q(opis_broni(bron))}',
                           '        specializations:']
                 for sid, snazwa, skolor, sopis, s_zb, s_br, stat in specy:
-                    daje = ['większa pula Dusz' if arch == 'akolita' and stat == 'regen_many' else STAT_OPIS[stat]] + [ZBROJA[z] + ' zbroja' for z in s_zb] + [BRON[x][0] for x in s_br]
+                    daje = [opis_statu(arch, stat)] + [ZBROJA[z] + ' zbroja' for z in s_zb] + [BRON[x][0] for x in s_br]
                     wynik += [f'          - name: {q(skolor + snazwa)}',
                               f'            description: {q(" ".join(sopis))}',
                               f'            perks: {q(", ".join(daje))}']
@@ -468,41 +496,45 @@ KOSZTY_MANY = {}
 # Etap 2 (30.09): skille archetypu spoza szkieletu. Wariant rasy przez parametr MythicLib 'wariant'
 # (MythicLib/skill/akolita.yml, treść w tools/klasy-rasowe/akolita/). (SKILL, poziom, {parametr: wartość per rasa}).
 WARIANT_RASY = {'nieumarly': 0, 'ork': 1, 'elf': 2, 'czlowiek': 3}
+# Slot poz. 1 = sygnatura rasy (decyzja 01.10). Dawne bazy WOJ_SZARZA/NIN_RZUT/MAG_POCISK/AKO_WEZWANIE stały tu
+# tylko jako miejsce do podmiany — każda z 16 par rasa x archetyp ma sygnaturę, więc żadna klasa ich nie wiązała
+# (paczka A 25.10, PLAN „Dla integracji”). Brak sygnatury dla pary = błąd generatora, nie cichy powrót do bazy.
+SYGNATURA = '<sygnatura>'
 EXTRA_SKILLE = {
-    'akolita': [('AKO_WEZWANIE', 1, {'wariant': WARIANT_RASY}), ('AKO_ZNIWO', 3, {}),
+    'akolita': [(SYGNATURA, 1, {}), ('AKO_ZNIWO', 3, {}),
                 ('AKO_OPIEKA', 5, {'wariant': WARIANT_RASY, 'mana': {'nieumarly': 0, 'ork': 1, 'elf': 1, 'czlowiek': 1}}), ('AKO_ROZKAZ', 7, {})],
-    'wojownik': [('WOJ_SZARZA', 1, {'wariant': WARIANT_RASY}),
+    'wojownik': [(SYGNATURA, 1, {}),
                  ('WOJ_ROZPLATANIE', 3, {'wariant': WARIANT_RASY,
                                          'cooldown': {'nieumarly': 5, 'ork': 5, 'elf': 4, 'czlowiek': 5}}),
                  ('WOJ_OKRZYK', 5, {'wariant': WARIANT_RASY}),
                  ('WOJ_GNIEW', 7, {'wariant': WARIANT_RASY})],
-    'ninja': [('NIN_RZUT', 1, {'wariant': WARIANT_RASY}),
+    'ninja': [(SYGNATURA, 1, {}),
               ('NIN_CIECIE', 3, {'wariant': WARIANT_RASY}),
               ('NIN_KROK', 5, {'wariant': WARIANT_RASY}),
               ('NIN_EGZEKUCJA', 7, {'wariant': WARIANT_RASY})],
-    'mag': [('MAG_POCISK', 1, {'wariant': WARIANT_RASY}),
+    'mag': [(SYGNATURA, 1, {}),
             ('MAG_BARIERA', 3, {'wariant': WARIANT_RASY}),
             ('MAG_WYBUCH', 5, {'wariant': WARIANT_RASY}),
             ('MAG_MRUGNIECIE', 7, {'wariant': WARIANT_RASY,
                                     'cooldown': {'nieumarly': 8, 'ork': 8, 'elf': 6, 'czlowiek': 8}})],
 }
 SYGNATURY = {
-    ('czlowiek', 'wojownik'): ('WOJ_PCHNIECIE_KORONY', 'WOJ_SZARZA'),
-    ('czlowiek', 'ninja'): ('NIN_BELT_LISTU', 'NIN_RZUT'),
-    ('nieumarly', 'ninja'): ('NIN_PETLA_GROBU', 'NIN_RZUT'),
-    ('nieumarly', 'wojownik'): ('WOJ_MARSZ_KRYPTY', 'WOJ_SZARZA'),
-    ('nieumarly', 'mag'): ('MAG_SPLOT_DUSZY', 'MAG_POCISK'),
-    ('nieumarly', 'akolita'): ('AKO_KOSIARZ_CISZY', 'AKO_WEZWANIE'),
-    ('ork', 'wojownik'): ('WOJ_NATARCIE_WODZA', 'WOJ_SZARZA'),
-    ('ork', 'ninja'): ('NIN_SLAD_KLA', 'NIN_RZUT'),
-    ('ork', 'mag'): ('MAG_OKO_BURZY', 'MAG_POCISK'),
-    ('ork', 'akolita'): ('AKO_PRZODEK_MLOTA', 'AKO_WEZWANIE'),
-    ('czlowiek', 'akolita'): ('AKO_STRAZ_RELIKWII', 'AKO_WEZWANIE'),
-    ('czlowiek', 'mag'): ('MAG_PIECZEC_WIEZY', 'MAG_POCISK'),
-    ('elf', 'wojownik'): ('WOJ_PRZELOT_GAJU', 'WOJ_SZARZA'),
-    ('elf', 'ninja'): ('NIN_STRZALA_KORONY', 'NIN_RZUT'),
-    ('elf', 'mag'): ('MAG_NIC_ARKANOW', 'MAG_POCISK'),
-    ('elf', 'akolita'): ('AKO_SIERP_KSIEZYCA', 'AKO_WEZWANIE'),
+    ('czlowiek', 'wojownik'): 'WOJ_PCHNIECIE_KORONY',
+    ('czlowiek', 'ninja'): 'NIN_BELT_LISTU',
+    ('nieumarly', 'ninja'): 'NIN_PETLA_GROBU',
+    ('nieumarly', 'wojownik'): 'WOJ_MARSZ_KRYPTY',
+    ('nieumarly', 'mag'): 'MAG_SPLOT_DUSZY',
+    ('nieumarly', 'akolita'): 'AKO_KOSIARZ_CISZY',
+    ('ork', 'wojownik'): 'WOJ_NATARCIE_WODZA',
+    ('ork', 'ninja'): 'NIN_SLAD_KLA',
+    ('ork', 'mag'): 'MAG_OKO_BURZY',
+    ('ork', 'akolita'): 'AKO_PRZODEK_MLOTA',
+    ('czlowiek', 'akolita'): 'AKO_STRAZ_RELIKWII',
+    ('czlowiek', 'mag'): 'MAG_PIECZEC_WIEZY',
+    ('elf', 'wojownik'): 'WOJ_PRZELOT_GAJU',
+    ('elf', 'ninja'): 'NIN_STRZALA_KORONY',
+    ('elf', 'mag'): 'MAG_NIC_ARKANOW',
+    ('elf', 'akolita'): 'AKO_SIERP_KSIEZYCA',
 }
 SPEC_SKILLE = {
     'bastion': ('SPEC_BASTION_MUR', 'Mur Przysięgi'), 'czempion': ('SPEC_CZEMPION_WYZWANIE', 'Wyzwanie Areny'),
@@ -554,9 +586,10 @@ def dodaj_extra(szkielet, arch, rasa):
         linie = []
         sygnatura = SYGNATURY.get((rasa, arch))
         for s, poz, par in extra:
-            if sygnatura and s == sygnatura[1]:
-                s = sygnatura[0]
-                par = {}
+            if s == SYGNATURA:
+                if not sygnatura:
+                    raise SystemExit(f'brak sygnatury w SYGNATURY dla ({rasa}, {arch})')
+                s = sygnatura
             linie += [f'    {s}:', f'        level: {poz}', '        max-level: 10']
             for k, v in par.items():
                 linie += [f'        {k}:', f'            base: {v[rasa]}', '            per-level: 0']
@@ -606,7 +639,7 @@ def main():
         skel_plik, arch_id, zb_arch, br_arch = ARCH[arch]
         szkielet = open(os.path.join(klasy_dir, skel_plik), encoding='utf-8').read()
         if arch == 'wojownik':
-            szkielet = szkielet.replace(*SZAL_Z_CIOSU)
+            szkielet = szkielet.replace(*(SZAL_Z_CIOSU_ORK if rasa == 'ork' else SZAL_Z_CIOSU))
         if arch == 'mag':
             # Regeneracja 2/s działa też podczas walki; procentowy bonus resource pozostaje poza walką.
             szkielet = szkielet.replace('    off-combat-health-regen: true',
@@ -640,11 +673,9 @@ def main():
                                        'spec': [s[0].upper() for s in specy]}
         for slot, (sid, snazwa, skolor, sopis, s_zb, s_br, stat) in zip((11, 15), specy):
             attr = kopia(baza)
-            zamiana_dusz = arch == 'akolita' and stat == 'regen_many'
-            if zamiana_dusz:
-                stat = 'mana'  # Dusze się nie regenerują (etap 2) — specjalizacja dostaje większą pulę Dusz
-            k, b, p = STAT[stat]
-            opis_premii = 'większa pula Dusz' if zamiana_dusz else STAT_OPIS[stat]
+            opis_premii = opis_statu(arch, stat)
+            # Dusze się nie regenerują (etap 2) — 'mana'/'regen_many' akolity to większa pula Dusz (B9)
+            k, b, p = DUSZE_PREMIA if arch == 'akolita' and stat in ('mana', 'regen_many') else STAT[stat]
             dodaj(attr, k, b, p)
             szb = [z for z in ZBROJA if z in zbroja + s_zb]
             sbr = bron + s_br
@@ -724,6 +755,15 @@ def main():
     ids_arch = {a: [ARCH[a][1]] for a in ARCH}
     for kid_, info in oczek['klasy'].items():
         ids_arch[info['arch']].append(kid_)
+    # ---- Zaklecia: bramka klasy (paczka B 25.10, B6; decyzja właściciela 21.10: Zaklęcia = mag i akolita,
+    # wojownik i ninja mają skille F). Plugin Zaklecia czyta listę id klas MMOCore przy starcie/reloadzie.
+    zak = P('Zaklecia', 'klasy.yml')
+    if os.path.isdir(os.path.dirname(zak)):
+        open(zak, 'w', encoding='utf-8').write('\n'.join(
+            ['# PLIK GENEROWANY: tools/klasy-rasowe/generuj_klasy.py (ids_arch) — zmiany w generatorze.',
+             '# Klasy MMOCore, które mogą rzucać Zaklęcia (archetyp + klasy rasowe + specjalizacje).',
+             '# Wojownik i ninja: brak (decyzja właściciela 21.10). Pusta lista = bramka wyłączona.',
+             'dozwolone-klasy:'] + [f'  - {x}' for a in ('mag', 'akolita') for x in ids_arch[a]]) + '\n')
     arch_skrypty = ['', 'klasa_archetyp_ustaw:', '  Mechanics:'] + \
         [f'    - script{{s=klasa_archetyp_{SKROT[a]}}} @Self' for a in ARCH]
     for a in ARCH:
@@ -753,8 +793,8 @@ def main():
     # jednoznaczność tylko wśród skilli, które mogą stać na pasku (wszystkie szkielety klas)
     wspolne_na_pasku = {s for a in ARCH if a not in PELNE_WLASNE_SKILLE
                 for s, _ in skille_szkieletu(open(os.path.join(klasy_dir, ARCH[a][0]), encoding='utf-8').read())} | \
-        {s for a in EXTRA_SKILLE for s, _, _ in EXTRA_SKILLE[a]} | \
-        {s for s, _ in SYGNATURY.values()}
+        {s for a in EXTRA_SKILLE for s, _, _ in EXTRA_SKILLE[a] if s != SYGNATURA} | \
+        set(SYGNATURY.values())
     spec_na_pasku = {s for s, _ in SPEC_SKILLE.values()}
     na_pasku = wspolne_na_pasku | spec_na_pasku
     def znacznik(skill, zestaw=na_pasku):
@@ -773,8 +813,7 @@ def main():
         demo = [] if a in PELNE_WLASNE_SKILLE else skille_szkieletu(skel)
         skille = sorted(demo + [(s, poz) for s, poz, _ in EXTRA_SKILLE.get(a, [])], key=lambda s: s[1])
         sygnatura = SYGNATURY.get((rasa, a))
-        if sygnatura:
-            skille = [(sygnatura[0] if s == sygnatura[1] else s, poz) for s, poz in skille]
+        skille = [(sygnatura if s == SYGNATURA else s, poz) for s, poz in skille]
         lista = '|' + '|'.join([kid.upper(), *(s[0].upper() for s in specy)]) + '|'
         pasek += ['', f'klasa_pasek_{rasa}_{SKROT[a]}:', '  Conditions:',
                   f'    - Comparator{{v1="|%mmocore_class_id%|";v2="{lista}";op="!c"}} true', '  Mechanics:']
