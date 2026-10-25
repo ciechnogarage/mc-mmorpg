@@ -150,19 +150,28 @@ final class Napad {
     if (faza == Faza.KONIEC) return;
     tik++;
     var c = pl.getConfig();
-    if (tik % 10 == 0) wybierzCele();
+    long t = System.nanoTime();
+    if (tik % 10 == 0) { wybierzCele(); t = odcinek("cele", t); }
     for (Jednostka j : jednostki) {
       if (!j.zywa()) continue;
       // cialo MM ma wlasne AI: dowodca decyduje co 5 tikow, jednostki rozlozone po tikach
       if (j.mm()) { if ((tik + j.id) % 5 == 0) sterujMM(j); }
       else steruj(j);
+      t = odcinek("j" + j.id + " " + j.akcja + (j.cel == null ? "" : " cel " + j.cel.getType()), t);
     }
     if (tik % 20 == 0) {
-      sprawdzFazy();
-      pilnujWidzow();
+      sprawdzFazy(); t = odcinek("fazy", t);
+      pilnujWidzow(); t = odcinek("widzowie", t);
       if (tik > c.getInt("limit-czasu-s", 300) * 20) zakoncz("limit czasu");
     }
-    if (tik % c.getInt("zapis-co-tikow", 5) == 0) zapiszKlatke();
+    if (tik % c.getInt("zapis-co-tikow", 5) == 0) { zapiszKlatke(); odcinek("zapis", t); }
+  }
+
+  /** Diagnoza skokow: odcinek tiku dluzszy niz 5 ms idzie do logu z nazwa (koszt: nanoTime na odcinek). */
+  private long odcinek(String co, long od) {
+    long teraz = System.nanoTime();
+    if (teraz - od > 5_000_000L) pl.getLogger().warning("Napad " + id + " tik " + tik + " odcinek " + co + ": " + (teraz - od) / 1000 + " us");
+    return teraz;
   }
 
   /**

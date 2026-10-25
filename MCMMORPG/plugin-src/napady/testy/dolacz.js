@@ -18,6 +18,8 @@ scenariusz('napady-dolacz', async ({ w, polacz, rcon }) => {
   const nick = 'BotNap' + (Date.now() % 100000);
   await rcon('napad stop');
   await rcon('napad limit 1');
+  await rcon('napad cialo mm');          // wariant A; seria A/B zostawia klon na manekinach
+  await rcon('napad przebrania true');
   await rcon('minecraft:difficulty easy');   // w peaceful ciosy mobow w gracza = 0, a MM zombie/szkielety znikaja
   const bot = await polacz({ nick, plugins: [pathfinder] });
   // bez kopania: inaczej pathfinder rozbiera mur i brame areny (24.10: ~40 machniec w bloki)

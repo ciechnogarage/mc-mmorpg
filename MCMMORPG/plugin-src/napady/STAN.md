@@ -1,5 +1,5 @@
-# Notatka stanu 25.10 (przerwane limitem)
-- Zrobione: wariant A (ciala MM + dowodca), sprzet przez Equipment MM, filtr osiagalne, `napad ai`, README, test testy/dolacz.js (przepisany, NIE uruchomiony), pomiar A/B (testy/ab-20261025.log).
-- A/B: MSPT przy 4 napadach MM 1.70-1.84 sr, manekin 1.31-1.83; plugin MM 0.14 ms/tik vs manekin 0.37-0.57 ms/tik. Skok 106 ms raz (MM n=2 runda 1), niewyjasniony (podejrzenie: spawn+przebrania).
-- Dalej: run.sh napady testy/dolacz.js; kadry klienta QA obu cial; strona Artifact z A/B; encyklopedia (etap 2) + skrzynka (pulapki z README); klon.sh usun napady.
-- Klon `napady` STOI (do sprzatniecia po tescie). Regula: paczka /opt/docker/mc/backups/najlepsza-droga-20261025 gotowa, wdraza wlasciciel.
+# Stan 25.10
+- Wariant A (ciala MM + dowodca w pluginie) na klonie, test bota testy/dolacz.js 13/13 PASS (z sciezka smierci).
+- A/B: testy/ab-20261025.log, strona https://claude.ai/artifact/1RRcwDoHFUUUvcNFkMKPxP.
+- Skoki tiku: log "odcinek <co>" >5 ms (Napad.odcinek). Najgorszy 33 ms przy pierwszym setTarget; 106/90 ms przy obciazonym hoscie (niedowiedzione).
+- Otwarte: balans (obroncy-wojownicy padaja w ~4 s), konflikt keepInventory z Trafienia/kara smierci na world1 (niesprawdzony), wdrozenie na serwer Krolestw - decyzja wlasciciela.
