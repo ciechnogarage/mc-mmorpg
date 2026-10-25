@@ -15,6 +15,7 @@ val pinnedPluginJars = listOf(
   "MMOCore-1.13.1-20260330.110342-58.jar",
   "MythicLib-dist-1.7.1-20260330.110510-95.jar",
   "MythicMobs-5.11.2.jar",
+  "MythicHUD-1.3.4-SNAPSHOT-all.jar",
   "PlaceholderAPI-2.12.2.jar",
 ).map { serverPluginsDir.resolve(it) }
 

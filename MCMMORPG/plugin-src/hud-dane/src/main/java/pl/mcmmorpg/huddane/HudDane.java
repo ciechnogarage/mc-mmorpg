@@ -47,6 +47,8 @@ public final class HudDane extends JavaPlugin implements Listener {
     nawigacja = new Nawigacja(getConfig().getConfigurationSection("zadania"));
     getServer().getPluginManager().registerEvents(nawigacja, this);
     new Placeholdery(this).register();
+    var hud = getServer().getPluginManager().getPlugin("MythicHUD");
+    if (hud != null && hud.isEnabled()) parser = SzybkiParser.zainstaluj(this, hud);
     getLogger().info("HudDane: druzyna zasieg " + zasieg + ", " + czasZycia.size() + " typow slug, " + efekty.size() + " efektow");
   }
 
@@ -60,16 +62,25 @@ public final class HudDane extends JavaPlugin implements Listener {
     return m;
   }
 
-  @EventHandler public void wyjscie(PlayerQuitEvent e) { migawki.remove(e.getPlayer().getUniqueId()); }
+  @EventHandler public void wyjscie(PlayerQuitEvent e) {
+    migawki.remove(e.getPlayer().getUniqueId());
+    if (parser != null) parser.wyjscie(e.getPlayer().getUniqueId());
+  }
 
-  // MythicHUD (PlaceholderAPIParser) zwraca SUROWY tekst, dopoki jego zegar nie wypelni cache gracza; warstwa head
-  // robila wtedy getOfflinePlayer("%hud_druzyna_N_nazwa%") -> "Name cannot be longer than 16" ze stack trace'em
-  // na kazdy slot przy kazdym wejsciu (24.10: 14 na logowanie). Wpisujemy cele glow do cache od razu przy wejsciu.
+  // Parser MythicHUD zwraca SUROWY tekst, dopoki zegar nie policzy wartosci gracza; warstwa head robila wtedy
+  // getOfflinePlayer("%hud_druzyna_N_nazwa%") -> "Name cannot be longer than 16" ze stack trace'em na kazdy slot
+  // przy kazdym wejsciu (24.10: 14 na logowanie). Cele glow liczymy od razu przy wejsciu - do naszego parsera,
+  // a gdy sie nie zainstalowal, do cache oryginalnego PlaceholderAPIParser.
+  private SzybkiParser parser;
   private Map<UUID, ConcurrentHashMap<String, String>> cacheMythicHud;
   private boolean cacheBrak;
 
   @SuppressWarnings("unchecked")
   @EventHandler public void wejscie(PlayerJoinEvent e) {
+    if (parser != null) {
+      for (int n = 1; n <= 7; n++) parser.zasiej(e.getPlayer(), "%hud_druzyna_" + n + "_nazwa%");
+      return;
+    }
     if (cacheBrak) return;
     try {
       if (cacheMythicHud == null) {
