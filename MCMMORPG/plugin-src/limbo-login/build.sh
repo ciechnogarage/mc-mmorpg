@@ -15,6 +15,9 @@ if [ -n "$(git -C "$here" status --porcelain -- "$here" 2>/dev/null)" ]; then
   git_rev="${git_rev}.dirty"
 fi
 
+# Katalog cache gradle'a tworzymy sami: brakujacy zrodlowy katalog montowania docker zaklada jako root i gradle pada (libnative-platform.so).
+mkdir -p "$here/../character-creator/.gradle-home"
+
 exec docker run --rm --name "build-limbo-login-$$" --memory 2g \
   -u "$(id -u):$(id -g)" \
   -v "$repo_root:$repo_root" \

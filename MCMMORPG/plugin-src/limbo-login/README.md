@@ -1,17 +1,17 @@
 # LimboLogin (`plugin-src/limbo-login`)
-Wersja w źródle: `0.1.0-<rewizja git>` (`gradle.properties:2`, `build.gradle.kts:29`, plugin.yml:2 = `${version}`). Jar: NIE na world1; stoi na serwerze limbo: `/opt/docker/mc/data/limbo/plugins/limbo-login-0.1.0-d5a7bdd.dirty.jar`. Zgodność źródła z jarem: zgodna co do plugin.yml (name, main, api-version, description identyczne; wersja `0.1.0-d5a7bdd.dirty` = build z niezacommitowanych źródeł, więc skrót d5a7bdd nie wskazuje dokładnie źródeł); bajtkodu nie porównywałem.
+Wersja w źródle: `0.1.0-<rewizja git>` (`gradle.properties:2`, `build.gradle.kts:29`, plugin.yml:2 = `${version}`). Jar: NIE na world1; stoi na serwerze limbo: `/opt/docker/mc/data/limbo/plugins/limbo-login-0.1.0-d5a7bdd.dirty.jar`. Zgodność źródła z jarem: zgodna co do plugin.yml (name, main, api-version, description identyczne; wersja `0.1.0-d5a7bdd.dirty` = build z niezacommitowanych źródeł, więc skrót d5a7bdd nie wskazuje dokładnie źródeł); bajtkod sprawdzony 25.10: czysty build ze źródła w gałęzi (rewizja ba5caa6, jar 0.1.0-ba5caa6) vs jar na limbo: ten sam zestaw plików, `LimboLoginPlugin.class` bajt w bajt identyczny (`cmp`, 8158 B), jedyna różnica to linia `version:` w plugin.yml. Źródło w gałęzi = to, co wdrożone. Uwaga: `build.sh:24` montuje gradle-home z `../character-creator/.gradle-home`, którego nie ma w świeżym worktree (gitignore) — w worktree build.sh wywala się na "libnative-platform.so"; w głównym repo działa.
 Opis stanu z dnia: 2026-10-25, commit 8c79ff8 (worktree docs-pluginy).
 
 ## Po co (co widzi gracz)
-Zamiast wpisywać hasło na czacie (`/login <hasło>`), gracz wchodzący na serwer `limbo` dostaje po 1 s natywne okno klienta (Paper Dialog) "Logowanie" z polem "Haslo" i przyciskami "Zaloguj" i "Utworz konto" (`src/main/java/pl/mcmmorpg/limbologin/LimboLoginPlugin.java:62, 73-81, 92-129`). Okno nie zamyka się Escape i zostaje po kliknięciu (linie 110-117). STAN PRODUKCYJNY: logowanie LibreLogin jest od 2026-09-20 wyłączone, kontener limbo zatrzymany; plugin jest gotowy, ale nieużywany (`~/.claude/skills/mc-host-testy-wdrozenia/serwer-stan.md:9`, `~/.claude/skills/mc-gui-pack-dialogi/historia.md:78`).
+Zamiast wpisywać hasło na czacie (`/login <hasło>`), gracz wchodzący na serwer `limbo` dostaje po 1 s natywne okno klienta (Paper Dialog) "Logowanie" z polem "Haslo" i przyciskami "Zaloguj" i "Utworz konto" (`src/main/java/pl/mcmmorpg/limbologin/LimboLoginPlugin.java:62-66, 68-76, 87-125`). Okno nie zamyka się Escape i zostaje po kliknięciu (linie 105-112). STAN PRODUKCYJNY: logowanie LibreLogin jest od 2026-09-20 wyłączone, kontener limbo zatrzymany; plugin jest gotowy, ale nieużywany (`~/.claude/skills/mc-host-testy-wdrozenia/serwer-stan.md:9`, `~/.claude/skills/mc-gui-pack-dialogi/historia.md:78`).
 
 ## Komendy i uprawnienia
 Brak własnych komend i uprawnień (`src/main/resources/plugin.yml:1-5`). Przyciski wysyłają z KLIENTA komendy LibreLogin (poniżej).
 
 | Przycisk | Komenda wysyłana przez klienta | Źródło |
 |---|---|---|
-| Zaloguj | `/login $(haslo)` | LimboLoginPlugin.java:93-97 |
-| Utworz konto | `/register $(haslo) $(haslo)` (hasło dwa razy, tak wymaga składnia LibreLogin) | LimboLoginPlugin.java:102-106 |
+| Zaloguj | `/login $(haslo)` | LimboLoginPlugin.java:88-92 |
+| Utworz konto | `/register $(haslo) $(haslo)` (hasło dwa razy, tak wymaga składnia LibreLogin) | LimboLoginPlugin.java:97-101 |
 
 ## Konfiguracja
 Brak pliku configu (nie ma `saveDefaultConfig`; na limbo w `plugins/` są tylko jar, `bStats`, `spark`). Stałe w kodzie: opóźnienie okna `SHOW_DELAY_TICKS = 20` (linia 62), nazwa pola `haslo` (65), `maxLength(64)` pola (123), szerokość pola 200, przycisków 120, 2 kolumny (linie 95, 104, 124, 128), tekst "minimum 6 znakow" (103, 120; to tekst pomocniczy, plugin nie waliduje).
@@ -36,4 +36,4 @@ Nie zapisuje nic; hasła obsługuje wyłącznie LibreLogin na proxy (baza SQLite
 - Brak obsługi błędnych haseł po stronie pluginu: komunikat o błędzie pokazuje LibreLogin; okno zostaje otwarte (linie 86-91).
 
 ## Budowanie i wdrożenie
-`./build.sh`: kontener `gradle:8.12-jdk21`, `--memory 2g`; rewizja gita liczona na hoście i wstrzykiwana jako `-PllGitRev`, `.dirty` gdy są niezacommitowane zmiany (build.sh:9-17; wspólny gradle-home z character-creator: build.sh:21; paper-api: build.gradle.kts:26). Zależność: tylko `paper-api:1.21.11-R0.1-SNAPSHOT` (`build.gradle.kts:25`), Java 21. Gradle home współdzielony z `../character-creator/.gradle-home` (build.sh, ostatnie linie). Wynik: `build/libs/limbo-login-<wersja>.jar` do `data/limbo/plugins/`. Testy: brak.
+`./build.sh`: kontener `gradle:8.12-jdk21`, `--memory 2g`; rewizja gita liczona na hoście i wstrzykiwana jako `-PllGitRev`, `.dirty` gdy są niezacommitowane zmiany (build.sh:9-16; wspólny gradle-home z character-creator: build.sh:24; paper-api: build.gradle.kts:26). Zależność: tylko `paper-api:1.21.11-R0.1-SNAPSHOT` (`build.gradle.kts:25`), Java 21. Gradle home współdzielony z `../character-creator/.gradle-home` (build.sh, ostatnie linie). Wynik: `build/libs/limbo-login-<wersja>.jar` do `data/limbo/plugins/`. Testy: brak.
