@@ -22,5 +22,13 @@ https://www.okl.lasy.gov.pl/documents/998963/38345364/Lecznicza+rola+lasu.pdf/70
   ścinane ostrym narzędziem same blaszki.
 - Rumianek (MD): koszyczki na początku kwitnienia, stopniowo, przed pełnym rozwinięciem; suszenie w cieniu do 35°C.
 
+- Rumianek a maruna bezwonna: rumianek ma stożkowate, PUSTE w środku dno koszyczka (doz.pl, https://www.doz.pl/ziola/z1552-rumianek_pospolity, 25.10).
+- Podbiał: żółte kwiaty długo przed liśćmi; liście od spodu białawo omszone; rośnie na zboczach, przydrożach, gliniastych nasypach
+  (https://skps.wroclaw.pl/wp-content/uploads/2018/04/rosliny-przedwioc59bnia.pdf, 25.10; jedno źródło).
+- Pokrzywa: parzące włoski na spodzie liści; do zbioru rękawice i nożyce (https://lovethegarden.com/pl-pl/problemy-ogrodnicze/pokrzywa, 25.10).
+- Wierzbówka kiprzyca: chętnie na wiatrołomach (https://www.radiokrakow.pl/aktualnosci/nowy-sacz/podhale/na-hali-gasienicowej-masowo-kwitnie-wierzbowka-kiprzyca, pap.pl, 25.10).
+- Babka zwyczajna: odporna na wydeptywanie (test konkursowy salamandra.org.pl, https://www.salamandra.org.pl/DO_POBRANIA/KONKURSY/pytania/sp_2008_2009_szk_test.pdf, 25.10; jedno źródło).
+
 ## Niesprawdzone (wiedza modelu)
 - nasiona przed osypaniem (otrząsanie), sok brzozy (nacięcie wiosną), owoce bzu tylko dojrzałe.
+- NIEPOTWIERDZONE w wyszukaniu 25.10: „chwyt pokrzywy pod włos nie parzy” (ludowe), grzebień do zbioru rumianku, podbiał pomylony z lepiężnikiem.
