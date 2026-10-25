@@ -179,8 +179,9 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
       getLogger().warning("Brak PlaceholderAPI — placeholdery %chowance_*% niedostępne.");
     }
 
-    // Zadania: co 20 ticków (walki, przywołania, turniej), co skan_s (Bestiariusz), co probkowanie_s (jaja),
-    // co 60 s (autozapis, jaja z hodowli). Nic co tick.
+    // Zadania: co 20 ticków (walki, przywołania, turniej), co 4 ticki (pojedynki.kamery: rozkazy trenera i ruch w pojedynkach,
+    // pętla pusta, gdy nie ma pojedynków), co 5 ticków (zagroda.patrz: etykiety młodych), co 40–100 ticków (kamera, trener, zagroda),
+    // co skan_s (Bestiariusz), co probkowanie_s (jaja), co 60 s (autozapis, jaja z hodowli). Nic co tick (1 tick).
     Bukkit.getScheduler().runTaskTimer(this, this::tik, 20L, 20L);
     // rozkazy trenera w pojedynkach (pusto, gdy nie ma pojedynków)
     Bukkit.getScheduler().runTaskTimer(this, () -> pojedynki.kamery(), 4L, 4L);

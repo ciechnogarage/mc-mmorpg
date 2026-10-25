@@ -98,7 +98,7 @@ public final class Ustawienia {
         c.getDouble("lapanie.poziom.min", 0.4), c.getDouble("lapanie.poziom.max", 1.5),
         c.getDouble("lapanie.profesja.wsp", 0.01), c.getDouble("lapanie.profesja.max", 1.5));
     zbieglySek = c.getInt("lapanie.zbiegly_sekundy", 60);
-    szalSek = c.getInt("lapanie.szal_sekundy", 10);
+    szalSek = c.getInt("lapanie.szal_sekundy", 0);
     predkoscRzutu = c.getDouble("lapanie.zasieg_rzutu", 1.4);
     odstepRzutuMs = c.getLong("lapanie.odstep_rzutu_ms", 1500);
     odniesienieAktywny = "AKTYWNY".equalsIgnoreCase(c.getString("lapanie.poziom_odniesienia", "DRUZYNA_MAX"));

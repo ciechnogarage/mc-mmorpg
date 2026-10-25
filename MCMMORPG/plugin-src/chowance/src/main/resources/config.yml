@@ -71,12 +71,12 @@ przywolanie:
   odleglosc: 2.5
   despawn_przy_zmianie_swiata: true
   teleport_za_graczem_powyzej: 24.0
-  swiaty_zabronione: [creator_limbo]
+  swiaty_zabronione: [creator_limbo, wyscigi, licho]
   pve_mnoznik_obrazen_niechowance: 0.15        # chwObrazenia na zwykłe moby (skala HP MC)
   pve_exp_za_zabicie: true
 
 regeneracja:
-  procent_na_minute: 5.0
+  procent_na_minute: 20.0
   zemdlony_tez: true
 
 statystyki:
@@ -86,8 +86,9 @@ poziomy:
   max: 100
   limit_bazowy: 20
   za_odznake: 20                               # 20 + 4 Mistrzów x 20 = 100 (DECYZJE D-08)
-  exp_pve_mnoznik: 1.0
+  exp_pve_mnoznik: 2.0
   exp_trener_mnoznik: 1.5
+  exp_dzielony: 0.5                            # część exp dla reszty sprawnej drużyny, która nie walczyła (0–1)
   exp_pojedynek: false                         # PvP nie daje exp (anty-farm)
 
 karmienie:
@@ -112,7 +113,7 @@ walka:
   widok_odslaniaj: true                        # bloki zasłaniające arenę znikają TYLKO u walczącego (świat bez zmian)
   widok_bez_reki: true                         # w walce dłoń bez modelu (Dziennik/ręka nie zasłania kadru)
   hud_mythichud: true                          # panele stworów i lista klawiszy w MythicHUD zamiast trzech pasków u góry
-  odtwarzanie_ticki: 30                        # tempo odgrywania tury (ticki na krok: atak, obrażenia, omdlenie)
+  odtwarzanie_ticki: 24                        # tempo odgrywania tury (ticki na krok: atak, obrażenia, omdlenie)
 
 pojedynek:
   arena: []                                    # [swiat,x,y,z, swiat,x,y,z] — puste = w miejscu
@@ -122,8 +123,18 @@ pojedynek:
   zaproszenie_s: 60
   auto: true                                   # stwory same dobierają ruchy; klawisze 1–4 = rozkaz trenera
   mnoznik_obrazen: 0.4                         # real-time: krótsze ciosy = dłuższa, czytelna walka (turowa bez zmian)
-  odstep_ruchow_ms: 2000                       # najczęściej co tyle stwór sam używa ruchu
+  odstep_ruchow_ms: 2400                       # najczęściej co tyle stwór sam używa ruchu
   wstep_ms: 2500                               # po starcie: kamera i napis, dopiero potem ciosy
+  zapowiedz_kontakt_ticki: 12                  # zapowiedź ciosu z kontaktu (ticki przed trafieniem; min 0)
+  zapowiedz_dystans_ticki: 10                  # zapowiedź ciosu z dystansu (ticki przed trafieniem; min 0)
+  unik_okno_ms: 500                            # okno na unik po zapowiedzi (min 200)
+  premia_rozkazu: 1.2                          # mnożnik ruchu wykonanego na rozkaz trenera (min 1.0)
+  premia_kontry: 1.3                           # mnożnik kontry (min 1.0)
+
+dzikie_walka:
+  obrazenia_w_gracza: 0.6
+  obrazenia_od_gracza: 0.4
+  zmiana_celu_na_chowanca: 0.5                 # 0–1
 
 ranking:
   elo_start: 1000

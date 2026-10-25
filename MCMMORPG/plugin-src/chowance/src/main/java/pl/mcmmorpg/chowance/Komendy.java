@@ -58,6 +58,8 @@ public final class Komendy implements TabExecutor {
       if (a.length > 0 && a[0].equalsIgnoreCase("admin")) return admin(s, a);
       if (!(s instanceof Player p)) { s.sendMessage("Tylko dla graczy (albo /chw admin ...)."); return true; }
       gracz(p, a);
+    } catch (NumberFormatException e) {
+      s.sendMessage(Chowance.mm(Chowance.PREFIX + "<red>Błędna liczba w poleceniu — sprawdź argumenty (/chw pomoc)."));
     } catch (RuntimeException e) {
       c.log.log(java.util.logging.Level.SEVERE, "Błąd komendy /chw " + String.join(" ", a), e);
       s.sendMessage(Chowance.mm(Chowance.PREFIX + "<red>Wewnętrzny błąd — zgłoś administracji."));
@@ -113,7 +115,7 @@ public final class Komendy implements TabExecutor {
   }
 
   private void pomoc(Player p) {
-    c.msg(p, "<gold>Chowańce <gray>— /chw menu, przywolaj <1-6>, odwolaj, druzyna, info <slot>, magazyn, nazwij, ewoluuj, naucz, uwolnij, starter, walka [gracz], pojedynek <gracz>, handel <gracz>, akceptuj, odrzuc, hodowla, bestiariusz, ranking, turniej");
+    c.msg(p, "<gold>Chowańce <gray>— /chw menu, przywolaj <1-6>, odwolaj, druzyna, info <slot>, magazyn, nazwij, ewoluuj, naucz, uwolnij, starter, walka [gracz], pojedynek <gracz>, handel <gracz>, akceptuj, odrzuc, poddaj, hodowla, bestiariusz, ranking, turniej");
   }
 
   private void druzyna(Player p) {
@@ -675,14 +677,16 @@ public final class Komendy implements TabExecutor {
       }
       case "status" -> {
         // test/eval: /chw admin status <uuid-ciala> <STATUS> <sek>
-        if (a.length < 5) return true;
-        Entity e = Bukkit.getEntity(java.util.UUID.fromString(a[2]));
+        if (a.length < 5) { s.sendMessage("Użycie: /chw admin status <uuid-ciala> <STATUS> <sek>"); return true; }
+        java.util.UUID id = parseUuid(a[2]);
+        if (id == null) { s.sendMessage("Błędny UUID ciała."); return true; }
+        Entity e = Bukkit.getEntity(id);
         var st = pl.mcmmorpg.chowance.model.Status.parse(a[3]);
         if (e == null || st == null || !plg.dzikie.dziki(e)) { s.sendMessage("Brak ciała/statusu."); return true; }
         plg.dzikie.nalozStatus(e, st, parse(a[4]));
         s.sendMessage("Status " + st + " na " + a[2]);
       }
-      default -> s.sendMessage("/chw admin daj|przeladuj|zapisz|info|lecz|odznaka|walka-npc|wieza|turniej|sezon|ranking|exp|jajo|spawn|spawnw|status|sprzatnij|diag");
+      default -> s.sendMessage("/chw admin daj|przeladuj|zapisz|info|lecz|odznaka|walka-npc|pojedynek-stan|pojedynek-npc|wieza|turniej|sezon|ranking|npc|exp|jajo|spawn|spawnw|status|sprzatnij|diag");
     }
     return true;
   }
@@ -702,6 +706,10 @@ public final class Komendy implements TabExecutor {
     return n < 1 ? 1 : n;
   }
 
+  private static java.util.UUID parseUuid(String s) {
+    try { return java.util.UUID.fromString(s.trim()); } catch (IllegalArgumentException e) { return null; }
+  }
+
   private static int parse(String s) {
     try { return Integer.parseInt(s.trim()); } catch (RuntimeException e) { return -1; }
   }
@@ -709,8 +717,8 @@ public final class Komendy implements TabExecutor {
   // ================================================================== tab
 
   private static final List<String> GRACZ = List.of("menu", "przywolaj", "odwolaj", "druzyna", "info", "zamien", "magazyn", "nazwij", "ewoluuj",
-      "naucz", "uwolnij", "starter", "karta", "gracze", "walka", "pojedynek", "handel", "akceptuj", "odrzuc", "poddaj", "ruch", "okno", "hodowla", "bestiariusz", "ranking", "turniej");
-  private static final List<String> ADMIN = List.of("daj", "przeladuj", "zapisz", "info", "pojedynek-stan", "lecz", "odznaka", "walka-npc", "wieza", "turniej", "sezon", "ranking", "npc", "exp", "jajo", "spawn", "spawnw", "status", "sprzatnij", "diag");
+      "naucz", "uwolnij", "starter", "karta", "gracze", "walka", "pojedynek", "handel", "akceptuj", "odrzuc", "poddaj", "ruch", "okno", "hodowla", "bestiariusz", "ranking", "turniej", "pomoc", "zamknij");
+  private static final List<String> ADMIN = List.of("daj", "przeladuj", "zapisz", "info", "pojedynek-stan", "lecz", "odznaka", "walka-npc", "pojedynek-npc", "wieza", "turniej", "sezon", "ranking", "npc", "exp", "jajo", "spawn", "spawnw", "status", "sprzatnij", "diag");
 
   @Override
   public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] a) {
