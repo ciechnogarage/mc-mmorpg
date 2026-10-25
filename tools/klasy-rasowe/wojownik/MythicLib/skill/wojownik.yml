@@ -4,7 +4,7 @@ WOJ_SZARZA:
   source: mythicmobs:WOJ_Szarza
   name: 'Szarża'
   icon: {item: IRON_SWORD}
-  lore: ['&7Doskok do celu w 8 blokach.', '&7Daje 15 Szału (ork: 25).', '', '&e{cooldown}s odnowienia']
+  lore: ['&7Doskok do celu w 8 bl. za {damage} obrażeń.', '&7Daje 15 Szału (ork: 25).', '&7Nieumarły leczy 30% obrażeń, ork odrzuca,', '&7elf ląduje za celem z szybkością 2 s,', '&7człowiek mocno spowalnia cel na 1,5 s.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 8}
@@ -46,14 +46,15 @@ WOJ_SZARZA:
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
-      - 'potion{type=SLOWNESS;duration=20;level=255;force=true;hasParticles=true}'
+      # A8: było SLOWNESS 255 (pełne unieruchomienie); teraz spowolnienie III na 1,5 s
+      - 'potion{type=SLOWNESS;duration=30;level=2;force=true;hasParticles=true}'
       - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
 
 WOJ_ROZPLATANIE:
   source: mythicmobs:WOJ_Rozplatanie
   name: 'Rozpłatanie'
   icon: {item: IRON_AXE}
-  lore: ['&7Cięcie w łuku do 3 bloków.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Cięcie w łuku do 3 bl. za {damage} obrażeń.', '&7Ork: zasięg 4 bl.; człowiek: szerszy łuk;', '&7elf: odskok po cięciu.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
   parameters:
     mana: {name: Koszt, player: 30}
     cooldown: {name: Odnowienie, player: 5}
@@ -68,11 +69,11 @@ WOJ_ROZPLATANIE:
       - 'skill{s=WOJ_Rozplatanie_Czlowiek} @self ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
     WOJ_Rozplatanie_Standard:
       Skills:
-      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=100;range=3;ignore=self,players}'
+      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=100;range=3;ignore=self,players;targetvillagers=false}'
       - 'skill{s=WOJ_Rozplatanie_Gracz} @EntitiesInCone{angle=100;range=3;target=players}'
     WOJ_Rozplatanie_Ork:
       Skills:
-      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=100;range=4;ignore=self,players}'
+      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=100;range=4;ignore=self,players;targetvillagers=false}'
       - 'skill{s=WOJ_Rozplatanie_Gracz} @EntitiesInCone{angle=100;range=4;target=players}'
     WOJ_Rozplatanie_Elf:
       Skills:
@@ -80,9 +81,14 @@ WOJ_ROZPLATANIE:
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.5}'
     WOJ_Rozplatanie_Czlowiek:
       Skills:
-      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=140;range=3;ignore=self,players}'
+      - 'skill{s=WOJ_Rozplatanie_Cel} @EntitiesInCone{angle=140;range=3;ignore=self,players;targetvillagers=false}'
       - 'skill{s=WOJ_Rozplatanie_Gracz} @EntitiesInCone{angle=140;range=3;target=players}'
     WOJ_Rozplatanie_Cel:
+      # A6: bez petów/sług sojuszników (frakcje MM; gracze bez frakcji przechodzą)
+      TargetConditions:
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
     WOJ_Rozplatanie_Gracz:
@@ -95,7 +101,7 @@ WOJ_OKRZYK:
   source: mythicmobs:WOJ_Okrzyk
   name: 'Okrzyk'
   icon: {item: GOAT_HORN}
-  lore: ['&7Siła dla ciebie i sojuszników w 8 blokach na 6 s.', '&7Daje 20 Szału.', '', '&e{cooldown}s odnowienia']
+  lore: ['&7Siła dla ciebie i sojuszników w 8 blokach na 6 s.', '&7Człowiek: także Odporność dla siebie.', '&7Daje 20 Szału.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 20}
@@ -120,7 +126,7 @@ WOJ_GNIEW:
   source: mythicmobs:WOJ_Gniew
   name: 'Gniew'
   icon: {item: NETHERITE_AXE}
-  lore: ['&7Cios zużywający cały Szał (minimum 40).', '&7Obrażenia rosną z zużytym Szałem.', '', '&e{cooldown}s odnowienia']
+  lore: ['&7Cios zużywający cały Szał (minimum 40).', '&7Bazowo {damage} obrażeń, rosną z Szałem.', '&7Ork: +50% za Szał; nieumarły leczy 30%;', '&7elf przeskakuje cel; człowiek: osłona 4 HP/4 s.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 40}
     cooldown: {name: Odnowienie, player: 10}
@@ -129,6 +135,10 @@ WOJ_GNIEW:
     wariant: {name: Wariant, player: 0}
   extra-skills:
     WOJ_Gniew:
+      # A5: warunki celu w KORZENIU — bez celu do 4 bl. skill się nie rzuca i nie zabiera Szału
+      # (docs MythicLib using-mythicmobs.md:92, przykład TargetConditions w korzeniu :183)
+      TargetConditions:
+      - 'distance{d=0to4} true'
       Skills:
       - 'skill{s=WOJ_Gniew_Cel} @target'
     WOJ_Gniew_Cel:
@@ -153,7 +163,10 @@ WOJ_GNIEW:
     WOJ_Gniew_Czlowiek:
       Skills:
       - 'skill{s=WOJ_Gniew_Zwykly} @TargetedTarget'
+      # A2: osłona 4 HP na 4 s (wcześniej bez wygaszenia)
       - 'shield{amount=4;maxabsorb=100} @self'
+      - 'delay 80'
+      - 'shield{amount=-4;maxabsorb=100} @self'
     WOJ_Gniew_Ork:
       Skills:
       - 'mmodamage{a="<modifier.damage> + <modifier.coefficient> * 1.5 * <skill.var.woj_gniew_szal>";types=SKILL,PHYSICAL}'
@@ -166,7 +179,7 @@ WOJ_PRZELOT_GAJU:
   source: mythicmobs:WOJ_Przelot_Gaju
   name: 'Przelot Gaju'
   icon: {item: IRON_SWORD}
-  lore: ['&8&oLiść opada za plecami wroga.', '&7Przelot przez cel do 8 bl. i cięcie.', '&7Następny cios w 3 s zadaje +50%.', '&7Daje 15 Szału.', '&6◆ Katana: szybkość i 4 s na cios.', '', '&e{cooldown}s odnowienia']
+  lore: ['&8&oLiść opada za plecami wroga.', '&7Przelot przez cel do 8 bl., cięcie za {damage}.', '&7Następny cios w 3 s zadaje +50%.', '&7Daje 15 Szału.', '&6◆ Katana: szybkość i 4 s na cios.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 8}
@@ -183,6 +196,9 @@ WOJ_PRZELOT_GAJU:
     WOJ_Przelot_Gaju_Mob:
       TargetConditions:
       - 'isPlayer false'
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'skill{s=WOJ_Przelot_Gaju_Cel} @TargetedTarget'
     WOJ_Przelot_Gaju_Gracz:
@@ -207,7 +223,7 @@ WOJ_PCHNIECIE_KORONY:
   source: mythicmobs:WOJ_Pchniecie_Korony
   name: 'Pchnięcie Korony'
   icon: {item: IRON_SWORD}
-  lore: ['&8&oDrzewce strzeże królewskiej drogi.', '&7Doskok do celu w 8 bl. i 5 obrażeń.', '&7Spowalnia na 1 s; daje 15 Szału.', '&6◆ Broń drzewcowa: spowolnienie 2 s.', '', '&e{cooldown}s odnowienia']
+  lore: ['&8&oDrzewce strzeże królewskiej drogi.', '&7Doskok do celu w 8 bl. za {damage} obrażeń.', '&7Spowalnia na 1 s; daje 15 Szału.', '&6◆ Broń drzewcowa: spowolnienie 2 s.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 8}
@@ -224,6 +240,9 @@ WOJ_PCHNIECIE_KORONY:
       TargetConditions:
       - 'distance{d=0to8} true'
       - 'isPlayer false'
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'skill{s=WOJ_Pchniecie_Korony_Cel} @TargetedTarget'
     WOJ_Pchniecie_Korony_Gracz:
@@ -247,7 +266,7 @@ WOJ_NATARCIE_WODZA:
   source: mythicmobs:WOJ_Natarcie_Wodza
   name: 'Natarcie Wodza'
   icon: {item: IRON_AXE}
-  lore: ['&8&oWódz rozsuwa mur tarcz.', '&7Doskok do 8 bl.; trafia do 3 wrogów', '&7w promieniu 3 bl. po 5 obrażeń.', '&7Daje 15 Szału raz za natarcie.', '&6◆ Topór: promień cięcia 4 bl.', '', '&e{cooldown}s odnowienia']
+  lore: ['&8&oWódz rozsuwa mur tarcz.', '&7Doskok do 8 bl.; trafia do 3 wrogów', '&7w promieniu 3 bl. po {damage} obrażeń.', '&7Daje 15 Szału raz za natarcie.', '&6◆ Topór: promień cięcia 4 bl.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 9}
@@ -264,6 +283,9 @@ WOJ_NATARCIE_WODZA:
       TargetConditions:
       - 'distance{d=0to8} true'
       - 'isPlayer false'
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Cel} @TargetedTarget'
     WOJ_Natarcie_Wodza_Gracz:
@@ -277,28 +299,32 @@ WOJ_NATARCIE_WODZA:
       Skills:
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
-      - 'setvariable{var=caster.woj_natarcie_cel;type=STRING;value="<target.uuid>";duration=40} @self'
       - 'setvariable{var=caster.woj_natarcie_licznik;type=INTEGER;value=1;duration=40} @self'
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
-      - 'skill{s=WOJ_Natarcie_Wodza_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
-      - 'skill{s=WOJ_Natarcie_Wodza_Topor} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+      # A1: rozprysk liczony wokół celu (origin = cel, sort NEAREST wg originu, skipTargetsUpToIndex=1 pomija sam cel —
+      # docs MM skills-targeters.md:355-356). Stare wykluczenie stringEquals <target.uuid> w TargetConditions + @LivingNearTargetLocation
+      # nie trafiało nikogo poza celem (test 25.10, klon klasy-skille: drugi worek 1 bl. obok = 0 obrażeń).
+      # limit=2 (po pominięciu celu): licznik variableadd na caster nie ograniczał (test: 3 dodatkowe trafienia).
+      - 'skill{s=WOJ_Natarcie_Wodza_Zwykly;origin=@TargetedTarget} @self ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=WOJ_Natarcie_Wodza_Topor;origin=@TargetedTarget} @self ?variableEquals{var=caster.kr_premia;value=1}'
       - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
       - 'effect:particles{p=sweep_attack;a=20;hS=1;vS=0.3} @self'
     WOJ_Natarcie_Wodza_Zwykly:
       Skills:
-      - 'skill{s=WOJ_Natarcie_Wodza_Adresuj} @LivingNearTargetLocation{r=3;ignore=self,armorstands,samefaction,owner;sort=NEAREST}'
+      - 'skill{s=WOJ_Natarcie_Wodza_Adresuj} @EntitiesNearOrigin{r=3;ignore=self,samefaction,owner;targetarmorstands=false;targetvillagers=false;sort=NEAREST;skipTargetsUpToIndex=1;limit=2}'
     WOJ_Natarcie_Wodza_Topor:
       Skills:
-      - 'skill{s=WOJ_Natarcie_Wodza_Adresuj} @LivingNearTargetLocation{r=4;ignore=self,armorstands,samefaction,owner;sort=NEAREST}'
+      - 'skill{s=WOJ_Natarcie_Wodza_Adresuj} @EntitiesNearOrigin{r=4;ignore=self,samefaction,owner;targetarmorstands=false;targetvillagers=false;sort=NEAREST;skipTargetsUpToIndex=1;limit=2}'
     WOJ_Natarcie_Wodza_Adresuj:
-      TargetConditions:
-      - 'stringEquals{val1="<target.uuid>";val2="<caster.var.woj_natarcie_cel|NONE>"} false'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Uderz_Mob} @TargetedTarget'
       - 'skill{s=WOJ_Natarcie_Wodza_Uderz_Gracz} @TargetedTarget'
     WOJ_Natarcie_Wodza_Uderz_Mob:
       TargetConditions:
       - 'isPlayer false'
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Uderz} @TargetedTarget'
     WOJ_Natarcie_Wodza_Uderz_Gracz:
@@ -318,7 +344,7 @@ WOJ_MARSZ_KRYPTY:
   source: mythicmobs:WOJ_Marsz_Krypty
   name: 'Marsz z Krypty'
   icon: {item: NETHERITE_SWORD}
-  lore: ['&8&oZ krypty wychodzi ciężki krok.', '&7Doskok do 6 bl.; do 3 wrogów', '&7w promieniu 2,5 bl. po 5 obrażeń.', '&7Leczy o 20% obrażeń, do 6 HP.', '&7Daje 15 Szału.', '&6◆ Miecz dwuręczny: pułap leczenia 8 HP.', '', '&e{cooldown}s odnowienia']
+  lore: ['&8&oZ krypty wychodzi ciężki krok.', '&7Doskok do 6 bl.; do 3 wrogów', '&7w promieniu 2,5 bl. po {damage} obrażeń.', '&7Leczy o 20% obrażeń, do 6 HP.', '&7Daje 15 Szału.', '&6◆ Miecz dwuręczny: pułap leczenia 8 HP.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 10}
@@ -334,6 +360,9 @@ WOJ_MARSZ_KRYPTY:
       TargetConditions:
       - 'distance{d=0to6} true'
       - 'isPlayer false'
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Cel} @TargetedTarget'
     WOJ_Marsz_Krypty_Gracz:
@@ -347,25 +376,32 @@ WOJ_MARSZ_KRYPTY:
       Skills:
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
-      - 'setvariable{var=caster.woj_marsz_cel;type=STRING;value="<target.uuid>";duration=40} @TargetedTarget'
       - 'setvariable{var=caster.woj_marsz_licznik;type=INTEGER;value=1;duration=40} @self'
       - 'setvariable{var=caster.woj_marsz_lecz;type=DOUBLE;value=0;duration=40} @self'
       - 'setvariable{var=caster.woj_marsz_limit;type=DOUBLE;value=6;duration=40} @self'
       - 'setvariable{var=caster.woj_marsz_limit;type=DOUBLE;value=8;duration=40} @self ?variableEquals{var=caster.kr_premia;value=1}'
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
       - 'skill{s=WOJ_Marsz_Krypty_Leczenie} @TargetedTarget'
-      - 'skill{s=WOJ_Marsz_Krypty_Adresuj} @LivingNearTargetLocation{r=2.5;ignore=self,armorstands,samefaction,owner;sort=NEAREST}'
+      # A1: rozprysk liczony wokół celu (origin = cel, sort NEAREST wg originu, skipTargetsUpToIndex=1 pomija sam cel —
+      # docs MM skills-targeters.md:355-356). Stare wykluczenie stringEquals <target.uuid> w TargetConditions + @LivingNearTargetLocation
+      # nie trafiało nikogo poza celem (test 25.10, klon klasy-skille: drugi worek 1 bl. obok = 0 obrażeń).
+      # limit=2 (po pominięciu celu): licznik variableadd na caster nie ograniczał (test: 3 dodatkowe trafienia).
+      - 'skill{s=WOJ_Marsz_Krypty_Strefa;origin=@TargetedTarget} @self'
       - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
       - 'effect:particles{p=soul;a=24;hS=1;vS=0.3} @self'
+    WOJ_Marsz_Krypty_Strefa:
+      Skills:
+      - 'skill{s=WOJ_Marsz_Krypty_Adresuj} @EntitiesNearOrigin{r=2.5;ignore=self,samefaction,owner;targetarmorstands=false;targetvillagers=false;sort=NEAREST;skipTargetsUpToIndex=1;limit=2}'
     WOJ_Marsz_Krypty_Adresuj:
-      TargetConditions:
-      - 'stringEquals{val1="<target.uuid>";val2="<caster.var.woj_marsz_cel|NONE>"} false'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Uderz_Mob} @TargetedTarget'
       - 'skill{s=WOJ_Marsz_Krypty_Uderz_Gracz} @TargetedTarget'
     WOJ_Marsz_Krypty_Uderz_Mob:
       TargetConditions:
       - 'isPlayer false'
+      - 'faction{faction=chowance} false'
+      - 'faction{faction=akolita_slugi} false'
+      - 'faction{faction=zaklecia_przywolane} false'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Uderz} @TargetedTarget'
     WOJ_Marsz_Krypty_Uderz_Gracz:

@@ -3,7 +3,7 @@
 AKO_Zniwo:
   Skills:
   - 'signal{s=ZNIWO} @Children{sort=NEAREST;limit=4}'
-# Co najwyżej 3 sługi ofensywne x 2 cele x 7 obrażeń = 42 obrażenia na rzut.
+# Co najwyżej 4 dzieci (limit=4: 3 sługi Wezwania + sługa sygnatury/specjalizacji) x 2 cele x 5-7 obrażeń.
 AKO_Sluga_Zniwo:
   Skills:
   - 'effect:particles{p=soul;a=30;hS=1;vS=0.8} @self'
@@ -20,16 +20,28 @@ AKO_Sluga_Zniwo:
 AKO_Sluga_Zniwo_Obronca:
   Skills:
   - 'heal{a=4} @UniqueIdentifier{uuid=<caster.var.ako_pilnowany>}'
-  - 'shield{amount=4;maxabsorb=100} @UniqueIdentifier{uuid=<caster.var.ako_pilnowany>}'
+  # A2: osłona wygasa po 6 s. Sługa znika zaraz po Żniwie, więc wygaszenie rzuca chroniony (sudoskill),
+  # nie sługa (docs skills-mechanics-sudoskill.md: cel wykonuje skill jako rzucający).
+  - 'sudoskill{s=AKO_Oslona4_Wygasa} @UniqueIdentifier{uuid=<caster.var.ako_pilnowany>}'
+AKO_Oslona4_Wygasa:
+  Skills:
+  - 'shield{amount=4;maxabsorb=100} @self'
+  - 'delay 120'
+  - 'shield{amount=-4;maxabsorb=100} @self'
+AKO_Oslona2_Wygasa:
+  Skills:
+  - 'shield{amount=2;maxabsorb=100} @self'
+  - 'delay 120'
+  - 'shield{amount=-2;maxabsorb=100} @self'
 AKO_Sluga_Zniwo_Ognik:
   Skills:
   - 'heal{a=4} @Owner'
 AKO_Sluga_Zniwo_Ofensywny:
   Skills:
   - 'effect:sound{s=entity.wither.shoot;v=0.7;p=1.4} @self'
-  - 'skill{s=AKO_Sluga_Zniwo_Adresuj} @EntitiesInRadius{r=3;ignore=self;targetarmorstands=false;targetsamefaction=false;targetowner=false;sort=NEAREST;limit=2}'
+  - 'skill{s=AKO_Sluga_Zniwo_Adresuj} @EntitiesInRadius{r=3;ignore=self;targetarmorstands=false;targetsamefaction=false;targetowner=false;sort=NEAREST;limit=2;targetvillagers=false}'
   - 'heal{a=2} @Owner ?mythicMobType{type=AKO_SLUGA_ELF}'
-  - 'shield{amount=2;maxabsorb=100} @Owner ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
+  - 'sudoskill{s=AKO_Oslona2_Wygasa} @Owner ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
 AKO_Sluga_Zniwo_Adresuj:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo_Mob} @TargetedTarget'
@@ -37,16 +49,20 @@ AKO_Sluga_Zniwo_Adresuj:
 AKO_Sluga_Zniwo_Mob:
   TargetConditions:
   - 'isPlayer false'
+  - 'faction{faction=chowance} false'
+  - 'faction{faction=akolita_slugi} false'
+  - 'faction{faction=zaklecia_przywolane} false'
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo_Cel} @TargetedTarget'
 AKO_Sluga_Zniwo_Cel:
+  # 2026-10-25 (audyt A3/A11): obrażenia Żniwa zadaje WŁAŚCICIEL (zabójstwo/EXP/łup gracza, skalowanie Wiarą).
+  # Wyrównane do 5-7 (było 4-7); wartość na słudze, potem wspólna ścieżka przez właściciela.
   Skills:
-  - 'mmodamage{a=6;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_NIEUMARLY}'
-  - 'mmodamage{a=7;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_ORK}'
-  - 'mmodamage{a=4;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_ELF}'
-  - 'mmodamage{a=5;types=SKILL,MAGIC} ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
-  - 'mmodamage{a=7;types=SKILL,MAGIC} ?mythicMobType{type=AKO_PRZODEK_MLOTA}'
-  - 'mmodamage{a=6;types=SKILL,MAGIC} ?mythicMobType{type=AKO_KOSIARZ_CISZY}'
+  - 'setvariable{var=caster.ako_dmg_teraz;type=DOUBLE;value=6} @self'
+  - 'setvariable{var=caster.ako_dmg_teraz;type=DOUBLE;value=5} @self ?mythicMobType{type=AKO_SLUGA_ELF}'
+  - 'setvariable{var=caster.ako_dmg_teraz;type=DOUBLE;value=5} @self ?mythicMobType{type=AKO_SLUGA_CZLOWIEK}'
+  - 'setvariable{var=caster.ako_dmg_teraz;type=DOUBLE;value=7} @self ?mythicMobType{type=AKO_PRZODEK_MLOTA}'
+  - 'skill{s=AKO_Sluga_Przez_Wlasciciela_Mag}'
 AKO_Sluga_Zniwo_Gracz:
   TargetConditions:
   - 'isPlayer true'
@@ -73,9 +89,13 @@ AKO_Sluga_Obronca_Taunt:
   - 'variableIsSet{var=caster.ako_cel_uuid} false'
   Skills:
   - 'effect:particles{p=totem_of_undying;a=8;hS=1;vS=0.4} @self'
-  - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=6;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3} ?variableEquals{var=caster.ako_bron_bonus;value=0}'
-  - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=8;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3} ?variableEquals{var=caster.ako_bron_bonus;value=1}'
+  - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=6;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=caster.ako_bron_bonus;value=0}'
+  - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=8;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=caster.ako_bron_bonus;value=1}'
 AKO_Sluga_Obronca_Taunt_Cel:
+  TargetConditions:
+  - 'faction{faction=chowance} false'
+  - 'faction{faction=akolita_slugi} false'
+  - 'faction{faction=zaklecia_przywolane} false'
   Skills:
   - 'sudoskill{s=AKO_Sluga_Obronca_Provokuj;cat=true} @TargetedTarget'
 AKO_Sluga_Obronca_Provokuj:
@@ -112,4 +132,41 @@ AKO_Ognik_Ksiezyca_Koniec:
 AKO_Sygnatura_Koniec:
   Skills:
   - 'delay 200'
+  - 'remove @self'
+
+# --- 2026-10-25 audyt A3/A11: cios sługi przez właściciela ---------------------------------------------------
+# Dlaczego: obrażenia zadane przez moba-sługę = zabójstwo NIE gracza (0 EXP MMOCore, brak łupu MM, brak Wiary).
+# Jak: ~onAttack sługi (sync=true, docs skills-mechanics-cancelevent.md) anuluje vanillowy cios, zapisuje UUID ofiary
+# i obrażenia na właścicielu i każe mu (sudoskill, docs skills-mechanics-sudoskill.md) zadać mmodamage typu SKILL.
+# Cios w gracza (PvP) zostaje vanillowy (?~!isplayer w linii moba), żeby nie omijać reguł PvP MythicLib.
+AKO_Sluga_Cios:
+  Skills:
+  - 'cancelevent'
+  - 'setvariable{var=caster.ako_dmg_teraz;type=DOUBLE;value="<caster.var.ako_dmg|3>"} @self'
+  - 'skill{s=AKO_Sluga_Przez_Wlasciciela_Fiz} @trigger'
+  - 'sudoskill{s=AKO_Sluga_Obronca_Provokuj;cat=true} @trigger'
+AKO_Sluga_Przez_Wlasciciela_Fiz:
+  # cel dziedziczony = ofiara; <target.uuid> przy mechanice bez targetera = ofiara (skills-placeholders.md)
+  Skills:
+  - 'setvariable{var=caster.ako_ofiara;type=STRING;value="<target.uuid>"}'
+  - 'setvariable{var=target.ako_ofiara;type=STRING;value="<caster.var.ako_ofiara>"} @Owner'
+  - 'setvariable{var=target.ako_sluga_dmg;type=DOUBLE;value="<caster.var.ako_dmg_teraz|3>"} @Owner'
+  - 'sudoskill{s=AKO_Wlasciciel_Cios_Fiz} @Owner'
+AKO_Sluga_Przez_Wlasciciela_Mag:
+  Skills:
+  - 'setvariable{var=caster.ako_ofiara;type=STRING;value="<target.uuid>"}'
+  - 'setvariable{var=target.ako_ofiara;type=STRING;value="<caster.var.ako_ofiara>"} @Owner'
+  - 'setvariable{var=target.ako_sluga_dmg;type=DOUBLE;value="<caster.var.ako_dmg_teraz|5>"} @Owner'
+  - 'sudoskill{s=AKO_Wlasciciel_Cios_Mag} @Owner'
+AKO_Wlasciciel_Cios_Fiz:
+  Skills:
+  - 'mmodamage{a="<caster.var.ako_sluga_dmg|3>";types=SKILL,PHYSICAL} @UniqueIdentifier{uuid=<caster.var.ako_ofiara>}'
+AKO_Wlasciciel_Cios_Mag:
+  Skills:
+  - 'mmodamage{a="<caster.var.ako_sluga_dmg|5>";types=SKILL,MAGIC} @UniqueIdentifier{uuid=<caster.var.ako_ofiara>}'
+# A9: sługa Wezwania żyje 90 s (wcześniej bez końca; po wylogowaniu właściciela zostawał w świecie)
+AKO_Sluga_Czas:
+  Skills:
+  - 'delay 1800'
+  - 'effect:particles{p=soul;a=20;hS=0.5;vS=0.6} @self'
   - 'remove @self'

@@ -8,9 +8,9 @@ SpecElementalistaKragZone:
 
 SpecElementalistaKragPulse:
   Skills:
-  - "skill{s=SpecElementalistaKragMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecElementalistaKragMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=skill.spec_bonus;value=0}"
   - "skill{s=SpecElementalistaKragPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
-  - "skill{s=SpecElementalistaKragMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "skill{s=SpecElementalistaKragMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=skill.spec_bonus;value=1}"
   - "skill{s=SpecElementalistaKragPlayer} @PlayersNearOrigin{r=4;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
 
 SpecCienLisciSidlaZone:
@@ -61,7 +61,7 @@ SpecCienLisciSidlaPulse:
   - "variableEquals{var=skill.spec_sidla_triggered;value=0} true"
   Skills:
   - "effect:particles{p=happy_villager;a=8;hS=1.5;vS=0.1} @Origin"
-  - "skill{s=SpecCienLisciSidlaMob} @EntitiesNearOrigin{r=2;ignore=players;targetarmorstands=false;sort=NEAREST;limit=1}"
+  - "skill{s=SpecCienLisciSidlaMob} @EntitiesNearOrigin{r=2;ignore=players;targetarmorstands=false;sort=NEAREST;limit=1;targetvillagers=false}"
   - "skill{s=SpecCienLisciSidlaPlayer} @PlayersNearOrigin{r=2;sort=NEAREST;limit=1}"
 
 SpecSokolDeszczZone:
@@ -76,9 +76,9 @@ SpecSokolDeszczZone:
 
 SpecSokolDeszczPulse:
   Skills:
-  - "skill{s=SpecSokolDeszczMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecSokolDeszczMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5;targetvillagers=false} ?variableEquals{var=skill.spec_bonus;value=0}"
   - "skill{s=SpecSokolDeszczPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=0}"
-  - "skill{s=SpecSokolDeszczMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "skill{s=SpecSokolDeszczMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5;targetvillagers=false} ?variableEquals{var=skill.spec_bonus;value=1}"
   - "skill{s=SpecSokolDeszczPlayer} @PlayersNearOrigin{r=4;sort=NEAREST;limit=5} ?variableEquals{var=skill.spec_bonus;value=1}"
 
 SpecBurzownikGromZone:
@@ -91,9 +91,9 @@ SpecBurzownikGromPulse:
   Skills:
   - "setvariable{var=skill.spec_w_oku;type=INTEGER;value=0}"
   - "skill{s=SpecBurzownikOwnEye} @EntitiesNearOrigin{r=3;targetarmorstands=true}"
-  - "skill{s=SpecBurzownikGromMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
+  - "skill{s=SpecBurzownikGromMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=skill.spec_bonus;value=0}"
   - "skill{s=SpecBurzownikGromPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=0}"
-  - "skill{s=SpecBurzownikGromMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
+  - "skill{s=SpecBurzownikGromMob} @EntitiesNearOrigin{r=4;ignore=players;targetarmorstands=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=skill.spec_bonus;value=1}"
   - "skill{s=SpecBurzownikGromPlayer} @PlayersNearOrigin{r=4;sort=NEAREST;limit=3} ?variableEquals{var=skill.spec_bonus;value=1}"
 
 SpecStraznikGrobuProgZone:
@@ -128,7 +128,7 @@ SpecStraznikGrobuProgZone:
 SpecStraznikGrobuProgPulse:
   Skills:
   - "effect:particles{p=soul;a=12;hS=2.5;vS=0.2} @Origin"
-  - "skill{s=SpecStraznikGrobuProgMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5}"
+  - "skill{s=SpecStraznikGrobuProgMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5;targetvillagers=false}"
   - "skill{s=SpecStraznikGrobuProgPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=5}"
   - "skill{s=SpecProgOwner} @PlayersNearOrigin{r=3;limit=5}"
 
@@ -144,12 +144,15 @@ SpecNekromantaZarazaZone:
   - "skill{s=SpecNekromantaZarazaPulse} @Origin ?variableEquals{var=skill.spec_bonus;value=1}"
 SpecNekromantaZarazaPulse:
   Skills:
-  - "skill{s=SpecNekromantaZarazaMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5}"
+  - "skill{s=SpecNekromantaZarazaMob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;sort=NEAREST;limit=5;targetvillagers=false}"
   - "skill{s=SpecNekromantaZarazaPlayer} @PlayersNearOrigin{r=3;sort=NEAREST;limit=5}"
 
 SpecElementalistaKragMob:
   TargetConditions:
   - "isPlayer false"
+  - "faction{faction=chowance} false"
+  - "faction{faction=akolita_slugi} false"
+  - "faction{faction=zaklecia_przywolane} false"
   Skills:
   - "skill{s=SpecElementalistaKragHit} @TargetedTarget"
 
@@ -162,12 +165,15 @@ SpecElementalistaKragPlayer:
 
 SpecElementalistaKragHit:
   Skills:
-  - "mmodamage{a=6;types=SKILL,MAGIC}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_elementalista_krag|6>\";types=SKILL,MAGIC}"
   - "skill{s=SpecElementalistaSeal} @TargetedTarget ?stringEquals{val1=\"<target.uuid>\";val2=\"<skill.var.spec_seal|NONE>\"}"
 
 SpecCienLisciSidlaMob:
   TargetConditions:
   - "isPlayer false"
+  - "faction{faction=chowance} false"
+  - "faction{faction=akolita_slugi} false"
+  - "faction{faction=zaklecia_przywolane} false"
   Skills:
   - "skill{s=SpecCienLisciSidlaHit} @TargetedTarget"
 
@@ -182,7 +188,7 @@ SpecCienLisciSidlaHit:
   Conditions:
   - "variableEquals{var=skill.spec_sidla_triggered;value=0} true"
   Skills:
-  - "mmodamage{a=3;types=SKILL,PHYSICAL}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_cien_lisci_sidla|3>\";types=SKILL,PHYSICAL}"
   - "potion{type=SLOWNESS;duration=60;level=0;force=true}"
   - "skill{s=SpecZnamieDodaj} @TargetedTarget"
   - "setvariable{var=skill.spec_sidla_triggered;type=INTEGER;value=1}"
@@ -190,6 +196,9 @@ SpecCienLisciSidlaHit:
 SpecSokolDeszczMob:
   TargetConditions:
   - "isPlayer false"
+  - "faction{faction=chowance} false"
+  - "faction{faction=akolita_slugi} false"
+  - "faction{faction=zaklecia_przywolane} false"
   Skills:
   - "skill{s=SpecSokolDeszczHit} @TargetedTarget"
 
@@ -202,12 +211,15 @@ SpecSokolDeszczPlayer:
 
 SpecSokolDeszczHit:
   Skills:
-  - "mmodamage{a=3;types=SKILL,PROJECTILE}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_sokol_deszcz|3>\";types=SKILL,PROJECTILE}"
   - "skill{s=SpecZnamieDodaj} @TargetedTarget"
 
 SpecBurzownikGromMob:
   TargetConditions:
   - "isPlayer false"
+  - "faction{faction=chowance} false"
+  - "faction{faction=akolita_slugi} false"
+  - "faction{faction=zaklecia_przywolane} false"
   Skills:
   - "skill{s=SpecBurzownikGromHit} @TargetedTarget"
 
@@ -220,12 +232,15 @@ SpecBurzownikGromPlayer:
 
 SpecBurzownikGromHit:
   Skills:
-  - "mmodamage{a=6;types=SKILL,MAGIC}"
-  - "mmodamage{a=2;types=SKILL,MAGIC} ?variableEquals{var=skill.spec_w_oku;value=1}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_burzownik_grom|6>\";types=SKILL,MAGIC}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_burzownik_grom|6> * 0.333\";types=SKILL,MAGIC} ?variableEquals{var=skill.spec_w_oku;value=1}"
 
 SpecStraznikGrobuProgMob:
   TargetConditions:
   - "isPlayer false"
+  - "faction{faction=chowance} false"
+  - "faction{faction=akolita_slugi} false"
+  - "faction{faction=zaklecia_przywolane} false"
   Skills:
   - "skill{s=SpecStraznikGrobuProgHit} @TargetedTarget"
 
@@ -244,6 +259,9 @@ SpecStraznikGrobuProgHit:
 SpecNekromantaZarazaMob:
   TargetConditions:
   - "isPlayer false"
+  - "faction{faction=chowance} false"
+  - "faction{faction=akolita_slugi} false"
+  - "faction{faction=zaklecia_przywolane} false"
   Skills:
   - "skill{s=SpecNekromantaZarazaHit} @TargetedTarget"
 
@@ -256,7 +274,7 @@ SpecNekromantaZarazaPlayer:
 
 SpecNekromantaZarazaHit:
   Skills:
-  - "mmodamage{a=2;types=SKILL,MAGIC}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_nekromanta_zaraza|2>\";types=SKILL,MAGIC}"
   - "potion{type=SLOWNESS;duration=20;level=0;force=true}"
 
 SpecSlugaKoniec10:
@@ -277,7 +295,7 @@ SpecProgOwner:
 
 SpecElementalistaSeal:
   Skills:
-  - "mmodamage{a=2;types=SKILL,MAGIC}"
+  - "mmodamage{a=\"<caster.var.dmg_spec_elementalista_krag|6> * 0.333\";types=SKILL,MAGIC}"
 
 SpecBurzownikOwnEye:
   TargetConditions:
@@ -293,6 +311,8 @@ SpecZnamieDodaj:
   - "skill{s=SpecZnamieInit} @TargetedTarget"
   - "variableadd{var=target.znamiona;amount=1} @TargetedTarget"
   - "skill{s=SpecZnamieOgranicz} @TargetedTarget"
+  # A10: Znamiona gasną 10 s po ostatnim trafieniu (jak NIN_Znamie_Dodaj)
+  - "setvariable{var=target.znamiona;type=INTEGER;value=\"<target.var.znamiona>\";duration=200} @TargetedTarget"
   - "effect:particles{p=crit;a=12;hS=0.25;vS=0.3} @TargetedTarget"
 
 SpecZnamieInit:

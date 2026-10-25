@@ -1,10 +1,13 @@
 # ETAP 2 przebudowy klas (prototyp 2026-09-30): słudzy akolity, po jednym na rasę. AI jak ciała Chowańców:
 # idą za właścicielem (summon ustawia właściciela), biją to, co bije właściciela i jego cel. Wygląd zastępczy vanilli.
+# 2026-10-25 (audyt A3/A9/A11): cios sługi w moba jest anulowany i zadawany przez WŁAŚCICIELA (AKO_Sluga_Cios ->
+# mmodamage gracza), więc zabójstwo, EXP i łup należą do gracza, a obrażenia skalują się ze skill_damage (Wiara).
+# Słudzy Wezwania mają czas życia (AKO_Sluga_Czas) i wyrównane HP x obrażenia; rozkaz odświeżany co 20 tików.
 AKO_SLUGA_NIEUMARLY:
   Type: SKELETON
   Display: '&7Sługa Kurhanu'
-  Health: 14
-  Damage: 3
+  Health: 22
+  Damage: 4
   Faction: akolita_slugi
   Options: {MovementSpeed: 0.3, PreventOtherDrops: true, PreventItemPickup: true, PreventSunburn: true, Despawn: true, FollowRange: 24}
   Equipment: ['AIR HAND']
@@ -13,8 +16,11 @@ AKO_SLUGA_NIEUMARLY:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=4} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
+  - 'skill{s=AKO_Sluga_Czas} @self ~onSpawn'
 AKO_SLUGA_ORK:
   Type: ZOMBIFIED_PIGLIN
   Display: '&cDuch Przodka'
@@ -28,13 +34,16 @@ AKO_SLUGA_ORK:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=4} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
+  - 'skill{s=AKO_Sluga_Czas} @self ~onSpawn'
 AKO_SLUGA_ELF:
   Type: WOLF
   Display: '&bOgnik Gaju'
-  Health: 12
-  Damage: 2
+  Health: 20
+  Damage: 3
   Faction: akolita_slugi
   Options: {MovementSpeed: 0.35, PreventOtherDrops: true, Despawn: true, FollowRange: 24, Glowing: true}
   AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
@@ -42,15 +51,18 @@ AKO_SLUGA_ELF:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
   - 'heal{a=1} @Owner ~onTimer:60'
   - 'effect:particles{p=end_rod;a=4;hS=0.3;vS=0.3} @self ~onTimer:20'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
+  - 'skill{s=AKO_Sluga_Czas} @self ~onSpawn'
 AKO_SLUGA_CZLOWIEK:
   Type: IRON_GOLEM
   Display: '&fŚwięty Obrońca'
-  Health: 50
-  Damage: 5
+  Health: 30
+  Damage: 3
   Faction: akolita_slugi
   Options: {MovementSpeed: 0.25, PreventOtherDrops: true, Despawn: true, FollowRange: 24}
   AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
@@ -58,8 +70,11 @@ AKO_SLUGA_CZLOWIEK:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
+  - 'skill{s=AKO_Sluga_Czas} @self ~onSpawn'
 AKO_SLUGA_OBRONCA:
   Type: IRON_GOLEM
   Display: '&fStrażnik Relikwii'
@@ -72,12 +87,14 @@ AKO_SLUGA_OBRONCA:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
   - 'skill{s=AKO_Sluga_Obronca_Taunt} @self ~onTimer:20'
   - 'skill{s=AKO_Sluga_Obronca_Pilnuj} @self ~onTimer:40'
   - 'skill{s=AKO_Sluga_Obronca_Koniec} @self ~onSpawn'
   - 'skill{s=AKO_Sluga_Obronca_Zastap} @self ~onSignal:ZASTAP'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=4} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
 
 AKO_OGNIK_KSIEZYCA:
   Type: ALLAY
@@ -106,9 +123,11 @@ AKO_PRZODEK_MLOTA:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
   - 'skill{s=AKO_Sygnatura_Koniec} @self ~onSpawn'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=4} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
 
 AKO_KOSIARZ_CISZY:
   Type: SKELETON
@@ -123,6 +142,8 @@ AKO_KOSIARZ_CISZY:
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
   - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
-  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:20 ?variableIsSet{var=caster.ako_cel_uuid}'
   - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
   - 'skill{s=AKO_Sygnatura_Koniec} @self ~onSpawn'
+  - 'setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer'
