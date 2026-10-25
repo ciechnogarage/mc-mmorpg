@@ -29,6 +29,9 @@ M=$D/plugins/MMOItems/item/material.yml
 sed -i '/^# >>> ZIELARZ wycinek/,/^# <<< ZIELARZ wycinek/d' "$M"; cat "$H/przedmioty-klon.yml" >> "$M"
 python3 "$H/klon_v7.py" "$D"   # v7: receptury z wybornymi + skup wybornych (tylko klon)
 L=$D/logs/latest.log
+# jak world1: klon dostaje domyslny paper-global (updates: false) -> nadepniety tripwire zmienia stan i kepa Nexo
+# staje sie innym blokiem (25.10: dziurawiec 42,42 zamienil sie w wezel v2 "Dzikie przyprawy")
+sed -i -E 's/^(\s*disable-(tripwire|noteblock)-updates:) false/\1 true/' "$D/config/paper-global.yml"
 /opt/docker/mc/narzedzia/klon.sh restart "$N" >/dev/null   # restart wlasnego klonu bez kolejki (nie docker restart)
 grep -E 'Rzemioslo\] (Kontrola|Profesje)' "$L" | tail -2
 R0(){ docker exec "klon-$N" rcon-cli "$@" >/dev/null; }
