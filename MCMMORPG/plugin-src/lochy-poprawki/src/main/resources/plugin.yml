@@ -3,4 +3,11 @@ version: '${version}'
 main: pl.mcmmorpg.lochypoprawki.LochyPoprawki
 api-version: '1.21'
 depend: [MythicDungeons]
-description: Poprawki bledow MythicDungeons 2.0.1 (instancja gracza solo po rozlaczeniu nigdy sie nie zamykala).
+description: Poprawki MythicDungeons 2.0.1 (zamykanie instancji gracza solo po rozlaczeniu, zamiatacz osieroconych instancji; komendy konsoli lochy sygnal|stan).
+commands:
+  lochy:
+    description: lochy sygnal <gracz> <nazwa> [ticki] - sygnal MD do instancji gracza (TriggerRemote w functions.yml); lochy stan - aktywne instancje
+    permission: lochypoprawki.sygnal
+permissions:
+  lochypoprawki.sygnal:
+    default: op

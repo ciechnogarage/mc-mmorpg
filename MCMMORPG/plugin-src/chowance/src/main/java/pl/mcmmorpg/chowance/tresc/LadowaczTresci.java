@@ -543,7 +543,7 @@ public final class LadowaczTresci {
       if (rodzaj == Trener.Rodzaj.MISTRZ && (odz.isBlank() || !ID.matcher(odz).matches())) { problemy.blad(plik, id + ".odznaka", "MISTRZ wymaga odznaki [A-Z0-9_]+"); ok = false; }
       if (!ok) continue;
       out.put(id, new Trener(id, s.getString("nazwa", id), rodzaj, odz, s.getInt("wymagane_odznaki", 0), List.copyOf(dr),
-          List.copyOf(s.getStringList("nagroda_komendy"))));
+          List.copyOf(s.getStringList("nagroda_komendy")), List.copyOf(s.getStringList("komendy_po_walce"))));
     }
   }
 

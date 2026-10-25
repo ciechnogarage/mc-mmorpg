@@ -200,7 +200,8 @@ MISTRZ_PLOMIENIA:
   wymagane_odznaki: 0           # min. liczba odznak do wyzwania
   druzyna:
     - {gatunek: ZARZEWIAK, poziom: 25, ruchy: [ISKRA, PLOMIENNY_KIEL], cecha: ZAR, geny: 20, charakter: SMIALY}
-  nagroda_komendy: ["mi give MISCELLANEOUS PIECZEC_KRYSZTALOWA %gracz% 3"]
+  nagroda_komendy: ["mi give MISCELLANEOUS PIECZEC_KRYSZTALOWA %gracz% 3"]  # MISTRZ: tylko z PIERWSZĄ odznaką; TRENER: każda wygrana
+  komendy_po_walce: ["lochy sygnal %gracz% sala_mistrzow_koniec 100"]   # opcjonalne: po KAŻDEJ wygranej (też powtórce)
 ```
 `wieza.yml`:
 ```yaml
@@ -384,3 +385,4 @@ do łapania.
 ---------------------------------------------------------------------------------------------
 ## Historia
 - v0 (2026-09-22 21:00) — pierwsza wersja.
+- 2026-10-25 — §7: `nagroda_komendy` mistrza tylko z pierwszą odznaką, nowy klucz `komendy_po_walce` (Chowance 4a0c6fb).
