@@ -1,0 +1,18 @@
+# Prototyp etapu 1. Liczby do strojenia na klonie.
+limit-naraz: 1          # ile napadow liczy sie jednoczesnie (kolejka "po kolei")
+mspt-prog: 40.0         # nowy napad startuje tylko gdy srednie MSPT ponizej
+ruch: predkosc          # predkosc (setVelocity) | teleport
+predkosc: 0.2           # blokow na tick (gracz chodzi ~0.216)
+atak:
+  wojownicy: 8
+  lucznicy: 2
+obrona:
+  wojownicy: 4
+  lucznicy: 2           # stoja na murze
+hp-jednostki: 20.0
+obrazenia: 3.0
+hp-bramy: 300
+lup-max: 100
+limit-czasu-s: 300
+morale-odwrot: 0.7      # odwrot po utracie takiej czesci atakujacych
+zapis-co-tikow: 5

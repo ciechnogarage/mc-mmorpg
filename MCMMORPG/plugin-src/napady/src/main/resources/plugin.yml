@@ -1,0 +1,14 @@
+name: Napady
+version: '${version}'
+main: pl.mcmmorpg.napady.Napady
+api-version: '1.21'
+description: Prototyp napadow - walka manekinow na serwerze (etap 1, klon)
+commands:
+  napad:
+    description: Napady - start/stan/dolacz/stop/limit/ruch
+    usage: /napad start [n] | stan | dolacz <id> atak|obrona | opusc | stop [id] | limit <n> | ruch predkosc|teleport
+permissions:
+  napady.admin:
+    default: op
+  napady.dolacz:
+    default: true
