@@ -1,0 +1,77 @@
+{
+ "model": {
+  "type": "minecraft:condition",
+  "property": "minecraft:using_item",
+  "on_true": {
+   "type": "minecraft:range_dispatch",
+   "property": "minecraft:use_duration",
+   "scale": 0.05,
+   "entries": [
+    {
+     "threshold": 0.2,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s100c1/wooden_shovel"
+     }
+    },
+    {
+     "threshold": 0.4,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s100c2/wooden_shovel"
+     }
+    },
+    {
+     "threshold": 0.6,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s100c3/wooden_shovel"
+     }
+    }
+   ],
+   "fallback": {
+    "type": "minecraft:model",
+    "model": "bron:item/s100c/wooden_shovel"
+   }
+  },
+  "on_false": {
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s100kl/wooden_shovel"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s100kp/wooden_shovel"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s100kt/wooden_shovel"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s100/wooden_shovel"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s100/wooden_shovel"
+   }
+  }
+ }
+}

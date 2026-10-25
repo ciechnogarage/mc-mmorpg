@@ -33,10 +33,13 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -115,6 +118,12 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   /** Kosa: kazdy lekki cios tnie lukiem (kat w stopniach, zasieg broni) - boczne cele dostaja mnoznik obrazen. */
   record LukLekki(double kat, double mnoznik) {}
 
+  /** Strona trafienia (sekcja strona): katy przodu i tylu ofiary, mnozniki bez gardy, oslabienie i limity bloku. */
+  record Strona(boolean wlaczona, double przod, double tyl, double mnoznikBok, double mnoznikTyl,
+                double limitBloku, double limitBlokuPvp, double progStaminy, double beltPrzebija) {}
+  /** Tarcza (SHIELD): warstwa przodu = Sila bloku przedmiotu przycieta do przod..przodMax, warstwa boku = bok. */
+  record Tarcza(float przod, float przodMax, float bok, float opoznienie) {}
+
 
   /** Komponenty, ktore plugin ustawia; przy zmianie wracaja do wartosci materialu (resetData). */
   private static final List<DataComponentType> ZARZADZANE = List.of(
@@ -163,6 +172,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private int progMocnego, odnowienieMocnegoTicki, odnowienieSzturchniecia, zmeczenieMocnego, oknoRytmu, dlugoscRytmu;
   private double mnoznikSzturchniecia, bazowyMnoznikMocnego;
   private boolean wlasnyCios;
+  private Strona strona = new Strona(false, 60, 120, 1, 1, 1, 1, 0, 0);
+  private Tarcza tarcza;
   private boolean debug;
   private void dbg(String m) { if (debug) getLogger().info("DBG t=" + getServer().getCurrentTick() + " " + m); }
   private final Set<Material> modele = new HashSet<>();
@@ -215,6 +226,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     mnoznikRytmu = getConfig().getDouble("rytm.mnoznik", 1.4);
     lukRytmu = getConfig().getDouble("rytm.luk_mnoznik", 0.5);
     if (wytrzymalosc != null) wytrzymalosc.wczytaj(getConfig().getConfigurationSection("stamina"));
+    ConfigurationSection st = getConfig().getConfigurationSection("strona");
+    strona = st == null ? new Strona(false, 60, 120, 1, 1, 1, 1, 0, 0)
+        : new Strona(st.getBoolean("wlaczona", true), st.getDouble("przod", 60), st.getDouble("tyl", 120),
+            st.getDouble("mnoznik_bok", 1.1), st.getDouble("mnoznik_tyl", 1.25), st.getDouble("limit_bloku", 0.9),
+            st.getDouble("limit_bloku_pvp", 0.75), st.getDouble("prog_staminy", 0.25), st.getDouble("belt_przebija", 0.5));
+    ConfigurationSection tc = getConfig().getConfigurationSection("tarcza");
+    tarcza = tc == null ? null : new Tarcza((float) tc.getDouble("przod", 0.7), (float) tc.getDouble("przod_max", 0.85),
+        (float) tc.getDouble("bok", 0.3), (float) tc.getDouble("opoznienie", 0.25));
     ConfigurationSection sek = getConfig().getConfigurationSection("typy");
     if (sek != null) {
       for (String typ : sek.getKeys(false)) {
@@ -415,6 +434,21 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
           .build());
       item.setData(DataComponentTypes.USE_EFFECTS, UseEffects.useEffects()
           .canSprint(false).speedMultiplier(g.spowolnienie()).interactVibrations(true).build());
+    }
+    if (item.getType() == Material.SHIELD && tarcza != null) {
+      // Warstwy sumuja sie (BlocksAttacks.resolveBlockedDamage w serwerze 1.21.11): przod = warstwa przodu + boku.
+      float bok = tarcza.bok();
+      float przod = Math.max(tarcza.przod(), Math.min(tarcza.przodMax(),
+          (float) NBTItem.get(item).getDouble("MMOITEMS_BLOCK_POWER") / 100f));
+      item.setData(DataComponentTypes.BLOCKS_ATTACKS, BlocksAttacks.blocksAttacks()
+          .blockDelaySeconds(tarcza.opoznienie())
+          .addDamageReduction(DamageReduction.damageReduction()
+              .horizontalBlockingAngle((float) strona.przod()).base(0f).factor(Math.max(0f, przod - bok)).build())
+          .addDamageReduction(DamageReduction.damageReduction()
+              .horizontalBlockingAngle((float) strona.tyl()).base(0f).factor(bok).build())
+          .blockSound(Key.key("minecraft", "item.shield.block"))
+          .disableSound(Key.key("minecraft", "item.shield.break"))
+          .build());
     }
 
     if (mocny) {
@@ -1289,10 +1323,76 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         && ustawienie(p.getInventory().getItemInMainHand()) != null) e.setCancelled(true);
   }
 
-  /** Lekki rytm i reakcje trafienia bronia w glownej rece. HIGHEST: MythicLib liczy obrazenia broni wczesniej
-   *  i nadpisalby zmiane z nizszego priorytetu (zmierzone: na HIGH mnoznik ciosu w plecy znikal). */
+  /** Bron w glownej rece gracza jest obuchowa (blok takiego ciosu kosztuje wiecej staminy). */
+  boolean obuchowa(Player p) {
+    Ustawienie u = ustawienie(p.getInventory().getItemInMainHand());
+    return u != null && u.rodzaj() == Rodzaj.OBUCHOWE;
+  }
+
+  double mnoznikTylu() { return strona.wlaczona() ? strona.mnoznikTyl() : 1; }
+
+  /** Kat (stopnie) miedzy patrzeniem ofiary a kierunkiem, z ktorego przyszedl cios; NaN, gdy nie da sie ustalic. */
+  double katTrafienia(LivingEntity ofiara, Entity zrodlo) {
+    Vector skad = zrodlo instanceof Projectile pocisk && pocisk.getVelocity().setY(0).lengthSquared() > 1e-4
+        ? pocisk.getVelocity().multiply(-1).setY(0)
+        : zrodlo.getLocation().toVector().subtract(ofiara.getLocation().toVector()).setY(0);
+    Vector patrzy = ofiara.getLocation().getDirection().setY(0);
+    if (skad.lengthSquared() < 1e-4 || patrzy.lengthSquared() < 1e-4) return Double.NaN;
+    return Math.toDegrees(skad.angle(patrzy));
+  }
+
+  /**
+   * Strona trafienia: przod/bok/tyl ofiary (gracza i moba) mnozy obrazenia bez gardy, a blok vanilli (warstwy
+   * blocks_attacks broni i tarczy) slabnie przy niskiej staminie, przed beltem z kuszy i ma limit (PvP nizszy).
+   * HIGHEST jak reakcja: MythicLib nadpisuje obrazenia ciosu gracza na HIGHEST (ladowany wczesniej). Blok vanilli jest
+   * w zdarzeniu modyfikatorem BLOCKING (LivingEntity.hurtServer Papera 1.21.11), efekty bloku tylko gdy BLOCKING < 0.
+   * Liczone tylko przy zdarzeniu obrazen, bez petli. Wolane z #trafienie PO reakcji: kazde setDamage(bazowe)
+   * przelicza BLOCKING od nowa, wiec oslabienie bloku musi byc ostatnie.
+   */
+  private void stronaTrafienia(EntityDamageByEntityEvent e) {
+    if (!strona.wlaczona() || !(e.getEntity() instanceof LivingEntity ofiara)) return;
+    EntityDamageEvent.DamageCause c = e.getCause();
+    if (c != EntityDamageEvent.DamageCause.ENTITY_ATTACK && c != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK
+        && c != EntityDamageEvent.DamageCause.PROJECTILE) return;
+    double kat = katTrafienia(ofiara, e.getDamager());
+    if (Double.isNaN(kat)) return;
+    double mnoznik = kat > strona.tyl() ? strona.mnoznikTyl() : kat > strona.przod() ? strona.mnoznikBok() : 1;
+    if (mnoznik != 1) e.setDamage(e.getDamage() * mnoznik);
+    if (!(ofiara instanceof Player p) || !e.isApplicable(EntityDamageEvent.DamageModifier.BLOCKING)) {
+      if (debug && mnoznik != 1) dbg("STRONA kat=" + Math.round(kat) + " x" + mnoznik + " cel=" + ofiara.getType());
+      return;
+    }
+    double blok = -e.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
+    if (blok <= 0) {
+      if (debug) dbg("STRONA kat=" + Math.round(kat) + " x" + mnoznik + " cel=" + p.getName() + " blok=0");
+      return;
+    }
+    double wsp = 1;
+    if (wytrzymalosc != null && wytrzymalosc.wlaczona() && strona.progStaminy() > 0) {
+      double ulamek = wytrzymalosc.ulamekStaminy(p);
+      if (ulamek < strona.progStaminy()) wsp = Math.max(0, ulamek / strona.progStaminy());
+    }
+    boolean belt = e.getDamager() instanceof AbstractArrow strzala && strzala.getWeapon() != null
+        && strzala.getWeapon().getType() == Material.CROSSBOW;
+    if (belt) wsp *= 1 - strona.beltPrzebija();
+    boolean pvp = e.getDamager() instanceof Player
+        || e.getDamager() instanceof Projectile pocisk && pocisk.getShooter() instanceof Player;
+    double nowy = Math.min(blok * wsp, (pvp ? strona.limitBlokuPvp() : strona.limitBloku()) * e.getDamage());
+    if (nowy < blok) e.setDamage(EntityDamageEvent.DamageModifier.BLOCKING, -nowy);
+    if (debug) dbg(String.format(Locale.ROOT, "STRONA kat=%d x%.2f cel=%s blok=%.2f->%.2f wsp=%.2f belt=%b pvp=%b dmg=%.2f final=%.2f",
+        Math.round(kat), mnoznik, p.getName(), blok, nowy, wsp, belt, pvp, e.getDamage(), e.getFinalDamage()));
+  }
+
+  /** HIGHEST: MythicLib liczy obrazenia broni wczesniej i nadpisalby zmiane z nizszego priorytetu (zmierzone: na HIGH
+   *  mnoznik ciosu w plecy znikal). Jeden handler, bo kolejnosc dwoch HIGHEST jednego pluginu nie jest pewna. */
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void reakcja(EntityDamageByEntityEvent e) {
+  public void stronaIReakcja(EntityDamageByEntityEvent e) {
+    reakcja(e);
+    stronaTrafienia(e);
+  }
+
+  /** Lekki rytm i reakcje trafienia bronia w glownej rece. */
+  private void reakcja(EntityDamageByEntityEvent e) {
     if (wlasnyCios && pancerzDodatkowegoCiosu) {
       przebijPancerz(e, 0.30);
       return;
@@ -1344,7 +1444,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         if (patrzy.lengthSquared() < 1e-4 || doGracza.lengthSquared() < 1e-4
             || Math.toDegrees(patrzy.angle(doGracza)) <= 120) return;
         boolean ukryty = ukryty(p, cel, u.ukrycie());
-        e.setDamage(e.getDamage() * (ukryty ? u.ukrycie().ukrycie() : u.ukrycie().plecy()));
+        // zastepuje ogolny mnoznik tylu (stronaTrafienia mnozy kazdy cios w plecy), wiec go tu odejmujemy
+        e.setDamage(e.getDamage() * (ukryty ? u.ukrycie().ukrycie() : u.ukrycie().plecy()) / mnoznikTylu());
         Location punkt = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
         cel.getWorld().spawnParticle(Particle.ENCHANTED_HIT, punkt, 8, 0.15, 0.15, 0.15, 0.05);
         cel.getWorld().playSound(punkt, Sound.ENTITY_PLAYER_ATTACK_CRIT, SoundCategory.PLAYERS, 0.3f, 1.4f);

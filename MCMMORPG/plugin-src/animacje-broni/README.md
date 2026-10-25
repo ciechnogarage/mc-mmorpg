@@ -25,6 +25,17 @@ Miecz kłujący `THRUSTING_SWORD` ma pchnięcie również w lekkich ciosach.
 
 Kierunek jest odczytywany **przy puszczeniu** PPM (klawisz trzymany w trakcie ładowania); sprint liczy się z chwili wciśnięcia PPM, bo ładowanie go wyłącza. Bez kierunku: znad głowy. Prawdziwy lot (fallDistance > 0,5) daje cios z powietrza. **Stan przedmiotu zależy tylko od trybu PPM** (brak/mocny/garda/szarża): każda zmiana komponentów broni w dłoni to w kliencie schowanie i wyjęcie broni (zmierzone 19.10), więc WASD i sprint (poza bronią z szarżą) jej nie zmieniają. Obszarowość tylko z reguł pluginu: łuk kosy przy każdym ciosie, łuk/linia wykończenia serii, mocny boczny; rozprysk MMOItems (`on-attack`) jest zdjęty z typów broni białej, a vanillowe cięcie zamaszyste anulowane. Dodatkowe trafienia pluginu przywracają graczowi naładowanie, a celowi nietykalność i lastDamage (inaczej następny LPM przepada). Mocny atak wybiera cel przed graczem w zasięgu broni, zadaje obrażenia przez MythicLib i respektuje `canTarget`; pchnięcie może trafić kolejne cele w linii, a łuk cele obok. Przed trafieniem ustawia zamach `whack`/`stab`. Smuga każdego lekkiego i mocnego ciosu biegnie przez cztery ticki: z prawej, z lewej lub prosto. Efekt trafienia i dźwięk zależą od rodzaju broni.
 
+## Strona trafienia i blok (sekcje `strona`, `tarcza`, `stamina.blok_obuch`)
+
+- **Strona trafienia:** kąt liczony od kierunku wzroku celu do napastnika (dla pocisku: do kierunku przeciwnego do jego lotu). Do `strona.przod` (60°) to przód, ×1,0; do `strona.tyl` (120°) bok, ×`mnoznik_bok` (1,1); dalej tył, ×`mnoznik_tyl` (1,25). Dotyczy graczy i mobów. Cios w plecy z `z_ukrycia.plecy` (sztylet) ZASTĘPUJE ogólny mnożnik tyłu, nie mnoży się z nim.
+- **Tarcza (PPM, jak w vanilli):** dwie warstwy `blocks_attacks.damage_reductions`, które vanilla SUMUJE: przód (kąt 60, factor przód−bok) i bok (kąt 120, factor bok). Przód = `MMOITEMS_BLOCK_POWER`/100, przycięte do 0,70…0,85 (`tarcza.przod`, `tarcza.przod_max`); bok = `tarcza.bok` (0,30); tył 0. `block_delay` = `tarcza.opoznienie` s.
+- **Garda bronią (Shift + PPM):** jedna warstwa, kąt 60 (sam przód).
+- **Osłabienie bloku:** stamina poniżej `strona.prog_staminy` (25%) mnoży blok przez ułamek staminy/próg; bełt z kuszy (`AbstractArrow#getWeapon()` = CROSSBOW) zabiera `strona.belt_przebija` (50%) bloku. Blok nigdy nie przekracza `limit_bloku` (90%) obrażeń, w PvP `limit_bloku_pvp` (75%).
+- **Koszt staminy bloku** (`Wytrzymalosc#blok`, MONITOR): naliczany, gdy kąt trafienia mieści się w największym kącie warstw aktywnego przedmiotu; cios bronią obuchową gracza kosztuje ×`blok_obuch` (2,0). Brak staminy = blok pęka.
+- **Kolejność:** jeden handler `stronaIReakcja` (EDBE HIGHEST) robi najpierw reakcję (zmęczenie, riposta — `setDamage`), na końcu stronę i osłabienie bloku. `setDamage(base)` przelicza modyfikator BLOCKING od nowa, więc osłabienie bloku musi być ostatnie.
+- **Losowy blok MythicLib wyłączony:** w `plugins/MythicLib/stats.yml` `min-max-values` wpis `BLOCK_RATING: '0 = 0'` (blokiem rządzi tylko tarcza i ten plugin).
+- `debug: true` dodaje linie `STRONA kat x cel blok=a->b wsp belt pvp dmg final` i `BLOK_STAMINA cios L koszt tarcza obuch kat peka`.
+
 ## Konfiguracja i pack
 
 `generuj.py` i tabela `TYPY` są źródłem liczb oraz wariantów. Generator zapisuje `wynik/config.yml` i `wynik/pack/assets/bron/`; skopiuj konfigurację do zasobów pluginu:
@@ -41,6 +52,6 @@ Modele `s100c`/`s130c` pokazują odciągniętą broń przy `using_item`. `use_du
 
 ## QA i wdrożenie
 
-`qa/mechanika.sh M3|M12|M24|BG|L3|MW|MA|MS` mierzy nowy PPM, gardę, łańcuch i kierunki na klonie z klientem BronQA. Scenariusze `F/G/W/B/T/Z/N/SW1/SW2` opisują poprzedni układ sterowania i wymagają aktualizacji przed użyciem. Nie uruchamiać Paper natywnie; środowisko testowe i wdrożenie opisują skrypty `qa/klon.sh` i `wdroz.sh`.
+`qa/mechanika.sh M3|M12|M24|BG|L3|MW|MA|MS` mierzy nowy PPM, gardę, łańcuch i kierunki na klonie z klientem BronQA. `qa/eval-strona.js a|b|c|d` (bot, `narzedzia/bot/run.sh <klon> qa/eval-strona.js <tryb>`, klon `--z-kreatorem`, `debug: true`, `gamerule spawn_monsters true`): a = mnożniki boku/tyłu i cios w plecy na husku, b = warstwy tarczy, przód/bok/tył, niska stamina, bełt, c = garda mieczem, d = PvP (limit 75% i obuch; świat `world` ma w WorldGuard `__global__ pvp: deny`, więc na czas testu na klonie `rg flag -w world __global__ pvp allow`, potem `deny`). Liczby czytaj z linii `STRONA`/`BLOK_STAMINA` w logu klona. Scenariusze `F/G/W/B/T/Z/N/SW1/SW2` opisują poprzedni układ sterowania i wymagają aktualizacji przed użyciem. Nie uruchamiać Paper natywnie; środowisko testowe i wdrożenie opisują skrypty `qa/klon.sh` i `wdroz.sh`.
 
 Przy aktualizacji z 1.21.11 trzeba ponownie sprawdzić komponenty animacji przedmiotu oraz działanie modeli `using_item` w kliencie.
