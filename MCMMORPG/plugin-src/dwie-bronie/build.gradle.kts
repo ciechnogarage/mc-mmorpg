@@ -15,7 +15,7 @@ val pinnedPluginJars = listOf(
   "MythicLib-dist-1.7.1-20260330.110510-95.jar",
   "MMOItems-6.10.1-20260330.094756-58.jar",
   "MMOCore-1.13.1-20260330.110342-58.jar",
-  
+  "ModelEngine-4.0.9.jar",   // softdepend: tylko klasa MostModelEngine, ladowana gdy ModelEngine dziala
 ).map { serverPluginsDir.resolve(it) }
 
 val missing = pinnedPluginJars.filterNot { it.isFile }

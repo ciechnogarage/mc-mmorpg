@@ -90,7 +90,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   record Parowanie(int okno, int ripostaTicki, double ripostaMnoznik) {}
   record Uderzenie(double promien, double mnoznik) {}
-  record Ukrycie(double plecy, double ukrycie) {}
+  /** stozek = pol-kat pola widzenia ofiary-gracza; swiadomosc = ticki od ostatniej wymiany ciosow, w ktorych ofiara "wie" o atakujacym. */
+  record Ukrycie(double plecy, double ukrycie, double stozek, int swiadomosc) {}
   record Krwawienie(double procent, int czas, int stosy) {}
   record Riposta(int doTicka, double mnoznik) {}
   record Ciezkie(String przod, String bok, String tyl, String bieg, String spadanie, String brak, double koszt, int pelne) {}
@@ -245,7 +246,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         ConfigurationSection ud = t.getConfigurationSection("uderzenie");
         Uderzenie uderzenie = ud == null ? null : new Uderzenie(ud.getDouble("promien", 3.5), ud.getDouble("mnoznik", 1.6));
         ConfigurationSection uk = t.getConfigurationSection("z_ukrycia");
-        Ukrycie ukrycie = uk == null ? null : new Ukrycie(uk.getDouble("plecy", 2), uk.getDouble("ukrycie", 3));
+        Ukrycie ukrycie = uk == null ? null : new Ukrycie(uk.getDouble("plecy", 2), uk.getDouble("ukrycie", 3),
+            uk.getDouble("stozek", 60), (int) Math.round(uk.getDouble("swiadomosc_s", 5) * 20));
         ConfigurationSection kr = t.getConfigurationSection("krwawienie");
         Krwawienie krwawienie = kr == null ? null : new Krwawienie(kr.getDouble("procent", 0.25),
             kr.getInt("czas", 60), kr.getInt("stosy", 1));
@@ -719,8 +721,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         Vector doGracza = p.getLocation().toVector().subtract(cel.getLocation().toVector()).setY(0);
         if (patrzy.lengthSquared() > 1e-4 && doGracza.lengthSquared() > 1e-4
             && Math.toDegrees(patrzy.angle(doGracza)) > 120)
-          obrazenia *= p.isSneaking() && (!(cel instanceof Mob mob) || !p.equals(mob.getTarget()))
-              ? u.ukrycie().ukrycie() : u.ukrycie().plecy();
+          obrazenia *= ukryty(p, cel, u.ukrycie()) ? u.ukrycie().ukrycie() : u.ukrycie().plecy();
       }
       Rodzaj poprzedni = rodzajDodatkowegoCiosu;
       boolean poprzedniPancerz = pancerzDodatkowegoCiosu;
@@ -1342,7 +1343,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         Vector doGracza = p.getLocation().toVector().subtract(cel.getLocation().toVector()).setY(0);
         if (patrzy.lengthSquared() < 1e-4 || doGracza.lengthSquared() < 1e-4
             || Math.toDegrees(patrzy.angle(doGracza)) <= 120) return;
-        boolean ukryty = p.isSneaking() && (!(cel instanceof Mob mob) || !p.equals(mob.getTarget()));
+        boolean ukryty = ukryty(p, cel, u.ukrycie());
         e.setDamage(e.getDamage() * (ukryty ? u.ukrycie().ukrycie() : u.ukrycie().plecy()));
         Location punkt = cel.getLocation().add(0, cel.getHeight() * 0.6, 0);
         cel.getWorld().spawnParticle(Particle.ENCHANTED_HIT, punkt, 8, 0.15, 0.15, 0.15, 0.05);
@@ -1570,5 +1571,39 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       return true;
     }
     return false;
+  }
+
+  /** Ostatnia wymiana ciosow miedzy dwoma graczami (klucz: para UUID bez kolejnosci) -> tick. */
+  private final Map<String, Integer> walkaGraczy = new HashMap<>();
+  private static String para(UUID a, UUID b) { return a.compareTo(b) < 0 ? a + ":" + b : b + ":" + a; }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void wymianaCiosow(EntityDamageByEntityEvent e) {
+    if (!(e.getEntity() instanceof Player ofiara) || e.getFinalDamage() <= 0) return;
+    Player a = e.getDamager() instanceof Player g ? g
+        : e.getDamager() instanceof org.bukkit.entity.Projectile pr && pr.getShooter() instanceof Player g2 ? g2 : null;
+    if (a == null || a == ofiara) return;
+    walkaGraczy.put(para(a.getUniqueId(), ofiara.getUniqueId()), getServer().getCurrentTick());
+    if (walkaGraczy.size() > 512) {
+      int teraz = getServer().getCurrentTick();
+      walkaGraczy.values().removeIf(t -> teraz - t > 20 * 60);
+    }
+  }
+
+  /** Cios z ukrycia (premia `ukrycie` zamiast `plecy`): kucanie i cel nieswiadomy atakujacego.
+   *  Mob: nie celuje w gracza. Gracz (D 21.10): atakujacy niewidzialny, albo ofiara go nie widzi
+   *  (poza stozkiem wzroku lub bez linii wzroku) i nie wymieniali ciosow w ostatnich `swiadomosc_s`. */
+  boolean ukryty(Player p, LivingEntity cel, Ukrycie u) {
+    if (!p.isSneaking()) return false;
+    if (cel instanceof Mob mob) return !p.equals(mob.getTarget());
+    if (!(cel instanceof Player ofiara)) return true;
+    if (p.isInvisible() || p.hasPotionEffect(PotionEffectType.INVISIBILITY)) return true;
+    Vector wzrok = ofiara.getEyeLocation().getDirection();
+    Vector doAtak = p.getLocation().add(0, p.getHeight() * 0.5, 0).toVector().subtract(ofiara.getEyeLocation().toVector());
+    boolean widzi = doAtak.lengthSquared() > 1e-4 && Math.toDegrees(wzrok.angle(doAtak)) <= u.stozek() && ofiara.hasLineOfSight(p);
+    Integer ostatnio = walkaGraczy.get(para(p.getUniqueId(), ofiara.getUniqueId()));
+    boolean swiadomy = ostatnio != null && getServer().getCurrentTick() - ostatnio <= u.swiadomosc();
+    dbg("UKRYCIE " + p.getName() + "->" + ofiara.getName() + " widzi=" + widzi + " swiadomy=" + swiadomy);
+    return !widzi && !swiadomy;
   }
 }

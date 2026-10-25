@@ -3,5 +3,5 @@ version: '${version}'
 main: pl.mcmmorpg.dwiebronie.DwieBronie
 api-version: '1.21'
 depend: [MythicLib, MMOItems]
-softdepend: [MMOCore, AnimacjeBroni, KsiegaPostaci]
+softdepend: [MMOCore, AnimacjeBroni, KsiegaPostaci, ModelEngine]
 description: Walka dwiema bronia - LPM naprzemiennie prawa/lewa, PPM cios lewa (obrazenia skalowane bronia lewej).

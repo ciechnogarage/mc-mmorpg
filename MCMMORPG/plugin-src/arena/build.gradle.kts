@@ -17,6 +17,7 @@ val pinnedPluginJars = listOf(
   "MMOCore-1.13.1-20260330.110342-58.jar",
   "MythicMobs-5.11.2.jar",
   "worldguard-bukkit-7.0.15.jar",
+  "FastAsyncWorldEdit-Paper-2.15.1-SNAPSHOT-1283.jar", // BukkitAdapter dla StrefyPvp
 ).map { serverPluginsDir.resolve(it) }
 
 val missing = pinnedPluginJars.filterNot { it.isFile }

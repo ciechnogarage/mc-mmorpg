@@ -145,6 +145,9 @@ typy:
     rytm: true
     kroki: [0.18, 0.18, 0.24]
     skala: s080
+    # plecy = cios w plecy (>120 st. od wzroku celu); ukrycie = plecy + kucanie, gdy cel nie wie o atakujacym:
+    # mob bez celu = atakujacy; gracz: nie widzi go (stozek st. od wzroku + linia wzroku) albo atakujacy niewidzialny,
+    # i brak wymiany ciosow tej pary przez swiadomosc_s (0 = tylko widzenie). Domyslnie stozek 60, swiadomosc_s 5.
     z_ukrycia: {plecy: 2.0, ukrycie: 3.0}
     krwawienie: {procent: 0.15, czas: 60, stosy: 1}
     ciezkie: {przod: wypad, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, tyl: odepchniecie, bieg: z_rozbiegu, brak: znad_glowy}

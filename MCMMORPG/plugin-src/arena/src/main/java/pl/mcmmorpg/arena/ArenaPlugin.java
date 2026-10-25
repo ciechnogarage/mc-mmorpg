@@ -83,6 +83,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   private final Set<UUID> internalTeleport = new HashSet<>();
   private final Set<UUID> deathsOnArena = new HashSet<>();
   private NamespacedKey dummyKey, numberKey, launchRingKey, projectileOwnerKey, cloudOwnerKey;
+  private StrefyPvp strefy;
   private Plugin profilesPlugin;
   private MenuGracza menuGracza;
   private File stateFile;
@@ -96,6 +97,9 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     launchRingKey = new NamespacedKey(this, "launch_ring");
     projectileOwnerKey = new NamespacedKey(this, "projectile_owner");
     cloudOwnerKey = new NamespacedKey(this, "cloud_owner");
+    if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+      try { strefy = new StrefyPvp(); } catch (Throwable t) { getLogger().warning("WorldGuard niedostepny, pvp-poza-ringiem: strefy nieaktywne: " + t); }
+    }
     profilesPlugin = Bukkit.getPluginManager().getPlugin("MMOProfiles");
     if (profilesPlugin != null && profilesPlugin.isEnabled()) registerProfileUnload();
     stateFile = new File(getDataFolder(), "returns.yml");
@@ -404,8 +408,20 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   }
   private boolean illegalPvp(Player source, Player victim) {
     if (source == victim) return false;
-    if (getConfig().getBoolean("pvp-tylko-w-ringu", true)) return !inRing(source.getLocation()) || !inRing(victim.getLocation());
-    return (arena(source.getLocation()) || arena(victim.getLocation())) && (!inRing(source.getLocation()) || !inRing(victim.getLocation()));
+    Location a = source.getLocation(), b = victim.getLocation();
+    if (inRing(a) && inRing(b)) return false;
+    if (arena(a) || arena(b)) return true;
+    return pvpPozaRingiemZakazane(a, b);
+  }
+  /** Poza swiatem areny: `pvp-poza-ringiem: strefy` = tylko gdy oba miejsca maja w WG jawnie `pvp: allow`;
+   *  inaczej (domyslnie, albo brak WG) jak dotad wg `pvp-tylko-w-ringu`. */
+  private boolean pvpPozaRingiemZakazane(Location a, Location b) {
+    if (strefy != null && "strefy".equalsIgnoreCase(getConfig().getString("pvp-poza-ringiem", ""))) {
+      boolean ok = strefy.dozwolone(a) && strefy.dozwolone(b);
+      dbg("strefy pvp: " + ok);
+      return !ok;
+    }
+    return getConfig().getBoolean("pvp-tylko-w-ringu", true);
   }
   private String kind(DamageMetadata d) {
     if (!d.collectElements().isEmpty()) return "żywioł " + d.collectElements().iterator().next().toString().toLowerCase();
@@ -472,7 +488,8 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     }
     if (hit == null) return;
     if (source == null && ownerId != null) {
-      if (getConfig().getBoolean("pvp-tylko-w-ringu", true) || arena(victim.getLocation())) event.setCancelled(true);
+      Player owner = Bukkit.getPlayer(ownerId);
+      if (arena(victim.getLocation()) || pvpPozaRingiemZakazane(owner == null ? null : owner.getLocation(), victim.getLocation())) event.setCancelled(true);
       return;
     }
     if (source == null) return;
@@ -619,7 +636,7 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
     Player source = attacker(event.getPotion());
     UUID ownerId = playerOwner(event.getPotion());
     for (LivingEntity entity : event.getAffectedEntities()) if (entity instanceof Player target && ownerId != null && !ownerId.equals(target.getUniqueId())) {
-      if (source == null && (getConfig().getBoolean("pvp-tylko-w-ringu", true) || arena(target.getLocation()))
+      if (source == null && (arena(target.getLocation()) || pvpPozaRingiemZakazane(Bukkit.getPlayer(ownerId) == null ? null : Bukkit.getPlayer(ownerId).getLocation(), target.getLocation()))
           || source != null && (illegalPvp(source, target) || (arena(source.getLocation()) || arena(target.getLocation()))
           && !event.getPotion().getPersistentDataContainer().has(launchRingKey, PersistentDataType.BYTE))) event.setIntensity(entity, 0);
     }
