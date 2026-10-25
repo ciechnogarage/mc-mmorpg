@@ -90,8 +90,8 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   private long tick;
 
   @Override public void onEnable() {
-    if (getConfig().getBoolean("sonda-pvp", false)) getServer().getPluginManager().registerEvents(new Sonda(this), this);
     saveDefaultConfig();
+    if (getConfig().getBoolean("sonda-pvp", false)) getServer().getPluginManager().registerEvents(new Sonda(this), this);
     dummyKey = new NamespacedKey(this, "dummy");
     numberKey = new NamespacedKey(this, "number");
     launchRingKey = new NamespacedKey(this, "launch_ring");
@@ -266,6 +266,8 @@ public final class ArenaPlugin extends JavaPlugin implements Listener {
   }
 
   @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    // Uprawnienie arena.console (plugin.yml, default op) odsiewa zwyklych graczy jeszcze przed tym kodem; konsola ma je zawsze,
+    // wiec ten warunek jest drugim zabezpieczeniem (op-gracz dostaje komunikat). Nikt poza konsola/RCON nie wykona komendy.
     // menu woła [console]; RCON to tez tylko administrator (testy na klonie). Gracz nie ma dostepu.
     if (!(sender instanceof org.bukkit.command.ConsoleCommandSender) && !(sender instanceof org.bukkit.command.RemoteConsoleCommandSender)) { sender.sendMessage("§cTylko menu areny może wykonać tę czynność."); return true; }
     if (args.length == 1 && args[0].equalsIgnoreCase("manekiny")) { ensureDummies(sender); return true; }
