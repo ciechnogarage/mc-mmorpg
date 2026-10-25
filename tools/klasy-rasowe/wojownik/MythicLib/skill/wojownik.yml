@@ -1,55 +1,5 @@
 # Wojownik, Akt 1. Modyfikatory MythicLib są odczytywane wyłącznie w extra-skills.
 # wariant: 0 nieumarły, 1 ork, 2 elf, 3 człowiek.
-WOJ_SZARZA:
-  source: mythicmobs:WOJ_Szarza
-  name: 'Szarża'
-  icon: {item: IRON_SWORD}
-  lore: ['&7Doskok do celu w 8 bl. za {damage} obrażeń.', '&7Daje 15 Szału (ork: 25).', '&7Nieumarły leczy 30% obrażeń, ork odrzuca,', '&7elf ląduje za celem z szybkością 2 s,', '&7człowiek mocno spowalnia cel na 1,5 s.', '', '&e{cooldown}s odnowienia']
-  parameters:
-    mana: {name: Koszt, player: 0}
-    cooldown: {name: Odnowienie, player: 8}
-    damage: {name: Obrażenia, player: {base: 5, per-level: 1.5}}
-    wariant: {name: Wariant, player: 0}
-  extra-skills:
-    WOJ_Szarza:
-      TargetConditions:
-      - 'distance{d=0to8} true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
-      Skills:
-      - 'skill{s=WOJ_Szarza_Nieumarly} @target ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
-      - 'skill{s=WOJ_Szarza_Ork} @target ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
-      - 'skill{s=WOJ_Szarza_Elf} @target ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
-      - 'skill{s=WOJ_Szarza_Czlowiek} @target ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
-    WOJ_Szarza_Nieumarly:
-      Skills:
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
-      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
-      - 'heal{a="<modifier.damage> * 0.3"} @self'
-      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
-    WOJ_Szarza_Ork:
-      Skills:
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
-      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
-      - 'throw{velocity=2;velocityY=0.3}'
-      - 'command{c="mmocore admin resource-mana give <caster.name> 25"} @self'
-    WOJ_Szarza_Elf:
-      Skills:
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
-      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
-      - 'potion{type=SPEED;duration=40;level=0;force=true;hasParticles=true} @self'
-      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
-    WOJ_Szarza_Czlowiek:
-      Skills:
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=-1.2}'
-      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
-      # A8: było SLOWNESS 255 (pełne unieruchomienie); teraz spowolnienie III na 1,5 s
-      - 'potion{type=SLOWNESS;duration=30;level=2;force=true;hasParticles=true}'
-      - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'
-
 WOJ_ROZPLATANIE:
   source: mythicmobs:WOJ_Rozplatanie
   name: 'Rozpłatanie'
@@ -159,7 +109,7 @@ WOJ_GNIEW:
       Skills:
       - 'skill{s=WOJ_Gniew_Zwykly} @TargetedTarget'
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5;lockpitch=true}'
     WOJ_Gniew_Czlowiek:
       Skills:
       - 'skill{s=WOJ_Gniew_Zwykly} @TargetedTarget'
@@ -211,7 +161,7 @@ WOJ_PRZELOT_GAJU:
       Skills:
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5;lockpitch=true}'
       - 'effect:particles{p=sweep_attack;a=15;hS=0.4;vS=0.4} @self'
       - 'effect:sound{s=entity.player.attack.sweep;v=0.9;p=1.3} @self'
       - 'command{c="mmocore admin resource-mana give <caster.name> 15"} @self'

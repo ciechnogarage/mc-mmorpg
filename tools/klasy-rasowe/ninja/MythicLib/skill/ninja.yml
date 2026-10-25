@@ -67,70 +67,25 @@ NIN_KROK:
     NIN_Krok_Teleport:
       Skills:
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5;lockpitch=true}'
       - 'effect:particles{p=smoke;a=18;hS=0.3;vS=0.5} @self'
     NIN_Krok_Ork:
       # A9: osobny wariant orka (wcześniej = człowiek): za cel i odepchnięcie barkiem
+      # throw dzieli velocity przez 10 (MM 5.11.2 ThrowMechanic, CFR; docs skills-mechanics-throw.md: przykłady 15/5)
+      # -> 1.2 dawało 0,12 bl./tik i 0-0,7 bl. odrzutu (klon klasy-naprawa 25.10); 12 = 1,2 bl./tik
       Skills:
       - 'skill{s=NIN_Krok_Teleport} @TargetedTarget'
-      - 'throw{velocity=1.2;velocityY=0.3} @TargetedTarget'
+      - 'throw{velocity=12;velocityY=3} @TargetedTarget'
     NIN_Krok_Elf:
       Skills:
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5;lockpitch=true}'
       - 'potion{type=INVISIBILITY;duration=40;level=0;force=true;hasParticles=false} @self'
       - 'effect:particles{p=smoke;a=18;hS=0.3;vS=0.5} @self'
     NIN_Krok_Nieumarly:
       Skills:
       - 'pull{velocity=2} @target'
       - 'effect:particles{p=soul;a=20;hS=0.3;vS=0.5} @target'
-
-NIN_RZUT:
-  source: mythicmobs:NIN_Rzut
-  name: 'Rzut Ostrzem'
-  icon: {item: IRON_SWORD}
-  lore: ['&7Pocisk do 15 bl. za {damage} obrażeń.', '&7Trafienie dodaje 1 Znamię (maks. 5).', '&7Elf: spowolnienie 1,5 s; ork: odrzut.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
-  parameters:
-    mana: {name: Koszt, player: 25}
-    cooldown: {name: Odnowienie, player: 4}
-    damage: {name: Obrażenia, player: {base: 3.5, per-level: 1}}
-    wariant: {name: Wariant, player: 0}
-  extra-skills:
-    NIN_Rzut:
-      TargetConditions:
-      - 'distance{d=0to15} true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
-      Skills:
-      - 'projectile{bulletType=ITEM;material=IRON_SWORD;bulletmatchdirection=true;onTick=NIN_Rzut_Slad;onHit=NIN_Rzut_Trafienie;v=22;mr=15;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @target'
-      - 'effect:sound{s=entity.player.attack.sweep;v=0.7;p=1.8} @self'
-    NIN_Rzut_Slad:
-      Skills:
-      - 'effect:particles{p=crit;a=2;hS=0.08;vS=0.08} @origin'
-    NIN_Rzut_Trafienie:
-      Skills:
-      - 'skill{s=NIN_Rzut_Trafienie_Mob} @TargetedTarget'
-      - 'skill{s=NIN_Rzut_Trafienie_Gracz} @TargetedTarget'
-    NIN_Rzut_Trafienie_Mob:
-      TargetConditions:
-      - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
-      Skills:
-      - 'skill{s=NIN_Rzut_Trafienie_Efekt} @TargetedTarget'
-    NIN_Rzut_Trafienie_Gracz:
-      TargetConditions:
-      - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
-      Skills:
-      - 'skill{s=NIN_Rzut_Trafienie_Efekt} @TargetedTarget'
-    NIN_Rzut_Trafienie_Efekt:
-      Skills:
-      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL,PROJECTILE}'
-      - 'skill{s=NIN_Znamie_Dodaj}'
-      # A8: było SLOWNESS 255 (pełne unieruchomienie); teraz spowolnienie III na 1,5 s
-      - 'potion{type=SLOWNESS;duration=30;level=2;force=true;hasParticles=true} ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
-      - 'throw{velocity=1.5;velocityY=0.2} ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
 
 NIN_EGZEKUCJA:
   source: mythicmobs:NIN_Egzekucja
