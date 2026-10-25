@@ -8,7 +8,7 @@ ZAKLECIE_LECZENIE:
   - ''
   - '<!i><#ffcf6b>PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
   - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-  - '<!i><gray>Ładowanie: bez ładowania · Koszt: <#6ab4ff>0,5 many / 0,5 s'
+  - '<!i><gray>Ładowanie: bez ładowania · Koszt: <#6ab4ff>3 many/s'
   - '<!i><#c9a6ff>Oburącz: <gray>efekt ×2,2, mana ×2,8'
   Options:
     ItemModel: zaklecia:leczenie

@@ -8,7 +8,7 @@ zaklecia:
     cel: stozek
     oburacz: {efekt: 2.2, mana: 2.8}
     przedmiot: ZAKLECIE_PLOMIENIE
-    mana-za-tik: 0.5   # TEST (30.09, wlasciciel: "niski koszt zeby testowac"); docelowo 2.0
+    mana-za-tik: 2.0   # B6 25.10: koniec TESTU 0.5 (kopia z world1)
     nazwa: 'Płomienie'
     skille:
       obraz: ''
@@ -19,7 +19,7 @@ zaklecia:
     cel: stozek
     oburacz: {efekt: 2.2, mana: 2.8}
     przedmiot: ZAKLECIE_ODMROZENIE
-    mana-za-tik: 0.5   # TEST; docelowo 2.5
+    mana-za-tik: 2.5   # B6 25.10: koniec TESTU 0.5 (kopia z world1)
     nazwa: 'Odmrożenie'
     skille:
       obraz: ''
@@ -47,7 +47,7 @@ zaklecia:
     cel: siebie
     przedmiot: ZAKLECIE_LECZENIE
     nazwa: 'Leczenie'
-    mana-za-tik: 0.5
+    mana-za-tik: 1.5   # B6 25.10: koniec TESTU 0.5 (kopia z world1)
     oburacz: {efekt: 2.2, mana: 2.8}
   runa_ognia:
     szkola: ogien
@@ -67,7 +67,7 @@ zaklecia:
     cel: siebie
     przedmiot: ZAKLECIE_OSLONA
     nazwa: 'Osłona'
-    mana-za-tik: 0.5
+    mana-za-tik: 1.5   # B6 25.10: koniec TESTU 0.5 (kopia z world1)
     sila: 40
     redukcja-magia: 0.6
     redukcja-fizyczne: 0.3
@@ -113,7 +113,7 @@ zaklecia:
     przedmiot: ZAKLECIE_LECZENIE_DLONI
     nazwa: 'Leczenie dłoni'
     zasieg: 6
-    mana-za-tik: 0.5
+    mana-za-tik: 1.5   # B6 25.10: koniec TESTU 0.5 (kopia z world1)
     oburacz: {efekt: 2.2, mana: 2.8}
   uspokojenie:
     szkola: iluzja

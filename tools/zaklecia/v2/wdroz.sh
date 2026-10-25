@@ -17,6 +17,9 @@ if [[ -n "$(find "$tu/src" -type f -newer "$JAR" -print -quit)" ]]; then
   exit 4
 fi
 
+# F3 (25.10): opisy kosztu musza zgadzac sie z configiem (zatrzymuje wdrozenie PRZED kopia i restartem)
+python3 "$tu/generuj_koszty.py" --sprawdz || { echo "PRZERWANE: opisy kosztu != config; uruchom generuj_koszty.py"; exit 5; }
+
 KOPIA="$DANE/backups/zaklecia-v2-$(date +%Y%m%d-%H%M)"; mkdir -p "$KOPIA"
 for f in plugins/MythicMobs/items/Zaklecia.yml plugins/MythicMobs/skills/Zaklecia.yml plugins/MenuKey/config.yml \
          plugins/DeluxeMenus/config.yml plugins/DeluxeMenus/gui_menus/hub_umiejetnosci.yml \
