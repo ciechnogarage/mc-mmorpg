@@ -10,6 +10,12 @@ a ME przekazuje do MM tylko `DISMOUNTED` (javap ME 4.0.9, skill `mc-mythicmobs/S
 Plugin słucha `BaseEntityInteractEvent` (MONITOR, bez ATTACK) i sam wysyła `new MythicMobInteractEvent(gracz, ActiveMob)`, jeden na klik.
 Jeden PPM klienta to INTERACT_AT + INTERACT, a czasem też druga ręka, dlatego obowiązuje okno 250 ms na gracza.
 
+## Wpływ na world1 i inne mosty
+- Na world1 (25.10) 0 z 218 mobów MythicMobs ma jednocześnie `model{` i `~onInteract` (parser tekstowy `plugins/MythicMobs/mobs/*.yml`),
+  więc wdrożenie MostNpc nie zmienia zachowania żadnego istniejącego moba — działa dopiero dla nowych NPC zadań z modelem.
+- Most Chowańców (`chowance/.../integracja/MostModelEngine.java`) obsługuje tylko własne reguły Chowańców (interakcje, łapanie, zagroda)
+  i NIE wysyła `MythicMobInteractEvent` — MostNpc go nie dubluje i nie koliduje.
+
 ## Dlaczego nie NPC typu `mythicmobs` w BetonQueście (wariant A)
 BQ 3.2.0 przy NPC `mythicmobs` w dowolnym pakiecie rejestruje `MythicMobsInteractCatcher.onMove(EntityMoveEvent)`, który przy każdym ruchu każdego moba MM
 robi `isMythicMob`, potem `getMythicMobInstance` i woła `NpcVisibilityUpdateEvent` (javap; rejestracja w `MythicMobsIntegrator$DynamicListenerRegister`
