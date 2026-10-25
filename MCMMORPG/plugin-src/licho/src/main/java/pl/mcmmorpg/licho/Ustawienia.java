@@ -6,6 +6,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +27,9 @@ final class Ustawienia {
   final int[] obszar;
   private final double[] poczekalniaPkt, bramaPkt, komoraPkt;
   final Map<Material, String> przebrania = new LinkedHashMap<>();
+  record Prog(int ile, String nazwa) {}
+  final int tytulyMinGraczy;
+  final List<Prog> tytulyLicho, tytulyZamawiacz;
 
   Ustawienia(FileConfiguration c) {
     swiat = c.getString("swiat", "licho");
@@ -71,6 +76,20 @@ final class Ustawienia {
       Material m = Material.matchMaterial(k.toUpperCase(Locale.ROOT));
       if (m != null && m.isBlock()) przebrania.put(m, p.getString(k));
     }
+    tytulyMinGraczy = c.getInt("tytuly.min-graczy", 4);
+    tytulyLicho = progi(c, "tytuly.licho");
+    tytulyZamawiacz = progi(c, "tytuly.zamawiacz");
+  }
+
+  /** {ile: nazwa} -> rosnąco po progu. */
+  private static List<Prog> progi(FileConfiguration c, String klucz) {
+    List<Prog> l = new ArrayList<>();
+    ConfigurationSection s = c.getConfigurationSection(klucz);
+    if (s != null) for (String k : s.getKeys(false)) {
+      try { l.add(new Prog(Integer.parseInt(k), s.getString(k))); } catch (NumberFormatException ignored) { }
+    }
+    l.sort(Comparator.comparingInt(Prog::ile));
+    return l;
   }
 
   private static int s(FileConfiguration c, String klucz, double domyslne) { return (int) Math.round(c.getDouble(klucz, domyslne) * 20); }

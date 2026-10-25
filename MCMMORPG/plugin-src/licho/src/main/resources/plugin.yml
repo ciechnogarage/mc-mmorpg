@@ -3,7 +3,7 @@ version: '${version}'
 main: pl.mcmmorpg.licho.LichoPlugin
 api-version: '1.21'
 depend: [MythicLib, packetevents]
-softdepend: [MMOProfiles, Multiverse-Core]
+softdepend: [MMOProfiles, Multiverse-Core, PlaceholderAPI]
 commands:
   licho:
     description: Licho nie śpi (prop hunt) — sterowanie z menu (konsola).

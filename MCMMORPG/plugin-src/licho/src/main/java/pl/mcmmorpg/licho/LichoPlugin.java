@@ -71,7 +71,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
   @Override public void onEnable() {
     saveDefaultConfig();
     u = new Ustawienia(getConfig());
-    rekordy = new Rekordy(new File(getDataFolder(), "rekordy.yml"), getLogger());
+    rekordy = new Rekordy(new File(getDataFolder(), "rekordy.yml"), getLogger(), u);
     mapa = new Mapa(getResource("mapa.txt"), getLogger());
     klucz = new NamespacedKey(this, "licho");
     plikPowrotow = new File(getDataFolder(), "powroty.yml");
@@ -80,6 +80,8 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
     klawisze = new Klawisze(this);
     PacketEvents.getAPI().getEventManager().registerListener(klawisze);
     Bukkit.getPluginManager().registerEvents(this, this);
+    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) new Placeholdery(this).register();
+    else getLogger().warning("Brak PlaceholderAPI — menu Licha nie pokaże tytułu.");
     getLogger().info(u.nazwaMapy + ": " + mapa.bloki.size() + " bloków, przebrań " + u.przebrania.size() + ".");
     Bukkit.getScheduler().runTaskTimer(this, this::tick, 20L, 1L);
     Bukkit.getScheduler().runTaskLater(this, () -> {
@@ -347,7 +349,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
     if (top.isEmpty()) p.sendMessage(MM.deserialize("<gray>  Jeszcze nikt nie zagrał. Bądź pierwszy!</gray>"));
     for (int i = 0; i < top.size(); i++) {
       Rekordy.Pozycja r = top.get(i);
-      p.sendMessage(MM.deserialize("<gray>  " + (i + 1) + ".</gray> <white>" + MM.escapeTags(r.nick()) + "</white> <yellow>" + r.najlepszy() + " pkt</yellow> <gray>· rund "
+      p.sendMessage(MM.deserialize("<gray>  " + (i + 1) + ".</gray> <white>" + MM.escapeTags(r.nick()) + "</white> " + tytulTag(r.tytul()) + "<yellow>" + r.najlepszy() + " pkt</yellow> <gray>· rund "
           + r.rundy() + ", przetrwanych jako Licho " + r.przetrwane() + "</gray>"));
     }
     List<Rekordy.Pozycja> sprytne = rekordy.top(1, Comparator.comparingInt(Rekordy.Pozycja::przetrwane).reversed());
@@ -359,7 +361,14 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
   private void rekordyKrotko(Player p) {
     Rekordy.Pozycja moj = rekordy.moj(p.getUniqueId());
     if (moj != null) p.sendMessage(MM.deserialize("<gray>  Twój rekord:</gray> <green>" + moj.najlepszy() + " pkt</green> <gray>· rund " + moj.rundy() + "</gray>"));
+    String pl = rekordy.postep(p.getUniqueId(), true), pz = rekordy.postep(p.getUniqueId(), false);
+    String t = rekordy.tytul(p.getUniqueId());
+    p.sendMessage(MM.deserialize("<gray>  Twój tytuł:</gray> " + (t == null ? "<gray>jeszcze żaden</gray>" : tytulTag(t))
+        + (pl.isEmpty() && pz.isEmpty() ? "" : "<gray>· dalej: " + MM.escapeTags(String.join(" · ", java.util.stream.Stream.of(pl, pz).filter(x -> !x.isEmpty()).toList())) + "</gray>")));
+    p.sendMessage(MM.deserialize("<dark_gray>  Do tytułów liczą się dokończone rundy od " + u.tytulyMinGraczy + " graczy (Licho: przetrwane, Zamawiacz: złapane).</dark_gray>"));
   }
+
+  static String tytulTag(String t) { return t == null ? "" : "<gold>«" + MM.escapeTags(t) + "»</gold> "; }
 
   // ------------------------------------------------------------------ komenda (konsola / menu)
   @Override public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
@@ -382,7 +391,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
       case "rekordy" -> {
         if (p != null) pokazRekordy(p);
         else for (Rekordy.Pozycja r : rekordy.top(10, Comparator.comparingInt(Rekordy.Pozycja::najlepszy).reversed()))
-          s.sendMessage(r.nick() + " " + r.najlepszy() + " pkt, rund " + r.rundy() + ", przetrwane " + r.przetrwane());
+          s.sendMessage(r.nick() + " " + r.najlepszy() + " pkt, rund " + r.rundy() + ", przetrwane " + r.przetrwane() + ", tytuł " + r.tytul());
       }
       case "zbuduj" -> {
         World w = swiat();
@@ -401,6 +410,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
         s.sendMessage(runda == null ? "Brak rundy" : "STAN " + runda.opis());
         World w = swiat();
         if (w != null) s.sendMessage("forceload=" + w.getForceLoadedChunks().size() + " encji z kluczem=" + w.getEntities().stream().filter(e -> e.getPersistentDataContainer().has(klucz)).count());
+        s.sendMessage("tytuly-min=" + u.tytulyMinGraczy + " progi licho=" + u.tytulyLicho + " zamawiacz=" + u.tytulyZamawiacz);
       }
       case "start" -> {
         int sek = a.length > 1 ? Integer.parseInt(a[1]) : 3;
@@ -424,6 +434,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
         if (runda != null) { s.sendMessage("Najpierw niech runda się skończy."); return true; }
         reloadConfig();
         u = new Ustawienia(getConfig());
+        rekordy.ustawienia(u);
         s.sendMessage("Przeładowano: przebrań " + u.przebrania.size());
       }
       default -> s.sendMessage("Nieznane: " + a[0]);

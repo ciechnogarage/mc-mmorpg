@@ -35,8 +35,18 @@ do świtu (koniec rundy); Zamawiacze, gdy „zamówią” (złapią) wszystkie.
 
 ## Punkty i ranking (bez nagród przedmiotowych)
 Licho: +1 co 10 s w ukryciu, +5 za psotę, +15 za przetrwanie. Zamawiacz: +3 za trafienie, +10 za złapanie.
-Ranking „najwięcej punktów w rundzie” i „najczęściej przetrwane” (rekordy.yml). Nagrody (kosmetyka, tytuł) =
-decyzja właściciela; EXP postaci celowo NIE (dwa konta grające razem nabiłyby EXP).
+Ranking „najwięcej punktów w rundzie” i „najczęściej przetrwane” (rekordy.yml). EXP postaci celowo NIE
+(dwa konta grające razem nabiłyby EXP).
+
+## Tytuły (decyzja właściciela 24.10: wariant B, „to dawaj”)
+Kosmetyka bez mocy. Liczą się tylko rundy dokończone (nie przerwane) przy ≥ `tytuly.min-graczy` (4) graczach na koniec.
+- Licho (przetrwane rundy): 1 Kryjak · 5 Domowik · 20 Licho Nieuchwytne · 50 Bies Zagrody.
+- Zamawiacz (złapane Licha): 3 Tropiciel · 10 Znachor · 40 Szeptun · 100 Mistrz Zamawiania.
+Progi z celu: pierwszy tytuł w pierwszy wieczór, ostatni ~15 h (założenie: Licho przetrwa ~1/3 rund, ~2 złapania na rundę
+przy 4–5 graczach — NIE zmierzone, do sprawdzenia w rekordy.yml po tygodniu). Wyświetlany jest najwyższy stopień
+(remis: ścieżka Licha). Widać go w podsumowaniu rundy, rekordach i w menu (przycisk Rekordy, `%licho_tytul%`,
+`%licho_postep_licho%`, `%licho_postep_zamawiacz%`, `%licho_min_graczy%`). Przy nicku w czacie NIE: CMI ma `ModifyChatFormat: false`,
+format czatu to zmiana wspólna dla serwera (osobna decyzja).
 
 ## Sterowanie (pakiety, przed Księgą/Zaklęciami/MenuKey)
 LPM = trafienie (Zamawiacz) · PPM = wcielenie (Licho) · F = psota / okadzanie · Q = menu (Opuść grę).

@@ -46,6 +46,22 @@ punkty:
   trafienie: 3
   zlapanie: 10
 
+# Tytuły za progi — kosmetyka, bez łupu i mocy. Liczą się tylko rundy dokończone (nie przerwane) przy co najmniej
+# min-graczy graczach: we dwóch albo na drugich kontach nie nabijesz. Progi z celu: pierwszy tytuł w pierwszy wieczór,
+# ostatni na ok. 15 h gry (założenie: Licho przetrwa ~1/3 rund, w rundzie łapie się ~2 Licha na ~4–5 graczy; do pomiaru po wdrożeniu).
+tytuly:
+  min-graczy: 4
+  licho:                    # przetrwane rundy jako Licho
+    1: Kryjak
+    5: Domowik
+    20: Licho Nieuchwytne
+    50: Bies Zagrody
+  zamawiacz:                # złapane Licha
+    3: Tropiciel
+    10: Znachor
+    40: Szeptun
+    100: Mistrz Zamawiania
+
 mapa:
   nazwa: 'Zagroda Zielarki'
   obszar: [-23, 60, -21, 23, 70, 21]   # x1 y1 z1 x2 y2 z2 — poza nim gracz wraca do bramy

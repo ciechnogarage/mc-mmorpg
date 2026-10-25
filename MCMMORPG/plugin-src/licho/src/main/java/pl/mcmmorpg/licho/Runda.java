@@ -54,6 +54,7 @@ final class Runda {
   private final List<Entity> encje = new ArrayList<>();
   private final Map<Block, Uczestnik> zastygle = new HashMap<>();
   private boolean lichaWygraly;
+  private String powodKonca;     // != null = runda przerwana (nie liczy się do tytułów)
 
   Runda(LichoPlugin pl, World w) {
     this.pl = pl;
@@ -248,6 +249,7 @@ final class Runda {
     boolean bylyLowy = faza == Faza.LOWY || faza == Faza.ROZPROSZENIE;
     faza = Faza.KONIEC;
     lichaWygraly = licha;
+    powodKonca = powod;
     poczatekFazy = teraz();
     koniecFazy = poczatekFazy + u.podsumowanie;
     for (Uczestnik x : gracze.values()) {
@@ -278,18 +280,32 @@ final class Runda {
     for (int i = 0; i < ranking.size(); i++) {
       Uczestnik x = ranking.get(i);
       String rola = x.przetrwal ? "<green>przetrwało</green>" : x.bylLicho ? "<gray>Licho, zamówione</gray>" : "<red>Zamawiacz</red>";
-      sb.append("\n<gray>  ").append(i + 1).append(".</gray> <white>").append(MM.escapeTags(x.nick)).append("</white> <yellow>")
+      String tytul = pl.rekordy.tytul(x.id);
+      sb.append("\n<gray>  ").append(i + 1).append(".</gray> <white>").append(MM.escapeTags(x.nick)).append("</white> ");
+      if (tytul != null) sb.append("<gold>«").append(MM.escapeTags(tytul)).append("»</gold> ");
+      sb.append("<yellow>")
           .append(x.punkty).append(" pkt</yellow> ").append(rola);
       if (x.trafienia > 0 || x.zlapani > 0) sb.append(" <gray>(trafień ").append(x.trafienia).append(", złapanych ").append(x.zlapani).append(")</gray>");
     }
+    // do tytułów: runda dokończona i dość graczy na koniec (we dwóch / na drugich kontach się nie nabija)
+    boolean liczona = powodKonca == null && gracze.size() >= u.tytulyMinGraczy;
     Component c = MM.deserialize(sb.toString());
+    List<String> ogloszenia = new ArrayList<>();
     for (Uczestnik x : gracze.values()) {
       Player p = x.gracz();
       if (p == null) continue;
       p.sendMessage(c);
-      if (pl.rekordy.zapisz(x.id, x.nick, x.punkty, x.przetrwal))
-        p.sendMessage(MM.deserialize(PREFIKS + "<gold>Nowy rekord osobisty: " + x.punkty + " pkt!</gold>"));
+      Rekordy.Wynik w = pl.rekordy.zapisz(x.id, x.nick, x.punkty, x.przetrwal, x.zlapani, liczona);
+      if (w.rekord()) p.sendMessage(MM.deserialize(PREFIKS + "<gold>Nowy rekord osobisty: " + x.punkty + " pkt!</gold>"));
+      for (String t : w.noweTytuly()) {
+        p.sendMessage(MM.deserialize(PREFIKS + "<gold>Nowy tytuł: «" + MM.escapeTags(t) + "»</gold> <gray>— widać go w podsumowaniach i rekordach.</gray>"));
+        p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
+        ogloszenia.add("<white>" + MM.escapeTags(x.nick) + "</white> <gray>zdobywa tytuł</gray> <gold>«" + MM.escapeTags(t) + "»</gold><gray>!</gray>");
+      }
     }
+    if (!liczona && powodKonca == null)
+      ogloszenieWGrze("<gray>Ta runda nie liczy się do tytułów: potrzeba co najmniej " + u.tytulyMinGraczy + " graczy.</gray>");
+    for (String o : ogloszenia) ogloszenieWGrze(o);
     pl.rekordy.zapiszPlik();
     pl.getLogger().info("Runda: " + (lichaWygraly ? "Licha" : "Zamawiacze") + " wygrywają, graczy " + gracze.size());
   }
