@@ -7,7 +7,9 @@ softdepend: [MMOProfiles, Multiverse-Core]
 commands:
   wyscigi:
     description: Wyścigi Chowańców — sterowanie z menu (konsola).
-    usage: /wyscigi <czasowka|wyscig|wyjdz|rekordy|zbuduj|stan> ...
+    usage: |-
+      /wyscigi czasowka|wyscig <gracz> <gatunek> | odnowa <gracz> | wyjdz <gracz> | rekordy [gracz] | obserwuj <gracz> [x y z]
+      | zbuduj | stan | poz <gracz> | zdarzenia <nick> | tor | przeladuj | poza <gracz> <4 liczby> | przechyl <gracz> <stopnie> [strona]
     permission: wyscigi.console
 permissions:
   wyscigi.console:

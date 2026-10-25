@@ -43,7 +43,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /** Wyścigi Chowańców. Gracz wchodzi tylko z menu (komenda konsoli), wierzchowiec jest z wypożyczalni. */
-public final class WyscigiPlugin extends JavaPlugin implements Listener {
+public final class WyscigiPlugin extends JavaPlugin implements Listener, org.bukkit.command.TabCompleter {
   private record Powrot(String swiat, double x, double y, double z, float yaw, float pitch, String profil) {}
 
   private static final MiniMessage MM = MiniMessage.miniMessage();
@@ -63,6 +62,7 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
 
   Ustawienia u;
   Rekordy rekordy;
+  private ZapisAsync zapisPowrotow;
   private final Map<UUID, Kierowca> kierowcy = new HashMap<>();
   private final List<Wyscig> wyscigi = new ArrayList<>();
   private final Map<UUID, Powrot> powroty = new HashMap<>();
@@ -78,8 +78,9 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
 
   @Override public void onEnable() {
     saveDefaultConfig();
-    u = new Ustawienia(getConfig());
+    u = new Ustawienia(getConfig(), getLogger());
     rekordy = new Rekordy(new File(getDataFolder(), "rekordy.yml"), getLogger());
+    zapisPowrotow = new ZapisAsync("Wyscigi-zapis-powrotow", getLogger());
     kluczWierzchowca = new NamespacedKey(this, "wierzchowiec");
     plikPowrotow = new File(getDataFolder(), "powroty.yml");
     wczytajPowroty();
@@ -104,7 +105,8 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     for (Kierowca k : new ArrayList<>(kierowcy.values())) zakoncz(k, true, "Restart serwera — wracasz.");
     if (bonusy != null) { bonusy.zdejmijSkrzynki(); bonusy.zdejmijStrzalki(); }
     if (klawisze != null) PacketEvents.getAPI().getEventManager().unregisterListener(klawisze);
-    zapiszPowroty();
+    zapiszPowroty(true);
+    if (rekordy != null) rekordy.zamknij();
   }
 
   World swiat() { return Bukkit.getWorld(u.swiat); }
@@ -515,8 +517,33 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
   }
 
   // ------------------------------------------------------------------ komenda (konsola / menu)
+  private static final String UZYCIE = "/wyscigi czasowka|wyscig <gracz> <gatunek> | odnowa <gracz> | wyjdz <gracz> | rekordy [gracz] | obserwuj <gracz> [x y z]"
+      + " | zbuduj | stan | poz <gracz> | zdarzenia <nick> | tor | przeladuj | poza <gracz> <4 liczby> | przechyl <gracz> <stopnie> [strona]";
+  private static final List<String> PODKOMENDY = List.of("czasowka", "wyscig", "odnowa", "wyjdz", "rekordy", "obserwuj", "zbuduj", "stan", "poz", "zdarzenia",
+      "tor", "przeladuj", "poza", "przechyl");
+
+  @Override public List<String> onTabComplete(CommandSender s, Command c, String l, String[] a) {
+    List<String> opcje = new ArrayList<>();
+    String pierwsza = a.length > 0 ? a[0].toLowerCase(Locale.ROOT) : "";
+    if (a.length == 1) opcje.addAll(PODKOMENDY);
+    else if (a.length == 2 && List.of("czasowka", "wyscig", "odnowa", "wyjdz", "rekordy", "obserwuj", "poz", "poza", "przechyl", "zdarzenia").contains(pierwsza))
+      Bukkit.getOnlinePlayers().forEach(p -> opcje.add(p.getName()));
+    else if (a.length == 3 && (pierwsza.equals("czasowka") || pierwsza.equals("wyscig"))) opcje.addAll(u.gatunki.keySet());
+    String pref = a[a.length - 1].toLowerCase(Locale.ROOT);
+    return opcje.stream().filter(x -> x.toLowerCase(Locale.ROOT).startsWith(pref)).sorted().toList();
+  }
+
   @Override public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
-    if (a.length == 0) { s.sendMessage("/wyscigi <czasowka|wyscig> <gracz> <gatunek> | wyjdz <gracz> | rekordy <gracz> | zbuduj | stan"); return true; }
+    try {
+      return wykonaj(s, a);
+    } catch (NumberFormatException e) {
+      s.sendMessage("Błędna liczba w poleceniu. Użycie: " + UZYCIE);
+      return true;
+    }
+  }
+
+  private boolean wykonaj(CommandSender s, String[] a) {
+    if (a.length == 0) { s.sendMessage(UZYCIE); return true; }
     switch (a[0].toLowerCase(Locale.ROOT)) {
       case "czasowka", "wyscig" -> {
         if (a.length < 3) { s.sendMessage("Użycie: /wyscigi " + a[0] + " <gracz> <gatunek>"); return true; }
@@ -531,14 +558,14 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
       case "poza" -> {
         Player p = a.length > 5 ? Bukkit.getPlayerExact(a[1]) : null;
         Kierowca k = p == null ? null : kierowcy.get(p.getUniqueId());
-        if (k == null) { s.sendMessage("Brak kierowcy"); return true; }
+        if (k == null) { s.sendMessage("Brak kierowcy (użycie: /wyscigi poza <gracz> <4 liczby>)"); return true; }
         k.pozaTest = new float[]{Float.parseFloat(a[2]), Float.parseFloat(a[3]), Float.parseFloat(a[4]), Float.parseFloat(a[5])};
         s.sendMessage("OK poza");
       }
       case "przechyl" -> {
         Player p = a.length > 2 ? Bukkit.getPlayerExact(a[1]) : null;
         Kierowca k = p == null ? null : kierowcy.get(p.getUniqueId());
-        if (k == null) { s.sendMessage("Brak kierowcy"); return true; }
+        if (k == null) { s.sendMessage("Brak kierowcy (użycie: /wyscigi przechyl <gracz> <stopnie> [strona])"); return true; }
         k.przechylTest = Float.parseFloat(a[2]);
         if (a.length > 3) k.stronaPoslizgu = Integer.parseInt(a[3]);
         s.sendMessage("OK przechyl=" + k.przechylTest);
@@ -619,10 +646,14 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
       case "przeladuj" -> {
         if (!kierowcy.isEmpty()) { s.sendMessage("Najpierw niech wszyscy dojadą."); return true; }
         reloadConfig();
-        u = new Ustawienia(getConfig());
-        s.sendMessage("Przeładowano: tor " + u.tor.nazwa + " " + String.format(Locale.ROOT, "%.1f", u.tor.dlugosc));
+        try {
+          u = new Ustawienia(getConfig(), getLogger());
+          s.sendMessage("Przeładowano: tor " + u.tor.nazwa + " " + String.format(Locale.ROOT, "%.1f", u.tor.dlugosc));
+        } catch (IllegalArgumentException e) {
+          s.sendMessage("Nie przeładowano (zostają poprzednie ustawienia): " + e.getMessage());
+        }
       }
-      default -> s.sendMessage("Nieznane: " + a[0]);
+      default -> s.sendMessage("Nieznane: " + a[0] + ". Użycie: " + UZYCIE);
     }
     return true;
   }
@@ -650,7 +681,10 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void zapiszPowroty() {
+  /** koncowy = onDisable: dokończ zapisy w tle i zapisz synchronicznie; inaczej zrzut tu, plik w tle. */
+  private void zapiszPowroty() { zapiszPowroty(false); }
+
+  private void zapiszPowroty(boolean koncowy) {
     YamlConfiguration y = new YamlConfiguration();
     for (Map.Entry<UUID, Powrot> e : powroty.entrySet()) {
       String id = e.getKey().toString();
@@ -658,6 +692,10 @@ public final class WyscigiPlugin extends JavaPlugin implements Listener {
       y.set(id + ".swiat", p.swiat()); y.set(id + ".x", p.x()); y.set(id + ".y", p.y()); y.set(id + ".z", p.z());
       y.set(id + ".yaw", p.yaw()); y.set(id + ".pitch", p.pitch()); y.set(id + ".profil", p.profil());
     }
-    try { y.save(plikPowrotow); } catch (IOException ex) { getLogger().warning("Nie zapisano powrotów: " + ex.getMessage()); }
+    if (koncowy) {
+      if (zapisPowrotow != null) zapisPowrotow.zamknij();
+      ZapisAsync.zapiszSync(plikPowrotow, y.saveToString(), "powrotów", getLogger());
+    } else if (zapisPowrotow != null) zapisPowrotow.zapisz(plikPowrotow, y.saveToString(), "powrotów");
+    else ZapisAsync.zapiszSync(plikPowrotow, y.saveToString(), "powrotów", getLogger());
   }
 }

@@ -4,7 +4,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,11 +19,13 @@ final class Rekordy {
   private final File plik;
   private final Logger log;
   private final YamlConfiguration dane;
+  private final ZapisAsync zapis;
 
   Rekordy(File plik, Logger log) {
     this.plik = plik;
     this.log = log;
     this.dane = YamlConfiguration.loadConfiguration(plik);
+    this.zapis = new ZapisAsync("Wyscigi-zapis-rekordow", log);
   }
 
   Wynik zapisz(String tor, UUID id, String nick, String gatunek, long przejazdMs, long okrazenieMs) {
@@ -65,7 +66,14 @@ final class Rekordy {
 
   long osobisty(String tor, String rodzaj, UUID id) { return dane.getLong("tory." + tor + "." + rodzaj + "." + id + ".ms", -1); }
 
+  /** Zrzut na wątku głównym, plik w tle (kolejność zapisów zachowana). */
   private void zapiszPlik() {
-    try { dane.save(plik); } catch (IOException e) { log.warning("Nie zapisano rekordów: " + e.getMessage()); }
+    zapis.zapisz(plik, dane.saveToString(), "rekordów");
+  }
+
+  /** onDisable: dokończ zapisy w tle i zapisz stan końcowy synchronicznie. */
+  void zamknij() {
+    zapis.zamknij();
+    ZapisAsync.zapiszSync(plik, dane.saveToString(), "rekordów", log);
   }
 }
