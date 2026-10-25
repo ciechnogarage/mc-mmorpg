@@ -1,0 +1,138 @@
+# MythicMobs🔗
+Minimal required version: 5.3.5
+Info
+MythicMobs integration supports BetonQuest Item features as well.
+For those, please visit the MythicMobs Item page.
+## Actions🔗
+### MCast🔗
+Context: 
+Syntax: mcast <name> +[...]
+Description: Cast a MythicMobs skill.
+ | Parameter
+ | Syntax
+ | Default Value
+ | Explanation
+ | name
+ | Name
+ | 
+ | Name of Skill to cast.
+ | +[...]
+ | Strings
+ | None
+ | Sets the skill parameters for the cast.
+Example
+actions:
+  castPoison: "mcast AngrySludgePoison"
+  giveItem: "mcast giveNItem +amount:20 +item:gold_coin"
+### MSpawnMob🔗
+Context:  
+Syntax: mspawnmob <location> <name> <amount> [target] [private] [marked]
+Description: Spawn a MythicMob at a specific location.
+ | Parameter
+ | Syntax
+ | Default Value
+ | Explanation
+ | location
+ | ULF
+ | 
+ | The location to spawn the mob at.
+ | name
+ | name:level
+ | 
+ | MythicMobs mob name. A level must be specified after a colon.
+ | amount
+ | Positive Number
+ | 
+ | Amount of mobs to spawn.
+ | target
+ | Keyword
+ | False
+ | Will make the mob target the player.
+ | private
+ | Keyword
+ | Disabled
+ | Will hide the mob from all other players until restart. This does not hide particles or block sound from the mob. Also see notes below.
+ | marked
+ | marked:text
+ | None
+ | Marks the mob. You can check for marked mobs in mmobkill objective.
+Example
+actions:
+  spawnBoss: "mspawnmob 100;200;300;world MegaBoss:1 1 target"
+  spawnKnights: "mspawnmob 100;200;300;world SkeletalKnight:3 5"
+  spawnPrivateDevil: "mspawnmob 100;200;300;world Mephisto:1 5 target private marked:DungeonBoss3"
+Private Argument
+The private argument requires some MythicMob setup for optimal use.
+It's best to use the private argument in combination with the target argument so the mob does not attack
+players that cannot see it.
+Additionally, the mob should be configured to never change its AI target using MythicMobs.
+Private & Target Arguments
+The private and target arguments are ignored when the action is used in an independent context like [Schedules]
+(../../../Schedules.md).
+## Objectives🔗
+### MMobKill🔗
+Context: 
+Syntax: mmobkill <identifier> [mode] [amount] [minLevel] [maxLevel] [neutralDeathRadiusAllPlayers] [deathRadiusAllPlayers] [marked]
+Description: The player needs to kill the specified amount of MythicMobs.
+You can add a notify keyword if you want to send a notification to players whenever the objective progresses.
+ | Parameter
+ | Syntax
+ | Default Value
+ | Explanation
+ | identifier
+ | strings
+ | 
+ | Identifiers for mobs that must be killed, based on mode. Multiple mob identifiers must be comma separated.
+ | mode
+ | mode:mode
+ | INTERNAL_NAME
+ | What of the mob should be checked. Either INTERNAL_NAME of the mob (as defined in the config) or FACTION.
+ | amount
+ | amount:number
+ | 1
+ | Amount of mobs required to kill.
+ | minLevel
+ | minLevel:number
+ | Disabled
+ | Minimal level of mob to kill.
+ | maxLevel
+ | maxLevel:number
+ | Disabled
+ | Maximal level of mob to kill.
+ | neutralDeath
+RadiusAllPlayers
+ | neutralDeath
+RadiusAllPlayers
+:number
+ | Disabled
+ | Radius to count objective progress for each nearby player when the mob is killed by any non-player source.
+ | deathRadius
+AllPlayers
+ | deathRadius
+AllPlayers:number
+ | Disabled
+ | Radius to count objective progress for each nearby player, no matter if it was killed by a non-player source or not. Disables the neutral death radius.
+ | marked
+ | marked:text
+ | None
+ | Check for mark on mobs as used in mspawnmob action.
+This objective has three properties: amount, left and total. amount is the amount of mythic mobs already killed,
+left is the amount of mythic mobs still needed to kill and total is the amount of mythic mobs initially required.
+mode gives the identification type.
+Example
+objectives:
+  killKnight: mmobkill SkeletalKnight amount:2 actions:reward
+  killSnails: mmobkill SnekBoss,SnailBoss,SunBoss amount:10 actions:reward
+  snailFaction: mmobkill snail mode:faction amount:10 actions:reward
+  killBoss: mmobkill SnekBoss amount:2 minlevel:4 maxlevel:6 actions:reward marked:DungeonBoss3
+  killDevil: mmobkill dungeonDevil deathRadiusAllPlayers:30 actions:reward
+  bandits: mmobkill bandit deathRadiusAllPlayers:30 mode:FACTION actions:spawnTrader
+## Conditions🔗
+### MythicMobDistance🔗
+Context: 
+Syntax: mythicmobdistance <name> <distance>
+Description: Whether the player is near a specific MythicMobs entity.
+The first argument is the internal name of the mob (the one defined in MythicMobs' configuration). The second argument is the distance to check, measured in block lengths in a circular radius.
+Example
+conditions:
+  nearKnight: "mythicmobdistance SkeletalKnight 7"

@@ -1,0 +1,14 @@
+# Nexo🔗
+Minimal required version: 1.17.0
+## Items🔗
+### Nexo🔗
+Nexo usage is integrated to the Items system and thus used for actions and conditions.
+In addition, you can also add quest-item argument to tag them as "QuestItem".
+Example
+items:
+  forestTrident: "nexo forest_trident"
+  tableLamp: "nexo table_lamp quest-item"
+conditions:
+  hasForestTrident: "hand forestTrident"
+actions:
+  giveTableLamp: "give tableLamp:3"

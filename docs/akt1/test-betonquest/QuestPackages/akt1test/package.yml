@@ -1,0 +1,103 @@
+# Zadanie testowe Aktu 1 (etap 1): czy BetonQuest 3.2.0 robi to, czego potrzebuje wycinek wyspy.
+# Składnia: docs/ref/betonquest/strony/*.txt (BetonQuest 3.2). Świat klona płaski, spawn 0 -59 0.
+npcs:
+  soltys: mythicmobs MYTHIC_MOB AKT1_NPC_PROSTY
+  straz: mythicmobs MYTHIC_MOB AKT1_NPC_MODEL
+
+npc_conversations:
+  soltys: rozmowaSoltys
+  straz: rozmowaStraz
+
+items:
+  sciegno: "mmoitem MATERIAL PROF_SINEW"
+
+conditions:
+  wziete: "tag wziete"
+  zabite: "tag zabite"
+  zebrane: "tag zebrane"
+  doszedl: "tag doszedl"
+  nagrodzony: "tag nagrodzony"
+  wszystko: "and zabite,zebrane,doszedl"
+  maSciegna: "item sciegno:2"
+
+objectives:
+  zabij: "mmobkill AKT1_CEL amount:3 actions:poZabiciu"
+  zbierz: "pickup sciegno amount:2 actions:poZebraniu"
+  dojdz: "location 0;-59;-15;world 3 actions:poDojsciu"
+
+actions:
+  start: "folder tagWziete,cele,wpisStart,spawnCele,infoStart"
+  tagWziete: "tag add wziete"
+  cele: "objective start zabij,zbierz,dojdz"
+  wpisStart: "journal add zadanieStart"
+  spawnCele: "mspawnmob 0;-59;10;world AKT1_CEL:1 3"
+  infoStart: "notify &eZadanie: zabij 3 cele, zbierz 2 ścięgna, dojdź do znacznika io:actionbar"
+  poZabiciu: "folder tagZabite,infoZabite"
+  tagZabite: "tag add zabite"
+  infoZabite: "notify &aCele zabite io:actionbar"
+  poZebraniu: "folder tagZebrane,infoZebrane"
+  tagZebrane: "tag add zebrane"
+  infoZebrane: "notify &aŚcięgna zebrane io:actionbar"
+  poDojsciu: "folder tagDoszedl,infoDoszedl"
+  tagDoszedl: "tag add doszedl"
+  infoDoszedl: "notify &aDotarłeś na miejsce io:actionbar"
+  nagroda: "folder tagNagrodzony,zabierz,wpisKoniec,expNagroda"
+  tagNagrodzony: "tag add nagrodzony"
+  zabierz: "take sciegno:2"
+  wpisKoniec: "journal add zadanieKoniec"
+  expNagroda: "command mmocore admin exp give %player% main 120"
+  tagStraz: "tag add rozmowaStraz"
+  rozmowa: "conversation rozmowaSoltys"
+
+journal:
+  zadanieStart: "&0Sołtys prosi: zabić 3 cele, przynieść 2 ścięgna, sprawdzić znacznik na północy."
+  zadanieKoniec: "&0Sołtys dostał ścięgna. Zadanie skończone."
+
+journal_main_page:
+  aktywne:
+    priority: 10
+    text: "&6Aktywne:&0 prośba sołtysa"
+    conditions: "wziete,!nagrodzony"
+
+conversations:
+  rozmowaSoltys:
+    quester: "Sołtys Testowy"
+    conversationIO: dialog
+    first: "juz,koniec,wTrakcie,powitanie"
+    NPC_options:
+      powitanie:
+        text: "Przyda mi się pomoc. Pomożesz?"
+        conditions: "!wziete"
+        pointers: "biore,nie"
+      wTrakcie:
+        text: "Wróć, gdy skończysz."
+        conditions: "wziete,!nagrodzony"
+      koniec:
+        text: "Dziękuję. Masz nagrodę."
+        conditions: "wziete,wszystko,maSciegna,!nagrodzony"
+        actions: "nagroda"
+      juz:
+        text: "Dziękuję jeszcze raz."
+        conditions: "nagrodzony"
+      ok:
+        text: "Dobrze. Cele są na południu, znacznik na północy."
+    player_options:
+      biore:
+        text: "Pomogę."
+        actions: "start"
+        pointers: "ok"
+      nie:
+        text: "Nie teraz."
+
+  rozmowaStraz:
+    quester: "Straż Testowa"
+    conversationIO: chest
+    first: "witaj"
+    NPC_options:
+      witaj:
+        text: "Stój. Czego chcesz?"
+        actions: "tagStraz"
+        pointers: "nic"
+    player_options:
+      nic:
+        text: "Niczego."

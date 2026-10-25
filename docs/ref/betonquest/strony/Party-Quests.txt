@@ -1,0 +1,59 @@
+# How to create a party quest🔗
+Party quests are useful when nearby players should start, play, and complete the same quest together.
+BetonQuest parties are not permanent groups.
+Instead, a party is created at the moment an action or condition checks for nearby players that match your conditions.
+The following example creates a small dungeon party quest.
+Players first mark themselves as ready.
+When at least two ready players stand close together, one player can start the quest for everyone nearby.
+When any active party member defeats the boss, all nearby active party members receive the reward and the quest is cleaned up.
+The goal is:
+- Players opt into the party quest with a tag.
+- The quest only starts if at least two ready players are nearby.
+- Starting the quest affects all ready players in range.
+- Each party member gets the same boss objective.
+- When one member defeats the boss, the whole nearby party is rewarded.
+- Temporary tags and objectives are removed after completion.
+objectives:
+  defeatPartyBoss: "mobkill BLAZE 1 notify actions:finishPartyQuest" #(1)!
+actions:
+  joinPartyQuest: "folder addReadyTag,notifyReady" #(2)!
+  addReadyTag: "tag add party_quest_ready"
+  notifyReady: "notify &aYou are ready for the party quest. Gather near the dungeon entrance."
+  leavePartyQuest: "folder removeReadyTag,removeActiveTag,removeBossObjective,notifyLeft" #(3)!
+  removeReadyTag: "tag delete party_quest_ready"
+  removeActiveTag: "tag delete party_quest_active"
+  removeBossObjective: "objective delete defeatPartyBoss"
+  notifyLeft: "notify &cYou left the party quest."
+  tryStartPartyQuest: "folder startPartyQuest,notEnoughPlayers" #(4)!
+  startPartyQuest: "folder startPartyForNearbyPlayers conditions:enoughReadyPlayers" #(5)!
+  notEnoughPlayers: "folder notifyNotEnoughPlayers conditions:!enoughReadyPlayers"
+  notifyNotEnoughPlayers: "notify &cAt least two ready players must stand near you."
+  startPartyForNearbyPlayers: "party 20 readyForPartyQuest startPartyMember" #(6)!
+  startPartyMember: "folder removeReadyTag,addActiveTag,addBossObjective,notifyStarted"
+  addActiveTag: "tag add party_quest_active"
+  addBossObjective: "objective add defeatPartyBoss"
+  notifyStarted: "notify &6Your party quest started. Defeat the blaze together!"
+  finishPartyQuest: "party 30 activePartyQuest completePartyMember" #(7)!
+  completePartyMember: "folder rewardPlayer,cleanupPartyMember,notifyCompleted"
+  rewardPlayer: "give partyReward:3"
+  cleanupPartyMember: "folder removeReadyTag,removeActiveTag,removeBossObjective"
+  notifyCompleted: "notify &aYour party defeated the boss!"
+conditions:
+  readyForPartyQuest: "tag party_quest_ready" #(8)!
+  activePartyQuest: "tag party_quest_active" #(9)!
+  enoughReadyPlayers: "party 20 readyForPartyQuest count:2" #(10)!
+items:
+  partyReward: "simple EMERALD"
+- Every party member receives this objective when the quest starts.
+- This action can be called from a conversation, menu, command objective, or NPC interaction to let a player join the party queue.
+- This optional action lets a player leave the party quest and removes temporary progress from that player.
+- Call this action from a conversation, menu, command objective, or NPC interaction when a player wants to start the party quest.
+- Starts the quest only when the party condition is met. Otherwise, notEnoughPlayers sends feedback to the player who tried to start it.
+- Runs startPartyMember for every ready player within 20 blocks of the player who started the quest.
+- When any active party member kills the boss, all active party members within 30 blocks receive the completion actions.
+- Only players with this tag are considered ready party members.
+- Only players with this tag can be rewarded when the boss is defeated.
+- Requires at least two ready players within 20 blocks before the quest can start.
+The important part is that the party is defined by range and conditions.
+Players do not need to create a party with commands.
+If they stand close enough and match readyForPartyQuest or activePartyQuest, the party action includes them automatically.

@@ -1,0 +1,25 @@
+# Moby TYLKO do testu BetonQuest na klonie (etap 1 Aktu 1). Nie wgrywać na world1.
+# AKT1_NPC_PROSTY: NPC bez modelu (VILLAGER). AKT1_NPC_MODEL: ten sam NPC z modelem ModelEngine (race_nieumarly).
+# AKT1_CEL: cel „zabij 3”, zawsze upuszcza PROF_SINEW (cel „zbierz 2”).
+AKT1_NPC_PROSTY:
+  Type: VILLAGER
+  Display: '&eSołtys Testowy'
+  Health: 100
+  Options: {NoAI: true, Invincible: true, Silent: true, Despawn: false, PreventOtherDrops: true, Collidable: false, AlwaysShowName: true}
+
+AKT1_NPC_MODEL:
+  Type: VILLAGER
+  Display: '&eStraż Testowa'
+  Health: 100
+  Options: {NoAI: true, Invincible: true, Silent: true, Despawn: false, PreventOtherDrops: true, Collidable: false, AlwaysShowName: true}
+  Skills:
+  - model{m=race_nieumarly;n=tag_name} @self ~onSpawn
+
+AKT1_CEL:
+  Type: ZOMBIE
+  Display: '&cCel testowy'
+  Health: 6
+  Damage: 1
+  Options: {PreventOtherDrops: true, PreventSunburn: true, MovementSpeed: 0.15}
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_SINEW} 1 1.0
