@@ -101,7 +101,26 @@ def _nazwy_skilli():
             if tekst_pl.endswith('.') and not tekst_pl.endswith(' bl.'):  # skrót 'bl.' zostaje
                 tekst_pl = tekst_pl[:-1]
             out[sid] = (n.group(1).strip().strip("'\""), tekst_pl[:1].lower() + tekst_pl[1:])
+            # 2026-10-25: lore ma {damage} (MMOCore wstawia wartość w /skills), a kreator CharacterCreator pokazywał
+            # "(damage)" (klon klasy-naprawa, kadr kreatora) -> wartość bazowa z parameters (player: N | {base: N})
+            PARAM[sid] = {k: float(b or v) for k, v, b in re.findall(
+                r'^    (\w+): \{name: [^,]+, player: (?:([\d.]+)|\{base: ([\d.]+)[^}]*\})\}', cialo, re.M)}
     return out
+
+
+PARAM = {}  # id -> {parametr: wartość bazowa z MythicLib}; wypełnia _nazwy_skilli
+
+
+def wstaw_wartosci(tekst, sid, cialo_klasy=''):
+    """{param} -> wartość na poz. 1 (nadpisanie 'base' z pliku klasy MMOCore ma pierwszeństwo)."""
+    def wart(m):
+        k = m.group(1)
+        o = re.search(rf'^        {k}:\n            base:\s*([\d.]+)', cialo_klasy, re.M)
+        v = float(o.group(1)) if o else PARAM.get(sid, {}).get(k)
+        if v is None:
+            raise SystemExit(f'karta_kreatora: brak wartości {{{k}}} dla {sid}')
+        return f'{v:g}'
+    return re.sub(r'\{(\w+)\}', wart, tekst)
 
 
 def umiejetnosc_startowa(plik_klasy):
@@ -133,7 +152,9 @@ def pola_karty(rasa, arch, plik_klasy, nazwy):
         out += [f'        start-skill: {q(nazwa)}',
                 f'        start-skill-level: {poziom}']
         if SKILL_PL.get(sid) or z_lore:
-            out.append(f'        start-skill-text: {q(SKILL_PL.get(sid) or z_lore)}')
+            m = re.search(rf'^    {sid}:\n((?:        .*\n)*)', open(plik_klasy, encoding='utf-8').read(), re.M)
+            tekst = wstaw_wartosci(SKILL_PL.get(sid) or z_lore, sid, m.group(1) if m else '')
+            out.append(f'        start-skill-text: {q(tekst)}')
         else:
             print(f'UWAGA: brak zdania SKILL_PL dla {sid} ({rasa}/{arch}) — karta pokaże samą nazwę')
     else:
