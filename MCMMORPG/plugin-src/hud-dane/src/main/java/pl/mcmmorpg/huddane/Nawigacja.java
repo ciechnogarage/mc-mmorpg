@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
@@ -88,6 +89,8 @@ final class Nawigacja implements Listener {
     if (z == p) return;
     obrazenia.put(p.getUniqueId(), new double[]{z.getLocation().getX(), z.getLocation().getZ(), System.currentTimeMillis()});
   }
+
+  @EventHandler public void wyjscie(PlayerQuitEvent e) { obrazenia.remove(e.getPlayer().getUniqueId()); }
 
   String kierunekObrazen(Player p) {
     double[] o = obrazenia.get(p.getUniqueId());

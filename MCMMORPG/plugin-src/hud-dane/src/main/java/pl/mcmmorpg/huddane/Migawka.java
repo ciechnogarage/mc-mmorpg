@@ -61,9 +61,26 @@ final class Migawka {
     druzyna.sort(Comparator.comparing((Czlonek c) -> !c.lider()).thenComparing(Czlonek::nazwa, String.CASE_INSENSITIVE_ORDER));
   }
 
+  /** Indeks rodzic -> jego aktywne moby, budowany raz na tick serwera (jedno przejscie po wszystkich mobach MM zamiast jednego na gracza). */
+  private record Indeks(int tick, Map<UUID, List<ActiveMob>> poRodzicu) {}
+  private static volatile Indeks indeks = new Indeks(-1, Map.of());
+
+  private static List<ActiveMob> przywolancePo(UUID rodzic) {
+    int tick = org.bukkit.Bukkit.getCurrentTick();
+    Indeks i = indeks;
+    if (i.tick() != tick) {
+      Map<UUID, List<ActiveMob>> m = new java.util.HashMap<>();
+      for (ActiveMob a : MythicBukkit.inst().getMobManager().getActiveMobs(a -> a.getParentUUID().isPresent()))
+        m.computeIfAbsent(a.getParentUUID().get(), k -> new ArrayList<>()).add(a);
+      i = new Indeks(tick, m);
+      indeks = i;
+    }
+    return i.poRodzicu().getOrDefault(rodzic, List.of());
+  }
+
   private void zbierzSlugi(HudDane pl, Player p, long teraz) {
     UUID id = p.getUniqueId();
-    for (ActiveMob am : MythicBukkit.inst().getMobManager().getActiveMobs(a -> a.getParentUUID().isPresent() && id.equals(a.getParentUUID().get()))) {
+    for (ActiveMob am : przywolancePo(id)) {
       Entity e = am.getEntity() == null ? null : am.getEntity().getBukkitEntity();
       if (!(e instanceof LivingEntity le) || le.isDead()) continue;
       Integer ticki = pl.czasZycia.get(am.getMobType());
