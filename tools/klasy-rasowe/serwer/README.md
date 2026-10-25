@@ -11,6 +11,8 @@ docker run ... python:3.12-slim (pyyaml) tools/przedmioty/sprawdz.py   # 0 błę
 /opt/docker/mc/narzedzia/klon.sh restart <klon>; rcon "minecraft:difficulty peaceful"
 ```
 - world1: tylko agent integracji, `WGRAJ_WORLD1=tak`, po kopii świata i z `cofnij.sh`. Generatory bez `KLASY_ROOT` odmawiają, na world1 tylko z `KLASY_WORLD1=tak`.
+- Najpierw kopiuje skille klas z paczki A (`../{wojownik,ninja,mag,akolita,specjalizacje}/` — układ `plugins/`), potem pliki B, potem generatory (generator czyta skille).
+- Test jak gracz skilli (integracja 25.10): `scenariusze/klasy/skille.js akolita|ninja|druzyna` (narzędzia eee82b1).
 - Skrypt kasuje `skill-trees/combat.yml` i `loop.yml` (B4/B14). Kopiowanie `plugins/.` nie usuwa plików, więc bez tego kroku zostałyby na serwerze.
 - Test jak gracz: `narzedzia/bot/run.sh <klon --z-kreatorem> scenariusze/klasy/progresja.js [wojownik,mag,akolita,ninja]`.
 
