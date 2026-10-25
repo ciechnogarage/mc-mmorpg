@@ -785,11 +785,11 @@ def main():
     # Nowa postać miała PUSTY pasek ("No Skill Bound") i nic jej o tym nie mówiło (poligon v2). Umiejętność
     # szkieletu trafia do pierwszego PUSTEGO slotu 1-4, gdy poziom postaci już ją odblokował i nie ma jej
     # jeszcze na pasku — nic, co gracz przypisał sam, nie jest ruszane.
-    # Placeholdery %mmocore_bound_N% zwracają NAZWĘ skilla (z MythicLib), pusty slot = "No Skill Bound".
+    # Placeholdery %mmocore_bound_N% zwracają NAZWĘ skilla (z MythicLib), pusty slot = no-skill-placeholder (messages.yml).
     nazwy_skilli = nazwy_skilli_mythiclib()
     # CoreTools dzieli warunek na SPACJACH (zmierzone 30.09: 'There is no condition action named: wound|...'),
     # więc w warunku nie może być "Deep Wound" ani "No Skill Bound". Porównujemy jedno słowo nazwy, które
-    # nie występuje w nazwie żadnego innego skilla; pusty slot = zawiera słowo "Bound".
+    # nie występuje w nazwie żadnego innego skilla; pusty slot: niżej (cooldown_bound).
     # jednoznaczność tylko wśród skilli, które mogą stać na pasku (wszystkie szkielety klas)
     wspolne_na_pasku = {s for a in ARCH if a not in PELNE_WLASNE_SKILLE
                 for s, _ in skille_szkieletu(open(os.path.join(klasy_dir, ARCH[a][0]), encoding='utf-8').read())} | \
@@ -843,11 +843,23 @@ def main():
                       f'    - Comparator{{v1="%mmocore_level%";v2="{poz}";op=">="}} true',
                       f'    - Comparator{{v1="{znacznik(s, wspolne_na_pasku)}";v2="%mmocore_bound_1%|%mmocore_bound_2%|%mmocore_bound_3%|%mmocore_bound_4%";op="!c"}} false',
                       '  Mechanics:', f'    - script{{s=klasa_pasek_slot1_{s.lower()}}} @Self']
+    # Pusty slot rozpoznajemy po %mmocore_cooldown_bound_N%, NIE po tekście %mmocore_bound_N%: dla pustego slotu
+    # oba zwracają komunikat `no-skill-placeholder` z MMOCore/messages.yml, a ten spolszczono ("Brak przypisanej
+    # umiejętności") i warunek "zawiera Bound" uznawał każdy pusty slot za zajęty — pasek nie wiązał NIC
+    # (klon klasy-naprawa 25.10; world1 tak samo). Zajęty slot zwraca Double.toString(odnowienie), zawsze z kropką
+    # (MMOCore 1.13.1 PlaceholderEnum.cooldown_bound_, CFR). Warunek: kropka = zajęty, brak kropki = pusty slot.
+    msg = P('MMOCore', 'messages.yml')
+    if os.path.exists(msg):
+        for linia in open(msg, encoding='utf-8'):
+            if linia.startswith('no-skill-placeholder:') and '.' in linia.split('#')[0].split(':', 1)[1]:
+                raise SystemExit('pasek: no-skill-placeholder w MMOCore/messages.yml nie może zawierać kropki')
     for s in sorted(uzyte_skille):
         for n in (1, 2, 3, 4):
             pasek += ['', f'klasa_pasek_slot{n}_{s.lower()}:', '  Conditions:',
-                      f'    - Comparator{{v1="Bound";v2="%mmocore_bound_{n}%";op="!c"}} ' +
-                      (f'falseElse klasa_pasek_slot{n + 1}_{s.lower()}' if n < 4 else 'true'),  # falseElse: slot zajęty -> następny
+                      f'    - Comparator{{v1=".";v2="%mmocore_cooldown_bound_{n}%";op="!c"}} ' +
+                      # kropka jest = slot zajęty: trueElse -> następny slot zamiast bind (docs CoreTools
+                      # events-examples-custom_messages.md: trueElse X = gdy spełniony, uruchom X zamiast Mechanics)
+                      (f'trueElse klasa_pasek_slot{n + 1}_{s.lower()}' if n < 4 else 'false'),
                       '  Mechanics:', f'    - command{{c="mmocore admin slot bind %player_name% {n} {s}"}} @Self']
     # zmiana klasy: zdarzenie przychodzi PRZED zmianą; poziom: odblokowanie po chwili; wczytanie postaci po mapowaniu
     pasek += ['', 'klasa_pasek_po_zmianie:', '  Delay: 60', '  Mechanics:', '    - script{s=klasa_pasek_uzupelnij} @Self',
