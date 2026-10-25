@@ -98,19 +98,39 @@ final class Zdarzenia implements Listener {
       napastnik.napad.zdarzenie("trafia-gracza", napastnik.id + ">" + p.getName() + ":" + dmg);
     } else if (napastnik != null && ofiara != null && !ev.isCancelled()) {
       double d = sprawca.getLocation().distance(ev.getEntity().getLocation());
+      // strzala: piate pole = obrazenia przed pancerzem / atak luku (przyspieszenie z wysokosci, kalibracja strzala-z-muru)
+      boolean strzala = ev.getDamager() instanceof Projectile;
       napastnik.napad.zdarzenie("traf", napastnik.id + ">" + ofiara.id + ":" + dmg + ":" + Napad.r1(d) + ":"
-          + (ev.getDamager() instanceof Projectile ? "strzala" : "wrecz"));
+          + (strzala ? "strzala:" + Napad.r2(ev.getDamage() / Math.max(0.1, napastnik.zestaw.atak())) : "wrecz"));
     }
   }
 
-  /** Strzal ciala: strzala nietrwala (nie zostaje w chunku) i wpis do kalibracji celnosci/tempa. */
+  /**
+   * Strzal ciala: strzala nietrwala (nie zostaje w chunku), obrazenia = atak luku MMOItems (jak w pelni naciagniety
+   * luk gracza; vanilla mnozy baze strzaly przez predkosc, wiec baza = atak / predkosc) i wpis do kalibracji celnosci/tempa.
+   */
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void strzal(EntityShootBowEvent ev) {
     Jednostka j = jednostka(ev.getEntity());
     if (j == null) return;
     ev.getProjectile().setPersistent(false);
+    if (ev.getProjectile() instanceof AbstractArrow a) {
+      double v = a.getVelocity().length();
+      if (v > 0.1) a.setDamage(j.zestaw.atak() / v);
+      a.setCritical(false);   // krytyk dokladalby losowo do polowy obrazen
+    }
     Jednostka c = j.cel;
     j.napad.zdarzenie("strzal", j.id + ">" + (c != null ? String.valueOf(c.id) : j.celGracz != null ? j.celGracz.getName() : "?"));
+  }
+
+  /**
+   * Obrona (statystyka MythicLib z przedmiotow) dla ciala: MythicLib liczy ja tylko graczom (DamageReduction wymaga
+   * MMOPlayerData), wiec cios gracza albo ciala w cialo dostaje ten sam wzor tutaj. Pancerz liczy vanilla po tym.
+   */
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  public void obronaCiala(EntityDamageByEntityEvent ev) {
+    Jednostka j = jednostka(ev.getEntity());
+    if (j != null && j.zestaw.obrona() > 0) ev.setDamage(Wyposazenie.poObronie(ev.getDamage(), j.zestaw.obrona()));
   }
 
   @EventHandler

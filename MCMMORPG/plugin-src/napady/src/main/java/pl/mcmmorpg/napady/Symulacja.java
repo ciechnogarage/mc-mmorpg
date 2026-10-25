@@ -5,31 +5,43 @@ import org.bukkit.configuration.ConfigurationSection;
 /**
  * Wykonawca bez ciala: ruch i walka jednostki liczone arytmetyka (bez encji, chunkow i A*), te same
  * drogi co ciala ({@link Uklad}: linia prosta albo pole przeplywu). Rozkazy i cele daje ten sam dowodca.
- * Liczby (predkosc, zasiegi, odstepy ciosow, obrazenia po pancerzu, celnosc, odstep w tloku) sa w configu {@code sym.*}; ustawiac z pomiaru cial:
- * testy/kalibracja.py czyta zapisy napadow z cialami i wypisuje te wartosci.
+ * Liczby ruchu (predkosc, zasiegi, odstepy ciosow, celnosc, odstep w tloku) sa w configu {@code sym.*}; ustawiac z pomiaru cial:
+ * testy/kalibracja.py czyta zapisy napadow z cialami i wypisuje te wartosci. Obrazenia NIE sa w configu: cios = atak broni
+ * jednostki, po obronie i pancerzu celu z przedmiotow MMOItems ({@link Napad#trafienie}, {@link Wyposazenie}) - jak cialo.
  */
 final class Symulacja {
-  final double predkosc, szarza, wreczZasieg, lukZasieg, celnosc, strzala, obrazenia, odstep;
+  final double predkosc, szarza, wreczZasieg, lukZasieg, celnosc, odstep;
+  /** strzal z muru w dol i z dolu na mur trafia inaczej (cel w tlumie pod brama vs lucznik za blankami), a strzala
+   *  spadajaca z muru przyspiesza (vanilla mnozy obrazenia przez predkosc) - mierzone na cialach, kalibracja.py */
+  final double celnoscZMuru, celnoscNaMur, strzalaZMuru;
   final int wreczCo, lukCo;
+  /** tiki od zlapania celu do pierwszej strzaly: szkielet vanilla zaczyna naciagac po wybraniu celu i puszcza
+   *  po 20 tikach (RangedBowAttackGoal), cel stracony = naciaganie od nowa - mierzone na cialach, kalibracja.py */
+  final int lukNaciag;
 
-  Symulacja(ConfigurationSection c, double obrazenia) {
+  Symulacja(ConfigurationSection c) {
     predkosc = c == null ? 0.17 : c.getDouble("predkosc", 0.17);
     szarza = c == null ? 1.2 : c.getDouble("szarza", 1.2);
     wreczZasieg = c == null ? 2.0 : c.getDouble("wrecz-zasieg", 2.0);
     wreczCo = c == null ? 20 : c.getInt("wrecz-co", 20);
     lukZasieg = c == null ? 15 : c.getDouble("luk-zasieg", 15);
     lukCo = c == null ? 40 : c.getInt("luk-co", 40);
+    lukNaciag = c == null ? 0 : c.getInt("luk-naciag", 0);
     celnosc = c == null ? 0.6 : c.getDouble("celnosc", 0.6);
-    strzala = c == null ? 2.5 : c.getDouble("strzala", 2.5);
     odstep = c == null ? 0.8 : c.getDouble("odstep", 0.8);
-    // cios ciala po pancerzu celu (mob bije config obrazenia, kaftan i helm zdejmuja czesc)
-    this.obrazenia = c == null ? obrazenia : c.getDouble("wrecz", obrazenia);
+    celnoscZMuru = c == null ? celnosc : c.getDouble("celnosc-z-muru", celnosc);
+    celnoscNaMur = c == null ? celnosc : c.getDouble("celnosc-na-mur", celnosc);
+    strzalaZMuru = c == null ? 1 : c.getDouble("strzala-z-muru", 1);
   }
 
   /** Jeden tik jednostki bez ciala. */
   void krok(Napad n, Jednostka j) {
     Jednostka c = j.cel != null && j.cel.zywa ? j.cel : null;
     if (c != null && !Double.isNaN(j.px)) c = null;   // rozkaz marszu ma pierwszenstwo (np. ranny, odwrot)
+    if (j.lucznik()) {
+      if (c == null) j.naciaga = false;
+      else if (!j.naciaga) { j.naciaga = true; j.gotowyOd = Math.max(j.gotowyOd, n.tik + lukNaciag); }
+    }
     if (c != null) {
       double d = j.odl(c.x, c.z);
       if (j.lucznik()) {
@@ -39,7 +51,9 @@ final class Symulacja {
           if (n.tik >= j.gotowyOd) {
             j.gotowyOd = n.tik + lukCo + n.los.nextInt(Math.max(1, lukCo / 4));
             n.zdarzenie("strzal", j.id + ">" + c.id);
-            if (n.los.nextDouble() < celnosc) n.trafienie(j, c, strzala, true);
+            boolean zMuru = j.naMurze && !c.naMurze, naMur = c.naMurze && !j.naMurze;
+            if (n.losTraf.nextDouble() < (zMuru ? celnoscZMuru : naMur ? celnoscNaMur : celnosc))
+              n.trafienie(j, c, j.zestaw.atak() * (zMuru ? strzalaZMuru : 1), true);
           }
         } else if (!j.naMurze) idz(n, j, c.x, c.z, predkosc);
         return;
@@ -48,12 +62,14 @@ final class Symulacja {
         patrz(j, c.x, c.z);
         if (n.tik >= j.gotowyOd) {
           j.gotowyOd = n.tik + wreczCo;
-          n.trafienie(j, c, obrazenia, false);
+          n.trafienie(j, c, j.zestaw.atak(), false);
         }
       } else idz(n, j, c.x, c.z, predkosc * szarza);
       return;
     }
-    if (!Double.isNaN(j.px) && j.odl(j.px, j.pz) > j.pr) idz(n, j, j.px, j.pz, predkosc);
+    // do samego punktu, nie do brzegu promienia rozkazu: pathfinder ciala idzie do srodka kratki (moveTo), dowodca tylko
+    // sprawdza promien; zatrzymanie na brzegu zostawialo drugi rzad grabiacych poza magazynem (kalibracja 25.10)
+    if (!Double.isNaN(j.px) && j.odl(j.px, j.pz) > Math.min(j.pr, 0.25)) idz(n, j, j.px, j.pz, predkosc);
   }
 
   private static void patrz(Jednostka j, double tx, double tz) {

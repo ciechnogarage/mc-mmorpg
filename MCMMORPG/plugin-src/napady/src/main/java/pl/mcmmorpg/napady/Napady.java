@@ -65,6 +65,20 @@ public final class Napady extends JavaPlugin {
   final Map<UUID, Dolaczenie> doPrzywrocenia = new HashMap<>();
   World swiat;
   private Boolean mm;
+  /** wyposazenie rol (STRONA_ROLA -> zestaw), budowane przy pierwszym napadzie: MMOItems wczytuje przedmioty po onEnable */
+  private final Map<String, Wyposazenie.Zestaw> zestawy = new HashMap<>();
+
+  Wyposazenie.Zestaw zestaw(Strona s, Jednostka.Rola r) {
+    return zestawy.computeIfAbsent(s.name() + "_" + r.name(), k -> {
+      var c = getConfig();
+      if (!Wyposazenie.dostepne()) getLogger().warning("Napady: bez MMOItems/MythicLib - jednostki bez wyposazenia");
+      var z = Wyposazenie.zestaw(c.getConfigurationSection("wyposazenie." + k), c.getInt("wyposazenie.poziom", 1),
+          c.getDouble("hp-jednostki", 20), s == Strona.ATAK ? org.bukkit.Color.fromRGB(168, 50, 50) : org.bukkit.Color.fromRGB(50, 85, 168), getLogger());
+      getLogger().info(String.format(Locale.ROOT, "Wyposazenie %s: pancerz %.1f, wytrzymalosc %.1f, obrona %.1f, zycie %.1f, atak %.1f (%s)",
+          k, z.pancerz(), z.wytrzymalosc(), z.obrona(), z.zycie(), z.atak(), z.opis()));
+      return z;
+    });
+  }
 
   @Override public void onEnable() {
     saveDefaultConfig();
@@ -196,6 +210,8 @@ public final class Napady extends JavaPlugin {
    * (ladowanie klas, zimny JIT), lepiej przy starcie niz w tiku z graczem.
    */
   private void przygotujAreny() {
+    // wyposazenie z MMOItems teraz (~70 ms raz), nie w pierwszym tiku pierwszego napadu
+    for (Strona s : Strona.values()) for (Jednostka.Rola r : Jednostka.Rola.values()) zestaw(s, r);
     int n = getConfig().getInt("areny", 4);
     for (int s = 0; s < n; s++) {
       Arena a = arena(s);

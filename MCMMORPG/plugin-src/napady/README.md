@@ -13,6 +13,10 @@ Decyzje właściciela (25.10, dziennik zakładki „Królestwa i Rody” w encyk
   - Plugin tylko dowodzi. Wybiera cel (`Mob#setTarget`; wręcz wybiera tylko cel osiągalny pieszo, liczony ze składowych spójnych siatki areny, `Arena.osiagalne`). Wysyła punkt marszu (`Pathfinder#moveTo`, tylko przy zmianie). Wycofuje rannych poniżej `ranny-prog` i wysyła ich z powrotem od 70% HP.
   - Własne cele mobów są wyłączone: `EntityTargetEvent` jest anulowany poza CUSTOM i TARGET_DIED.
   - Przy `przebrania: true` LibsDisguises zakłada ciału skórę gracza (`skory.yml`).
+- **Wyposażenie z MMOItems (`wyposazenie.<strona>.<rola>`, `Wyposazenie.java`).** Każda rola nosi przedmioty MMOItems (`SLOT: TYP:ID`, poziom `wyposazenie.poziom`), te same co gracz. Skórzane barwi na kolor strony.
+  - MMOItems nie daje statystyk mobom („mmo stats on the armor DO NOT work on MythicMobs”, `MC/docs/Plugins-wiki-local/mythicmobs/wiki/md/mobs-equipment.md`). Plugin czyta je z przedmiotu (NBT `MMOITEMS_*`) i ustawia ciału atrybuty: pancerz i wytrzymałość (vanilla `armor`, `armor_toughness`), życie = `zycie` roli + `MAX_HEALTH` przedmiotów, atak = `ATTACK_DAMAGE` broni w ręce (wręcz) i baza strzały (łuk). Vanillowe atrybuty samych przedmiotów są zerowane.
+  - Obrona MythicLib działa tylko dla graczy (`DamageReduction` wymaga `MMOPlayerData`). Ciału liczy ją listener `obronaCiala` tym samym wzorem z `plugins/MythicLib/config.yml` (`defense-application`).
+  - Symulacja liczy cios tym samym wzorem (`Wyposazenie.poObronie`, `poPancerzu` = vanilla `CombatRules`), więc ciało i model dają to samo.
 - **Poziom szczegółów (LOD, `lod.*`; decyzja właściciela 25.10, wariant 2).** Model napadu (HP, pozycje, fazy) jest jeden i to on jest prawdą. Ciała to tylko jego wykonawca.
   - Stany napadu: SYM → MATERIALIZUJE → CIALA → DEMATERIALIZUJE.
   - **SYM:** bez encji. Ruch i walkę liczy `Symulacja` po tych samych drogach (`Uklad`: linia prosta albo pole przepływu), cele daje ten sam dowódca. Koszt to kilkanaście µs na tik.
@@ -32,7 +36,7 @@ Decyzje właściciela (25.10, dziennik zakładki „Królestwa i Rody” w encyk
 - **Zapis:** `plugins/Napady/zapisy/napad-<id>-<ts>.jsonl.gz`.
   - Pierwsza linia to nagłówek `{napad,arena,ziarno,lod,jednostki:[{id,s,r}]}`.
   - Klatki: `{t,f,m,b,l,u:[[id,x,y,z,yaw,hp,akcja]]}` co `zapis-co-tikow`, gdzie `m` = `c` (ciała) albo `s` (symulacja).
-  - Zdarzenia: `{t,e,d}`: faza, brama, ranny, padl, lod, `traf` (`a>v:dmg:odl:strzala|wrecz`), `strzal`, cios graczy, koniec.
+  - Zdarzenia: `{t,e,d}`: faza, brama, ranny, padl, lod, `traf` (`a>v:dmg:odl:wrecz` albo `a>v:dmg:odl:strzala:mn`, `mn` = obrażenia strzały ciała przed pancerzem / atak łuku), `strzal`, cios graczy, koniec.
 - **Kolejka:** `limit-naraz` napadów naraz. Nowy rusza tylko przy MSPT poniżej `mspt-prog`.
 
 ## Komendy (`napady.admin`, poza dolacz/opusc)
@@ -46,24 +50,23 @@ Decyzje właściciela (25.10, dziennik zakładki „Królestwa i Rody” w encyk
 - `ai`: diagnoza jednego ciała MM. Pokazuje rękę, cel, `hasLineOfSight`, `hasPath`, biegnące i wszystkie cele AI (Paper MobGoals).
 
 ## Pułapki (sprawdzone na klonie `napady`, 25.10)
-- **Sprzęt ciała MM tylko w `Equipment:` moba w `Napady.yml`.**
-  - Ręka ustawiona z pluginu (`setItemInMainHand`) zaraz po `MythicMob.spawn` znika: MM zakłada wyposażenie przy spawnie (MM wiki `mobs-equipment.md`).
-  - Objaw: szkielet z `reka=AIR` dostaje vanillowy `skeleton_melee` i nie strzela.
-  - Kolorowe kamizelki są przedmiotami MM w `mythicmobs/items/Napady.yml` (`Options: Color`).
+- **Sprzęt z pluginu zakładaj 1 tik po spawnie i jeszcze raz po 10 tikach.** MM zakłada `Equipment:` moba przy spawnie i nadpisuje rękę jeszcze kilka tików później (25.10: łuk szkieletu wracał jako goły vanillowy). `PreventRandomEquipment: true` czyści wyposażenie 3–5 tików po spawnie, więc ciała mają `false`. Szkielet zostaje z `Equipment: bow HAND` (bez łuku w ręce przy spawnie dostaje cel `skeleton_melee` i nie strzela).
 - **Peaceful usuwa ciała MM (zombie, szkielety).** Klon zostaje na `easy`, mobów pilnuje świat bez spawnu.
 - **Nie wołaj `removeAllGoals` na ciele MM** (skill `mc-mythicmobs`).
 - **Nie teleportuj mobów MM co tik**: koszt `MobListeners.onTeleportEvent` (skill `mc-mythicmobs`).
 - **Cel wręcz za zamkniętą bramą = jednostka stoi.** Stąd filtr `osiagalne` w `wybierzCele`.
-- **Broń w `Equipment` moba MM dodaje swoje obrażenia do `Damage` moba** (`Damage` to bazowy atrybut). Żelazny topór/miecz bił 10,3/7,0 zamiast 3. Lekarstwo: broń ciała to przedmiot MM z `Attributes: MainHand: ATTACK_DAMAGE: 0 ADD` (`NAP_TOPOR`, `NAP_MIECZ`; `MC/docs/Plugins-wiki-local/mythicmobs/wiki/md/items-attributes.md`). Na klonie 25.10: cios 2,3 po pancerzu na obie strony.
+- **Broń na mobie dodaje swoje vanillowe atrybuty do ataku moba** (25.10: żelazny topór bił 10,3 zamiast 3). Stąd zerowanie komponentu `attribute_modifiers` przedmiotu i atak tylko z atrybutu ciała.
+- **Kolejność obrażeń ciało→gracz: trudność (`easy`: min(d/2+1, d)), obrona MythicLib, pancerz vanilla** — sprawdzone botem w zbroi MMOItems (`testy/dolacz.js`, cios 1,73 przy oczekiwanym 1,73).
+- **Strzała z muru trafia częściej i mocniej.** Celność z muru w dół 0,68, z ziemi na mur 0,36 (25.10, 385 strzałów ciał). Spadająca strzała przyspiesza, a vanilla mnoży obrażenia przez prędkość. Symulacja ma na to `sym.celnosc-z-muru`, `celnosc-na-mur`, `strzala-z-muru`; bez nich wynik różnił się w 4/8 ziaren, a napastnicy tracili 1 zamiast 4.
 - **Ucieczka = pas wyjścia (`WYJSCIE_X`), nie punkt.** Pierwsi uciekinierzy stawali na skraju okręgu punktu i zamykali go spóźnionym, a napad kończył się limitem czasu (25.10, ziarno 101, 301 s).
 - **Bot w trybie widza spada** (mineflayer liczy grawitację): w testach `bot.physicsEnabled = false` przy zmianie trybu (`testy/dolacz.js`).
 - **Lagi przy 2 graczach na klonie to MythicHUD, nie napady.** Pomiar B0 bez napadów: MSPT p95 35,6 ms, napady 0,002 ms/tik. Koszt robi warstwa `l3-kolumna` (524 bloki warunków), patrz skrzynka `wiedza/skrzynka/20261025-reczny-mythichud-koszt-l3.md`.
 
 ## Budowa i test
-- `./build.sh` składa jar w dockerze gradle. Jary MM, LD i packetevents kopiuje do `libs/` (ignorowane przez git).
+- `./build.sh` składa jar w dockerze gradle. Jary MM, LD, packetevents, MMOItems i MythicLib kopiuje do `libs/` (ignorowane przez git).
 - Wdrożenie na klon:
   - jar do `plugins/`;
-  - `src/main/resources/mythicmobs/{mobs,items}/Napady.yml` do `plugins/MythicMobs/{mobs,items}/`;
+  - `src/main/resources/mythicmobs/mobs/Napady.yml` do `plugins/MythicMobs/mobs/` (stary `items/Napady.yml` z kamizelkami usuń);
   - zmieniony `config.yml` do `plugins/Napady/` (istniejacy plik nie jest nadpisywany z jara);
   - `klon.sh restart napady`.
 - Test jak gracz (bot bez OP): `/opt/docker/mc/narzedzia/bot/run.sh napady testy/dolacz.js`.
@@ -72,9 +75,13 @@ Decyzje właściciela (25.10, dziennik zakładki „Królestwa i Rody” w encyk
 
 ## Kalibracja symulacji (pętla zamknięta)
 1. Zapisy ciał: `napad lod ciala`, `napad limit 4`, `napad start 8 101`.
-2. `python3 testy/kalibracja.py zapisy/*.gz` daje `sym.*` (prędkość, szarża, zasięgi, odstępy ciosów, celność, obrażenia po pancerzu, tłok). `--tryb s` na zapisach symulacji sprawdza, czy symulacja oddaje config. Szarża mierzy się ~0,87 configu, a prędkość ~0,97, przez tłok: przelicz, zanim wpiszesz.
+2. `python3 testy/kalibracja.py zapisy/*.gz` daje `sym.*` (prędkość, szarża, zasięgi, odstępy ciosów, naciąg łuku, celność ogólna i z muru / na mur, mnożnik strzały z muru, obrażenia po pancerzu do kontroli, tłok). `--tryb s` na zapisach symulacji sprawdza, czy symulacja oddaje config. Szarża mierzy się ~0,87 configu, a prędkość ~0,97, przez tłok: przelicz, zanim wpiszesz.
 3. Te same ziarna w `napad lod symulacja`, potem `python3 testy/porownaj.py <ciała> <symulacja>` porównuje czas bramy, grabieży i końca, poległych i wynik (exit 1 przy różnicy > 20%).
-- Wynik 25.10 (8 par ziaren 101–108): brama −2%, grabież −4%, koniec −6%, polegli 1/4 wobec 1/4, wynik zgodny 8/8. `sym.odstep` (tłok przy drzwiach) dorzucony, bo bez niego grabież i koniec szły o 11–13% szybciej.
+- Wynik 25.10 wieczór (zbroja z MMOItems, 8 par ziaren 201–208): brama +12%, grabież +5%, koniec +3%, polegli atak 2,5→3,0, obrona 4,0→4,5, ZGODNE (wynik różny w 2/8 parach, tyle co rozrzut samych ciał). Po drodze trzy poprawki modelu:
+  - `sym.luk-naciag` (22 tiki): szkielet naciąga łuk ~1 s po złapaniu celu (`kalibracja.py` mierzy od wejścia w `strzela` do pierwszej strzały, 56 próbek); bez tego symulacja strzelała w t=10 zamiast ~31 i napastnicy tracili 2× mniej.
+  - Ziarno mieszane SplitMix64 (`Napad.miesz`) i osobny strumień na celność (`losTraf`): `java.util.Random` z ziarnami 201, 202… dawał prawie te same pierwsze liczby, 8 napadów było kopią jednego (obrona traciła 6 w każdym, celność na mur 0,45 przy configu 0,36). Po poprawce 0,34.
+  - Symulacja idzie do środka punktu rozkazu (0,25), nie do brzegu promienia: ciało idzie pathfinderem do środka kratki, a zatrzymanie na brzegu zostawiało drugi rząd poza promieniem grabieży (2,2 grabiących zamiast 3,6, grabież 22 s zamiast 13).
+- Liczby z małych prób (polegli 0–6 na napad) porównuj średnią i rozrzutem po ziarnach, nie samą medianą: 1 jednostka to ±20–40%.
 
 ## Pomiary (klon `--cpus 2`, 25.10)
 - 4 napady naraz, 64 ciała, bez graczy, rozgrzane: materializacja 0,45–2 s, MSPT śr 2,7, p95 6,2, max 14,6, 0 tików > 20 ms. Stały stan: śr 1,6, max 5,8.
@@ -83,7 +90,7 @@ Decyzje właściciela (25.10, dziennik zakładki „Królestwa i Rody” w encyk
 
 ## Testy
 - `testy/lod.js` (15/15): symulacja bez gracza, obserwacja, materializacja, histereza z dematerializacją po zwłoce, ponowna materializacja, stop.
-- `testy/dolacz.js` (14/14): dołączenie, walka bronią, blokada ciosu we własną stronę, śmierć, widz w punkcie widza, powrót.
+- `testy/dolacz.js` (17/17, z obrażeniami po zbroi MMOItems i obronie MythicLib): dołączenie, walka bronią, blokada ciosu we własną stronę, śmierć, widz w punkcie widza, powrót.
 - `testy/pomiar.js`: obciążenie do `napad pomiar`, bot walczy ~70 s; bez napadu to pomiar kontrolny samego gracza.
 
 ## Stan

@@ -2,8 +2,11 @@
 # Cele wybiera plugin (Mob#setTarget), dlatego AITargetSelectors: clear - mob sam nikogo nie namierza.
 # Despawn CHUNK: znika przy restarcie i wyladowaniu chunka (NORMAL = znika bez graczy w poblizu,
 # a napad trwa bez graczy); mobs-options.md "Despawn".
-# Sprzet TYLKO tutaj (Equipment): MM przy spawnie nadpisuje sprzet nadany z pluginu (25.10 klon napady:
-# luk z setItemInMainHand znikal, szkielet dostawal skeleton_melee i nie strzelal).
+# Wyposazenie (przedmioty MMOItems i ich liczby) zaklada plugin tik po spawnie (config wyposazenie, Wyposazenie.java):
+# MM przy spawnie nadpisuje sprzet nadany z pluginu. Tu zostaje tylko luk szkieletow: bez niego w chwili spawnu
+# szkielet dostaje skeleton_melee i nie strzela (25.10 klon napady). Health/Damage nadpisuje plugin.
+# PreventRandomEquipment: false, bo true czysci sprzet 3-5 tikow po spawnie, takze nadany z pluginu (25.10 klon:
+# +2 tiki topor i helm sa, +5 pusto; z false zostaja). Losowy sprzet vanilla nie wchodzi: plugin ustawia kazdy slot.
 NAP_ATAK_WOJOWNIK:
   Type: ZOMBIE
   Display: 'NAP_ATAK_WOJOWNIK'
@@ -14,14 +17,10 @@ NAP_ATAK_WOJOWNIK:
     PreventSunburn: true
     PreventItemPickup: true
     PreventOtherDrops: true
-    PreventRandomEquipment: true
+    PreventRandomEquipment: false   # true = MM czysci sprzet 3-5 tikow po spawnie (i przedmioty z pluginu)
     MovementSpeed: 0.25
     FollowRange: 20
     KnockbackResistance: 0.3
-  Equipment:
-  - NAP_TOPOR HAND
-  - NAP_KAMIZELKA_ATAK CHEST
-  - chainmail_helmet HEAD
   AIGoalSelectors:
   - clear
   - float
@@ -39,14 +38,12 @@ NAP_ATAK_LUCZNIK:
     PreventSunburn: true
     PreventItemPickup: true
     PreventOtherDrops: true
-    PreventRandomEquipment: true
+    PreventRandomEquipment: false   # true = MM czysci sprzet 3-5 tikow po spawnie (i przedmioty z pluginu)
     MovementSpeed: 0.25
     FollowRange: 24
     KnockbackResistance: 0.3
   Equipment:
   - bow HAND
-  - NAP_KAMIZELKA_ATAK CHEST
-  - chainmail_helmet HEAD
   AIGoalSelectors:
   - clear
   - float
@@ -64,15 +61,10 @@ NAP_OBRONA_WOJOWNIK:
     PreventSunburn: true
     PreventItemPickup: true
     PreventOtherDrops: true
-    PreventRandomEquipment: true
+    PreventRandomEquipment: false   # true = MM czysci sprzet 3-5 tikow po spawnie (i przedmioty z pluginu)
     MovementSpeed: 0.25
     FollowRange: 20
     KnockbackResistance: 0.3
-  Equipment:
-  - NAP_MIECZ HAND
-  - shield OFFHAND
-  - NAP_KAMIZELKA_OBRONA CHEST
-  - iron_helmet HEAD
   AIGoalSelectors:
   - clear
   - float
@@ -90,14 +82,12 @@ NAP_OBRONA_LUCZNIK:
     PreventSunburn: true
     PreventItemPickup: true
     PreventOtherDrops: true
-    PreventRandomEquipment: true
+    PreventRandomEquipment: false   # true = MM czysci sprzet 3-5 tikow po spawnie (i przedmioty z pluginu)
     MovementSpeed: 0.25
     FollowRange: 24
     KnockbackResistance: 0.3
   Equipment:
   - bow HAND
-  - NAP_KAMIZELKA_OBRONA CHEST
-  - iron_helmet HEAD
   AIGoalSelectors:
   - clear
   - float

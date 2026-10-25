@@ -2,7 +2,7 @@ name: Napady
 version: '${version}'
 main: pl.mcmmorpg.napady.Napady
 api-version: '1.21'
-softdepend: [MythicMobs, LibsDisguises]
+softdepend: [MythicMobs, LibsDisguises, MythicLib, MMOItems]
 description: Napady - jednostki MythicMobs walcza na serwerze, dowodzi plugin, bez widza symulacja (etap 2, klon)
 commands:
   napad:

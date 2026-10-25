@@ -21,12 +21,15 @@ final class Jednostka {
   final int slot;
   /** skora LD (indeks w skory.yml): ta sama po kazdej materializacji */
   final int skora;
+  /** przedmioty MMOItems roli i liczby walki z nich (wspolne dla jednostek tej roli) */
+  final Wyposazenie.Zestaw zestaw;
 
   // model (wspolrzedne wzgledem rogu areny)
   double x, z, yaw;
   double hp, maxHp;
   boolean zywa = true;
   int gotowyOd;                   // tik, od ktorego moze uderzyc/strzelic (symulacja i brama)
+  boolean naciaga;                // lucznik w symulacji ma cel i naciaga luk (pierwsza strzala po luk-naciag)
   String akcja = "stoi";
   boolean ranny;
 
@@ -43,10 +46,10 @@ final class Jednostka {
   double ruchX = Double.NaN, ruchZ = Double.NaN, ruchDoX = Double.NaN, ruchDoZ = Double.NaN;
   int ruchOd, ruchWstrzymanyDo;
 
-  Jednostka(Napad napad, int id, Strona strona, Rola rola, double x, double z, boolean naMurze, int slot, double hp, int skora) {
+  Jednostka(Napad napad, int id, Strona strona, Rola rola, double x, double z, boolean naMurze, int slot, Wyposazenie.Zestaw zestaw, int skora) {
     this.napad = napad; this.id = id; this.strona = strona; this.rola = rola;
-    this.postX = x; this.postZ = z; this.naMurze = naMurze; this.slot = slot; this.skora = skora;
-    this.x = x + 0.5; this.z = z + 0.5; this.hp = hp; this.maxHp = hp;
+    this.postX = x; this.postZ = z; this.naMurze = naMurze; this.slot = slot; this.skora = skora; this.zestaw = zestaw;
+    this.x = x + 0.5; this.z = z + 0.5; this.hp = zestaw.zycie(); this.maxHp = zestaw.zycie();
     this.yaw = strona == Strona.ATAK ? -90 : 90;
   }
 

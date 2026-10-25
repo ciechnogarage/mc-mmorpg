@@ -34,6 +34,8 @@ final class Napad {
   final Arena arena;
   final long ziarno;
   final Random los;
+  /** Osobny strumien na celnosc: rzut trafienia nie zalezy od losowan odnowien i skor (to samo ziarno = ten sam napad). */
+  final Random losTraf;
   final Symulacja sym;
   final List<Jednostka> jednostki = new ArrayList<>();
   Faza faza = Faza.MARSZ;
@@ -56,8 +58,10 @@ final class Napad {
 
   Napad(Napady pl, int id, Arena arena, long ziarno) {
     this.pl = pl; this.id = id; this.arena = arena; this.ziarno = ziarno;
-    this.los = new Random(ziarno);
-    this.sym = new Symulacja(pl.getConfig().getConfigurationSection("sym"), pl.getConfig().getDouble("obrazenia", 3));
+    // ziarna 201, 202... daja w java.util.Random prawie te same pierwsze liczby - mieszamy (SplitMix64)
+    this.los = new Random(miesz(ziarno));
+    this.losTraf = new Random(miesz(ziarno ^ 0x7A3F1C2BL));
+    this.sym = new Symulacja(pl.getConfig().getConfigurationSection("sym"));
   }
 
   /** Start = sam model (bez swiata). Ciala powstana dopiero, gdy ktos bedzie patrzyl. */
@@ -65,26 +69,25 @@ final class Napad {
     var c = pl.getConfig();
     hpBramy = c.getInt("hp-bramy", 300);
     arena.uklad = Uklad.BRAMA_STOI;   // arena slotu jest wspolna dla kolejnych napadow
-    double hp = c.getDouble("hp-jednostki", 20);
     int nid = 0;
     for (int i = 0; i < c.getInt("atak.wojownicy", 8); i++)
-      dodaj(++nid, Strona.ATAK, Jednostka.Rola.WOJOWNIK, 2 + i % 3, 16 + (i * 7) % 9, false, i, hp);
+      dodaj(++nid, Strona.ATAK, Jednostka.Rola.WOJOWNIK, 2 + i % 3, 16 + (i * 7) % 9, false, i);
     for (int i = 0; i < c.getInt("atak.lucznicy", 2); i++)
-      dodaj(++nid, Strona.ATAK, Jednostka.Rola.LUCZNIK, 0, 18 + i * 4, false, i, hp);
+      dodaj(++nid, Strona.ATAK, Jednostka.Rola.LUCZNIK, 0, 18 + i * 4, false, i);
     int ob = c.getInt("obrona.wojownicy", 4);
     for (int i = 0; i < ob; i++)
-      dodaj(++nid, Strona.OBRONA, Jednostka.Rola.WOJOWNIK, i < ob / 2 ? 23 : 31, 18 + (i % 2) * 4, false, i, hp);
+      dodaj(++nid, Strona.OBRONA, Jednostka.Rola.WOJOWNIK, i < ob / 2 ? 23 : 31, 18 + (i % 2) * 4, false, i);
     for (int i = 0; i < c.getInt("obrona.lucznicy", 2); i++)
-      dodaj(++nid, Strona.OBRONA, Jednostka.Rola.LUCZNIK, Arena.BRAMA_X, i == 0 ? 13 : 27, true, i, hp);
+      dodaj(++nid, Strona.OBRONA, Jednostka.Rola.LUCZNIK, Arena.BRAMA_X, i == 0 ? 13 : 27, true, i);
     napastnikowStart = (int) jednostki.stream().filter(j -> j.strona == Strona.ATAK).count();
     ktosBlisko = -1_000_000;
     zapiszNaglowek();
     pl.getLogger().info("Napad " + id + " start, arena x=" + arena.ox + ", jednostek " + jednostki.size() + ", ziarno " + ziarno);
   }
 
-  private void dodaj(int nid, Strona s, Jednostka.Rola r, double x, double z, boolean naMurze, int slot, double hp) {
+  private void dodaj(int nid, Strona s, Jednostka.Rola r, double x, double z, boolean naMurze, int slot) {
     int skora = pl.skory.isEmpty() ? -1 : los.nextInt(pl.skory.size());
-    jednostki.add(new Jednostka(this, nid, s, r, x, z, naMurze, slot, hp, skora));
+    jednostki.add(new Jednostka(this, nid, s, r, x, z, naMurze, slot, pl.zestaw(s, r), skora));
   }
 
   // ---------------------------------------------------------------- tik
@@ -264,9 +267,11 @@ final class Napad {
     if (i != null) i.setBaseValue(v);
   }
 
-  /** Cialo MM: liczby z configu (te same co model), skora LD z modelu (ta sama po kazdej materializacji). */
+  /**
+   * Cialo MM: liczby z wyposazenia MMOItems (te same co model), skora LD z modelu (ta sama po kazdej materializacji).
+   * Pancerz/wytrzymalosc/atak = BAZA atrybutu (zombie ma wlasne 2 pancerza - zastapione), przedmioty bez wlasnych atrybutow.
+   */
   private void przygotujMM(Mob e, Jednostka j) {
-    var c = pl.getConfig();
     e.setPersistent(false);
     e.setCanPickupItems(false);
     if (e instanceof Ageable a) a.setAdult();
@@ -275,19 +280,35 @@ final class Napad {
     e.setCustomNameVisible(false);
     atrybut(e, Attribute.MAX_HEALTH, j.maxHp);
     e.setHealth(Math.max(0.5, Math.min(j.maxHp, j.hp)));
-    atrybut(e, Attribute.ATTACK_DAMAGE, c.getDouble("obrazenia", 3));
+    var z = j.zestaw;
+    atrybut(e, Attribute.ARMOR, z.pancerz());
+    atrybut(e, Attribute.ARMOR_TOUGHNESS, z.wytrzymalosc());
+    atrybut(e, Attribute.ATTACK_DAMAGE, z.atak());
     atrybut(e, Attribute.SPAWN_REINFORCEMENTS, 0);
     // lucznik na murze stoi: bowattack inaczej schodzi z muru, zeby okrazac cel
     if (j.naMurze) { atrybut(e, Attribute.MOVEMENT_SPEED, 0); atrybut(e, Attribute.KNOCKBACK_RESISTANCE, 1); }
-    // sprzet z Equipment w mobs/Napady.yml (sprzet z pluginu MM nadpisuje przy spawnie)
-    var eq = e.getEquipment();
-    if (eq != null) for (var slot : org.bukkit.inventory.EquipmentSlot.values())
-      try { eq.setDropChance(slot, 0); } catch (IllegalArgumentException ignored) { /* slot bez szansy upuszczenia (np. BODY) */ }
+    // przedmioty tik po spawnie i jeszcze raz po 10 t: MM przy spawnie i kilka tikow pozniej nadpisuje reke
+    // swoim Equipment (luk szkieletu wracal jako golym vanilla, 25.10 klon napady), zbroje zostawia
+    Bukkit.getScheduler().runTask(pl, () -> ubierz(e, z));
+    Bukkit.getScheduler().runTaskLater(pl, () -> ubierz(e, z), 10);
     long t0 = System.nanoTime();
     if (j.skora >= 0 && pl.przebrania()
         && CialaMM.przebierz(e, j.strona == Strona.ATAK ? "Najezdzca" : "Obronca", pl.skory.get(j.skora), pl.getLogger())) przebrane++;
     long dt = System.nanoTime() - t0;
     nsPrzebr += dt; maxPrzebr = Math.max(maxPrzebr, dt);
+  }
+
+  private static void ubierz(Mob e, Wyposazenie.Zestaw z) {
+    var eq = e.getEquipment();
+    if (!e.isValid() || eq == null) return;
+    // kazdy slot reki i zbroi: z zestawu albo pusty (bez losowego sprzetu vanilla, PreventRandomEquipment wylaczone w MM)
+    for (var slot : org.bukkit.inventory.EquipmentSlot.values()) {
+      if (slot.isHand() || slot.isArmor()) {
+        var it = z.przedmioty().get(slot);
+        eq.setItem(slot, it == null ? null : it.clone());
+      }
+      try { eq.setDropChance(slot, 0); } catch (IllegalArgumentException ignored) { /* slot bez szansy upuszczenia (np. BODY) */ }
+    }
   }
 
   /** Koszt ostatniej materializacji (ms): suma i najdluzszy pojedynczy spawn MM / przebranie LD. */
@@ -484,7 +505,7 @@ final class Napad {
 
   private void uderzBrame(Jednostka j) {
     if (j.cialo != null) j.cialo.swingMainHand();
-    hpBramy -= (int) pl.getConfig().getDouble("obrazenia", 3);
+    hpBramy -= (int) Math.round(j.zestaw.atak());
     j.gotowyOd = tik + odnowienie();
     j.akcja = "bije brame";
     if (faza == Faza.MARSZ) { faza = Faza.BRAMA; zdarzenie("faza", faza.name()); }
@@ -504,8 +525,20 @@ final class Napad {
     odswiezNapis();
   }
 
-  /** Trafienie w symulacji (cialo celu, jesli jest, dostaje obrazenia przez zdarzenie). */
-  void trafienie(Jednostka a, Jednostka c, double dmg, boolean strzala) {
+  /**
+   * Trafienie w symulacji: atak broni po obronie (wzor MythicLib) i pancerzu celu (wzor vanilla) - tak samo, jak cios
+   * ciala liczy gra. Cialo celu dostaje gotowa liczbe: damage() bez sprawcy to typ generic, ktory pomija pancerz.
+   */
+  static long miesz(long z) {
+    z += 0x9E3779B97F4A7C15L;
+    z = (z ^ (z >>> 30)) * 0xBF58476D1CE4E5B9L;
+    z = (z ^ (z >>> 27)) * 0x94D049BB133111EBL;
+    return z ^ (z >>> 31);
+  }
+
+  void trafienie(Jednostka a, Jednostka c, double atak, boolean strzala) {
+    var z = c.zestaw;
+    double dmg = Wyposazenie.poPancerzu(Wyposazenie.poObronie(atak, z.obrona()), z.pancerz(), z.wytrzymalosc());
     zdarzenie("traf", a.id + ">" + c.id + ":" + r1(dmg) + ":" + r1(a.odl(c.x, c.z)) + ":" + (strzala ? "strzala" : "wrecz"));
     if (c.cialo != null) { c.cialo.damage(dmg); return; }
     c.hp -= dmg;
@@ -699,4 +732,5 @@ final class Napad {
   }
 
   static String r1(double v) { return String.valueOf(Math.round(v * 10) / 10.0); }
+  static String r2(double v) { return String.valueOf(Math.round(v * 100) / 100.0); }
 }

@@ -21,9 +21,11 @@ sym:
   wrecz-co: 20          # tikow miedzy ciosami
   luk-zasieg: 15.9
   luk-co: 53            # tikow miedzy strzalami (+ do 1/4 losowo)
-  celnosc: 0.5
-  strzala: 3.2          # obrazenia strzaly po pancerzu
-  wrecz: 2.3            # obrazenia ciosu po pancerzu (cialo bije 'obrazenia', pancerz celu zdejmuje czesc)
+  luk-naciag: 22        # tikow od zlapania celu do pierwszej strzaly (szkielet naciaga luk)
+  celnosc: 0.5           # strzal na rownym (cialo w cialo na ziemi)
+  celnosc-z-muru: 0.68  # z muru w dol: cel w tlumie pod brama (kalibracja 25.10, 176 strzalow cial)
+  celnosc-na-mur: 0.36  # z ziemi na mur: lucznik za blankami (209 strzalow)
+  strzala-z-muru: 1.15   # spadajaca strzala przyspiesza: obrazenia x (vanilla: baza x predkosc), piate pole "traf"
   odstep: 1.3           # promien rozpychania swoich (tlok przy bramie i drzwiach; cialo zderza sie mocniej niz punkt)
 atak:
   wojownicy: 8
@@ -31,9 +33,38 @@ atak:
 obrona:
   wojownicy: 4
   lucznicy: 2           # stoja na murze
-hp-jednostki: 20.0
-obrazenia: 3.0
-hp-bramy: 300
+hp-jednostki: 20.0      # zycie bez wyposazenia (jak gracz: 20), przedmioty dodaja MAX_HEALTH
+hp-bramy: 700           # cios w brame = atak broni (topor 7); 700 = tyle ciosow co dawne 300 przy 3
+# Wyposazenie jednostek = przedmioty MMOItems (te same co gracza): SLOT: TYP:ID (Bukkit HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET).
+# Liczby walki ida z przedmiotow (pancerz, wytrzymalosc, obrona, zycie, atak broni w rece), cialo i symulacja licza je tak samo
+# (Wyposazenie.java). Skorzane barwi na kolor strony. Poziom = skala przedmiotow z base+scale (pozniej: zbrojownia krolestwa).
+wyposazenie:
+  poziom: 1
+  ATAK_WOJOWNIK:
+    HAND: AXE:TOPOR_BOJOWY
+    HEAD: ARMOR:KOLCZUGA_HELM
+    CHEST: ARMOR:ZBROJA_SKORZANA_NAPIERSNIK
+    LEGS: ARMOR:ZBROJA_SKORZANA_NOGI
+    FEET: ARMOR:ZBROJA_SKORZANA_BUTY
+  ATAK_LUCZNIK:
+    HAND: BOW:LUK_MYSLIWSKI
+    HEAD: ARMOR:ZBROJA_SKORZANA_HELM
+    CHEST: ARMOR:ZBROJA_SKORZANA_NAPIERSNIK
+    LEGS: ARMOR:ZBROJA_SKORZANA_NOGI
+    FEET: ARMOR:ZBROJA_SKORZANA_BUTY
+  OBRONA_WOJOWNIK:
+    HAND: SWORD:MIECZ_ZELAZNY
+    OFF_HAND: SHIELD:TARCZA_DREWNIANA
+    HEAD: ARMOR:ZBROJA_ZELAZNA_HELM
+    CHEST: ARMOR:KOLCZUGA_NAPIERSNIK
+    LEGS: ARMOR:KOLCZUGA_NOGI
+    FEET: ARMOR:ZBROJA_SKORZANA_BUTY
+  OBRONA_LUCZNIK:
+    HAND: BOW:LUK_MYSLIWSKI
+    HEAD: ARMOR:ZBROJA_ZELAZNA_HELM
+    CHEST: ARMOR:ZBROJA_SKORZANA_NAPIERSNIK
+    LEGS: ARMOR:ZBROJA_SKORZANA_NOGI
+    FEET: ARMOR:ZBROJA_SKORZANA_BUTY
 lup-max: 100
 limit-czasu-s: 300
 morale-odwrot: 0.7      # odwrot po utracie takiej czesci atakujacych
