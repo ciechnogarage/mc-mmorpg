@@ -29,7 +29,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,8 +67,11 @@ final class ZSuszarnia implements Listener {
     private final File plik;
     private final NamespacedKey kJakosc;
 
-    ZSuszarnia(Rzemioslo plugin) {
+    private final ZMagazyn magazyn;
+
+    ZSuszarnia(Rzemioslo plugin, ZMagazyn magazyn) {
         this.plugin = plugin;
+        this.magazyn = magazyn;
         this.plik = new File(plugin.getDataFolder(), "zielarz-suszarnie.yml");
         this.kJakosc = new NamespacedKey(plugin, "jakosc");
         wczytaj();
@@ -313,8 +315,8 @@ final class ZSuszarnia implements Listener {
 
     // ================================================================ zapis
     private void wczytaj() {
-        if (!plik.exists()) return;
-        YamlConfiguration y = YamlConfiguration.loadConfiguration(plik);
+        YamlConfiguration y = magazyn.czytajTeraz(plik);
+        if (y == null) return;
         ConfigurationSection s = y.getConfigurationSection("suszarnie");
         if (s == null) return;
         for (String k : s.getKeys(false)) {
@@ -345,6 +347,6 @@ final class ZSuszarnia implements Listener {
                 if (p.wlasciciel != null) y.set(b + ".wlasciciel", p.wlasciciel.toString());
             }
         }
-        try { y.save(plik); } catch (IOException ex) { plugin.getLogger().warning("zielarz-suszarnie.yml: " + ex); }
+        magazyn.zapisz(plik, y.saveToString());   // w tle, plik tymczasowy + podmiana (F1)
     }
 }

@@ -8,13 +8,13 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -60,10 +60,36 @@ final class ZZielnik {
     private final Rzemioslo plugin;
     private final Map<UUID, Set<String>> odkrycia = new HashMap<>();
     private final File katalog;
+    private final ZMagazyn magazyn;
+    /** Postacie ze zmianami jeszcze nie oddanymi na dysk (liczniki bez zapisu od razu). */
+    private final Set<UUID> brudne = new java.util.HashSet<>();
 
-    ZZielnik(Rzemioslo plugin) {
+    ZZielnik(Rzemioslo plugin, ZMagazyn magazyn) {
         this.plugin = plugin;
+        this.magazyn = magazyn;
         this.katalog = new File(plugin.getDataFolder(), "zielnik");
+    }
+
+    /** Wejscie gracza: zielnik postaci z dysku w tle, zanim zacznie zbierac (F1). */
+    void wczytaj(UUID u) {
+        if (odkrycia.containsKey(u)) return;
+        magazyn.czytaj(new File(katalog, u + ".yml")).thenAccept(y -> {
+            if (!plugin.isEnabled()) return;
+            Bukkit.getScheduler().runTask(plugin, () -> { if (!odkrycia.containsKey(u)) wloz(u, y); });
+        });
+    }
+
+    private Set<String> wloz(UUID u, YamlConfiguration y) {
+        Set<String> s = new LinkedHashSet<>();
+        Map<String, Integer> l = new HashMap<>();
+        if (y != null) {
+            s.addAll(y.getStringList("odkrycia"));
+            var sek = y.getConfigurationSection("liczniki");
+            if (sek != null) for (String x : sek.getKeys(false)) l.put(x, sek.getInt(x));
+        }
+        liczniki.put(u, l);
+        odkrycia.put(u, s);
+        return s;
     }
 
     boolean ma(Player p, String wpis) { return dla(Zlecenia.profil(p)).contains(wpis); }
@@ -100,20 +126,10 @@ final class ZZielnik {
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.7f, 1.1f);
     }
 
+    /** Zwykle juz w pamieci (wczytaj przy wejsciu); odczyt z dysku tutaj tylko, gdy postac zmieniono w trakcie gry. */
     private Set<String> dla(UUID u) {
-        return odkrycia.computeIfAbsent(u, k -> {
-            Set<String> s = new LinkedHashSet<>();
-            Map<String, Integer> l = new HashMap<>();
-            File f = new File(katalog, k + ".yml");
-            if (f.exists()) {
-                YamlConfiguration y = YamlConfiguration.loadConfiguration(f);
-                s.addAll(y.getStringList("odkrycia"));
-                var sek = y.getConfigurationSection("liczniki");
-                if (sek != null) for (String x : sek.getKeys(false)) l.put(x, sek.getInt(x));
-            }
-            liczniki.put(k, l);
-            return s;
-        });
+        Set<String> s = odkrycia.get(u);
+        return s != null ? s : wloz(u, magazyn.czytajTeraz(new File(katalog, u + ".yml")));
     }
 
     /** Ukryte liczniki postaci (wprawa, rady, skaza partii): zielnik ich nie pokazuje. */
@@ -129,7 +145,7 @@ final class ZZielnik {
         Map<String, Integer> m = lic(u);
         int v = Math.max(0, m.getOrDefault(k, 0) + d);
         if (v == 0) m.remove(k); else m.put(k, v);
-        if (zapisz) zapisz(u);
+        if (zapisz) zapisz(u); else brudne.add(u);
         return v;
     }
 
@@ -146,18 +162,35 @@ final class ZZielnik {
     /** Rada po ruchu: tylko 3 pierwsze razy na postac i rodzaj. */
     boolean rada3(Player p, String rodzaj) { return dolicz(p, "_r_" + rodzaj, 1, false) <= 3; }
 
+    /** Migawka na watku serwera, zapis w kolejce dysku (od razu: odkrycia, skaza, wprawa). */
     void zapisz(UUID u) {
         Set<String> s = odkrycia.get(u);
         if (s == null) return;
-        katalog.mkdirs();
+        brudne.remove(u);
         YamlConfiguration y = new YamlConfiguration();
         y.set("odkrycia", new ArrayList<>(s));
         Map<String, Integer> l = liczniki.get(u);
         if (l != null) for (Map.Entry<String, Integer> e : l.entrySet()) y.set("liczniki." + e.getKey(), e.getValue());
-        try { y.save(new File(katalog, u + ".yml")); } catch (IOException e) { plugin.getLogger().warning("zielnik: " + e); }
+        magazyn.zapisz(new File(katalog, u + ".yml"), y.saveToString());
     }
 
     void zapiszWszystko() { for (UUID u : new ArrayList<>(odkrycia.keySet())) zapisz(u); }
+
+    void zapiszZmienione() { for (UUID u : new ArrayList<>(brudne)) zapisz(u); }
+
+    /** Wyjscie: zapis, a pamiec zwalniamy dopiero PO zapisie (dla() czytajacy dysk nie zobaczy starszego pliku). */
+    void zwolnij(UUID gracz, UUID profil) {
+        zapisz(profil);
+        magazyn.potem(() -> {
+            if (!plugin.isEnabled()) return;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (Bukkit.getPlayer(gracz) != null) return;
+                odkrycia.remove(profil);
+                liczniki.remove(profil);
+                zalegle.remove(gracz);
+            });
+        });
+    }
 
     /** Zwraca true, gdy to nowy wpis (i oglasza go graczowi). */
     boolean odkryj(Player p, String klucz) {

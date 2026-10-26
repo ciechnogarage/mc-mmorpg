@@ -160,8 +160,30 @@ final class Zielarz implements Listener {
     private final Map<UUID, Long> poSesji = new HashMap<>();
     private static final long PO_SESJI_MS = 900;
     private final Map<UUID, Long> poKoncu = new java.util.concurrent.ConcurrentHashMap<>();
-    private final Map<UUID, Map<String, Stan>> stany = new HashMap<>();
-    private final File plikKep;
+    /** Stany kep konta (odrost per KONTO). W pamieci tylko gracze online; plik zielarz/konta/<uuid>.yml (F1). */
+    static final class Konto {
+        final Map<String, Stan> kepy = new HashMap<>();
+        /** Indeks "swiat;cx;cz" -> klucze kep: wyslanie chunka czyta tylko jego kepy, nie wszystkie stany konta. */
+        final Map<String, List<String>> wgChunka = new HashMap<>();
+        boolean brudne;
+
+        void dodaj(String k, Stan st) {
+            if (kepy.put(k, st) == null) wgChunka.computeIfAbsent(chunkKlucza(k), x -> new ArrayList<>()).add(k);
+        }
+    }
+
+    static String chunkKlucza(String k) {
+        String[] a = k.split(";");
+        return a[0] + ";" + (Integer.parseInt(a[1]) >> 4) + ";" + (Integer.parseInt(a[3]) >> 4);
+    }
+
+    private final Map<UUID, Konto> stany = new HashMap<>();
+    private final java.util.Set<UUID> wczytywane = new java.util.HashSet<>();
+    /** Rejestr kep (miejsce -> gatunek) zapisywany per region 512×512: zmiana jednej kepy przepisuje jeden maly plik. */
+    private final java.util.Set<String> brudneRegiony = new java.util.HashSet<>();
+    private boolean brudnySwiat;
+    final ZMagazyn magazyn;
+    private final File katalog;
     private final NamespacedKey kJakosc, kZamiana, kSlot, kUchwyt, kPartia;
     private final PacketListenerAbstract pakiety;
     final ZZielnik zielnik;
@@ -174,22 +196,24 @@ final class Zielarz implements Listener {
 
     Zielarz(Rzemioslo plugin) {
         this.plugin = plugin;
-        this.plikKep = new File(plugin.getDataFolder(), "zielarz-kepy.yml");
+        this.katalog = new File(plugin.getDataFolder(), "zielarz");
+        this.magazyn = new ZMagazyn(plugin.getLogger());
         this.kJakosc = new NamespacedKey(plugin, "jakosc");
         this.kZamiana = new NamespacedKey(plugin, "zielarz_zamiana");
         this.kPartia = new NamespacedKey(plugin, "partia");
         this.kSlot = new NamespacedKey(plugin, "zielarz_slot");
         this.kUchwyt = new NamespacedKey(plugin, "zielarz_uchwyt");
-        this.zielnik = new ZZielnik(plugin);
+        this.zielnik = new ZZielnik(plugin, magazyn);
         this.kom = new ZKomunikaty(plugin);
-        this.suszarnia = new ZSuszarnia(plugin);
+        this.suszarnia = new ZSuszarnia(plugin, magazyn);
         this.feeling = new ZFeeling(plugin);
         this.scena = new ZScena(plugin);
         Bukkit.getPluginManager().registerEvents(suszarnia, plugin);
         Bukkit.getScheduler().runTaskLater(plugin, suszarnia::pokazWszystko, 40L);
+        przeniesStarePliki();
         wczytajKepy();
-        wczytajStany();
-        Bukkit.getScheduler().runTaskTimer(plugin, this::zapiszStany, 6000L, 6000L);
+        for (Player p : Bukkit.getOnlinePlayers()) { wczytajKonto(p.getUniqueId()); zielnik.wczytaj(Zlecenia.profil(p)); }   // reload pluginu
+        Bukkit.getScheduler().runTaskTimer(plugin, this::zapiszZmienione, 1200L, 1200L);   // co 60 s tylko brudne pliki
         pakiety = new PacketListenerAbstract(PacketListenerPriority.NORMAL) {
             /** W trakcie zbioru kliki naleza do zielarza: pakiety machniecia/uzycia/kopania sa anulowane, zanim powstanie
              *  zdarzenie Bukkita (inne pluginy — bron, zaklecia, wymagania MMOItems — ich nie widza). Klient dostaje ack
@@ -268,18 +292,36 @@ final class Zielarz implements Listener {
 
     static String klucz(Block b) { return b.getWorld().getName() + ";" + b.getX() + ";" + b.getY() + ";" + b.getZ(); }
 
-    private void wczytajKepy() {
-        kepy.clear();
-        if (!plikKep.exists()) return;
-        YamlConfiguration y = YamlConfiguration.loadConfiguration(plikKep);
-        var sek = y.getConfigurationSection("kepy");
-        if (sek != null) for (String k : sek.getKeys(false)) kepy.put(zYaml(k), sek.getString(k));
+    /** Region rejestru kep: "swiat/r.<x>.<z>" (512×512 blokow, jak plik regionu swiata). */
+    static String region(String k) {
+        String[] a = k.split(";");
+        return a[0] + "/r." + (Integer.parseInt(a[1]) >> 9) + "." + (Integer.parseInt(a[3]) >> 9);
     }
 
-    private void zapiszKepy() {
+    private File plikRegionu(String r) { return new File(katalog, "regiony/" + r + ".yml"); }
+
+    /** Start pluginu: caly rejestr do pamieci (kilka bajtow na kepe), z plikow regionow. */
+    private void wczytajKepy() {
+        kepy.clear();
+        File[] swiaty = new File(katalog, "regiony").listFiles(File::isDirectory);
+        if (swiaty == null) return;
+        for (File sw : swiaty) {
+            File[] pliki = sw.listFiles((d, n) -> n.endsWith(".yml"));
+            if (pliki == null) continue;
+            for (File f : pliki) {
+                YamlConfiguration y = magazyn.czytajTeraz(f);
+                var sek = y == null ? null : y.getConfigurationSection("kepy");
+                if (sek != null) for (String k : sek.getKeys(false)) kepy.put(zYaml(k), sek.getString(k));
+            }
+        }
+    }
+
+    private void zapiszRegion(String r) {
         YamlConfiguration y = new YamlConfiguration();
-        for (Map.Entry<String, String> e : kepy.entrySet()) y.set("kepy." + doYaml(e.getKey()), e.getValue());
-        try { y.save(plikKep); } catch (IOException ex) { plugin.getLogger().warning("zielarz-kepy.yml: " + ex); }
+        int n = 0;
+        for (Map.Entry<String, String> e : kepy.entrySet())
+            if (region(e.getKey()).equals(r)) { y.set("kepy." + doYaml(e.getKey()), e.getValue()); n++; }
+        if (n == 0) magazyn.usun(plikRegionu(r)); else magazyn.zapisz(plikRegionu(r), y.saveToString());
     }
 
     static final List<String> GATUNKI = List.of("dziurawiec", "kozlek", "czosnek", "konwalia");
@@ -300,10 +342,10 @@ final class Zielarz implements Listener {
     }
 
     String ustawKepe(Block b, String gatunek) {
-        if (gatunek == null) { kepy.remove(klucz(b)); zapiszKepy(); return "usunieto"; }
+        if (gatunek == null) { kepy.remove(klucz(b)); brudneRegiony.add(region(klucz(b))); return "usunieto"; }
         if (!GATUNKI.contains(gatunek)) return "nieznany gatunek; " + GATUNKI;
         kepy.put(klucz(b), gatunek);
-        zapiszKepy();
+        brudneRegiony.add(region(klucz(b)));
         return "kepa " + gatunek + " @ " + klucz(b);
     }
 
@@ -375,9 +417,15 @@ final class Zielarz implements Listener {
 
     private static String kluczRozpoznania(Block b, Stan st) { return "_rozp_" + klucz(b) + "_" + st.ziarno; }
 
+    /** null = konto jeszcze sie wczytuje z dysku (pierwsze sekundy po wejsciu). */
     private Stan stan(Player p, Block b) {
         // odrost per KONTO: druga postac nie zbiera tej samej kepy jeszcze raz; rozpoznanie i wiedza sa per postac (zielnik)
-        return stany.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).computeIfAbsent(klucz(b), k -> new Stan());
+        Konto k = stany.get(p.getUniqueId());
+        if (k == null) { wczytajKonto(p.getUniqueId()); return null; }
+        String kl = klucz(b);
+        Stan st = k.kepy.get(kl);
+        if (st == null) { st = new Stan(); k.dodaj(kl, st); }
+        return st;
     }
 
     void rozpocznij(Player p, Block b, String gatunek) {
@@ -389,6 +437,7 @@ final class Zielarz implements Listener {
         if (poz < prog && !p.hasPermission("rzemioslo.zielarz.bezprogow")) { kom.odmowa(p, "§fNie znasz się jeszcze na tej roślinie. §7Zielarstwo " + prog + " (masz " + poz + ")."); return; }
         if (odl > 3.2) { kom.odmowa(p, "§7Podejdź bliżej, żeby pochylić się nad rośliną."); return; }   // stale, bliskie zblizenie
         Stan st = stan(p, b);
+        if (st == null) { kom.odmowa(p, "§7Chwila, rozglądasz się jeszcze."); return; }
         long teraz = System.currentTimeMillis();
         if (st.odrostDo > teraz) {
             String gk = gatunek;
@@ -397,7 +446,10 @@ final class Zielarz implements Listener {
             return;
         }
         // po odroscie nowy okaz, ale rozpoznanie kepy zostaje (gracz juz wie, co tu rosnie)
-        if (st.odrostDo != 0) { Stan nowy = new Stan(); nowy.slaba = st.chciwie; stany.get(p.getUniqueId()).put(klucz(b), nowy); st = nowy; }
+        if (st.odrostDo != 0) {
+            Stan nowy = new Stan(); nowy.slaba = st.chciwie;
+            Konto k = stany.get(p.getUniqueId()); k.dodaj(klucz(b), nowy); k.brudne = true; st = nowy;
+        }
         String rodzaj = plugin.dane().narzedzieProfesji.getOrDefault(PROF, "sierp");
         Przedmioty.Znalezione sierp = plugin.przedmioty().najlepsze(p, rodzaj, 1);
         if (sierp == null) {
@@ -531,6 +583,8 @@ final class Zielarz implements Listener {
     @EventHandler
     public void naWejscie(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+        wczytajKonto(p.getUniqueId());
+        zielnik.wczytaj(Zlecenia.profil(p));
         var pdc = p.getPersistentDataContainer();
         pdc.remove(kZamiana);
         pdc.remove(kSlot);
@@ -697,11 +751,12 @@ final class Zielarz implements Listener {
 
     /** Test: wszystkie kepy gracza gotowe do zbioru od razu (zamiast czekac minut). */
     int odrostTeraz(Player p) {
-        Map<String, Stan> m = stany.get(p.getUniqueId());
-        if (m == null) return 0;
+        Konto k = stany.get(p.getUniqueId());
+        if (k == null) return 0;
         int n = 0;
         long teraz = System.currentTimeMillis();
-        for (Stan st : m.values()) if (st.odrostDo > teraz) { st.odrostDo = teraz - 1; n++; }
+        for (Stan st : k.kepy.values()) if (st.odrostDo > teraz) { st.odrostDo = teraz - 1; n++; }
+        if (n > 0) k.brudne = true;
         return n;
     }
 
@@ -1407,6 +1462,8 @@ final class Zielarz implements Listener {
             zielnik.odkryj(p, "dziurawiec_chciwosc");
         }
         if (odrost > 0) s.stan.odrostDo = System.currentTimeMillis() + odrost * 1000;
+        Konto konto = stany.get(p.getUniqueId());
+        if (konto != null) konto.brudne = true;   // na dysk w ciagu 60 s, przy wyjsciu albo przy wylaczaniu (F1)
         if (!s.zebrane.isEmpty()) zielnik.dolicz(p, "_wprawa_" + grupa(s.gatunek), 1, true);
         if (s.mokrych > 0) {
             zielnik.dolicz(p, "_mokre_ziele", s.mokrych, true);
@@ -1418,7 +1475,6 @@ final class Zielarz implements Listener {
             plugin.getLogger().info(String.format("[pomiar] %s %s %d/%d/%d skazone=%d pokruszone=%d sek=%.1f wprawa=%d woda=%b mokro=%b",
                     p.getName(), s.gatunek, k[0], k[1], k[2], s.skazone, s.pokruszone, (System.currentTimeMillis() - s.startMs) / 1000.0, s.wprawa, s.przyWodzie, s.mokro));
         }
-        if (!wylaczanie) zapiszStany();   // crash nie cofa swiezych zbiorow
         boolean poZbiorze = odrost > 0;
         if (wylaczanie) {
             s.r.usun();
@@ -1584,75 +1640,179 @@ final class Zielarz implements Listener {
         kom.zatrzymajWszystko();
         try { PacketEvents.getAPI().getEventManager().unregisterListener(pakiety); } catch (Throwable ignored) { }
         zielnik.zapiszWszystko();
-        zapiszStany();
+        zapiszZmienione();
         suszarnia.sprzatnij();
+        magazyn.zamknij();   // czeka, az kolejka zejdzie na dysk
     }
 
-    // ================================================================ stan kep na dysku (odrost i uklad rosliny przezywaja restart)
-    /** Partia nierozpoznanych lisci -> gatunek (zapisywane razem ze stanami kep). */
+    // ================================================================ stan kep na dysku (F1: pliki per konto i region, zapis w tle)
+    /** Partia nierozpoznanych lisci -> gatunek (zielarz/swiat.yml). */
     private final Map<Integer, String> partie = new HashMap<>();
 
     String gatunekPartii(int partia) { return partie.get(partia); }
 
-    private File plikStanow() { return new File(plugin.getDataFolder(), "zielarz-stany.yml"); }
+    private File plikKonta(UUID u) { return new File(katalog, "konta/" + u + ".yml"); }
 
-    void wczytajStany() {
-        File f = plikStanow();
-        if (!f.exists()) return;
-        YamlConfiguration y = YamlConfiguration.loadConfiguration(f);
+    /** Konto z dysku w tle; do wczytania stan(...) daje null (gracz slyszy „chwila”). Odczyt idzie w tej samej kolejce
+     *  co zapisy, wiec szybki powrot po wyjsciu czyta to, co wyjscie zapisalo. */
+    void wczytajKonto(UUID u) {
+        if (stany.containsKey(u) || !wczytywane.add(u)) return;
+        magazyn.czytaj(plikKonta(u)).thenAccept(y -> {
+            if (!plugin.isEnabled()) return;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                wczytywane.remove(u);
+                if (stany.containsKey(u)) return;
+                Player p = Bukkit.getPlayer(u);
+                if (p == null) return;   // wyszedl, zanim dysk odpowiedzial
+                Konto k = new Konto();
+                if (y != null) wczytajStany(y, k);
+                stany.put(u, k);
+                odeslijOdrastajace(p, k);
+            });
+        });
+    }
+
+    private static void wczytajStany(YamlConfiguration y, Konto k) {
         long teraz = System.currentTimeMillis();
-        var ps = y.getConfigurationSection("_partie");
-        if (ps != null) for (String k : ps.getKeys(false)) partie.put(Integer.parseInt(k), ps.getString(k));
-        for (String u : y.getKeys(false)) {
-            if (u.startsWith("_")) continue;
-            var sek = y.getConfigurationSection(u);
-            if (sek == null) continue;
-            Map<String, Stan> m = stany.computeIfAbsent(UUID.fromString(u), k -> new HashMap<>());
-            for (String k : sek.getKeys(false)) {
-                String[] a = sek.getString(k, "").split(";");
-                if (a.length < 3) continue;
-                Stan st = new Stan();
-                st.ziarno = Long.parseLong(a[0]); st.odrostDo = Long.parseLong(a[1]); st.rozpoznana = Boolean.parseBoolean(a[2]);
-                if (a.length >= 5) { st.chciwie = Boolean.parseBoolean(a[3]); st.slaba = Boolean.parseBoolean(a[4]); }
-                if (st.trwaly(teraz)) m.put(zYaml(k), st);
-            }
+        var sek = y.getConfigurationSection("kepy");
+        if (sek == null) return;
+        for (String kl : sek.getKeys(false)) {
+            String[] a = sek.getString(kl, "").split(";");
+            if (a.length < 3) continue;
+            Stan st = new Stan();
+            st.ziarno = Long.parseLong(a[0]); st.odrostDo = Long.parseLong(a[1]); st.rozpoznana = Boolean.parseBoolean(a[2]);
+            if (a.length >= 5) { st.chciwie = Boolean.parseBoolean(a[3]); st.slaba = Boolean.parseBoolean(a[4]); }
+            if (st.trwaly(teraz)) k.dodaj(zYaml(kl), st);
         }
     }
 
-    void zapiszStany() {
+    private static String tekstKonta(Konto k) {
         YamlConfiguration y = new YamlConfiguration();
         long teraz = System.currentTimeMillis();
-        for (Map.Entry<UUID, Map<String, Stan>> e : stany.entrySet())
-            for (Map.Entry<String, Stan> k : e.getValue().entrySet()) {
-                Stan st = k.getValue();
-                if (!st.trwaly(teraz)) continue;   // wygasle nie ida na dysk (w pamieci zostaja do odwiedzin)
-                y.set(e.getKey() + "." + doYaml(k.getKey()), st.ziarno + ";" + st.odrostDo + ";" + st.rozpoznana + ";" + st.chciwie + ";" + st.slaba);
+        for (Map.Entry<String, Stan> e : k.kepy.entrySet()) {
+            Stan st = e.getValue();
+            if (!st.trwaly(teraz)) continue;   // wygasle nie ida na dysk (w pamieci zostaja do odwiedzin)
+            y.set("kepy." + doYaml(e.getKey()), st.ziarno + ";" + st.odrostDo + ";" + st.rozpoznana + ";" + st.chciwie + ";" + st.slaba);
+        }
+        return y.getKeys(false).isEmpty() ? null : y.saveToString();
+    }
+
+    private void zapiszKonto(UUID u, Konto k) {
+        String t = tekstKonta(k);
+        if (t == null) magazyn.usun(plikKonta(u)); else magazyn.zapisz(plikKonta(u), t);
+        k.brudne = false;
+    }
+
+    String opisMagazynu() {
+        int kep = 0, brud = 0;
+        for (Konto k : stany.values()) { kep += k.kepy.size(); if (k.brudne) brud++; }
+        return "konta w pamieci " + stany.size() + " (brudne " + brud + ", kep " + kep + "), wczytywane " + wczytywane.size()
+                + ", rejestr kep " + kepy.size() + ", brudne regiony " + brudneRegiony.size()
+                + ", zapisy dysku " + magazyn.zapisy + ", bledy " + magazyn.bledy;
+    }
+
+    /** Co 60 s, przy wyjsciu gracza i przy wylaczaniu: tylko to, co sie zmienilo. */
+    void zapiszZmienione() {
+        for (Map.Entry<UUID, Konto> e : stany.entrySet()) if (e.getValue().brudne) zapiszKonto(e.getKey(), e.getValue());
+        for (String r : brudneRegiony) zapiszRegion(r);
+        brudneRegiony.clear();
+        if (brudnySwiat) {
+            YamlConfiguration y = new YamlConfiguration();
+            for (Map.Entry<Integer, String> e : partie.entrySet()) y.set("partie." + e.getKey(), e.getValue());
+            magazyn.zapisz(new File(katalog, "swiat.yml"), y.saveToString());
+            brudnySwiat = false;
+        }
+        zielnik.zapiszZmienione();
+    }
+
+    /** Wyjscie: zapis i zwolnienie pamieci tik pozniej (po wszystkich obsluzach wyjscia, tez konczacej sesje). */
+    private void zwolnijKonto(UUID u) {
+        if (wylaczanie || !plugin.isEnabled()) return;
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (Bukkit.getPlayer(u) != null) return;   // wrocil w tym samym tiku
+            Konto k = stany.remove(u);
+            if (k != null && k.brudne) zapiszKonto(u, k);
+        });
+    }
+
+    /** Uklad sprzed F1 (zielarz-stany.yml, zielarz-kepy.yml): jednorazowo do plikow per konto/region, stare pliki
+     *  zostaja obok jako *.przed-f1 (cofniecie = stary jar + zmiana nazwy z powrotem). */
+    private void przeniesStarePliki() {
+        File stare = new File(plugin.getDataFolder(), "zielarz-stany.yml");
+        if (stare.exists()) {
+            YamlConfiguration y = magazyn.czytajTeraz(stare);
+            int n = 0;
+            if (y != null) {
+                var ps = y.getConfigurationSection("_partie");
+                if (ps != null) { for (String k : ps.getKeys(false)) partie.put(Integer.parseInt(k), ps.getString(k)); brudnySwiat = true; }
+                for (String u : y.getKeys(false)) {
+                    if (u.startsWith("_")) continue;
+                    var sek = y.getConfigurationSection(u);
+                    if (sek == null) continue;
+                    YamlConfiguration k = new YamlConfiguration();
+                    for (String kl : sek.getKeys(false)) k.set("kepy." + kl, sek.getString(kl));
+                    File f = plikKonta(UUID.fromString(u));
+                    if (!f.exists()) { magazyn.zapisz(f, k.saveToString()); n++; }
+                }
             }
-        for (Map.Entry<Integer, String> e : partie.entrySet()) y.set("_partie." + e.getKey(), e.getValue());
-        String tekst = y.saveToString();
-        File f = plikStanow();
-        Runnable zapis = () -> { try { java.nio.file.Files.writeString(f.toPath(), tekst); } catch (java.io.IOException ex) { plugin.getLogger().warning("zielarz-stany.yml: " + ex); } };
-        if (wylaczanie) zapis.run(); else Bukkit.getScheduler().runTaskAsynchronously(plugin, zapis);   // dysk poza watkiem serwera
+            przemianuj(stare);
+            plugin.getLogger().info("zielarz F1: zielarz-stany.yml -> " + n + " kont w zielarz/konta/");
+        } else {
+            YamlConfiguration y = magazyn.czytajTeraz(new File(katalog, "swiat.yml"));
+            var ps = y == null ? null : y.getConfigurationSection("partie");
+            if (ps != null) for (String k : ps.getKeys(false)) partie.put(Integer.parseInt(k), ps.getString(k));
+        }
+        File stareKepy = new File(plugin.getDataFolder(), "zielarz-kepy.yml");
+        if (stareKepy.exists()) {
+            YamlConfiguration y = magazyn.czytajTeraz(stareKepy);
+            var sek = y == null ? null : y.getConfigurationSection("kepy");
+            Map<String, YamlConfiguration> wgRegionu = new HashMap<>();
+            if (sek != null) for (String k : sek.getKeys(false)) {
+                String kl = zYaml(k);
+                wgRegionu.computeIfAbsent(region(kl), r -> new YamlConfiguration()).set("kepy." + doYaml(kl), sek.getString(k));
+            }
+            for (Map.Entry<String, YamlConfiguration> e : wgRegionu.entrySet())
+                if (!plikRegionu(e.getKey()).exists()) magazyn.zapiszTeraz(plikRegionu(e.getKey()), e.getValue().saveToString());
+            przemianuj(stareKepy);
+            plugin.getLogger().info("zielarz F1: zielarz-kepy.yml -> " + wgRegionu.size() + " regionow w zielarz/regiony/");
+        }
+    }
+
+    /** Po zapisach w kolejce (ta sama kolejka = po nich). */
+    private void przemianuj(File f) {
+        magazyn.potem(() -> {
+            try { java.nio.file.Files.move(f.toPath(), new File(f.getPath() + ".przed-f1").toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING); }
+            catch (IOException e) { plugin.getLogger().warning("zielarz F1: " + f + ": " + e); }
+        });
     }
 
     // ================================================================ przerwania i blokady
     /** Wyglad odrastajacej kepy zna tylko zbierajacy — przy kazdym wyslaniu chunka (relog, powrot) odsylamy go jeszcze raz. */
     @EventHandler
     public void naChunkGracza(io.papermc.paper.event.packet.PlayerChunkLoadEvent e) {
-        Map<String, Stan> m = stany.get(e.getPlayer().getUniqueId());
-        if (m == null) return;
-        long teraz = System.currentTimeMillis();
-        String pref = e.getWorld().getName() + ";";
-        for (Map.Entry<String, Stan> k : m.entrySet()) {
-            if (k.getValue().odrostDo <= teraz || !k.getKey().startsWith(pref)) continue;
-            String[] a = k.getKey().split(";");
-            int x = Integer.parseInt(a[1]), z = Integer.parseInt(a[3]);
-            if (x >> 4 != e.getChunk().getX() || z >> 4 != e.getChunk().getZ()) continue;
-            String g = kepy.get(k.getKey());
-            if (g == null) continue;
-            Block b = e.getWorld().getBlockAt(x, Integer.parseInt(a[2]), z);
-            Player p = e.getPlayer();
-            Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) p.sendBlockChange(b.getLocation(), wygladBloku(g, true, b)); }, 2L);
+        Konto k = stany.get(e.getPlayer().getUniqueId());
+        if (k == null) return;
+        List<String> l = k.wgChunka.get(e.getWorld().getName() + ";" + e.getChunk().getX() + ";" + e.getChunk().getZ());
+        if (l != null) for (String kl : l) odeslijWyglad(e.getPlayer(), kl, k.kepy.get(kl), 2L);
+    }
+
+    private void odeslijWyglad(Player p, String kl, Stan st, long opoznienie) {
+        if (st == null || st.odrostDo <= System.currentTimeMillis()) return;
+        String g = kepy.get(kl);
+        if (g == null) return;
+        World w = swiatKepy(kl);
+        if (w == null) return;
+        String[] a = kl.split(";");
+        Block b = w.getBlockAt(Integer.parseInt(a[1]), Integer.parseInt(a[2]), Integer.parseInt(a[3]));
+        Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline() && p.getWorld() == w) p.sendBlockChange(b.getLocation(), wygladBloku(g, true, b)); }, opoznienie);
+    }
+
+    /** Konto doczytane po wejsciu: chunki wokol gracza poszly juz bez wygladu odrostu. */
+    private void odeslijOdrastajace(Player p, Konto k) {
+        for (Map.Entry<String, List<String>> e : k.wgChunka.entrySet()) {
+            String[] c = e.getKey().split(";");
+            if (!c[0].equals(p.getWorld().getName()) || !p.getWorld().isChunkLoaded(Integer.parseInt(c[1]), Integer.parseInt(c[2]))) continue;
+            for (String kl : e.getValue()) odeslijWyglad(p, kl, k.kepy.get(kl), 1L);
         }
     }
 
@@ -1737,7 +1897,8 @@ final class Zielarz implements Listener {
         Sesja s = sesje.get(e.getPlayer().getUniqueId());
         if (s != null) zakoncz(s, null);
         poSesji.remove(e.getPlayer().getUniqueId());
-        zielnik.zapisz(Zlecenia.profil(e.getPlayer()));
+        zwolnijKonto(e.getPlayer().getUniqueId());
+        zielnik.zwolnij(e.getPlayer().getUniqueId(), Zlecenia.profil(e.getPlayer()));
     }
 
     @EventHandler

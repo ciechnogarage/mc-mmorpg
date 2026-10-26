@@ -187,6 +187,10 @@ final class Komenda implements TabExecutor {
                 Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
                 if (p != null) s.sendMessage("odrost: " + plugin.zielarz().odrostTeraz(p) + " kep");
             }
+            case "magazyn" -> {            // magazyn [zapisz] — test F1: konta w pamieci, brudne, zapisy dysku; zapisz = zrzut zmian teraz
+                if (a.length > 1 && a[1].equalsIgnoreCase("zapisz")) plugin.zielarz().zapiszZmienione();
+                s.sendMessage("[Rzemioslo] " + plugin.zielarz().opisMagazynu());
+            }
             case "kom-test" -> {           // kom-test <gracz> <tekst...> — test: komunikat w biezacym wariancie (& = kolor, {LPM} {PPM} {SHIFT})
                 Player p = a.length > 2 ? Bukkit.getPlayerExact(a[1]) : null;
                 String t = String.join(" ", java.util.Arrays.copyOfRange(a, 2, a.length)).replace('&', '\u00a7');
