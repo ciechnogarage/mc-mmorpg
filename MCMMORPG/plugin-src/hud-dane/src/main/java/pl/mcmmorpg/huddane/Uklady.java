@@ -31,7 +31,10 @@ final class Uklady {
   /** Tyle ms po wejsciu nie ruszamy layoutow: MythicHUD w tym czasie asynchronicznie buduje je z PDC (initialize). */
   private static final long ZWLOKA_MS = 1500;
 
+  private final java.util.logging.Logger log;
   private final Map<UUID, Long> wejscie = new ConcurrentHashMap<>();
+
+  Uklady(java.util.logging.Logger log) { this.log = log; }
   private final Set<String> wartosci = Set.copyOf(WARIANTY.values());
 
   void wszedl(Player p) { wejscie.put(p.getUniqueId(), System.currentTimeMillis()); }
@@ -45,6 +48,7 @@ final class Uklady {
     }
     HudHolder h = HudHolder.get(p);
     if (h == null || !h.isInitialized()) return;
+    BezDuplikatow.owin(h, log);
     LayoutManager lm = MythicHUD.getInstance().layouts();
     String chce = WARIANTY.get(PlaceholderAPI.setPlaceholders(p, "%hud_uklad%"));
     for (String k : wartosci) {

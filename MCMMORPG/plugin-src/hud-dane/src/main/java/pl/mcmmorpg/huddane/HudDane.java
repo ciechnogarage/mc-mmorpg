@@ -50,7 +50,10 @@ public final class HudDane extends JavaPlugin implements Listener {
     var hud = getServer().getPluginManager().getPlugin("MythicHUD");
     if (hud != null && hud.isEnabled()) {
       parser = SzybkiParser.zainstaluj(this, hud);
-      uklady = new Uklady();
+      Przycinacz przycinacz = new Przycinacz(hud);
+      przycinacz.przytnij(getLogger());
+      getServer().getScheduler().runTaskTimer(this, () -> przycinacz.przytnij(getLogger()), 600L, 600L);
+      uklady = new Uklady(getLogger());
       if (parser != null) parser.poGraczu = uklady::odswiez;
       else getServer().getScheduler().runTaskTimer(this, () -> { for (Player p : getServer().getOnlinePlayers()) uklady.odswiez(p); }, 1L, 5L);
     }
