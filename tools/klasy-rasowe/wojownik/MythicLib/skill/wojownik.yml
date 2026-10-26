@@ -4,7 +4,7 @@ WOJ_ROZPLATANIE:
   source: mythicmobs:WOJ_Rozplatanie
   name: 'Rozpłatanie'
   icon: {item: IRON_AXE}
-  lore: ['&7Cięcie w łuku do 3 bl. za {damage} obrażeń.', '&7Ork: zasięg 4 bl.; człowiek: szerszy łuk;', '&7elf: odskok po cięciu.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Cięcie w łuku do 3 bl. za {damage} obrażeń.', '&7Ork: zasięg 4 bl.; człowiek: szerszy łuk;', '&7elf: odskok po cięciu.', '', '&e{cooldown}s odnowienia', '&9Koszt: 30 Szału']
   parameters:
     mana: {name: Koszt, player: 30}
     cooldown: {name: Odnowienie, player: 5}
@@ -36,14 +36,12 @@ WOJ_ROZPLATANIE:
     WOJ_Rozplatanie_Cel:
       # A6: bez petów/sług sojuszników (frakcje MM; gracze bez frakcji przechodzą)
       TargetConditions:
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL}'
     WOJ_Rozplatanie_Gracz:
       TargetConditions:
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Rozplatanie_Cel} @TargetedTarget'
 
@@ -51,7 +49,7 @@ WOJ_OKRZYK:
   source: mythicmobs:WOJ_Okrzyk
   name: 'Okrzyk'
   icon: {item: GOAT_HORN}
-  lore: ['&7Siła dla ciebie i sojuszników w 8 blokach na 6 s.', '&7Człowiek: także Odporność dla siebie.', '&7Daje 20 Szału.', '', '&e{cooldown}s odnowienia']
+  lore: ['&7Siła dla ciebie i drużyny w 8 blokach na 6 s.', '&7Człowiek: także Odporność I.', '&7Daje 20 Szału.', '', '&e{cooldown}s odnowienia']
   parameters:
     mana: {name: Koszt, player: 0}
     cooldown: {name: Odnowienie, player: 20}
@@ -60,7 +58,7 @@ WOJ_OKRZYK:
     WOJ_Okrzyk:
       Skills:
       - 'skill{s=WOJ_Okrzyk_Buff} @self'
-      - 'skill{s=WOJ_Okrzyk_Sojusznik} @PlayersInRadius{r=8;ignore=self}'
+      - 'skill{s=WOJ_Okrzyk_Sojusznik} @PlayersInRadius{r=8;ignore=self;conditions=[  - druzyna{} true ]}'
       - 'command{c="mmocore admin resource-mana give <caster.name> 20"} @self'
     WOJ_Okrzyk_Buff:
       Skills:
@@ -68,7 +66,7 @@ WOJ_OKRZYK:
       - 'potion{type=RESISTANCE;duration=120;level=0;force=true;hasParticles=true} ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
     WOJ_Okrzyk_Sojusznik:
       TargetConditions:
-      - 'mmoCanTarget{interaction=SUPPORT_SKILL} true'
+      - 'druzyna{} true'
       Skills:
       - 'skill{s=WOJ_Okrzyk_Buff}'
 
@@ -76,7 +74,7 @@ WOJ_GNIEW:
   source: mythicmobs:WOJ_Gniew
   name: 'Gniew'
   icon: {item: NETHERITE_AXE}
-  lore: ['&7Cios zużywający cały Szał (minimum 40).', '&7Bazowo {damage} obrażeń, rosną z Szałem.', '&7Ork: +50% za Szał; nieumarły leczy 30%;', '&7elf przeskakuje cel; człowiek: osłona 4 HP/4 s.', '', '&e{cooldown}s odnowienia']
+  lore: ['&7Potężny cios w cel do 4 bl.', '&7Bazowo {damage} obrażeń, rosną z Szałem.', '&7Ork: +50% za Szał; nieumarły leczy 30%;', '&7elf przeskakuje cel; człowiek: osłona 4 HP/4 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: cały Szał (min. 40)']
   parameters:
     mana: {name: Koszt, player: 40}
     cooldown: {name: Odnowienie, player: 10}
@@ -94,7 +92,7 @@ WOJ_GNIEW:
     WOJ_Gniew_Cel:
       TargetConditions:
       - 'distance{d=0to4} true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'setvariable{var=skill.woj_gniew_szal;type=DOUBLE;value="<mana>"} @self'
       - 'skill{s=WOJ_Gniew_Nieumarly} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
@@ -146,15 +144,13 @@ WOJ_PRZELOT_GAJU:
     WOJ_Przelot_Gaju_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Przelot_Gaju_Cel} @TargetedTarget'
     WOJ_Przelot_Gaju_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Przelot_Gaju_Cel} @TargetedTarget'
     WOJ_Przelot_Gaju_Cel:
@@ -190,16 +186,14 @@ WOJ_PCHNIECIE_KORONY:
       TargetConditions:
       - 'distance{d=0to8} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Pchniecie_Korony_Cel} @TargetedTarget'
     WOJ_Pchniecie_Korony_Gracz:
       TargetConditions:
       - 'distance{d=0to8} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Pchniecie_Korony_Cel} @TargetedTarget'
     WOJ_Pchniecie_Korony_Cel:
@@ -233,16 +227,14 @@ WOJ_NATARCIE_WODZA:
       TargetConditions:
       - 'distance{d=0to8} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Cel} @TargetedTarget'
     WOJ_Natarcie_Wodza_Gracz:
       TargetConditions:
       - 'distance{d=0to8} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Cel} @TargetedTarget'
     WOJ_Natarcie_Wodza_Cel:
@@ -272,15 +264,13 @@ WOJ_NATARCIE_WODZA:
     WOJ_Natarcie_Wodza_Uderz_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Uderz} @TargetedTarget'
     WOJ_Natarcie_Wodza_Uderz_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Natarcie_Wodza_Uderz} @TargetedTarget'
     WOJ_Natarcie_Wodza_Uderz:
@@ -310,16 +300,14 @@ WOJ_MARSZ_KRYPTY:
       TargetConditions:
       - 'distance{d=0to6} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Cel} @TargetedTarget'
     WOJ_Marsz_Krypty_Gracz:
       TargetConditions:
       - 'distance{d=0to6} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Cel} @TargetedTarget'
     WOJ_Marsz_Krypty_Cel:
@@ -349,15 +337,13 @@ WOJ_MARSZ_KRYPTY:
     WOJ_Marsz_Krypty_Uderz_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Uderz} @TargetedTarget'
     WOJ_Marsz_Krypty_Uderz_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=WOJ_Marsz_Krypty_Uderz} @TargetedTarget'
     WOJ_Marsz_Krypty_Uderz:

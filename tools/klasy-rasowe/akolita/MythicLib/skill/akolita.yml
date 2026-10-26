@@ -13,7 +13,7 @@ AKO_STRAZ_RELIKWII:
   source: mythicmobs:AKO_Straz_Relikwii
   name: 'Straż Relikwii'
   icon: {item: SHIELD}
-  lore: ['&8&oPrzy relikwii stoi wierna warta.', '&7Stawia obrońcę przy sojuszniku do 10 bl.', '&7lub przy sobie; prowokuje i pilnuje.', '&7Jeden obrońca na 15 s, 40 HP.', '&6◆ Tarcza: prowokacja do 8 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oPrzy relikwii stoi wierna warta.', '&7Stawia obrońcę przy członku drużyny', '&7do 10 bl. lub przy sobie; prowokuje i pilnuje.', '&7Jeden obrońca na 15 s, 40 HP.', '&6◆ Tarcza: prowokacja do 8 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: 2 Dusze']
   parameters:
     mana: {name: Koszt, player: 2}
     cooldown: {name: Odnowienie, player: 10}
@@ -26,12 +26,12 @@ AKO_STRAZ_RELIKWII:
       - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
       - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=SHIELD}'
       - 'setvariable{var=caster.ako_straz_sojusznik;type=INTEGER;value=0;duration=2} @self'
-      - 'skill{s=AKO_Straz_Relikwii_Sojusznik} @PlayersInRadius{r=10;ignore=self;sort=NEAREST;limit=1;conditions=[  - mmoCanTarget{interaction=SUPPORT_SKILL} true ]}'
+      - 'skill{s=AKO_Straz_Relikwii_Sojusznik} @PlayersInRadius{r=10;ignore=self;sort=NEAREST;limit=1;conditions=[  - druzyna{} true ]}'
       - 'skill{s=AKO_Straz_Relikwii_Siebie} @self ?variableEquals{var=caster.ako_straz_sojusznik;value=0}'
       - 'effect:sound{s=block.beacon.activate;v=0.8;p=1.2} @self'
     AKO_Straz_Relikwii_Sojusznik:
       TargetConditions:
-      - 'mmoCanTarget{interaction=SUPPORT_SKILL} true'
+      - 'druzyna{} true'
       Skills:
       - 'setvariable{var=caster.ako_straz_sojusznik;type=INTEGER;value=1;duration=2} @self'
       - 'setvariable{var=skill.ako_pilnowany;type=STRING;value="<target.uuid>"} @TargetedTarget'
@@ -51,7 +51,7 @@ AKO_OPIEKA:
   source: mythicmobs:AKO_Opieka
   name: 'Opieka'
   icon: {item: GOLDEN_APPLE}
-  lore: ['&7Leczy siebie lub wskazanego sojusznika.', '&7Elf: leczenie w czasie; ork: także sługa.', '&7Nieumarły płaci 2 HP, człowiek daje', '&7osłonę 4 HP na 6 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Leczy siebie lub wskazanego sojusznika.', '&7Elf: leczenie w czasie; ork: także sługa.', '&7Nieumarły płaci 2 HP, człowiek daje', '&7osłonę 4 HP na 6 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: 1 Dusza (nieumarły: za darmo)']
   parameters:
     mana: {name: Koszt, player: 1}
     cooldown: {name: Odnowienie, player: 6}
@@ -139,15 +139,13 @@ AKO_ROZKAZ:
     AKO_Rozkaz_Cel_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Rozkaz_Cel} @TargetedTarget'
     AKO_Rozkaz_Cel_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Rozkaz_Cel} @TargetedTarget'
     AKO_Rozkaz_Cel:
@@ -166,7 +164,7 @@ AKO_SIERP_KSIEZYCA:
   source: mythicmobs:AKO_Sierp_Ksiezyca
   name: 'Sierp Księżyca'
   icon: {item: IRON_HOE}
-  lore: ['&8&oOgnik budzi się w łuku sierpa.', '&7Cięcie do 3 bl. za {damage} obrażeń.', '&7Wzywa ognik na 8 s; leczy 1 HP co 2 s.', '&7Wspólny limit 3 sług.', '&6◆ Sierp: ognik leczy 2 HP.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oOgnik budzi się w łuku sierpa.', '&7Cięcie do 3 bl. za {damage} obrażeń.', '&7Wzywa ognik na 8 s; leczy 1 HP co 2 s.', '&7Wspólny limit 3 sług.', '&6◆ Sierp: ognik leczy 2 HP.', '', '&e{cooldown}s odnowienia', '&9Koszt: 2 Dusze']
   parameters:
     damage: {name: Obrażenia, player: {base: 3, per-level: 0.75}}
     mana: {name: Koszt, player: 2}
@@ -185,16 +183,14 @@ AKO_SIERP_KSIEZYCA:
       TargetConditions:
       - 'distance{d=0to3} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Sierp_Ksiezyca_Cel} @TargetedTarget'
     AKO_Sierp_Ksiezyca_Gracz:
       TargetConditions:
       - 'distance{d=0to3} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Sierp_Ksiezyca_Cel} @TargetedTarget'
     AKO_Sierp_Ksiezyca_Cel:
@@ -208,7 +204,7 @@ AKO_PRZODEK_MLOTA:
   source: mythicmobs:AKO_Przodek_Mlota
   name: 'Przodek Młota'
   icon: {item: MACE}
-  lore: ['&8&oMłot woła dawnych wojowników.', '&7Cel do 4 bl. otrzymuje {damage} obrażeń;', '&7pobliscy wrogowie w promieniu 2 bl. także.', '&7Wzywa przodka na 10 s: 22 HP, 4 obrażenia.', '&7Wspólny limit 3 sług.', '&6◆ Młot dwuręczny: promień 3 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oMłot woła dawnych wojowników.', '&7Cel do 4 bl. otrzymuje {damage} obrażeń;', '&7pobliscy wrogowie w promieniu 2 bl. także.', '&7Wzywa przodka na 10 s: 22 HP, 4 obrażenia.', '&7Wspólny limit 3 sług.', '&6◆ Młot dwuręczny: promień 3 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: 2 Dusze']
   parameters:
     damage: {name: Obrażenia, player: {base: 4, per-level: 1}}
     mana: {name: Koszt, player: 2}
@@ -227,16 +223,14 @@ AKO_PRZODEK_MLOTA:
       TargetConditions:
       - 'distance{d=0to4} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Przodek_Mlota_Cel} @TargetedTarget'
     AKO_Przodek_Mlota_Cel_Gracz:
       TargetConditions:
       - 'distance{d=0to4} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Przodek_Mlota_Cel} @TargetedTarget'
     AKO_Przodek_Mlota_Cel:
@@ -262,15 +256,13 @@ AKO_PRZODEK_MLOTA:
     AKO_Przodek_Mlota_Uderz_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'mmodamage{a="<caster.var.dmg_ako_przodek_mlota|4>";types=SKILL,PHYSICAL}'
     AKO_Przodek_Mlota_Uderz_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'mmodamage{a="<caster.var.dmg_ako_przodek_mlota|4>";types=SKILL,PHYSICAL}'
 
@@ -278,9 +270,10 @@ AKO_KOSIARZ_CISZY:
   source: mythicmobs:AKO_Kosiarz_Ciszy
   name: 'Kosiarz Ciszy'
   icon: {item: NETHERITE_HOE}
-  lore: ['&8&oCisza idzie za ostrzem kosy.', '&7Cięcie do 4 bl. za {damage} obrażeń.', '&7Wzywa sługę na 10 s: 14 HP, 3 obrażenia.', '&7Wspólny limit 3 sług.', '&6◆ Kosa: +1 obrażenie co 1 s przez 4 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oCisza idzie za ostrzem kosy.', '&7Cięcie do 4 bl. za {damage} obrażeń.', '&7Wzywa sługę na 10 s: 14 HP, 3 obrażenia.', '&7Wspólny limit 3 sług.', '&6◆ Kosa: +{puls} obrażeń co 1 s przez 4 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: 2 Dusze']
   parameters:
     damage: {name: Obrażenia, player: {base: 4, per-level: 1}}
+    puls: {name: Puls, player: {base: 1, per-level: 0.25}}
     mana: {name: Koszt, player: 2}
     cooldown: {name: Odnowienie, player: 8}
   extra-skills:
@@ -289,6 +282,7 @@ AKO_KOSIARZ_CISZY:
       - 'children{a=<3} true'
       Skills:
       - 'setvariable{var=caster.dmg_ako_kosiarz_ciszy;type=DOUBLE;value="<modifier.damage>";duration=400} @self'
+      - 'setvariable{var=caster.puls_ako_kosiarz_ciszy;type=DOUBLE;value="<modifier.puls>";duration=400} @self'
       - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
       - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=KOSA}'
       - 'skill{s=AKO_Kosiarz_Ciszy_Mob} @target'
@@ -297,16 +291,14 @@ AKO_KOSIARZ_CISZY:
       TargetConditions:
       - 'distance{d=0to4} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Kosiarz_Ciszy_Cel} @TargetedTarget'
     AKO_Kosiarz_Ciszy_Gracz:
       TargetConditions:
       - 'distance{d=0to4} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=AKO_Kosiarz_Ciszy_Cel} @TargetedTarget'
     AKO_Kosiarz_Ciszy_Cel:
@@ -332,14 +324,12 @@ AKO_KOSIARZ_CISZY:
     AKO_Kosiarz_Ciszy_Impuls_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
-      - 'mmodamage{a="<caster.var.dmg_ako_kosiarz_ciszy|4> * 0.25";types=SKILL,MAGIC}'
+      - 'mmodamage{a="<caster.var.puls_ako_kosiarz_ciszy|1>";types=SKILL,MAGIC}'
     AKO_Kosiarz_Ciszy_Impuls_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
-      - 'mmodamage{a="<caster.var.dmg_ako_kosiarz_ciszy|4> * 0.25";types=SKILL,MAGIC}'
+      - 'mmodamage{a="<caster.var.puls_ako_kosiarz_ciszy|1>";types=SKILL,MAGIC}'

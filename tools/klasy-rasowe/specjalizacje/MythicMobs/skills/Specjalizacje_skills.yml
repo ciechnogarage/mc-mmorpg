@@ -150,16 +150,14 @@ SpecNekromantaZarazaPulse:
 SpecElementalistaKragMob:
   TargetConditions:
   - "isPlayer false"
-  - "faction{faction=chowance} false"
-  - "faction{faction=akolita_slugi} false"
-  - "faction{faction=zaklecia_przywolane} false"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecElementalistaKragHit} @TargetedTarget"
 
 SpecElementalistaKragPlayer:
   TargetConditions:
   - "isPlayer true"
-  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecElementalistaKragHit} @TargetedTarget"
 
@@ -171,16 +169,14 @@ SpecElementalistaKragHit:
 SpecCienLisciSidlaMob:
   TargetConditions:
   - "isPlayer false"
-  - "faction{faction=chowance} false"
-  - "faction{faction=akolita_slugi} false"
-  - "faction{faction=zaklecia_przywolane} false"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecCienLisciSidlaHit} @TargetedTarget"
 
 SpecCienLisciSidlaPlayer:
   TargetConditions:
   - "isPlayer true"
-  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecCienLisciSidlaHit} @TargetedTarget"
 
@@ -196,16 +192,14 @@ SpecCienLisciSidlaHit:
 SpecSokolDeszczMob:
   TargetConditions:
   - "isPlayer false"
-  - "faction{faction=chowance} false"
-  - "faction{faction=akolita_slugi} false"
-  - "faction{faction=zaklecia_przywolane} false"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecSokolDeszczHit} @TargetedTarget"
 
 SpecSokolDeszczPlayer:
   TargetConditions:
   - "isPlayer true"
-  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecSokolDeszczHit} @TargetedTarget"
 
@@ -217,16 +211,14 @@ SpecSokolDeszczHit:
 SpecBurzownikGromMob:
   TargetConditions:
   - "isPlayer false"
-  - "faction{faction=chowance} false"
-  - "faction{faction=akolita_slugi} false"
-  - "faction{faction=zaklecia_przywolane} false"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecBurzownikGromHit} @TargetedTarget"
 
 SpecBurzownikGromPlayer:
   TargetConditions:
   - "isPlayer true"
-  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecBurzownikGromHit} @TargetedTarget"
 
@@ -238,16 +230,14 @@ SpecBurzownikGromHit:
 SpecStraznikGrobuProgMob:
   TargetConditions:
   - "isPlayer false"
-  - "faction{faction=chowance} false"
-  - "faction{faction=akolita_slugi} false"
-  - "faction{faction=zaklecia_przywolane} false"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecStraznikGrobuProgHit} @TargetedTarget"
 
 SpecStraznikGrobuProgPlayer:
   TargetConditions:
   - "isPlayer true"
-  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecStraznikGrobuProgHit} @TargetedTarget"
 
@@ -259,16 +249,14 @@ SpecStraznikGrobuProgHit:
 SpecNekromantaZarazaMob:
   TargetConditions:
   - "isPlayer false"
-  - "faction{faction=chowance} false"
-  - "faction{faction=akolita_slugi} false"
-  - "faction{faction=zaklecia_przywolane} false"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecNekromantaZarazaHit} @TargetedTarget"
 
 SpecNekromantaZarazaPlayer:
   TargetConditions:
   - "isPlayer true"
-  - "mmoCanTarget{interaction=OFFENSE_SKILL} true"
+  - "celWrogi{} true"
   Skills:
   - "skill{s=SpecNekromantaZarazaHit} @TargetedTarget"
 

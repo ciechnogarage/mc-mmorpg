@@ -4,7 +4,7 @@ MAG_BARIERA:
   source: mythicmobs:MAG_Bariera
   name: 'Bariera Many'
   icon: {item: SHIELD}
-  lore: ['&7Pochłania 10 obrażeń przez maks. 6 s.', '&7Nieumarły: 13 obrażeń.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Pochłania 10 obrażeń przez maks. 6 s.', '&7Nieumarły: 13 obrażeń.', '', '&e{cooldown}s odnowienia', '&9Koszt: 10 Many']
   parameters:
     mana: {name: Koszt, player: 10}
     cooldown: {name: Odnowienie, player: 12}
@@ -33,7 +33,7 @@ MAG_WYBUCH:
   source: mythicmobs:MAG_Wybuch
   name: 'Wybuch Arkanów'
   icon: {item: FIRE_CHARGE}
-  lore: ['&7Wybuch w miejscu celu, promień 3 bl.', '&7{damage} obrażeń.', '&7Zapowiedź 0,8 s; żywioł zależy od rasy.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Wybuch w miejscu celu, promień 3 bl.', '&7{damage} obrażeń.', '&7Zapowiedź 0,8 s; żywioł zależy od rasy.', '', '&e{cooldown}s odnowienia', '&9Koszt: 15 Many']
   parameters:
     mana: {name: Koszt, player: 15}
     cooldown: {name: Odnowienie, player: 6}
@@ -54,7 +54,7 @@ MAG_MRUGNIECIE:
   source: mythicmobs:MAG_Mrugniecie
   name: 'Mrugnięcie'
   icon: {item: ENDER_PEARL}
-  lore: ['&7Bezpieczny skok: nieumarły 5 bl. w tył,', '&7ork 4 bl., człowiek 6, elf 8 bl. w przód.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Bezpieczny skok: nieumarły 5 bl. w tył,', '&7ork 4 bl., człowiek 6, elf 8 bl. w przód.', '', '&e{cooldown}s odnowienia', '&9Koszt: 8 Many']
   parameters:
     mana: {name: Koszt, player: 8}
     cooldown: {name: Odnowienie, player: 8}
@@ -74,7 +74,7 @@ MAG_OKO_BURZY:
   source: mythicmobs:MAG_Oko_Burzy
   name: 'Oko Burzy'
   icon: {item: TOTEM_OF_UNDYING}
-  lore: ['&8&oNad totemem gęstnieje powietrze.', '&7Pocisk tworzy punkt burzy na 6 s.', '&7Co 1 s rani za {damage} w promieniu 3 bl.', '&7Własny Wybuch przy burzy: +50%.', '&6◆ Totem: burza także spowalnia.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oNad totemem gęstnieje powietrze.', '&7Pocisk tworzy punkt burzy na 6 s.', '&7Co 1 s rani za {damage} w promieniu 3 bl.', '&7Własny Wybuch przy burzy: +50%.', '&6◆ Totem: burza także spowalnia.', '', '&e{cooldown}s odnowienia', '&9Koszt: 6 Many']
   parameters:
     damage: {name: Obrażenia, player: {base: 3, per-level: 0.75}}
     mana: {name: Koszt, player: 6}
@@ -94,15 +94,13 @@ MAG_OKO_BURZY:
     MAG_Oko_Burzy_Rzuc_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Oko_Burzy_Pocisk} @TargetedTarget'
     MAG_Oko_Burzy_Rzuc_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Oko_Burzy_Pocisk} @TargetedTarget'
     MAG_Oko_Burzy_Pocisk:
@@ -125,7 +123,7 @@ MAG_PIECZEC_WIEZY:
   source: mythicmobs:MAG_Pieczec_Wiezy
   name: 'Pieczęć Wieży'
   icon: {item: BOOK}
-  lore: ['&8&oW księdze czeka znak wieży.', '&7Pocisk rani za {damage} i znaczy cel na 6 s.', '&7Własny Wybuch zużywa znak: +50%.', '&6◆ Grimuar: trafienie spowalnia.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oW księdze czeka znak wieży.', '&7Pocisk rani za {damage} i znaczy cel na 6 s.', '&7Własny Wybuch zużywa znak: +50%.', '&6◆ Grimuar: trafienie spowalnia.', '', '&e{cooldown}s odnowienia', '&9Koszt: 6 Many']
   parameters:
     damage: {name: Obrażenia, player: {base: 2, per-level: 0.5}}
     mana: {name: Koszt, player: 6}
@@ -144,15 +142,13 @@ MAG_PIECZEC_WIEZY:
     MAG_Pieczec_Wiezy_Rzuc_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Pieczec_Wiezy_Pocisk} @TargetedTarget'
     MAG_Pieczec_Wiezy_Rzuc_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Pieczec_Wiezy_Pocisk} @TargetedTarget'
     MAG_Pieczec_Wiezy_Pocisk:
@@ -168,15 +164,13 @@ MAG_PIECZEC_WIEZY:
     MAG_Pieczec_Wiezy_Trafienie_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Pieczec_Wiezy_Trafienie_Efekt} @TargetedTarget'
     MAG_Pieczec_Wiezy_Trafienie_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Pieczec_Wiezy_Trafienie_Efekt} @TargetedTarget'
     MAG_Pieczec_Wiezy_Trafienie_Efekt:
@@ -190,7 +184,7 @@ MAG_NIC_ARKANOW:
   source: mythicmobs:MAG_Nic_Arkanow
   name: 'Nić Arkanów'
   icon: {item: BLAZE_ROD}
-  lore: ['&8&oNić biegnie między konarami.', '&7Linia do 20 bl. trafia do 3 wrogów', '&7po {damage} obrażeń.', '&6◆ Kostur dwuręczny: szersza linia.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oNić biegnie między konarami.', '&7Linia do 20 bl. trafia do 3 wrogów', '&7po {damage} obrażeń.', '&6◆ Kostur dwuręczny: szersza linia.', '', '&e{cooldown}s odnowienia', '&9Koszt: 6 Many']
   parameters:
     mana: {name: Koszt, player: 6}
     cooldown: {name: Odnowienie, player: 2}
@@ -213,15 +207,13 @@ MAG_NIC_ARKANOW:
     MAG_Nic_Arkanow_Cel_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Nic_Arkanow_Cel} @TargetedTarget'
     MAG_Nic_Arkanow_Cel_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Nic_Arkanow_Cel} @TargetedTarget'
     MAG_Nic_Arkanow_Cel:
@@ -232,7 +224,7 @@ MAG_SPLOT_DUSZY:
   source: mythicmobs:MAG_Splot_Duszy
   name: 'Splot Duszy'
   icon: {item: ECHO_SHARD}
-  lore: ['&8&oKość pamięta cudzy oddech.', '&7Cel do 15 bl. otrzymuje {damage} obrażeń.', '&7Przez 4 s co 1 s 1/3 tej wartości;', '&7rzucający odzyskuje 1 HP na impuls.', '&7Więź słabnie poza zasięgiem 15 bl.', '&6◆ Filakterium: więź trwa 6 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oKość pamięta cudzy oddech.', '&7Cel do 15 bl. otrzymuje {damage} obrażeń.', '&7Przez 4 s co 1 s 1/3 tej wartości;', '&7rzucający odzyskuje 1 HP na impuls.', '&7Więź słabnie poza zasięgiem 15 bl.', '&6◆ Filakterium: więź trwa 6 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: 8 Many']
   parameters:
     damage: {name: Obrażenia, player: {base: 3, per-level: 0.75}}
     mana: {name: Koszt, player: 8}
@@ -249,16 +241,14 @@ MAG_SPLOT_DUSZY:
       TargetConditions:
       - 'distance{d=0to15} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Splot_Duszy_Zwiaz} @TargetedTarget'
     MAG_Splot_Duszy_Gracz:
       TargetConditions:
       - 'distance{d=0to15} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Splot_Duszy_Zwiaz} @TargetedTarget'
     MAG_Splot_Duszy_Zwiaz:
@@ -292,15 +282,13 @@ MAG_SPLOT_DUSZY:
     MAG_Splot_Duszy_Impuls_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Splot_Duszy_Trafienie} @TargetedTarget'
     MAG_Splot_Duszy_Impuls_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=MAG_Splot_Duszy_Trafienie} @TargetedTarget'
     MAG_Splot_Duszy_Trafienie:

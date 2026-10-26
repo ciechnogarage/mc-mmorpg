@@ -5,7 +5,7 @@ NIN_CIECIE:
   source: mythicmobs:NIN_Ciecie
   name: 'Cięcie'
   icon: {item: IRON_SWORD}
-  lore: ['&7Szybki cios do 3 bl. za {damage} obrażeń.', '&7Dodaje 1 Znamię (maks. 5, gasną po 10 s).', '&7Człowiek: zatruwa cel na 3 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Szybki cios do 3 bl. za {damage} obrażeń.', '&7Dodaje 1 Znamię (maks. 5, gasną po 10 s).', '&7Człowiek: zatruwa cel na 3 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: 20 Skupienia']
   parameters:
     mana: {name: Koszt, player: 20}
     cooldown: {name: Odnowienie, player: 1.5}
@@ -15,7 +15,7 @@ NIN_CIECIE:
     NIN_Ciecie:
       TargetConditions:
       - 'distance{d=0to3} true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL} @target'
       - 'skill{s=NIN_Znamie_Dodaj} @target'
@@ -47,7 +47,7 @@ NIN_KROK:
   source: mythicmobs:NIN_Krok
   name: 'Krok w Cień'
   icon: {item: ENDER_PEARL}
-  lore: ['&7Za cel do 10 bloków; szybkość na 2 s.', '&7Nieumarły przyciąga cel zamiast skoku.', '&7Ork odpycha cel, elf znika na 2 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Za cel do 10 bloków; szybkość na 2 s.', '&7Nieumarły przyciąga cel zamiast skoku.', '&7Ork odpycha cel, elf znika na 2 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: 30 Skupienia']
   parameters:
     mana: {name: Koszt, player: 30}
     cooldown: {name: Odnowienie, player: 8}
@@ -56,7 +56,7 @@ NIN_KROK:
     NIN_Krok:
       TargetConditions:
       - 'distance{d=0to10} true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Krok_Nieumarly} @target ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
       - 'skill{s=NIN_Krok_Ork} @target ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
@@ -65,8 +65,12 @@ NIN_KROK:
       - 'potion{type=SPEED;duration=40;level=0;force=true;hasParticles=true} @self'
       - 'effect:sound{s=entity.enderman.teleport;v=0.6;p=1.5} @self'
     NIN_Krok_Teleport:
+      # 1. krok unsafe=true: tryb bezpieczny nie laduje "w" celu (docs skills-mechanics-teleport.md: unsafe = teleport into the target entity)
+      #    i losowal miejsce w spreadv=1 (nad celem / obok) -> Forward 1,5 liczony od zlej pozycji, throw orka w bok;
+      #    test 26.10 klon klasy-p1p2 (p1p2.js pochylenie 4): przed 2/8 rzutow za cel i odrzut do tylu +-20 st.
+      # 2. krok zostaje bezpieczny (unsafe=false): ladowanie za celem nie wejdzie w blok
       Skills:
-      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{unsafe=true} @TargetedTarget'
       - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5;lockpitch=true}'
       - 'effect:particles{p=smoke;a=18;hS=0.3;vS=0.5} @self'
     NIN_Krok_Ork:
@@ -91,7 +95,7 @@ NIN_EGZEKUCJA:
   source: mythicmobs:NIN_Egzekucja
   name: 'Egzekucja'
   icon: {item: NETHERITE_SWORD}
-  lore: ['&7Cios kończący do 3 bl.; strzelcy do 8.', '&7Bazowo {damage} obrażeń.', '&7Wersja dystansowa ma niższy mnożnik.', '&7Za Znamię: wręcz +40% (ork +55%),', '&7z dystansu +25%.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&7Cios kończący do 3 bl.; strzelcy do 8.', '&7Bazowo {damage} obrażeń.', '&7Wersja dystansowa ma niższy mnożnik.', '&7Za Znamię: wręcz +40% (ork +55%),', '&7z dystansu +25%.', '', '&e{cooldown}s odnowienia', '&9Koszt: 40 Skupienia']
   parameters:
     mana: {name: Koszt, player: 40}
     cooldown: {name: Odnowienie, player: 6}
@@ -113,32 +117,28 @@ NIN_EGZEKUCJA:
       TargetConditions:
       - 'distance{d=0to3} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Egzekucja_Cel} @TargetedTarget'
     NIN_Egzekucja_Wrecz_Gracz:
       TargetConditions:
       - 'distance{d=0to3} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Egzekucja_Cel} @TargetedTarget'
     NIN_Egzekucja_Dystans_Mob:
       TargetConditions:
       - 'distance{d=3to8} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Egzekucja_Cel_Dystans} @TargetedTarget'
     NIN_Egzekucja_Dystans_Gracz:
       TargetConditions:
       - 'distance{d=3to8} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Egzekucja_Cel_Dystans} @TargetedTarget'
     NIN_Egzekucja_Cel:
@@ -173,7 +173,7 @@ NIN_PETLA_GROBU:
   source: mythicmobs:NIN_Petla_Grobu
   name: 'Pętla Grobu'
   icon: {item: IRON_CHAIN}
-  lore: ['&8&oŁańcuch dzwoni pod ziemią.', '&7Trafia cel do 10 bl. za {damage} obr.,', '&7przyciąga go', '&7i nakłada 1 Znamię.', '&6◆ Łańcuch: silniejszy chwyt i spowolnienie.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oŁańcuch dzwoni pod ziemią.', '&7Trafia cel do 10 bl. za {damage} obr.,', '&7przyciąga go', '&7i nakłada 1 Znamię.', '&6◆ Łańcuch: silniejszy chwyt i spowolnienie.', '', '&e{cooldown}s odnowienia', '&9Koszt: 25 Skupienia']
   parameters:
     mana: {name: Koszt, player: 25}
     cooldown: {name: Odnowienie, player: 6}
@@ -191,15 +191,13 @@ NIN_PETLA_GROBU:
     NIN_Petla_Grobu_Rzuc_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Petla_Grobu_Pocisk} @TargetedTarget'
     NIN_Petla_Grobu_Rzuc_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Petla_Grobu_Pocisk} @TargetedTarget'
     NIN_Petla_Grobu_Pocisk:
@@ -215,15 +213,13 @@ NIN_PETLA_GROBU:
     NIN_Petla_Grobu_Trafienie_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Petla_Grobu_Trafienie_Efekt} @TargetedTarget'
     NIN_Petla_Grobu_Trafienie_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Petla_Grobu_Trafienie_Efekt} @TargetedTarget'
     NIN_Petla_Grobu_Trafienie_Efekt:
@@ -239,7 +235,7 @@ NIN_BELT_LISTU:
   source: mythicmobs:NIN_Belt_Listu
   name: 'Bełt Listu Gończego'
   icon: {item: CROSSBOW}
-  lore: ['&8&oW zaułku szeleści list gończy.', '&7Bełt trafia do 15 bl. za {damage} obrażeń', '&7i nakłada 1 Znamię.', '&6◆ Kusza: 2 Znamiona na czystym celu.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oW zaułku szeleści list gończy.', '&7Bełt trafia do 15 bl. za {damage} obrażeń', '&7i nakłada 1 Znamię.', '&6◆ Kusza: 2 Znamiona na czystym celu.', '', '&e{cooldown}s odnowienia', '&9Koszt: 25 Skupienia']
   parameters:
     mana: {name: Koszt, player: 25}
     cooldown: {name: Odnowienie, player: 4}
@@ -255,9 +251,7 @@ NIN_BELT_LISTU:
       TargetConditions:
       - 'distance{d=0to15} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Belt_Listu_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
       - 'skill{s=NIN_Belt_Listu_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
@@ -265,7 +259,7 @@ NIN_BELT_LISTU:
       TargetConditions:
       - 'distance{d=0to15} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Belt_Listu_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
       - 'skill{s=NIN_Belt_Listu_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
@@ -293,15 +287,13 @@ NIN_BELT_LISTU:
     NIN_Belt_Listu_Trafienie_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Belt_Listu_Efekt} @TargetedTarget'
     NIN_Belt_Listu_Trafienie_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Belt_Listu_Efekt} @TargetedTarget'
     NIN_Belt_Listu_Efekt:
@@ -320,7 +312,7 @@ NIN_STRZALA_KORONY:
   source: mythicmobs:NIN_Strzala_Korony
   name: 'Strzała z Korony'
   icon: {item: BOW}
-  lore: ['&8&oWśród liści napina się cięciwa.', '&7Po 0,6 s trafia do 20 bl. za {damage} obr.', '&7i nakłada 1 Znamię.', '&6◆ Łuk długi: 24 bl. i drugie Znamię zza 12 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oWśród liści napina się cięciwa.', '&7Po 0,6 s trafia do 20 bl. za {damage} obr.', '&7i nakłada 1 Znamię.', '&6◆ Łuk długi: 24 bl. i drugie Znamię zza 12 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: 25 Skupienia']
   parameters:
     mana: {name: Koszt, player: 25}
     cooldown: {name: Odnowienie, player: 5}
@@ -336,9 +328,7 @@ NIN_STRZALA_KORONY:
       TargetConditions:
       - 'distance{d=0to24} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Strzala_Korony_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
       - 'skill{s=NIN_Strzala_Korony_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
@@ -346,7 +336,7 @@ NIN_STRZALA_KORONY:
       TargetConditions:
       - 'distance{d=0to24} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Strzala_Korony_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
       - 'skill{s=NIN_Strzala_Korony_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
@@ -390,15 +380,13 @@ NIN_STRZALA_KORONY:
     NIN_Strzala_Korony_Trafienie_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Strzala_Korony_Efekt} @TargetedTarget'
     NIN_Strzala_Korony_Trafienie_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Strzala_Korony_Efekt} @TargetedTarget'
     NIN_Strzala_Korony_Efekt:
@@ -416,7 +404,7 @@ NIN_SLAD_KLA:
   source: mythicmobs:NIN_Slad_Kla
   name: 'Ślad Kła'
   icon: {item: TRIDENT}
-  lore: ['&8&oStep niesie trop za grotem.', '&7Trafia do 12 bl. za {damage} obrażeń.', '&7Znaczy i śledzi cel przez 4 s.', '&6◆ Włócznia: szybkość przez 2 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  lore: ['&8&oStep niesie trop za grotem.', '&7Trafia do 12 bl. za {damage} obrażeń.', '&7Znaczy i śledzi cel przez 4 s.', '&6◆ Włócznia: szybkość przez 2 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: 25 Skupienia']
   parameters:
     mana: {name: Koszt, player: 25}
     cooldown: {name: Odnowienie, player: 4}
@@ -432,9 +420,7 @@ NIN_SLAD_KLA:
       TargetConditions:
       - 'distance{d=0to12} true'
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Slad_Kla_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
       - 'skill{s=NIN_Slad_Kla_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
@@ -442,7 +428,7 @@ NIN_SLAD_KLA:
       TargetConditions:
       - 'distance{d=0to12} true'
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Slad_Kla_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
       - 'skill{s=NIN_Slad_Kla_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
@@ -470,15 +456,13 @@ NIN_SLAD_KLA:
     NIN_Slad_Kla_Trafienie_Mob:
       TargetConditions:
       - 'isPlayer false'
-      - 'faction{faction=chowance} false'
-      - 'faction{faction=akolita_slugi} false'
-      - 'faction{faction=zaklecia_przywolane} false'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Slad_Kla_Efekt} @TargetedTarget'
     NIN_Slad_Kla_Trafienie_Gracz:
       TargetConditions:
       - 'isPlayer true'
-      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      - 'celWrogi{} true'
       Skills:
       - 'skill{s=NIN_Slad_Kla_Efekt} @TargetedTarget'
     NIN_Slad_Kla_Efekt:

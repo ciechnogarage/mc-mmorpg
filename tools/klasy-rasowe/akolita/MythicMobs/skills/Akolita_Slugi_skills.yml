@@ -49,9 +49,7 @@ AKO_Sluga_Zniwo_Adresuj:
 AKO_Sluga_Zniwo_Mob:
   TargetConditions:
   - 'isPlayer false'
-  - 'faction{faction=chowance} false'
-  - 'faction{faction=akolita_slugi} false'
-  - 'faction{faction=zaklecia_przywolane} false'
+  - 'celWrogi{} true'
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo_Cel} @TargetedTarget'
 AKO_Sluga_Zniwo_Cel:
@@ -66,7 +64,7 @@ AKO_Sluga_Zniwo_Cel:
 AKO_Sluga_Zniwo_Gracz:
   TargetConditions:
   - 'isPlayer true'
-  - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+  - 'celWrogi{} true'
   Skills:
   - 'skill{s=AKO_Sluga_Zniwo_Cel} @TargetedTarget'
 AKO_Sluga_Atak:
@@ -93,9 +91,7 @@ AKO_Sluga_Obronca_Taunt:
   - 'skill{s=AKO_Sluga_Obronca_Taunt_Cel} @EntitiesInRadius{r=8;ignore=self,players;targetarmorstands=false;targetsamefaction=false;sort=NEAREST;limit=3;targetvillagers=false} ?variableEquals{var=caster.ako_bron_bonus;value=1}'
 AKO_Sluga_Obronca_Taunt_Cel:
   TargetConditions:
-  - 'faction{faction=chowance} false'
-  - 'faction{faction=akolita_slugi} false'
-  - 'faction{faction=zaklecia_przywolane} false'
+  - 'celWrogi{} true'
   Skills:
   - 'sudoskill{s=AKO_Sluga_Obronca_Provokuj;cat=true} @TargetedTarget'
 AKO_Sluga_Obronca_Provokuj:
@@ -117,11 +113,11 @@ AKO_Sluga_Obronca_Zastap:
 
 AKO_Ognik_Ksiezyca_Leczenie:
   Skills:
-  - 'skill{s=AKO_Ognik_Ksiezyca_Sojusznik} @PlayersInRadius{r=6;sort=NEAREST;limit=1;conditions=[  - mmoCanTarget{interaction=SUPPORT_SKILL} true ]}'
+  - 'skill{s=AKO_Ognik_Ksiezyca_Sojusznik} @PlayersInRadius{r=6;sort=NEAREST;limit=1;conditions=[  - druzyna{} true ]}'
   - 'effect:particles{p=end_rod;a=6;hS=0.3;vS=0.3} @self'
 AKO_Ognik_Ksiezyca_Sojusznik:
   TargetConditions:
-  - 'mmoCanTarget{interaction=SUPPORT_SKILL} true'
+  - 'druzyna{} true'
   Skills:
   - 'heal{a=1} ?variableEquals{var=caster.ako_ognik_premia;value=0}'
   - 'heal{a=2} ?variableEquals{var=caster.ako_ognik_premia;value=1}'

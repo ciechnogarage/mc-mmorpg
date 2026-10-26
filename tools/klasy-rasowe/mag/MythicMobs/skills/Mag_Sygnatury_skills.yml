@@ -19,15 +19,13 @@ MAG_Wybuch_Sprawdz_Burze:
 MAG_Wybuch_Mob:
   TargetConditions:
   - 'isPlayer false'
-  - 'faction{faction=chowance} false'
-  - 'faction{faction=akolita_slugi} false'
-  - 'faction{faction=zaklecia_przywolane} false'
+  - 'celWrogi{} true'
   Skills:
   - 'skill{s=MAG_Wybuch_Cel} @TargetedTarget'
 MAG_Wybuch_Gracz:
   TargetConditions:
   - 'isPlayer true'
-  - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+  - 'celWrogi{} true'
   Skills:
   - 'skill{s=MAG_Wybuch_Cel} @TargetedTarget'
 MAG_Wybuch_Cel:
@@ -76,15 +74,13 @@ MAG_Oko_Burzy_Impuls:
 MAG_Oko_Burzy_Mob:
   TargetConditions:
   - 'isPlayer false'
-  - 'faction{faction=chowance} false'
-  - 'faction{faction=akolita_slugi} false'
-  - 'faction{faction=zaklecia_przywolane} false'
+  - 'celWrogi{} true'
   Skills:
   - 'skill{s=MAG_Oko_Burzy_Cel} @TargetedTarget'
 MAG_Oko_Burzy_Gracz:
   TargetConditions:
   - 'isPlayer true'
-  - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+  - 'celWrogi{} true'
   Skills:
   - 'skill{s=MAG_Oko_Burzy_Cel} @TargetedTarget'
 MAG_Oko_Burzy_Cel:
