@@ -3,6 +3,7 @@ package pl.mcmmorpg.klasybron;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.conditions.IEntityCondition;
 import io.lumine.mythic.bukkit.events.MythicConditionLoadEvent;
+import io.lumine.mythic.bukkit.events.MythicTargeterLoadEvent;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import java.util.Arrays;
 import java.util.Locale;
@@ -45,6 +46,11 @@ public final class KlasyBron extends JavaPlugin implements Listener {
   public void onDisable() {
     // Wylaczenie/restart serwera: MM nie dokonczy delay w skillach, wiec zdejmujemy oslony jak przy wyjsciu.
     for (Player p : getServer().getOnlinePlayers()) Oslony.zdejmij(p);
+  }
+
+  @EventHandler
+  public void targeter(MythicTargeterLoadEvent e) {
+    if (e.getTargeterName().equalsIgnoreCase("celownik")) e.register(new Celownik(this, e.getConfig()));
   }
 
   @EventHandler

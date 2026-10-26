@@ -105,6 +105,23 @@ final class Warunki {
     }
   }
 
+  /**
+   * Sojusznik gracza: on sam, czlonek jego druzyny MMOCore albo mob frakcji gracza nalezacy do niego lub do
+   * czlonka druzyny. Celownik ({@code @Celownik}) patrzy przez sojusznikow (straznik przed graczem nie zaslania celu).
+   */
+  static boolean sojusznik(Player gracz, Entity e) {
+    if (gracz.getUniqueId().equals(e.getUniqueId())) return true;
+    boolean mmocore = Bukkit.getPluginManager().isPluginEnabled("MMOCore");
+    if (e instanceof Player p) return mmocore && wJednejDruzynie(gracz, p);
+    Optional<ActiveMob> mob = MythicBukkit.inst().getMobManager().getActiveMob(e.getUniqueId());
+    if (mob.isEmpty()) return false;
+    String frakcja = mob.get().getFaction();
+    if (frakcja == null || !FRAKCJE_GRACZA.contains(frakcja.toLowerCase(java.util.Locale.ROOT))) return false;
+    Player w = wlasciciel(mob.get());
+    if (w == null) return false;
+    return w.getUniqueId().equals(gracz.getUniqueId()) || (mmocore && wJednejDruzynie(gracz, w));
+  }
+
   /** Caster-gracz albo wlasciciel castera-moba MM (slugi akolity rzucaja skille jako moby). */
   static Player graczCastera(AbstractEntity caster) {
     if (caster == null) return null;

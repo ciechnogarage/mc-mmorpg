@@ -124,11 +124,12 @@ AKO_ROZKAZ:
     AKO_Rozkaz:
       Skills:
       - 'setvariable{var=caster.ako_rozkaz_cel;type=INTEGER;value=0;duration=2} @self'
-      # Cel = istota pod celownikiem (@Target gracza, docs skills-targeters-target.md). Zapas: linia POZIOMA
-      # (lockpitch) — sama linia stopy->@Forward{f=20} przy wzroku w dół szła w ziemię i mijała moba
-      # 3 bl. przed graczem (bot klon klasy-naprawa 25.10: celownik na zającu 0 obrażeń, wzrok poziomo 12->8 HP).
-      - 'skill{s=AKO_Rozkaz_Cel_Mob} @Target'
-      - 'skill{s=AKO_Rozkaz_Cel_Gracz} @Target ?variableEquals{var=caster.ako_rozkaz_cel;value=0}'
+      # Cel = istota pod celownikiem: @Celownik (KlasyBron, promien z oczu, patrzy przez wlasne slugi/druzyne).
+      # NIE @Target: MM 5.11.2 MythicUtil.getTargetedEntity lapie pierwsza istote w pudle ~2.5x3.5 bl. wokol
+      # bloku linii wzroku, w kolejnosci getNearbyEntities - straznik obok gracza "przechwytywal" Rozkaz
+      # w ~polowie prob (README KlasyBron, "Celownik"). Zapas: linia POZIOMA (lockpitch) przy chybieniu.
+      - 'skill{s=AKO_Rozkaz_Cel_Mob} @Celownik{r=20;s=0.3}'
+      - 'skill{s=AKO_Rozkaz_Cel_Gracz} @Celownik{r=20;s=0.3} ?variableEquals{var=caster.ako_rozkaz_cel;value=0}'
       - 'skill{s=AKO_Rozkaz_Wskaz} @Forward{f=20;lockpitch=true} ?variableEquals{var=caster.ako_rozkaz_cel;value=0}'
       - 'signal{s=POWROT} @Children ?variableEquals{var=caster.ako_rozkaz_cel;value=0}'
       - 'effect:sound{s=block.note_block.hat;v=0.8;p=1} @self'
