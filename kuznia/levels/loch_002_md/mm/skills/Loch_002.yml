@@ -2,17 +2,17 @@
 loch_002_przybycie:
   Skills:
   # gamerules.yml nie jest stosowany do recznego szablonu (zmierzone) - reguly z konsoli na swiecie instancji
-  - command{c="execute in minecraft:<caster.l.w> run gamerule fall_damage false"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule keep_inventory true"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule advance_time false"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule advance_weather false"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule mob_griefing false"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule random_tick_speed 0"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule block_drops false"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule drowning_damage false"}
-  - command{c="execute in minecraft:<caster.l.w> run gamerule water_source_conversion false"}
-  - command{c="execute in minecraft:<caster.l.w> run time set 13000"}
-  - command{c="execute in minecraft:<caster.l.w> run weather rain"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule fall_damage false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule keep_inventory true"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule advance_time false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule advance_weather false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule mob_griefing false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule random_tick_speed 0"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule block_drops false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule drowning_damage false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:gamerule water_source_conversion false"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:time set 13000"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:weather rain"}
   - setvariable{var=world.l002_sekrety;val=0;type=INTEGER} @self
   - setvariable{var=world.l002_sluza1;val=0;type=INTEGER} @self
   - setvariable{var=world.l002_sluza2;val=0;type=INTEGER} @self
@@ -38,7 +38,7 @@ loch_002_populacja:
   - summon{m=L002_MULOWIEC;level=1;a=1;r=0;yr=6;os=true} @Location{c=-3,102,40}
   - summon{m=L002_PIJAWKA;level=1;a=2;r=1;yr=6;os=true} @Location{c=5,102,42}
   - summon{m=L002_MULOWIEC;level=1;a=1;r=0;yr=6;os=true} @Location{c=-5,102,-3}
-  - summon{m=L002_KOSCIEJ;level=1;a=1;r=0;yr=6;os=true} @Location{c=18,103,4}
+  - summon{m=L002_KOSCIEJ;level=1;a=1;r=0;yr=6;os=true} @Location{c=18,102,4}
   - summon{m=L002_SZEPTUCHA_CHATA;level=1;a=1;r=0;yr=6;os=true} @Location{c=38,102,-4}
   - summon{m=L002_MULOWIEC;level=1;a=1;r=0;yr=6;os=true} @Location{c=30,102,-8}
   - summon{m=L002_MULOWIEC;level=1;a=1;r=0;yr=6;os=true} @Location{c=31,102,-13}
@@ -111,20 +111,55 @@ L002_SLUZA_1_RUSZ:
   - particles{p=block;m=MUD;a=40;hs=1;vs=1;s=0.1;y=1} @self
   - message{m="<gold>Kołowrót skrzypi i rusza.</gold>"} @PlayersInRadius{r=20}
   - delay 20
-  - command{c="execute in minecraft:<caster.l.w> run fill -1 102 30 1 104 31 minecraft:air replace minecraft:iron_bars"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -1 102 30 1 104 31 minecraft:air replace minecraft:iron_bars"}
   - sound{s=block.iron_door.open;v=1.5;p=0.6} @PlayersInRadius{r=20}
-  - command{c="execute in minecraft:<caster.l.w> run fill -14 100 7 14 100 28 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -14 100 7 14 100 28 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill -14 99 7 14 99 28 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -14 99 7 14 99 28 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill -14 98 7 14 98 28 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -14 98 7 14 98 28 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill -14 97 7 14 97 28 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -14 97 7 14 97 28 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -9 97 20 minecraft:spruce_slab[type=bottom,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -8 97 21 minecraft:spruce_trapdoor[facing=north,half=bottom,open=false,powered=false,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 0 100 14 minecraft:spruce_fence[east=true,north=false,south=true,waterlogged=false,west=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 0 100 15 minecraft:dark_oak_stairs[facing=north,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 1 100 14 minecraft:spruce_fence[east=false,north=false,south=true,waterlogged=false,west=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 1 99 16 minecraft:dark_oak_stairs[facing=north,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 1 100 17 minecraft:dark_oak_stairs[facing=north,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 2 99 16 minecraft:dark_oak_fence[east=false,north=true,south=true,waterlogged=false,west=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 2 98 17 minecraft:dark_oak_stairs[facing=north,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 3 98 14 minecraft:spruce_fence[east=true,north=false,south=true,waterlogged=false,west=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 3 99 17 minecraft:chest[facing=north,type=single,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 3 99 18 minecraft:dark_oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 4 97 14 minecraft:dark_oak_stairs[facing=east,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 4 98 14 minecraft:spruce_fence[east=false,north=false,south=true,waterlogged=false,west=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 4 97 17 minecraft:dark_oak_stairs[facing=north,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 5 97 17 minecraft:dark_oak_stairs[facing=west,half=top,shape=outer_right,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 7 97 15 minecraft:dark_oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 7 99 18 minecraft:dark_oak_stairs[facing=east,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 8 98 16 minecraft:spruce_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 8 100 20 minecraft:chest[facing=north,type=single,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 9 97 16 minecraft:dark_oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 9 98 17 minecraft:spruce_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 9 98 20 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 10 97 18 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 11 97 18 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 12 97 18 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 12 100 18 minecraft:dark_oak_trapdoor[facing=east,half=bottom,open=true,powered=false,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 12 98 20 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 13 97 18 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 13 100 18 minecraft:dark_oak_trapdoor[facing=east,half=bottom,open=true,powered=false,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 14 100 10 minecraft:mud_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 14 99 11 minecraft:mud_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 14 98 12 minecraft:mud_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 14 97 13 minecraft:mud_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 14 97 18 minecraft:dark_oak_stairs[facing=west,half=top,shape=straight,waterlogged=false]"}
   - title{title="";subtitle="<gold>Śluza otwarta</gold>";fadein=5;duration=40;fadeout=15} @PlayersInRadius{r=30}
   - message{m="<gold>Śluza otwarta.</gold> <gray>Krata w tamie opadła, a woda z basenu uchodzi. Na dnie leży wrak łodzi - zejście po schodach od wschodu.</gray>"} @PlayersInRadius{r=30}
   - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
@@ -137,18 +172,22 @@ L002_SLUZA_2_RUSZ:
   - particles{p=block;m=MUD;a=40;hs=1;vs=1;s=0.1;y=1} @self
   - message{m="<gold>Kołowrót skrzypi i rusza.</gold>"} @PlayersInRadius{r=20}
   - delay 20
-  - command{c="execute in minecraft:<caster.l.w> run fill -60 100 -18 -44 100 4 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -60 100 -18 -44 100 4 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill -60 99 -18 -44 99 4 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -60 99 -18 -44 99 4 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill -60 98 -18 -44 98 4 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -60 98 -18 -44 98 4 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill -60 97 -18 -44 97 4 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -60 97 -18 -44 97 4 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -58 100 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -57 99 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -56 98 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -55 97 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
   - title{title="";subtitle="<gold>Zachodnia śluza otwarta</gold>";fadein=5;duration=40;fadeout=15} @PlayersInRadius{r=30}
   - message{m="<gold>Zachodnia śluza otwarta.</gold> <gray>Na dnie basenu, wśród kości, stoi skrzynia.</gray>"} @PlayersInRadius{r=30}
   - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
@@ -161,18 +200,24 @@ L002_SLUZA_3_RUSZ:
   - particles{p=block;m=MUD;a=40;hs=1;vs=1;s=0.1;y=1} @self
   - message{m="<gold>Kołowrót skrzypi i rusza.</gold>"} @PlayersInRadius{r=20}
   - delay 20
-  - command{c="execute in minecraft:<caster.l.w> run fill 76 100 -18 94 100 2 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill 76 100 -18 94 100 2 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill 76 99 -18 94 99 2 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill 76 99 -18 94 99 2 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill 76 98 -18 94 98 2 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill 76 98 -18 94 98 2 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
-  - command{c="execute in minecraft:<caster.l.w> run fill 76 97 -18 94 97 2 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill 76 97 -18 94 97 2 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.4;p=0.8} @PlayersInRadius{r=30}
   - delay 8
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 78 100 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 79 99 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 80 98 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 81 97 -18 minecraft:mud_brick_stairs[facing=west,half=bottom,shape=straight,waterlogged=false]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 83 98 -8 minecraft:mossy_stone_brick_wall[east=none,north=none,south=none,up=true,waterlogged=false,west=none]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock 83 99 -8 minecraft:mossy_stone_brick_wall[east=none,north=none,south=none,up=true,waterlogged=false,west=none]"}
   - title{title="";subtitle="<gold>Wschodnia śluza otwarta</gold>";fadein=5;duration=40;fadeout=15} @PlayersInRadius{r=30}
   - message{m="<gold>Wschodnia śluza otwarta.</gold> <gray>Z mułu na dnie wystaje stary dzwon.</gray>"} @PlayersInRadius{r=30}
   - command{c="mmocore admin exp give <target.name> main 20"} @PlayersInWorld
@@ -187,7 +232,7 @@ L002_WRAK_OK:
   - setvariable{var=world.l002_wrak;val=1;type=INTEGER} @self
   - variableadd{var=world.l002_sekrety;amount=1} @self
   - command{c="mmocore admin exp give <target.name> main 25"} @PlayersInWorld
-  - command{c="execute in minecraft:<caster.l.w> run setblock -8 97 20 minecraft:barrel[facing=up,open=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -8 97 20 minecraft:barrel[facing=up,open=true]"}
   - sound{s=block.barrel.open;v=1;p=0.8} @PlayersInRadius{r=8}
   - particles{p=happy_villager;a=15;hs=0.5;vs=0.5;y=1} @self
   - title{title="<gold>Wrak Rybaków</gold>";subtitle="<gray>Zapasy, których nikt nie odebrał</gray>";fadein=5;duration=60;fadeout=15} @PlayersInRadius{r=10}
@@ -202,7 +247,7 @@ L002_SKRZYNIA_OK:
   - setvariable{var=world.l002_skrzynia;val=1;type=INTEGER} @self
   - variableadd{var=world.l002_sekrety;amount=1} @self
   - command{c="mmocore admin exp give <target.name> main 25"} @PlayersInWorld
-  - command{c="execute in minecraft:<caster.l.w> run setblock -51 97 -7 minecraft:barrel[facing=up,open=true]"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:setblock -51 97 -7 minecraft:barrel[facing=up,open=true]"}
   - sound{s=block.barrel.open;v=1;p=0.8} @PlayersInRadius{r=8}
   - particles{p=happy_villager;a=15;hs=0.5;vs=0.5;y=1} @self
   - title{title="<gold>Skrzynia Topielca</gold>";subtitle="<gray>Ktoś tu utonął ze swoim dobytkiem</gray>";fadein=5;duration=60;fadeout=15} @PlayersInRadius{r=10}
@@ -224,7 +269,7 @@ L002_DZWON_OK:
   - command{c="mi give MATERIAL PROF_WATER_ESSENCE <target.name> 1"} @PlayersInWorld
   - sound{s=block.bell.use;v=2;p=0.7} @PlayersInRadius{r=60}
   - sound{s=block.bell.resonate;v=2;p=0.7} @PlayersInRadius{r=60}
-  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run effect clear @a[distance=..300] minecraft:poison"}
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:effect clear @a[distance=..300] minecraft:poison"}
   - message{m="<aqua>Dźwięk dzwonu niesie się nad bagnem.</aqua> <gray>Do końca lochu zgniła woda i trucizny Topielicy nie działają na drużynę.</gray>"} @PlayersInWorld
 loch_002_wywar:
   Skills:
@@ -333,18 +378,18 @@ L002_KOKON_ZYCIE:
   Skills:
   - delay 80
   - potion{type=POISON;duration=60;level=1} @PlayersInRadius{r=1.6} ?variableequals{var=world.l002_dzwon;value=0}
-  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run effect clear @a[distance=..1.8] minecraft:slowness"}
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:effect clear @a[distance=..1.8] minecraft:slowness"}
   - remove @self
 L002_KOKON_PEKA:
   Skills:
   - sound{s=block.wool.break;v=1.5;p=0.7} @self
   - particles{p=block;m=COBWEB;a=30;hs=0.5;vs=0.8;y=1} @self
-  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run effect clear @a[distance=..2.5] minecraft:slowness"}
+  - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> run minecraft:effect clear @a[distance=..2.5] minecraft:slowness"}
 
 # BOREK: kokon rozbity -> rybak, korba, sekret
 L002_BOREK_WOLNY:
   Skills:
-  - command{c="execute in minecraft:<caster.l.w> run fill 61 102 -52 61 104 -52 minecraft:air"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill 61 102 -52 61 104 -52 minecraft:air"}
   - command{c="mm mobs spawn L002_BOREK 1 <caster.l.w>,62.5,102,-50.5"}
   - setvariable{var=world.l002_korba;val=1;type=INTEGER} @self
   - variableadd{var=world.l002_sekrety;amount=1} @self
@@ -421,7 +466,7 @@ L002_NURT:
   - skill{s=L002_BABLE} @selflocation
   - delay 30
   - command{c="execute in minecraft:<caster.l.w> positioned <caster.l.x> <caster.l.y> <caster.l.z> as @e[tag=l002_boss,distance=..3,limit=1] run minecraft:tp @s ~ ~4 ~"}
-  - command{c="effect clear <caster.uuid> minecraft:invisibility"}
+  - command{c="minecraft:effect clear <caster.uuid> minecraft:invisibility"}
   - sound{s=entity.generic.splash;v=2;p=0.5} @PlayersInRadius{r=30}
   - particles{p=splash;a=120;hs=2;vs=2;y=1} @self
   - damage{amount=5} @PlayersInRadius{r=3}
@@ -486,46 +531,46 @@ L002_FINAL_SEKWENCJA:
   Skills:
   - message{m="<green>Topielica pada w muł.</green> <gray>Bagno cichnie.</gray>"} @PlayersInRadius{r=120}
   - delay 40
-  - command{c="execute in minecraft:<caster.l.w> run time set 22500"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:time set 22500"}
   - sound{s=block.beacon.deactivate;v=1.5;p=0.6} @PlayersInRadius{r=120}
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 100 -135 18 100 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 100 -135 18 100 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 99 -135 18 99 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 99 -135 18 99 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 98 -135 18 98 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 98 -135 18 98 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 97 -135 18 97 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 97 -135 18 97 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 96 -135 18 96 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 96 -135 18 96 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 95 -135 18 95 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 95 -135 18 95 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 94 -135 18 94 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 94 -135 18 94 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 93 -135 18 93 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 93 -135 18 93 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 92 -135 18 92 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 92 -135 18 92 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 91 -135 18 91 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 91 -135 18 91 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 90 -135 18 90 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 90 -135 18 90 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run fill -18 89 -135 18 89 -117 minecraft:air replace minecraft:water"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:fill -18 89 -135 18 89 -117 minecraft:air replace minecraft:water"}
   - sound{s=block.bubble_column.whirlpool_inside;v=1.5;p=0.6} @PlayersInRadius{r=120}
   - delay 5
-  - command{c="execute in minecraft:<caster.l.w> run time set 0"}
-  - command{c="execute in minecraft:<caster.l.w> run weather clear"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:time set 0"}
+  - command{c="execute in minecraft:<caster.l.w> run minecraft:weather clear"}
   - summon{m=L002_SWIT;level=1;a=1;r=0} @Location{c=0,102,-92}
   - summon{m=L002_SWIT;level=1;a=1;r=0} @Location{c=20,102,-60}
   - title{title="<yellow>Woda opada</yellow>";subtitle="<gray>Z jeziora wyłania się zatopiona wieża</gray>";fadein=10;duration=70;fadeout=20} @PlayersInRadius{r=120}
