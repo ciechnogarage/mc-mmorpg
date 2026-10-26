@@ -6,6 +6,7 @@
 //       potem z przodu przy 10% staminy (blok x0,4) i bez staminy (garda peka), na koniec belt pillagera (blok x0,5)
 //   c = garda mieczem (Shift + PPM, 40%, tylko przod do 60 st.): husk z przodu blokowany, z boku nie
 //   e = strzaly szkieleta (luk) w tarcze z przodu/boku/tylu: blok 70% / 30% x1,1 / 0 x1,25
+//   k = jak e, ale szkielet 5 blokow pod katem 55/65/94/115/125 st. od wzroku (granice warstw 60 i 120): w logu STRONA blok 70/30/30/30/0
 //   d = PvP: drugi bot (SERAFIN, BULAWA_NOWICJUSZA) bije z przodu gracza z OBSIDIAN_SHIELD (85% z przodu)
 //       -> blok obciety do limit_bloku_pvp 75%, koszt staminy bloku obuchem x2 (BLOK_STAMINA obuch=true)
 // Liczby z logu klona (debug: true w plugins/AnimacjeBroni/config.yml + animacjebroni reload): linie "STRONA" i "BLOK_STAMINA"; bot podaje spadki HP po swojej stronie.
@@ -214,7 +215,7 @@ scenariusz('strona-' + TRYB, async ({ w, polacz, rcon }) => {
     w.sprawdz('blok-belt', ciosy.length > 0, `HP po beltach: ${ciosy.map(v => v.toFixed(1)).join(', ')}`);
   }
 
-  if (TRYB === 'e') {
+  if (TRYB === 'e' || TRYB === 'k') {
     // strzaly szkieleta (luk, nie kusza -> bez przebicia) w tarcze z przodu / boku / tylu, 4 bloki od gracza.
     // Rozrzut szkieleta = 14 - trudnosc*4 (AbstractSkeleton#performRangedAttack, Paper 1.21.11): na easy (10) z 7 blokow
     // strzaly pudluja, wiec na czas testu hard (2).
@@ -246,9 +247,17 @@ scenariusz('strona-' + TRYB, async ({ w, polacz, rcon }) => {
       w.sprawdz(`strzala-${etykieta}`, ciosy.length > 0, `HP po strzalach: ${ciosy.map(v => v.toFixed(1)).join(', ')} (log: STRONA kat/blok)`);
       await sleep(1500);
     };
-    await strzaly('przod', 0, 4, 180);
-    await strzaly('bok', 4, 0, 90);
-    await strzaly('tyl', 0, -4, 0);
+    if (TRYB === 'e') {
+      await strzaly('przod', 0, 4, 180);
+      await strzaly('bok', 4, 0, 90);
+      await strzaly('tyl', 0, -4, 0);
+    } else {
+      // gracz patrzy na +Z; kat od wzroku do szkieleta: dx = r sin, dz = r cos
+      for (const kat of [55, 65, 94, 115, 125]) {
+        const r = kat * Math.PI / 180;
+        await strzaly('kat' + kat, +(5 * Math.sin(r)).toFixed(2), +(5 * Math.cos(r)).toFixed(2), 0);
+      }
+    }
     await rcon('minecraft:difficulty easy');
   }
-}, { limitMs: 240000 });
+}, { limitMs: TRYB === 'k' ? 360000 : 240000 });
