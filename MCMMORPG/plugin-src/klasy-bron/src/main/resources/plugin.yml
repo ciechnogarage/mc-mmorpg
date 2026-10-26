@@ -3,4 +3,5 @@ version: '${version}'
 main: pl.mcmmorpg.klasybron.KlasyBron
 api-version: '1.21'
 depend: [MythicMobs, MythicLib]
-description: Warunek MythicMobs bronRasowa{typ=..} - czy gracz trzyma bron MMOItems danego typu (premia sygnatur klas).
+softdepend: [MMOCore, MMOProfiles]
+description: Warunki MythicMobs bronRasowa{typ=..}, druzyna{}, celWrogi{} dla skilli klas rasowych + zdejmowanie osieroconych oslon (absorpcja) przy wyjsciu/zmianie postaci.

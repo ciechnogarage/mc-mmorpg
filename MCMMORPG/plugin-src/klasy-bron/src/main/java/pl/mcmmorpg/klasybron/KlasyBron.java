@@ -20,17 +20,45 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * <p>Zastepuje placeholder Crucible {@code <caster.item.hand.nbt.MMOITEMS_ITEM_TYPE>}, ktory po restarcie
  * serwera jest "Invalid Placeholder" (Crucible rejestruje go po wczytaniu skilli; dziala dopiero po mm reload).
+ *
+ * <p>Do tego warunki {@code druzyna{}} i {@code celWrogi{}} ({@link Warunki}) oraz listener osieroconych oslon
+ * ({@link Oslony}). Opis: README.md.
  */
 public final class KlasyBron extends JavaPlugin implements Listener {
 
+  private Warunki warunki;
+
   @Override
   public void onEnable() {
+    warunki = new Warunki(this);
+    Oslony oslony = new Oslony(this);
     getServer().getPluginManager().registerEvents(this, this);
+    getServer().getPluginManager().registerEvents(oslony, this);
+    if (getServer().getPluginManager().isPluginEnabled("MMOProfiles")) {
+      getServer().getPluginManager().registerEvents(new OslonyProfile(oslony), this);
+    } else {
+      getLogger().info("Brak MMOProfiles - oslony zdejmowane tylko przy wyjsciu/wejsciu.");
+    }
+  }
+
+  @Override
+  public void onDisable() {
+    // Wylaczenie/restart serwera: MM nie dokonczy delay w skillach, wiec zdejmujemy oslony jak przy wyjsciu.
+    for (Player p : getServer().getOnlinePlayers()) Oslony.zdejmij(p);
   }
 
   @EventHandler
   public void warunek(MythicConditionLoadEvent e) {
-    if (!e.getConditionName().equalsIgnoreCase("bronRasowa")) return;
+    String nazwa = e.getConditionName();
+    if (nazwa.equalsIgnoreCase("druzyna")) {
+      e.register(warunki.druzyna());
+      return;
+    }
+    if (nazwa.equalsIgnoreCase("celWrogi")) {
+      e.register(warunki.celWrogi());
+      return;
+    }
+    if (!nazwa.equalsIgnoreCase("bronRasowa")) return;
     MythicLineConfig cfg = e.getConfig();
     Set<String> typy = Arrays.stream(cfg.getString(new String[] {"typ", "t"}, "").split(","))
         .map(s -> s.trim().toUpperCase(Locale.ROOT)).filter(s -> !s.isEmpty()).collect(Collectors.toSet());

@@ -14,6 +14,8 @@ val serverPluginsDir = file(providers.gradleProperty("serverPlugins").get())
 val pinnedPluginJars = listOf(
   "MythicLib-dist-1.7.1-20260330.110510-95.jar",
   "MythicMobs-5.11.2.jar",
+  "MMOCore-1.13.1-20260330.110342-58.jar",
+  "MMOProfiles-1.2-20260325.193503-28.jar",
 ).map { serverPluginsDir.resolve(it) }
 
 val missing = pinnedPluginJars.filterNot { it.isFile }
