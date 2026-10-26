@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -27,14 +28,14 @@ final class ZMagazyn {
         return t;
     });
     /** Pomiar: zapisy wykonane / nieudane (rzemioslo magazyn). */
-    volatile int zapisy, bledy;
+    final AtomicInteger zapisy = new AtomicInteger(), bledy = new AtomicInteger();   // czytajTeraz bywa wolane tez z watku serwera
 
     ZMagazyn(Logger log) { this.log = log; }
 
     /** Kolejka zapisu; tekst zlozony przez wolajacego na watku serwera (migawka). */
     void zapisz(File f, String tekst) { io.execute(() -> zapiszTeraz(f, tekst)); }
 
-    void usun(File f) { io.execute(() -> { try { Files.deleteIfExists(f.toPath()); } catch (IOException e) { bledy++; log.warning("zielarz dysk: " + f + ": " + e); } }); }
+    void usun(File f) { io.execute(() -> { try { Files.deleteIfExists(f.toPath()); } catch (IOException e) { bledy.incrementAndGet(); log.warning("zielarz dysk: " + f + ": " + e); } }); }
 
     /** Dowolna praca w kolejce dysku (np. przeniesienie starego pliku PO zapisaniu jego tresci w nowym ukladzie). */
     void potem(Runnable r) { io.execute(r); }
@@ -48,8 +49,8 @@ final class ZMagazyn {
         try {
             y.loadFromString(Files.readString(f.toPath(), StandardCharsets.UTF_8));
             return y;
-        } catch (IOException | InvalidConfigurationException e) {
-            bledy++;
+        } catch (IOException | InvalidConfigurationException | RuntimeException e) {
+            bledy.incrementAndGet();
             log.severe("zielarz dysk: zepsuty " + f + " (" + e.getMessage() + "), odkladam jako .zepsuty");
             try { Files.move(f.toPath(), new File(f.getPath() + ".zepsuty").toPath(), StandardCopyOption.REPLACE_EXISTING); } catch (IOException ignored) { }
             return null;
@@ -64,9 +65,9 @@ final class ZMagazyn {
             Files.writeString(tmp.toPath(), tekst, StandardCharsets.UTF_8);
             try (FileChannel ch = FileChannel.open(tmp.toPath(), StandardOpenOption.WRITE)) { ch.force(true); }
             Files.move(tmp.toPath(), f.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-            zapisy++;
+            zapisy.incrementAndGet();
         } catch (IOException e) {
-            bledy++;
+            bledy.incrementAndGet();
             log.warning("zielarz dysk: " + f + ": " + e);
         }
     }

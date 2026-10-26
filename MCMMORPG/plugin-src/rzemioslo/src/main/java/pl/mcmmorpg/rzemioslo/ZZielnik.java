@@ -73,8 +73,9 @@ final class ZZielnik {
     /** Wejscie gracza: zielnik postaci z dysku w tle, zanim zacznie zbierac (F1). */
     void wczytaj(UUID u) {
         if (odkrycia.containsKey(u)) return;
-        magazyn.czytaj(new File(katalog, u + ".yml")).thenAccept(y -> {
-            if (!plugin.isEnabled()) return;
+        magazyn.czytaj(new File(katalog, u + ".yml")).whenComplete((y, blad) -> {
+            if (blad != null) plugin.getLogger().severe("zielnik: odczyt " + u + ": " + blad);
+            if (!plugin.isEnabled() || blad != null) return;   // po bledzie dla() sprobuje jeszcze raz przy pierwszym uzyciu
             Bukkit.getScheduler().runTask(plugin, () -> { if (!odkrycia.containsKey(u)) wloz(u, y); });
         });
     }

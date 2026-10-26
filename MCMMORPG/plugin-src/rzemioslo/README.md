@@ -32,7 +32,9 @@ Zasady zapisu:
 - Zbiór tylko oznacza konto/region jako „brudne”; zrzut zmienionych co 60 s (`runTaskTimer` 1200 t), przy wyjściu
   gracza (jego konto i zielnik) i przy wyłączaniu (`ZMagazyn.zamknij` czeka do 20 s na kolejkę).
   Po crashu (kill -9) można stracić najwyżej ostatnie 60 s odrostu.
-- Zepsuty YAML zostaje obok jako `<plik>.zepsuty` + SEVERE w logu (nie nadpisujemy go pustym).
+- Zepsuty YAML (albo inny błąd odczytu) zostaje obok jako `<plik>.zepsuty` + SEVERE w logu (nie nadpisujemy go pustym);
+  gracz zaczyna wtedy z pustym odrostem, zamiast wisieć na „Chwila…”. Pojedynczy zły wpis konta (np. ucięta liczba)
+  jest pomijany z WARN `pomijam zly wpis kepy`, reszta konta się wczytuje (przy następnym zapisie wpis znika).
 - Indeks chunków per konto (`"swiat;cx;cz" -> klucze kęp`) — wysłanie chunka graczowi sprawdza tylko kępy z tego chunka.
 - Gracz klika kępę, zanim jego konto się wczyta (pierwsze ~ms po wejściu): „Chwila, rozglądasz się jeszcze.”
 

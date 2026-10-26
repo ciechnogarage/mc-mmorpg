@@ -1657,7 +1657,9 @@ final class Zielarz implements Listener {
      *  co zapisy, wiec szybki powrot po wyjsciu czyta to, co wyjscie zapisalo. */
     void wczytajKonto(UUID u) {
         if (stany.containsKey(u) || !wczytywane.add(u)) return;
-        magazyn.czytaj(plikKonta(u)).thenAccept(y -> {
+        // whenComplete, nie thenAccept: blad odczytu tez musi zdjac konto z "wczytywane", inaczej gracz do restartu slyszy "Chwila…"
+        magazyn.czytaj(plikKonta(u)).whenComplete((y, blad) -> {
+            if (blad != null) plugin.getLogger().severe("zielarz: odczyt konta " + u + ": " + blad + " (gracz zaczyna z pustym odrostem)");
             if (!plugin.isEnabled()) return;
             Bukkit.getScheduler().runTask(plugin, () -> {
                 wczytywane.remove(u);
@@ -1665,24 +1667,30 @@ final class Zielarz implements Listener {
                 Player p = Bukkit.getPlayer(u);
                 if (p == null) return;   // wyszedl, zanim dysk odpowiedzial
                 Konto k = new Konto();
-                if (y != null) wczytajStany(y, k);
+                if (y != null) wczytajStany(y, k, u);
                 stany.put(u, k);
                 odeslijOdrastajace(p, k);
             });
         });
     }
 
-    private static void wczytajStany(YamlConfiguration y, Konto k) {
+    /** Zly wpis (reczna edycja, ucieta liczba) pomija z ostrzezeniem; reszta konta sie wczytuje. */
+    private void wczytajStany(YamlConfiguration y, Konto k, Object kto) {
         long teraz = System.currentTimeMillis();
         var sek = y.getConfigurationSection("kepy");
         if (sek == null) return;
         for (String kl : sek.getKeys(false)) {
-            String[] a = sek.getString(kl, "").split(";");
-            if (a.length < 3) continue;
-            Stan st = new Stan();
-            st.ziarno = Long.parseLong(a[0]); st.odrostDo = Long.parseLong(a[1]); st.rozpoznana = Boolean.parseBoolean(a[2]);
-            if (a.length >= 5) { st.chciwie = Boolean.parseBoolean(a[3]); st.slaba = Boolean.parseBoolean(a[4]); }
-            if (st.trwaly(teraz)) k.dodaj(zYaml(kl), st);
+            String w = sek.getString(kl, "");
+            String[] a = w.split(";");
+            try {
+                if (a.length < 3) throw new IllegalArgumentException("za malo pol");
+                Stan st = new Stan();
+                st.ziarno = Long.parseLong(a[0]); st.odrostDo = Long.parseLong(a[1]); st.rozpoznana = Boolean.parseBoolean(a[2]);
+                if (a.length >= 5) { st.chciwie = Boolean.parseBoolean(a[3]); st.slaba = Boolean.parseBoolean(a[4]); }
+                if (st.trwaly(teraz)) k.dodaj(zYaml(kl), st);
+            } catch (RuntimeException e) {
+                plugin.getLogger().warning("zielarz: pomijam zly wpis kepy " + kto + " " + kl + " = \"" + w + "\" (" + e + ")");
+            }
         }
     }
 
@@ -1708,7 +1716,7 @@ final class Zielarz implements Listener {
         for (Konto k : stany.values()) { kep += k.kepy.size(); if (k.brudne) brud++; }
         return "konta w pamieci " + stany.size() + " (brudne " + brud + ", kep " + kep + "), wczytywane " + wczytywane.size()
                 + ", rejestr kep " + kepy.size() + ", brudne regiony " + brudneRegiony.size()
-                + ", zapisy dysku " + magazyn.zapisy + ", bledy " + magazyn.bledy;
+                + ", zapisy dysku " + magazyn.zapisy.get() + ", bledy " + magazyn.bledy.get();
     }
 
     /** Co 60 s, przy wyjsciu gracza i przy wylaczaniu: tylko to, co sie zmienilo. */
@@ -1751,7 +1759,9 @@ final class Zielarz implements Listener {
                     if (sek == null) continue;
                     YamlConfiguration k = new YamlConfiguration();
                     for (String kl : sek.getKeys(false)) k.set("kepy." + kl, sek.getString(kl));
-                    File f = plikKonta(UUID.fromString(u));
+                    File f;
+                    try { f = plikKonta(UUID.fromString(u)); }
+                    catch (IllegalArgumentException e) { plugin.getLogger().warning("zielarz F1: pomijam klucz " + u + " (nie UUID)"); continue; }
                     if (!f.exists()) { magazyn.zapisz(f, k.saveToString()); n++; }
                 }
             }
@@ -1769,7 +1779,8 @@ final class Zielarz implements Listener {
             Map<String, YamlConfiguration> wgRegionu = new HashMap<>();
             if (sek != null) for (String k : sek.getKeys(false)) {
                 String kl = zYaml(k);
-                wgRegionu.computeIfAbsent(region(kl), r -> new YamlConfiguration()).set("kepy." + doYaml(kl), sek.getString(k));
+                try { wgRegionu.computeIfAbsent(region(kl), r -> new YamlConfiguration()).set("kepy." + doYaml(kl), sek.getString(k)); }
+                catch (RuntimeException e) { plugin.getLogger().warning("zielarz F1: pomijam kepe " + k + " (" + e + ")"); }
             }
             for (Map.Entry<String, YamlConfiguration> e : wgRegionu.entrySet())
                 if (!plikRegionu(e.getKey()).exists()) magazyn.zapiszTeraz(plikRegionu(e.getKey()), e.getValue().saveToString());

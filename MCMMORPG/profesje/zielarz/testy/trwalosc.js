@@ -5,6 +5,8 @@
 //          run.sh <klon> <sciezka>/trwalosc.js zrzut <nick>    -> zbior, 75 s online, konto zapisane zrzutem co 60 s
 //          (restart / docker kill klona z zewnatrz; przy zrzut: kill, gdy w logu "ZRZUT gotowy")
 //          run.sh <klon> <sciezka>/trwalosc.js sprawdz <nick>  -> po starcie: PPM w ta sama kepe = nadal "odrasta"
+//          run.sh <klon> <sciezka>/trwalosc.js pusty <nick>    -> sciezka nieidealna: plik konta zepsuty (podlozony z hosta przy
+//          graczu offline) -> PPM nie wisi na "Chwila, rozgladasz sie", tylko kepa daje sie zebrac; zly wpis w pliku = faza sprawdz
 // Przygotowanie (poziom, sierp, tp) i sam zbior przez RCON jak w obciazenie.js (scena nie jest tematem F1);
 // sprawdzenie trwalosci = prawdziwy PPM gracza w kepe i komunikat na pasku akcji.
 const { scenariusz, sleep, postac, obserwuj } = require('/bot/lib');
@@ -95,6 +97,13 @@ scenariusz('zielarz-trwalosc-' + faza, async ({ w, polacz, rcon }) => {
     a = await ppm(bot, e);
     w.sprawdz('relog-od-razu', /odrasta/.test(a), a + ' | ' + await magazyn());
     console.log('KONIEC zbierz', new Date().toISOString());
+  } else if (faza === 'pusty') {
+    const { bot, e, d } = await wejdz(IMIE);
+    await rcon(`mmocore admin level set ${NICK} herbalism 10`);
+    await rcon(`rzemioslo narzedzie ${NICK} sierp 1`);
+    await sleep(2000);   // odczyt konta w tle juz dawno skonczony
+    const a1 = await ppm(bot, e), a2 = await ppm(bot, e);
+    w.sprawdz('nie-wisi', !/rozgl/.test(a1 + a2), `droga=${d.droga}; ${a1} || ${a2} | ${await magazyn()}`);
   } else {
     const { bot, e, d } = await wejdz(IMIE);
     await rcon(`mmocore admin level set ${NICK} herbalism 10`);   // po kill klona postac MMOProfiles bywa nowa (odrost jest per KONTO)
