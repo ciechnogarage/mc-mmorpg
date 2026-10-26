@@ -2,7 +2,7 @@
 // To test funkcjonalny (czy mechaniki dzialaja), nie przejscie "jak gracz" - to robi potem harness gracza.
 // Wynik: linie "PASS/FAIL <nazwa> <szczegoly>" + "WYNIK x/y".
 // Uruchom (klon z wgranym lochem): /opt/docker/mc/narzedzia/bot/run.sh <klon> <repo>/kuznia/tools/sonda_l002/sonda.js
-const { scenariusz } = require('/bot/lib');
+const { scenariusz, postac } = require('/bot/lib');
 const NICK = process.env.NICK || 'Sonda002';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -10,6 +10,7 @@ scenariusz('sonda-l002', async ({ w, polacz, rcon }) => {
   const ok = (n, pass, info = '') => w.sprawdz(n, pass, info);
   const R = { cmd: rcon };
   const bot = await polacz({ nick: NICK });
+  await postac.wejdz(bot, { imie: 'Sonda' + Math.floor(Math.random() * 900 + 100) });   // klon --z-kreatorem: scena kreatora, jak gracz
   const tytuly = [], czat = []; let kick = null, swiat = null;
   const txt = v => JSON.stringify(v).replace(/"(text|color|bold|italic|type|extra)":/g, '').replace(/[{}\[\]"]/g, ' ');
   bot._client.on('set_title_text', d => tytuly.push(txt(d)));

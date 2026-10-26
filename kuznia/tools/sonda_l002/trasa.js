@@ -1,7 +1,7 @@
 // Sonda PRZECHODNIOSCI Lochu 002: bot idzie pathfinderem cala trasa (zero teleportow po wejsciu), sam klika
 // kolowrot przy tamie, schodzi po schodach do wraku i wraca. Walki nie mierzy (odpornosc z konsoli PRZED wejsciem).
 // Uruchom: /opt/docker/mc/narzedzia/bot/run.sh <klon> <repo>/kuznia/tools/sonda_l002/trasa.js
-const { scenariusz } = require('/bot/lib');
+const { scenariusz, postac } = require('/bot/lib');
 const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 const NICK = process.env.NICK || 'Trasa002';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -11,6 +11,9 @@ scenariusz('trasa-l002', async ({ w, polacz, rcon }) => {
   const R = { cmd: rcon };
   const bot = await polacz({ nick: NICK });
   bot.loadPlugin(pathfinder);
+  // klon --z-kreatorem: pierwsze wejscie konta laduje w scenie kreatora - postac jak gracz (na klonie bez kreatora droga 'bez-sceny')
+  const sc = await postac.wejdz(bot, { imie: 'Trasa' + Math.floor(Math.random() * 900 + 100) });
+  console.log('postac.wejdz droga=' + sc.droga);
   let kick = null; bot.on('kicked', r => kick = String(r));
   await sleep(1500);
   await R.cmd(`minecraft:effect give ${NICK} minecraft:resistance infinite 4 true`); await R.cmd(`minecraft:effect give ${NICK} minecraft:regeneration infinite 3 true`);
