@@ -5,6 +5,7 @@
 //   b = gracz z tarcza (TARCZA_DREWNIANA, 70% z przodu, 30% z boku) pod ciosami huska z przodu/boku/tylu,
 //       potem z przodu przy 10% staminy (blok x0,4) i bez staminy (garda peka), na koniec belt pillagera (blok x0,5)
 //   c = garda mieczem (Shift + PPM, 40%, tylko przod do 60 st.): husk z przodu blokowany, z boku nie
+//   e = strzaly szkieleta (luk) w tarcze z przodu/boku/tylu: blok 70% / 30% x1,1 / 0 x1,25
 //   d = PvP: drugi bot (SERAFIN, BULAWA_NOWICJUSZA) bije z przodu gracza z OBSIDIAN_SHIELD (85% z przodu)
 //       -> blok obciety do limit_bloku_pvp 75%, koszt staminy bloku obuchem x2 (BLOK_STAMINA obuch=true)
 // Liczby z logu klona (debug: true w plugins/AnimacjeBroni/config.yml + animacjebroni reload): linie "STRONA" i "BLOK_STAMINA"; bot podaje spadki HP po swojej stronie.
@@ -195,7 +196,9 @@ scenariusz('strona-' + TRYB, async ({ w, polacz, rcon }) => {
     await pod('tyl', 0, -1.4, 1, 2200);
     await pod('przod-stamina10', 0, 1.4, 0.1, 2500);
     await pod('przod-stamina0', 0, 1.4, 0, 2500);
-    // belt: pillager z kusza 6 blokow z przodu
+    // belt: pillager z kusza 7 blokow z przodu. Rozrzut kuszy = 14 - trudnosc*4 (CrossbowAttackMob#performCrossbowAttack,
+    // Paper 1.21.11): na easy bywa 0 trafien, wiec na czas belta hard (obrazenia belta wtedy wieksze niz na easy).
+    await rcon('minecraft:difficulty hard');
     await rcon(`mmocore admin resource-stamina set ${NICK} ${maks}`);
     await rcon(`minecraft:effect give ${NICK} minecraft:instant_health 1 5 true`);
     await sleep(2500);   // garda po pekniecu wraca (cooldown)
@@ -207,6 +210,45 @@ scenariusz('strona-' + TRYB, async ({ w, polacz, rcon }) => {
     bot.deactivateItem();
     await rcon('minecraft:kill @e[type=pillager]');
     await rcon('minecraft:kill @e[type=arrow]');
+    await rcon('minecraft:difficulty easy');
     w.sprawdz('blok-belt', ciosy.length > 0, `HP po beltach: ${ciosy.map(v => v.toFixed(1)).join(', ')}`);
+  }
+
+  if (TRYB === 'e') {
+    // strzaly szkieleta (luk, nie kusza -> bez przebicia) w tarcze z przodu / boku / tylu, 4 bloki od gracza.
+    // Rozrzut szkieleta = 14 - trudnosc*4 (AbstractSkeleton#performRangedAttack, Paper 1.21.11): na easy (10) z 7 blokow
+    // strzaly pudluja, wiec na czas testu hard (2).
+    await rcon('minecraft:difficulty hard');
+    await rcon(`mmocore admin class ${NICK} BASTION`);
+    await rcon(`minecraft:clear ${NICK}`);
+    await rcon(`mi give SHIELD TARCZA_DREWNIANA ${NICK} 1`);
+    await sleep(1200);
+    await rcon(`minecraft:item replace entity ${NICK} weapon.offhand from entity ${NICK} weapon.mainhand`);
+    await rcon(`minecraft:item replace entity ${NICK} weapon.mainhand with minecraft:air`);
+    await sleep(800);
+    const maks = +(/\/(\d+)/.exec(await rcon(`animacjebroni stamina gracz ${NICK}`)) || [0, 0])[1];
+    let ciosy = [];
+    bot.on('health', () => { ciosy.push(bot.health); });
+    const strzaly = async (etykieta, dx, dz, yaw) => {
+      await rcon('minecraft:kill @e[type=skeleton]');
+      await rcon('minecraft:kill @e[type=arrow]');
+      await rcon(`mmocore admin resource-stamina set ${NICK} ${maks}`);
+      await rcon(`minecraft:effect give ${NICK} minecraft:instant_health 1 5 true`);
+      await sleep(1200);
+      bot.look(Math.PI, 0, true);
+      bot.activateItem(true); await sleep(400);
+      ciosy = [];
+      await rcon(`${OW}summon skeleton ${X + dx} ${Y} ${Z + dz} {Silent:1b,PersistenceRequired:1b,Tags:["str_bije"],Rotation:[${yaw}f,0f],equipment:{mainhand:{id:"minecraft:bow",count:1},head:{id:"minecraft:leather_helmet",count:1}},active_effects:[{id:"minecraft:fire_resistance",duration:-1}],attributes:[{id:"minecraft:movement_speed",base:0}]}`);
+      await sleep(9000);
+      bot.deactivateItem();
+      await rcon('minecraft:kill @e[type=skeleton]');
+      await rcon('minecraft:kill @e[type=arrow]');
+      w.sprawdz(`strzala-${etykieta}`, ciosy.length > 0, `HP po strzalach: ${ciosy.map(v => v.toFixed(1)).join(', ')} (log: STRONA kat/blok)`);
+      await sleep(1500);
+    };
+    await strzaly('przod', 0, 4, 180);
+    await strzaly('bok', 4, 0, 90);
+    await strzaly('tyl', 0, -4, 0);
+    await rcon('minecraft:difficulty easy');
   }
 }, { limitMs: 240000 });

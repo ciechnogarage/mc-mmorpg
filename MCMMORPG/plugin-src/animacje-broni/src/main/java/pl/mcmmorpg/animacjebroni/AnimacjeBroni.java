@@ -1342,6 +1342,24 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   }
 
   /**
+   * Blok pocisku liczony z tego samego kata co strona (kierunek lotu), wzorem vanilli BlocksAttacks.DamageReduction#resolve
+   * (suma warstw, ktorych horizontal_blocking_angle obejmuje kat; kazda base + factor*dmg, przycieta do dmg).
+   * Vanilla (LivingEntity#applyItemBlocking, Paper 1.21.11) bierze kat do POZYCJI strzaly w chwili trafienia, czyli punktu
+   * na krawedzi hitboxa: strzala z boku wbita w przedni rog dawala blok przodu (zmierzone 25.10: kat 94, blok 70%).
+   * NaN = zostaw vanilli (brak komponentu, warstwy z typem obrazen, strzala przebijajaca).
+   */
+  static double blokZKata(ItemStack garda, Projectile pocisk, double kat, double dmg) {
+    BlocksAttacks ba = garda == null ? null : garda.getData(DataComponentTypes.BLOCKS_ATTACKS);
+    if (ba == null || pocisk instanceof AbstractArrow s && s.getPierceLevel() > 0) return Double.NaN;
+    double suma = 0;
+    for (DamageReduction r : ba.damageReductions()) {
+      if (r.type() != null) return Double.NaN;
+      if (kat <= r.horizontalBlockingAngle()) suma += Math.max(0, Math.min(dmg, r.base() + r.factor() * dmg));
+    }
+    return Math.min(suma, dmg);
+  }
+
+  /**
    * Strona trafienia: przod/bok/tyl ofiary (gracza i moba) mnozy obrazenia bez gardy, a blok vanilli (warstwy
    * blocks_attacks broni i tarczy) slabnie przy niskiej staminie, przed beltem z kuszy i ma limit (PvP nizszy).
    * HIGHEST jak reakcja: MythicLib nadpisuje obrazenia ciosu gracza na HIGHEST (ladowany wczesniej). Blok vanilli jest
@@ -1363,6 +1381,14 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       return;
     }
     double blok = -e.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
+    if (e.getDamager() instanceof Projectile pocisk && p.isBlocking()) {
+      double zKierunku = blokZKata(p.getActiveItem(), pocisk, kat, e.getDamage());
+      if (!Double.isNaN(zKierunku) && Math.abs(zKierunku - blok) > 1e-3) {
+        e.setDamage(EntityDamageEvent.DamageModifier.BLOCKING, -zKierunku);
+        if (debug) dbg(String.format(Locale.ROOT, "STRONA pocisk blok vanilla=%.2f -> z kierunku lotu=%.2f", blok, zKierunku));
+        blok = zKierunku;
+      }
+    }
     if (blok <= 0) {
       if (debug) dbg("STRONA kat=" + Math.round(kat) + " x" + mnoznik + " cel=" + p.getName() + " blok=0");
       return;
