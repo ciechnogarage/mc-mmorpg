@@ -55,6 +55,10 @@ final class Runda {
   private final Map<Block, Uczestnik> zastygle = new HashMap<>();
   private boolean lichaWygraly;
   private String powodKonca;     // != null = runda przerwana (nie liczy się do tytułów)
+  /** Ćwiczenie: gracz(e) jako Zamawiacze przeciw botom-Lichom; nie liczy się do rekordów ani tytułów. */
+  boolean cwiczenie;
+  private List<Block> sprzetyMapy = List.of();
+  private java.util.Set<Block> osiagalne = java.util.Set.of();   // ćwiczenie: miejsca, do których gracz dojdzie od bramy
 
   Runda(LichoPlugin pl, World w) {
     this.pl = pl;
@@ -66,6 +70,7 @@ final class Runda {
   boolean przyjmuje() { return faza != Faza.KONIEC && gracze.size() < u.max; }
   long licha() { return gracze.values().stream().filter(Uczestnik::licho).count(); }
   long zamawiacze() { return gracze.size() - licha(); }
+  long ludzie() { return gracze.values().stream().filter(x -> !x.bot).count(); }
 
   // ------------------------------------------------------------------ skład
   /** Nowy gracz: w poczekalni czeka, w trakcie rundy dołącza jako Zamawiacz (Licha już się schowały). */
@@ -88,6 +93,13 @@ final class Runda {
         p.sendMessage(MM.deserialize(PREFIKS + "<gray>Licho chowa się w sprzętach zagrody, Zamawiacze je wyganiają. "
             + "<white>Licho:</white> PPM w sprzęt = wcielenie, stój bez ruchu = zastygasz, <white>F</white> psota. "
             + "<white>Zamawiacz:</white> LPM = cios (pudło kosztuje tchu), <white>F</white> okadzanie. <white>Q</white> = menu i wyjście.</gray>"));
+        // sam w poczekalni: Q w zagrodzie to pauza, więc TRENING jest tylko w menu Licha poza nią — mówimy, jak tam trafić
+        // (po 3 s: ścieżka TRENING też przechodzi przez poczekalnię i od razu zmienia ją w ćwiczenie)
+        Bukkit.getScheduler().runTaskLater(pl, () -> {
+          if (cwiczenie || faza != Faza.POCZEKALNIA || gracze.size() != 1 || !gracze.containsKey(x.id) || !p.isOnline()) return;
+          p.sendMessage(MM.deserialize(PREFIKS + "<gray>Sam? Możesz poćwiczyć z botami: <white>Q</white> → Opuść zagrodę, "
+              + "potem w menu Licha <white>TRENING</white>.</gray>"));
+        }, 60L);
       }
       case ROZPROSZENIE -> { zostanZamawiaczem(x, p, false); doKomory(x, p); }
       case LOWY -> {
@@ -97,6 +109,8 @@ final class Runda {
       }
       case KONIEC -> {}
     }
+    if (cwiczenie && faza != Faza.POCZEKALNIA)
+      p.sendMessage(MM.deserialize(PREFIKS + "<gray>To <white>ćwiczenie z botami</white> — łowisz razem z innymi, runda nie liczy się do rekordów ani tytułów.</gray>"));
   }
 
   /** Gracz wychodzi (menu, relog, zmiana postaci). Licho, które ucieka, przepada jak złapane, ale bez punktów dla nikogo. */
@@ -106,7 +120,7 @@ final class Runda {
     przywroc(x, p);
     gracze.remove(x.id);
     if (faza == Faza.ROZPROSZENIE || faza == Faza.LOWY) {
-      if (gracze.size() < u.min) koniec(licha() > 0, "Za mało graczy — runda przerwana.");
+      if (ludzie() == 0 || (!cwiczenie && gracze.size() < u.min)) koniec(licha() > 0, "Za mało graczy — runda przerwana.");
       else if (licha() == 0) koniec(false, null);
       else if (zamawiacze() == 0) koniec(true, "Zamawiacze uciekli.");
     } else if (faza == Faza.POCZEKALNIA && gracze.size() < u.min) koniecFazy = -1;
@@ -150,6 +164,7 @@ final class Runda {
       }
       case ROZPROSZENIE, LOWY -> {
         for (Uczestnik x : new ArrayList<>(gracze.values())) {
+          if (x.bot) { if (gracze.containsKey(x.id)) tickBota(x, t); continue; }
           Player p = x.gracz();
           if (p == null) continue;
           if (p.isFlying()) p.setFlying(false);   // latanie dozwolone tylko po to, by stanie na pozornym bloku nie kickowało
@@ -227,8 +242,9 @@ final class Runda {
   private void lowy() {
     faza = Faza.LOWY;
     poczatekFazy = teraz();
-    koniecFazy = poczatekFazy + u.lowy;
+    koniecFazy = poczatekFazy + (cwiczenie ? u.cwLowy : u.lowy);
     for (Uczestnik x : gracze.values()) {
+      if (x.bot) { x.szeptOd = teraz() + u.szeptCo / 2 + ThreadLocalRandom.current().nextInt(u.szeptCo / 2 + 1); x.psotaDo = teraz() + u.cwPsotaCo; przeprowadzkaZa(x); continue; }
       Player p = x.gracz();
       if (p == null) continue;
       if (x.licho()) {
@@ -288,13 +304,14 @@ final class Runda {
       if (x.trafienia > 0 || x.zlapani > 0) sb.append(" <gray>(trafień ").append(x.trafienia).append(", złapanych ").append(x.zlapani).append(")</gray>");
     }
     // do tytułów: runda dokończona i dość graczy na koniec (we dwóch / na drugich kontach się nie nabija)
-    boolean liczona = powodKonca == null && gracze.size() >= u.tytulyMinGraczy;
+    boolean liczona = !cwiczenie && powodKonca == null && gracze.size() >= u.tytulyMinGraczy;
     Component c = MM.deserialize(sb.toString());
     List<String> ogloszenia = new ArrayList<>();
     for (Uczestnik x : gracze.values()) {
       Player p = x.gracz();
       if (p == null) continue;
       p.sendMessage(c);
+      if (cwiczenie) continue;
       Rekordy.Wynik w = pl.rekordy.zapisz(x.id, x.nick, x.punkty, x.przetrwal, x.zlapani, liczona);
       if (w.rekord()) p.sendMessage(MM.deserialize(PREFIKS + "<gold>Nowy rekord osobisty: " + x.punkty + " pkt!</gold>"));
       for (String t : w.noweTytuly()) {
@@ -303,11 +320,12 @@ final class Runda {
         ogloszenia.add("<white>" + MM.escapeTags(x.nick) + "</white> <gray>zdobywa tytuł</gray> <gold>«" + MM.escapeTags(t) + "»</gold><gray>!</gray>");
       }
     }
-    if (!liczona && powodKonca == null)
+    if (cwiczenie) ogloszenieWGrze("<gray>To było ćwiczenie z botami — nie liczy się do rekordów ani tytułów.</gray>");
+    else if (!liczona && powodKonca == null)
       ogloszenieWGrze("<gray>Ta runda nie liczy się do tytułów: potrzeba co najmniej " + u.tytulyMinGraczy + " graczy.</gray>");
     for (String o : ogloszenia) ogloszenieWGrze(o);
-    pl.rekordy.zapiszPlik();
-    pl.getLogger().info("Runda: " + (lichaWygraly ? "Licha" : "Zamawiacze") + " wygrywają, graczy " + gracze.size());
+    if (!cwiczenie) pl.rekordy.zapiszPlik();
+    pl.getLogger().info((cwiczenie ? "Ćwiczenie: " : "Runda: ") + (lichaWygraly ? "Licha" : "Zamawiacze") + " wygrywają, graczy " + gracze.size());
   }
 
   // ------------------------------------------------------------------ Licho
@@ -415,6 +433,235 @@ final class Runda {
     pasek(p, 30, "§aJesteś teraz: §f" + u.przebrania.getOrDefault(x.ksztalt.getMaterial(), "sprzęt"));
   }
 
+  // ------------------------------------------------------------------ Ćwiczenie (boty-Licha)
+  /**
+   * Start ćwiczenia: gracze idą do Komory jako Zamawiacze, boty-Licha od razu zastygają obok prawdziwych sprzętów
+   * (kształt = najbliższy sprzęt). Bot to Uczestnik bez gracza: blok pozorny + ukryty wyświetlacz + zaczepa, jak zastygłe Licho.
+   */
+  void zacznijCwiczenie() {
+    cwiczenie = true;
+    faza = Faza.ROZPROSZENIE;
+    poczatekFazy = teraz();
+    koniecFazy = poczatekFazy + u.cwRozproszenie;
+    postawZaczepy();
+    sprzetyMapy = pl.mapa.sprzety(w, u.przebrania.keySet());
+    osiagalne = osiagalneOdBramy();
+    for (Uczestnik x : gracze.values()) {
+      Player p = x.gracz();
+      if (p == null) continue;
+      zostanZamawiaczem(x, p, false);
+      doKomory(x, p);
+    }
+    List<String> imiona = new ArrayList<>(u.cwImiona);
+    Collections.shuffle(imiona);
+    int ile = Math.min(u.cwBoty, u.max - gracze.size());
+    for (int i = 0; i < ile; i++) {
+      Block gdzie = wolneMiejsce(null, null, 0, 0);
+      if (gdzie == null) break;
+      String imie = imiona.get(i % imiona.size()) + (i >= imiona.size() ? " " + (i + 1) : "");
+      Uczestnik b = new Uczestnik(imie + " (bot)");
+      b.rola = Uczestnik.Rola.LICHO;
+      b.bylLicho = true;
+      b.iskry = u.iskry;
+      gracze.put(b.id, b);
+      Block wzor = najblizszySprzet(gdzie);
+      postawBota(b, gdzie, wzor == null ? Material.BARREL.createBlockData() : wzor.getBlockData());
+    }
+    ogloszenieWGrze("<gray>Ćwiczenie z botami! Lichów: <white>" + licha() + "</white> — schowały się wśród sprzętów. Łowy za "
+        + sek(u.cwRozproszenie) + " s. Trafione Licho ucieka, " + u.iskry + " trafienia = zamówione. Nie liczy się do rekordów.</gray>");
+    pl.getLogger().info("Ćwiczenie: botów " + licha() + ", sprzętów " + sprzetyMapy.size() + ", miejsc osiągalnych " + osiagalne.size());
+  }
+
+  private void postawBota(Uczestnik b, Block gdzie, BlockData ksztalt) {
+    b.ksztalt = ksztalt.clone();
+    Location rog = new Location(w, gdzie.getX(), gdzie.getY(), gdzie.getZ());
+    b.wyglad = w.spawn(rog, BlockDisplay.class, d -> {
+      d.setBlock(b.ksztalt);
+      d.setTeleportDuration(2);
+      d.setPersistent(false);
+      oznacz(d);
+    });
+    encje.add(b.wyglad);
+    b.zaczepa = zaczepa(rog.clone().add(0.5, -0.01, 0.5));
+    cele.put(b.zaczepa.getEntityId(), new Cel(b, null));
+    zamrozBota(b, gdzie);
+  }
+
+  private void zamrozBota(Uczestnik b, Block blok) {
+    b.zastygly = blok;
+    zastygle.put(blok, b);
+    Location rog = new Location(w, blok.getX(), blok.getY(), blok.getZ());
+    b.wyglad.teleport(rog);
+    b.zaczepa.teleport(rog.clone().add(0.5, -0.01, 0.5));
+    for (Player v : w.getPlayers()) {
+      v.sendBlockChange(blok.getLocation(), b.ksztalt);
+      v.hideEntity(pl, b.wyglad);
+    }
+  }
+
+  /** Bot co tick: lot (ucieczka/przeprowadzka) albo w łowach szept, psota przy Zamawiaczu, czasem cicha przeprowadzka. */
+  private void tickBota(Uczestnik b, int t) {
+    if (b.wyglad == null || b.zaczepa == null) return;
+    if (b.lotDo != null) {
+      double f = Math.min(1.0, (double) (t - b.lotStart) / Math.max(1, b.lotKoniec - b.lotStart));
+      double x = b.lotOd.getX() + (b.lotDo.getX() - b.lotOd.getX()) * f;
+      double y = b.lotOd.getY() + (b.lotDo.getY() - b.lotOd.getY()) * f + Math.sin(Math.PI * f) * 1.2;   // podskok nad płotkiem
+      double z = b.lotOd.getZ() + (b.lotDo.getZ() - b.lotOd.getZ()) * f;
+      b.wyglad.teleport(new Location(w, x, y, z));
+      b.zaczepa.teleport(new Location(w, x + 0.5, y - 0.01, z + 0.5));
+      if (t % 3 == 0) w.spawnParticle(Particle.SMOKE, x + 0.5, y + 0.2, z + 0.5, 2, 0.15, 0.1, 0.15, 0.005);
+      if (f < 1.0) return;
+      Block cel = b.lotCel;
+      b.lotOd = b.lotDo = null;
+      b.lotCel = null;
+      // ktoś wszedł w miejsce lądowania albo zajęło je inne Licho: szukamy dalej od miejsca, gdzie wylądował
+      if (!zastygle.containsKey(cel) && !blisko(cel.getLocation().add(0.5, 0, 0.5), 1.2)) zamrozBota(b, cel);
+      else uciekaj(b, null, false);
+      return;
+    }
+    if (b.zastygly == null) { if (t % 20 == 0) uciekaj(b, null, false); return; }   // nie miał gdzie wylądować: próbuje co sekundę
+    if (faza != Faza.LOWY) return;
+    Location tu = b.zastygly.getLocation().add(0.5, 0.5, 0.5);
+    if (t >= b.szeptOd) {
+      b.szeptOd = t + (koniecFazy - t <= 600 ? u.szeptCoKoniec : u.szeptCo);
+      w.playSound(tu, Sound.ENTITY_VEX_AMBIENT, (float) (u.szeptZasieg / 16.0), 0.6f);
+    }
+    double najblizej = najblizszyZamawiacz(tu);
+    if (t >= b.psotaDo && najblizej <= u.psotaSluch) {
+      b.psotaDo = t + u.cwPsotaCo + ThreadLocalRandom.current().nextInt(u.cwPsotaCo / 2 + 1);
+      w.playSound(tu, Sound.ENTITY_WITCH_CELEBRATE, 1.5f, 1.4f);
+      w.spawnParticle(Particle.WITCH, tu, 18, 0.35, 0.4, 0.35, 0.02);
+      b.punkty += u.ptPsota;
+    }
+    if (t >= b.przeprowadzkaOd && najblizej > u.cwSpokoj) {
+      przeprowadzkaZa(b);
+      Block bylo = b.zastygly;
+      odmroz(b);
+      if (!uciekaj(b, null, false)) zamrozBota(b, bylo);
+    }
+  }
+
+  private void przeprowadzkaZa(Uczestnik b) {
+    b.przeprowadzkaOd = teraz() + u.cwPrzeprowadzkaMin + ThreadLocalRandom.current().nextInt(u.cwPrzeprowadzkaMax - u.cwPrzeprowadzkaMin + 1);
+  }
+
+  /**
+   * Bot rusza do nowej kryjówki 4–12 bl. dalej (po trafieniu: dalej od Zamawiacza, który trafił). Leci łukiem przez
+   * cwiczenie.lot ticków, widoczny (wyświetlacz), i zastyga na miejscu. Brak miejsca = false (wywołujący decyduje).
+   */
+  private boolean uciekaj(Uczestnik b, Location od, boolean trafiony) {
+    if (b.wyglad == null) return false;
+    Location start = b.wyglad.getLocation();
+    Block cel = wolneMiejsce(start.clone().add(0.5, 0, 0.5), od, u.cwUcieczkaMin, u.cwUcieczkaMax);
+    if (cel == null) cel = wolneMiejsce(start.clone().add(0.5, 0, 0.5), null, 2, u.cwUcieczkaMax * 2);
+    if (cel == null) {
+      Block tu = w.getBlockAt(start);
+      if (b.lotDo == null && !zastygle.containsKey(tu)) { zamrozBota(b, tu); return true; }
+      return false;
+    }
+    b.lotOd = start;
+    b.lotDo = new Location(w, cel.getX(), cel.getY(), cel.getZ());
+    b.lotCel = cel;
+    b.lotStart = teraz();
+    b.lotKoniec = teraz() + u.cwLot;
+    w.playSound(start, trafiony ? Sound.ENTITY_VEX_CHARGE : Sound.BLOCK_WOODEN_TRAPDOOR_OPEN, trafiony ? 1f : 0.5f, trafiony ? 1.4f : 0.8f);
+    return true;
+  }
+
+  /** Wolny grunt przy losowym sprzęcie (±2 bl.): przechodni, z pełnym blokiem pod spodem (nie na sprzęcie), z dala od graczy i bramy. */
+  private Block wolneMiejsce(Location start, Location od, double rMin, double rMax) {
+    List<Block> kandydaci = sprzetyMapy;
+    if (start != null) kandydaci = sprzetyMapy.stream().filter(s -> s.getLocation().add(0.5, 0, 0.5).distanceSquared(start) <= (rMax + 2) * (rMax + 2)).toList();
+    if (kandydaci.isEmpty()) return null;
+    ThreadLocalRandom r = ThreadLocalRandom.current();
+    Location brama = u.brama(w);
+    for (int proba = 0; proba < 60; proba++) {
+      Block s = kandydaci.get(r.nextInt(kandydaci.size()));
+      int x = s.getX() + r.nextInt(-2, 3), z = s.getZ() + r.nextInt(-2, 3);
+      for (int y = s.getY() + 1; y >= s.getY() - 1; y--) {
+        Block b = w.getBlockAt(x, y, z);
+        Block pod = b.getRelative(BlockFace.DOWN);
+        if (!osiagalne.contains(b) || u.przebrania.containsKey(pod.getType())) continue;
+        Location c = b.getLocation().add(0.5, 0, 0.5);
+        if (!u.wObszarze(c) || zastygle.containsKey(b) || celemLotu(b) || c.distanceSquared(brama) < 25 || blisko(c, 3)) break;
+        if (start != null) { double d = c.distance(start); if (d < rMin || d > rMax) break; }
+        if (od != null && start != null && c.distanceSquared(od) <= start.distanceSquared(od)) break;
+        return b;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Bot przelatuje, gracz chodzi: bez tego bot ląduje w zagrodzie za płotem, do której Zamawiacz nie dojdzie (test 15.11:
+   * dynia 14,64,8, najbliżej 3,6 bl.). Raz na ćwiczenie BFS po polach do stania od bramy: krok w bok, w górę o 1
+   * (nie na płot/mur — kolizja >1 bl.), w dół do 3, w obrębie obszaru mapy.
+   */
+  private java.util.Set<Block> osiagalneOdBramy() {
+    java.util.Set<Block> byl = new java.util.HashSet<>();
+    java.util.ArrayDeque<Block> kolejka = new java.util.ArrayDeque<>();
+    Block b0 = w.getBlockAt(u.brama(w));
+    for (int dy : new int[]{0, 1, -1, 2, -2}) { Block c = b0.getRelative(0, dy, 0); if (doStania(c)) { byl.add(c); kolejka.add(c); break; } }
+    int[][] boki = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    while (!kolejka.isEmpty() && byl.size() < 40000) {
+      Block c = kolejka.poll();
+      for (int[] d : boki) for (int dy = 1; dy >= -3; dy--) {
+        Block n = c.getRelative(d[0], dy, d[1]);
+        if (byl.contains(n) || !u.wObszarze(n.getLocation().add(0.5, 0, 0.5)) || !doStania(n)) continue;
+        if (dy == 1 && !c.getRelative(0, 2, 0).isPassable()) continue;                                   // bez miejsca na skok
+        if (dy < 0 && !c.getRelative(d[0], 0, d[1]).isPassable()) continue;                             // zejście przez wolne pole
+        byl.add(n); kolejka.add(n);
+        break;
+      }
+    }
+    return byl;
+  }
+
+  private static boolean doStania(Block c) {
+    if (!c.isPassable() || c.isLiquid() || !c.getRelative(BlockFace.UP).isPassable()) return false;
+    double h = 0;
+    for (BoundingBox bb : c.getRelative(BlockFace.DOWN).getCollisionShape().getBoundingBoxes()) h = Math.max(h, bb.getMaxY());
+    return h > 0.4 && h <= 1.0;
+  }
+
+  private boolean celemLotu(Block b) {
+    for (Uczestnik x : gracze.values()) if (b.equals(x.lotCel)) return true;
+    return false;
+  }
+
+  /** Czy jakiś gracz (nie bot) stoi bliżej niż r. */
+  private boolean blisko(Location c, double r) {
+    for (Player v : w.getPlayers()) if (v.getLocation().distanceSquared(c) < r * r) return true;
+    return false;
+  }
+
+  private double najblizszyZamawiacz(Location c) {
+    double min = Double.MAX_VALUE;
+    for (Uczestnik z : gracze.values()) {
+      Player zp = z.gracz();
+      if (z.licho() || zp == null || zp.getWorld() != w) continue;
+      min = Math.min(min, zp.getLocation().distanceSquared(c));
+    }
+    return Math.sqrt(min);
+  }
+
+  private Block najblizszySprzet(Block b) {
+    Block naj = null;
+    double min = Double.MAX_VALUE;
+    for (Block s : sprzetyMapy) {
+      double d = s.getLocation().distanceSquared(b.getLocation());
+      if (d < min) { min = d; naj = s; }
+    }
+    return naj;
+  }
+
+  /** Gdzie jest Licho (gracz albo bot): blok zastygnięcia, gracz, wyświetlacz w locie. */
+  private static Location pozycja(Uczestnik l, Player lp) {
+    if (l.zastygly != null) return l.zastygly.getLocation().add(0.5, 0, 0.5);
+    if (lp != null) return lp.getLocation();
+    return l.wyglad != null && l.wyglad.isValid() ? l.wyglad.getLocation().add(0.5, 0, 0.5) : null;
+  }
+
   // ------------------------------------------------------------------ Zamawiacz
   void cios(Uczestnik x, Player p, int encja) {
     if (x.licho() || faza != Faza.LOWY) return;
@@ -447,6 +694,7 @@ final class Runda {
       Bukkit.getScheduler().runTaskLater(pl, () -> { if (d.isValid()) d.setGlowing(false); }, 20L);
     }
     pasek(zp, 30, "§a+" + u.ptTrafienie + " pkt — trafione Licho! Zostało mu iskier: " + l.iskry);
+    if (l.bot) uciekaj(l, zp.getLocation(), true);
     if (lp != null) {
       lp.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 1, false, false, false));
       lp.showTitle(Title.title(Component.empty(), MM.deserialize("<red>Trafiony!</red> <gray>Iskry: </gray>" + iskry(l.iskry)),
@@ -462,7 +710,8 @@ final class Runda {
     if (lp != null) {
       zostanZamawiaczem(l, lp, true);
       tytul(lp, "<red>Zamówiony!</red>", "<gray>Teraz łowisz razem z Zamawiaczami</gray>", Sound.ENTITY_VEX_DEATH, 1f);
-    } else l.rola = Uczestnik.Rola.ZAMAWIACZ;
+    } else if (l.bot) gracze.remove(l.id);
+    else l.rola = Uczestnik.Rola.ZAMAWIACZ;
     pasek(zp, 30, "§a+" + u.ptZlapanie + " pkt — Licho zamówione!");
     if (licha() == 0) koniec(false, null);
   }
@@ -494,11 +743,14 @@ final class Runda {
     int ile = 0;
     for (Uczestnik l : gracze.values()) {
       Player lp = l.gracz();
-      if (!l.licho() || lp == null || lp.getLocation().distanceSquared(s) > u.okadzaniePromien * u.okadzaniePromien) continue;
+      Location gdzie = pozycja(l, lp);
+      if (!l.licho() || gdzie == null || gdzie.distanceSquared(s) > u.okadzaniePromien * u.okadzaniePromien) continue;
       ile++;
       Bukkit.getScheduler().runTaskLater(pl, () -> {
-        if (faza != Faza.LOWY || !l.licho() || !lp.isOnline()) return;
-        Location g = l.zastygly != null ? l.zastygly.getLocation().add(0.5, 0.8, 0.5) : lp.getLocation().add(0, 0.8, 0);
+        if (faza != Faza.LOWY || !l.licho() || (lp != null && !lp.isOnline()) || !gracze.containsKey(l.id)) return;
+        Location g = pozycja(l, lp);
+        if (g == null) return;
+        g.add(0, 0.8, 0);
         w.playSound(g, Sound.ENTITY_PANDA_SNEEZE, 1.2f, 1.3f);
         w.spawnParticle(Particle.SNEEZE, g, 10, 0.2, 0.2, 0.2, 0.02);
         pasek(lp, 40, "§eKichnąłeś od dymu!");

@@ -62,6 +62,23 @@ tytuly:
     40: Szeptun
     100: Mistrz Zamawiania
 
+# Ćwiczenie (menu: ĆWICZENIE): gracz jako Zamawiacz przeciw botom-Lichom serwera, żeby zagrać i nauczyć się w pojedynkę.
+# Nie liczy się do rekordów ani tytułów. Bot stoi zastygły obok prawdziwego sprzętu (udaje drugi taki sam), trafiony
+# ucieka łukiem 4–12 bl. dalej i zastyga znowu; gdy nikt nie stoi blisko, czasem cicho się przenosi (skrzypnięcie).
+# Koszt jak zwykłe Licho: 2 encje na bota (wyświetlacz + zaczepa), ruch tylko w czasie lotu.
+cwiczenie:
+  boty: 3
+  rozproszenie: 5           # tyle s w Komorze, boty chowają się od razu
+  lowy: 150
+  lot: 1.5                  # czas lotu do nowej kryjówki (max 2,9 s)
+  ucieczka-min: 4
+  ucieczka-max: 12
+  przeprowadzka-co-min: 40  # cicha przeprowadzka co 40–70 s...
+  przeprowadzka-co-max: 70
+  przeprowadzka-spokoj: 6   # ...tylko gdy żaden Zamawiacz nie stoi bliżej niż tyle bloków
+  psota-co: 30              # psota (śmiech + iskry), gdy Zamawiacz jest w zasięgu psota-sluch
+  imiona: [Psotek, Skrzat, Kłębek, Mruk, Pokrzyk, Bieda]
+
 mapa:
   nazwa: 'Zagroda Zielarki'
   obszar: [-23, 60, -21, 23, 70, 21]   # x1 y1 z1 x2 y2 z2 — poza nim gracz wraca do bramy

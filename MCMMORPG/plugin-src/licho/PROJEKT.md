@@ -32,6 +32,8 @@ do świtu (koniec rundy); Zamawiacze, gdy „zamówią” (złapią) wszystkie.
 1. Poczekalnia: start, gdy jest ≥2 graczy; 25 s (każdy nowy +5 s, maks. 45 s). Ogłoszenie na czacie jak w Wyścigach.
 2. Rozproszenie 30 s → Łowy 180 s → podsumowanie 8 s → powrót tam, skąd gracz przyszedł.
 3. Limit 12 graczy na rundę; jedna runda naraz (mapa jedna), kolejni czekają na następną.
+4. **Ćwiczenie (decyzja właściciela 15.11: „B, na razie tylko bot-licho”)**: kafel TRENING w menu, gracz sam jako
+   Zamawiacz przeciw 3 botom-Lichom; rozproszenie 5 s, łowy 150 s; nie liczy się do rekordów ani tytułów. Bez bota-Zamawiacza.
 
 ## Punkty i ranking (bez nagród przedmiotowych)
 Licho: +1 co 10 s w ukryciu, +5 za psotę, +15 za przetrwanie. Zamawiacz: +3 za trafienie, +10 za złapanie.
@@ -64,4 +66,5 @@ Ekwipunek nietknięty (MMOProfiles zapisuje EQ postaci — nie ruszamy go).
 - Mapa ~3×3 chunki, forceload tylko na czas rundy (jak tor Wyścigów).
 - Encje: 2 na Licho (BlockDisplay + Interaction) + ~zaczepy (jedna na sprzęt, bez AI, bez ticka).
   Teleport wyświetlacza tylko przy ruchu. Pętla rundy: 12 graczy × kilka porównań/tick.
+- Bot-Licho w ćwiczeniu = te same 2 encje co Licho gracza; teleport tylko w locie ucieczki (1,5 s), poza tym stoi.
 - Jedna runda naraz → koszt nie rośnie z liczbą graczy online (100+ = kolejka).

@@ -6,13 +6,23 @@ md5 `25c0c63ed05f7a98fe0b5bfa9b92e342`. Cofnięcie: `/opt/docker/mc/data/world1/
 Projekt gry (role, punkty, tytuły, koszt serwera): `PROJEKT.md`. Ten plik opisuje plugin.
 
 ## Wejście gracza
-Q → Drużyna (slot 38) → kafel LICHO (25) → menu `licho` (DOŁĄCZ slot 5, Rekordy 25/26/34/35). Gracz nie wpisuje komend.
+Q → Drużyna (slot 38) → kafel LICHO (25) → menu `licho` (DOŁĄCZ slot 5, TRENING 41/42/50/51, Rekordy 25/26/34/35). Gracz nie wpisuje komend.
+**TRENING = ćwiczenie solo** (`licho cwiczenie <gracz>`): gracz jest Zamawiaczem, Lichami są boty serwera
+(`Uczestnik` z `bot=true`, bez gracza: BlockDisplay + zaczepa, fałszywy blok `sendBlockChange`). Bot po trafieniu
+ucieka lotem na inny sprzęt, co 40–70 s sam się przeprowadza, gdy nikt nie stoi blisko, psoci jak Licho.
+Miejsca botów tylko z `osiagalneOdBramy()` (BFS chodzenia od bramy przy starcie ćwiczenia: krok ±1 w górę z 2 bloki
+wolnej głowy, do 3 w dół, podłoga o kolizji 0,4–1,0, więc nie płoty/murki) — bez tego bot lądował w zagrodzie z dyniami
+(14,64,8), do której gracz nie dochodzi bliżej niż 3,6 bloku (test 15.11).
+Ćwiczenie nie zapisuje rekordów, tytułów ani pliku rundy (`Runda.cwiczenie`). Gdy w Zagrodzie trwa runda z graczami,
+TRENING odmawia; gracz sam w poczekalni dostaje po 3 s podpowiedź na czacie (Q w Zagrodzie otwiera pauzę `licho_pauza`,
+nie hub): „Q → Opuść zagrodę, potem TRENING”. Drugi gracz może dołączyć (DOŁĄCZ/TRENING) jako Zamawiacz.
 Menu i kafel: `wdrozenie/menu/` (DeluxeMenus), wpinane przez `wdrozenie/latka.py`.
 
 ## Konfiguracja (`plugins/Licho/config.yml`, komentarze w pliku)
 - `swiat` (licho, VoidGen), `swiaty-wejscia`, `swiaty-awaryjne` — skąd wolno dołączyć i dokąd odesłać.
 - `gracze.min/max/na-zamawiacza`, `czasy.*` (poczekalnia, rozproszenie 30, łowy 180, podsumowanie 8 s).
 - `licho.*`, `zamawiacz.*`, `punkty.*` — zasady rundy; `przebrania` — sprzęty, w które wciela się Licho.
+- `cwiczenie.*` — liczba botów (3), krótsze łowy (150 s), lot ucieczki, odległości, przeprowadzki, psoty, imiona.
 - `tytuly.min-graczy` (4) i progi `tytuly.licho` / `tytuly.zamawiacz` (liczba → nazwa). Tytuł wynika z progów,
   więc zmiana progów działa wstecz. Liczą się tylko rundy dokończone przy co najmniej `min-graczy` graczach.
 - Po zmianie: `licho przeladuj` (na klonie; na world1 restart lub to samo z konsoli przy 0 graczach).
@@ -23,7 +33,7 @@ Menu i kafel: `wdrozenie/menu/` (DeluxeMenus), wpinane przez `wdrozenie/latka.py
 
 ## Komendy (konsola, `licho.console` = OP)
 `licho dolacz|wyjdz <gracz>` (menu woła je przez konsolę), `rekordy [gracz]`, `zbuduj` (Zagroda z `mapa.txt`),
-`stan` (faza, gracze, forceload, encje, progi tytułów), `start [s]`, `obserwuj <gracz>`, `przeladuj`.
+`cwiczenie <gracz>` (TRENING), `stan` (faza, gracze, forceload, encje, progi tytułów), `start [s]`, `obserwuj <gracz>`, `przeladuj`.
 
 ## PlaceholderAPI (softdepend)
 `%licho_tytul%`, `%licho_postep_licho%`, `%licho_postep_zamawiacz%` („Domowik (2/5)”), `%licho_min_graczy%`.
@@ -32,4 +42,10 @@ Menu i kafel: `wdrozenie/menu/` (DeluxeMenus), wpinane przez `wdrozenie/latka.py
 - `bash build.sh` → `build/libs/` (ma być jeden jar).
 - Klon: `wdrozenie/klon-przygotuj.sh <klon>` (pełne), `wdrozenie/klon-jar.sh <klon>` (podmiana jara + restart).
 - Boty: `narzedzia/bot/run.sh <klon> $PWD/testy/<scenariusz>.js` — `runda.js`, `nieidealne.js` (+ `nieidealne-c.js`), `tytuly.js`.
+- Menu: `python3 narzedzia/ksiega/rysuj_menu.py <katalog>` generuje `licho.yml` i `licho_*.png`, ale **`hub_spolecznosc_*.png`
+  z wyjścia NIE kopiuj** — generator wycina Gildię z obrazów prod, które już ją mają przesuniętą, więc wychodzi inny plik
+  niż `wdrozenie/menu/baza-hub-md5.txt` (15.11). Do `wdrozenie/menu/` tylko pliki `licho*`; porównuj `tobytes()`, nie `getbbox()` (RGBA).
+- Test ćwiczenia: `testy/cwiczenie.js` (pogoń za botami, 19/19, 3/3 złapane) i `testy/cwiczenie-nieidealne.js`
+  (odmowa przy rundzie z graczami, podpowiedź, Opuść → TRENING, dołączenie drugiego gracza, wyjścia; 14/14). Gonitwa w teście:
+  `idz(... {r: 1})` — `idz` kończy przy odległości ≤ r+1,5, a cios dopiero z ≤3 bloków.
 - World1: `wdrozenie/wdroz.sh --sucho`, potem `wdrozenie/wdroz.sh` (tylko przy 0 graczach; kopia świata, restart, budowa Zagrody).

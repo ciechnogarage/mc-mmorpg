@@ -74,12 +74,24 @@ def dolacz(x, y):
     beczka(x, y, 28, 14, oczy=False)
     G([(x+21, y+20), (x+27, y+20), (x+27, y+16), (x+33, y+23), (x+27, y+30), (x+27, y+26), (x+21, y+26)], 'gold2', 'ink')
 
+def trening(x, y):
+    """Ćwiczenie z botami: słomiany manekin (Zamawiacz ćwiczy) i beczka z oczami (bot-Licho)."""
+    M.field(x, y)
+    L([(x+14, y+14), (x+14, y+36)], 'wood1', 2)                     # słup
+    L([(x+5, y+19), (x+23, y+19)], 'wood2', 2)                      # poprzeczka-ręce
+    R((x+9, y+17, x+19, y+29), 'gold1', 'ink')                      # słomiany tułów
+    for dy in (21, 25): L([(x+10, y+dy), (x+18, y+dy)], 'gold0')
+    R((x+13, y+22, x+15, y+24), 'red1')                             # cel na piersi
+    E((x+9, y+5, x+19, y+15), 'gold1', 'ink')                       # głowa-snopek
+    beczka(x, y, 29, 13)
+
 # ------------------------------------------------------------------ strony
 def strona_glowna():
     W.hero_frame(14, 34, hero_licho)
     M.opis(('Licho chowa się', 'w sprzętach.', 'Zamawiacze', 'je tropią.'))
     kafle = [((194, 34), 'dolacz', 'DOŁĄCZ', dolacz), ((266, 34), 'licho', 'LICHO', licho_ikona),
-             ((194, 106), 'zamawiacz', 'ŁOWY', ziola), ((266, 106), 'rekordy', 'REKORDY', M.puchar)]
+             ((194, 106), 'zamawiacz', 'ŁOWY', ziola), ((266, 106), 'rekordy', 'REKORDY', M.puchar),
+             ((194, 178), 'cwiczenie', 'TRENING', trening)]        # ĆWICZENIE ma 33 px (> 32) -> TRENING
     for (x, y), _, podpis, p in kafle: W.tile(x, y, podpis, p, podpis)
     return [(M.sloty(x, y, 2), k) for (x, y), k, _, _ in kafle]
 
@@ -102,7 +114,8 @@ def menu_yml(ident, tytul_znaki, uklad):
     s = [f"menu_title: '{tytul}'", 'size: 54', 'update_interval: 20', 'items:']
     if ident == 'licho':
         s += M.yml_item('info', M.LEWA, '&2Licho nie śpi', ['&7Zagroda Zielarki o zmierzchu.', '&7Licho chowa się w beczkach', '&7i snopkach, Zamawiacze je tropią.',
-                                                             '&7Od 2 do 12 graczy, runda ok. 4 min.', '&7Bez łupu: punkty idą do rekordów.'])
+                                                             '&7Od 2 do 12 graczy, runda ok. 4 min.', '&7Bez łupu: rekordy i tytuły.',
+                                                             '&7Sam? &fTRENING&7: łowy na boty-Licha.'])
         tekst = {
             'dolacz': ('&aDołącz do gry', ['&7Wchodzisz do poczekalni.', '&7Odliczanie rusza przy 2 graczach.', '&7Role losuje gra: 1 Zamawiacz', '&7na każdych 4 graczy.', '',
                                            '&fKliknij, by dołączyć.'], ['[close]', '[console] licho dolacz %player_name%']),
@@ -111,7 +124,12 @@ def menu_yml(ident, tytul_znaki, uklad):
                                             '&7Przetrwaj do świtu: &e+15 pkt'], None),
             'zamawiacz': ('&bJak grać Zamawiaczem', ['&fLPM &7w sprzęt = trafienie', '&7Pudło w prawdziwy sprzęt', '&7zabiera &f1 tchu&7; bez tchu zadyszka.',
                                                     '&fF &7okadzanie: Licho w dymie', '&7po chwili kicha i się zdradza.', '&7Złapane Licho dołącza do Ciebie.'], None),
-            'rekordy': ('&eRekordy zagrody', ['&7Najlepsze wyniki i Twoje miejsce.'], ['[close]', '[console] licho rekordy %player_name%']),
+            'rekordy': ('&eRekordy zagrody', ['&7Najlepsze wyniki i Twoje miejsce.', '', '&7Twój tytuł: %licho_tytul%', '&7Licho: %licho_postep_licho%',
+                                              '&7Zamawiacz: %licho_postep_zamawiacz%', '&8Liczą się dokończone rundy od %licho_min_graczy% graczy.'],
+                        ['[close]', '[console] licho rekordy %player_name%']),
+            'cwiczenie': ('&aĆwiczenie z botami', ['&7Grasz sam jako Zamawiacz:', '&7w zagrodzie chowają się &f3 boty-Licha&7.', '&7Trafione Licho ucieka i zastyga',
+                                                   '&7gdzie indziej, &f3 trafienia &7= zamówione.', '&7Łowy ok. 2,5 min.', '&8Nie liczy się do rekordów ani tytułów.', '',
+                                                   '&fKliknij, by zacząć.'], ['[close]', '[console] licho cwiczenie %player_name%']),
         }
     else:  # pauza
         s += M.yml_item('info', M.LEWA, '&6Pauza', ['&7Gra trwa dalej, gdy tu jesteś.'])

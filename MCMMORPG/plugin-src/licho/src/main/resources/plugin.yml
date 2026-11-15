@@ -7,7 +7,7 @@ softdepend: [MMOProfiles, Multiverse-Core, PlaceholderAPI]
 commands:
   licho:
     description: Licho nie śpi (prop hunt) — sterowanie z menu (konsola).
-    usage: /licho <dolacz|wyjdz|rekordy|zbuduj|stan|start|obserwuj|przeladuj> ...
+    usage: /licho <dolacz|cwiczenie|wyjdz|rekordy|zbuduj|stan|start|obserwuj|przeladuj> ...
     permission: licho.console
 permissions:
   licho.console:
