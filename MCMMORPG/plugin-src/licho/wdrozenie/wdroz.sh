@@ -16,7 +16,10 @@ echo "== kontrole"
 df -h / | tail -1; free -g | sed -n 2p
 [[ $(df -BG --output=avail / | tail -1 | tr -dc 0-9) -ge 10 ]] || { echo "PRZERWANE: < 10 GB dysku (kopia swiata)"; exit 3; }
 for f in "${EDYTOWANE[@]}"; do [[ -f $P/$f ]] || { echo "PRZERWANE: brak $f"; exit 4; }; done
-(cd "$P" && md5sum -c --quiet "$TU/menu/baza-hub-md5.txt") || { echo "PRZERWANE: tlo hub_spolecznosc zmienione od generowania - uruchom narzedzia/ksiega/rysuj_menu.py wdrozenie/menu"; exit 4; }
+# tlo Druzyny: baza sprzed Licha (pierwsze wdrozenie) albo juz identyczne z paczka (ponowne wdrozenie = kopia bez zmian)
+tlo_ok() { (cd "$P" && md5sum -c --quiet "$TU/menu/baza-hub-md5.txt" >/dev/null 2>&1) && return 0
+  for f in "$TU"/menu/gui/hub_spolecznosc_[1-4].png; do cmp -s "$f" "$GUI/$(basename "$f")" || return 1; done; }
+tlo_ok || { echo "PRZERWANE: tlo hub_spolecznosc zmienione od generowania - uruchom narzedzia/ksiega/rysuj_menu.py wdrozenie/menu"; exit 4; }
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 for f in "${EDYTOWANE[@]}"; do mkdir -p "$T/$(dirname $f)"; cp -a "$P/$f" "$T/$f"; done
 python3 "$TU/latka.py" "$T" "$TU" >/dev/null || { echo "PRZERWANE: latka nie przechodzi na obecnych plikach"; exit 4; }
