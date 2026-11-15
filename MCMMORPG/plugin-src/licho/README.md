@@ -16,6 +16,8 @@ wolnej głowy, do 3 w dół, podłoga o kolizji 0,4–1,0, więc nie płoty/murk
 Ćwiczenie nie zapisuje rekordów, tytułów ani pliku rundy (`Runda.cwiczenie`). Gdy w Zagrodzie trwa runda z graczami,
 TRENING odmawia; gracz sam w poczekalni dostaje po 3 s podpowiedź na czacie (Q w Zagrodzie otwiera pauzę `licho_pauza`,
 nie hub): „Q → Opuść zagrodę, potem TRENING”. Drugi gracz może dołączyć (DOŁĄCZ/TRENING) jako Zamawiacz.
+**WDROŻONE** na world1 15.11 21:25 UTC z gałęzi `licho-cwiczenie` (3a15908 + 8c2de22), jar `licho-0.1.0-202611151842.jar` (md5 b6519e55);
+cofnięcie `/opt/docker/mc/data/world1/backups/licho-20261115-212426/cofnij.sh`.
 Menu i kafel: `wdrozenie/menu/` (DeluxeMenus), wpinane przez `wdrozenie/latka.py`.
 
 ## Konfiguracja (`plugins/Licho/config.yml`, komentarze w pliku)
