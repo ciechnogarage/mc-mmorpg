@@ -140,10 +140,14 @@ final class Nosnik implements Listener {
     for (int s = 0; s < 36; s++) if (pusta(inv.getItem(s))) inv.setItem(s, null);
   }
 
-  private static void pasek(Player p, String tekst, int priorytet) {
+  private static void pasek(Player p, String tekst, int priorytet) { pasek(p, tekst, priorytet, 40L); }
+
+  /** Arbiter MythicLib (ActionBarHandler 1.7.1): tekst przechodzi, gdy poprzedni wygasl albo priorytet >= poprzedniego;
+   *  wysyla raz i trzyma pasek przez {@code tiki}. */
+  static void pasek(Player p, String tekst, int priorytet, long tiki) {
     // pasek MMOCore co 5 tickow nadpisuje zwykly actionbar — piszemy przez handler MythicLib z wyzszym priorytetem
     // Dane MMO bywaja nieaktualne po przelogowaniu w <1 s (MMOCore: "Player is offline") — wtedy zwykly pasek.
-    try { MMOPlayerData.get(p).getActionBar().show(priorytet, 40L, tekst); }
+    try { MMOPlayerData.get(p).getActionBar().show(priorytet, tiki, tekst); }
     catch (Throwable t) { p.sendActionBar(net.kyori.adventure.text.Component.text(tekst.replaceAll("§.", ""))); }
   }
 

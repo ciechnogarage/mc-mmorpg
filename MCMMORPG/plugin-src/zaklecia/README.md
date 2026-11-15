@@ -23,3 +23,8 @@ Build: `./build.sh` → `build/libs/zaklecia-*.jar`.
   skilli MMOCore (`PlayerData.leaveSkillCasting`) i zamyka pełną mapę (`mapa zamknij <gracz>`); w walce Chowańców
   (metadane `chowance_walka`) pasek się nie otwiera. F (`PlayerEnterCastingModeEvent`) zamyka otwarty pasek.
   `zaklecia pasek zamknij <gracz>` (konsola) zamyka pasek — wołają go Mapa i Chowance. `Wybor.otworz`, `Wybor.trybSkilli`.
+- **Wygląd paska Shift+Q (decyzja właściciela 15.11, „Nad hotbar”)**: jedna linia w pasku akcji nad hotbarem
+  (`✦ [wybrane] · sąsiednie › │ strumień N many/s`), odświeżana co 20 ticków przez MythicLib `ActionBarHandler`
+  (priorytety `Wybor.PRIO_LISTA`=35 < `PRIO_KOMUNIKAT`=40 < `PRIO_RUCH`=41, więc komunikaty przypisania wygrywają z listą).
+  Wcześniej bossbary u góry ekranu zasłaniały kartę gracza MythicHUD. Podpowiedź klawiszy idzie na czat, dopóki gracz
+  pierwszy raz czegoś nie przypisze (flaga PDC `pasek_wyboru_umie`). Sprawdzone 15.11 w kliencie QA (klon `klawisze`).

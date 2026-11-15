@@ -6,9 +6,10 @@ import java.util.Map;
 import java.util.UUID;
 import net.Indyuce.mmocore.api.event.PlayerEnterCastingModeEvent;
 import net.Indyuce.mmocore.api.player.PlayerData;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,14 +28,21 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
- * Szybki wybor jak ulubione w Skyrimie: Shift+Q wlacza pasek wszystkich zaklec Ksiegi (ulubione ★ na poczatku) u gory ekranu (BossBar, bez okna — gracz dalej
- * chodzi i patrzy), Shift+Q albo Q wylacza. Gdy wlaczony: kolko (albo klawisz 1-9) wybiera pozycje, LPM wklada ja do
- * PRAWEJ dloni, PPM do LEWEJ (jak w vanilli). Po 15 s bez ruchu zamyka sie sam.
+ * Szybki wybor jak ulubione w Skyrimie: Shift+Q wlacza pasek wszystkich zaklec Ksiegi (ulubione ★ na poczatku) jedna linia
+ * w pasku akcji nad hotbarem (bez okna — gracz dalej chodzi i patrzy), Shift+Q albo Q wylacza. Gdy wlaczony: kolko
+ * (albo klawisz 1-9) wybiera pozycje, LPM wklada ja do PRAWEJ dloni, PPM do LEWEJ (jak w vanilli). Po 15 s bez ruchu
+ * zamyka sie sam.
+ * Do 15.11 pasek byl dwoma BossBarami u gory; nachodzil na karte gracza MythicHUD (przy GUI 4 i 1080p u gory nie ma
+ * miejsca) — decyzja wlasciciela 15.11 „Nad hotbar”.
  * Przy okazji: Q (wyrzucenie) nad slotem w oknie DeluxeMenus zamyka to okno — Q wlacza i wylacza menu.
  */
 final class Wybor implements Listener {
   private static final LegacyComponentSerializer L = LegacyComponentSerializer.legacySection();
-  private static final class Sesja { int i; BossBar bar, opis; String tekstBaru, tekstOpisu; long ostatnio; }
+  // Priorytety arbitra paska akcji MythicLib (NORMAL 30, HIGH 40): lista ponad zwyklymi komunikatami,
+  // komunikat przypisania (40) chwile ponad lista, ruch kolkiem (41) od razu przywraca liste.
+  private static final int PRIO_LISTA = 35, PRIO_KOMUNIKAT = 40, PRIO_RUCH = 41;
+  private static final long TIKI_LISTY = 30L, TIKI_KOMUNIKATU = 30L;
+  private static final class Sesja { int i; String tekst; long ostatnio; }
 
   private final Zaklecia plugin;
   private final Ksiega ksiega;
@@ -50,10 +58,15 @@ final class Wybor implements Listener {
       long t = System.currentTimeMillis();
       for (UUID u : List.copyOf(otwarte.keySet())) {
         Player p = Bukkit.getPlayer(u);
-        if (p == null || t - otwarte.get(u).ostatnio > 15_000) zamknij(p, u);
+        Sesja s = otwarte.get(u);
+        if (p == null || t - s.ostatnio > 15_000) zamknij(p, u);
+        else if (s.tekst != null) Nosnik.pasek(p, s.tekst, PRIO_LISTA, TIKI_LISTY);   // klient gasi pasek akcji po ~3 s
       }
     }, 20, 20);
   }
+
+  /** Raz na gracza: dopoki nie przypisze nic z paska, podpowiedz klawiszy idzie na czat (w pasku akcji brak miejsca). */
+  private NamespacedKey kluczUmie() { return new NamespacedKey(plugin, "pasek_wyboru_umie"); }
 
   boolean otwarty(Player p) { return otwarte.containsKey(p.getUniqueId()); }
 
@@ -78,57 +91,46 @@ final class Wybor implements Listener {
     Ksiega.Zaklecie wPrawej = ksiega.w(p.getInventory().getItemInMainHand());
     List<String> k = ulubione.kolo(p);
     s.i = Math.max(0, wPrawej == null ? 0 : k.indexOf(wPrawej.id()));
-    s.bar = BossBar.bossBar(L.deserialize(""), 1f, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS);
-    s.opis = BossBar.bossBar(L.deserialize(""), 1f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS);
     s.ostatnio = System.currentTimeMillis();
     otwarte.put(p.getUniqueId(), s);
-    if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG boss open gracz="
-        + p.getName() + " bar=" + System.identityHashCode(s.bar) + " opis=" + System.identityHashCode(s.opis));
-    p.showBossBar(s.bar);
-    p.showBossBar(s.opis);
+    if (plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG pasek open gracz=" + p.getName());
     nosnik.odswiezPusta(p);   // PPM z pusta reka nie dociera do serwera — od razu nosnik w dloni
-    odswiez(p, s);
+    odswiez(p, s, PRIO_RUCH);
     podpowiedz(p);
     p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.8f, 1.2f);
   }
 
   void zamknij(Player p, UUID u) {
     Sesja s = otwarte.remove(u);
-    if (s != null && plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG boss close gracz="
-        + (p == null ? u : p.getName()) + " online=" + (p != null && p.isOnline())
-        + " bar=" + System.identityHashCode(s.bar) + " opis=" + System.identityHashCode(s.opis));
+    if (s != null && plugin.getConfig().getBoolean("debug", false)) plugin.getLogger().info("ZAKDBG pasek close gracz="
+        + (p == null ? u : p.getName()) + " online=" + (p != null && p.isOnline()));
     if (s != null && p != null) {
-      p.hideBossBar(s.bar); p.hideBossBar(s.opis);
+      if (p.isOnline()) Nosnik.pasek(p, " ", PRIO_RUCH, 1L);   // zgas liste od razu, nie po ~3 s zanikania
       p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.6f, 0.8f);
     }
   }
 
-  private void odswiez(Player p, Sesja s) {
+  private void odswiez(Player p, Sesja s, int priorytet) {
     List<String> k = ulubione.kolo(p);
     List<String> ul = ulubione.lista(p);
     s.i = Math.floorMod(s.i, k.size());
-    // Trzy pozycje wystarcza nawet przy dlugich nazwach i 15+ zakleciach.
+    // Trzy pozycje wystarcza nawet przy dlugich nazwach i 15+ zakleciach; cala linia ~60 znakow miesci sie
+    // nad hotbarem przy GUI 4 i 1080p (480 jednostek GUI szerokosci).
     int od = Math.max(0, Math.min(s.i - 1, k.size() - 3));
     int doIndeks = Math.min(k.size(), od + 3);
-    StringBuilder okno = new StringBuilder(od > 0 ? "§7‹  " : "§8   ");
+    StringBuilder okno = new StringBuilder(od > 0 ? "§7‹ " : "§8  ");
     for (int j = od; j < doIndeks; j++) {
-      if (j > od) okno.append("  §8·  ");
+      if (j > od) okno.append(" §8· ");
       String id = k.get(j);
       String n = id == null ? "pusta" : (ul.contains(id) ? "★ " : "") + ksiega.poId.get(id).nazwa();
       okno.append(j == s.i ? "§f§l[" + n + "]§r" : "§7" + n);
     }
-    okno.append(doIndeks < k.size() ? "  §7›" : "  §8 ");
-    String tekstBaru = "§5✦  " + okno;
-    if (!tekstBaru.equals(s.tekstBaru)) { s.bar.name(L.deserialize(tekstBaru)); s.tekstBaru = tekstBaru; }
-
+    okno.append(doIndeks < k.size() ? " §7›" : " §8 ");
     String id = k.get(s.i);
     Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
-    String dlonie = "§7L: §f" + nazwa(ksiega.w(p.getInventory().getItemInOffHand()))
-        + " §8· §7P: §f" + nazwa(ksiega.w(p.getInventory().getItemInMainHand()));
-    String opis = z == null ? "§7pusta §8· §7bez kosztu" : kolor(z.szkola()) + z.nazwa()
-        + " §8· §7" + typ(z) + " §8· §b" + koszt(z) + " many" + (z.koncentracja() ? "/s" : "");
-    String tekstOpisu = opis + "   §8│   " + dlonie;
-    if (!tekstOpisu.equals(s.tekstOpisu)) { s.opis.name(L.deserialize(tekstOpisu)); s.tekstOpisu = tekstOpisu; }
+    String opis = z == null ? "§7bez kosztu" : "§7" + typ(z) + " §b" + koszt(z) + " many" + (z.koncentracja() ? "/s" : "");
+    s.tekst = "§5✦ " + okno + "  §8│  " + opis;
+    Nosnik.pasek(p, s.tekst, priorytet, TIKI_LISTY);
   }
 
   private static String kolor(String szkola) {
@@ -163,10 +165,10 @@ final class Wybor implements Listener {
 
 
   private void podpowiedz(Player p) {
-    nosnik.komunikat(p, "§7kółko: wybór · §eLPM §7→ prawa · §ePPM §7→ lewa · §eQ§7: zamknij");
+    if (p.getPersistentDataContainer().has(kluczUmie(), PersistentDataType.BYTE)) return;
+    p.sendMessage(L.deserialize("§5✦ §7Pasek zaklęć: §ekółko§7 wybór · §eLPM§7 → prawa dłoń · §ePPM§7 → lewa · §eQ§7 zamknij"));
   }
 
-  private static String nazwa(Ksiega.Zaklecie z) { return z == null ? "pusta" : z.nazwa(); }
 
   private void przypisz(Player p, boolean prawa) {
     Sesja s = otwarte.get(p.getUniqueId());
@@ -175,11 +177,15 @@ final class Wybor implements Listener {
     String id = k.get(Math.floorMod(s.i, k.size()));
     String wynik = nosnik.przypisz(p, id, prawa);
     boolean sukces = !wynik.startsWith("§c");
-    nosnik.komunikat(p, sukces ? "§f" + (id == null ? "Pusta" : ksiega.poId.get(id).nazwa())
-        + " §7→ " + (prawa ? "prawa" : "lewa") + " dłoń" : wynik);
-    if (sukces) p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.3f);
     s.ostatnio = System.currentTimeMillis();
-    odswiez(p, s);
+    odswiez(p, s, PRIO_LISTA);
+    // komunikat chwile nad lista (lista wraca z timera albo od razu po ruchu kolkiem)
+    Nosnik.pasek(p, sukces ? "§f" + (id == null ? "Pusta" : ksiega.poId.get(id).nazwa())
+        + " §7→ " + (prawa ? "prawa" : "lewa") + " dłoń" : wynik, PRIO_KOMUNIKAT, TIKI_KOMUNIKATU);
+    if (sukces) {
+      p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.3f);
+      p.getPersistentDataContainer().set(kluczUmie(), PersistentDataType.BYTE, (byte) 1);
+    }
   }
 
   void wcisnietoLpm(Player p) { przypisz(p, true); }
@@ -196,7 +202,7 @@ final class Wybor implements Listener {
     if (r == 1) s.i++; else if (r == 8) s.i--; else s.i = e.getNewSlot();   // klawisz 1-9 = pozycja wprost
     s.ostatnio = System.currentTimeMillis();
     e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.UI_BUTTON_CLICK, 0.3f, 1.8f);
-    odswiez(e.getPlayer(), s);
+    odswiez(e.getPlayer(), s, PRIO_RUCH);
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
