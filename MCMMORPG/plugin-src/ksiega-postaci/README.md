@@ -115,5 +115,10 @@ Nadzorca powinien potwierdzić kompilację sygnatur Paper i MMOItems oraz zachow
 ## Wymagana zmiana MMOCore (zmierzone klientem 2026-10-01)
 `plugins/MMOCore/config.yml` -> `skill-casting.ignore-sneak: true`. Przy `false` Shift+F oprócz zamiany broni
 włącza też tryb SKILL CASTING. Z `true`: Shift+F = zamiana zestawu broni, samo F = pasek umiejętności (bez zmian).
+
+## Klawisz F (decyzja właściciela 15.11: każdy klawisz robi jedną rzecz)
+Samo F = wyłącznie tryb skilli MMOCore: Księga anuluje `PlayerSwapHandItemsEvent` i nie rusza rąk (wcześniej
+F przekładało broń z prawej do lewej przy zaklęciu w lewej i zamieniało ręce, a MMOCore w tym samym naciśnięciu
+włączał tryb skilli). Przekładanie broni: Shift+F (komplet zapasowy) albo okno E. `Bron.swap`.
 Tekstura okna E: `wdrozenie/inventory.png` (generator `wdrozenie/ksiega_tekstura.py`) -> pack Nexo
 `assets/minecraft/textures/gui/container/inventory.png`.
