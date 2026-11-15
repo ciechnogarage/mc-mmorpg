@@ -7,7 +7,7 @@ softdepend: [MapEngine, NMinimap, MMOProfiles, MMOCore, packetevents]
 commands:
   mapa:
     description: Administracja mapy - otwiera atlas lub pełną mapę graczowi, ustawia i czyści cel prowadzenia, przeładowuje dane mapy
-    usage: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa cel <gracz> <swiat> <x> <z> <nazwa> | /mapa cel <gracz> wyczysc | /mapa przeladuj
+    usage: /mapa otworz <gracz> | /mapa pelna <gracz> | /mapa zamknij <gracz> | /mapa cel <gracz> <swiat> <x> <z> <nazwa> | /mapa cel <gracz> wyczysc | /mapa przeladuj
     permission: mapa.admin
 permissions:
   mapa.admin:

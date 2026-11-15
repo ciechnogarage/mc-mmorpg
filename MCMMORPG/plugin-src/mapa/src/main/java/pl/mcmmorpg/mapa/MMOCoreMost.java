@@ -18,4 +18,18 @@ final class MMOCoreMost {
   static void nawigacja(Player player, String message) {
     MMOPlayerData.get(player).getActionBar().show(20, 40L, message);
   }
+
+  /** Odmowa (np. mapa w walce Chowancow): priorytet 40 jak odmowy Zaklec, zeby nie przepadla pod ich komunikatem. */
+  static void odmowa(Player player, String message) {
+    try { MMOPlayerData.get(player).getActionBar().show(40, 40L, message); }
+    catch (RuntimeException e) { actionBar(player, message); }
+  }
+
+  /** Wyjscie z trybu skilli MMOCore (F), gdy gracz otwiera inny tryb na klawiszach 1-9. */
+  static void wyjdzZTrybuSkilli(Player player) {
+    try {
+      PlayerData data = PlayerData.get(player);
+      if (data != null && data.isCasting()) data.leaveSkillCasting();
+    } catch (RuntimeException ignored) { /* dane MMOCore niewczytane (zmiana postaci) */ }
+  }
 }
