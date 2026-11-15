@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import net.Indyuce.mmocore.api.event.PlayerEnterCastingModeEvent;
+import net.Indyuce.mmocore.api.player.PlayerData;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -57,7 +59,20 @@ final class Wybor implements Listener {
 
   void przelacz(Player p) { if (otwarty(p)) zamknij(p, p.getUniqueId()); else otworz(p); }
 
+  /** Metadane gracza ustawiane przez Chowance na czas walki turowej i pojedynku (klawisze 1-9 = ruchy chowanca). */
+  static final String WALKA_CHOWANCOW = "chowance_walka";
+
   void otworz(Player p) {
+    // Jeden tryb na klawiszach 1-9 naraz (decyzja wlasciciela 15.11): bramka klasy, walka Chowancow blokuje,
+    // nowy pasek zamyka tryb skilli MMOCore i pelna mape.
+    if (!plugin.bramka.wolno(p)) { nosnik.komunikat(p, Bramka.ODMOWA); return; }
+    if (p.hasMetadata(WALKA_CHOWANCOW)) { nosnik.komunikat(p, "§cW walce chowańców pasek zaklęć jest niedostępny."); return; }
+    try {
+      PlayerData d = PlayerData.get(p);
+      if (d != null && d.isCasting()) d.leaveSkillCasting();
+    } catch (RuntimeException ignored) { /* dane MMOCore niewczytane (zmiana postaci) */ }
+    if (Bukkit.getPluginManager().isPluginEnabled("Mapa"))
+      Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mapa zamknij " + p.getName());
     rzucanie.stop(p, false);
     Sesja s = new Sesja();
     Ksiega.Zaklecie wPrawej = ksiega.w(p.getInventory().getItemInMainHand());
@@ -224,6 +239,13 @@ final class Wybor implements Listener {
 
   @EventHandler
   public void wyjscie(PlayerQuitEvent e) { zamknij(e.getPlayer(), e.getPlayer().getUniqueId()); }
+
+  /** Tryb skilli MMOCore (F) zamyka pasek: nowy tryb zamyka stary. */
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void trybSkilli(PlayerEnterCastingModeEvent e) {
+    Player p = e.getPlayer();
+    if (otwarty(p)) zamknij(p, p.getUniqueId());
+  }
 
   @EventHandler
   public void smierc(PlayerDeathEvent e) { zamknij(e.getEntity(), e.getEntity().getUniqueId()); }

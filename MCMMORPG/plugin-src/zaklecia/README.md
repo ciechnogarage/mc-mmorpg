@@ -18,3 +18,8 @@ Plugin prowadzi rzucanie zaklęć koncentracji, a MythicMobs rysuje efekty i zad
 
 Treść (przedmioty, skille, menu), wdrożenie i evale: `tools/zaklecia/v2/ (repo MC)` i `tools/zaklecia/README.md`.
 Build: `./build.sh` → `build/libs/zaklecia-*.jar`.
+- **Klawisze (decyzja właściciela 15.11, „każdy klawisz robi jedną rzecz”)**: Shift+Q u klasy spoza `dozwolone-klasy`
+  (wojownik, ninja) nie otwiera paska, tylko komunikat `Bramka.ODMOWA` w pasku akcji. Otwarcie paska wychodzi z trybu
+  skilli MMOCore (`PlayerData.leaveSkillCasting`) i zamyka pełną mapę (`mapa zamknij <gracz>`); w walce Chowańców
+  (metadane `chowance_walka`) pasek się nie otwiera. F (`PlayerEnterCastingModeEvent`) zamyka otwarty pasek.
+  `zaklecia pasek zamknij <gracz>` (konsola) zamyka pasek — wołają go Mapa i Chowance. `Wybor.otworz`, `Wybor.trybSkilli`.

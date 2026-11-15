@@ -93,6 +93,12 @@ public final class Zaklecia extends JavaPlugin implements Listener {
       } catch (NumberFormatException ignored) { /* nieprawidłowa zmienna MythicMobs */ }
       return true;
     }
+    if (a.length == 3 && a[0].equalsIgnoreCase("pasek") && a[1].equalsIgnoreCase("zamknij")) {
+      // Mapa i Chowance zamykaja pasek, gdy otwieraja wlasny tryb na 1-9 (wolane jako konsola).
+      Player p = getServer().getPlayerExact(a[2]);
+      if (p != null && wybor.otwarty(p)) wybor.zamknij(p, p.getUniqueId());
+      return true;
+    }
     if (a.length == 2 && a[0].equalsIgnoreCase("q")) {
       // E: klawisz Q (MenuKey wola 'zaklecia q <gracz>'): z Shiftem okno ulubionych, bez — hub jak dotad
       Player p = getServer().getPlayerExact(a[1]);
