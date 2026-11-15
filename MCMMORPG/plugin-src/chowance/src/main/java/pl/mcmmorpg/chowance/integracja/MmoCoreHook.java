@@ -22,6 +22,15 @@ public final class MmoCoreHook {
     this.log = log;
   }
 
+  /** Wyjście z trybu skilli MMOCore (F) przy wejściu w walkę chowańców. */
+  public void wyjdzZTrybuSkilli(Player p) {
+    if (!Bukkit.getPluginManager().isPluginEnabled("MMOCore")) return;
+    try {
+      PlayerData d = PlayerData.get(p);
+      if (d != null && d.isCasting()) d.leaveSkillCasting();
+    } catch (RuntimeException | LinkageError ignored) { /* dane MMOCore niewczytane (zmiana postaci) */ }
+  }
+
   private Profession profesja() {
     if (!Bukkit.getPluginManager().isPluginEnabled("MMOCore")) return null;
     try {

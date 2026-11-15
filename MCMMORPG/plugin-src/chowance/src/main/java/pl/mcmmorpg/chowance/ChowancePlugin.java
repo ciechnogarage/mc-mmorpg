@@ -161,6 +161,7 @@ public final class ChowancePlugin extends JavaPlugin implements Listener {
     }
     mythic = new MythicRejestracja(ctx, przywolania, dzikie, druzyny, lapanie, walki, pojedynki);
     pm.registerEvents(mythic, this);
+    if (pm.isPluginEnabled("MMOCore")) pm.registerEvents(new pl.mcmmorpg.chowance.integracja.BlokadaTrybuSkilli(), this);
 
     modul = new ProfilModul(this, ctx);
     modul.przedZdjeciem = this::sprzatnijSesje;
