@@ -1,0 +1,293 @@
+# Przeciwnicy remake'u Lochu 001 - generowane przez kuznia/tools/przeciwnicy/przeciwnicy_l001.py (nie edytowac recznie)
+# ---- pak (R1): trafienie usuwa (1 HP, ~onDeath), po 4 s peczniebie i swieci, po 5 s skutek ----
+# Nosnik: maly niewidzialny ZOMBIE bez AI z kwiatem na glowie. ARMOR_STAND odpadl (klon 16.11: odporny na zwykle
+# obrazenia, cios gracza nie wolal ~onDamaged). Opozniony lancuch dojrzewania BIEGNIE DALEJ po smierci nosiciela
+# (zmierzone: /kill paka i tak dawal Pniaczka) -> flaga caster.dojrzewa=0 w ~onDeath blokuje skutek.
+L1R_PAK:
+  Type: ZOMBIE
+  Display: '&dPąk'
+  Health: 1
+  Damage: 0
+  Options:
+    NoAI: true
+    Silent: true
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventSunburn: true
+    KnockbackResistance: 1
+  Equipment:
+  - FLOWERING_AZALEA HEAD
+  Skills:
+  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
+  - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
+  - addtag{tag=l1r_pak} @self ~onSpawn
+  - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
+  - skill{s=L1R_PAK_DOJRZEWA} @self ~onSpawn
+  - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
+L1R_PAK_DUZY:
+  Type: ZOMBIE
+  Display: '&dDuży pąk'
+  Health: 1
+  Damage: 0
+  Options:
+    NoAI: true
+    Silent: true
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventSunburn: true
+    KnockbackResistance: 1
+    Scale: 1.5
+  Equipment:
+  - FLOWERING_AZALEA HEAD
+  Skills:
+  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
+  - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
+  - addtag{tag=l1r_pak_duzy} @self ~onSpawn
+  - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
+  - skill{s=L1R_PAK_DUZY_DOJRZEWA} @self ~onSpawn
+  - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
+L1R_PAK_SIEWCY:
+  Type: ZOMBIE
+  Display: '&dPąk z puchem'
+  Health: 1
+  Damage: 0
+  Options:
+    NoAI: true
+    Silent: true
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventSunburn: true
+    KnockbackResistance: 1
+  Equipment:
+  - DANDELION HEAD
+  Skills:
+  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
+  - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
+  - addtag{tag=l1r_pak} @self ~onSpawn
+  - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
+  - skill{s=L1R_PAK_SIEWCY_DOJRZEWA} @self ~onSpawn
+  - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
+# Korzen: krag 3x3 na 8 s, spowalnia i trzyma WSZYSTKO (gracze i wrogowie)
+L1R_KORZEN:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - skill{s=L1R_KORZEN_TRZYMA} @self ~onSpawn
+
+# ---- roj i zwykle ----
+L1R_PNIACZEK:
+  Type: HUSK
+  Display: '&2Pniaczek'
+  Health: 6
+  Damage: 1
+  Options:
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    FollowRange: 16
+    MovementSpeed: 0.3
+    AttackSpeed: 0.83
+  Equipment:
+  - OAK_LEAVES HEAD
+  Skills:
+  # Baby: true NIE dziala na HUSK w 1.21.11 (klon 16.11: IsBaby 0b); data merge przy spawnie dziala (1b)
+  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
+  - sound{s=block.azalea.step;v=1.2;p=1.4} @self ~onTimer:24
+  - sound{s=entity.fox.squeak;v=0.8;p=1.6} @self ~onDeath
+  - summon{type=L1R_PAK;amount=1;noise=0} @self ~onDeath
+
+L1R_SIEWCA:
+  Type: HUSK
+  Display: '&eSiewca'
+  Health: 20
+  Damage: 0
+  Options:
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    FollowRange: 22
+    MovementSpeed: 0
+    KnockbackResistance: 1
+  Equipment:
+  - DANDELION HEAD
+  AIGoalSelectors:
+  - clear
+  - lookatplayers
+  Skills:
+  # PUCH: zapowiedz 0.8 s, 3 kule w ZAMKNIETY punkt: 2 obr. + Spowolnienie I 2 s kazda
+  - skill{s=L1R_SIEWCA_PUCH} @target ~onTimer:20
+  - summon{type=L1R_PAK_SIEWCY;amount=1;noise=0} @self ~onDeath
+
+L1R_KOROWIEC:
+  Type: ZOMBIE
+  Display: '&6Korowiec'
+  Health: 60
+  Damage: 0
+  Options:
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    FollowRange: 20
+    MovementSpeed: 0.19
+    KnockbackResistance: 0.8
+    Scale: 1.3
+  Equipment:
+  - SHIELD OFFHAND
+  - OAK_LOG HEAD
+  Skills:
+  - setvariable{var=caster.garda;val=1;type=INTEGER} @self ~onSpawn
+  # GARDA: z przodu (120 st.) bierze 20% obrazen, chyba ze odsloniety po ciosie
+  - skill{s=L1R_KOROWIEC_GARDA;sync=true} @trigger ~onDamaged
+  # ODGORNE UDERZENIE: zapowiedz 1.0 s, pole 2x3 przed nim w zamknietym kierunku, 8 obr.; potem 1.5 s bez gardy
+  - skill{s=L1R_KOROWIEC_CIOS} @target ~onTimer:20
+  - summon{type=L1R_PAK_DUZY;amount=1;noise=0} @self ~onDeath
+
+L1R_KOTWA:
+  Type: ZOMBIE
+  Display: '&5Kotwa'
+  Health: 30
+  Damage: 0
+  Options:
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    NoAI: true
+    Silent: true
+    KnockbackResistance: 1
+  Equipment:
+  - ROOTED_DIRT HEAD
+  Skills:
+  - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
+  - particles{p=glow;a=6;hs=0.3;vs=0.5;y=1.6} @self ~onTimer:10
+  # co 10 s budzi 1 Pniaczka (puls)
+  - sound{s=block.chorus_flower.grow;v=1.6;p=0.7} @self ~onTimer:200
+  - summon{type=L1R_PNIACZEK;amount=1;noise=1.5} @self ~onTimer:200
+
+# warianty v8 (walka = GAJ_* v8 bez zmian) + pak po smierci
+L1R_WILK:
+  Type: WOLF
+  Display: '&6Wilk Gajowy'
+  Health: 40
+  Damage: 3
+  Options:
+    Despawn: persistent
+    FollowRange: 20
+    MovementSpeed: 0.34
+    PreventOtherDrops: true
+    KnockbackResistance: 0.3
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # SKOK: zapowiedz 0.9 s (warkniecie + przysiad), potem doskok i ugryzienie 6; po skoku 1 s odslony (wolny)
+  - skill{s=GAJ_WILK_SKOK} @target ~onTimer:20
+  - summon{type=L1R_PAK;amount=1;noise=0} @self ~onDeath
+L1R_KORZENIAK:
+  Type: ZOMBIE
+  Display: '&aKorzeniak'
+  Health: 40
+  Damage: 4
+  Options:
+    Despawn: persistent
+    FollowRange: 20
+    MovementSpeed: 0.17
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+    KnockbackResistance: 0.6
+  Equipment:
+  - OAK_LEAVES HEAD
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # WYRWA: pod GRACZEM krag korzeni 1.2 s, potem 6 obr. + unieruchomienie; Korzeniak w tym czasie zakorzeniony (bij go)
+  # USCISK: przysiad 1 s (dzwiek korzeni + krag wokol siebie), potem korzenie r3: 8 obr. + unieruchomienie -> odskocz
+  - skill{s=GAJ_KORZEN_USCISK} @self ~onTimer:10
+  # WYRWA tylko gdy gracz dalej niz 5 (przeciw kitowaniu)
+  - skill{s=GAJ_KORZEN_WYRWA} @target ~onTimer:20
+  - summon{type=L1R_PAK_DUZY;amount=1;noise=0} @self ~onDeath
+L1R_LUCZNIK:
+  Type: SKELETON
+  Display: '&2Cierniowy Łucznik'
+  Health: 26
+  Damage: 2
+  Options:
+    Despawn: persistent
+    FollowRange: 24
+    MovementSpeed: 0.26
+    PreventOtherDrops: true
+    PreventSunburn: true
+  Equipment:
+  - BOW HAND
+  AIGoalSelectors:
+  - clear
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # trzyma dystans: gracz blizej niz 5 -> odskok
+  - skill{s=GAJ_LUCZNIK_ODSKOK} @target ~onTimer:15
+  # NACIAG 0.8 s (dzwiek kuszy + blysk), potem strzal prosto w miejsce gracza sprzed naciagu -> unik w bok
+  - skill{s=GAJ_LUCZNIK_STRZAL} @target ~onTimer:20
+  - summon{type=L1R_PAK;amount=1;noise=0} @self ~onDeath
+
+# ---- elita S6 ----
+L1R_SOWIEDZ:
+  Type: POLAR_BEAR
+  Display: '&cSowiedź'
+  Health: 90
+  Damage: 0
+  Options:
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    FollowRange: 24
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.7
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  - setvariable{var=caster.mlode;val=0;type=INTEGER} @self ~onSpawn
+  - skill{s=L1R_SOWIEDZ_SKOK} @target ~onTimer:20
+  - skill{s=L1R_SOWIEDZ_LAPA} @target ~onTimer:10
+  # wolanie mlodych raz, przy 50% HP
+  - skill{s=L1R_SOWIEDZ_WOLA} @self ~onDamaged ?healthpercent{h=<50%}
+  - summon{type=L1R_PAK_DUZY;amount=1;noise=0} @self ~onDeath
+L1R_SOWIEDZ_MLODE:
+  Type: POLAR_BEAR
+  Display: '&cMłode Sowiedzi'
+  Health: 12
+  Damage: 2
+  Options:
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    Age: -1
+    AgeLock: true
+    FollowRange: 20
+    MovementSpeed: 0.3
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  - summon{type=L1R_PAK;amount=1;noise=0} @self ~onDeath

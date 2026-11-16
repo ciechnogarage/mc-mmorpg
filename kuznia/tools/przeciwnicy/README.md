@@ -56,3 +56,32 @@ Pniaczek (rój), Korowiec (garda z przodu → obejście), Purchawka; potem stroj
 Obrona w MythicLib jest dziś płaska (`#damage# - #defense#`), a klasy obronne mają ~26 obrony. Przy tej formule przeciwnicy Gaju
 nie zadaliby im nic. Otwarta zmiana: `#damage# * 50 / (50 + #defense#)` (malejące zwroty). Obrażenia strojone tu (bez klas,
 bez zbroi) są liczbami SUROWYMI; ostatecznie dostroić po decyzji o formule i pomiarze klas na poligonie.
+
+## Loch 001 remake — przeciwnicy L1R_* (16.11)
+Karta: `docs/lochy/akt1-v2/10-loch-001-kwietna-polana.md` (§0 protokół pąków R1, §5 bestiariusz, §13).
+- `przeciwnicy_l001.py` → `kuznia/levels/przeciwnicy/Przeciwnicy_L001{,_skills}.yml` (13 mobów L1R_*; Wilk/Korzeniak/Łucznik
+  to kopie Gaju v8 + pąk przy śmierci, więc na klon wgraj też `Przeciwnicy_Gaj_skills.yml`).
+- `arena_l001.js` (bot BASTION poz. 2, MIECZ_KAMIENNY, klon bez kreatora, difficulty easy, obrona MythicLib `#damage# * 50 / (50 + #defense#)` jak world1):
+  `run.sh <klon> arena_l001.js pak` (8 sprawdzeń R1), `… garda` (Korowiec), `… walka <MOB> nieuwazny|uwazny [POWT] [debug]`.
+
+Pułapki znalezione na klonie (MM 5.11.2, Paper 1.21.11, 16.11):
+- `Baby: true` na HUSK nie działa (`IsBaby 0b`); `data merge entity <caster.uuid> {IsBaby:1b}` przy `~onSpawn` działa. Na POLAR_BEAR: `Age: -1` + `AgeLock`.
+- Nośnik pąka NIE może być ARMOR_STAND (odporny na `damage … generic`, cios gracza nie wołał `~onDeath`). Jest: mały niewidzialny ZOMBIE NoAI, HP 1, kwiat na głowie, tag `l1r_pak`/`l1r_pak_duzy`.
+- Opóźniony łańcuch (`delay`) biegnie dalej po śmierci rzucającego — `/kill` pąka i tak dawał Pniaczka. Bezpiecznik: `caster.dojrzewa=0` w `~onDeath` + warunek przy summon.
+- `modifydamage{a=-0.8;action=COMPOUND_MULTIPLIER}` dawało UJEMNE obrażenia (leczyło). ×0,2 = `a=0.2;action=ADDITIVE_MULTIPLIER;sync=true`.
+- Bot: wrogów rozpoznawaj po typie i `metadata[2]` (custom_name), bo `text_display` (paski MM) przechodził filtr i bot go bił; pąk rozpoznawaj po nazwie — wyposażenie przychodzi osobnym pakietem później.
+
+Wyniki 16.11 (seria 2, 3 walki na wroga i styl, utracone HP, gracz ~28 HP; limit walki 75 s):
+
+| Wróg | nieuważny: HP / czas / zgony | uważny: HP / czas / zgony | uwagi |
+|---|---|---|---|
+| Wilk | 9,0 / 75 s (limit) / 0 | 2,3 / 9 s / 0 | nieuważny nie depcze → pętla Pniaczek→pąk→Pniaczek |
+| Korzeniak | 9,0 / 13 s / 0 | 0 / 13 s / 0 | |
+| Łucznik | 2,7 / 75 s (limit) / 0 | 1,8 / 27 s / 0 | solo niska stawka (jak Gaj v8); groźny ma być pozycją |
+| Siewca | 5,5 / 75 s (limit) / 0 | 0 / 9 s / 0 | pąk Siewcy = 3 Pniaczki |
+| Korowiec | 22,2 / 17 s / 0 | 0 / 28 s / 0 | garda ×0,16 z przodu, odsłona po ciosie = pełne obrażenia |
+| Sowiedź | 29,4 / 16 s / **3/3** | 0 / 22 s / 0 | nieuważny zawsze ginie |
+
+Garda (`… garda`, 4 ciosy): przód 1,2 HP, tył 7,5, przód 1,2 s po zapowiedzi ciosu 6,0. Pąki (`… pak`) 8/8 PASS.
+Koszt (klon, 12 pąków + 14 Pniaczków + 2 Kotwy + Sowiedź): MSPT śr. 0,3 → 0,6 ms, szczyt 10 ms przy masowym przywołaniu.
+Nie sprawdzone: limit 12 pąków na instancję (kolejka), boss Strażnik Sadu, ataki w grupie, prawdziwy gracz (klient QA).
