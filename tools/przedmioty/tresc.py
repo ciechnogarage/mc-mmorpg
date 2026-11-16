@@ -96,6 +96,10 @@ RODZAJE = {
  'kostur_dwureczny': ('GREATSTAFF', 6.0, 0.45, 0.9, True, {'magic-damage': (10, 0.7)}, ['STICK', 'BAMBOO', 'BLAZE_ROD', 'BREEZE_ROD', 'END_ROD'], 'kostury dwuręczne'),
  'totem':            ('TALISMAN', None, 0, None, False, {'skill-damage': (8, 0.5), 'max-mana': (5, 0.5)}, ['BONE', 'BONE', 'SKELETON_SKULL', 'GOAT_HORN', 'WITHER_SKELETON_SKULL'], 'totemy'),
  'filakterium':      ('FILAKTERIUM', None, 0, None, False, {'magic-damage': (4, 0.4), 'max-mana': (5, 0.5), 'spell-vampirism': (1, 0.1)}, ['BONE_MEAL', 'DECORATED_POT', 'SKELETON_SKULL', 'SCULK_CATALYST', 'WITHER_SKELETON_SKULL'], 'filakteria'),
+ # B13 (paczka B 25.10): berło = druga wspólna broń akolity (grupa biegłości 'bulawa', jak różdżka w grupie
+ # 'kostur' maga). Akolita miał 2 rodzaje broni (buława + rasowa), inne archetypy 3: lekki akolita (Wyrocznia,
+ # Pasterz Ciszy, Kapłan Krwi) do 10 poz. widział 10 broni wobec 15. Słabszy cios, premia do obrażeń umiejętności.
+ 'berlo':            ('HAMMER', 4.0, 0.30, 1.2, False, {'skill-damage': (3, 0.15)}, ['WOODEN_SHOVEL', 'GOLDEN_SHOVEL', 'GOLDEN_SHOVEL', 'DIAMOND_SHOVEL', 'NETHERITE_SHOVEL'], 'berła'),
  'bulawa':           ('HAMMER', 5.5, 0.45, 1.2, False, {}, ['STONE_SHOVEL', 'IRON_SHOVEL', 'IRON_SHOVEL', 'DIAMOND_SHOVEL', 'MACE'], 'buławy'),
  'tarcza':           ('SHIELD', None, 0, None, False, {'armor': (2, 0.2), 'block-power': (30, 1.0), 'block-rating': (10, 1.0)}, ['SHIELD'] * 5, 'tarcze'),
  'sierp':            ('SIERP', 5.0, 0.40, 1.6, False, {'critical-strike-chance': (3, 0.1)}, ['IRON_HOE', 'IRON_HOE', 'GOLDEN_HOE', 'DIAMOND_HOE', 'NETHERITE_HOE'], 'sierpy'),
@@ -103,14 +107,14 @@ RODZAJE = {
  'kosa':             ('KOSA', 11.9, 0.95, 1.0, True, {'lifesteal': (1, 0.1)}, ['IRON_HOE', 'IRON_HOE', 'DIAMOND_HOE', 'DIAMOND_HOE', 'NETHERITE_HOE'], 'kosy'),
 }
 # grupa bieglosci dla rodzaju (rozdzka i kostur to jedna grupa "kostur")
-GRUPA = {'rozdzka': 'kostur'}
+GRUPA = {'rozdzka': 'kostur', 'berlo': 'bulawa'}
 
 # archetyp: wspolne rodzaje + 4 rodzaje rasowe (czlowiek, elf, ork, nieumarly) — decyzja wlasciciela 29.09
 BRON_ARCH = {
  'woj': (['miecz'], ['drzewcowa', 'klinga', 'topor', 'miecz_dwureczny']),
  'nin': (['sztylet', 'luk'], ['kusza', 'luk_dlugi', 'wlocznia', 'lancuch']),
  'mag': (['rozdzka', 'kostur'], ['grimuar', 'kostur_dwureczny', 'totem', 'filakterium']),
- 'ako': (['bulawa'], ['tarcza', 'sierp', 'mlot_dwureczny', 'kosa']),
+ 'ako': (['bulawa', 'berlo'], ['tarcza', 'sierp', 'mlot_dwureczny', 'kosa']),
 }
 RASA_RODZAJU = {'drzewcowa': 'Człowiek', 'klinga': 'Elf', 'topor': 'Ork', 'miecz_dwureczny': 'Nieumarły',
                 'kusza': 'Człowiek', 'luk_dlugi': 'Elf', 'wlocznia': 'Ork', 'lancuch': 'Nieumarły',
@@ -129,6 +133,7 @@ NAZWY_BRONI = {
  'luk_dlugi': [('Łuk długi', 'm'), ('Łuk z cisu', 'm'), ('Łuk wierzbowy', 'm'), ('Łuk z rogu', 'm'), ('Łuk księżyca', 'm')],
  'wlocznia': [('Oszczep myśliwski', 'm'), ('Włócznia stepowa', 'f'), ('Dzida', 'f'), ('Włócznia z kości', 'f'), ('Grot stepowy', 'm')],
  'lancuch': [('Łańcuch więzienny', 'm'), ('Kiścień', 'm'), ('Łańcuch z hakiem', 'm'), ('Łańcuch żałobny', 'm'), ('Okowy ciszy', 'p')],
+ 'berlo': [('Berło nowicjusza', 'n'), ('Kropidło', 'n'), ('Berło pielgrzyma', 'n'), ('Buzdygan kapłański', 'm'), ('Berło relikwiarza', 'n')],
  'rozdzka': [('Różdżka z leszczyny', 'f'), ('Różdżka runiczna', 'f'), ('Różdżka iskier', 'f'), ('Różdżka szronu', 'f'), ('Berło adepta', 'n')],
  'kostur': [('Kostur wędrowca', 'm'), ('Kostur runiczny', 'm'), ('Kostur żaru', 'm'), ('Kostur burzy', 'm'), ('Laska arcymaga', 'f')],
  'grimuar': [('Księga zaklęć', 'f'), ('Grimuar żywiołów', 'm'), ('Kodeks wieży', 'm'), ('Foliał czasu', 'm'), ('Księga świtu', 'f')],

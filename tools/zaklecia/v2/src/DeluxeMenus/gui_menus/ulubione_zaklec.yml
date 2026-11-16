@@ -1,6 +1,6 @@
 # Szybkie ulubione (Shift + Q), jak Q w Skyrimie. Widac tylko zaklecia z gwiazdka (Ksiega: Shift+LPM).
 # LPM = prawa dlon, PPM = lewa. Tytul (glif panelu + znaki przesuniecia) wpisuje wpnij_menu.py z hub_umiejetnosci.
-menu_title: 'Ulubione zaklęcia'
+menu_title: '&f䄐&fUlubione zaklęcia'
 size: 27
 update_interval: 1
 items:

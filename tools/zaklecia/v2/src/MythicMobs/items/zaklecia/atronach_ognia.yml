@@ -8,7 +8,7 @@ ZAKLECIE_ATRONACH_OGNIA:
   - '<!i><#ffcf6b>PPM: ładuj i puść · LPM: klik — ładuje i strzela'
   - '<!i><#ffcf6b>PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
   - '<!i><gray>Jeden przywołaniec łącznie; nowy zastępuje starego.'
-  - '<!i><gray>Koszt testowy: <#6ab4ff>3 many'
+  - '<!i><gray>Koszt: <#6ab4ff>3 many'
   - '<!i><dark_gray>TODO grafika: tymczasowy model dłoni'
   Options:
     ItemModel: zaklecia:atronach_ognia

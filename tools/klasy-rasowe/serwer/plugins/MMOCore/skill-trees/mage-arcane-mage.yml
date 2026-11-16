@@ -1,0 +1,423 @@
+# Drzewko archetypu (paczka B naprawy klas, 25.10). Źródło: tools/klasy-rasowe/serwer/plugins/MMOCore/skill-trees/.
+# Układ węzłów = rogue-marksman.yml (łańcuch 21 węzłów od a1). Bez COOLDOWN_REDUCTION (sufit CDR: README serwer/).
+id: 'mage-arcane-mage'
+name: '&5Mag'
+type: CUSTOM
+lore:
+  - '&6Dla maga: moc i studnia many'
+max-point-spent: 21
+
+icon:
+  material: BLAZE_ROD
+  item_flags: [HIDE_ATTRIBUTES]
+
+nodes:
+
+#### A
+  a1:
+    name: 'Moc arkanów I'
+    coordinates:
+      x: -3
+      y: 0
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia magiczne: &a+2%"
+      1:
+        - "&7Obrażenia magiczne: &a+2%"
+  a2:
+    name: 'Moc arkanów II'
+    coordinates:
+      x: -2
+      y: 0
+
+    parents:
+      strong:
+        a1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia magiczne: &a+3%"
+      1:
+        - "&7Obrażenia magiczne: &a+3%"
+  a3:
+    name: 'Moc arkanów III'
+    coordinates:
+      x: -1
+      y: 0
+
+    parents:
+      strong:
+        a2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia magiczne: &a+5%"
+      1:
+        - "&7Obrażenia magiczne: &a+5%"
+
+#### B
+  b1:
+    name: 'Głęboka studnia I'
+    coordinates:
+      x: -1
+      y: -1
+
+    parents:
+      strong:
+        a3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_MANA";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalna mana: &a+3"
+      1:
+        - "&7Maksymalna mana: &a+3"
+  b2:
+    name: 'Głęboka studnia II'
+    coordinates:
+      x: -1
+      y: -2
+
+    parents:
+      strong:
+        b1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_MANA";amount=4;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalna mana: &a+4"
+      1:
+        - "&7Maksymalna mana: &a+4"
+  b3:
+    name: 'Głęboka studnia III'
+    coordinates:
+      x: 0
+      y: -2
+
+    parents:
+      strong:
+        b2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_MANA";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalna mana: &a+5"
+      1:
+        - "&7Maksymalna mana: &a+5"
+
+#### C
+  c1:
+    name: 'Przypływ many I'
+    coordinates:
+      x: 1
+      y: -2
+
+    parents:
+      strong:
+        b3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MANA_REGENERATION";amount=0.1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja many: &a+0,1/s"
+      1:
+        - "&7Regeneracja many: &a+0,1/s"
+  c2:
+    name: 'Przypływ many II'
+    coordinates:
+      x: 2
+      y: -2
+
+    parents:
+      strong:
+        c1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MANA_REGENERATION";amount=0.15;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja many: &a+0,15/s"
+      1:
+        - "&7Regeneracja many: &a+0,15/s"
+  c3:
+    name: 'Przypływ many III'
+    coordinates:
+      x: 3
+      y: -2
+
+    parents:
+      strong:
+        c2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MANA_REGENERATION";amount=0.25;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja many: &a+0,25/s"
+      1:
+        - "&7Regeneracja many: &a+0,25/s"
+
+#### D
+  d1:
+    name: 'Krytyczne zaklęcie I'
+    coordinates:
+      x: 3
+      y: -1
+
+    parents:
+      strong:
+        c3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na krytyk umiejętności: &a+2%"
+      1:
+        - "&7Szansa na krytyk umiejętności: &a+2%"
+  d2:
+    name: 'Krytyczne zaklęcie II'
+    coordinates:
+      x: 4
+      y: -1
+
+    parents:
+      strong:
+        d1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na krytyk umiejętności: &a+3%"
+      1:
+        - "&7Szansa na krytyk umiejętności: &a+3%"
+  d3:
+    name: 'Krytyczne zaklęcie III'
+    coordinates:
+      x: 4
+      y: 0
+
+    parents:
+      strong:
+        d2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na krytyk umiejętności: &a+5%"
+      1:
+        - "&7Szansa na krytyk umiejętności: &a+5%"
+
+#### E
+  e1:
+    name: 'Osłona arkanów I'
+    coordinates:
+      x: 4
+      y: 1
+
+    parents:
+      strong:
+        d3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na magię: &a+2%"
+      1:
+        - "&7Odporność na magię: &a+2%"
+  e2:
+    name: 'Osłona arkanów II'
+    coordinates:
+      x: 4
+      y: 2
+
+    parents:
+      strong:
+        e1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na magię: &a+3%"
+      1:
+        - "&7Odporność na magię: &a+3%"
+  e3:
+    name: 'Osłona arkanów III'
+    coordinates:
+      x: 3
+      y: 2
+
+    parents:
+      strong:
+        e2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na magię: &a+5%"
+      1:
+        - "&7Odporność na magię: &a+5%"
+
+#### F
+  f1:
+    name: 'Wytrwałość uczonego I'
+    coordinates:
+      x: 2
+      y: 2
+
+    parents:
+      strong:
+        e3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalne zdrowie: &a+1"
+      1:
+        - "&7Maksymalne zdrowie: &a+1"
+  f2:
+    name: 'Wytrwałość uczonego II'
+    coordinates:
+      x: 2
+      y: 1
+
+    parents:
+      strong:
+        f1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalne zdrowie: &a+2"
+      1:
+        - "&7Maksymalne zdrowie: &a+2"
+  f3:
+    name: 'Wytrwałość uczonego III'
+    coordinates:
+      x: 1
+      y: 1
+
+    parents:
+      strong:
+        f2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="MAX_HEALTH";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Maksymalne zdrowie: &a+3"
+      1:
+        - "&7Maksymalne zdrowie: &a+3"
+
+#### G
+  g1:
+    name: 'Pijawka zaklęć I'
+    coordinates:
+      x: 0
+      y: 1
+
+    parents:
+      strong:
+        f3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SPELL_VAMPIRISM";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Wampiryzm czarów: &a+1%"
+      1:
+        - "&7Wampiryzm czarów: &a+1%"
+  g2:
+    name: 'Pijawka zaklęć II'
+    coordinates:
+      x: 0
+      y: 2
+
+    parents:
+      strong:
+        g1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SPELL_VAMPIRISM";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Wampiryzm czarów: &a+1%"
+      1:
+        - "&7Wampiryzm czarów: &a+1%"
+  g3:
+    name: 'Pijawka zaklęć III'
+    coordinates:
+      x: -1
+      y: 2
+
+    parents:
+      strong:
+        g2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="SPELL_VAMPIRISM";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Wampiryzm czarów: &a+2%"
+      1:
+        - "&7Wampiryzm czarów: &a+2%"

@@ -1,3 +1,4 @@
+# 2026-10-25 (audyt A3/A11): cios sługi zadaje właściciel (AKO_Sluga_Cios w Akolita_Slugi_skills.yml): EXP/łup dla gracza, skaluje Wiara.
 SPEC_WILK_STEPU:
   Type: "WOLF"
   Display: "&7Wilk Stepu"
@@ -21,6 +22,8 @@ SPEC_WILK_STEPU:
   - "2 ownertarget"
   Skills:
   - "skill{s=SpecSlugaKoniec10} @self ~onSpawn"
+  - "setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer"
 SPEC_PRZODEK:
   Type: "ZOMBIFIED_PIGLIN"
   Display: "&cPrzodek Pobojowiska"
@@ -45,6 +48,8 @@ SPEC_PRZODEK:
   Skills:
   - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
   - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+  - "setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer"
 SPEC_SLUGA_KURHANU:
   Type: "SKELETON"
   Display: "&7Głos Kurhanu"
@@ -70,6 +75,8 @@ SPEC_SLUGA_KURHANU:
   Skills:
   - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
   - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+  - "setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer"
 SPEC_WILK_STEPU_BRON:
   Type: "WOLF"
   Display: "&7Wilk Stepu"
@@ -93,6 +100,8 @@ SPEC_WILK_STEPU_BRON:
   - "2 ownertarget"
   Skills:
   - "skill{s=SpecSlugaKoniec10} @self ~onSpawn"
+  - "setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer"
 SPEC_PRZODEK_BRON:
   Type: "ZOMBIFIED_PIGLIN"
   Display: "&cPrzodek Pobojowiska"
@@ -117,6 +126,8 @@ SPEC_PRZODEK_BRON:
   Skills:
   - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
   - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+  - "setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer"
 SPEC_SLUGA_KURHANU_BRON:
   Type: "SKELETON"
   Display: "&7Głos Kurhanu"
@@ -142,3 +153,5 @@ SPEC_SLUGA_KURHANU_BRON:
   Skills:
   - "skill{s=SpecSlugaKoniec12} @self ~onSpawn"
   - "skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO"
+  - "setvariable{var=caster.ako_dmg;type=DOUBLE;value=3} @self ~onSpawn"
+  - "skill{s=AKO_Sluga_Cios;sync=true} @trigger ~onAttack ?~!isplayer"

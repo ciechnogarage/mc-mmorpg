@@ -1,9 +1,16 @@
 # ETAP 2 (prototyp): +1 Dusza dla każdego akolity w promieniu 16 bloków od śmierci moba (MythicMobs ~onKill sługi
 # się nie odpala — zmierzone 30.09 — więc liczymy śmierć, nie zabójcę). Śmierć gracza pomijana (osobna reguła później).
-# Warunek "czy to akolita" sprawdza vanilla na GRACZU (tag arch_ako z klasa_archetyp_*): PAPI w warunku CoreTools
-# liczy się dla martwego moba, nie dla celu z @PlayersInRadius (zmierzone 30.09).
+# Warunek "czy to akolita" sprawdza vanilla na GRACZU (tag arch_ako z klasa_archetyp_*): PAPI w warunku SKRYPTU CoreTools
+# liczy się dla martwego moba, nie dla celu z @PlayersInRadius (zmierzone 30.09). Warunek MECHANIKI !t{...} liczy PAPI
+# dla CELU (docs: scripting-mechanic_conditions.md; zmierzone na klonie 25.10) i tym sprawdzamy "pula pełna".
+#
+# F10 (25.10): przy pełnej puli (Dusze == max) MMOCore po cichu ucina +1 i gracz widział "zabiłem i nic". Przyczyna
+# zmierzona na klonie (25 zabójstw, wlasne i sługi): pula < max -> +1 za każde zabójstwo, pula = max -> 0, bez śladu.
+# D6 (domyślnie TAK): komunikat w action barze. WYŁĄCZNIK: zakomentuj JEDNĄ linię "D6" niżej i /coretools reload.
 akolita_dusze_smierc:
   Conditions:
   - Comparator{v1="{caster_type}";v2="player";op="!="} true
   Mechanics:
   - command{c="execute if entity @a[name={target_name},tag=arch_ako] run mmocore admin resource-mana give {target_name} 1"} @PlayersInRadius{r=16}
+  # D6 (wyłącznik: zakomentuj tę linię)
+  - command{c="execute if entity @a[name={target_name},tag=arch_ako] run minecraft:title {target_name} actionbar {text:'Dusze pełne',color:gray}"} @PlayersInRadius{r=16} !t{c="Comparator{v1="%mmocore_mana%";v2="%mmocore_stat_max_mana%";op=">="} true"}

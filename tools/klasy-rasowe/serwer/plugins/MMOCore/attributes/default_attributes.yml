@@ -1,0 +1,44 @@
+#####################################
+# Atrybuty gracza (etap 0 przebudowy klas, 2026-09-29; plan: strona Xy7cJTFt)
+#####################################
+# Id zostają angielskie (strength/dexterity/intelligence siedzą w danych graczy), nazwy są polskie.
+# Każdy archetyp ma swój główny atrybut: wojownik Siła, ninja Zręczność, mag Intelekt, akolita Wiara.
+# Przedmioty MMOItems wymagają ich jako required-strength / -dexterity / -intelligence / -wiara
+# (generator przedmiotów tools/przedmioty/). NOWY atrybut = RESTART serwera (MMOItems rejestruje
+# statystyki required-<atrybut> tylko przy starcie).
+# Wygląd okna: gui/attribute-view.yml — każdy nowy bonus dopisać też tam.
+
+strength:
+    name: Siła
+    max-points: 40
+    buff:
+        weapon_damage: 2
+        max_health: 1%
+
+dexterity:
+    name: Zręczność
+    max-points: 40
+    buff:
+        physical_damage: 1.5 # procentowa
+        projectile_damage: 1 # procentowa
+        attack_speed: 0.5%
+
+intelligence:
+    name: Intelekt
+    max-points: 40
+    buff:
+        magic_damage: 2 # procentowa
+        # B4 (paczka B 25.10): 1 -> 0.5; 10 pkt INT w Akcie 1 = 5% (limit CDR 35% w MythicLib/stats.yml)
+        cooldown_reduction: 0.5 # procentowa
+
+# Wiara (D3, 2026-09-29): moc umiejętności i pula zasobu akolity (Dusze w etapie 2 — wtedy bonusy
+# do przeglądu). skill_damage to procentowa statystyka MythicLib (SKILL_DAMAGE).
+# B7 (paczka B 25.10): max_mana 0.5 płasko -> 1% (RELATIVE, zapis jak attack_speed: 0.5% wyżej). Płasko 40 pkt
+# dawało +20 do puli: Dusze akolity 10 -> 30 (x3), a mana maga 40 -> 60. Procent skaluje każdy zasób tak samo:
+# 40 pkt = +40% (Dusze 10 -> 14, mana 40 -> 56).
+wiara:
+    name: Wiara
+    max-points: 40
+    buff:
+        skill_damage: 1.5
+        max_mana: 1%

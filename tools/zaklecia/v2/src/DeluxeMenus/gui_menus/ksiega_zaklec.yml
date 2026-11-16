@@ -1,267 +1,223 @@
-# Ksiega zaklec: przypisanie zaklecia do dloni (Skyrim). Wejscie: hub_umiejetnosci, slot 22.
-# LPM = prawa dlon (slot paska), PPM = lewa dlon (druga reka). Menu zostaje otwarte — widac zmiane w pasku.
-# Komendy jako konsola: gracz nie ma uprawnienia zaklecia.admin i nie ma go miec.
-menu_title: '&f䄐&fKsięga zaklęć'
-size: 27
-update_interval: 1
+# Wygenerowane przez strony/siatka/siatka.py; źródłowe pozycje zachowane.
+menu_title: '&f䩄䩅䩆䩇'
+size: 54
+update_interval: 5
 items:
 
   'uzdrowienie_innego':
     material: TRIAL_KEY
     item_model: 'zaklecia:uzdrowienie_innego'
-    update: true
-    slot: 3
-    display_name: '&a&lUzdrowienie innego'
+    slot: 14
+    display_name: '&a&lUzdrowienie innego &e%zaklecia_ulubione_uzdrowienie_innego%'
     lore:
       - '&8Przywracanie · Ładowane'
       - ''
       - '&7Wskazana niewroga istota · 6 bloków · 8 HP · 2 many'
       - '&7Oburącz: leczenie ×2,2; mana ×2,8.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_uzdrowienie_innego%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% uzdrowienie_innego prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% uzdrowienie_innego lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% uzdrowienie_innego'
+      - '[refresh]'
 
   'zasklepienie_ran':
     material: TRIAL_KEY
     item_model: 'zaklecia:zasklepienie_ran'
-    update: true
-    slot: 4
-    display_name: '&a&lZasklepienie ran'
+    slot: 15
+    display_name: '&a&lZasklepienie ran &e%zaklecia_ulubione_zasklepienie_ran%'
     lore:
       - '&8Przywracanie · Ładowane'
       - ''
       - '&7Siebie · 12 HP · 3 many'
       - '&7Oburącz: leczenie ×2,2; mana ×2,8.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_zasklepienie_ran%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% zasklepienie_ran prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% zasklepienie_ran lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% zasklepienie_ran'
+      - '[refresh]'
 
   'wielkie_uzdrowienie':
     material: TRIAL_KEY
     item_model: 'zaklecia:wielkie_uzdrowienie'
-    update: true
-    slot: 5
-    display_name: '&a&lWielkie uzdrowienie'
+    slot: 16
+    display_name: '&a&lWielkie uzdrowienie &e%zaklecia_ulubione_wielkie_uzdrowienie%'
     lore:
       - '&8Przywracanie · Ładowane'
       - ''
       - '&7Siebie i sojusznicy · 5 bloków · 16 HP · 5 many'
       - '&7Oburącz: leczenie ×2,2; mana ×2,8.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_wielkie_uzdrowienie%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% wielkie_uzdrowienie prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% wielkie_uzdrowienie lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% wielkie_uzdrowienie'
+      - '[refresh]'
 
   'plomienie':
     material: TRIAL_KEY
     item_model: 'zaklecia:plomienie'
-    update: true
-    slot: 11
-    display_name: '&6&lPłomienie'
+    slot: 23
+    display_name: '&6&lPłomienie &e%zaklecia_ulubione_plomienie%'
     lore:
       - '&8Zniszczenie · Nowicjusz'
       - ''
       - '&7Strumień ognia z dłoni.'
-      - '&78 obrażeń/s · 1 many/s · 6 bloków'
+      - '&78 obrażeń/s · 4 many/s · 6 bloków'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_plomienie%'
-      - '&8W obu dłoniach: podwójne rzucanie.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% plomienie prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% plomienie lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% plomienie'
+      - '[refresh]'
 
   'odmrozenie':
     material: TRIAL_KEY
     item_model: 'zaklecia:odmrozenie'
-    update: true
-    slot: 15
-    display_name: '&b&lOdmrożenie'
+    slot: 24
+    display_name: '&b&lOdmrożenie &e%zaklecia_ulubione_odmrozenie%'
     lore:
       - '&8Zniszczenie · Nowicjusz'
       - ''
       - '&7Lodowaty podmuch, spowalnia cel.'
-      - '&77 obrażeń/s · 1 many/s · 6 bloków'
+      - '&77 obrażeń/s · 5 many/s · 6 bloków'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_odmrozenie%'
-      - '&8W obu dłoniach: podwójne rzucanie.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% odmrozenie prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% odmrozenie lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% odmrozenie'
+      - '[refresh]'
 
   'ognisty_pocisk':
     material: TRIAL_KEY
     item_model: 'zaklecia:ognisty_pocisk'
-    update: true
-    slot: 10
-    display_name: '&6&lOgnisty pocisk'
+    slot: 25
+    display_name: '&6&lOgnisty pocisk &e%zaklecia_ulubione_ognisty_pocisk%'
     lore:
       - '&8Ładowane / runa · Nowicjusz'
       - ''
       - '&7Pocisk · 8 t ładowania · 3 many'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_ognisty_pocisk%'
       - '&8Oburącz: efekt ×2,2; mana ×2,8.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% ognisty_pocisk prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% ognisty_pocisk lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% ognisty_pocisk'
+      - '[refresh]'
 
   'kula_ognia':
     material: TRIAL_KEY
     item_model: 'zaklecia:kula_ognia'
-    update: true
-    slot: 12
-    display_name: '&6&lKula ognia'
+    slot: 32
+    display_name: '&6&lKula ognia &e%zaklecia_ulubione_kula_ognia%'
     lore:
       - '&8Ładowane / runa · Nowicjusz'
       - ''
       - '&7Wybuch 3 bloki · 14 t · 5 many'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_kula_ognia%'
       - '&8Oburącz: efekt ×2,2; mana ×2,8.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% kula_ognia prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% kula_ognia lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% kula_ognia'
+      - '[refresh]'
 
   'leczenie':
     material: TRIAL_KEY
     item_model: 'zaklecia:leczenie'
-    update: true
-    slot: 14
-    display_name: '&a&lLeczenie'
+    slot: 33
+    display_name: '&a&lLeczenie &e%zaklecia_ulubione_leczenie%'
     lore:
       - '&8Koncentracja · Nowicjusz'
       - ''
-      - '&7Koncentracja Self · 0,5 many / 0,5 s'
+      - '&7Koncentracja Self · 3 many/s'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_leczenie%'
       - '&8Oburącz: efekt ×2,2; mana ×2,8.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% leczenie prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% leczenie lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% leczenie'
+      - '[refresh]'
 
   'runa_ognia':
     material: TRIAL_KEY
     item_model: 'zaklecia:runa_ognia'
-    update: true
-    slot: 16
-    display_name: '&6&lRuna ognia'
+    slot: 34
+    display_name: '&6&lRuna ognia &e%zaklecia_ulubione_runa_ognia%'
     lore:
       - '&8Ładowane / runa · Nowicjusz'
       - ''
       - '&7Runa 60 s · promień 2 · 6 many'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_runa_ognia%'
       - '&8Oburącz: efekt ×2,2; mana ×2,8.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% runa_ognia prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% runa_ognia lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% runa_ognia'
+      - '[refresh]'
 
   'oslona':
     material: TRIAL_KEY
     item_model: 'zaklecia:oslona'
-    update: true
-    slot: 22
-    display_name: '&b&lOsłona'
+    slot: 41
+    display_name: '&b&lOsłona &e%zaklecia_ulubione_oslona%'
     lore:
       - '&8Koncentracja · Nowicjusz'
       - ''
       - '&7Siła 40 · magia 60% · ciosy 30%'
       - '&7Najlepiej chroni przed magią.'
-      - '&70,5 many / 0,5 s'
+      - '&73 many/s'
       - ''
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_oslona%'
       - '&8Oburącz: efekt ×2,2; mana ×2,8.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% oslona prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% oslona lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% oslona'
+      - '[refresh]'
 
   'przywolany_miecz':
     material: TRIAL_KEY
     item_model: 'zaklecia:przywolany_miecz'
-    update: true
-    slot: 19
-    display_name: '&d&lPrzywołany miecz'
+    slot: 42
+    display_name: '&d&lPrzywołany miecz &e%zaklecia_ulubione_przywolany_miecz%'
     lore:
       - '&8Przywoływanie · Nowicjusz'
       - ''
@@ -269,123 +225,101 @@ items:
       - '&7Powstaje w dłoni rzucającej; dwa rzuty = dwa miecze.'
       - '&7Lewa to tarcza/ozdoba — nie zadaje ciosów.'
       - '&7Oburącz: jeden w prawej na 240 s.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_przywolany_miecz%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% przywolany_miecz prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% przywolany_miecz lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% przywolany_miecz'
+      - '[refresh]'
 
   'duch_wilka':
     material: TRIAL_KEY
     item_model: 'zaklecia:duch_wilka'
-    update: true
-    slot: 20
-    display_name: '&d&lDuch wilka'
+    slot: 43
+    display_name: '&d&lDuch wilka &e%zaklecia_ulubione_duch_wilka%'
     lore:
       - '&8Przywoływanie · Nowicjusz'
       - ''
       - '&7Wilk · 12 t · 60 s · 3 many'
       - '&7Jeden przywołaniec łącznie z atronachem.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_duch_wilka%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% duch_wilka prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% duch_wilka lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% duch_wilka'
+      - '[refresh]'
 
   'atronach_ognia':
     material: TRIAL_KEY
     item_model: 'zaklecia:atronach_ognia'
-    update: true
-    slot: 21
-    display_name: '&d&lAtronach ognia'
+    slot: 50
+    display_name: '&d&lAtronach ognia &e%zaklecia_ulubione_atronach_ognia%'
     lore:
       - '&8Przywoływanie · Nowicjusz'
       - ''
       - '&7Blaze · 12 t · 60 s · 3 many'
       - '&7Jeden przywołaniec łącznie z wilkiem.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_atronach_ognia%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% atronach_ognia prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% atronach_ognia lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% atronach_ognia'
+      - '[refresh]'
 
   'leczenie_dloni':
     material: TRIAL_KEY
     item_model: 'zaklecia:leczenie_dloni'
-    update: true
-    slot: 23
-    display_name: '&d&lLeczenie dłoni'
+    slot: 51
+    display_name: '&d&lLeczenie dłoni &e%zaklecia_ulubione_leczenie_dloni%'
     lore:
       - '&8Przywracanie · Nowicjusz'
       - ''
-      - '&7Niewroga istota · 6 bloków · 0,5 many / 0,5 s'
+      - '&7Niewroga istota · 6 bloków · 3 many/s'
       - '&7Mana ubywa także bez celu.'
       - '&7Nie działa na nieumarłych, atronachy i golemy.'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa dłoń (trzymaj) · LPM — prawa dłoń (klik włącza/wyłącza)'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_leczenie_dloni%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% leczenie_dloni prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% leczenie_dloni lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% leczenie_dloni'
+      - '[refresh]'
 
   'uspokojenie':
     material: TRIAL_KEY
     item_model: 'zaklecia:uspokojenie'
-    update: true
-    slot: 24
-    display_name: '&d&lUspokojenie'
+    slot: 52
+    display_name: '&d&lUspokojenie &e%zaklecia_ulubione_uspokojenie%'
     lore:
       - '&8Iluzja · Nowicjusz'
       - ''
       - '&7Wróg ≤ 9 (oburącz ≤ 19) · 15 s · 3 many'
-      - '&eLPM &7— do prawej dłoni'
-      - '&ePPM &7— do lewej dłoni'
-      - '&7PPM — lewa · LPM — prawa'
-      - '&7PPM: ładuj i puść · LPM: klik — ładuje i strzela'
-      - '&7PPM + klik LPM — obie · zmiana zaklęć: Shift+Q'
-      - '&eShift+LPM &7— ulubione &e%zaklecia_ulubione_uspokojenie%'
-      - '&8TODO grafika: tymczasowa ikona.'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% uspokojenie prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% uspokojenie lewa'
+      - '[refresh]'
     shift_left_click_commands:
       - '[console] zaklecia ulubione %player_name% uspokojenie'
+      - '[refresh]'
 
-  'puste':
+  'dlon_prawa':
     material: GLASS_PANE
+    item_model: '%zaklecia_prawa_model%'
     update: true
-    slot: 13
+    slot: 37
     display_name: '&f&lTwoje dłonie'
     lore:
       - '&7Prawa: &f%zaklecia_prawa%'
@@ -400,19 +334,36 @@ items:
       - '&ePPM &7— opróżnij lewą dłoń'
     left_click_commands:
       - '[console] zaklecia przypisz %player_name% nic prawa'
+      - '[refresh]'
     right_click_commands:
       - '[console] zaklecia przypisz %player_name% nic lewa'
+      - '[refresh]'
 
-  'wstecz':
-    material: nexo-hub_wstecz
-    slot: 18
-    display_name: '&7Wstecz'
+  'dlon_lewa':
+    material: GLASS_PANE
+    item_model: '%zaklecia_lewa_model%'
+    update: true
+    slot: 38
+    display_name: '&f&lTwoje dłonie'
+    lore:
+      - '&7Prawa: &f%zaklecia_prawa%'
+      - '&7Lewa: &f%zaklecia_lewa%'
+      - ''
+      - '&eSterowanie w Księdze'
+      - '&7LPM: przypisz prawej · PPM: przypisz lewej'
+      - '&7Shift+LPM: przełącz ulubione'
+      - '&eSterowanie w grze'
+      - '&7PPM: lewa (trzymaj) · LPM: prawa (klik)'
+      - '&7PPM + LPM: obie · Shift+Q: szybki wybór'
+      - '&7Czary ładowane: puść PPM albo kliknij LPM'
+      - ''
+      - '&7Odłóż zaklęcie z dłoni.'
+      - ''
+      - '&eLPM &7— opróżnij prawą dłoń'
+      - '&ePPM &7— opróżnij lewą dłoń'
     left_click_commands:
-      - '[openguimenu] hub_umiejetnosci'
-
-  'zamknij':
-    material: nexo-hub_zamknij
-    slot: 26
-    display_name: '&c&lZamknij'
-    left_click_commands:
-      - '[close]'
+      - '[console] zaklecia przypisz %player_name% nic prawa'
+      - '[refresh]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% nic lewa'
+      - '[refresh]'

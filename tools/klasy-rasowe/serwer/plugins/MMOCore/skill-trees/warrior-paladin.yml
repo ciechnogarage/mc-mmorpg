@@ -1,0 +1,451 @@
+id: 'warrior-paladin'
+name: '&4Wojownik'
+type: CUSTOM
+lore:
+  - '&6Dla wojowników (akolita ma drzewko Przywoływacza)'
+max-point-spent: 21
+
+icon:
+  material: SHIELD
+  item_flags: [HIDE_ATTRIBUTES]
+  #custom_model_data: 10
+  #custom_model_data_string: 'off_hand'
+  #item_model: 'minecraft:dirt'
+  #tooltip_style: 'myplugin:tooltip_style_1'
+
+nodes:
+
+#### A
+  a1:
+    name: 'Szybkość ataku I'
+    coordinates:
+      x: -1
+      y: 2
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ATTACK_SPEED";amount=5;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Szybkość ataku: &a+5%"
+      1:
+        - "&7Szybkość ataku: &a+5%"
+  a2:
+    name: 'Szybkość ataku II'
+    coordinates:
+      x: -2
+      y: 1
+
+    parents: 
+      strong: 
+        a1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ATTACK_SPEED";amount=10;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Szybkość ataku: &a+10%"
+      1:
+        - "&7Szybkość ataku: &a+10%"
+  a3:
+    name: 'Szybkość ataku III'
+    coordinates:
+      x: -3
+      y: 0
+      
+    parents: 
+      strong: 
+        a2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="ATTACK_SPEED";amount=15;type="RELATIVE"}'
+    lores:
+      0:
+        - "&7Szybkość ataku: &a+15%"
+      1:
+        - "&7Szybkość ataku: &a+15%"
+
+## B
+
+  b1:
+    name: 'Regeneracja zdrowia I'
+    coordinates:
+      x: -2
+      y: -1
+
+    parents: 
+      strong: 
+        a3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja zdrowia: &a+0,1 HP/s"
+      1:
+        - "&7Regeneracja zdrowia: &a+0,1 HP/s"
+  b2:
+    name: 'Regeneracja zdrowia II'
+    coordinates:
+      x: -1
+      y: -2
+
+    parents: 
+      strong: 
+        b1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.15;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja zdrowia: &a+0,15 HP/s"
+      1:
+        - "&7Regeneracja zdrowia: &a+0,15 HP/s"
+  b3:
+    name: 'Regeneracja zdrowia III'
+    coordinates:
+      x: 0
+      y: -2
+      
+    parents: 
+      strong: 
+        b2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.25;type="FLAT"}'
+    lores:
+      0:
+        - "&7Regeneracja zdrowia: &a+0,25 HP/s"
+      1:
+        - "&7Regeneracja zdrowia: &a+0,25 HP/s"
+
+## C
+
+  c1:
+    name: 'Redukcja obrażeń fizycznych I'
+    coordinates:
+      x: 0
+      y: -1
+
+    parents: 
+      strong: 
+        b3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Redukcja obrażeń fizycznych: &a+2%"
+      1:
+        - "&7Redukcja obrażeń fizycznych: &a+2%"
+  c2:
+    name: 'Redukcja obrażeń fizycznych II'
+    coordinates:
+      x: -1
+      y: 0
+
+    parents: 
+      strong: 
+        c1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Redukcja obrażeń fizycznych: &a+3%"
+      1:
+        - "&7Redukcja obrażeń fizycznych: &a+3%"
+  c3:
+    name: 'Redukcja obrażeń fizycznych III'
+    coordinates:
+      x: 0
+      y: 1
+      
+    parents: 
+      strong: 
+        c2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PHYSICAL_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Redukcja obrażeń fizycznych: &a+5%"
+      1:
+        - "&7Redukcja obrażeń fizycznych: &a+5%"
+
+## D
+
+  d1:
+    name: 'Szansa na parowanie I'
+    coordinates:
+      x: 1
+      y: 1
+
+    parents: 
+      strong: 
+        c3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PARRY_RATING";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na parowanie: &a+5%"
+      1:
+        - "&7Szansa na parowanie: &a+5%"
+  d2:
+    name: 'Szansa na parowanie II'
+    coordinates:
+      x: 2
+      y: 1
+
+    parents: 
+      strong: 
+        d1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PARRY_RATING";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na parowanie: &a+5%"
+      1:
+        - "&7Szansa na parowanie: &a+5%"
+  d3:
+    name: 'Szansa na parowanie III'
+    coordinates:
+      x: 2
+      y: 2
+      
+    parents: 
+      strong: 
+        d2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="PARRY_RATING";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na parowanie: &a+5%"
+      1:
+        - "&7Szansa na parowanie: &a+5%"
+
+## E
+
+  e1:
+    name: 'Odporność na odrzut I'
+    coordinates:
+      x: 3
+      y: 2
+
+    parents: 
+      strong: 
+        d3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na odrzut: &a+5%"
+      1:
+        - "&7Odporność na odrzut: &a+5%"
+  e2:
+    name: 'Odporność na odrzut II'
+    coordinates:
+      x: 4
+      y: 2
+
+    parents: 
+      strong: 
+        e1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na odrzut: &a+5%"
+      1:
+        - "&7Odporność na odrzut: &a+5%"
+  e3:
+    name: 'Odporność na odrzut III'
+    coordinates:
+      x: 4
+      y: 1
+      
+    parents: 
+      strong: 
+        e2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Odporność na odrzut: &a+10%"
+      1:
+        - "&7Odporność na odrzut: &a+10%"
+
+## F
+
+  f1:
+    name: 'Szansa na unik I'
+    coordinates:
+      x: 4
+      y: 0
+
+    parents: 
+      strong: 
+        e3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DODGE_RATING";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na unik: &a+2%"
+      1:
+        - "&7Szansa na unik: &a+2%"
+  f2:
+    name: 'Szansa na unik II'
+    coordinates:
+      x: 4
+      y: -1
+
+    parents: 
+      strong: 
+        f1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DODGE_RATING";amount=3;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na unik: &a+3%"
+      1:
+        - "&7Szansa na unik: &a+3%"
+  f3:
+    name: 'Szansa na unik III'
+    coordinates:
+      x: 4
+      y: -2
+      
+    parents: 
+      strong: 
+        f2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="DODGE_RATING";amount=5;type="FLAT"}'
+    lores:
+      0:
+        - "&7Szansa na unik: &a+5%"
+      1:
+        - "&7Szansa na unik: &a+5%"
+
+## G
+
+  g1:
+    name: 'Obrażenia broni I'
+    coordinates:
+      x: 3
+      y: -2
+
+    parents: 
+      strong: 
+        f3: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="WEAPON_DAMAGE";amount=1;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia broni: &a+1%"
+      1:
+        - "&7Obrażenia broni: &a+1%"
+  g2:
+    name: 'Obrażenia broni II'
+    coordinates:
+      x: 2
+      y: -2
+
+    parents: 
+      strong: 
+        g1: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="WEAPON_DAMAGE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia broni: &a+2%"
+      1:
+        - "&7Obrażenia broni: &a+2%"
+  g3:
+    name: 'Obrażenia broni III'
+    coordinates:
+      x: 2
+      y: -1
+      
+    parents: 
+      strong: 
+        g2: 1
+
+    experience-table:
+      first_table_item:
+        triggers:
+          - 'stat{stat="WEAPON_DAMAGE";amount=2;type="FLAT"}'
+    lores:
+      0:
+        - "&7Obrażenia broni: &a+2%"
+      1:
+        - "&7Obrażenia broni: &a+2%"
+
+# This section is to change display options for nodes and paths depending on:
+# - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.
+# - their state: is the node/path unlocked, locked, maxed out... ?
+#
+# All of this is to "hide" the grid pattern of the chest inventory UI and give the
+# impression of a clean 2D skill tree UI.
+#
+# This config section is optional; if you do not provide it the one provided in the skill tree CUSTOM GUI CONFIG will be used.
+#
+# Please refer to the default config file 'combat.yml' for syntax examples and explanations.
+#########################
+#display:
+#  paths:
+#    unlocked:
+#      up: 'WHITE_DYE:0'
+#      ....
+#    ...
+#  nodes:
+#    ....

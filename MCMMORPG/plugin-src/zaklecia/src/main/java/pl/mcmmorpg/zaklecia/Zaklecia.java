@@ -38,6 +38,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   private Ulubione ulubione;
   private Rzucanie rzucanie;
   private Wybor wybor;
+  Bramka bramka;
   private Kotwica kotwica;
   private Kostur kostur;
 
@@ -53,6 +54,7 @@ public final class Zaklecia extends JavaPlugin implements Listener {
   public void onEnable() {
     saveDefaultConfig();
     ksiega = new Ksiega(getConfig());
+    bramka = new Bramka(this);
     nosnik = new Nosnik(this, ksiega);
     getServer().getPluginManager().registerEvents(this, this);
     rzucanie = new Rzucanie(this, ksiega, nosnik);
@@ -89,6 +91,12 @@ public final class Zaklecia extends JavaPlugin implements Listener {
         String tekst = "§6Cięcie §f" + ile + "/" + razem;
         io.lumine.mythic.lib.api.player.MMOPlayerData.get(p).getActionBar().show(30, 25L, tekst);
       } catch (NumberFormatException ignored) { /* nieprawidłowa zmienna MythicMobs */ }
+      return true;
+    }
+    if (a.length == 3 && a[0].equalsIgnoreCase("pasek") && a[1].equalsIgnoreCase("zamknij")) {
+      // Mapa i Chowance zamykaja pasek, gdy otwieraja wlasny tryb na 1-9 (wolane jako konsola).
+      Player p = getServer().getPlayerExact(a[2]);
+      if (p != null && wybor.otwarty(p)) wybor.zamknij(p, p.getUniqueId());
       return true;
     }
     if (a.length == 2 && a[0].equalsIgnoreCase("q")) {

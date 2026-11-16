@@ -6,10 +6,12 @@
    "nazwa": "Miecz Korony",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "drzewcowa"
    ],
    "spec": [
@@ -28,8 +30,8 @@
    ],
    "bron": [
     "miecz",
-    "drzewcowa",
-    "tarcza"
+    "tarcza",
+    "drzewcowa"
    ],
    "baza": "RYCERZ",
    "stat": "defense"
@@ -40,10 +42,12 @@
    "nazwa": "Czempion Areny",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "drzewcowa"
    ],
    "baza": "RYCERZ",
@@ -157,8 +161,7 @@
    "nazwa": "Żywa Relikwia",
    "zbroja": [
     "lekka",
-    "srednia",
-    "ciezka"
+    "srednia"
    ],
    "bron": [
     "bulawa",
@@ -188,10 +191,12 @@
    "nazwa": "Klinga Gaju",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "klinga"
    ],
    "spec": [
@@ -210,8 +215,8 @@
    ],
    "bron": [
     "miecz",
-    "klinga",
-    "tarcza"
+    "tarcza",
+    "klinga"
    ],
    "baza": "OSTRZE_GAJU",
    "stat": "defense"
@@ -222,10 +227,12 @@
    "nazwa": "Tancerz Ostrzy",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "klinga"
    ],
    "baza": "OSTRZE_GAJU",
@@ -369,10 +376,12 @@
    "nazwa": "Wódz Wojny",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "topor"
    ],
    "spec": [
@@ -391,8 +400,8 @@
    ],
    "bron": [
     "miecz",
-    "topor",
-    "tarcza"
+    "tarcza",
+    "topor"
    ],
    "baza": "WODZ_WOJNY",
    "stat": "defense"
@@ -403,10 +412,12 @@
    "nazwa": "Krwioburca",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "topor"
    ],
    "baza": "WODZ_WOJNY",
@@ -557,10 +568,12 @@
    "nazwa": "Rycerz Śmierci",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "miecz_dwureczny"
    ],
    "spec": [
@@ -579,8 +592,8 @@
    ],
    "bron": [
     "miecz",
-    "miecz_dwureczny",
-    "tarcza"
+    "tarcza",
+    "miecz_dwureczny"
    ],
    "baza": "RYCERZ_SMIERCI",
    "stat": "defense"
@@ -591,10 +604,12 @@
    "nazwa": "Żniwiarz",
    "zbroja": [
     "lekka",
-    "srednia"
+    "srednia",
+    "ciezka"
    ],
    "bron": [
     "miecz",
+    "tarcza",
     "miecz_dwureczny"
    ],
    "baza": "RYCERZ_SMIERCI",

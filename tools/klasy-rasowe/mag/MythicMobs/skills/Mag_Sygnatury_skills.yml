@@ -8,7 +8,7 @@ MAG_Wybuch_Strefa:
   - 'effect:sound{s=entity.generic.explode;v=0.9;p=1.2} @Origin'
   - 'setvariable{var=skill.mag_burza_wlasna;type=INTEGER;value=0}'
   - 'skill{s=MAG_Wybuch_Sprawdz_Burze} @EntitiesNearOrigin{r=3;targetarmorstands=true}'
-  - 'skill{s=MAG_Wybuch_Mob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false}'
+  - 'skill{s=MAG_Wybuch_Mob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;targetvillagers=false}'
   - 'skill{s=MAG_Wybuch_Gracz} @PlayersNearOrigin{r=3}'
 MAG_Wybuch_Sprawdz_Burze:
   TargetConditions:
@@ -19,6 +19,9 @@ MAG_Wybuch_Sprawdz_Burze:
 MAG_Wybuch_Mob:
   TargetConditions:
   - 'isPlayer false'
+  - 'faction{faction=chowance} false'
+  - 'faction{faction=akolita_slugi} false'
+  - 'faction{faction=zaklecia_przywolane} false'
   Skills:
   - 'skill{s=MAG_Wybuch_Cel} @TargetedTarget'
 MAG_Wybuch_Gracz:
@@ -68,11 +71,14 @@ MAG_Oko_Burzy_Impuls:
   Skills:
   - 'effect:particles{p=electric_spark;a=25;hS=1.5;vS=0.3} @Origin'
   - 'effect:sound{s=block.beacon.ambient;v=0.4;p=1.7} @Origin'
-  - 'skill{s=MAG_Oko_Burzy_Mob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false}'
+  - 'skill{s=MAG_Oko_Burzy_Mob} @EntitiesNearOrigin{r=3;ignore=players;targetarmorstands=false;targetvillagers=false}'
   - 'skill{s=MAG_Oko_Burzy_Gracz} @PlayersNearOrigin{r=3}'
 MAG_Oko_Burzy_Mob:
   TargetConditions:
   - 'isPlayer false'
+  - 'faction{faction=chowance} false'
+  - 'faction{faction=akolita_slugi} false'
+  - 'faction{faction=zaklecia_przywolane} false'
   Skills:
   - 'skill{s=MAG_Oko_Burzy_Cel} @TargetedTarget'
 MAG_Oko_Burzy_Gracz:
@@ -83,7 +89,7 @@ MAG_Oko_Burzy_Gracz:
   - 'skill{s=MAG_Oko_Burzy_Cel} @TargetedTarget'
 MAG_Oko_Burzy_Cel:
   Skills:
-  - 'mmodamage{a=3;types=SKILL,MAGIC}'
+  - 'mmodamage{a="<caster.var.dmg_mag_oko_burzy|3>";types=SKILL,MAGIC}'
   - 'potion{type=SLOWNESS;duration=25;level=0;force=true;hasParticles=true} ?variableEquals{var=skill.mag_eye_bonus;value=1}'
 MAG_Punkt_Burzy_Koniec:
   Skills:
