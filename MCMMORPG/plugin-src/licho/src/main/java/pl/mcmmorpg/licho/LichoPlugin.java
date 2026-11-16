@@ -95,7 +95,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
 
   @Override public void onDisable() {
     if (runda != null) {
-      for (Uczestnik x : new ArrayList<>(runda.gracze.values())) sprzatnij(x, true, "Restart serwera — wracasz.");
+      for (Uczestnik x : new ArrayList<>(runda.gracze.values())) if (!x.bot) sprzatnij(x, true, "Restart serwera — wracasz.");
       runda.usunEncje();
     }
     if (klawisze != null) PacketEvents.getAPI().getEventManager().unregisterListener(klawisze);
@@ -133,7 +133,10 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
   }
 
   // ------------------------------------------------------------------ wejście
-  String dolacz(Player p) {
+  String dolacz(Player p) { return dolacz(p, false); }
+
+  /** @param cicho bez ogłoszenia „czeka w zagrodzie” dla innych (ćwiczenie). */
+  String dolacz(Player p, boolean cicho) {
     if (uczestnik(p.getUniqueId()) != null) return "Już grasz.";
     World w = swiat();
     if (w == null) return "Zagroda jest zamknięta.";
@@ -157,8 +160,26 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
     BossBar pasek = paski.computeIfAbsent(p.getUniqueId(), k -> BossBar.bossBar(Component.empty(), 1f, BossBar.Color.GREEN, BossBar.Overlay.NOTCHED_10));
     p.showBossBar(pasek);
     runda.dolacz(x, p);
-    if (nowa) ogloszenie(p);
+    if (nowa && !cicho) ogloszenie(p);
     getLogger().info(p.getName() + " -> runda (" + runda.faza + ", graczy " + runda.gracze.size() + ")");
+    return null;
+  }
+
+  /**
+   * Ćwiczenie z botami-Lichami (menu: przycisk ĆWICZENIE). Pusta zagroda = nowe ćwiczenie; trwa ćwiczenie = dołącza jako Zamawiacz;
+   * sam w poczekalni = poczekalnia zamienia się w ćwiczenie; trwa runda z graczami = odmowa (DOŁĄCZ).
+   */
+  String cwiczenie(Player p) {
+    Uczestnik x = uczestnik(p.getUniqueId());
+    if (runda != null && !runda.cwiczenie) {
+      if (x != null && runda.faza == Runda.Faza.POCZEKALNIA && runda.ludzie() == 1) { runda.zacznijCwiczenie(); return null; }
+      return x != null ? "Już grasz." : "W zagrodzie trwa runda z graczami — dołącz przyciskiem DOŁĄCZ.";
+    }
+    if (x != null) return "Już grasz.";
+    boolean nowa = runda == null;
+    String problem = dolacz(p, true);
+    if (problem != null) return problem;
+    if (nowa) runda.zacznijCwiczenie();
     return null;
   }
 
@@ -194,12 +215,13 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
       if (powrot) odeslij(p);
       if (komunikat != null) p.sendMessage(MM.deserialize(PREFIKS + "<gray>" + komunikat + "</gray>"));
     }
-    if (r != null && r == runda && r.gracze.isEmpty()) zamknij(r);
+    if (r != null && r == runda && r.ludzie() == 0) zamknij(r);
   }
 
   /** Koniec podsumowania: wszyscy wracają tam, skąd przyszli. */
   void zakonczRunde(Runda r) {
     for (Uczestnik x : new ArrayList<>(r.gracze.values())) {
+      if (x.bot) continue;
       Player p = x.gracz();
       if (p != null) rekordyKrotko(p);
       sprzatnij(x, true, null);
@@ -372,12 +394,20 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
 
   // ------------------------------------------------------------------ komenda (konsola / menu)
   @Override public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
-    if (a.length == 0) { s.sendMessage("/licho dolacz <gracz> | wyjdz <gracz> | rekordy [gracz] | zbuduj | stan | start [s] | obserwuj <gracz> | przeladuj"); return true; }
+    if (a.length == 0) { s.sendMessage("/licho dolacz <gracz> | cwiczenie <gracz> | wyjdz <gracz> | rekordy [gracz] | zbuduj | stan | start [s] | obserwuj <gracz> | przeladuj"); return true; }
     Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
     switch (a[0].toLowerCase(Locale.ROOT)) {
       case "dolacz" -> {
         if (p == null) { s.sendMessage("Brak gracza"); return true; }
         String problem = dolacz(p);
+        if (problem != null) {
+          p.sendMessage(MM.deserialize(PREFIKS + "<red>" + problem + "</red>"));
+          s.sendMessage("Odmowa: " + problem);
+        } else s.sendMessage("OK");
+      }
+      case "cwiczenie" -> {
+        if (p == null) { s.sendMessage("Brak gracza"); return true; }
+        String problem = cwiczenie(p);
         if (problem != null) {
           p.sendMessage(MM.deserialize(PREFIKS + "<red>" + problem + "</red>"));
           s.sendMessage("Odmowa: " + problem);

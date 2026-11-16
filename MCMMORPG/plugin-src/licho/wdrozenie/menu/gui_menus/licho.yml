@@ -13,6 +13,7 @@ items:
       - '&7i snopkach, Zamawiacze je tropią.'
       - '&7Od 2 do 12 graczy, runda ok. 4 min.'
       - '&7Bez łupu: rekordy i tytuły.'
+      - '&7Sam? &fTRENING&7: łowy na boty-Licha.'
   dolacz:
     material: nexo-mmo_icon_blank
     slots: [5, 6, 14, 15]
@@ -68,3 +69,20 @@ items:
     left_click_commands:
       - '[close]'
       - '[console] licho rekordy %player_name%'
+  cwiczenie:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aĆwiczenie z botami'
+    lore:
+      - '&7Grasz sam jako Zamawiacz:'
+      - '&7w zagrodzie chowają się &f3 boty-Licha&7.'
+      - '&7Trafione Licho ucieka i zastyga'
+      - '&7gdzie indziej, &f3 trafienia &7= zamówione.'
+      - '&7Łowy ok. 2,5 min.'
+      - '&8Nie liczy się do rekordów ani tytułów.'
+      - ''
+      - '&fKliknij, by zacząć.'
+    left_click_commands:
+      - '[close]'
+      - '[console] licho cwiczenie %player_name%'

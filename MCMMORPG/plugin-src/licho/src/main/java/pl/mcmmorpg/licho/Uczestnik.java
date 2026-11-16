@@ -34,6 +34,12 @@ final class Uczestnik {
 
   int wcielenieDo, psotaDo, okadzanieDo, ciosDo, zadyszkaDo, tchuOd, szeptOd;
 
+  // bot-Licho trybu Ćwiczenie: nie ma gracza (gracz() = null), stoi zastygłe i ucieka po trafieniu
+  final boolean bot;
+  Location lotOd, lotDo;         // ucieczka/przeprowadzka w toku (null = stoi)
+  Block lotCel;
+  int lotStart, lotKoniec, przeprowadzkaOd;
+
   // stan sprzed gry, przywracany przy wyjściu
   GameMode trybPrzed;
   boolean latanieDozwolonePrzed;
@@ -43,6 +49,14 @@ final class Uczestnik {
     nick = p.getName();
     trybPrzed = p.getGameMode();
     latanieDozwolonePrzed = p.getAllowFlight();
+    bot = false;
+  }
+
+  /** Bot-Licho: losowe UUID, którego nie ma żaden gracz. */
+  Uczestnik(String nick) {
+    id = UUID.randomUUID();
+    this.nick = nick;
+    bot = true;
   }
 
   Player gracz() { return Bukkit.getPlayer(id); }
