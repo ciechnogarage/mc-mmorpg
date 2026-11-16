@@ -1,0 +1,13 @@
+cel-layout:
+  elements:
+    samouczek:
+      asset: cel-chowance
+      align: right
+      position: {x: 0.0, y: 100.0}
+      # Ponizej panelu aktywnego Chowanca (offset y=-84, nazwa wystaje +10).
+      offset: {x: 6, y: -112}
+    zadanie:
+      asset: cel-mmocore
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -112}

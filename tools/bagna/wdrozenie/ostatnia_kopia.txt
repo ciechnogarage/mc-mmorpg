@@ -1,0 +1,1 @@
+/opt/docker/mc/bagna-test/kopia-wdrozenia

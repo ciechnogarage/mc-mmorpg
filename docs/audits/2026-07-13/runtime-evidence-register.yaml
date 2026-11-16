@@ -1,0 +1,140 @@
+version: 1
+audit_date: 2026-07-13
+contract_status: accepted
+runtime_status: partial
+release_status: blocked
+
+verdicts: [PASS, FAIL, BLOCKED, INSUFFICIENT_EVIDENCE]
+
+blockers:
+  - id: VAL-RUNTIME-001
+    type: validation_blocker
+    severity: P0
+    status: resolved_host_side
+    description: Agent audit environment cannot access /var/run/docker.sock.
+    affects: runtime_evidence
+    does_not_prove: server_runtime_failure
+    resolution: host_side_or_approved_docker_runtime
+    resolution_evidence: RUNTIME-001
+
+evidence:
+  - id: STATIC-001
+    scenario: repository_hygiene
+    status: PASS
+    command: node scripts/repo-hygiene.mjs --audit
+    source: repository output captured 2026-07-13
+
+  - id: STATIC-002
+    scenario: contract_registry
+    status: PASS
+    command: python3 scripts/check-contract-registry.py
+    result: 16 contracts validated; 4 unresolved non-MVP blockers remain
+
+  - id: STATIC-003
+    scenario: modelengine_binding
+    status: FAIL
+    command: node MCMMORPG/_validation/check_modelengine_binding.js
+    result: briarwolf, glimmer_wisp and moss_stalker have binding issues
+    priority_rule: classify by mandatory vertical-slice dependency graph
+
+  - id: RUNTIME-001
+    scenario: docker_boot
+    status: PASS
+    blocker: null
+    expected: selected backend and MariaDB start with classified logs
+    actual: MariaDB, srv-items, srv-world and Velocity reported healthy
+    caveats:
+      - srv-items has an economy integration error through Vault
+      - world logs contain MythicMobs drop type warnings
+
+  - id: RUNTIME-002
+    scenario: items_coretools_boot
+    status: PASS
+    backend: items
+    actual: CoreTools creator script loads after list-shape correction and reaches Done
+    caveats:
+      - MMOItems reports Could not load Economy Support (Vault)
+      - CoreTools reports no economy plugin successfully loaded
+
+  - id: RUNTIME-003
+    scenario: character_creator_e2e
+    status: FAIL
+    backend: items
+    test_account: P0CreatorQA3
+    report: MCMMORPG/_validation/runs/foundation_bot_2026-07-13T13-22-57-201Z_P0CreatorQA3.md
+    actual: bot login and creator GUI open pass; race/class clicks do not advance Accept to mentor roster
+    diagnostics_added:
+      - CREATOR_ACCEPT_CLICK
+      - CREATOR_SELECTED_RACE
+      - CREATOR_SELECTED_CLASS
+      - CREATOR_RACE_CONDITION
+      - CREATOR_CLASS_CONDITION
+      - CREATOR_ACCEPT_CONDITION
+      - CREATOR_DISPATCH_TARGET
+      - CREATOR_DISPATCH_EXECUTOR
+      - CREATOR_DISPATCH_RESULT
+    next_action: rerun the player-visible creator scenario and classify the first missing marker; preserve hard-blocked Accept until dispatch is proven
+
+  - id: RUNTIME-004
+    scenario: economy_provider_registration
+    contract_status: accepted
+    runtime_status: blocked
+    release_status: blocked
+    status: BLOCKED
+    evidence: MCMMORPG/docker/servers/items/logs/latest.log
+    actual:
+      cmi_economy_enabled: true
+      vault_enabled_before_cmi: true
+      economy_provider_registration: not_observed
+      mmoitems_hook: failed_economy_support
+      coretools_hook: no_economy_plugin
+    conclusion: CMI enables economy in configuration, but runtime provider registration is not proven and consumers fail to load it.
+    next_action: run a host-side ServicesManager probe and inspect exact CMI/CMILib build ordering before changing production logic
+
+  - id: PERSIST-001
+    scenario: mmoprofiles_persistence_isolation
+    contract_status: accepted
+    runtime_status: not_tested
+    release_status: blocked
+    status: INSUFFICIENT_EVIDENCE
+    scope: MMOProfiles only; CharacterStage, MMOCore and MMOInventory observe
+    required_snapshot_fields: [profile_id, player_uuid, character_stage, class_id, level, selected_slot]
+    required_proof: before_after_restart_field_comparison_reconnect_crash_recovery_rollback
+
+  - id: REWARD-001
+    scenario: reward_idempotency_boundary
+    contract_status: accepted
+    runtime_status: not_tested
+    release_status: blocked
+    status: INSUFFICIENT_EVIDENCE
+    unresolved: durable reward_transaction_id storage and atomic duplicate rejection boundary
+    retry_rule: same transaction ID must produce no second reward and an audit event
+
+  - id: DUNGEON-001
+    scenario: dungeon_instance_reset
+    contract_status: accepted
+    runtime_status: not_tested
+    release_status: blocked
+    status: INSUFFICIENT_EVIDENCE
+    required_proof: unique_instance_id_mob_cleanup_variable_cleanup_reward_non_duplication_orphan_entity_check
+
+required_runtime_evidence:
+  - login_profile_class
+  - profile_restart_reconnect
+  - reward_commit
+  - duplicate_reward_rejection
+  - dungeon_reset
+  - model_live_spawn
+  - full_vertical_slice
+
+required_metadata:
+  - commit
+  - backend
+  - paper_version
+  - plugin_jar_inventory
+  - configuration_hashes
+  - test_account_uuid
+  - started_at
+  - finished_at
+  - command_or_runner
+  - log_paths

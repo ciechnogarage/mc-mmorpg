@@ -1,0 +1,38 @@
+Domain 17 reward idempotency prerequisite checkpoint static inspection
+====================================================================
+
+Ticket:
+domain-17-reward-idempotency-prerequisite-checkpoint
+
+Scope:
+Static read-only inspection of allowed paths only. Runtime was not touched because no active dev-qa lease exists.
+
+Inspected paths:
+- docs/qa/e2e-scenarios.yaml
+- docs/qa/release-gates.yaml
+- docs/qa/legacy-evidence-migration-snapshot.yaml
+- docs/qa/regression-matrix.yaml
+- docs/qa/foundation-runtime-adapter-contract.md
+- tools/qa
+- MCMMORPG/_validation
+- MCMMORPG/plugins/CMI
+- MCMMORPG/plugins/MMOInventory
+- MCMMORPG/plugins/MMOCore
+- MCMMORPG/plugins/MMOItems
+
+Commands:
+- command rg -n -i --max-count 20 -g '!*.jar' -g '!*.db' -g '!*.sqlite' -g '!*.sqlite3' -g '!**/node_modules/**' -g '!**/*secret*' -g '!**/*token*' 'reward_transaction_id|idempotency_key|idempotent|duplicate reward|reward_restart_recovery|reward_idempotency' docs/qa tools/qa MCMMORPG/_validation MCMMORPG/plugins
+- command rg -n -i -g '*.yml' -g '*.yaml' -g '*.json' -g '*.txt' 'idempot|transaction_id|reward_transaction|duplicate rejection|ledger' MCMMORPG/plugins/MMOCore MCMMORPG/plugins/MMOItems MCMMORPG/plugins/CMI MCMMORPG/plugins/MMOInventory docs/qa tools/qa MCMMORPG/_validation
+- command rg -n -i -g '*.yml' -g '*.yaml' -g '*.json' -g '*.txt' '^Economy:|Enabled: true|method: sqlite|userdata-table-name|auto-save|mysql:' MCMMORPG/plugins/CMI/config.yml MCMMORPG/plugins/CMI/Settings/DataBaseInfo.yml MCMMORPG/plugins/MMOInventory/config.yml
+
+Findings:
+- docs/qa/e2e-scenarios.yaml defines scenario_id reward_restart_recovery and requires transaction-ledger-snapshot, reward_transaction_id ownership, idempotency_key ownership, currency_provider ownership, inventory_storage ownership, and duplicate-rejection proof.
+- docs/qa/release-gates.yaml defines gate_id reward_restart_recovery_prerequisites and keeps it blocked until the required metadata and scenario proof exist.
+- docs/qa/legacy-evidence-migration-snapshot.yaml records the legacy downstream requirement that runtime evidence must prove durable transaction id storage and retry idempotency.
+- Static plugin/config inspection found no plugin, tool, or validation runner source defining reward_transaction_id, idempotency_key, a transaction ledger, or durable duplicate-rejection proof.
+- MCMMORPG/plugins/CMI/config.yml exposes CMI economy configuration, with Economy enabled at lines 10 and 16.
+- MCMMORPG/plugins/CMI/Settings/DataBaseInfo.yml uses sqlite storage at line 4. This is only a candidate currency persistence signal, not proof of reward idempotency.
+- MCMMORPG/plugins/MMOInventory/config.yml has autosave enabled at lines 22-24 and user data table name mmoinventory_inventories at line 44. This is only a candidate inventory persistence signal, not proof of reward idempotency.
+
+Decision:
+BLOCKED. The current allowed static sources cannot prove reward_transaction_id, idempotency_key, authoritative currency_provider, authoritative inventory_storage, or durable duplicate rejection for reward_restart_recovery. A runtime-safe inspection requires an active dev-qa lease.

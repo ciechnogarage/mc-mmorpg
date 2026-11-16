@@ -1,0 +1,125 @@
+{
+ "textures": {
+  "p": "zaklecia:item/mroz_b",
+  "particle": "zaklecia:item/mroz_b"
+ },
+ "elements": [
+  {
+   "from": [
+    8,
+    8,
+    0
+   ],
+   "to": [
+    24,
+    8,
+    16
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#p",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "rotation": 90
+    }
+   }
+  }
+ ],
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    135,
+    45
+   ],
+   "translation": [
+    0,
+    -3,
+    -4
+   ],
+   "scale": [
+    0.648,
+    0.648,
+    0.648
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    -135,
+    -45
+   ],
+   "translation": [
+    0,
+    -3,
+    -4
+   ],
+   "scale": [
+    0.648,
+    0.648,
+    0.648
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    28,
+    99,
+    45
+   ],
+   "translation": [
+    1.5,
+    2.6,
+    -1
+   ],
+   "scale": [
+    0.2434,
+    0.2434,
+    0.2434
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    28,
+    -99,
+    -45
+   ],
+   "translation": [
+    1.5,
+    2.6,
+    -1
+   ],
+   "scale": [
+    0.2434,
+    0.2434,
+    0.2434
+   ]
+  },
+  "head": {
+   "translation": [
+    0,
+    8,
+    0
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  }
+ }
+}

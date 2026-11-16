@@ -1,0 +1,400 @@
+pack_id: dungeon_ruins_001
+display_name: "Ruiny Złamanej Korony"
+status: human_review_required
+source_of_truth: content/dungeons/dungeon_ruins_001/intake
+review:
+  builder_author: codex_local_procedural_candidate
+  art_author: codex_local_procedural_candidate
+  audio_author: codex_local_synthetic_wav_source_converted_with_ffmpeg_libvorbis
+  reviewer: human_review_required
+  reviewed_at: 2026-05-30T00:00:00Z
+  approval_status: human_review_required
+checksum_policy:
+  algorithm: sha256
+  required_before_staging_import: true
+license_source_notes:
+  local_generated: "Generated locally by repository script; no external assets downloaded."
+  template_source: "ModelEngine candidates may derive from local staging rust_raider.bbmodel where available; requires license/art review before final approval."
+  audio: "Four synthetic local WAV source cues were generated under intake/sounds/dr001_source and converted locally with ffmpeg/libvorbis. No external assets downloaded."
+schematics:
+  required_count: 10
+  files:
+    - path: intake/schematics/gatehouse_broken_01.schem
+      sha256: bee1c5b43b449f1f270d0a0b50ce3037112e746f05833253573118cbce72fc3c
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/gatehouse_broken_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/rooted_courtyard_01.schem
+      sha256: be2d9daf24819202ee76b80b7d16371fabe8efde080ad0dbd50c1282d7f0df90
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/rooted_courtyard_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/varos_gate_arena_01.schem
+      sha256: c6709ac9e7054f22f122c6e3959a587910221362b4529c4c48343350931e5449
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/varos_gate_arena_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/collapsed_stairwell_01.schem
+      sha256: e75d8b0d204ccd8e725780f5f842048a130c6dca5195716a2d1854239ae3bee7
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/collapsed_stairwell_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/cistern_puzzle_01.schem
+      sha256: 30fefe78cf2e3a1b1ca30bfc0e56510ab137a780172783505ab7cd8daa888b9d
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/cistern_puzzle_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/nhalruun_oracle_chamber_01.schem
+      sha256: 7b4185d1abff832d6ae9f7d9e10433f9259cefe4b5a81850493ef8a0d1f2abf2
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/nhalruun_oracle_chamber_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/crown_bridge_01.schem
+      sha256: 1a9b72f7992117324f8cf068ff4cd495e4d0c5cfb9c0c7728eae58adeb5e726e
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/crown_bridge_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/void_anchor_hall_01.schem
+      sha256: 7d705f4914bcfedf627759d74fff546cc23a91acf4afe6e1911f47b1fc24c93a
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/void_anchor_hall_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/void_sanctum_arena_01.schem
+      sha256: 893c1330ad858fa8b2691b8e142098aa774ce3b38ee7896e161791f6e2d68602
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/void_sanctum_arena_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+    - path: intake/schematics/loot_shrine_exit_01.schem
+      sha256: 425c733eef24ebc46744bc4f3ddd5ae3f3ee6306605631bd9b7954f499cf835f
+      status: blocked_quality_review
+      source: local procedural schematic authoring
+      target: plugins/Iris/packs/dungeon_ruins_001/schematics/loot_shrine_exit_01.schem
+      notes: "Valid gzipped WorldEdit schematic candidate; requires builder review before final approval."
+modelengine:
+  required_count: 15
+  requires_hitboxes: true
+  namespace: dr001_
+  files:
+    - path: intake/modelengine/dr001_ruin_thrall.bbmodel
+      sha256: e0af5ba79fdd7c6803f5443320cf1933211fb277b5d0d33276606e2c6fdfadef
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_ruin_thrall.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_mossbound_archer.bbmodel
+      sha256: 007810c1d0b388bd4fae9d68508f5b220a71292c358f1c5ef832da369969168f
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_mossbound_archer.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_rootling.bbmodel
+      sha256: 41f2ebbc88041822dcae01cce8ad550ac19231c24e69db7cf1c1d4453902abc8
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_rootling.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_animated_rubble.bbmodel
+      sha256: 86a6262a7776cf254ef874ceb879fab09179c4f61a1cf3f2cc67be9725630f40
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_animated_rubble.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_gatewarden_varos.bbmodel
+      sha256: bc4905bf9232942980e2b0e4268befd7589c1c33b488096abd4f299b034c5f1d
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_gatewarden_varos.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_drowned_tombguard.bbmodel
+      sha256: 2031e27a18f3cccf5bbfea303ffd1d83d573bccc68b7a9da45c311cc7571dedd
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_drowned_tombguard.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_plague_acolyte.bbmodel
+      sha256: 992df59a1d112536b6e703b1ab6b84644bc4d0ab33a12a202bf5c7e6e9563c93
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_plague_acolyte.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_cistern_leech.bbmodel
+      sha256: 4500ddc6614edebf09663ba485555c706eb557707959e65c8c7dc89881bfe681
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_cistern_leech.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_bone_mason.bbmodel
+      sha256: c95cbdbe1b020b0b4cf6189f9299e4b071475608f437f50974132ce19099558b
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_bone_mason.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_nhalruun.bbmodel
+      sha256: 906578b052aece0644fb62d71d3fa4295872b84ee923a4050bdf937300944c34
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_nhalruun.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_voidbound_knight.bbmodel
+      sha256: cecafa5797535dbf0dec789c99b1d2433f54b3d1ddc0ff9ed4310d3a91fb6e6d
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_voidbound_knight.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_rune_sentinel.bbmodel
+      sha256: 116c8fe42a6a389342ea6d428ec6ea0bc3c6cd4176afa406dfac9157fae9511b
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_rune_sentinel.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_crown_shade.bbmodel
+      sha256: cffdfba9b53666deed0b6cc91287b641b2ff9220b7baebc87339f13e01ede3a3
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_crown_shade.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_anchor_warden.bbmodel
+      sha256: 307c36cd59c77a951ee1fcdba526383ecfeca448b93e2641864bd6571f02104c
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_anchor_warden.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+    - path: intake/modelengine/dr001_ruined_king.bbmodel
+      sha256: abbab2598f0ce54a56647e3828f9f63d4cc96c862baeb3c40a4b96f40bdec4b6
+      status: blocked_quality_review
+      source: local ModelEngine template-derived candidate
+      target: plugins/ModelEngine/blueprints/dr001_ruined_king.bbmodel
+      notes: "Technical import candidate with required animation aliases and hitbox data; needs final ModelEngine art pass."
+nexo:
+  required_namespace: dr001
+  files:
+    - path: intake/nexo/models/item/dr001/block/rune_cracked_stone.json
+      sha256: 12b584a9517980c0ff2a7ed98657ca4cf06c65df53d3517164ae6ee08ac0a038
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/block/rune_cracked_stone.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/block/rune_cracked_stone.png
+      sha256: 2bdc692e7a690614567a459c381995748695e6fc9ca5333288c86110ee51cbd2
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/rune_cracked_stone.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/block/ancient_moss_panel.json
+      sha256: 82f46cd9436686979ef9b888bac8a62260a4dc7604df6260209b70544b5e3345
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/block/ancient_moss_panel.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/block/ancient_moss_panel.png
+      sha256: 37a24fb2fd797b7d7e95b92ca16eb36204cbae283c0360ecca9e9481a6983083
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/ancient_moss_panel.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/block/cursed_water_grate.json
+      sha256: 70b1ff839832d819e9e709259bf0bab1f8245cb4ac169f5fe087c23ed9e8356a
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/block/cursed_water_grate.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/block/cursed_water_grate.png
+      sha256: f55d6524321d0251683995cdbac08649702cba244a61ba95f71a28818b0a40ae
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/cursed_water_grate.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/block/void_rune_block.json
+      sha256: b88eaf8b18853cb0037f724ddd1928a9b8307752992565e3c259042d16a6b9ca
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/block/void_rune_block.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/block/void_rune_block.png
+      sha256: 0f5b7ffdbab2fffd76655f0e900a281cc822b0ee31cdb7ec7b917c1d8e3a7ff1
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/void_rune_block.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/block/broken_crown_ornament.json
+      sha256: 072a18b9a13689bdb414bbe49449f6dd8b655ce9471907eda27a20fc907a5637
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/block/broken_crown_ornament.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/block/broken_crown_ornament.png
+      sha256: 880867a52348a60f2b68335b387792dd59b2d2747aa8a8e1eba6dc643915177c
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/block/broken_crown_ornament.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/furniture/void_anchor.json
+      sha256: f4d0e69729ef01701bfbde171d1db81a220a6731887c3a0c734ff3eb078e6155
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/void_anchor.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/furniture/void_anchor.png
+      sha256: bb6910dd338afe62019afce9140137bdfc3e45691ea80e4a226a5ac897c0fbc6
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/void_anchor.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/furniture/rune_pedestal.json
+      sha256: 0e983beb434a2af4d8b6b951ef498c1ab5a072c5ba4644416e5516b5df975b76
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/rune_pedestal.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/furniture/rune_pedestal.png
+      sha256: ed3b66c444d56785a8525b48cc9be16a3185bf1fa097aa11359a5f418600dff9
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/rune_pedestal.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/furniture/broken_king_statue.json
+      sha256: 940c244d118ab0a71b75a4e5d7fe8caf8a49e4776658151310e7b4e86a4667b2
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/broken_king_statue.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/furniture/broken_king_statue.png
+      sha256: b2992c46d1959a0210e46a2744049edec34fa5e99b743a70ed0aace9fb657eef
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/broken_king_statue.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/furniture/soul_censer.json
+      sha256: ef6a85f0647be25d117affef324c3d0113f2150360373ce8627eae9d117dae5e
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/soul_censer.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/furniture/soul_censer.png
+      sha256: 162014ab7e9b3b6e16731760b0be51341b7ba2b2fc69935073a3618e230811b1
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/soul_censer.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/furniture/loot_shrine.json
+      sha256: fa5d8a45fa5900e254bf8762470a5b4a3e4eb226abe2ae94b89ff6c23f832b19
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/furniture/loot_shrine.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/furniture/loot_shrine.png
+      sha256: ace15f8c2963b6020864889d9484b742962c72568e324448e03277f9197826d4
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/furniture/loot_shrine.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/item/ruined_gate_key.json
+      sha256: feccf1910a9f5d21f2e250424540f074f9f5bff4567869459e05bc19ae159d96
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/item/ruined_gate_key.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/item/ruined_gate_key.png
+      sha256: bb95b076482fd50c1bfac1c7aede39f7a62b89444e85894582fe01156f6ba9a5
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/item/ruined_gate_key.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/item/relic_shard.json
+      sha256: e940799e76c3bd9f43b7126d9a40f0a429a684e4f5d8224f7d731ee5cdc94e2c
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/item/relic_shard.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/item/relic_shard.png
+      sha256: d428fd350ff47aa09847dd5877c3e9f2ad394ed376acd4916fce19a453bf5263
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/item/relic_shard.png
+      notes: "Valid PNG texture candidate; needs art review."
+    - path: intake/nexo/models/item/dr001/item/cleansing_draught.json
+      sha256: 8fc3fc2ab09a3ec849bedd3b8c57a94e2888562a0c8d861361b176b4bd169b2d
+      status: review_ready
+      source: local procedural JSON model
+      target: plugins/Nexo/pack/assets/nexo/models/item/dr001/item/cleansing_draught.json
+      notes: "JSON references final dr001 texture path."
+    - path: intake/nexo/textures/item/dr001/item/cleansing_draught.png
+      sha256: f27afbe8346f5d3d34aeadb3ea488f8546dd178b6627917d8c1ffc67a09f47dd
+      status: blocked_quality_review
+      source: local procedural texture
+      target: plugins/Nexo/pack/assets/nexo/textures/item/dr001/item/cleansing_draught.png
+      notes: "Valid PNG texture candidate; needs art review."
+sounds:
+  required: true
+  registry:
+    path: intake/nexo/sounds.json
+    sha256: 754d650e52f71d09948787484cbc8873caca8700dec6e268fee03ae1e24bbaf8
+    status: review_ready
+    source: local sound event registry metadata
+    target: plugins/Nexo/pack/assets/nexo/sounds.json
+    notes: "Authoritative DR001 Nexo sound event registry for the canonical candidate set."
+  files:
+    - path: intake/sounds/dr001/roots_whisper.ogg
+      sha256: 72b4d529fb9ada26e1534e6a5946bc58f5e60cf6c654e174ce9108b5a897bfb7
+      status: human_review_required
+      source: local synthetic WAV converted with ffmpeg libvorbis q5
+      target: plugins/Nexo/pack/assets/nexo/sounds/dr001/roots_whisper.ogg
+      notes: "Valid Ogg Vorbis converted from reviewed source WAV; requires human audio review before approved_final."
+    - path: intake/sounds/dr001/cistern_geyser.ogg
+      sha256: 8eaaa41cf605e990946469cc93b5cc20da7ae6958b3797ce213a477edcfcc770
+      status: human_review_required
+      source: local synthetic WAV converted with ffmpeg libvorbis q5
+      target: plugins/Nexo/pack/assets/nexo/sounds/dr001/cistern_geyser.ogg
+      notes: "Valid Ogg Vorbis converted from reviewed source WAV; requires human audio review before approved_final."
+    - path: intake/sounds/dr001/void_crown_pulse.ogg
+      sha256: 7eb930eb3619d17b9fc6ea7694e0430af535d3bfe3353c21f766f679499989c6
+      status: human_review_required
+      source: local synthetic WAV converted with ffmpeg libvorbis q5
+      target: plugins/Nexo/pack/assets/nexo/sounds/dr001/void_crown_pulse.ogg
+      notes: "Valid Ogg Vorbis converted from reviewed source WAV; requires human audio review before approved_final."
+    - path: intake/sounds/dr001/aurelion_enrage.ogg
+      sha256: c2378d98bcb7bf4446ee11a724f49350ad03e741ca301e1fd895bb4552da0be5
+      status: human_review_required
+      source: local synthetic WAV converted with ffmpeg libvorbis q5
+      target: plugins/Nexo/pack/assets/nexo/sounds/dr001/aurelion_enrage.ogg
+      notes: "Valid Ogg Vorbis converted from reviewed source WAV; requires human audio review before approved_final."
+source_audio:
+  final_gate_satisfying: false
+  required_conversion: "Convert these WAV sources to valid Ogg Vorbis with ffmpeg or oggenc, then replace the missing sound entries above with real SHA-256 checksums."
+  files:
+    - path: intake/sounds/dr001_source/roots_whisper.wav
+      sha256: fcf2532a9ffa0212eb8c79cb9b3a0050e1fa8f97eea547b78b503b53463b041b
+      status: source_wav_prepared_ogg_blocked
+      source: local synthetic audio authoring
+      target: intake/sounds/dr001/roots_whisper.ogg
+      notes: "Low moss/root ambience source. Not final until converted to valid Ogg Vorbis."
+    - path: intake/sounds/dr001_source/cistern_geyser.wav
+      sha256: f79ad3b4e25f881e75bce8b3fcc86b78cd001f9a044d3a424a37e2a36420d511
+      status: source_wav_prepared_ogg_blocked
+      source: local synthetic audio authoring
+      target: intake/sounds/dr001/cistern_geyser.ogg
+      notes: "Water pressure and stone resonance source. Not final until converted to valid Ogg Vorbis."
+    - path: intake/sounds/dr001_source/void_crown_pulse.wav
+      sha256: 6110e51ecf08a111e1a5fa2c9052b84f38d2fe02696a355a189b9e70e9992f3a
+      status: source_wav_prepared_ogg_blocked
+      source: local synthetic audio authoring
+      target: intake/sounds/dr001/void_crown_pulse.ogg
+      notes: "Void crown pulse source. Not final until converted to valid Ogg Vorbis."
+    - path: intake/sounds/dr001_source/aurelion_enrage.wav
+      sha256: 6402fe0d38b5c41fa99bc5b7197b890b395e9ec2a5afe12a0d5f20aa5e244cd9
+      status: source_wav_prepared_ogg_blocked
+      source: local synthetic audio authoring
+      target: intake/sounds/dr001/aurelion_enrage.ogg
+      notes: "Boss enrage sting source. Not final until converted to valid Ogg Vorbis."
+rejected_legacy_candidates:
+  archive: content/dungeons/dungeon_ruins_001/legacy_candidate_archive
+  reason: "dungeon_ruins_001 namespace is legacy scaffold/reference only and not final dr001 intake."

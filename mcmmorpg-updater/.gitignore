@@ -1,0 +1,5 @@
+node_modules/
+downloads/
+config/trusted-sources.json
+data/*.json
+reports/*.json

@@ -1,0 +1,489 @@
+# Ninja, Akt 1. wariant: 0 nieumarły, 1 ork, 2 elf, 3 człowiek.
+# Znamiona są zmienną MythicMobs na trafionym celu (target.znamiona), od 0 do 5.
+# Modyfikatory MythicLib są odczytywane wyłącznie w extra-skills.
+NIN_CIECIE:
+  source: mythicmobs:NIN_Ciecie
+  name: 'Cięcie'
+  icon: {item: IRON_SWORD}
+  lore: ['&7Szybki cios do 3 bloków.', '&7Dodaje 1 Znamię (maks. 5).', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 20}
+    cooldown: {name: Odnowienie, player: 1.5}
+    damage: {name: Obrażenia, player: {base: 3, per-level: 0.8}}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    NIN_Ciecie:
+      TargetConditions:
+      - 'distance{d=0to3} true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL} @target'
+      - 'skill{s=NIN_Znamie_Dodaj} @target'
+      - 'potion{type=POISON;duration=60;level=0;force=true;hasParticles=true} @target ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+      - 'effect:sound{s=entity.player.attack.sweep;v=0.7;p=1.4} @self'
+    NIN_Znamie_Init:
+      TargetConditions:
+      - 'variableIsSet{var=target.znamiona} false'
+      Skills:
+      - 'setvariable{var=target.znamiona;type=INTEGER;value=0}'
+    NIN_Znamie_Dodaj:
+      Skills:
+      - 'skill{s=NIN_Znamie_Init}'
+      - 'variableadd{var=target.znamiona;amount=1}'
+      - 'skill{s=NIN_Znamie_Ogranicz}'
+      - 'setvariable{var=skill.nin_znamiona;type=INTEGER;value="<target.var.znamiona>"}'
+      - 'message{m="&7Znamiona: &f<skill.var.nin_znamiona>&7/5"} @self'
+      - 'effect:particles{p=crit;a=12;hS=0.25;vS=0.3} @target'
+    NIN_Znamie_Ogranicz:
+      TargetConditions:
+      - 'variableInRange{var=target.znamiona;value=>5} true'
+      Skills:
+      - 'setvariable{var=target.znamiona;type=INTEGER;value=5}'
+
+NIN_KROK:
+  source: mythicmobs:NIN_Krok
+  name: 'Krok w Cień'
+  icon: {item: ENDER_PEARL}
+  lore: ['&7Za cel do 10 bloków; szybkość na 2 s.', '&7Nieumarły przyciąga cel zamiast skoku.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 30}
+    cooldown: {name: Odnowienie, player: 8}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    NIN_Krok:
+      TargetConditions:
+      - 'distance{d=0to10} true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Krok_Nieumarly} @target ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'skill{s=NIN_Krok_Teleport} @target ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'skill{s=NIN_Krok_Elf} @target ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'skill{s=NIN_Krok_Teleport} @target ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+      - 'potion{type=SPEED;duration=40;level=0;force=true;hasParticles=true} @self'
+      - 'effect:sound{s=entity.enderman.teleport;v=0.6;p=1.5} @self'
+    NIN_Krok_Teleport:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'effect:particles{p=smoke;a=18;hS=0.3;vS=0.5} @self'
+    NIN_Krok_Elf:
+      Skills:
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @TargetedTarget'
+      - 'teleport{spreadh=0;spreadv=1;unsafe=false} @Forward{f=1.5}'
+      - 'potion{type=INVISIBILITY;duration=40;level=0;force=true;hasParticles=false} @self'
+      - 'effect:particles{p=smoke;a=18;hS=0.3;vS=0.5} @self'
+    NIN_Krok_Nieumarly:
+      Skills:
+      - 'pull{velocity=2} @target'
+      - 'effect:particles{p=soul;a=20;hS=0.3;vS=0.5} @target'
+
+NIN_RZUT:
+  source: mythicmobs:NIN_Rzut
+  name: 'Rzut Ostrzem'
+  icon: {item: IRON_SWORD}
+  lore: ['&7Pocisk do 15 bloków.', '&7Trafienie dodaje 1 Znamię (maks. 5).', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 25}
+    cooldown: {name: Odnowienie, player: 4}
+    damage: {name: Obrażenia, player: {base: 3.5, per-level: 1}}
+    wariant: {name: Wariant, player: 0}
+  extra-skills:
+    NIN_Rzut:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'projectile{bulletType=ITEM;material=IRON_SWORD;bulletmatchdirection=true;onTick=NIN_Rzut_Slad;onHit=NIN_Rzut_Trafienie;v=22;mr=15;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @target'
+      - 'effect:sound{s=entity.player.attack.sweep;v=0.7;p=1.8} @self'
+    NIN_Rzut_Slad:
+      Skills:
+      - 'effect:particles{p=crit;a=2;hS=0.08;vS=0.08} @origin'
+    NIN_Rzut_Trafienie:
+      Skills:
+      - 'skill{s=NIN_Rzut_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=NIN_Rzut_Trafienie_Gracz} @TargetedTarget'
+    NIN_Rzut_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Rzut_Trafienie_Efekt} @TargetedTarget'
+    NIN_Rzut_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Rzut_Trafienie_Efekt} @TargetedTarget'
+    NIN_Rzut_Trafienie_Efekt:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL,PROJECTILE}'
+      - 'skill{s=NIN_Znamie_Dodaj}'
+      - 'potion{type=SLOWNESS;duration=20;level=255;force=true;hasParticles=true} ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'throw{velocity=1.5;velocityY=0.2} ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+
+NIN_EGZEKUCJA:
+  source: mythicmobs:NIN_Egzekucja
+  name: 'Egzekucja'
+  icon: {item: NETHERITE_SWORD}
+  lore: ['&7Cios kończący do 3 bl.; strzelcy do 8.', '&7Wersja dystansowa ma niższy mnożnik.', '&7Za Znamię: wręcz +40% (ork +55%),', '&7z dystansu +25%.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 40}
+    cooldown: {name: Odnowienie, player: 6}
+    damage: {name: Obrażenia, player: {base: 4.5, per-level: 1.2}}
+    wariant: {name: Wariant, player: 0}
+    dystans: {name: Wariant dystansowy, player: 0}
+  extra-skills:
+    NIN_Egzekucja:
+      Skills:
+      - 'skill{s=NIN_Egzekucja_Wrecz_Mob} @target ?stringEquals{val1="<modifier.int.dystans>";val2="0"}'
+      - 'skill{s=NIN_Egzekucja_Wrecz_Gracz} @target ?stringEquals{val1="<modifier.int.dystans>";val2="0"}'
+      - 'skill{s=NIN_Egzekucja_Dystans_Mob} @target ?stringEquals{val1="<modifier.int.dystans>";val2="1"}'
+      - 'skill{s=NIN_Egzekucja_Dystans_Gracz} @target ?stringEquals{val1="<modifier.int.dystans>";val2="1"}'
+    NIN_Egzekucja_Wrecz_Mob:
+      TargetConditions:
+      - 'distance{d=0to3} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Egzekucja_Cel} @TargetedTarget'
+    NIN_Egzekucja_Wrecz_Gracz:
+      TargetConditions:
+      - 'distance{d=0to3} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Egzekucja_Cel} @TargetedTarget'
+    NIN_Egzekucja_Dystans_Mob:
+      TargetConditions:
+      - 'distance{d=3to8} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Egzekucja_Cel_Dystans} @TargetedTarget'
+    NIN_Egzekucja_Dystans_Gracz:
+      TargetConditions:
+      - 'distance{d=3to8} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Egzekucja_Cel_Dystans} @TargetedTarget'
+    NIN_Egzekucja_Cel:
+      Skills:
+      - 'skill{s=NIN_Znamie_Init} @TargetedTarget'
+      - 'setvariable{var=skill.nin_finisher_znamiona;type=INTEGER;value="<target.var.znamiona>"} @TargetedTarget'
+      - 'skill{s=NIN_Egzekucja_Nieumarly} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="0"}'
+      - 'skill{s=NIN_Egzekucja_Ork} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="1"}'
+      - 'skill{s=NIN_Egzekucja_Zwykla} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="2"}'
+      - 'skill{s=NIN_Egzekucja_Zwykla} @TargetedTarget ?stringEquals{val1="<modifier.int.wariant>";val2="3"}'
+      - 'setvariable{var=target.znamiona;type=INTEGER;value=0} @TargetedTarget'
+      - 'effect:sound{s=entity.player.attack.crit;v=0.8;p=0.8} @self'
+    NIN_Egzekucja_Cel_Dystans:
+      Skills:
+      - 'skill{s=NIN_Znamie_Init} @TargetedTarget'
+      - 'setvariable{var=skill.nin_finisher_znamiona;type=INTEGER;value="<target.var.znamiona>"} @TargetedTarget'
+      - 'mmodamage{a="<modifier.damage> * (1 + 0.25 * <skill.var.nin_finisher_znamiona>)";types=SKILL,PHYSICAL} @TargetedTarget'
+      - 'setvariable{var=target.znamiona;type=INTEGER;value=0} @TargetedTarget'
+      - 'effect:sound{s=entity.player.attack.crit;v=0.8;p=1.2} @self'
+    NIN_Egzekucja_Zwykla:
+      Skills:
+      - 'mmodamage{a="<modifier.damage> * (1 + 0.4 * <skill.var.nin_finisher_znamiona>)";types=SKILL,PHYSICAL}'
+    NIN_Egzekucja_Ork:
+      Skills:
+      - 'mmodamage{a="<modifier.damage> * (1 + 0.55 * <skill.var.nin_finisher_znamiona>)";types=SKILL,PHYSICAL}'
+    NIN_Egzekucja_Nieumarly:
+      Skills:
+      - 'mmodamage{a="<modifier.damage> * (1 + 0.4 * <skill.var.nin_finisher_znamiona>)";types=SKILL,PHYSICAL}'
+      - 'heal{a="<modifier.damage> * (1 + 0.4 * <skill.var.nin_finisher_znamiona>) * 0.3"} @self'
+
+NIN_PETLA_GROBU:
+  source: mythicmobs:NIN_Petla_Grobu
+  name: 'Pętla Grobu'
+  icon: {item: IRON_CHAIN}
+  lore: ['&8&oŁańcuch dzwoni pod ziemią.', '&7Trafia cel do 10 bl., przyciąga go', '&7i nakłada 1 Znamię.', '&6◆ Łańcuch: silniejszy chwyt i spowolnienie.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 25}
+    cooldown: {name: Odnowienie, player: 6}
+    damage: {name: Obrażenia, player: {base: 3.5, per-level: 1}}
+  extra-skills:
+    NIN_Petla_Grobu:
+      TargetConditions:
+      - 'distance{d=0to10} true'
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=WHIP}'
+      - 'skill{s=NIN_Petla_Grobu_Rzuc_Mob} @target'
+      - 'skill{s=NIN_Petla_Grobu_Rzuc_Gracz} @target'
+      - 'effect:sound{s=block.chain.place;v=0.9;p=0.7} @self'
+    NIN_Petla_Grobu_Rzuc_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Petla_Grobu_Pocisk} @TargetedTarget'
+    NIN_Petla_Grobu_Rzuc_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Petla_Grobu_Pocisk} @TargetedTarget'
+    NIN_Petla_Grobu_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=IRON_CHAIN;onTick=NIN_Petla_Grobu_Slad;onHit=NIN_Petla_Grobu_Trafienie;v=22;mr=10;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    NIN_Petla_Grobu_Slad:
+      Skills:
+      - 'effect:particles{p=soul;a=3;hS=0.08;vS=0.08} @origin'
+    NIN_Petla_Grobu_Trafienie:
+      Skills:
+      - 'skill{s=NIN_Petla_Grobu_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=NIN_Petla_Grobu_Trafienie_Gracz} @TargetedTarget'
+    NIN_Petla_Grobu_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Petla_Grobu_Trafienie_Efekt} @TargetedTarget'
+    NIN_Petla_Grobu_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Petla_Grobu_Trafienie_Efekt} @TargetedTarget'
+    NIN_Petla_Grobu_Trafienie_Efekt:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL,PROJECTILE}'
+      - 'pull{velocity=2.5} ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'pull{velocity=3.5} ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'potion{type=SLOWNESS;duration=20;level=0;force=true;hasParticles=true} ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'skill{s=NIN_Znamie_Dodaj}'
+      - 'effect:particles{p=soul;a=24;hS=0.4;vS=0.5}'
+
+NIN_BELT_LISTU:
+  source: mythicmobs:NIN_Belt_Listu
+  name: 'Bełt Listu Gończego'
+  icon: {item: CROSSBOW}
+  lore: ['&8&oW zaułku szeleści list gończy.', '&7Bełt trafia do 15 bl. za 3,5 obrażeń', '&7i nakłada 1 Znamię.', '&6◆ Kusza: 2 Znamiona na czystym celu.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 25}
+    cooldown: {name: Odnowienie, player: 4}
+    damage: {name: Obrażenia, player: {base: 3.5, per-level: 1}}
+  extra-skills:
+    NIN_Belt_Listu:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=CROSSBOW}'
+      - 'skill{s=NIN_Belt_Listu_Rzuc_Mob} @target'
+      - 'skill{s=NIN_Belt_Listu_Rzuc_Gracz} @target'
+    NIN_Belt_Listu_Rzuc_Mob:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Belt_Listu_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Belt_Listu_Rzuc_Gracz:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Belt_Listu_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Belt_Listu_Pocisk_Zwykly:
+      TargetConditions:
+      - 'distance{d=0to15} true'
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Wypusc} @TargetedTarget'
+    NIN_Belt_Listu_Pocisk_Premia:
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Wypusc} @TargetedTarget'
+    NIN_Belt_Listu_Wypusc:
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Pocisk} @TargetedTarget'
+    NIN_Belt_Listu_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=CROSSBOW;onTick=NIN_Belt_Listu_Slad;onHit=NIN_Belt_Listu_Trafienie;v=24;mr=15;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    NIN_Belt_Listu_Slad:
+      Skills:
+      - 'effect:particles{p=crit;a=3;hS=0.08;vS=0.08} @origin'
+    NIN_Belt_Listu_Trafienie:
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=NIN_Belt_Listu_Trafienie_Gracz} @TargetedTarget'
+    NIN_Belt_Listu_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Efekt} @TargetedTarget'
+    NIN_Belt_Listu_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Belt_Listu_Efekt} @TargetedTarget'
+    NIN_Belt_Listu_Efekt:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL,PROJECTILE}'
+      - 'skill{s=NIN_Znamie_Init}'
+      - 'skill{s=NIN_Belt_Listu_Czysty} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+      - 'skill{s=NIN_Znamie_Dodaj}'
+    NIN_Belt_Listu_Czysty:
+      TargetConditions:
+      - 'variableEquals{var=target.znamiona;value=0} true'
+      Skills:
+      - 'skill{s=NIN_Znamie_Dodaj} @TargetedTarget'
+
+NIN_STRZALA_KORONY:
+  source: mythicmobs:NIN_Strzala_Korony
+  name: 'Strzała z Korony'
+  icon: {item: BOW}
+  lore: ['&8&oWśród liści napina się cięciwa.', '&7Po 0,6 s trafia do 20 bl. za 4 obrażenia', '&7i nakłada 1 Znamię.', '&6◆ Łuk długi: 24 bl. i drugie Znamię zza 12 bl.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 25}
+    cooldown: {name: Odnowienie, player: 5}
+    damage: {name: Obrażenia, player: {base: 4, per-level: 1}}
+  extra-skills:
+    NIN_Strzala_Korony:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=GREATBOW}'
+      - 'skill{s=NIN_Strzala_Korony_Rzuc_Mob} @target'
+      - 'skill{s=NIN_Strzala_Korony_Rzuc_Gracz} @target'
+    NIN_Strzala_Korony_Rzuc_Mob:
+      TargetConditions:
+      - 'distance{d=0to24} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Strzala_Korony_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Strzala_Korony_Rzuc_Gracz:
+      TargetConditions:
+      - 'distance{d=0to24} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Strzala_Korony_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Strzala_Korony_Pocisk_Zwykly:
+      TargetConditions:
+      - 'distance{d=0to20} true'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Wypusc} @TargetedTarget'
+    NIN_Strzala_Korony_Pocisk_Premia:
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Wypusc} @TargetedTarget'
+    NIN_Strzala_Korony_Wypusc:
+      Skills:
+      - 'effect:sound{s=entity.arrow.shoot;v=0.8;p=0.7} @self'
+      - 'delay 12'
+      - 'skill{s=NIN_Strzala_Korony_Po_Zapowiedzi} @TargetedTarget'
+    NIN_Strzala_Korony_Po_Zapowiedzi:
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Po_Zapowiedzi_Zwykla} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Strzala_Korony_Po_Zapowiedzi_Luk} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Strzala_Korony_Po_Zapowiedzi_Zwykla:
+      TargetConditions:
+      - 'distance{d=0to20} true'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Pocisk} @TargetedTarget'
+    NIN_Strzala_Korony_Po_Zapowiedzi_Luk:
+      TargetConditions:
+      - 'distance{d=0to24} true'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Pocisk} @TargetedTarget'
+    NIN_Strzala_Korony_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=BOW;onTick=NIN_Strzala_Korony_Slad;onHit=NIN_Strzala_Korony_Trafienie;v=24;mr=24;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    NIN_Strzala_Korony_Slad:
+      Skills:
+      - 'effect:particles{p=crit;a=3;hS=0.08;vS=0.08} @origin'
+    NIN_Strzala_Korony_Trafienie:
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=NIN_Strzala_Korony_Trafienie_Gracz} @TargetedTarget'
+    NIN_Strzala_Korony_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Efekt} @TargetedTarget'
+    NIN_Strzala_Korony_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Strzala_Korony_Efekt} @TargetedTarget'
+    NIN_Strzala_Korony_Efekt:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL,PROJECTILE}'
+      - 'skill{s=NIN_Znamie_Dodaj}'
+      - 'skill{s=NIN_Strzala_Korony_Daleko} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Strzala_Korony_Daleko:
+      TargetConditions:
+      - 'distance{d=>12} true'
+      Skills:
+      - 'skill{s=NIN_Znamie_Dodaj} @TargetedTarget'
+
+NIN_SLAD_KLA:
+  source: mythicmobs:NIN_Slad_Kla
+  name: 'Ślad Kła'
+  icon: {item: TRIDENT}
+  lore: ['&8&oStep niesie trop za grotem.', '&7Trafia do 12 bl. za 3,5 obrażeń.', '&7Znaczy i śledzi cel przez 4 s.', '&6◆ Włócznia: szybkość przez 2 s.', '', '&e{cooldown}s odnowienia', '&9Koszt: {mana} {mana_name}']
+  parameters:
+    mana: {name: Koszt, player: 25}
+    cooldown: {name: Odnowienie, player: 4}
+    damage: {name: Obrażenia, player: {base: 3.5, per-level: 1}}
+  extra-skills:
+    NIN_Slad_Kla:
+      Skills:
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=0;duration=100} @self'
+      - 'setvariable{var=caster.kr_premia;type=INTEGER;value=1;duration=100} @self ?bronRasowa{typ=SPEAR}'
+      - 'skill{s=NIN_Slad_Kla_Rzuc_Mob} @target'
+      - 'skill{s=NIN_Slad_Kla_Rzuc_Gracz} @target'
+    NIN_Slad_Kla_Rzuc_Mob:
+      TargetConditions:
+      - 'distance{d=0to12} true'
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Slad_Kla_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Slad_Kla_Rzuc_Gracz:
+      TargetConditions:
+      - 'distance{d=0to12} true'
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Pocisk_Zwykly} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=0}'
+      - 'skill{s=NIN_Slad_Kla_Pocisk_Premia} @TargetedTarget ?variableEquals{var=caster.kr_premia;value=1}'
+    NIN_Slad_Kla_Pocisk_Zwykly:
+      TargetConditions:
+      - 'distance{d=0to12} true'
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Wypusc} @TargetedTarget'
+    NIN_Slad_Kla_Pocisk_Premia:
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Wypusc} @TargetedTarget'
+    NIN_Slad_Kla_Wypusc:
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Pocisk} @TargetedTarget'
+    NIN_Slad_Kla_Pocisk:
+      Skills:
+      - 'projectile{bulletType=ITEM;material=TRIDENT;onTick=NIN_Slad_Kla_Slad;onHit=NIN_Slad_Kla_Trafienie;v=24;mr=12;hR=0.6;vR=0.6;hitNonPlayers=true;hitPlayers=true;hitTargetOnly=true;stopAtBlock=true;stopAtEntity=true} @TargetedTarget'
+    NIN_Slad_Kla_Slad:
+      Skills:
+      - 'effect:particles{p=crit;a=3;hS=0.08;vS=0.08} @origin'
+    NIN_Slad_Kla_Trafienie:
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Trafienie_Mob} @TargetedTarget'
+      - 'skill{s=NIN_Slad_Kla_Trafienie_Gracz} @TargetedTarget'
+    NIN_Slad_Kla_Trafienie_Mob:
+      TargetConditions:
+      - 'isPlayer false'
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Efekt} @TargetedTarget'
+    NIN_Slad_Kla_Trafienie_Gracz:
+      TargetConditions:
+      - 'isPlayer true'
+      - 'mmoCanTarget{interaction=OFFENSE_SKILL} true'
+      Skills:
+      - 'skill{s=NIN_Slad_Kla_Efekt} @TargetedTarget'
+    NIN_Slad_Kla_Efekt:
+      Skills:
+      - 'mmodamage{a="<modifier.damage>";types=SKILL,PHYSICAL,PROJECTILE}'
+      - 'skill{s=NIN_Znamie_Dodaj}'
+      - 'setvariable{var=target.nin_slad_kla;type=STRING;value="<caster.uuid>";duration=80}'
+      - 'potion{type=GLOWING;duration=80;level=0;force=true;hasParticles=true}'
+      - 'potion{type=SPEED;duration=40;level=0;force=true;hasParticles=true} @self ?variableEquals{var=caster.kr_premia;value=1}'

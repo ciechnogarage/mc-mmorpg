@@ -1,0 +1,141 @@
+contract:
+  id: world-progression-persistence-contract-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "01"
+  semantic_owner: "06"
+  purpose:
+    - separate durable floor completion state from runtime dungeon instance state
+    - define the boundary between progression unlock semantics and instanced run lifecycle
+    - give reward, travel, and unlock systems one shared vocabulary for persistent dungeon progression
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/world-progression-model.md
+    - docs/contracts/dungeon-floor-contract.yaml
+    - docs/contracts/unlock-rules.yaml
+    - docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  upstream_dependencies:
+    domain_06:
+      required:
+        - canonical_floor_id_semantics
+        - unlock_rule_taxonomy
+        - act_island_dungeon_parity_rules
+    domain_07:
+      required:
+        - runtime_dungeon_instance_lifecycle
+        - instance_exit_reset_rules
+    domain_17:
+      required:
+        - floor_completion_non_duplication_evidence
+        - restart_and_reconnect_progression_regression_tests
+
+identity:
+  owner_subject_key:
+    contract_ref: docs/contracts/account-character-contract.yaml
+    key: character_id
+  floor_completion_id:
+    type: composite
+    components:
+      - character_id
+      - dungeon_sector_id
+      - floor_id
+      - difficulty_id
+    mutable: false
+    duplicates_allowed: false
+  instance_id:
+    type: string
+    authority: MythicDungeons
+    scope: runtime_dungeon_instance
+    mutable: false
+    duplicates_allowed: false
+    forbidden_as_progression_identity: true
+
+runtime_authority:
+  floor_completion_service: Domain06WorldProgressionService
+  runtime_instance_provider: MythicDungeons
+  unlock_rules_owner: Domain06UnlockRules
+  reward_transaction_contract: docs/contracts/reward-transaction-contract.yaml
+
+durable_progression_shape:
+  floor_completion_record:
+    character_id: string
+    dungeon_sector_id: DNG-xx
+    floor_id: FLOOR-xxx
+    difficulty_id: story|standard|veteran|mythic
+    completion_status: NOT_STARTED|IN_PROGRESS|COMPLETED
+    highest_completed_difficulty: story|standard|veteran|mythic|null
+    first_completed_at: iso8601
+    last_completed_at: iso8601
+    reward_claim_status: NOT_GRANTED|PENDING|GRANTED
+    unlock_effects:
+      next_floor_unlocked: true_or_false
+      next_act_progress_counted: true_or_false
+
+runtime_instance_shape:
+  dungeon_instance_record:
+    instance_id: string
+    content_run_id: string
+    dungeon_sector_id: DNG-xx
+    floor_id: FLOOR-xxx
+    difficulty_id: story|standard|veteran|mythic
+    party_id: string|null
+    lifecycle_state: CREATED|ACTIVE|EXITED|RESET
+    reward_resolution_state: UNRESOLVED|ELIGIBLE|SETTLED
+    completion_projection_only: true
+
+boundary_rules:
+  floor_completion_is_durable_progression_state: true
+  instance_id_is_runtime_only_not_progression_identity: true
+  runtime_instance_exit_alone_must_not_imply_floor_completion: true
+  floor_completion_requires_confirmed_completion_event: true
+  next_floor_unlock_requires_durable_floor_completion_not_runtime_presence: true
+  reward_eligibility_must_not_become_floor_completion_without_progress_service_write: true
+
+completion_and_unlock_rules:
+  completion_source_event: confirmed_dungeon_floor_completion
+  completion_writer: Domain06WorldProgressionService
+  runtime_event_producer: MythicDungeons
+  unlock_scope: per_character_per_sector
+  replay_unlocked_floors: true
+  completion_must_preserve_same_floor_identity_across_reconnect: true
+  duplicate_completion_same_transaction_reference: reject_and_audit
+
+non_goals:
+  - runtime_dungeon_layout_generation
+  - encounter_balance_numbers
+  - reward_table_contents
+  - travel_node_placement
+
+integration_with_rewards_and_travel:
+  reward_contract_ref: docs/contracts/reward-transaction-contract.yaml
+  travel_contract_ref: docs/contracts/travel-and-discovery.md
+  required_context_fields:
+    - character_id
+    - dungeon_sector_id
+    - floor_id
+    - difficulty_id
+    - instance_id
+    - transaction_id
+  rules:
+    - reward_grant_for_floor_clear_must_reference_instance_id_and_floor_identity
+    - travel_or_unlock_surfaces_must_read_durable_floor_completion_not_runtime_instance_state
+    - reset_or_exit_events_must_not_clear_durable_completion_without_explicit_admin_or_migration_path
+
+migration_requirements:
+  migration_ledger_ref: docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  relevant_legacy_claims:
+    - world_and_dungeons
+  current_phase: shell_only_no_cutover
+  cutover_blockers:
+    - WORLD-PROG-001_unresolved
+    - world_progression_service_not_implemented
+    - runtime_instance_to_durable_completion_event_boundary_not_verified
+    - reward_and_unlock_non_duplication_evidence_missing
+
+open_questions:
+  - Whether floor completion lives in a dedicated world progression store or a broader domain-06 progression store.
+  - Which exact MythicDungeons event or adapter projection becomes the confirmed completion signal.
+  - How abandoned or failed instances interact with in-progress but not completed floor state.
+  - Whether mythic or veteran completion should imply lower-tier replay unlocks or remain tier-local only.

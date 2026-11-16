@@ -1,0 +1,52 @@
+#version 330
+
+#define MAP_DEPTH -0.9999
+#define MARKER_DEPTH -0.9999
+
+#moj_import <nminimap:config.glsl>
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:globals.glsl>
+#moj_import <minecraft:projection.glsl>
+
+in vec3 Position;
+in vec4 Color;
+in vec2 UV0;
+in ivec2 UV2;
+
+uniform sampler2D Sampler0;
+uniform sampler2D Sampler2;
+
+out float sphericalVertexDistance;
+out float cylindricalVertexDistance;
+out vec4 vertexColor;
+out vec2 texCoord0;
+
+flat out int custom;
+out vec2 uvCoord;
+flat out vec3 b_meta;
+flat out vec4 box;
+
+#moj_import <nminimap:vertex_utils.glsl>
+
+// MythicHUD (scalone z NMinimap 2026-10-01, tools/mapa/minimapa)
+#define MH_VERSION 5
+#moj_import <minecraft:mythichud_utils.glsl>
+
+void main() {
+    custom = 0;
+    uvCoord = vec2(0);
+    b_meta = vec3(0);
+    box = vec4(0);
+
+    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+
+    sphericalVertexDistance = fog_spherical_distance(Position);
+    cylindricalVertexDistance = fog_cylindrical_distance(Position);
+    vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+    texCoord0 = UV0;
+
+    applyCustomHud();
+
+    #moj_import <nminimap:vertex_body.glsl>
+}

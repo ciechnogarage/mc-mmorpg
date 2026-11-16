@@ -1,0 +1,111 @@
+# MENU Q na produkcyjnym zestawie znaków 䅨–䅫.
+kb_1:
+  font: minecraft:default
+  texture: nexo:gui/kb_1
+  ascent: 13
+  height: 111
+  char: 䅨
+kb_2:
+  font: minecraft:default
+  texture: nexo:gui/kb_2
+  ascent: 13
+  height: 111
+  char: 䅩
+kb_3:
+  font: minecraft:default
+  texture: nexo:gui/kb_3
+  ascent: -98
+  height: 111
+  char: 䅪
+kb_4:
+  font: minecraft:default
+  texture: nexo:gui/kb_4
+  ascent: -98
+  height: 111
+  char: 䅫
+# Portal 6-rzędowy: 352×444 przecięte na cztery tekstury 176×222.
+portal_1:
+  font: minecraft:default
+  texture: nexo:gui/portal_1
+  ascent: 13
+  height: 111
+  char: 䅬
+portal_2:
+  font: minecraft:default
+  texture: nexo:gui/portal_2
+  ascent: 13
+  height: 111
+  char: 䅭
+portal_3:
+  font: minecraft:default
+  texture: nexo:gui/portal_3
+  ascent: -98
+  height: 111
+  char: 䅮
+portal_4:
+  font: minecraft:default
+  texture: nexo:gui/portal_4
+  ascent: -98
+  height: 111
+  char: 䅯
+# The fourth tile carries the count; Java selects one glyph for 0–9.
+portal_4_count_0:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_0
+  ascent: -98
+  height: 111
+  char: 䅰
+portal_4_count_1:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_1
+  ascent: -98
+  height: 111
+  char: 䅱
+portal_4_count_2:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_2
+  ascent: -98
+  height: 111
+  char: 䅲
+portal_4_count_3:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_3
+  ascent: -98
+  height: 111
+  char: 䅳
+portal_4_count_4:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_4
+  ascent: -98
+  height: 111
+  char: 䅴
+portal_4_count_5:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_5
+  ascent: -98
+  height: 111
+  char: 䅵
+portal_4_count_6:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_6
+  ascent: -98
+  height: 111
+  char: 䅶
+portal_4_count_7:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_7
+  ascent: -98
+  height: 111
+  char: 䅷
+portal_4_count_8:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_8
+  ascent: -98
+  height: 111
+  char: 䅸
+portal_4_count_9:
+  font: minecraft:default
+  texture: nexo:gui/portal_4_count_9
+  ascent: -98
+  height: 111
+  char: 䅹

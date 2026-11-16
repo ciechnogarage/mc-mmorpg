@@ -1,0 +1,76 @@
+Zak_Ognisty_pocisk_Laduj_P:
+  Skills:
+  - effect:particles{p=flame;a=3;hs=0.09;vs=0.09;s=0.02;y=1.3;sso=0.38;sfo=0.5} @self
+
+Zak_Ognisty_pocisk_Gotowe_P:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.5;p=1.8} @self
+  - effect:particles{p=lava;a=2;hs=0.1;vs=0.1;y=1.3;sso=0.38;sfo=0.5} @self
+
+Zak_Ognisty_pocisk_Wystrzal_P:
+  Skills:
+  - sound{s=item.firecharge.use;v=0.8;p=1.1} @self
+  - projectile{onTick=Zak_Ognisty_pocisk_Ogon;onHit=Zak_Ognisty_pocisk_Traf;onEnd=Zak_Ognisty_pocisk_Koniec;v=20;i=1;ti=1;mr=24;hR=0.35;vR=0.35;syo=1.3;sfo=0.55;sso=0.38;hp=true;hnp=true;ht=true;sE=true;sB=true;hitConditions=[ - faction{faction=zaklecia_przywolane} false ]} @Forward{f=25;y=1.3}
+
+Zak_Ognisty_pocisk_Laduj_L:
+  Skills:
+  - effect:particles{p=flame;a=3;hs=0.09;vs=0.09;s=0.02;y=1.3;sso=-0.38;sfo=0.5} @self
+
+Zak_Ognisty_pocisk_Gotowe_L:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.5;p=1.8} @self
+  - effect:particles{p=lava;a=2;hs=0.1;vs=0.1;y=1.3;sso=-0.38;sfo=0.5} @self
+
+Zak_Ognisty_pocisk_Wystrzal_L:
+  Skills:
+  - sound{s=item.firecharge.use;v=0.8;p=1.1} @self
+  - projectile{onTick=Zak_Ognisty_pocisk_Ogon;onHit=Zak_Ognisty_pocisk_Traf;onEnd=Zak_Ognisty_pocisk_Koniec;v=20;i=1;ti=1;mr=24;hR=0.35;vR=0.35;syo=1.3;sfo=0.55;sso=-0.38;hp=true;hnp=true;ht=true;sE=true;sB=true;hitConditions=[ - faction{faction=zaklecia_przywolane} false ]} @Forward{f=25;y=1.3}
+
+Zak_Ognisty_pocisk_Laduj_Obie:
+  Skills:
+  - effect:particles{p=flame;a=3;hs=0.09;vs=0.09;s=0.02;y=1.3;sso=0;sfo=0.5} @self
+
+Zak_Ognisty_pocisk_Gotowe_Obie:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.5;p=1.8} @self
+  - effect:particles{p=lava;a=2;hs=0.1;vs=0.1;y=1.3;sso=0;sfo=0.5} @self
+
+Zak_Ognisty_pocisk_Wystrzal_Obie:
+  Skills:
+  - sound{s=item.firecharge.use;v=0.8;p=1.1} @self
+  - projectile{onTick=Zak_Ognisty_pocisk_Ogon;onHit=Zak_Ognisty_pocisk_Traf_Obie;onEnd=Zak_Ognisty_pocisk_Koniec_Obie;v=20;i=1;ti=1;mr=24;hR=0.35;vR=0.35;syo=1.3;sfo=0.55;sso=0;hp=true;hnp=true;ht=true;sE=true;sB=true;hitConditions=[ - faction{faction=zaklecia_przywolane} false ]} @Forward{f=25;y=1.3}
+
+Zak_Ognisty_pocisk_Ogon:
+  Skills:
+  - effect:particles{p=flame;a=8;hs=0.13;vs=0.13;s=0.025} @origin
+  - effect:particles{p=smoke;a=2;hs=0.08;vs=0.08} @origin
+
+Zak_Ognisty_pocisk_Traf:
+  Skills:
+  - skill{s=Zak_Ognisty_pocisk_Obrazenia;sync=true}
+
+Zak_Ognisty_pocisk_Koniec:
+  Skills:
+  - effect:particles{p=flame;a=12;hs=0.3;vs=0.3} @origin
+
+Zak_Ognisty_pocisk_Obrazenia:
+  TargetConditions:
+  - mmoCanTarget{interaction=OFFENSE_ACTION} true
+  Skills:
+  - mmodamage{a=5;t=SKILL,MAGIC;element=FIRE}
+  - ignite{ticks=50}
+
+Zak_Ognisty_pocisk_Traf_Obie:
+  Skills:
+  - skill{s=Zak_Ognisty_pocisk_Obrazenia_Obie;sync=true}
+
+Zak_Ognisty_pocisk_Koniec_Obie:
+  Skills:
+  - effect:particles{p=flame;a=12;hs=0.3;vs=0.3} @origin
+
+Zak_Ognisty_pocisk_Obrazenia_Obie:
+  TargetConditions:
+  - mmoCanTarget{interaction=OFFENSE_ACTION} true
+  Skills:
+  - mmodamage{a=11;t=SKILL,MAGIC;element=FIRE}
+  - ignite{ticks=50}

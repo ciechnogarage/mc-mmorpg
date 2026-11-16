@@ -1,0 +1,94 @@
+Compiled from "DamageMechanic.java"
+public class io.lumine.mythic.core.skills.mechanics.DamageMechanic extends io.lumine.mythic.core.skills.damage.DamagingMechanic implements io.lumine.mythic.api.skills.ITargetedEntitySkill {
+  protected io.lumine.mythic.api.skills.placeholders.PlaceholderDouble amount;
+
+  public io.lumine.mythic.core.skills.mechanics.DamageMechanic(io.lumine.mythic.core.skills.SkillExecutor, java.io.File, java.lang.String, io.lumine.mythic.api.config.MythicLineConfig);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: invokespecial #1                  // Method io/lumine/mythic/core/skills/damage/DamagingMechanic."<init>":(Lio/lumine/mythic/core/skills/SkillExecutor;Ljava/io/File;Ljava/lang/String;Lio/lumine/mythic/api/config/MythicLineConfig;)V
+       9: aload_0
+      10: aload         4
+      12: iconst_2
+      13: anewarray     #7                  // class java/lang/String
+      16: dup
+      17: iconst_0
+      18: ldc           #9                  // String amount
+      20: aastore
+      21: dup
+      22: iconst_1
+      23: ldc           #11                 // String a
+      25: aastore
+      26: dconst_1
+      27: iconst_0
+      28: anewarray     #7                  // class java/lang/String
+      31: invokeinterface #13,  5           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getPlaceholderDouble:([Ljava/lang/String;D[Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      36: putfield      #19                 // Field amount:Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      39: return
+
+  public io.lumine.mythic.api.skills.SkillResult castAtEntity(io.lumine.mythic.api.skills.SkillMetadata, io.lumine.mythic.api.adapters.AbstractEntity);
+    Code:
+       0: aload_2
+       1: invokeinterface #24,  1           // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.isDead:()Z
+       6: ifne          43
+       9: aload_1
+      10: invokeinterface #30,  1           // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCaster:()Lio/lumine/mythic/api/skills/SkillCaster;
+      15: invokeinterface #36,  1           // InterfaceMethod io/lumine/mythic/api/skills/SkillCaster.isUsingDamageSkill:()Z
+      20: ifne          43
+      23: aload_2
+      24: invokeinterface #41,  1           // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.isLiving:()Z
+      29: ifeq          47
+      32: aload_2
+      33: invokeinterface #44,  1           // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getHealth:()D
+      38: dconst_0
+      39: dcmpg
+      40: ifgt          47
+      43: getstatic     #48                 // Field io/lumine/mythic/api/skills/SkillResult.INVALID_TARGET:Lio/lumine/mythic/api/skills/SkillResult;
+      46: areturn
+      47: aload_0
+      48: getfield      #54                 // Field powerAffectsDamage:Z
+      51: ifeq          77
+      54: aload_0
+      55: getfield      #19                 // Field amount:Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      58: aload_1
+      59: aload_2
+      60: invokeinterface #58,  3           // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.get:(Lio/lumine/mythic/core/skills/placeholders/PlaceholderMeta;Lio/lumine/mythic/api/adapters/AbstractEntity;)D
+      65: aload_1
+      66: invokeinterface #64,  1           // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getPower:()F
+      71: f2d
+      72: dmul
+      73: dstore_3
+      74: goto          89
+      77: aload_0
+      78: getfield      #19                 // Field amount:Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      81: aload_1
+      82: aload_2
+      83: invokeinterface #58,  3           // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.get:(Lio/lumine/mythic/core/skills/placeholders/PlaceholderMeta;Lio/lumine/mythic/api/adapters/AbstractEntity;)D
+      88: dstore_3
+      89: aload_0
+      90: aload_1
+      91: aload_2
+      92: dload_3
+      93: invokevirtual #68                 // Method doDamage:(Lio/lumine/mythic/api/skills/SkillMetadata;Lio/lumine/mythic/api/adapters/AbstractEntity;D)V
+      96: getstatic     #72                 // Field io/lumine/mythic/core/logging/MythicLogger$DebugLevel.MECHANIC:Lio/lumine/mythic/core/logging/MythicLogger$DebugLevel;
+      99: ldc           #78                 // String + DamageMechanic fired for {0} with {1} power
+     101: iconst_2
+     102: anewarray     #80                 // class java/lang/Object
+     105: dup
+     106: iconst_0
+     107: dload_3
+     108: invokestatic  #82                 // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+     111: aastore
+     112: dup
+     113: iconst_1
+     114: aload_1
+     115: invokeinterface #64,  1           // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getPower:()F
+     120: invokestatic  #88                 // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     123: aastore
+     124: invokestatic  #93                 // Method io/lumine/mythic/core/logging/MythicLogger.debug:(Lio/lumine/mythic/core/logging/MythicLogger$DebugLevel;Ljava/lang/String;[Ljava/lang/Object;)V
+     127: getstatic     #99                 // Field io/lumine/mythic/api/skills/SkillResult.SUCCESS:Lio/lumine/mythic/api/skills/SkillResult;
+     130: areturn
+}

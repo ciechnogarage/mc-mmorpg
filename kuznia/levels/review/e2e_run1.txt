@@ -1,0 +1,21 @@
+PASS  wejscie do instancji  -- swiat=minecraft:poziom_01_2
+PASS  start nad wyspa  -- y0=109.0
+PASS  powolne opadanie nalozone  -- efekty(pakiety)=[10,27]
+PASS  ladowanie na wyspie  -- y=102
+PASS  bez obrazen przy ladowaniu  -- hp 20->20
+PASS  tytul startu  -- set_title_time: fadeIn :15, stay :70, fadeOut :20  | set_title_subtitle:Kwietna Polana | set_title_text:Poziom 1
+PASS  zajace przy starcie  -- {"rabbit\"Leśny Zając\"":4}
+PASS  regula: brak obrazen od upadku  -- Gamerule fall_damage is currently set to: false
+PASS  regula: zachowanie ekwipunku  -- Gamerule keep_inventory is currently set to: true
+PASS  czas zamrozony na 1000  -- [1000,1000]
+PASS  zasadzka laka_a  -- {"pig\"Dziki Odyniec\"":3}
+PASS  zasadzka laka_b  -- {"pig\"Dziki Odyniec\"":2,"wolf\"Wilk Gajowy\"":2}
+PASS  zasadzka brama  -- {"wolf\"Wilk Gajowy\"":5,"pig\"Dziki Odyniec\"":1}
+PASS  boss pojawil sie na arenie  -- {"wolf\"Strażnik Polany\"":1}
+PASS  pasek bossa  -- ["Strażnik Polany"]
+PASS  tytul bossa  -- set_title_time: fadeIn :5, stay :50, fadeOut :10  | set_title_subtitle:Wilk Alfa broni serca gaju
+PASS  tytul zwyciestwa  -- set_title_time: fadeIn :10, stay :70, fadeOut :20  | set_title_subtitle:Poziom 1 ukończony | set_title_text:Polana oczyszczona
+PASS  loch oznaczony jako ukonczony  -- Applied 999 damage to Strażnik Polany || [Server] [WIEZA-DEBUG] poziom_01_zwyciestwo || [Dungeons] You completed Poziom 1 » Kwietna Polana!
+PASS  wyjscie z lochu  -- swiat=minecraft:overworld
+
+WYNIK: 19/19 PASS

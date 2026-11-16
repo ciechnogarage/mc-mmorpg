@@ -1,0 +1,277 @@
+{
+ "name": "Gaj",
+ "derivative": "CHERRY_GROVE",
+ "vanillaDerivative": "CHERRY_GROVE",
+ "color": "#f0a0c8",
+ "layers": [
+  {
+   "palette": [
+    {
+     "block": "minecraft:grass_block"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 1
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:dirt"
+    }
+   ],
+   "minHeight": 2,
+   "maxHeight": 3
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:dirt"
+    },
+    {
+     "block": "minecraft:rooted_dirt"
+    }
+   ],
+   "minHeight": 2,
+   "maxHeight": 4
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:andesite"
+    },
+    {
+     "block": "minecraft:tuff"
+    }
+   ],
+   "minHeight": 14,
+   "maxHeight": 24
+  }
+ ],
+ "decorators": [
+  {
+   "chance": 0.6,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "weight": 1,
+     "block": "minecraft:short_grass"
+    },
+    {
+     "block": "minecraft:short_grass"
+    },
+    {
+     "block": "minecraft:short_grass"
+    },
+    {
+     "chance": 7,
+     "block": "minecraft:short_grass"
+    }
+   ]
+  },
+  {
+   "chance": 0.02,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:tall_grass"
+    }
+   ]
+  },
+  {
+   "chance": 0.06,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:allium"
+    }
+   ]
+  },
+  {
+   "chance": 0.08,
+   "variance": {
+    "style": "VASCULAR_IRIS"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:pink_petals"
+    }
+   ]
+  }
+ ],
+ "generators": [
+  {
+   "generator": "wyspa_fale",
+   "min": 100,
+   "max": 106
+  }
+ ],
+ "objects": [
+  {
+   "chance": 0.8,
+   "density": 2,
+   "place": [
+    "trees/oak/antioch3",
+    "trees/oak/antioch4",
+    "trees/oak/antioch5"
+   ],
+   "rotation": {
+    "enabled": true,
+    "yAxis": {
+     "enabled": true,
+     "interval": 90,
+     "min": 0,
+     "max": 360
+    }
+   },
+   "edit": [
+    {
+     "find": [
+      {
+       "block": "minecraft:oak_leaves"
+      }
+     ],
+     "chance": 1,
+     "replace": {
+      "palette": [
+       {
+        "block": "minecraft:cherry_leaves[persistent=true]"
+       }
+      ]
+     }
+    },
+    {
+     "find": [
+      {
+       "block": "minecraft:birch_leaves"
+      }
+     ],
+     "chance": 1,
+     "replace": {
+      "palette": [
+       {
+        "block": "minecraft:cherry_leaves[persistent=true]"
+       }
+      ]
+     }
+    },
+    {
+     "find": [
+      {
+       "block": "minecraft:oak_log"
+      },
+      {
+       "block": "minecraft:oak_wood"
+      },
+      {
+       "block": "minecraft:birch_log"
+      },
+      {
+       "block": "minecraft:birch_wood"
+      },
+      {
+       "block": "minecraft:stripped_birch_wood"
+      }
+     ],
+     "chance": 1,
+     "replace": {
+      "palette": [
+       {
+        "block": "minecraft:cherry_wood"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "chance": 0.5,
+   "density": 1,
+   "place": [
+    "trees/birch/antioch3",
+    "trees/birch/antioch4",
+    "trees/birch/antioch5"
+   ],
+   "rotation": {
+    "enabled": true,
+    "yAxis": {
+     "enabled": true,
+     "interval": 90,
+     "min": 0,
+     "max": 360
+    }
+   },
+   "edit": [
+    {
+     "find": [
+      {
+       "block": "minecraft:oak_leaves"
+      }
+     ],
+     "chance": 1,
+     "replace": {
+      "palette": [
+       {
+        "block": "minecraft:cherry_leaves[persistent=true]"
+       }
+      ]
+     }
+    },
+    {
+     "find": [
+      {
+       "block": "minecraft:birch_leaves"
+      }
+     ],
+     "chance": 1,
+     "replace": {
+      "palette": [
+       {
+        "block": "minecraft:cherry_leaves[persistent=true]"
+       }
+      ]
+     }
+    },
+    {
+     "find": [
+      {
+       "block": "minecraft:oak_log"
+      },
+      {
+       "block": "minecraft:oak_wood"
+      },
+      {
+       "block": "minecraft:birch_log"
+      },
+      {
+       "block": "minecraft:birch_wood"
+      },
+      {
+       "block": "minecraft:stripped_birch_wood"
+      }
+     ],
+     "chance": 1,
+     "replace": {
+      "palette": [
+       {
+        "block": "minecraft:cherry_wood"
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

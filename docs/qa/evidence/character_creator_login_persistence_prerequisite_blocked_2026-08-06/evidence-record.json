@@ -1,0 +1,140 @@
+{
+  "evidence_id": "character_creator_login_persistence_character_persistence_prerequisite_blocked_2026_08_06_blocked",
+  "scenario_id": "character_creator_login_persistence",
+  "domain": "character",
+  "system": "character_creator_login_persistence",
+  "environment": "dev-qa",
+  "test_type": "character_persistence_runtime_admission",
+  "contract_status": "proposed",
+  "runtime_status": "blocked",
+  "release_effect": "blocks_release",
+  "migration_snapshot_ref": "domain-17-legacy-evidence-migration-snapshot-2026-07-31",
+  "legacy_source_ids": [
+    "runtime_evidence_register_2026_07_13",
+    "vertical_slice_e2e_runtime_gate",
+    "persistence_restart_matrix"
+  ],
+  "legacy_sha256": [
+    "a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf",
+    "aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79",
+    "87b9b8a1dc78db66ada1bb01dd7f5b378627cc2e5b19bd53f3e0f77d36326df9"
+  ],
+  "legacy_status_mapping": [
+    "This record supersedes the obsolete no-lease blocker with current prerequisite evidence.",
+    "No runtime_status verified promotion is allowed without runtime and player proof."
+  ],
+  "evidence_types": [],
+  "contract_refs": [],
+  "metadata": {},
+  "proof_level_mapping": {
+    "supported_levels": [
+      "STATIC_CONTRACT",
+      "RUNTIME_PROOF",
+      "INTEGRATION_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "requiredProof": [
+      "STATIC_CONTRACT",
+      "RUNTIME_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "achievedProof": [
+      "STATIC_CONTRACT"
+    ],
+    "missingProof": [
+      "RUNTIME_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "highest_achieved": "STATIC_CONTRACT"
+  },
+  "preconditions": [
+    "docs/contracts/account-character-contract.yaml must be approved and runtime-ready.",
+    "The dev-qa secret environment must exist so the isolated backend can start.",
+    "A disposable account UUID, field-based snapshot collector, duplicate-profile assertion, and rollback plan must exist before mutation."
+  ],
+  "steps": [
+    "Ran MCMMORPG/infra/bin/mc-lease validate.",
+    "Ran MCMMORPG/infra/bin/mc-lease export-env qa.",
+    "Ran MCMMORPG/infra/bin/mcenv ps dev qa.",
+    "Ran node MCMMORPG/_validation/validate_character_sector.js.",
+    "Ran node MCMMORPG/_validation/check_character_stage_scaffold.js.",
+    "Stopped before runtime execution because the governing contract is proposed/blocked and the isolated backend cannot start without its secret environment."
+  ],
+  "assertions": [
+    "The active lease is dev-qa; the historic no-lease reason no longer applies.",
+    "No account UUID, bot transcript, before/after snapshots, restart/reconnect proof, or backend logs were produced because runtime was not admitted.",
+    "Field-based snapshot comparison and duplicate-profile prevention remain unverified at runtime and cannot be promoted from static checks."
+  ],
+  "artifacts": [
+    {
+      "kind": "foundation-runtime-report",
+      "path": "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/foundation-report.json",
+      "sha256": "7ebf0c7fb11fe357183621e980cb6c2610c2b2ac8747a2e7e8ededaed22c46a3"
+    },
+    {
+      "kind": "lease-proof",
+      "path": "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/lease-proof.txt",
+      "sha256": "3b72e22600d9c200e742dad9e41be558a17d617aaab51bed2c4ecf5136062349"
+    },
+    {
+      "kind": "runtime-admission",
+      "path": "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/runtime-admission.txt",
+      "sha256": "e2e85a641b0bba310bb8d55f1eb4ecf98705d7bbc745e9488893d388569d8581"
+    },
+    {
+      "kind": "static-inspection",
+      "path": "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/static-inspection.md",
+      "sha256": "b138a576fa7417d69ad09e2deda607da5b9ac18abadddeaa4000287697b61c7e"
+    },
+    {
+      "kind": "rollback-restore-proof",
+      "path": "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/rollback-restore-proof.md",
+      "sha256": "8f49ec24efd41689bb17e349f64c5018e8faacaaa49aa5fa6d196de6591c842c"
+    }
+  ],
+  "build": {
+    "paper": "baseline-no-runtime",
+    "plugin_manifest_hash": "baseline-no-runtime",
+    "commit": "baseline-no-runtime",
+    "plugin_jar_inventory_hash": "not_collected_runtime_not_admitted",
+    "configuration_hashes": {}
+  },
+  "execution": {
+    "runner": "tools/qa/adapters/foundation-runtime.mjs",
+    "backend": "dev-qa-not-provisioned",
+    "docker_volume_id": "not-created-runtime-not-admitted",
+    "test_account_uuid": "not-created-prerequisite-blocked",
+    "started_at": "2026-08-06T10:04:14Z",
+    "finished_at": "2026-08-06T10:04:25Z",
+    "executed_by": "domain-17-character-persistence-evidence-records",
+    "log_paths": [
+      "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/runtime-admission.txt"
+    ],
+    "environment_control": {
+      "lease": "dev-qa",
+      "workspace_root": "/home/przemek/projects/MC",
+      "runtime_touched": false,
+      "staging_touched": false,
+      "rollback": {
+        "method": "not_required_no_runtime_mutation",
+        "proof_paths": [
+          "docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/rollback-restore-proof.md"
+        ]
+      }
+    }
+  },
+  "result": {
+    "verdict": "BLOCKED",
+    "proof_level": "STATIC_CONTRACT",
+    "blocker_ids": [
+      "D17-CHARACTER-PERSISTENCE-CONTRACT-NOT-APPROVED",
+      "D17-CHARACTER-PERSISTENCE-DEV-QA-RUNTIME-NOT-PROVISIONED",
+      "missing_runtime_evidence"
+    ],
+    "observations": [
+      "Owner Domain 02 must approve and make the account-character contract runtime-ready before a persistence PASS can be attempted.",
+      "Lease owner dff7e768-43cf-417d-80c2-77cfca371e14 must provision the dev-qa secret environment and isolated stack before a bot run can be admitted.",
+      "No runtime or staging state was touched."
+    ]
+  }
+}

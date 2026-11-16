@@ -1,0 +1,128 @@
+# ETAP 2 przebudowy klas (prototyp 2026-09-30): słudzy akolity, po jednym na rasę. AI jak ciała Chowańców:
+# idą za właścicielem (summon ustawia właściciela), biją to, co bije właściciela i jego cel. Wygląd zastępczy vanilli.
+AKO_SLUGA_NIEUMARLY:
+  Type: SKELETON
+  Display: '&7Sługa Kurhanu'
+  Health: 14
+  Damage: 3
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.3, PreventOtherDrops: true, PreventItemPickup: true, PreventSunburn: true, Despawn: true, FollowRange: 24}
+  Equipment: ['AIR HAND']
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+AKO_SLUGA_ORK:
+  Type: ZOMBIFIED_PIGLIN
+  Display: '&cDuch Przodka'
+  Health: 24
+  Damage: 4
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.27, PreventOtherDrops: true, PreventItemPickup: true, Despawn: true, FollowRange: 24}
+  Equipment: ['GOLDEN_AXE HAND']
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+AKO_SLUGA_ELF:
+  Type: WOLF
+  Display: '&bOgnik Gaju'
+  Health: 12
+  Damage: 2
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.35, PreventOtherDrops: true, Despawn: true, FollowRange: 24, Glowing: true}
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'heal{a=1} @Owner ~onTimer:60'
+  - 'effect:particles{p=end_rod;a=4;hS=0.3;vS=0.3} @self ~onTimer:20'
+AKO_SLUGA_CZLOWIEK:
+  Type: IRON_GOLEM
+  Display: '&fŚwięty Obrońca'
+  Health: 50
+  Damage: 5
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.25, PreventOtherDrops: true, Despawn: true, FollowRange: 24}
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+AKO_SLUGA_OBRONCA:
+  Type: IRON_GOLEM
+  Display: '&fStrażnik Relikwii'
+  Health: 40
+  Damage: 4
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.23, PreventOtherDrops: true, Despawn: true, FollowRange: 24}
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'skill{s=AKO_Sluga_Obronca_Taunt} @self ~onTimer:20'
+  - 'skill{s=AKO_Sluga_Obronca_Pilnuj} @self ~onTimer:40'
+  - 'skill{s=AKO_Sluga_Obronca_Koniec} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Obronca_Zastap} @self ~onSignal:ZASTAP'
+
+AKO_OGNIK_KSIEZYCA:
+  Type: ALLAY
+  Display: '&bOgnik Księżyca'
+  Health: 8
+  Damage: 0
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.35, PreventOtherDrops: true, PreventItemPickup: true, Despawn: true, FollowRange: 24, Glowing: true}
+  AIGoalSelectors: ['0 clear', '1 float', '2 gotoowner', '3 lookatplayers']
+  AITargetSelectors: ['0 clear']
+  Skills:
+  - 'skill{s=AKO_Ognik_Ksiezyca_Leczenie} @self ~onTimer:40'
+  - 'skill{s=AKO_Ognik_Ksiezyca_Koniec} @self ~onSpawn'
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+
+AKO_PRZODEK_MLOTA:
+  Type: ZOMBIFIED_PIGLIN
+  Display: '&cPrzodek Młota'
+  Health: 22
+  Damage: 4
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.28, PreventOtherDrops: true, PreventItemPickup: true, Despawn: true, FollowRange: 24}
+  Equipment: ['GOLDEN_AXE HAND']
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'skill{s=AKO_Sygnatura_Koniec} @self ~onSpawn'
+
+AKO_KOSIARZ_CISZY:
+  Type: SKELETON
+  Display: '&7Kosiarz Ciszy'
+  Health: 14
+  Damage: 3
+  Faction: akolita_slugi
+  Options: {MovementSpeed: 0.3, PreventOtherDrops: true, PreventItemPickup: true, PreventSunburn: true, Despawn: true, FollowRange: 24}
+  Equipment: ['AIR HAND']
+  AIGoalSelectors: ['0 clear', '1 float', '2 meleeattack', '3 gotoowner', '4 lookatplayers']
+  AITargetSelectors: ['0 clear', '1 ownerattacker', '2 ownertarget']
+  Skills:
+  - 'skill{s=AKO_Sluga_Zniwo} ~onSignal:ZNIWO'
+  - 'skill{s=AKO_Sluga_Atak} ~onSignal:ATAK'
+  - 'skill{s=AKO_Sluga_Utrzymaj_Rozkaz} @self ~onTimer:10 ?variableIsSet{var=caster.ako_cel_uuid}'
+  - 'skill{s=AKO_Sluga_Powrot} ~onSignal:POWROT'
+  - 'skill{s=AKO_Sygnatura_Koniec} @self ~onSpawn'

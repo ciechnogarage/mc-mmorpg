@@ -1,0 +1,53 @@
+DR001_ANCIENT_COIN:
+  base:
+    material: GOLD_NUGGET
+    name: '&6Ancient Coin'
+    tier: COMMON
+    disable-interaction: true
+    lore:
+      - '&7Dungeon currency: Ruiny Złamanej Korony.'
+
+DR001_RUNE_DUST:
+  base:
+    material: GLOWSTONE_DUST
+    name: '&bRuniczny Pył'
+    tier: COMMON
+    disable-interaction: true
+    lore:
+      - '&7Pozostałość po runach Złamanej Korony.'
+
+DR001_RELIC_SHARD:
+  base:
+    material: AMETHYST_SHARD
+    name: '&aFragment Reliktu'
+    tier: UNCOMMON
+    disable-interaction: true
+    lore:
+      - '&7START objective and crafting material.'
+
+DR001_AQUEDUCT_RUNE:
+  base:
+    material: PRISMARINE_CRYSTALS
+    name: '&3Runa Akweduktu'
+    tier: RARE
+    disable-interaction: true
+    lore:
+      - '&7Recovered from the sunken catacombs.'
+
+DR001_VOID_ANCHOR_CORE:
+  base:
+    material: ECHO_SHARD
+    name: '&5Rdzeń Kotwicy Pustki'
+    tier: EPIC
+    disable-interaction: true
+    lore:
+      - '&7Used for epic DR001 gear upgrades.'
+
+DR001_CROWN_CORE:
+  base:
+    material: NETHER_STAR
+    name: '&6Rdzeń Złamanej Korony'
+    tier: LEGENDARY
+    disable-interaction: true
+    lore:
+      - '&7First Mythic weekly reward.'

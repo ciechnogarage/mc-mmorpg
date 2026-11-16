@@ -1,0 +1,198 @@
+archive_labels:
+  import_status: archive-only
+  promotion_state: blocked
+  promotion_note: "Legacy DR001 import snapshot only; no staging, runtime, or canonical promotion from this manifest."
+  labels:
+    legacy_candidate_archive:
+      - archive-only
+      - do-not-promote
+    legacy_candidate_archive_nexo:
+      - archive-only
+      - shadow-copy-only
+    resourcepack_assets_nexo:
+      - archive-reference
+      - reference-authority
+    qa_visual_evidence:
+      - archive-reference
+      - extract-only
+    reports_and_notes:
+      - extract-only
+  authority_resolution:
+    legacy_nexo_namespace:
+      authoritative_reference_path: resourcepack/assets/nexo
+      shadow_copy_path: legacy_candidate_archive/nexo
+      duplicate_relative_paths: 24
+      identical_files: 16
+      differing_files: 8
+      decision_ticket: minecraft-source-import-promotion-decision-manifest
+  notes:
+    - "legacy_candidate_archive/ stays in place as archive material only."
+    - "qa/visual_evidence is historical validation evidence, not active proof."
+    - "Markdown reports/notes may be mined for snippets only after review."
+
+id: dungeon_ruins_001
+display_name: "Ruiny Złamanej Korony"
+status: release_prep_blocked_live_approval
+version: 0.2.0-dr001
+created_for: "MC MMO RPG staging release prep"
+design_source: "C:\\Codex\\dungeon_ruins_001_codex_concept.md"
+implementation_scope: "source pack and release-prep artifacts only; no live or production commands"
+risk_classification: T3_player_facing_dungeon_release_prep
+observed_environment:
+  minecraft_target: "1.21.11 staging"
+  plugins:
+    Iris: "3.9.1-1.20.1-1.21.11"
+    MythicDungeons: "2.0.1-SNAPSHOT"
+    MythicMobs: "5.11.2"
+    MMOItems: "6.10.1-20260330.094756-58"
+    MMOCore: "1.13.1-20260330.110342-58"
+    ModelEngine: "4.0.9"
+    Nexo: "1.20"
+identity:
+  folder_id: dungeon_ruins_001
+  mythicdungeons_map_id: dungeon_ruins_001
+  display_name: "Ruiny Złamanej Korony"
+  theme: "overgrown ruins -> sunken catacombs -> void throne sanctum"
+  public_prefix_upper: DR001_
+  public_prefix_lower: dr001_
+  legacy_prefix: dungeon_ruins_001_
+  recommended_levels:
+    normal: 12
+    veteran: 20
+    mythic: 30
+  recommended_party_size: "1-5"
+  target_run_time_minutes: "18-35"
+  entry_key: DR001_RUINED_GATE_KEY
+  currencies:
+    - DR001_ANCIENT_COIN
+    - DR001_RUNE_DUST
+  weekly_reward: DR001_CROWN_CORE
+release_prep:
+  approval_status: waiting_for_live_approval
+  staging_target: "Server — kopia/1.21.11"
+  live_commands_allowed: false
+  production_commands_allowed: false
+  rollback: "remove DR001/dr001 imports from staging plugin folders and restore backups from codex-backups/dungeon_ruins_001"
+namespaces:
+  mythicmobs: DR001_
+  mmoitems: DR001_
+  droptables: DR001_
+  iris: dr001_
+  nexo: dr001_
+  modelengine: dr001_
+  objective_state: dr001_
+stages:
+  - id: start
+    name: "START / Overgrown Ruins"
+    biome: dr001_start_overgrown_ruins
+    boss: DR001_GatewardenVaros
+  - id: mid
+    name: "MID / Sunken Catacombs"
+    biome: dr001_mid_sunken_catacombs
+    boss: DR001_CisternOracleNhalruun
+  - id: end
+    name: "END / Void Sanctum"
+    biome: dr001_end_void_sanctum
+    boss: DR001_RuinedKingAurelion
+iris_biomes:
+  - dr001_start_overgrown_ruins
+  - dr001_mid_sunken_catacombs
+  - dr001_end_void_sanctum
+mythicmobs:
+  mobs:
+    - DR001_RuinThrall
+    - DR001_MossboundArcher
+    - DR001_RootlingSwarmer
+    - DR001_AnimatedRubble
+    - DR001_DrownedTombguard
+    - DR001_PlagueAcolyte
+    - DR001_CisternLeech
+    - DR001_BoneMason
+    - DR001_VoidboundKnight
+    - DR001_RuneSentinel
+    - DR001_CrownShade
+    - DR001_AnchorWarden
+  bosses:
+    - DR001_GatewardenVaros
+    - DR001_CisternOracleNhalruun
+    - DR001_RuinedKingAurelion
+nexo:
+  blocks:
+    - dr001_rune_cracked_stone
+    - dr001_ancient_moss_panel
+    - dr001_cursed_water_grate
+    - dr001_void_rune_block
+    - dr001_broken_crown_ornament
+  furniture:
+    - dr001_void_anchor
+    - dr001_rune_pedestal
+    - dr001_broken_king_statue
+    - dr001_soul_censer
+    - dr001_loot_shrine
+  items:
+    - dr001_ruined_gate_key
+    - dr001_relic_shard
+    - dr001_cleansing_draught
+mmoitems:
+  materials:
+    - DR001_ANCIENT_COIN
+    - DR001_RUNE_DUST
+    - DR001_RELIC_SHARD
+    - DR001_AQUEDUCT_RUNE
+    - DR001_VOID_ANCHOR_CORE
+    - DR001_CROWN_CORE
+  gear:
+    - DR001_RELIC_BLADE
+    - DR001_OVERGROWN_BOW
+    - DR001_CISTERN_RING
+    - DR001_VOIDWARD_SHIELD
+    - DR001_CROWN_FRAGMENT_AMULET
+    - DR001_CROWNREAVER
+    - DR001_RUINED_CROWN_HELMET
+    - DR001_RUINED_CROWN_CHESTPLATE
+    - DR001_RUINED_CROWN_LEGGINGS
+    - DR001_RUINED_CROWN_BOOTS
+modelengine:
+  required_blueprints:
+    - dr001_ruin_thrall.bbmodel
+    - dr001_mossbound_archer.bbmodel
+    - dr001_rootling.bbmodel
+    - dr001_animated_rubble.bbmodel
+    - dr001_gatewarden_varos.bbmodel
+    - dr001_drowned_tombguard.bbmodel
+    - dr001_plague_acolyte.bbmodel
+    - dr001_cistern_leech.bbmodel
+    - dr001_bone_mason.bbmodel
+    - dr001_nhalruun.bbmodel
+    - dr001_voidbound_knight.bbmodel
+    - dr001_rune_sentinel.bbmodel
+    - dr001_crown_shade.bbmodel
+    - dr001_anchor_warden.bbmodel
+    - dr001_ruined_king.bbmodel
+manual_assets_required:
+  schematics:
+    - gatehouse_broken_01.schem
+    - rooted_courtyard_01.schem
+    - varos_gate_arena_01.schem
+    - collapsed_stairwell_01.schem
+    - cistern_puzzle_01.schem
+    - nhalruun_oracle_chamber_01.schem
+    - crown_bridge_01.schem
+    - void_anchor_hall_01.schem
+    - void_sanctum_arena_01.schem
+    - loot_shrine_exit_01.schem
+  textures:
+    - "nexo dr001 block/item/furniture textures"
+  sounds:
+    - sounds/dr001/roots_whisper.ogg
+    - sounds/dr001/cistern_geyser.ogg
+    - sounds/dr001/void_crown_pulse.ogg
+    - sounds/dr001/aurelion_enrage.ogg
+validation:
+  required_checks:
+    - yaml_json_parse
+    - duplicate_id_scan
+    - cross_reference_validator
+    - final_asset_validator_blocks_until_approved_final
+    - staging_import_dry_run_only
+    - scoped_git_status

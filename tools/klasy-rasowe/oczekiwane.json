@@ -1,0 +1,778 @@
+{
+ "klasy": {
+  "RYCERZ": {
+   "rasa": "czlowiek",
+   "arch": "wojownik",
+   "nazwa": "Miecz Korony",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "drzewcowa"
+   ],
+   "spec": [
+    "BASTION",
+    "CZEMPION"
+   ]
+  },
+  "BASTION": {
+   "rasa": "czlowiek",
+   "arch": "wojownik",
+   "nazwa": "Nieugięty",
+   "zbroja": [
+    "lekka",
+    "srednia",
+    "ciezka"
+   ],
+   "bron": [
+    "miecz",
+    "drzewcowa",
+    "tarcza"
+   ],
+   "baza": "RYCERZ",
+   "stat": "defense"
+  },
+  "CZEMPION": {
+   "rasa": "czlowiek",
+   "arch": "wojownik",
+   "nazwa": "Czempion Areny",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "drzewcowa"
+   ],
+   "baza": "RYCERZ",
+   "stat": "physical-damage"
+  },
+  "AGENT": {
+   "rasa": "czlowiek",
+   "arch": "ninja",
+   "nazwa": "Lis Zaułków",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "kusza"
+   ],
+   "spec": [
+    "WIDMO",
+    "JASTRZAB"
+   ]
+  },
+  "WIDMO": {
+   "rasa": "czlowiek",
+   "arch": "ninja",
+   "nazwa": "Truciciel",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "kusza"
+   ],
+   "baza": "AGENT",
+   "stat": "critical-strike-chance"
+  },
+  "JASTRZAB": {
+   "rasa": "czlowiek",
+   "arch": "ninja",
+   "nazwa": "Łowca Nagród",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "kusza"
+   ],
+   "baza": "AGENT",
+   "stat": "projectile-damage"
+  },
+  "MAG_AKADEMII": {
+   "rasa": "czlowiek",
+   "arch": "mag",
+   "nazwa": "Magister Wieży",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "grimuar"
+   ],
+   "spec": [
+    "ELEMENTALISTA",
+    "PRZYWOLYWACZ"
+   ]
+  },
+  "ELEMENTALISTA": {
+   "rasa": "czlowiek",
+   "arch": "mag",
+   "nazwa": "Władca Żywiołów",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "grimuar"
+   ],
+   "baza": "MAG_AKADEMII",
+   "stat": "magic-damage"
+  },
+  "PRZYWOLYWACZ": {
+   "rasa": "czlowiek",
+   "arch": "mag",
+   "nazwa": "Chronomanta",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "grimuar"
+   ],
+   "baza": "MAG_AKADEMII",
+   "stat": "cooldown-reduction"
+  },
+  "SWIETY_AKOLITA": {
+   "rasa": "czlowiek",
+   "arch": "akolita",
+   "nazwa": "Nosiciel Relikwii",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "bulawa",
+    "tarcza"
+   ],
+   "spec": [
+    "SERAFIN",
+    "HIEROFANT"
+   ]
+  },
+  "SERAFIN": {
+   "rasa": "czlowiek",
+   "arch": "akolita",
+   "nazwa": "Żywa Relikwia",
+   "zbroja": [
+    "lekka",
+    "srednia",
+    "ciezka"
+   ],
+   "bron": [
+    "bulawa",
+    "tarcza"
+   ],
+   "baza": "SWIETY_AKOLITA",
+   "stat": "defense"
+  },
+  "HIEROFANT": {
+   "rasa": "czlowiek",
+   "arch": "akolita",
+   "nazwa": "Chorąży Świętych",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "bulawa",
+    "tarcza"
+   ],
+   "baza": "SWIETY_AKOLITA",
+   "stat": "max-mana"
+  },
+  "OSTRZE_GAJU": {
+   "rasa": "elf",
+   "arch": "wojownik",
+   "nazwa": "Klinga Gaju",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "klinga"
+   ],
+   "spec": [
+    "STRAZNIK_CIERNI",
+    "TANCERZ_OSTRZY"
+   ]
+  },
+  "STRAZNIK_CIERNI": {
+   "rasa": "elf",
+   "arch": "wojownik",
+   "nazwa": "Różany Rycerz",
+   "zbroja": [
+    "lekka",
+    "srednia",
+    "ciezka"
+   ],
+   "bron": [
+    "miecz",
+    "klinga",
+    "tarcza"
+   ],
+   "baza": "OSTRZE_GAJU",
+   "stat": "defense"
+  },
+  "TANCERZ_OSTRZY": {
+   "rasa": "elf",
+   "arch": "wojownik",
+   "nazwa": "Tancerz Ostrzy",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "klinga"
+   ],
+   "baza": "OSTRZE_GAJU",
+   "stat": "dodge-rating"
+  },
+  "STRAZNIK_KNIEI": {
+   "rasa": "elf",
+   "arch": "ninja",
+   "nazwa": "Szept Kniei",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "luk_dlugi"
+   ],
+   "spec": [
+    "CIEN_LISCI",
+    "SOKOL"
+   ]
+  },
+  "CIEN_LISCI": {
+   "rasa": "elf",
+   "arch": "ninja",
+   "nazwa": "Tkacz Sideł",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "luk_dlugi"
+   ],
+   "baza": "STRAZNIK_KNIEI",
+   "stat": "critical-strike-chance"
+  },
+  "SOKOL": {
+   "rasa": "elf",
+   "arch": "ninja",
+   "nazwa": "Srebrna Cięciwa",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "luk_dlugi"
+   ],
+   "baza": "STRAZNIK_KNIEI",
+   "stat": "projectile-damage"
+  },
+  "TKACZ_ARKANOW": {
+   "rasa": "elf",
+   "arch": "mag",
+   "nazwa": "Tkacz Arkanów",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "kostur_dwureczny"
+   ],
+   "spec": [
+    "TKACZ_ZYWIOLOW",
+    "STRAZNIK_ZYWIOLOW"
+   ]
+  },
+  "TKACZ_ZYWIOLOW": {
+   "rasa": "elf",
+   "arch": "mag",
+   "nazwa": "Pieśniarz Burz",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "kostur_dwureczny"
+   ],
+   "baza": "TKACZ_ARKANOW",
+   "stat": "magic-damage"
+  },
+  "STRAZNIK_ZYWIOLOW": {
+   "rasa": "elf",
+   "arch": "mag",
+   "nazwa": "Władca Zwierciadeł",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "kostur",
+    "kostur_dwureczny"
+   ],
+   "baza": "TKACZ_ARKANOW",
+   "stat": "magic-damage-reduction"
+  },
+  "WYROCZNIA": {
+   "rasa": "elf",
+   "arch": "akolita",
+   "nazwa": "Wyrocznia",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "bulawa",
+    "sierp"
+   ],
+   "spec": [
+    "OSTRZE_KSIEZYCA",
+    "OPIEKUN_DUCHOW"
+   ]
+  },
+  "OSTRZE_KSIEZYCA": {
+   "rasa": "elf",
+   "arch": "akolita",
+   "nazwa": "Ostrze Księżyca",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "bulawa",
+    "sierp"
+   ],
+   "baza": "WYROCZNIA",
+   "stat": "critical-strike-chance"
+  },
+  "OPIEKUN_DUCHOW": {
+   "rasa": "elf",
+   "arch": "akolita",
+   "nazwa": "Przewodnik Ogników",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "bulawa",
+    "sierp"
+   ],
+   "baza": "WYROCZNIA",
+   "stat": "max-mana"
+  },
+  "WODZ_WOJNY": {
+   "rasa": "ork",
+   "arch": "wojownik",
+   "nazwa": "Wódz Wojny",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "topor"
+   ],
+   "spec": [
+    "TYRAN",
+    "KRWIOBURCA"
+   ]
+  },
+  "TYRAN": {
+   "rasa": "ork",
+   "arch": "wojownik",
+   "nazwa": "Tyran",
+   "zbroja": [
+    "lekka",
+    "srednia",
+    "ciezka"
+   ],
+   "bron": [
+    "miecz",
+    "topor",
+    "tarcza"
+   ],
+   "baza": "WODZ_WOJNY",
+   "stat": "defense"
+  },
+  "KRWIOBURCA": {
+   "rasa": "ork",
+   "arch": "wojownik",
+   "nazwa": "Krwioburca",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "topor"
+   ],
+   "baza": "WODZ_WOJNY",
+   "stat": "critical-strike-chance"
+  },
+  "TROPICIEL": {
+   "rasa": "ork",
+   "arch": "ninja",
+   "nazwa": "Kieł Stepu",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "wlocznia"
+   ],
+   "spec": [
+    "LOWCA_BESTII",
+    "LOWCA_KOSCI"
+   ]
+  },
+  "LOWCA_BESTII": {
+   "rasa": "ork",
+   "arch": "ninja",
+   "nazwa": "Zaklinacz Bestii",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "wlocznia"
+   ],
+   "baza": "TROPICIEL",
+   "stat": "max-health"
+  },
+  "LOWCA_KOSCI": {
+   "rasa": "ork",
+   "arch": "ninja",
+   "nazwa": "Kościany Grot",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "wlocznia"
+   ],
+   "baza": "TROPICIEL",
+   "stat": "projectile-damage"
+  },
+  "SZAMAN": {
+   "rasa": "ork",
+   "arch": "mag",
+   "nazwa": "Szaman",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "kostur",
+    "totem"
+   ],
+   "spec": [
+    "BURZOWNIK",
+    "TOTEMISTA"
+   ]
+  },
+  "BURZOWNIK": {
+   "rasa": "ork",
+   "arch": "mag",
+   "nazwa": "Burzownik",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "kostur",
+    "totem"
+   ],
+   "baza": "SZAMAN",
+   "stat": "magic-damage"
+  },
+  "TOTEMISTA": {
+   "rasa": "ork",
+   "arch": "mag",
+   "nazwa": "Głos Bębna",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "kostur",
+    "totem"
+   ],
+   "baza": "SZAMAN",
+   "stat": "cooldown-reduction"
+  },
+  "KAPLAN_KRWI": {
+   "rasa": "ork",
+   "arch": "akolita",
+   "nazwa": "Kapłan Krwi",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "bulawa",
+    "mlot_dwureczny"
+   ],
+   "spec": [
+    "AWATAR_WOJNY",
+    "SZEPT_PRZODKOW"
+   ]
+  },
+  "AWATAR_WOJNY": {
+   "rasa": "ork",
+   "arch": "akolita",
+   "nazwa": "Awatar Wojny",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "bulawa",
+    "mlot_dwureczny"
+   ],
+   "baza": "KAPLAN_KRWI",
+   "stat": "physical-damage"
+  },
+  "SZEPT_PRZODKOW": {
+   "rasa": "ork",
+   "arch": "akolita",
+   "nazwa": "Wołający Przodków",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "bulawa",
+    "mlot_dwureczny"
+   ],
+   "baza": "KAPLAN_KRWI",
+   "stat": "max-mana"
+  },
+  "RYCERZ_SMIERCI": {
+   "rasa": "nieumarly",
+   "arch": "wojownik",
+   "nazwa": "Rycerz Śmierci",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "miecz_dwureczny"
+   ],
+   "spec": [
+    "STRAZNIK_GROBU",
+    "ZNIWIARZ"
+   ]
+  },
+  "STRAZNIK_GROBU": {
+   "rasa": "nieumarly",
+   "arch": "wojownik",
+   "nazwa": "Kustosz Krypt",
+   "zbroja": [
+    "lekka",
+    "srednia",
+    "ciezka"
+   ],
+   "bron": [
+    "miecz",
+    "miecz_dwureczny",
+    "tarcza"
+   ],
+   "baza": "RYCERZ_SMIERCI",
+   "stat": "defense"
+  },
+  "ZNIWIARZ": {
+   "rasa": "nieumarly",
+   "arch": "wojownik",
+   "nazwa": "Żniwiarz",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "miecz",
+    "miecz_dwureczny"
+   ],
+   "baza": "RYCERZ_SMIERCI",
+   "stat": "lifesteal"
+  },
+  "WIDMO_GROBU": {
+   "rasa": "nieumarly",
+   "arch": "ninja",
+   "nazwa": "Upiór",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "lancuch"
+   ],
+   "spec": [
+    "CIEN",
+    "STRZELEC_GROBU"
+   ]
+  },
+  "CIEN": {
+   "rasa": "nieumarly",
+   "arch": "ninja",
+   "nazwa": "Dusiciel",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "lancuch"
+   ],
+   "baza": "WIDMO_GROBU",
+   "stat": "critical-strike-chance"
+  },
+  "STRZELEC_GROBU": {
+   "rasa": "nieumarly",
+   "arch": "ninja",
+   "nazwa": "Łucznik Ciszy",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "sztylet",
+    "luk",
+    "lancuch"
+   ],
+   "baza": "WIDMO_GROBU",
+   "stat": "projectile-damage"
+  },
+  "MAG_GROBU": {
+   "rasa": "nieumarly",
+   "arch": "mag",
+   "nazwa": "Lisz",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "filakterium"
+   ],
+   "spec": [
+    "DUSZOZERCA",
+    "NEKROMANTA"
+   ]
+  },
+  "DUSZOZERCA": {
+   "rasa": "nieumarly",
+   "arch": "mag",
+   "nazwa": "Duszożerca",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "filakterium"
+   ],
+   "baza": "MAG_GROBU",
+   "stat": "spell-vampirism"
+  },
+  "NEKROMANTA": {
+   "rasa": "nieumarly",
+   "arch": "mag",
+   "nazwa": "Zwiastun Zarazy",
+   "zbroja": [],
+   "bron": [
+    "kostur",
+    "filakterium"
+   ],
+   "baza": "MAG_GROBU",
+   "stat": "max-mana"
+  },
+  "SPACZONY_AKOLITA": {
+   "rasa": "nieumarly",
+   "arch": "akolita",
+   "nazwa": "Pasterz Ciszy",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "bulawa",
+    "kosa"
+   ],
+   "spec": [
+    "AWATAR_OTCHLANI",
+    "PASTERZ_UMARLYCH"
+   ]
+  },
+  "AWATAR_OTCHLANI": {
+   "rasa": "nieumarly",
+   "arch": "akolita",
+   "nazwa": "Awatar Otchłani",
+   "zbroja": [
+    "lekka",
+    "srednia"
+   ],
+   "bron": [
+    "bulawa",
+    "kosa"
+   ],
+   "baza": "SPACZONY_AKOLITA",
+   "stat": "lifesteal"
+  },
+  "PASTERZ_UMARLYCH": {
+   "rasa": "nieumarly",
+   "arch": "akolita",
+   "nazwa": "Pan Kurhanów",
+   "zbroja": [
+    "lekka"
+   ],
+   "bron": [
+    "bulawa",
+    "kosa"
+   ],
+   "baza": "SPACZONY_AKOLITA",
+   "stat": "max-mana"
+  }
+ },
+ "mapa": {
+  "czlowiek/wojownik": "RYCERZ",
+  "czlowiek/ninja": "AGENT",
+  "czlowiek/mag": "MAG_AKADEMII",
+  "czlowiek/akolita": "SWIETY_AKOLITA",
+  "elf/wojownik": "OSTRZE_GAJU",
+  "elf/ninja": "STRAZNIK_KNIEI",
+  "elf/mag": "TKACZ_ARKANOW",
+  "elf/akolita": "WYROCZNIA",
+  "ork/wojownik": "WODZ_WOJNY",
+  "ork/ninja": "TROPICIEL",
+  "ork/mag": "SZAMAN",
+  "ork/akolita": "KAPLAN_KRWI",
+  "nieumarly/wojownik": "RYCERZ_SMIERCI",
+  "nieumarly/ninja": "WIDMO_GROBU",
+  "nieumarly/mag": "MAG_GROBU",
+  "nieumarly/akolita": "SPACZONY_AKOLITA"
+ },
+ "bieglosci": [
+  "lekka",
+  "srednia",
+  "ciezka",
+  "miecz",
+  "sztylet",
+  "luk",
+  "kostur",
+  "bulawa",
+  "tarcza",
+  "drzewcowa",
+  "kusza",
+  "grimuar",
+  "klinga",
+  "luk_dlugi",
+  "kostur_dwureczny",
+  "sierp",
+  "topor",
+  "wlocznia",
+  "totem",
+  "mlot_dwureczny",
+  "miecz_dwureczny",
+  "lancuch",
+  "filakterium",
+  "kosa"
+ ]
+}

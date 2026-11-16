@@ -1,0 +1,20 @@
+{
+  "name": "mcmmorpg-updater",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free host-side contracts, registry, inventory, and candidate qualification for MCMMORPG plugin updates.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "discover-candidates": "node src/batch/cli.mjs",
+    "operator-decision-report": "node src/batch/decision-report-cli.mjs",
+    "persist-verified-batch": "node src/batch/persist-cli.mjs",
+    "release-manifest": "node src/batch/release-manifest-cli.mjs",
+    "inventory": "node src/inventory/cli.mjs",
+    "qualify-candidate": "node src/downloads/cli.mjs",
+    "voxel": "node src/voxel/cli.mjs",
+    "test": "node --test"
+  }
+}

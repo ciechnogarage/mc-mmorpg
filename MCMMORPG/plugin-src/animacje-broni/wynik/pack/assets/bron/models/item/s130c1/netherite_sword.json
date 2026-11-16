@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/netherite_sword",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    -22,
+    16,
+    17
+   ],
+   "translation": [
+    0,
+    2.5,
+    -2.1
+   ],
+   "scale": [
+    1.235,
+    1.235,
+    1.235
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    -22,
+    -16,
+    -17
+   ],
+   "translation": [
+    0,
+    2.5,
+    -2.1
+   ],
+   "scale": [
+    1.235,
+    1.235,
+    1.235
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    -18,
+    17,
+    10
+   ],
+   "translation": [
+    -0.7,
+    2.5,
+    -2.8
+   ],
+   "scale": [
+    1.04,
+    1.04,
+    1.04
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    -18,
+    -17,
+    -10
+   ],
+   "translation": [
+    -0.7,
+    2.5,
+    -2.8
+   ],
+   "scale": [
+    1.04,
+    1.04,
+    1.04
+   ]
+  }
+ }
+}

@@ -1,0 +1,663 @@
+# Wygenerowane przez strony/chowance/generuj_menu.py.
+menu_title: '&f䫐䫑䫒䫓'
+size: 54
+update_interval: 2
+items:
+  'm_1':
+    material: 'nexo-%chowance_magazyn_1_ikona%'
+    slot: 5
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_1_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_1_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_1_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_1_nr%'
+      - '[refresh]'
+  'm_2':
+    material: 'nexo-%chowance_magazyn_2_ikona%'
+    slot: 6
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_2_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_2_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_2_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_2_nr%'
+      - '[refresh]'
+  'm_3':
+    material: 'nexo-%chowance_magazyn_3_ikona%'
+    slot: 7
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_3_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_3_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_3_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_3_nr%'
+      - '[refresh]'
+  'm_4':
+    material: 'nexo-%chowance_magazyn_4_ikona%'
+    slot: 8
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_4_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_4_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_4_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_4_nr%'
+      - '[refresh]'
+  'm_5':
+    material: 'nexo-%chowance_magazyn_5_ikona%'
+    slot: 14
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_5_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_5_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_5_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_5_nr%'
+      - '[refresh]'
+  'm_6':
+    material: 'nexo-%chowance_magazyn_6_ikona%'
+    slot: 15
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_6_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_6_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_6_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_6_nr%'
+      - '[refresh]'
+  'm_7':
+    material: 'nexo-%chowance_magazyn_7_ikona%'
+    slot: 16
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_7_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_7_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_7_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_7_nr%'
+      - '[refresh]'
+  'm_8':
+    material: 'nexo-%chowance_magazyn_8_ikona%'
+    slot: 17
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_8_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_8_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_8_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_8_nr%'
+      - '[refresh]'
+  'm_9':
+    material: 'nexo-%chowance_magazyn_9_ikona%'
+    slot: 23
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_9_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_9_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_9_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_9_nr%'
+      - '[refresh]'
+  'm_10':
+    material: 'nexo-%chowance_magazyn_10_ikona%'
+    slot: 24
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_10_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_10_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_10_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_10_nr%'
+      - '[refresh]'
+  'm_11':
+    material: 'nexo-%chowance_magazyn_11_ikona%'
+    slot: 25
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_11_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_11_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_11_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_11_nr%'
+      - '[refresh]'
+  'm_12':
+    material: 'nexo-%chowance_magazyn_12_ikona%'
+    slot: 26
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_12_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_12_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_12_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_12_nr%'
+      - '[refresh]'
+  'm_13':
+    material: 'nexo-%chowance_magazyn_13_ikona%'
+    slot: 32
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_13_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_13_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_13_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_13_nr%'
+      - '[refresh]'
+  'm_14':
+    material: 'nexo-%chowance_magazyn_14_ikona%'
+    slot: 33
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_14_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_14_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_14_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_14_nr%'
+      - '[refresh]'
+  'm_15':
+    material: 'nexo-%chowance_magazyn_15_ikona%'
+    slot: 34
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_15_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_15_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_15_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_15_nr%'
+      - '[refresh]'
+  'm_16':
+    material: 'nexo-%chowance_magazyn_16_ikona%'
+    slot: 35
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_16_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_16_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_16_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_16_nr%'
+      - '[refresh]'
+  'm_17':
+    material: 'nexo-%chowance_magazyn_17_ikona%'
+    slot: 41
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_17_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_17_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_17_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_17_nr%'
+      - '[refresh]'
+  'm_18':
+    material: 'nexo-%chowance_magazyn_18_ikona%'
+    slot: 42
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_18_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_18_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_18_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_18_nr%'
+      - '[refresh]'
+  'm_19':
+    material: 'nexo-%chowance_magazyn_19_ikona%'
+    slot: 43
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_19_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_19_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_19_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_19_nr%'
+      - '[refresh]'
+  'm_20':
+    material: 'nexo-%chowance_magazyn_20_ikona%'
+    slot: 44
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_20_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_20_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_20_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_20_nr%'
+      - '[refresh]'
+  'm_21':
+    material: 'nexo-%chowance_magazyn_21_ikona%'
+    slot: 50
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_21_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_21_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_21_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_21_nr%'
+      - '[refresh]'
+  'm_22':
+    material: 'nexo-%chowance_magazyn_22_ikona%'
+    slot: 51
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_22_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_22_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_22_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_22_nr%'
+      - '[refresh]'
+  'm_23':
+    material: 'nexo-%chowance_magazyn_23_ikona%'
+    slot: 52
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_23_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_23_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_23_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_23_nr%'
+      - '[refresh]'
+  'm_24':
+    material: 'nexo-%chowance_magazyn_24_ikona%'
+    slot: 53
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_24_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_24_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_24_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_24_nr%'
+      - '[refresh]'
+  'm_25':
+    material: 'nexo-%chowance_magazyn_25_ikona%'
+    slot: 27
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_25_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_25_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_25_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_25_nr%'
+      - '[refresh]'
+  'm_26':
+    material: 'nexo-%chowance_magazyn_26_ikona%'
+    slot: 28
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_26_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_26_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_26_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_26_nr%'
+      - '[refresh]'
+  'm_27':
+    material: 'nexo-%chowance_magazyn_27_ikona%'
+    slot: 29
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_27_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_27_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_27_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_27_nr%'
+      - '[refresh]'
+  'm_28':
+    material: 'nexo-%chowance_magazyn_28_ikona%'
+    slot: 30
+    priority: 1
+    update: true
+    display_name: '&f%chowance_magazyn_28_nazwa%'
+    lore:
+      - '&7Poziom: &f%chowance_magazyn_28_poziom%'
+      - ''
+      - '&eKliknij &7— przenieś do drużyny'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_magazyn_28_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wyjmij %chowance_magazyn_28_nr%'
+      - '[refresh]'
+  'd_1':
+    material: 'nexo-%chowance_druzyna_1_ikona%'
+    slot: 36
+    priority: 1
+    update: true
+    display_name: '&7Drużyna 1: &f%chowance_druzyna_1_nazwa%'
+    lore:
+      - '&eKliknij &7— odłóż do magazynu'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_1_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wloz 1'
+      - '[refresh]'
+  'd_2':
+    material: 'nexo-%chowance_druzyna_2_ikona%'
+    slot: 37
+    priority: 1
+    update: true
+    display_name: '&7Drużyna 2: &f%chowance_druzyna_2_nazwa%'
+    lore:
+      - '&eKliknij &7— odłóż do magazynu'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_2_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wloz 2'
+      - '[refresh]'
+  'd_3':
+    material: 'nexo-%chowance_druzyna_3_ikona%'
+    slot: 38
+    priority: 1
+    update: true
+    display_name: '&7Drużyna 3: &f%chowance_druzyna_3_nazwa%'
+    lore:
+      - '&eKliknij &7— odłóż do magazynu'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_3_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wloz 3'
+      - '[refresh]'
+  'd_4':
+    material: 'nexo-%chowance_druzyna_4_ikona%'
+    slot: 39
+    priority: 1
+    update: true
+    display_name: '&7Drużyna 4: &f%chowance_druzyna_4_nazwa%'
+    lore:
+      - '&eKliknij &7— odłóż do magazynu'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_4_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wloz 4'
+      - '[refresh]'
+  'd_5':
+    material: 'nexo-%chowance_druzyna_5_ikona%'
+    slot: 45
+    priority: 1
+    update: true
+    display_name: '&7Drużyna 5: &f%chowance_druzyna_5_nazwa%'
+    lore:
+      - '&eKliknij &7— odłóż do magazynu'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_5_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wloz 5'
+      - '[refresh]'
+  'd_6':
+    material: 'nexo-%chowance_druzyna_6_ikona%'
+    slot: 46
+    priority: 1
+    update: true
+    display_name: '&7Drużyna 6: &f%chowance_druzyna_6_nazwa%'
+    lore:
+      - '&eKliknij &7— odłóż do magazynu'
+    view_requirement:
+      requirements:
+        jest:
+          type: string equals
+          input: '%chowance_druzyna_6_istnieje%'
+          output: 'tak'
+    left_click_commands:
+      - '[player] chw magazyn wloz 6'
+      - '[refresh]'
+  'poprzednia':
+    material: 'nexo-hub_chw_wstecz'
+    slot: 47
+    display_name: '&ePoprzednia strona'
+    lore:
+    left_click_commands:
+      - '[player] chw magazyn strona poprzednia'
+      - '[refresh]'
+  'nastepna':
+    material: 'ARROW'
+    slot: 48
+    display_name: '&eNastępna strona'
+    lore:
+    left_click_commands:
+      - '[player] chw magazyn strona nastepna'
+      - '[refresh]'
+  'informacja':
+    material: nexo-mmo_icon_blank
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21]
+    update: true
+    display_name: '&6&lMagazyn'
+    lore:
+      - '&7Strona: &f%chowance_magazyn_strona%&7/&f%chowance_magazyn_stron%'

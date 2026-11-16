@@ -1,0 +1,857 @@
+{
+ "PROF_ALCHEMICAL_BASE": {
+  "id": "PROF_ALCHEMICAL_BASE",
+  "typ": "MATERIAL",
+  "nazwa": "Baza alchemiczna",
+  "wartosc": 22.07,
+  "skup": 7.65,
+  "k": 0.4,
+  "droga": "alchemy L1: 1xHERBAL_EXTRACT"
+ },
+ "PROF_ALCHEMICAL_CROP": {
+  "id": "PROF_ALCHEMICAL_CROP",
+  "typ": "MATERIAL",
+  "nazwa": "Plon alchemiczny",
+  "wartosc": 14.2,
+  "skup": 5.05,
+  "k": 0.4,
+  "droga": "herbalism L30: 4xREDCAP"
+ },
+ "PROF_ALCHEMICAL_SOLVENT": {
+  "id": "PROF_ALCHEMICAL_SOLVENT",
+  "typ": "MATERIAL",
+  "nazwa": "Rozpuszczalnik alchemiczny",
+  "wartosc": 45.2,
+  "skup": 13.5,
+  "k": 0.4,
+  "droga": "alchemy L45: 2xALCHEMICAL_CROP"
+ },
+ "PROF_ANTIDOTE": {
+  "id": "PROF_ANTIDOTE",
+  "typ": "MATERIAL",
+  "nazwa": "Antidotum",
+  "wartosc": 14.06,
+  "skup": 5.15,
+  "k": 0.4,
+  "droga": "alchemy L15: 3xMEDICINAL_HERB"
+ },
+ "PROF_ARCANE_CRYSTAL": {
+  "id": "PROF_ARCANE_CRYSTAL",
+  "typ": "MATERIAL",
+  "nazwa": "Kryształ arkanów",
+  "wartosc": 30.0,
+  "skup": 12.0,
+  "k": 0.4,
+  "droga": "druza_arkany: 150.0 s/szt."
+ },
+ "PROF_ARROWHEADS": {
+  "id": "PROF_ARROWHEADS",
+  "typ": "MATERIAL",
+  "nazwa": "Groty strzał",
+  "wartosc": 38.11,
+  "skup": 12.5,
+  "k": 0.4,
+  "droga": "smithing L30: 2xREFINED_IRON"
+ },
+ "PROF_AWAKENED_STAFF": {
+  "id": "PROF_AWAKENED_STAFF",
+  "typ": "STAFF",
+  "nazwa": "&dPrzebudzony kostur",
+  "wartosc": 944.33,
+  "skup": 232.0,
+  "k": 0.4,
+  "droga": "enchanting L30: 1xUNAWAKENED_STAFF + 1xSTAFF_FOCUS + 2xCHARGED_RUNE"
+ },
+ "PROF_AWAKENING_SEAL": {
+  "id": "PROF_AWAKENING_SEAL",
+  "typ": "MATERIAL",
+  "nazwa": "Pieczęć przebudzenia",
+  "wartosc": 116.61,
+  "skup": 29.5,
+  "k": 0.4,
+  "droga": "enchanting L45: 1xMASTER_CHARM"
+ },
+ "PROF_AXE_HEAD": {
+  "id": "PROF_AXE_HEAD",
+  "typ": "MATERIAL",
+  "nazwa": "Głowica siekiery",
+  "wartosc": 248.26,
+  "skup": 77.5,
+  "k": 0.4,
+  "droga": "smithing L15: 2xMETAL_PLATE + 2xREFINED_IRON"
+ },
+ "PROF_BAIT_MIX": {
+  "id": "PROF_BAIT_MIX",
+  "typ": "MATERIAL",
+  "nazwa": "Mieszanka zanętowa",
+  "wartosc": 17.4,
+  "skup": 5.95,
+  "k": 0.4,
+  "droga": "farming L45: 10xFRESH_HARVEST"
+ },
+ "PROF_BEAST_BONE": {
+  "id": "PROF_BEAST_BONE",
+  "typ": "MATERIAL",
+  "nazwa": "Kość bestii",
+  "wartosc": 3.14,
+  "skup": 1.25,
+  "k": 0.4,
+  "droga": "bestie: 15.7 s/szt."
+ },
+ "PROF_BEAST_SCRAP": {
+  "id": "PROF_BEAST_SCRAP",
+  "typ": "MATERIAL",
+  "nazwa": "Łup z bestii",
+  "wartosc": 2.22,
+  "skup": 0.9,
+  "k": 0.4,
+  "droga": "bestie: 11.1 s/szt."
+ },
+ "PROF_BIRCH_LATH": {
+  "id": "PROF_BIRCH_LATH",
+  "typ": "MATERIAL",
+  "nazwa": "Giętkie drewno brzozowe",
+  "wartosc": 1.67,
+  "skup": 0.65,
+  "k": 0.4,
+  "droga": "wezel_brzoza: 8.3 s/szt."
+ },
+ "PROF_BOWSTRING": {
+  "id": "PROF_BOWSTRING",
+  "typ": "MATERIAL",
+  "nazwa": "Cięciwa",
+  "wartosc": 100.1,
+  "skup": 32.0,
+  "k": 0.4,
+  "droga": "tailoring L30: 3xSINEW"
+ },
+ "PROF_BOW_LIMB": {
+  "id": "PROF_BOW_LIMB",
+  "typ": "MATERIAL",
+  "nazwa": "Łęczysko",
+  "wartosc": 20.2,
+  "skup": 7.15,
+  "k": 0.4,
+  "droga": "woodworking L30: 8xBIRCH_LATH"
+ },
+ "PROF_CARVED_FITTING": {
+  "id": "PROF_CARVED_FITTING",
+  "typ": "MATERIAL",
+  "nazwa": "Rzeźbione okucie",
+  "wartosc": 27.6,
+  "skup": 9.35,
+  "k": 0.4,
+  "droga": "woodworking L45: 10xSPRUCE_RESIN"
+ },
+ "PROF_CARVED_STONE": {
+  "id": "PROF_CARVED_STONE",
+  "typ": "MATERIAL",
+  "nazwa": "Rzeźbiony kamień",
+  "wartosc": 134.0,
+  "skup": 41.0,
+  "k": 0.4,
+  "droga": "building L15: 4xCUT_STONE"
+ },
+ "PROF_CHARGED_RUNE": {
+  "id": "PROF_CHARGED_RUNE",
+  "typ": "MATERIAL",
+  "nazwa": "Naładowana runa",
+  "wartosc": 158.3,
+  "skup": 46.0,
+  "k": 0.4,
+  "droga": "enchanting L15: 2xRUNE_BLANK"
+ },
+ "PROF_CLAM": {
+  "id": "PROF_CLAM",
+  "typ": "MATERIAL",
+  "nazwa": "Małż",
+  "wartosc": 5.22,
+  "skup": 2.1,
+  "k": 0.4,
+  "droga": "polow: 26.1 s/szt."
+ },
+ "PROF_CLAY_LUMP": {
+  "id": "PROF_CLAY_LUMP",
+  "typ": "MATERIAL",
+  "nazwa": "Gruda gliny",
+  "wartosc": 1.25,
+  "skup": 0.5,
+  "k": 0.4,
+  "droga": "wezel_glina: 6.2 s/szt."
+ },
+ "PROF_CLOTH_BOLT": {
+  "id": "PROF_CLOTH_BOLT",
+  "typ": "MATERIAL",
+  "nazwa": "Zwój tkaniny",
+  "wartosc": 34.57,
+  "skup": 12.0,
+  "k": 0.4,
+  "droga": "tailoring L1: 3xFLAX_FIBER"
+ },
+ "PROF_COMBAT_TONIC": {
+  "id": "PROF_COMBAT_TONIC",
+  "typ": "MATERIAL",
+  "nazwa": "Tonik bojowy",
+  "wartosc": 8.71,
+  "skup": 3.05,
+  "k": 0.4,
+  "droga": "alchemy L45: 1xVENOM_SAC"
+ },
+ "PROF_CURED_HIDE": {
+  "id": "PROF_CURED_HIDE",
+  "typ": "MATERIAL",
+  "nazwa": "Wyprawiona skóra",
+  "wartosc": 14.55,
+  "skup": 5.5,
+  "k": 0.4,
+  "droga": "hunting L1: 5xBEAST_SCRAP"
+ },
+ "PROF_CUT_GEM": {
+  "id": "PROF_CUT_GEM",
+  "typ": "MATERIAL",
+  "nazwa": "Oszlifowany klejnot",
+  "wartosc": 6.66,
+  "skup": 2.55,
+  "k": 0.4,
+  "droga": "jewelcrafting L1: 2xROUGH_CRYSTAL"
+ },
+ "PROF_CUT_STONE": {
+  "id": "PROF_CUT_STONE",
+  "typ": "MATERIAL",
+  "nazwa": "Kamień konstrukcyjny",
+  "wartosc": 26.4,
+  "skup": 8.95,
+  "k": 0.4,
+  "droga": "mining L45: 8xROUGH_STONE"
+ },
+ "PROF_DECORATIVE_FITTING": {
+  "id": "PROF_DECORATIVE_FITTING",
+  "typ": "MATERIAL",
+  "nazwa": "Okucie dekoracyjne",
+  "wartosc": 85.2,
+  "skup": 24.5,
+  "k": 0.4,
+  "droga": "building L45: 2xCARVED_FITTING"
+ },
+ "PROF_DRIED_HERBS": {
+  "id": "PROF_DRIED_HERBS",
+  "typ": "MATERIAL",
+  "nazwa": "Suszone zioła",
+  "wartosc": 12.89,
+  "skup": 4.85,
+  "k": 0.4,
+  "droga": "herbalism L1: 3xMEDICINAL_HERB"
+ },
+ "PROF_EMPTY_SOCKET": {
+  "id": "PROF_EMPTY_SOCKET",
+  "typ": "MATERIAL",
+  "nazwa": "Puste gniazdo",
+  "wartosc": 22.38,
+  "skup": 7.3,
+  "k": 0.4,
+  "droga": "jewelcrafting L45: 2xCUT_GEM"
+ },
+ "PROF_ENCHANT_DUST": {
+  "id": "PROF_ENCHANT_DUST",
+  "typ": "MATERIAL",
+  "nazwa": "Pył zaklęć",
+  "wartosc": 42.7,
+  "skup": 15.0,
+  "k": 0.4,
+  "droga": "enchanting L30: 1xARCANE_CRYSTAL"
+ },
+ "PROF_FABRIC_REPAIR_KIT": {
+  "id": "PROF_FABRIC_REPAIR_KIT",
+  "typ": "MATERIAL",
+  "nazwa": "Zestaw naprawczy krawca",
+  "wartosc": 106.32,
+  "skup": 31.0,
+  "k": 0.4,
+  "droga": "tailoring L45: 2xCLOTH_BOLT"
+ },
+ "PROF_FARMER_HOE": {
+  "id": "PROF_FARMER_HOE",
+  "typ": "TOOL",
+  "nazwa": "Motyka farmera",
+  "wartosc": 198.1,
+  "skup": 62.0,
+  "k": 0.4,
+  "droga": "smithing L15: 1xMETAL_PLATE + 2xREFINED_IRON + 1xWEAPON_HANDLE"
+ },
+ "PROF_FINE_WOOL": {
+  "id": "PROF_FINE_WOOL",
+  "typ": "MATERIAL",
+  "nazwa": "Delikatna wełna",
+  "wartosc": 21.4,
+  "skup": 7.55,
+  "k": 0.4,
+  "droga": "farming L30: 4xRAW_FLEECE"
+ },
+ "PROF_FISHER_STEW": {
+  "id": "PROF_FISHER_STEW",
+  "typ": "CONSUMABLE",
+  "nazwa": "Gulasz rybaka",
+  "wartosc": 15.09,
+  "skup": 5.5,
+  "k": 0.4,
+  "droga": "cooking L15: 1xRARE_FISH + 1xWILD_SPICE"
+ },
+ "PROF_FISHING_ROD": {
+  "id": "PROF_FISHING_ROD",
+  "typ": "TOOL",
+  "nazwa": "Wędka rybaka",
+  "wartosc": 205.05,
+  "skup": 62.0,
+  "k": 0.4,
+  "droga": "woodworking L15: 2xSEASONED_TIMBER + 1xBOWSTRING + 1xCARVED_FITTING"
+ },
+ "PROF_FISH_OIL": {
+  "id": "PROF_FISH_OIL",
+  "typ": "MATERIAL",
+  "nazwa": "Olej rybi",
+  "wartosc": 15.94,
+  "skup": 6.0,
+  "k": 0.4,
+  "droga": "fishing L1: 5xRAW_CATCH"
+ },
+ "PROF_FLAX_FIBER": {
+  "id": "PROF_FLAX_FIBER",
+  "typ": "MATERIAL",
+  "nazwa": "Włókno lniane",
+  "wartosc": 9.5,
+  "skup": 3.5,
+  "k": 0.4,
+  "droga": "farming L15: 6xFRESH_HARVEST"
+ },
+ "PROF_FRESH_HARVEST": {
+  "id": "PROF_FRESH_HARVEST",
+  "typ": "MATERIAL",
+  "nazwa": "Świeży zbiór",
+  "wartosc": 1.0,
+  "skup": 0.4,
+  "k": 0.4,
+  "droga": "wezel_poletko: 5.0 s/szt."
+ },
+ "PROF_HARVEST_FEAST": {
+  "id": "PROF_HARVEST_FEAST",
+  "typ": "CONSUMABLE",
+  "nazwa": "Uczta żniwna",
+  "wartosc": 23.7,
+  "skup": 7.3,
+  "k": 0.4,
+  "droga": "cooking L45: 1xALCHEMICAL_CROP"
+ },
+ "PROF_HERBAL_EXTRACT": {
+  "id": "PROF_HERBAL_EXTRACT",
+  "typ": "MATERIAL",
+  "nazwa": "Ekstrakt zielarski",
+  "wartosc": 17.62,
+  "skup": 6.4,
+  "k": 0.4,
+  "droga": "herbalism L15: 3xMOONLEAF"
+ },
+ "PROF_HERB_SICKLE": {
+  "id": "PROF_HERB_SICKLE",
+  "typ": "TOOL",
+  "nazwa": "Sierp zielarza",
+  "wartosc": 108.32,
+  "skup": 35.0,
+  "k": 0.4,
+  "droga": "smithing L15: 3xREFINED_IRON + 1xWEAPON_HANDLE"
+ },
+ "PROF_HUNTER_KNIFE": {
+  "id": "PROF_HUNTER_KNIFE",
+  "typ": "TOOL",
+  "nazwa": "Nóż myśliwski",
+  "wartosc": 84.05,
+  "skup": 28.5,
+  "k": 0.4,
+  "droga": "smithing L15: 2xREFINED_IRON + 1xCURED_HIDE + 1xSINEW"
+ },
+ "PROF_HUNTER_ROAST": {
+  "id": "PROF_HUNTER_ROAST",
+  "typ": "CONSUMABLE",
+  "nazwa": "Pieczeń myśliwego",
+  "wartosc": 21.84,
+  "skup": 7.35,
+  "k": 0.4,
+  "droga": "cooking L30: 1xCURED_HIDE"
+ },
+ "PROF_LEATHER_GLOVES": {
+  "id": "PROF_LEATHER_GLOVES",
+  "typ": "GLOVES",
+  "nazwa": "Skorzane rekawice",
+  "wartosc": 174.01,
+  "skup": 54.5,
+  "k": 0.4,
+  "droga": "tailoring L15: 2xLEATHER_PANEL + 1xSINEW"
+ },
+ "PROF_LEATHER_PANEL": {
+  "id": "PROF_LEATHER_PANEL",
+  "typ": "MATERIAL",
+  "nazwa": "Panel skórzany",
+  "wartosc": 56.56,
+  "skup": 19.5,
+  "k": 0.4,
+  "droga": "tailoring L15: 3xCURED_HIDE"
+ },
+ "PROF_LUCK_CHARM": {
+  "id": "PROF_LUCK_CHARM",
+  "typ": "CHARM",
+  "nazwa": "&eTalizman szczescia",
+  "wartosc": 139.52,
+  "skup": 37.0,
+  "k": 0.4,
+  "droga": "jewelcrafting L45: 1xMASTER_CHARM + 1xMONSTER_TROPHY"
+ },
+ "PROF_LUMBER_AXE": {
+  "id": "PROF_LUMBER_AXE",
+  "typ": "TOOL",
+  "nazwa": "Siekiera drwala",
+  "wartosc": 411.8,
+  "skup": 120.0,
+  "k": 0.4,
+  "droga": "woodworking L15: 1xAXE_HEAD + 1xWEAPON_HANDLE + 2xSEASONED_TIMBER"
+ },
+ "PROF_MASTER_BANQUET": {
+  "id": "PROF_MASTER_BANQUET",
+  "typ": "CONSUMABLE",
+  "nazwa": "Mistrzowska uczta",
+  "wartosc": 15.67,
+  "skup": 4.85,
+  "k": 0.4,
+  "droga": "cooking L45: 1xCOMBAT_TONIC"
+ },
+ "PROF_MASTER_BLADE_BLANK": {
+  "id": "PROF_MASTER_BLADE_BLANK",
+  "typ": "MATERIAL",
+  "nazwa": "Mistrzowska głownia",
+  "wartosc": 47.6,
+  "skup": 16.0,
+  "k": 0.4,
+  "droga": "smithing L45: 1xARCANE_CRYSTAL"
+ },
+ "PROF_MASTER_CHARM": {
+  "id": "PROF_MASTER_CHARM",
+  "typ": "MATERIAL",
+  "nazwa": "Mistrzowski talizman",
+  "wartosc": 76.0,
+  "skup": 22.5,
+  "k": 0.4,
+  "droga": "jewelcrafting L45: 2xPEARL_SETTING"
+ },
+ "PROF_MASTER_FARMER_HOE": {
+  "id": "PROF_MASTER_FARMER_HOE",
+  "typ": "TOOL",
+  "nazwa": "&aMistrzowska motyka farmera",
+  "wartosc": 187.53,
+  "skup": 54.0,
+  "k": 0.4,
+  "droga": "smithing L45: 1xMASTER_BLADE_BLANK + 1xSTEEL_MECHANISM + 1xCARVED_FITTING"
+ },
+ "PROF_MASTER_FISHING_ROD": {
+  "id": "PROF_MASTER_FISHING_ROD",
+  "typ": "TOOL",
+  "nazwa": "&aMistrzowska wędka rybaka",
+  "wartosc": 647.09,
+  "skup": 178.0,
+  "k": 0.4,
+  "droga": "woodworking L45: 4xSEASONED_TIMBER + 2xCARVED_FITTING + 2xBOWSTRING + 1xSTAFF_CORE"
+ },
+ "PROF_MASTER_HERB_SICKLE": {
+  "id": "PROF_MASTER_HERB_SICKLE",
+  "typ": "TOOL",
+  "nazwa": "&aMistrzowski sierp zielarza",
+  "wartosc": 397.23,
+  "skup": 113.0,
+  "k": 0.4,
+  "droga": "smithing L45: 1xMASTER_BLADE_BLANK + 2xMETAL_PLATE + 1xWEAPON_HANDLE"
+ },
+ "PROF_MASTER_HUNTER_KNIFE": {
+  "id": "PROF_MASTER_HUNTER_KNIFE",
+  "typ": "TOOL",
+  "nazwa": "&aMistrzowski nóż myśliwski",
+  "wartosc": 190.76,
+  "skup": 57.0,
+  "k": 0.4,
+  "droga": "smithing L45: 1xMASTER_BLADE_BLANK + 2xCURED_HIDE + 2xSINEW"
+ },
+ "PROF_MASTER_LUMBER_AXE": {
+  "id": "PROF_MASTER_LUMBER_AXE",
+  "typ": "TOOL",
+  "nazwa": "&aMistrzowska siekiera drwala",
+  "wartosc": 597.24,
+  "skup": 161.0,
+  "k": 0.4,
+  "droga": "woodworking L45: 1xMASTER_BLADE_BLANK + 1xAXE_HEAD + 2xCARVED_FITTING + 1xWEAPON_HANDLE"
+ },
+ "PROF_MEDICINAL_HERB": {
+  "id": "PROF_MEDICINAL_HERB",
+  "typ": "MATERIAL",
+  "nazwa": "Zioło lecznicze",
+  "wartosc": 3.22,
+  "skup": 1.3,
+  "k": 0.4,
+  "droga": "wezel_ziola: 16.1 s/szt."
+ },
+ "PROF_METAL_PLATE": {
+  "id": "PROF_METAL_PLATE",
+  "typ": "MATERIAL",
+  "nazwa": "Metalowa płyta",
+  "wartosc": 85.13,
+  "skup": 29.0,
+  "k": 0.4,
+  "droga": "smithing L15: 5xREFINED_IRON"
+ },
+ "PROF_METAL_REPAIR_KIT": {
+  "id": "PROF_METAL_REPAIR_KIT",
+  "typ": "MATERIAL",
+  "nazwa": "Zestaw naprawczy kowala",
+  "wartosc": 257.78,
+  "skup": 73.5,
+  "k": 0.4,
+  "droga": "smithing L45: 2xMETAL_PLATE"
+ },
+ "PROF_MONSTER_TROPHY": {
+  "id": "PROF_MONSTER_TROPHY",
+  "typ": "MATERIAL",
+  "nazwa": "Trofeum potwora",
+  "wartosc": 14.87,
+  "skup": 5.95,
+  "k": 0.4,
+  "droga": "bestie: 74.4 s/szt."
+ },
+ "PROF_MOONLEAF": {
+  "id": "PROF_MOONLEAF",
+  "typ": "MATERIAL",
+  "nazwa": "Księżycowy liść",
+  "wartosc": 4.17,
+  "skup": 1.65,
+  "k": 0.4,
+  "droga": "wezel_ksiezyc: 20.8 s/szt."
+ },
+ "PROF_MOONLEAF_AMULET": {
+  "id": "PROF_MOONLEAF_AMULET",
+  "typ": "NECKLACE",
+  "nazwa": "Amulet z ksiezycowym lisciem",
+  "wartosc": 47.08,
+  "skup": 15.0,
+  "k": 0.4,
+  "droga": "jewelcrafting L30: 1xPEARL_SETTING + 2xMOONLEAF"
+ },
+ "PROF_MORTAR": {
+  "id": "PROF_MORTAR",
+  "typ": "MATERIAL",
+  "nazwa": "Zaprawa",
+  "wartosc": 13.3,
+  "skup": 5.0,
+  "k": 0.4,
+  "droga": "building L0: 8xCLAY_LUMP"
+ },
+ "PROF_OAK_TIMBER": {
+  "id": "PROF_OAK_TIMBER",
+  "typ": "MATERIAL",
+  "nazwa": "Twarde drewno dębowe",
+  "wartosc": 1.67,
+  "skup": 0.65,
+  "k": 0.4,
+  "droga": "wezel_dab: 8.3 s/szt."
+ },
+ "PROF_ORE_CHUNK": {
+  "id": "PROF_ORE_CHUNK",
+  "typ": "MATERIAL",
+  "nazwa": "Bryła urobku",
+  "wartosc": 3.33,
+  "skup": 1.35,
+  "k": 0.4,
+  "droga": "ruda_urobku: 16.7 s/szt."
+ },
+ "PROF_PEARL": {
+  "id": "PROF_PEARL",
+  "typ": "MATERIAL",
+  "nazwa": "Perła",
+  "wartosc": 16.49,
+  "skup": 6.6,
+  "k": 0.4,
+  "droga": "polow: 82.5 s/szt."
+ },
+ "PROF_PEARL_SETTING": {
+  "id": "PROF_PEARL_SETTING",
+  "typ": "MATERIAL",
+  "nazwa": "Perłowa oprawa",
+  "wartosc": 24.47,
+  "skup": 8.65,
+  "k": 0.4,
+  "droga": "jewelcrafting L30: 1xPEARL"
+ },
+ "PROF_QUALITY_GRAIN": {
+  "id": "PROF_QUALITY_GRAIN",
+  "typ": "MATERIAL",
+  "nazwa": "Dobre ziarno",
+  "wartosc": 15.6,
+  "skup": 5.9,
+  "k": 0.4,
+  "droga": "farming L1: 12xFRESH_HARVEST"
+ },
+ "PROF_RARE_FISH": {
+  "id": "PROF_RARE_FISH",
+  "typ": "MATERIAL",
+  "nazwa": "Rzadka ryba",
+  "wartosc": 8.25,
+  "skup": 3.3,
+  "k": 0.4,
+  "droga": "polow: 41.2 s/szt."
+ },
+ "PROF_RAW_CATCH": {
+  "id": "PROF_RAW_CATCH",
+  "typ": "MATERIAL",
+  "nazwa": "Świeży połów",
+  "wartosc": 2.46,
+  "skup": 1.0,
+  "k": 0.4,
+  "droga": "polow: 12.3 s/szt."
+ },
+ "PROF_RAW_FLEECE": {
+  "id": "PROF_RAW_FLEECE",
+  "typ": "MATERIAL",
+  "nazwa": "Surowe runo",
+  "wartosc": 3.56,
+  "skup": 1.4,
+  "k": 0.4,
+  "droga": "bestie: 17.8 s/szt."
+ },
+ "PROF_RAW_GEM": {
+  "id": "PROF_RAW_GEM",
+  "typ": "MATERIAL",
+  "nazwa": "Surowy klejnot",
+  "wartosc": 7.03,
+  "skup": 2.8,
+  "k": 0.4,
+  "droga": "zyla_klejnotow: 35.1 s/szt."
+ },
+ "PROF_REDCAP": {
+  "id": "PROF_REDCAP",
+  "typ": "MATERIAL",
+  "nazwa": "Czerwony kapelusz",
+  "wartosc": 2.22,
+  "skup": 0.9,
+  "k": 0.4,
+  "droga": "wezel_grzyby: 11.1 s/szt."
+ },
+ "PROF_REFINED_IRON": {
+  "id": "PROF_REFINED_IRON",
+  "typ": "MATERIAL",
+  "nazwa": "Rafinowane żelazo",
+  "wartosc": 13.3,
+  "skup": 5.0,
+  "k": 0.4,
+  "droga": "mining L1: 3xORE_CHUNK"
+ },
+ "PROF_REINFORCED_BLOCK": {
+  "id": "PROF_REINFORCED_BLOCK",
+  "typ": "MATERIAL",
+  "nazwa": "Blok zbrojony",
+  "wartosc": 257.98,
+  "skup": 73.5,
+  "k": 0.4,
+  "droga": "building L45: 2xMETAL_PLATE"
+ },
+ "PROF_ROBE_LINING": {
+  "id": "PROF_ROBE_LINING",
+  "typ": "MATERIAL",
+  "nazwa": "Podszycie szaty",
+  "wartosc": 98.7,
+  "skup": 29.5,
+  "k": 0.4,
+  "droga": "tailoring L45: 3xFINE_WOOL"
+ },
+ "PROF_ROUGH_CRYSTAL": {
+  "id": "PROF_ROUGH_CRYSTAL",
+  "typ": "MATERIAL",
+  "nazwa": "Surowy kryształ",
+  "wartosc": 2.11,
+  "skup": 0.85,
+  "k": 0.4,
+  "droga": "wezel_druza: 10.6 s/szt."
+ },
+ "PROF_ROUGH_STONE": {
+  "id": "PROF_ROUGH_STONE",
+  "typ": "MATERIAL",
+  "nazwa": "Surowy kamień",
+  "wartosc": 2.0,
+  "skup": 0.8,
+  "k": 0.4,
+  "droga": "kamieniolom: 10.0 s/szt."
+ },
+ "PROF_RUNE_BLANK": {
+  "id": "PROF_RUNE_BLANK",
+  "typ": "MATERIAL",
+  "nazwa": "Pusta runa",
+  "wartosc": 62.52,
+  "skup": 20.0,
+  "k": 0.4,
+  "droga": "enchanting L1: 2xCUT_STONE"
+ },
+ "PROF_SEASONED_TIMBER": {
+  "id": "PROF_SEASONED_TIMBER",
+  "typ": "MATERIAL",
+  "nazwa": "Sezonowane drewno",
+  "wartosc": 17.13,
+  "skup": 6.45,
+  "k": 0.4,
+  "droga": "woodworking L1: 8xOAK_TIMBER"
+ },
+ "PROF_SILVER_ORE": {
+  "id": "PROF_SILVER_ORE",
+  "typ": "MATERIAL",
+  "nazwa": "Ruda srebra",
+  "wartosc": 5.33,
+  "skup": 2.15,
+  "k": 0.4,
+  "droga": "zyla_srebra: 26.7 s/szt."
+ },
+ "PROF_SILVER_SETTING": {
+  "id": "PROF_SILVER_SETTING",
+  "typ": "MATERIAL",
+  "nazwa": "Srebrna oprawa",
+  "wartosc": 22.0,
+  "skup": 8.0,
+  "k": 0.4,
+  "droga": "jewelcrafting L15: 3xSILVER_ORE"
+ },
+ "PROF_SILVER_SIGNET": {
+  "id": "PROF_SILVER_SIGNET",
+  "typ": "RING",
+  "nazwa": "Srebrny sygnet",
+  "wartosc": 38.23,
+  "skup": 13.0,
+  "k": 0.4,
+  "droga": "jewelcrafting L15: 1xCUT_GEM + 1xSILVER_SETTING"
+ },
+ "PROF_SINEW": {
+  "id": "PROF_SINEW",
+  "typ": "MATERIAL",
+  "nazwa": "Ścięgno",
+  "wartosc": 24.17,
+  "skup": 8.8,
+  "k": 0.4,
+  "droga": "hunting L15: 8xBEAST_SCRAP"
+ },
+ "PROF_SPRUCE_RESIN": {
+  "id": "PROF_SPRUCE_RESIN",
+  "typ": "MATERIAL",
+  "nazwa": "Żywiczne drewno świerkowe",
+  "wartosc": 1.67,
+  "skup": 0.65,
+  "k": 0.4,
+  "droga": "wezel_swierk: 8.3 s/szt."
+ },
+ "PROF_STAFF_CORE": {
+  "id": "PROF_STAFF_CORE",
+  "typ": "MATERIAL",
+  "nazwa": "Korpus kostura",
+  "wartosc": 105.2,
+  "skup": 33.0,
+  "k": 0.4,
+  "droga": "woodworking L45: 4xSEASONED_TIMBER"
+ },
+ "PROF_STAFF_FOCUS": {
+  "id": "PROF_STAFF_FOCUS",
+  "typ": "MATERIAL",
+  "nazwa": "Ognisko kostura",
+  "wartosc": 160.2,
+  "skup": 42.5,
+  "k": 0.4,
+  "droga": "enchanting L45: 1xSTAFF_CORE"
+ },
+ "PROF_STEEL_MECHANISM": {
+  "id": "PROF_STEEL_MECHANISM",
+  "typ": "MATERIAL",
+  "nazwa": "Stalowy mechanizm",
+  "wartosc": 47.69,
+  "skup": 17.0,
+  "k": 0.4,
+  "droga": "smithing L1: 3xREFINED_IRON"
+ },
+ "PROF_SUPPORT_BEAM": {
+  "id": "PROF_SUPPORT_BEAM",
+  "typ": "MATERIAL",
+  "nazwa": "Belka nośna",
+  "wartosc": 94.72,
+  "skup": 31.0,
+  "k": 0.4,
+  "droga": "building L30: 4xSEASONED_TIMBER"
+ },
+ "PROF_TRAIL_RATION": {
+  "id": "PROF_TRAIL_RATION",
+  "typ": "CONSUMABLE",
+  "nazwa": "Racja podróżna",
+  "wartosc": 6.91,
+  "skup": 2.65,
+  "k": 0.4,
+  "droga": "cooking L0: 2xWILD_SPICE"
+ },
+ "PROF_TRAVELER_BELT": {
+  "id": "PROF_TRAVELER_BELT",
+  "typ": "BELT",
+  "nazwa": "Pas podroznika",
+  "wartosc": 116.32,
+  "skup": 36.0,
+  "k": 0.4,
+  "droga": "tailoring L15: 1xLEATHER_PANEL + 1xCLOTH_BOLT"
+ },
+ "PROF_UNAWAKENED_STAFF": {
+  "id": "PROF_UNAWAKENED_STAFF",
+  "typ": "STAFF",
+  "nazwa": "&7Nieprzebudzony kostur",
+  "wartosc": 219.74,
+  "skup": 62.5,
+  "k": 0.4,
+  "droga": "woodworking L30: 1xSTAFF_CORE + 2xCARVED_FITTING"
+ },
+ "PROF_VENOM_SAC": {
+  "id": "PROF_VENOM_SAC",
+  "typ": "MATERIAL",
+  "nazwa": "Woreczek jadowy",
+  "wartosc": 4.21,
+  "skup": 1.7,
+  "k": 0.4,
+  "droga": "bestie: 21.0 s/szt."
+ },
+ "PROF_WATER_ESSENCE": {
+  "id": "PROF_WATER_ESSENCE",
+  "typ": "MATERIAL",
+  "nazwa": "Esencja wody",
+  "wartosc": 13.47,
+  "skup": 5.4,
+  "k": 0.4,
+  "droga": "polow: 67.3 s/szt."
+ },
+ "PROF_WEAPON_HANDLE": {
+  "id": "PROF_WEAPON_HANDLE",
+  "typ": "MATERIAL",
+  "nazwa": "Rękojeść",
+  "wartosc": 44.83,
+  "skup": 15.5,
+  "k": 0.4,
+  "droga": "woodworking L15: 2xSEASONED_TIMBER"
+ },
+ "PROF_WEAPON_OIL": {
+  "id": "PROF_WEAPON_OIL",
+  "typ": "MATERIAL",
+  "nazwa": "Olej do broni",
+  "wartosc": 45.23,
+  "skup": 15.0,
+  "k": 0.4,
+  "droga": "alchemy L30: 2xFISH_OIL"
+ },
+ "PROF_WILD_SPICE": {
+  "id": "PROF_WILD_SPICE",
+  "typ": "MATERIAL",
+  "nazwa": "Dzikie ziele przyprawowe",
+  "wartosc": 2.22,
+  "skup": 0.9,
+  "k": 0.4,
+  "droga": "wezel_przyprawy: 11.1 s/szt."
+ }
+}

@@ -1,0 +1,48 @@
+'use strict'
+setTimeout(() => { console.error('BLAD: limit czasu'); process.exit(2) }, 120000)
+// Przypadki brzegowe zaklec. Konsola tylko rozdaje i mierzy.
+const mineflayer = require('mineflayer'); const { Rcon } = require('rcon-client'); const rp = require('./resourcepack')
+const HOST = 'zaklecia-proba'; const sleep = ms => new Promise(r => setTimeout(r, ms))
+const clean = s => String(s).replace(/§./g, '').replace(/\x1b\[[0-9;]*m/g, '').trim()
+const wynik = []; const ok = (n, c, d) => { wynik.push(`${c ? 'PASS' : 'FAIL'} ${n} ${d || ''}`) }
+;(async () => {
+  const rcon = await Rcon.connect({ host: HOST, port: 25575, password: 'zaklecia' }); const cmd = async c => clean(await rcon.send(c))
+  const bot = mineflayer.createBot({ host: HOST, port: 25565, username: 'MagTest', version: '1.21.11' }); rp.attach(bot._client)
+  let cz = {}; bot._client.on('world_particles', p => { if (!bot.entity) return; const d = Math.hypot(p.x - bot.entity.position.x, p.z - bot.entity.position.z); if (d < 1.2) { const k = p.particle?.type; cz[k] = (cz[k] || 0) + 1 } })
+  await new Promise(r => bot.once('spawn', r)); await sleep(4500); const cel = mineflayer.createBot({ host: HOST, port: 25565, username: 'CelTest', version: '1.21.11' }); rp.attach(cel._client); await new Promise(r => cel.once('spawn', r)); await sleep(2000)
+  const PVP = process.env.PVP || 'allow'; await cmd(`rg flag __global__ -w world pvp ${PVP}`)
+  await cmd('minecraft:clear MagTest'); await cmd('minecraft:kill @e[type=zombie]'); await cmd('minecraft:tp MagTest 0.5 -60 0.5 0 0')
+  await cmd('minecraft:give MagTest stone')
+  await cmd('mm items give MagTest ZAKLECIE_PLOMIENIE'); await cmd('mm items give MagTest ZAKLECIE_ODMROZENIE'); await sleep(1000)
+  // 1) efekt dloni: kamien w rece (slot 0) vs zaklecia w slotach 1/2
+  bot.setQuickBarSlot(0); await sleep(500); cz = {}; await sleep(2500)
+  const przyKamieniu = (cz.small_flame || 0) + (cz.snowflake || 0)
+  ok('dlon: brak ognia/szronu gdy w rece kamien', przyKamieniu === 0, JSON.stringify(cz))
+  bot.setQuickBarSlot(1); await sleep(500); cz = {}; await sleep(2500)
+  ok('dlon: ogien gdy w rece Plomienie', (cz.small_flame || 0) > 0 && !cz.snowflake, JSON.stringify(cz))
+  bot.setQuickBarSlot(2); await sleep(500); cz = {}; await sleep(2500)
+  ok('dlon: szron gdy w rece Odmrozenie', (cz.snowflake || 0) > 0 && !cz.small_flame, JSON.stringify(cz))
+  // 2) zmiana slotu w trakcie rzucania
+  await cmd('mmocore admin resource-mana set MagTest 100'); bot.setQuickBarSlot(1); await sleep(400)
+  bot.activateItem(); await sleep(1600); const m1 = +(await cmd('papi parse MagTest %mmocore_mana%'))
+  bot.setQuickBarSlot(0); await sleep(300); const m2 = +(await cmd('papi parse MagTest %mmocore_mana%')); await sleep(2000)
+  const m3 = +(await cmd('papi parse MagTest %mmocore_mana%'))
+  ok('zmiana slotu przerywa pobor many', m3 >= m2, `w trakcie=${m1} po zmianie=${m2} po 2 s=${m3}`)
+  bot.deactivateItem()
+  // 3) mroz na graczu (CelTest jako cel, 3 bloki przed botem)
+  await cmd('minecraft:effect clear CelTest'); await cmd('minecraft:tp CelTest 0.5 -60 3.5 180 0'); await cmd('mmocore admin resource-mana set MagTest 100')
+  await cmd('mmocore admin resource-stamina set CelTest 20'); await cmd('mmocore admin resource-health set CelTest 20')
+  const st0 = await cmd('papi parse CelTest %mmocore_stamina%'); const hp0 = await cmd('data get entity CelTest Health')
+  bot.setQuickBarSlot(2); await sleep(400); await bot.lookAt(bot.entity.position.offset(0, 1.5, 3), true)
+  bot.activateItem(); await sleep(2000)
+  const efekty = await cmd('data get entity CelTest active_effects'); const mroz = await cmd('data get entity CelTest TicksFrozen')
+  bot.deactivateItem(); await sleep(300)
+  const st1 = await cmd('papi parse CelTest %mmocore_stamina%'); const hp1 = await cmd('data get entity CelTest Health')
+  if (PVP==='deny') { ok('strefa bez PvP: gracz nietkniety', !/slowness/.test(efekty) && +st1 === +st0 && hp0===hp1, `${st0}->${st1} ${hp0}->${hp1}`) } else {
+  ok('mroz na graczu: spowolnienie', /slowness/.test(efekty), efekty.slice(0, 160))
+  ok('mroz na graczu: zamrozenie', /\d+/.test(mroz) && +mroz.match(/(\d+)$/)?.[1] > 0, mroz)
+  ok('mroz na graczu: wytrzymalosc spada', +st1 < +st0, `stamina ${st0} -> ${st1}`)
+  ok('mroz na graczu: obrazenia', hp1 !== hp0, `${hp0} -> ${hp1}`) }
+  console.log('HP gracza-celu:', hp0, '->', hp1)
+  console.log(wynik.join('\n')); bot.quit(); cel.quit(); await rcon.end(); process.exit(0)
+})().catch(e => { console.error('BLAD', e); process.exit(1) })

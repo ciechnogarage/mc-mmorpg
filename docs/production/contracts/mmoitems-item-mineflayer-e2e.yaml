@@ -1,0 +1,50 @@
+schema_version: 1
+contract_id: mmoitems-item-mineflayer-e2e
+contract_version: 1
+plugin: MMOItems
+content_type: item
+subject_scope:
+  - item.weapon.sword.ashen_vanguard
+scenario:
+  scenario_id: ashen_vanguard_obtainable_identity
+  validation_channel: Mineflayer
+  environment:
+    allowed_values:
+      - staging
+identity_v1:
+  target_tuple: MMOItems:MCMMORPG/plugins/MMOItems/item/sword.yml#ASHEN_VANGUARD
+  section_key: ASHEN_VANGUARD
+required_fields:
+  - schema_version
+  - report_kind
+  - scenario_id
+  - environment
+  - build_id
+  - subject_id
+  - target_tuple
+  - effective_runtime_digest
+  - obtainable
+  - identity_matched
+  - player_visible
+  - captured_at
+pass_requires:
+  - report_kind == mineflayer-item-e2e
+  - scenario_id == ashen_vanguard_obtainable_identity
+  - environment == staging
+  - subject_id == item.weapon.sword.ashen_vanguard
+  - target_tuple == MMOItems:MCMMORPG/plugins/MMOItems/item/sword.yml#ASHEN_VANGUARD
+  - obtainable == true
+  - identity_matched == true
+  - player_visible == true
+runtime_verified_assertions:
+  - item-obtainable-by-player
+  - runtime-identity-matches-target-tuple
+  - player-visible-item-state-confirmed
+fail_when:
+  - obtainable == false
+  - identity_matched == false
+  - player_visible == false
+blocked_when:
+  - build_id differs from runtime_loaded evidence
+  - effective_runtime_digest differs from runtime_loaded evidence
+  - target_tuple differs from pilot tuple

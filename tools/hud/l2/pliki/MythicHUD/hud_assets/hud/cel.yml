@@ -1,0 +1,78 @@
+# Cel zadania v2 (19.10): przezroczysta wstega pod oknem postaci, bez ciezkiego panelu.
+# Aktywnie podjete zadanie MMOCore ma pierwszenstwo przed samouczkiem Chowancow (boolean z Chowance).
+cel-chowance:
+  conditions:
+    - placeholder{ph=%chowance_kroki_aktywne%;val=true} true hide
+    - placeholder{ph=%chowance_ma_zadanie_mmocore%;val=tak} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%luckperms_meta_ui_goal%;val=off} false hide
+  layers:
+    tytul:
+      text: '<#FFE7AE>Pierwsze kroki <#D5A96B>%chowance_kroki_postep%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -5}
+    krok:
+      text: '<#FFF1CC>%chowance_kroki_opis%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -17}
+    ikona:
+      texture: {path: assets/l1/cel_ikona.png}
+      scale: 0.5
+      offset: {x: 6, y: -4}
+    strzalka:
+      texture: {path: assets/l1/cel_strzalka.png}
+      scale: 0.5
+      offset: {x: 7, y: -16}
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 115, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+cel-mmocore:
+  conditions:
+    - placeholder{ph=%chowance_ma_zadanie_mmocore%;val=tak} true hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%luckperms_meta_ui_goal%;val=off} false hide
+  layers:
+    tytul:
+      text: '<#FFE7AE>%mmocore_quest% <#D5A96B>%mmocore_quest_progress%%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -5}
+    krok:
+      text: '<#FFF1CC>%mmocore_quest_objective%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -17}
+    ikona:
+      texture: {path: assets/l1/cel_ikona.png}
+      scale: 0.5
+      offset: {x: 6, y: -4}
+    strzalka:
+      texture: {path: assets/l1/cel_strzalka.png}
+      scale: 0.5
+      offset: {x: 7, y: -16}
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 115, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}

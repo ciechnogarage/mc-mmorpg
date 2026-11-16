@@ -1,0 +1,12 @@
+# CompanionBridge — plugin dziala WEWNATRZ kontenera Dockera. Bind na
+# 127.0.0.1 tam wiazalby serwer wylacznie do loopbacku kontenera, ktory
+# docker-proxy (publikacja portu w compose) nie potrafi przekierowac —
+# zweryfikowane na zywo: 401 po `docker exec ... curl 127.0.0.1`, ale
+# "connection reset" z hosta mimo poprawnego `docker port`. Dlatego bind
+# = 0.0.0.0 (wszystkie interfejsy WEWNATRZ kontenera); realna izolacja do
+# hosta zapewnia prefiks `127.0.0.1:` w publikacji portu w
+# docker/compose.yml, nie bind adres pluginu.
+bind: 0.0.0.0
+port: 25580
+# ZMIEN przed wystawieniem portu poza lokalny kontener/host.
+token: "CHANGE_ME"

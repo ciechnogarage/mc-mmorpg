@@ -1,0 +1,3 @@
+Wykonałem rundę 6 bez commitów. Panel Księgi pokazuje modele zaklęć osobno dla prawej i lewej dłoni, z istniejącym modelem pustym jako fallback. Odsunąłem i zmniejszyłem strumień widoczny dla rzucającego oraz przesunąłem cząsteczki `Start_Obie` przed kamerę.
+
+Build i sonda modeli obu slotów przeszły. Regresja `A,N_r2` zakończyła się kodem 1: A03 przekroczył próg liczby pakietów (także w rundzie 5), a N4 nie wykrył pakietów `REMOVE` po Q. Szczegóły i ograniczenie weryfikacji wizualnej są w [szczegoly-r6.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/szczegoly-r6.md). `debug: false`; klon pozostawiłem uruchomiony.

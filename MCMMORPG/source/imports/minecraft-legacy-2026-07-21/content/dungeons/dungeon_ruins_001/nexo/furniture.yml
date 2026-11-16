@@ -1,0 +1,74 @@
+dr001_void_anchor:
+  itemname: Void Anchor
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/furniture/void_anchor
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      hitbox:
+        barriers:
+          - 0,0,0
+
+dr001_rune_pedestal:
+  itemname: Rune Pedestal
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/furniture/rune_pedestal
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      hitbox:
+        barriers:
+          - 0,0,0
+
+dr001_broken_king_statue:
+  itemname: Broken King Statue
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/furniture/broken_king_statue
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      hitbox:
+        barriers:
+          - 0,0,0
+
+dr001_soul_censer:
+  itemname: Soul Censer
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/furniture/soul_censer
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: true
+        floor: true
+        wall: false
+      hitbox:
+        barriers:
+          - 0,0,0
+
+dr001_loot_shrine:
+  itemname: Loot Shrine
+  material: PAPER
+  Pack:
+    model: nexo:item/dr001/furniture/loot_shrine
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      hitbox:
+        barriers:
+          - 0,0,0

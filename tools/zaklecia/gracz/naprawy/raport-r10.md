@@ -1,0 +1,3 @@
+Wykonałem rundę 10 w dozwolonych plikach Java, bez commitów. Promień celownika ma pierwszeństwo, siatka sprawdza skraje sylwetki, a długość modelu strumienia jest liczona od oczu. Finalny build przeszedł i klon uruchomił się poprawnie. Wyniki oraz pomiar kosztu są w [szczegoly-r10.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/szczegoly-r10.md).
+
+**Wymagany próg trafienia widocznej krawędzi pozostaje niespełniony.** Debug potwierdził, że nowa siatka wykrywa huska, lecz osobny warunek `lineofsight true` w skillu MythicMobs odrzuca obrażenia. Zmiana tego warunku wykracza poza zakres wskazany w poleceniu. Zatrzymałem pracę po raporcie, zgodnie z instrukcją Claude.

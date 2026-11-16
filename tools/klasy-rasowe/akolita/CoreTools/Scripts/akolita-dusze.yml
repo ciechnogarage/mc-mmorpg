@@ -1,0 +1,9 @@
+# ETAP 2 (prototyp): +1 Dusza dla każdego akolity w promieniu 16 bloków od śmierci moba (MythicMobs ~onKill sługi
+# się nie odpala — zmierzone 30.09 — więc liczymy śmierć, nie zabójcę). Śmierć gracza pomijana (osobna reguła później).
+# Warunek "czy to akolita" sprawdza vanilla na GRACZU (tag arch_ako z klasa_archetyp_*): PAPI w warunku CoreTools
+# liczy się dla martwego moba, nie dla celu z @PlayersInRadius (zmierzone 30.09).
+akolita_dusze_smierc:
+  Conditions:
+  - Comparator{v1="{caster_type}";v2="player";op="!="} true
+  Mechanics:
+  - command{c="execute if entity @a[name={target_name},tag=arch_ako] run mmocore admin resource-mana give {target_name} 1"} @PlayersInRadius{r=16}

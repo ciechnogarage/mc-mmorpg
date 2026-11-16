@@ -1,0 +1,16 @@
+klasa,archetyp,trudnosc,obrazenia,obrona,zasieg,szybkosc
+archer,Boltslinger,1,3,1,2,3
+archer,Sharpshooter,2,3,1,3,2
+archer,Trapper,2,2,2,2,2
+warrior,Fallen,2,3,2,2,2
+warrior,Battle Monk,1,2,2,2,3
+warrior,Paladin,2,2,3,2,1
+assassin,Shadestepper,2,3,2,1,3
+assassin,Trickster,2,2,2,3,2
+assassin,Acrobat,3,2,2,2,3
+mage,Riftwalker,1,3,1,2,3
+mage,Light Bender,2,2,2,3,2
+mage,Arcanist,3,3,1,3,2
+shaman,Summoner,1,3,2,2,2
+shaman,Ritualist,2,3,2,1,3
+shaman,Acolyte,3,3,1,2,3

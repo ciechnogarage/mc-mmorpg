@@ -1,0 +1,217 @@
+# =====================================================================
+#  Umiejetnosci wezlow zasobow.
+#  KAZDA PROFESJA MA WLASNY RYTM ZBIERANIA - to jest celowe:
+#    drwal      - wiele ciec, wysilek, halas, licznik postepu
+#    zielarz    - jedno szybkie ciche zerwanie, loteria jakosci
+#    farmer     - dlugi zbior, ale duza ilosc naraz
+#    jubiler    - precyzja z ryzykiem: druza moze peknac
+#  Licznik cięć trafia przez komendę konsoli Zaklecia do wspólnego arbitra MythicLib (priorytet 30).
+# =====================================================================
+
+# --- DRWAL: kazde klikniecie to jedno ciecie -------------------------
+
+NODE_TIMBER_OAK_HARVEST:
+  Cooldown: 1
+  Skills:
+    - variableadd{var=caster.chops;amount=1} @self
+    - effect:sound{s=block.wood.hit;v=1.0;p=0.8} @self
+    - effect:particles{p=block_crack;m=oak_log;a=14;hs=0.35;vs=0.35} @self
+    - command{c="zaklecia pasek <trigger.name> ciecie <caster.var.chops> 3"} @trigger
+    - skill{s=NODE_TIMBER_OAK_FELL} @trigger ?variableinrange{var=caster.chops;value=>2}
+
+NODE_TIMBER_OAK_FELL:
+  Skills:
+    - effect:sound{s=block.wood.break;v=1.0;p=0.8} @self
+    - command{c="mi give MATERIAL PROF_OAK_TIMBER <trigger.name> 3"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> woodworking 18"} @trigger
+    - message{m="<green>Dąb pada. Pozyskujesz <white>3x Twarde drewno dębowe<green>."} @trigger
+    - remove @self
+
+NODE_TIMBER_SPRUCE_HARVEST:
+  Cooldown: 1
+  Skills:
+    - variableadd{var=caster.chops;amount=1} @self
+    - effect:sound{s=block.wood.hit;v=1.0;p=0.7} @self
+    - effect:particles{p=block_crack;m=spruce_log;a=14;hs=0.35;vs=0.35} @self
+    - command{c="zaklecia pasek <trigger.name> ciecie <caster.var.chops> 3"} @trigger
+    - skill{s=NODE_TIMBER_SPRUCE_FELL} @trigger ?variableinrange{var=caster.chops;value=>2}
+
+NODE_TIMBER_SPRUCE_FELL:
+  Skills:
+    - effect:sound{s=block.wood.break;v=1.0;p=0.7} @self
+    - command{c="mi give MATERIAL PROF_SPRUCE_RESIN <trigger.name> 3"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> woodworking 20"} @trigger
+    - message{m="<green>Świerk pada. Pozyskujesz <white>3x Żywiczne drewno świerkowe<green>."} @trigger
+    - remove @self
+
+NODE_TIMBER_BIRCH_HARVEST:
+  Cooldown: 1
+  Skills:
+    - variableadd{var=caster.chops;amount=1} @self
+    - effect:sound{s=block.wood.hit;v=1.0;p=1.1} @self
+    - effect:particles{p=block_crack;m=birch_log;a=14;hs=0.35;vs=0.35} @self
+    - command{c="zaklecia pasek <trigger.name> ciecie <caster.var.chops> 2"} @trigger
+    - skill{s=NODE_TIMBER_BIRCH_FELL} @trigger ?variableinrange{var=caster.chops;value=>1}
+
+NODE_TIMBER_BIRCH_FELL:
+  Skills:
+    - effect:sound{s=block.wood.break;v=1.0;p=1.1} @self
+    - command{c="mi give MATERIAL PROF_BIRCH_LATH <trigger.name> 3"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> woodworking 15"} @trigger
+    - message{m="<green>Brzoza pada. Pozyskujesz <white>3x Giętkie drewno brzozowe<green>."} @trigger
+    - remove @self
+
+# --- ZIELARZ: jedno ciche zerwanie, jakosc losowa --------------------
+NODE_HERB_PATCH_HARVEST:
+  Cooldown: 1
+  Skills:
+    - effect:sound{s=block.grass.break;v=0.4;p=1.4} @self
+    - effect:particles{p=happy_villager;a=6;hs=0.3;vs=0.3} @self
+    - randomskill{skills=NODE_HERB_PATCH_ZWYKLE 70,NODE_HERB_PATCH_OBFITE 25,NODE_HERB_PATCH_OKAZ 5} @trigger
+    - remove @self
+
+NODE_HERB_PATCH_ZWYKLE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_MEDICINAL_HERB <trigger.name> 1"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 10"} @trigger
+    - message{m="<gray>Zrywasz <white>1x Zioło lecznicze<gray>."} @trigger
+
+NODE_HERB_PATCH_OBFITE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_MEDICINAL_HERB <trigger.name> 2"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 14"} @trigger
+    - 'message{m="<green>Kępa była obfita: <white>2x Zioło lecznicze<green>."} @trigger'
+
+NODE_HERB_PATCH_OKAZ:
+  Skills:
+    - effect:sound{s=entity.player.levelup;v=0.6;p=1.6} @self
+    - command{c="mi give MATERIAL PROF_MEDICINAL_HERB <trigger.name> 2"} @trigger
+    - command{c="mi give MATERIAL PROF_MOONLEAF <trigger.name> 1"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 25"} @trigger
+    - message{m="<aqua>Trafiłeś na rzadki okaz! <white>2x Zioło lecznicze <aqua>i <white>1x Liść księżycowy<aqua>."} @trigger
+
+NODE_HERB_MOONLEAF_HARVEST:
+  Cooldown: 1
+  Skills:
+    - effect:sound{s=block.grass.break;v=0.4;p=1.7} @self
+    - effect:particles{p=end_rod;a=8;hs=0.2;vs=0.3} @self
+    - randomskill{skills=NODE_HERB_MOONLEAF_ZWYKLE 80,NODE_HERB_MOONLEAF_OBFITE 20} @trigger
+    - remove @self
+
+NODE_HERB_MOONLEAF_ZWYKLE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_MOONLEAF <trigger.name> 1"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 20"} @trigger
+    - message{m="<aqua>Zrywasz <white>1x Liść księżycowy<aqua>."} @trigger
+
+NODE_HERB_MOONLEAF_OBFITE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_MOONLEAF <trigger.name> 2"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 28"} @trigger
+    - 'message{m="<aqua>Kępa rodziła podwójnie: <white>2x Liść księżycowy<aqua>."} @trigger'
+
+NODE_MUSHROOM_RING_HARVEST:
+  Cooldown: 1
+  Skills:
+    - effect:sound{s=block.fungus.break;v=0.5;p=1.0} @self
+    - effect:particles{p=spore_blossom_air;a=10;hs=0.4;vs=0.3} @self
+    - randomskill{skills=NODE_MUSHROOM_RING_ZWYKLE 75,NODE_MUSHROOM_RING_OBFITE 25} @trigger
+    - remove @self
+
+NODE_MUSHROOM_RING_ZWYKLE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_REDCAP <trigger.name> 2"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 16"} @trigger
+    - message{m="<red>Zbierasz <white>2x Czerwony kapelusz<red>."} @trigger
+
+NODE_MUSHROOM_RING_OBFITE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_REDCAP <trigger.name> 3"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> herbalism 22"} @trigger
+    - 'message{m="<red>Krąg był bogaty: <white>3x Czerwony kapelusz<red>."} @trigger'
+
+# --- FARMER: dlugi zbior, ale duzo naraz -----------------------------
+NODE_CROP_FIELD_HARVEST:
+  Cooldown: 4
+  Skills:
+    - message{m="<gray><i>Zbierasz plon z poletka...</i>"} @trigger
+    - effect:sound{s=block.crop.break;v=0.8;p=0.9} @self
+    - effect:particles{p=block_crack;m=hay_block;a=15;hs=0.5;vs=0.3} @self
+    - delay 25
+    - effect:sound{s=block.crop.break;v=0.8;p=1.0} @self
+    - effect:particles{p=block_crack;m=hay_block;a=15;hs=0.5;vs=0.3} @self
+    - delay 25
+    - effect:sound{s=block.crop.break;v=1.0;p=1.1} @self
+    - command{c="mi give MATERIAL PROF_FRESH_HARVEST <trigger.name> 5"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> farming 22"} @trigger
+    - 'message{m="<yellow>Poletko zebrane: <white>5x Świeży zbiór<yellow>."} @trigger'
+    - remove @self
+
+# --- JUBILER: precyzja, druza moze peknac ----------------------------
+NODE_GEM_GEODE_HARVEST:
+  Cooldown: 4
+  Skills:
+    - message{m="<gray><i>Ostrożnie wyłuskujesz kryształ...</i>"} @trigger
+    - effect:sound{s=block.amethyst_block.hit;v=0.7;p=1.2} @self
+    - delay 20
+    - effect:sound{s=block.amethyst_block.hit;v=0.7;p=1.4} @self
+    - delay 20
+    - effect:sound{s=block.amethyst_block.hit;v=0.7;p=1.6} @self
+    - delay 20
+    - randomskill{skills=NODE_GEM_GEODE_UDANE 75,NODE_GEM_GEODE_PEKLA 25} @trigger
+    - remove @self
+
+NODE_GEM_GEODE_UDANE:
+  Skills:
+    - effect:sound{s=block.amethyst_block.chime;v=1.0;p=1.0} @self
+    - command{c="mi give MATERIAL PROF_ROUGH_CRYSTAL <trigger.name> 2"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> jewelcrafting 30"} @trigger
+    - 'message{m="<light_purple>Czysty wyłom: <white>2x Surowy kryształ<light_purple>."} @trigger'
+
+NODE_GEM_GEODE_PEKLA:
+  Skills:
+    - effect:sound{s=block.glass.break;v=1.0;p=0.8} @self
+    - command{c="mi give MATERIAL PROF_ROUGH_STONE <trigger.name> 2"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> jewelcrafting 8"} @trigger
+    - message{m="<red>Druza pękła. Zostaje tylko <white>2x Surowy kamień<red>."} @trigger
+
+# --- BUDOWNICZY: kopanie gliny, dwa nabrania, duza ilosc -------------
+NODE_CLAY_DEPOSIT_HARVEST:
+  Cooldown: 3
+  Skills:
+    - message{m="<gray><i>Nabierasz gliny...</i>"} @trigger
+    - effect:sound{s=block.rooted_dirt.break;v=0.9;p=0.8} @self
+    - effect:particles{p=block_crack;m=clay;a=16;hs=0.4;vs=0.3} @self
+    - delay 20
+    - effect:sound{s=block.rooted_dirt.break;v=0.9;p=1.0} @self
+    - effect:particles{p=block_crack;m=clay;a=16;hs=0.4;vs=0.3} @self
+    - delay 20
+    - effect:sound{s=block.mud.place;v=1.0;p=1.0} @self
+    - command{c="mi give MATERIAL PROF_CLAY_LUMP <trigger.name> 4"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> building 14"} @trigger
+    - message{m="<gray>Wykopujesz <white>4x Gruda gliny<gray>."} @trigger
+    - remove @self
+
+# --- KUCHARZ: zbior przypraw ------------------------------------------
+#  Tempo dobrane pod krzywa 'zbieractwo' (~18 XP na zbior):
+#     0.75 * 15 + 0.25 * 24 = 17.25 XP srednio.
+NODE_SPICE_PATCH_HARVEST:
+  Cooldown: 1
+  Skills:
+    - effect:sound{s=block.grass.break;v=0.5;p=1.2} @self
+    - effect:particles{p=composter;a=8;hs=0.3;vs=0.3} @self
+    - randomskill{skills=NODE_SPICE_PATCH_ZWYKLE 75,NODE_SPICE_PATCH_OBFITE 25} @trigger
+    - remove @self
+
+NODE_SPICE_PATCH_ZWYKLE:
+  Skills:
+    - command{c="mi give MATERIAL PROF_WILD_SPICE <trigger.name> 2"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> cooking 15"} @trigger
+    - message{m="<yellow>Zrywasz <white>2x Dzikie ziele przyprawowe<yellow>."} @trigger
+
+NODE_SPICE_PATCH_OBFITE:
+  Skills:
+    - effect:sound{s=entity.player.levelup;v=0.5;p=1.5} @self
+    - command{c="mi give MATERIAL PROF_WILD_SPICE <trigger.name> 3"} @trigger
+    - command{c="mmocore admin exp give <trigger.name> cooking 24"} @trigger
+    - 'message{m="<gold>Kępa była obfita: <white>3x Dzikie ziele przyprawowe<gold>."} @trigger'

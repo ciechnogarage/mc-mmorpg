@@ -1,0 +1,16 @@
+name: Wyscigi
+version: '${version}'
+main: pl.mcmmorpg.wyscigi.WyscigiPlugin
+api-version: '1.21'
+depend: [ModelEngine, MythicLib, packetevents]
+softdepend: [MMOProfiles, Multiverse-Core]
+commands:
+  wyscigi:
+    description: Wyścigi Chowańców — sterowanie z menu (konsola).
+    usage: |-
+      /wyscigi czasowka|wyscig <gracz> <gatunek> | odnowa <gracz> | wyjdz <gracz> | rekordy [gracz] | obserwuj <gracz> [x y z]
+      | zbuduj | stan | poz <gracz> | zdarzenia <nick> | tor | przeladuj | poza <gracz> <4 liczby> | przechyl <gracz> <stopnie> [strona]
+    permission: wyscigi.console
+permissions:
+  wyscigi.console:
+    default: op

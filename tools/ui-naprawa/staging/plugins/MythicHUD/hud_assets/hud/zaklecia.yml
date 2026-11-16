@@ -1,0 +1,79 @@
+# Gotowy czar nie zajmuje miejsca na ekranie. Podczas ladowania dwa paski
+# mieszczą się w jednym wierszu; odmowa idzie przez arbiter paska akcji.
+zaklecia-lewa-rzuca:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=rzuca} true hide
+  layers:
+    znacznik:
+      text: '<#FFBC69>◆'
+      font: default
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-prawa-rzuca:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=rzuca} true hide
+  layers:
+    znacznik:
+      text: '<#FFBC69>◆'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-prawa-przelacznik:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_przelacznik%;val=tak} true hide
+  layers:
+    znacznik:
+      text: '<#F6D87B>●'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-lewa-laduje:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=laduje} true hide
+  layers:
+    pasek:
+      text: '<#FFBC69>L %zaklecia_lewa_pasek% <white>%zaklecia_lewa_koszt%'
+      font: default
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-prawa-laduje:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=laduje} true hide
+  layers:
+    pasek:
+      text: '<#FFBC69>P %zaklecia_prawa_pasek% <white>%zaklecia_prawa_koszt%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}
+zaklecia-lewa-gotowe:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_lewa_stan%;val=gotowe} true hide
+  layers:
+    znacznik:
+      text: '<#96FFB1>◆ puść'
+      font: default
+      outlined: true
+      align: left
+      offset: {x: 0, y: 0}
+zaklecia-prawa-gotowe:
+  conditions:
+    - placeholder{ph=%zaklecia_tryb%;val=tak} true hide
+    - placeholder{ph=%zaklecia_prawa_stan%;val=gotowe} true hide
+  layers:
+    znacznik:
+      text: '<#96FFB1>◆ puść'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 0, y: 0}

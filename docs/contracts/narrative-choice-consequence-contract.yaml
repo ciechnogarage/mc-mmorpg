@@ -1,0 +1,67 @@
+contract:
+  id: narrative-choice-consequence-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_implemented
+  release_status: blocked
+  owner_domain: "08"
+  upstream_dependencies:
+    domain_06:
+      required:
+        - island_region_scope_boundaries
+        - local_story_phase_mapping
+    domain_10:
+      required:
+        - service_pricing_and_access_boundary
+    domain_13:
+      required:
+        - global_canon_change_process
+    domain_14:
+      required:
+        - player_facing_visibility_rules
+    domain_17:
+      required:
+        - branching_regression_tests
+
+choice_scope_vocabulary:
+  - PERSONAL
+  - LOCAL
+  - REGIONAL
+  - GLOBAL
+
+knowledge_confidence_vocabulary:
+  - UNKNOWN
+  - SUSPECTED
+  - CREDIBLE
+  - CONFIRMED
+  - PUBLIC
+
+consequence_shape:
+  consequence_id: string
+  source_choice_id: string
+  scope: LOCAL
+  reversible: false
+  player_visible: true
+  propagation_targets:
+    organizations:
+      - organization_id: string
+        minimum_knowledge_confidence: CREDIBLE
+  impacts:
+    quests: []
+    access_rules: []
+    prices: []
+    dialogue_tags: []
+    encounter_variants: []
+    local_story_phases: []
+  reconciliation:
+    supported: false
+    method_id: null
+  migration:
+    policy: explicit
+    obsolete_behavior: preserve_effect_until_migrated
+
+rules:
+  choices_must_be_modular_not_worldwide_rewrites: true
+  reversibility_must_be_explicit: true
+  visibility_must_be_explicit: true
+  downstream_system_impacts_must_be_listed: true

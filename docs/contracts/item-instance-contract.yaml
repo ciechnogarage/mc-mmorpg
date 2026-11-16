@@ -1,0 +1,133 @@
+contract:
+  id: item-instance-identity-contract-v1
+  version: 1
+  contract_status: draft
+  runtime_status: not_tested
+  release_status: blocked
+  owner_domain: "01"
+  semantic_owner: "05"
+  purpose:
+    - separate stable item definition identity from per-instance identity
+    - define the minimum cross-domain contract for item ownership, transfer, reward grant, and persistence
+    - forbid display-name, lore, and slot position from acting as durable item identity
+  dependencies:
+    - docs/contracts/account-character-contract.yaml
+    - docs/contracts/reward-contract.yaml
+    - docs/contracts/stack-lot-contract.yaml
+    - docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  upstream_dependencies:
+    domain_05:
+      required:
+        - stable_item_definition_catalog
+        - affix_roll_boundary
+        - durability_and_upgrade_policy
+    domain_10:
+      required:
+        - craft_and_trade_transaction_contract
+    domain_17:
+      required:
+        - duplicate_instance_id_detection_evidence
+        - restart_and_transfer_regression_tests
+
+identity:
+  owner_subject_key:
+    contract_ref: docs/contracts/account-character-contract.yaml
+    key: character_id
+  item_definition_id:
+    type: string
+    authority: MMOItems
+    scope: shared_definition
+    mutable: false
+    duplicates_allowed: true
+    forbidden_identity_sources:
+      - display_name
+      - lore_text
+      - inventory_slot
+  item_instance_id:
+    type: uuid
+    authority: Domain01ItemInstanceService
+    scope: per_physical_item_instance
+    mutable: false
+    duplicates_allowed: false
+    persistence_requirement: persistent_data_container_or_equivalent_durable_binding
+    required_on:
+      - tradable_items
+      - rewarded_items
+      - dropped_items_with_persistence_expectation
+      - stash_or_bank_items
+    forbidden_identity_sources:
+      - item_definition_id_alone
+      - display_name
+      - lore_text
+      - inventory_slot
+      - transient_entity_uuid
+
+runtime_authority:
+  item_definition_catalog: MMOItems
+  character_inventory_runtime: MMOInventory
+  instance_identity_coordinator: Domain01ItemInstanceService
+  reward_grant_consumer: reward-contract
+
+runtime_shape:
+  item_definition_record:
+    item_definition_id: string
+    source_plugin: MMOItems
+    item_type: string
+    affix_schema_version: integer
+    bind_rules_ref: string
+  item_instance_record:
+    item_instance_id: uuid
+    item_definition_id: string
+    owner_character_id: string
+    stack_policy: SINGLE_OR_STACK_MEMBER
+    stack_lot_id: uuid_or_null
+    bind_state: BOUND_OR_UNBOUND
+    issuance_source:
+      source_type: REWARD|CRAFT|ADMIN|DROP|TRADE
+      source_id: string
+    durability_state: {}
+    affix_rolls: {}
+    instance_flags: []
+
+pdc_binding:
+  item_instance_id:
+    required: true
+    key_status: pending_registration
+    write_timing:
+      - at_item_issuance
+      - before_trade_or_bank_persist
+      - before_world_drop_persist
+    read_guards:
+      - reject_duplicate_instance_id
+      - reject_missing_instance_id_for_durable_flows
+      - reject_cross_character_restore_without_transaction_evidence
+
+rules:
+  item_definition_and_item_instance_must_not_share_identity_space: true
+  item_definition_duplicates_are_normal: true
+  duplicate_item_instance_id_is_integrity_incident: true
+  reward_grants_must_not_create_instance_identity_from_display_name_or_lore: true
+  item_instance_transfer_must_preserve_same_item_instance_id: true
+  stack_split_requires_stack_lot_contract: true
+  stack_merge_requires_stack_lot_contract: true
+  stack_lot_id_is_quantity_custody_identity: true
+  restoring_item_after_restart_requires_durable_instance_identity: true
+  deleting_item_instance_without_transaction_or_audit_record: forbidden
+
+migration_requirements:
+  legacy_registry_claims:
+    - item_definition
+    - inventory_and_storage
+  migration_ledger_ref: docs/contracts/migration/config-authority-registry-migration-ledger.yaml
+  current_phase: shell_only_no_cutover
+  cutover_blockers:
+    - item_instance_service_not_implemented
+    - pdc_key_not_registered
+    - duplicate_detection_evidence_missing
+    - stack_lot_service_not_implemented
+
+open_questions:
+  - Which exact PDC namespace key will become the canonical durable carrier for item_instance_id.
+  - Whether stackable items receive one instance_id per stack or per stack member after split/merge; stack_lot_id is the quantity-custody identity in either case.
+  - Whether MMOInventory alone can preserve instance identity across all storage surfaces or needs a dedicated persistence bridge.
+  - Which flows remain definition-only and are explicitly exempt from durable item_instance_id requirements.

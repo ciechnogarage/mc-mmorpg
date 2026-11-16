@@ -1,0 +1,49 @@
+# Akt 6 · Srebrna Knieja · lochy 051–060
+
+- **Kraina:** dzika nocna puszcza nad rozpadlinami, polany otwarte na księżyc i srebrne tafle skały. Bez pól Aktu 1, drzewa matki, jeleni i frontu wojennego.
+- **Prawo:** w blasku księżyca odbicie w oznaczonej tafli zyskuje ciało: most lub ściana stają się przechodnie, a odbity wróg może mieć drugie ciało ze wspólnym zdrowiem. Tylko 051, 052, 056 i 060 używają pary walczących ciał; pozostałe lochy materializują teren, gest lub jedno własne odbicie gracza. Dwa jednoczesne trafienia nigdy nie są wymagane.
+- **Antagonistka:** Ilvessa strzeże zapisów zmarłych, bo nie chce, by uchodźcy utracili bliskich po raz drugi. Materialne odbicia zamykają jednak drogi żywym. Pytanie, czy Echo przechowuje osobę, pozostaje otwarte.
+- **Emocja:** oczarowanie → czułość wobec pamięci → lęk, gdy wspomnienie zajmuje cudze miejsce.
+- **Rodziny tylko tego aktu:** nocne borsuki, nietoperze pełni, srebrne kuny, rysie jedynie w 056, własne odbicia i widmowy Dziki Gon. Bez sów, pająków i ciem zajętych w Akcie 1; Ilvessa jest jedyną humanoidalną przeciwniczką.
+- **Rozdroże Cieni:** kwalifikowany Cień ma jedno ciało i jedno odbicie ze wspólnym zdrowiem; bez niego wchodzi jawnie fikcyjna elita. Opcjonalne Wezwanie sojusznika za zgodą znajomego trwa 60 s raz na przebieg i nie warunkuje postępu.
+
+| Nr | Poz. | Nazwa | Czasownik gracza | Prawo + zwrot | Boss + haczyk zmieniający walkę | Kadr WOW: istota albo cud | Lokalna odmiana prawa | Topologia |
+|---|---:|---|---|---|---|---|---|---|
+| 051 | 51 | Próg Srebrnej Kładki | **wkraczam** na odbity most | W bezpiecznej sali oszroniony znak kurhanu i trop z północy pokazują przybycie Zmarzłych Widm; księżyc materializuje krótką kładkę nad płytką polaną, potem borsuk pojawia się po obu jej stronach. | **Borsuk Dwóch Brzegów** toczy kamień po odbiciu mostu; gracz przechodzi na realny brzeg i stacza kamień w przeciwną stronę, niszcząc jego blokadę. | Dwie sylwetki borsuka biegną ku sobie po świetlistej kładce nad trawą. | Jedna nieruchoma tafla uczy pary ciał. | Krótka linia z obejściem po ziemi. |
+| 052 | 52 | Gniazdo Nietoperza Pełni | **zwisam** z korony | Odwrócone gniazdo ma odbitą podłogę, po której można przejść pod gałęziami; zwrot: księżyc odsłania drugie ciało drapieżnika pod graczem. | **Nietoperz Pełni** śpi głową w dół, a jego odbicie poluje pod odbitą podłogą; gracz chwyta gałęzie korony i odwraca poziom walki, zmuszając oba ciała na tę samą stronę. | Gigantyczny nietoperz wisi między koronami, a pod nim stoi jego srebrna, odwrócona kopia. | Odbita podłoga jest sufitem realnego gniazda. | Dwie warstwy koron z otwartym pionem. |
+| 053 | 53 | Polana Trzech Tafli | **strzaskuję** taflę | Tylko obwiedziona księżycem tafla tworzy most; rozbicie jej przenosi światło na następną, więc gracz zmienia drogę w trakcie walki. | **Kuna Szklanego Skoku** przebiega po aktywnym mostku i zrzuca gracza; uderzenie w taflę kasuje most pod nią i materializuje następny w zasięgu skoku gracza. | Trzy srebrne okna polany zapalają się kolejno, a kuna przeskakuje przez pustkę jak przez szkło. | Aktywność pokazuje stała obwódka; nie ma zgadywania. | Trójkąt przejść z wyspą pośrodku. |
+| 054 | 54 | Baldachim Srebrnych Wstęg | **trzęsę** baldachimem | Odbite w tafli wiszące wstęgi stają się ścianami i mostkami; zwrot: wstrząs przenosi je między wysokościami, także pod łapy kuny. | **Kuna Wstęgi** biegnie po srebrnych pasach nad głową; gracz trzęsie ramą baldachimu, strącając jej trasę i budując własny pomost w tym samym ruchu. | Rozświetlone wstęgi wiją się między drzewami jak żywa zorza, a srebrna kuna pędzi po nich. | Odbity teren, bez drugiego ciała bossa. | Dwa piętra połączone ramą wstęg. |
+| 055 | 55 | Teatr Bez Aktorów | **uskakuję** przed sobowtórem | Tafle odtwarzają trzy gesty zmarłego wędrowca jako krótkie pomosty; jeden prowadzi w urwany prześwit, więc gracz uskakuje na stały brzeg. | **Sobowtór Wędrowca** odgrywa jeden z trzech gestów zmarłego wędrowca; każdy tworzy inny pomost, a jeden kończy się nad przepaścią. Gracz uskakuje z błędnego pomostu i spycha sobowtóra na drogę bez wyjścia, otwierając przejście. | Puste miejsca amfiteatru wypełniają się księżycowymi śladami tancerzy bez ciał. | Materialny gest trwa krótko; brak pary wspólnego HP. | Półkolisty amfiteatr. |
+| 056 | 56 | Rozlewisko Lustrzanych Rysi | **oddzielam** dwa ciała | Tafla tworzy odbicie drapieżnika na przeciwnym brzegu; zasłonięcie jej usuwa odbicie, ale otwiera rysiowi drogę do legowiska. | **Matka Rysi** osłania młode ciałem, a odbiciem poluje; gracz przesuwa trzcinowe grodzie, oddziela oba tory ataku i zmusza ją do obrony zamiast pościgu. | Matka i jej srebrny obraz skaczą jednocześnie nad rozlewiskiem, a młode kryją się w trzcinach. | Para ciał ze wspólnym zdrowiem ma różne zadania. | Dwa brzegi wokół tafli. |
+| 057 | 57 | Schody Między Koronami | **zarzucam** pomosty | Odbite stopnie materializują się nad przepaścią; gdy chmura zasłania księżyc, zostają tylko oznaczone realne podesty. | **Nietoperz Koronny** spycha gracza z wąskich stopni; gracz zarzuca gotowy odbity pomost w bok, przechwytując trasę lotu bossa i tworząc szeroką arenę wręcz. | Świetliste schody rozkwitają nad przepaścią, po której kołuje nietoperz wielkości domu. | Odbity teren znika po czytelnym sygnale chmury. | Spirala z bezpiecznymi podestami. |
+| 058 | 58 | Lustrzany Ja | **pozoruję** cios | W centralnej tafli odbicie gracza dostaje jedno ciało; kopiuje jego cios sekundę później. Zwrot: jego opóźniony atak może przeciąć srebrne zasłony i otworzyć drogę do dwóch sprzecznych podpisów; po walce gracz zachowuje oba albo niszczy jeden kosztem prawdy. | **Własne Odbicie** kontruje przewidywalne serie; gracz pozoruje cios, odsuwa się i kieruje spóźnione uderzenie kopii w zasłonę lub nią samą. | Z tafli wychodzi drugi gracz, a za nim dziesiątki srebrnych wersji tej samej postawy. | Jeden przeciwnik kopiujący gracza, bez pary wspólnego HP. | Ośmiokąt z centralną taflą i czterema zasłonami. |
+| 059 | 59 | Dziki Gon | **uciekam** przed Gonem | Odbite mosty pozwalają przeskoczyć rozpadliny, lecz znikają, gdy chmura zasłania księżyc; gracz biegnie po nich sam, bez eskorty. | **Łowczy Gonu** dosiada konia istniejącego tylko jako odbicie; gracz strzaskuje wskazaną taflę w chwili skoku, przez co łowczy spada i musi walczyć pieszo. | Widmowy orszak jeźdźców przelatuje między koronami, a ich odbicia nabierają ciał na mostach. | Odbita droga ma zapowiedziane okna zaniku. | Sekwencja rozpadlin i dwóch okrężnych aren. |
+| 060 | 60 | Zwierciadło Ilvessy | **odchylam** tafle | Egzamin łączy odbity most, ścianę i dwa ciała; Ilvessa utrzymuje księżyc nad knieję, a w walce zasłania go, by ocalić zapis, i sama traci osłonę. | **Ilvessa** przenosi drugie ciało tylko do tafli zwróconej ku księżycowi; gracz odchyla tafle, odbiera jej wybrane pozycje i tworzy dojście do oryginału oraz widoczne przejście Powracających ku Paktowi. | Nad polaną pojawia się srebrny obraz całej kniei, a obie Ilvessy rozrywają go między sobą. | Trzy poznane formy odbicia, bez nowej reguły. | Pierścień tafli i dwie kładki. |
+
+## Łuk odkryć
+
+051–053 uczą, że materialny obraz nie musi być osobą. 054–057 zmieniają odbity teren w wstęgi, scenę, łowisko i pionowy szlak. W 058 gracz mierzy się z własną kopią i znajduje dwa sprzeczne podpisy jednego wspomnienia. 059 jest samodzielną ucieczką przed Gonem; żywi pozostają poza instancją. W 060 Ilvessa wydaje kopie zapisów i zgadza się na odwracalną drogę. Aelyra i Sylvaen pozostają interpretacjami mieszkańców, bez potwierdzenia boskiej obecności. Wybory moralne występują w 056, 058 i 060.
+
+## Ślad aktu w lochach (runda 3)
+
+- Bodziec Ilvessy: po odwilży Sigrun Zmarzłe Widma wchodzą w księżycowe tafle i zyskują ciała; Ilvessa przedłuża noc, by ich nie utracić.
+- Fakt 1 (przyczyna) → **051**: oszroniony znak kurhanu i trop z północy.
+- Fakt 2 (koszt i sprawczyni) → **060**: utrzymywany blask i zamykane przez tafle drogi żywych.
+- Fakt 3 (skutek) → **060**: odchylone tafle pokazują przejście nowych ciał do Paktu.
+- Echo wcześniejszego prawa: przy bocznym stopniu **057** trzy sekundy bezruchu mrożą odbicie napastnika według Aktu 5; realny podest daje obejście.
+
+## Wykonanie i plan B
+
+Tafle to jawne pola oraz gotowe bryły. Wspólny pasek HP występuje tylko w 051/052/056/060; jeśli synchronizacja zawiedzie, odbicie jest trafialną projekcją przekazującą obrażenia do jednego moba. Sobowtór 055 odgrywa jedną z trzech gotowych sekwencji gestów zmarłego wędrowca; tylko 058 kopiuje ciosy gracza (awaryjnie używa trzech sygnalizowanych sekwencji ciosów). W 059 chmura przełącza gotowe odcinki mostów; na dnie są półki ratunkowe. Brak NPC do prowadzenia i brak warunku ukończenia zależnego od Wezwania.
+
+## Odpowiedź na recenzję (etap 5)
+
+- **P1/C: dziewięć walk z parą HP, słaby motyw** → pary pozostają tylko w 051/052/056/060; 053–055 i 057–059 walczą mostem, wstęgą, rytmem, pionem, własną kopią i Gonem.
+- **C/P2: 053, 054 i 058 poznawcze lub powtórzone czasowniki** → strzaskuję, trzęsę i pozoruję oznaczają fizyczne działania w walce; 055 uskakuję, 057 zarzucam, 060 odchylam.
+- **P1.4: 059 eskorta** → zastąpiona samotną ucieczką przed Dzikim Gonem; usunięto również plan B z NPC. Przyjęto propozycję C, lecz odbite mosty znikają po zapowiedzi, aby pościg był czytelny.
+- **P5: zajęte rodziny, kadry i wybory** → usunięto sowy, pająki i ćmy; rysie są tylko w 056, każdy kadr ma istotę lub cud, a wybory są w 056/058/060. Odrzucono wariant pajęczycy 054, bo pająki należą do Aktu 1.
+- **P2/P5.6: rejestr** → czasowniki 051–060 porównano z 011–100 i Aktem 1; kolizje rozpoznaję/rozpinam/zestawiam/uwalniam zostały wymienione.
+
+## Odpowiedź na recenzję (etap 7)
+
+- **C: 055 powiela 058** → Sobowtór odgrywa trzy gesty zmarłego wędrowca i tworzy nimi zwodnicze pomosty; nie kopiuje gracza. Kopiowanie ciosów pozostaje wyłącznie w 058.

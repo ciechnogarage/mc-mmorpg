@@ -1,0 +1,34 @@
+template:
+  kind: religion_definition
+  version: 1
+  owner_domain: "08"
+  production_status: draft
+
+required_fields:
+  religion_id: religion.example
+  worldview: ""
+  rituals: []
+  obligations: []
+  taboos: []
+  community_shape: ""
+  death_memory_guilt_sacrifice_response: []
+  allowed_build_impacts:
+    contract_owner_domain: "04"
+    notes: []
+  departure_modes:
+    - PEACEFUL_EXIT
+    - CONVERSION
+    - EXCLUSION
+    - OATHBREAK
+  conversion_process:
+    - crisis_or_doubt
+    - prior_oath_resolution
+    - social_consequence
+    - reduced_benefit_interval
+    - acceptance_by_new_community
+    - optional_faith_scar_or_broken_oath
+
+rules:
+  religion_is_not_faction_alias: true
+  conversion_requires_narrative_process: true
+  build_impact_must_stay_within_domain_04_contract: true

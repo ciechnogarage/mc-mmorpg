@@ -1,0 +1,31 @@
+# KARA ZA ŚMIERĆ (2026-09-27, decyzja właściciela): ekwipunek ZOSTAJE, kara to utrata doświadczenia
+# i czasowe osłabienie.
+#  - ekwipunek: gamerule keep_inventory true w światach world1 (world, world_nether, world_the_end,
+#    creator_limbo), ustawiona przez `mv gamerule set minecraft:keep_inventory true <świat>`.
+#    PUŁAPKA (zmierzone 2026-09-27): vanillowe `execute in minecraft:overworld run gamerule keep_inventory true`
+#    na Paperze 1.21.11 NIE zmienia reguły, którą czyta śmierć gracza (odczyt tą samą komendą dawał 1,
+#    a `mv gamerule list` pokazywał false i przedmioty wypadały). Sprawdzać `mv gamerule list <świat>`.
+#    Lochy MythicDungeons mają keep_inventory w swoich gamerules.yml.
+#    NIE przez Set{m=keepinventory}: przy wyłączonej regule CoreTools zostawia ekwipunek I upuszcza te same
+#    przedmioty (docs events/server/PlayerDeathEvent — duplikacja).
+#  - doświadczenie: MMOCore config.yml death-exp-loss (10% bieżącego EXP poziomu, poziom nie spada).
+#  - osłabienie: ten skrypt, na odrodzenie (EventsManager/kara-smierci.yml; zmiana wiązania = RESTART).
+#    MMOStat = czasowa statystyka MythicLib; klucz 'kara_smierci' pozwala zdjąć poprzednią, więc
+#    kolejna śmierć ODŚWIEŻA czas zamiast sumować karę. Ikona Pecha (unluck) tylko jako widoczny licznik
+#    — w grze pech zmienia wyłącznie vanillowe tabele łupów.
+kara_smierci:
+  Delay: 5
+  Conditions:
+    - WorldName{w="creator_limbo"} false
+    - WorldName{w="arena"} false
+  Mechanics:
+    - mmostat{mode=remove;stat=weapon_damage;key=kara_smierci} @Self
+    - mmostat{mode=remove;stat=skill_damage;key=kara_smierci} @Self
+    - mmostat{mode=remove;stat=max_health;key=kara_smierci} @Self
+    - mmostat{mode=add;stat=weapon_damage;type=FLAT;value=-15;duration=3600;key=kara_smierci} @Self
+    - mmostat{mode=add;stat=skill_damage;type=FLAT;value=-15;duration=3600;key=kara_smierci} @Self
+    - mmostat{mode=add;stat=max_health;type=RELATIVE;value=-10;duration=3600;key=kara_smierci} @Self
+    - command{c="minecraft:effect give %player_name% minecraft:unluck 180 0 true"} @Self
+    # tellraw z JSON-em nie przechodził przez parser GSON CoreTools (cisza); Message = MiniMessage (docs),
+    # mechaniki Component w CoreTools 1.4.2 NIE ma (reload rzuca "No enum constant ... component")
+    - Message{message="<red>Rany po śmierci:</red> <gray>przez 3 minuty -15% obrażeń i -10% zdrowia.</gray>";position="chat"} @Self

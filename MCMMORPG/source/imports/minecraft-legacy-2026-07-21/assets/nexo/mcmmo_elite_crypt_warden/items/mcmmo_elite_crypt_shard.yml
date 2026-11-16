@@ -1,0 +1,6 @@
+mcmmo_elite_crypt_shard:
+  itemname: <#9BE7FF>Elite Crypt Shard
+  material: ECHO_SHARD
+  lore:
+    - <dark_gray>Token drop from the Elite Crypt Warden.
+    - <gray>Draft item for staging loot and resource-pack checks.

@@ -1,0 +1,9 @@
+ZAK_BRON_PRZYWOLANY_MIECZ:
+  Id: IRON_SWORD
+  Display: '<!i><#b7d8ff>Przywołany miecz'
+  Lore:
+  - '<!i><gray>Broń przywołana · znika po czasie'
+  Options:
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true

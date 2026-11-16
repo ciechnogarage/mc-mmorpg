@@ -1,0 +1,31 @@
+# Układ paska Chowańca: lewy górny róg ekranu (lewy dół zajmuje 'sword-layout').
+# Wpięcie: config.yml layout.default += chowance-layout (fragment w config.yml.chowance).
+chowance-layout:
+  elements:
+    chowaniec:
+      # 2026-09-30: lewy GÓRNY róg (y liczone od dołu ekranu; y 0 kładło pasek na czacie)
+      asset: 'chowaniec'
+      align: right
+      position:
+        x: 0.0
+        y: 100.0
+      offset:
+        x: 6
+        y: -84
+    # Walka (2026-09-30): przeciwnik i twój stwór w lewym górnym rogu, klawisze po prawej na środku wysokości.
+    # Pozycja 0–100 od LEWEGO DOLNEGO rogu; offset w px GUI, y w górę; align right = element rośnie w prawo.
+    walka-on:
+      asset: 'chowance-walka-on'
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -84}
+    walka-ja:
+      asset: 'chowance-walka-ja'
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 6, y: -134}
+    walka-klawisze:
+      asset: 'chowance-walka-klawisze'
+      align: right
+      position: {x: 100.0, y: 50.0}
+      offset: {x: -126, y: 46}

@@ -1,0 +1,218 @@
+# Cel zadania v5 (20.10): w lewej kolumnie pod efektami; tekst z HudDane (przyciety), strzalka do celu kroku.
+l5-zadanie-e0:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zadanie_widac%;val=tak} true hide
+    - placeholder{ph=%hud_efekty_liczba%;v=1;o=>=} false hide
+  layers:
+    tytul:
+      text: '<#FFE7AE>%hud_zadanie_tytul% <#D5A96B>%hud_zadanie_postep%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -5}
+    krok:
+      text: '<#FFF1CC>%hud_zadanie_krok%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -17}
+    ikona:
+      texture: {path: assets/l1/cel_ikona.png}
+      scale: 0.5
+      offset: {x: 6, y: -4}
+    strzalka:
+      texture: {path: assets/l1/cel_strzalka.png}
+      scale: 0.5
+      offset: {x: 7, y: -16}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=brak} true hide
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 115, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-zadanie-kier-e0:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zadanie_widac%;val=tak} true hide
+    - placeholder{ph=%hud_efekty_liczba%;v=1;o=>=} false hide
+    - placeholder{ph=%hud_zadanie_kierunek%;val=brak} false hide
+  layers:
+    odl:
+      text: '<#D5A96B>%hud_zadanie_odl%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 190, y: -5}
+    k-n:
+      texture: {path: assets/l1/zad_n.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=n} true hide
+    k-ne:
+      texture: {path: assets/l1/zad_ne.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=ne} true hide
+    k-e:
+      texture: {path: assets/l1/zad_e.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=e} true hide
+    k-se:
+      texture: {path: assets/l1/zad_se.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=se} true hide
+    k-s:
+      texture: {path: assets/l1/zad_s.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=s} true hide
+    k-sw:
+      texture: {path: assets/l1/zad_sw.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=sw} true hide
+    k-w:
+      texture: {path: assets/l1/zad_w.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=w} true hide
+    k-nw:
+      texture: {path: assets/l1/zad_nw.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=nw} true hide
+    k-tu:
+      texture: {path: assets/l1/zad_tu.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=tu} true hide
+
+l5-zadanie-e1:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zadanie_widac%;val=tak} true hide
+    - placeholder{ph=%hud_efekty_liczba%;v=1;o=>=} true hide
+  layers:
+    tytul:
+      text: '<#FFE7AE>%hud_zadanie_tytul% <#D5A96B>%hud_zadanie_postep%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -5}
+    krok:
+      text: '<#FFF1CC>%hud_zadanie_krok%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -17}
+    ikona:
+      texture: {path: assets/l1/cel_ikona.png}
+      scale: 0.5
+      offset: {x: 6, y: -4}
+    strzalka:
+      texture: {path: assets/l1/cel_strzalka.png}
+      scale: 0.5
+      offset: {x: 7, y: -16}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=brak} true hide
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 115, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-zadanie-kier-e1:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zadanie_widac%;val=tak} true hide
+    - placeholder{ph=%hud_efekty_liczba%;v=1;o=>=} true hide
+    - placeholder{ph=%hud_zadanie_kierunek%;val=brak} false hide
+  layers:
+    odl:
+      text: '<#D5A96B>%hud_zadanie_odl%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 190, y: -5}
+    k-n:
+      texture: {path: assets/l1/zad_n.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=n} true hide
+    k-ne:
+      texture: {path: assets/l1/zad_ne.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=ne} true hide
+    k-e:
+      texture: {path: assets/l1/zad_e.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=e} true hide
+    k-se:
+      texture: {path: assets/l1/zad_se.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=se} true hide
+    k-s:
+      texture: {path: assets/l1/zad_s.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=s} true hide
+    k-sw:
+      texture: {path: assets/l1/zad_sw.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=sw} true hide
+    k-w:
+      texture: {path: assets/l1/zad_w.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=w} true hide
+    k-nw:
+      texture: {path: assets/l1/zad_nw.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=nw} true hide
+    k-tu:
+      texture: {path: assets/l1/zad_tu.png}
+      scale: 0.5
+      offset: {x: 0, y: -15}
+      conditions:
+        - placeholder{ph=%hud_zadanie_kierunek%;val=tu} true hide

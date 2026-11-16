@@ -1,0 +1,8 @@
+nazwa,typ,poziom,trudnosc,dlugosc,liczba_nagrod,tiers
+Canyon of the Lost Excursion (South),CAMP,85,MEDIUM,LONG,38,"{""MYTHIC"": 3, ""WARD"": 1, ""CURRENCY"": 2, ""FABLED"": 10, ""LEGENDARY"": 4, ""ITEM"": 5, ""RARE"": 6, ""UNIQUE"": 7}"
+The Corkus Traversal,CAMP,90,MEDIUM,MEDIUM,42,"{""MYTHIC"": 5, ""ITEM"": 5, ""WARD"": 2, ""CURRENCY"": 2, ""FABLED"": 9, ""LEGENDARY"": 9, ""RARE"": 5, ""UNIQUE"": 5}"
+Molten Heights Hike,CAMP,95,MEDIUM,MEDIUM,40,"{""MYTHIC"": 5, ""ITEM"": 6, ""CURRENCY"": 2, ""FABLED"": 8, ""LEGENDARY"": 6, ""RARE"": 7, ""UNIQUE"": 6}"
+Sky Islands Exploration,CAMP,96,MEDIUM,MEDIUM,38,"{""MYTHIC"": 6, ""WARD"": 1, ""CURRENCY"": 2, ""FABLED"": 7, ""LEGENDARY"": 6, ""ITEM"": 5, ""RARE"": 5, ""UNIQUE"": 6}"
+Silent Expanse Expedition,CAMP,101,MEDIUM,MEDIUM,48,"{""MYTHIC"": 7, ""ITEM"": 7, ""WARD"": 1, ""CURRENCY"": 2, ""FABLED"": 10, ""LEGENDARY"": 6, ""RARE"": 7, ""UNIQUE"": 8}"
+The Fruma Foray (West),CAMP,110,HARD,LONG,50,"{""MYTHIC"": 9, ""ITEM"": 10, ""WARD"": 2, ""CURRENCY"": 2, ""FABLED"": 6, ""LEGENDARY"": 6, ""RARE"": 7, ""UNIQUE"": 8}"
+The Fruma Foray (East),CAMP,115,HARD,LONG,45,"{""MYTHIC"": 9, ""ITEM"": 10, ""WARD"": 1, ""CURRENCY"": 2, ""FABLED"": 7, ""LEGENDARY"": 4, ""RARE"": 6, ""UNIQUE"": 6}"

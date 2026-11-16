@@ -1,0 +1,334 @@
+# HUD v4 (20.10): cel walki, loch, zdobycz, ostrzezenia. Dane: HudDane, MythicDungeons.
+l4-cel-walki-zwykly:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%hud_cel_jest%;val=tak} true hide
+    - placeholder{ph=%hud_cel_ranga%;val=boss} false hide
+  layers:
+    nazwa:
+      text: '<#FFF1CC>%hud_cel_nazwa% <#D5A96B>%hud_cel_poziom%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 6, y: -5}
+    hp-tekst:
+      text: '<#FFF1CC>%hud_cel_hp%/%hud_cel_hpmax%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 90, y: -5}
+    hp:
+      texture: {path: assets/l1/cw_hp.png}
+      scale: 0.5
+      offset: {x: 6, y: -15}
+      function: {listener: cel_walki_hp, increment: 119, orientation: horizontal}
+    hp-tlo:
+      texture: {path: assets/l1/cw_hp_tlo.png}
+      scale: 0.5
+      offset: {x: 5, y: -14}
+    tlo-b:
+      texture: {path: assets/l1/cw_zwykly_b.png}
+      scale: 0.5
+      offset: {x: 100, y: 0}
+    tlo:
+      texture: {path: assets/l1/cw_zwykly_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-loch:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_loch%;val=tak} true hide
+  layers:
+    nazwa:
+      text: '<#FFE7AE>%md_dungeon_display_name%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 18, y: -5}
+    czas:
+      text: '<#FFF1CC>%md_dungeon_time_left%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 30, y: -17}
+    zycia:
+      text: '<#F36D62>%md_dungeon_lives_left%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 90, y: -17}
+    ik-czas:
+      texture: {path: assets/l1/loch_czas.png}
+      scale: 0.5
+      offset: {x: 18, y: -16}
+    ik-zycia:
+      texture: {path: assets/l1/loch_zycia.png}
+      scale: 0.5
+      offset: {x: 78, y: -16}
+    ikona:
+      texture: {path: assets/l1/loch_ikona.png}
+      scale: 0.5
+      offset: {x: 6, y: -4}
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 115, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz1-exp:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_1_rodzaj%;val=exp} true hide
+  layers:
+    t:
+      text: '<#B8E4FF>%hud_zdobycz_1_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_exp.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz1-profesja:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_1_rodzaj%;val=profesja} true hide
+  layers:
+    t:
+      text: '<#9BD07A>%hud_zdobycz_1_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_profesja.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz1-przedmiot:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_1_rodzaj%;val=przedmiot} true hide
+  layers:
+    t:
+      text: '<#FFE7AE>%hud_zdobycz_1_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_przedmiot.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz2-exp:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_2_rodzaj%;val=exp} true hide
+  layers:
+    t:
+      text: '<#B8E4FF>%hud_zdobycz_2_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_exp.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz2-profesja:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_2_rodzaj%;val=profesja} true hide
+  layers:
+    t:
+      text: '<#9BD07A>%hud_zdobycz_2_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_profesja.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz2-przedmiot:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_2_rodzaj%;val=przedmiot} true hide
+  layers:
+    t:
+      text: '<#FFE7AE>%hud_zdobycz_2_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_przedmiot.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz3-exp:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_3_rodzaj%;val=exp} true hide
+  layers:
+    t:
+      text: '<#B8E4FF>%hud_zdobycz_3_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_exp.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz3-profesja:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_3_rodzaj%;val=profesja} true hide
+  layers:
+    t:
+      text: '<#9BD07A>%hud_zdobycz_3_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_profesja.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz3-przedmiot:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_3_rodzaj%;val=przedmiot} true hide
+  layers:
+    t:
+      text: '<#FFE7AE>%hud_zdobycz_3_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_przedmiot.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz4-exp:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_4_rodzaj%;val=exp} true hide
+  layers:
+    t:
+      text: '<#B8E4FF>%hud_zdobycz_4_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_exp.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz4-profesja:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_4_rodzaj%;val=profesja} true hide
+  layers:
+    t:
+      text: '<#9BD07A>%hud_zdobycz_4_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_profesja.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-zdobycz4-przedmiot:
+  conditions:
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=minimal} false hide
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_zdobycz_4_rodzaj%;val=przedmiot} true hide
+  layers:
+    t:
+      text: '<#FFE7AE>%hud_zdobycz_4_tekst%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/z_przedmiot.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-ostrz-zuzycie:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_ostrzezenie%;val=zuzycie} true hide
+  layers:
+    t:
+      text: '<#F36D62>Broń prawie zniszczona'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/ostrz.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l4-ostrz-pelny:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_ostrzezenie%;val=pelny} true hide
+  layers:
+    t:
+      text: '<#FFE7AE>Pełny ekwipunek'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 11, y: -1}
+    ik:
+      texture: {path: assets/l1/ostrz.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}

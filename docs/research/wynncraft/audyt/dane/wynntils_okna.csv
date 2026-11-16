@@ -1,0 +1,65 @@
+plik,wzorzec_tytulu,pelnoekranowe
+AbilityTreeContainer.java,"\uDAFF\uDFEA[\uE000\uE057]",tak
+AbilityTreeResetContainer.java,"\uDAFF\uDFEA\uE001",tak
+AspectsContainer.java,"\uDAFF\uDFEA\uE002",tak
+BlacksmithRepairContainer.java,"\uDAFF\uDFF8\uE017",nie
+BlacksmithSellContainer.java,"\uDAFF\uDFF8\uE016",nie
+CharacterCreationContainer.java,"\uDAFF\uDFD0\uE025",tak
+CharacterInfoContainer.java,"\uDAFF\uDFDC\uE003",nie
+CharacterSelectionContainer.java,"\uDAFF\uDFD5\uE01F",tak
+ContentBookContainer.java,"\uDAFF\uDFEE\uE004",tak
+CosmeticContainer.java,"\uF029",nie
+CraftingStationContainer.java,"\uDAFF\uDFF8\uE053\uDAFF\uDF80",nie
+EmeraldPouchContainer.java,"EmeraldÀÀÀÀPouchÀ",nie
+GuildBadgesContainer.java,".+: Badges",nie
+GuildBankContainer.java,".+: Bank \\(.+\\)",nie
+GuildDiplomacyContainer.java,"[a-zA-Z\\s]+: Diplomacy",nie
+GuildLogContainer.java,"§7Next Page",nie
+GuildManagementContainer.java,"[a-zA-Z\\s]+: Manage",nie
+GuildMemberListContainer.java,".+: Members",nie
+GuildTerritoriesContainer.java,".+: Territories",nie
+HousingJukeboxContainer.java,"Select Songs",nie
+HousingListContainer.java,"Available Islands",nie
+HousingSongSelectContainer.java,"Select a Song",nie
+IngredientPouchContainer.java,".+'s? Pouch",nie
+InventoryContainer.java,,nie
+ItemIdentifierAugmentsContainer.java,"\uDAFF\uDFF8\uE019",nie
+ItemIdentifierContainer.java,"\uDAFF\uDFF8\uE018",nie
+JukeboxContainer.java,"Player's Jukebox",nie
+LeaderboardRewardsContainer.java,"Leaderboard Rewards",nie
+LobbyContainer.java,"Wynncraft Servers",nie
+LootrunRewardChestContainer.java,"\uDAFF\uDFF2\uE00A",nie
+MasteryTomesContainer.java,"\uDAFF\uDFDB\uE005",nie
+MountFeederContainer.java,"\uDAFF\uDFED\uE058",nie
+PartyFinderMatchFoundContainer.java,"\uDAFF\uDFE0[\uE041-\uE051]",tak
+RaidRewardChestContainer.java,"\uDAFF\uDFEA\uE00E",nie
+RaidRewardPreviewContainer.java,"\uDAFF\uDFEA\uE00D\uDAFF\uDF6F.",nie
+RaidStartContainer.java,"\uDAFF\uDFE1\uE00C",nie
+RatingRewardsContainer.java,"Rating Rewards",nie
+ScrapMenuContainer.java,"\uDAFF\uDFE8\uE037\uDAFF\uDF42\uF024\uDAFF\uDF5B\uF030",nie
+SeaskipperContainer.java,"V.S.S. Seaskipper",nie
+StoreContainer.java,"\uDAFF\uDFF4\uE02C\uDAFF\uDF7C\uF027\uDAFF\uDF52\uDB00\uDC3D.\uDAFF\uDF22\uDB00\uDC40.\uDAFF\uDF2F",nie
+StorePageContainer.java,"\uDAFF\uDFF4\uE02D\uDAFF\uDF7C",nie
+personal/AccountBankContainer.java,"\uDAFF\uDFF0\uE00F\uDAFF\uDF68\uF000",nie
+personal/BookshelfContainer.java,"\uDAFF\uDFF0\uE00F\uDAFF\uDF68\uF005",nie
+personal/CharacterBankContainer.java,"\uDAFF\uDFF0\uE00F\uDAFF\uDF68\uF001",nie
+personal/IslandBlockBankContainer.java,"\uDAFF\uDFF0\uE00F\uDAFF\uDF68\uF003",nie
+personal/MiscBucketContainer.java,"\uDAFF\uDFF0\uE00F\uDAFF\uDF68\uF004",nie
+personal/PersonalBlockBankContainer.java,"\uDAFF\uDFF0\uE00F\uDAFF\uDF68\uF002",nie
+personal/PersonalStorageContainer.java,"§f§lPage (\\d+)§a >§2>§a>§2>§a>",nie
+reward/ChallengeRewardContainer.java,"Challenge Rewards",nie
+reward/DailyRewardContainer.java,"Daily Rewards",nie
+reward/EventContainer.java,"Event Rewards",nie
+reward/FlyingChestContainer.java,"Flying Chest Rewards",nie
+reward/IngredientBombRewardContainer.java,"Ingredient Bomb Rewards",nie
+reward/ItemBombRewardContainer.java,"Item Bomb Rewards",nie
+reward/LootChestContainer.java,"Loot Chest (§.)\\[.+\\]",nie
+reward/ObjectiveRewardContainer.java,"Objective Rewards",nie
+reward/RewardContainer.java,,nie
+trademarket/TradeMarketBuyContainer.java,"\uDAFF\uDFE8\uE015.+",nie
+trademarket/TradeMarketContainer.java,"\uDAFF\uDFE8\uE011",nie
+trademarket/TradeMarketFiltersContainer.java,"\uDAFF\uDFE8\uE010",nie
+trademarket/TradeMarketOrderContainer.java,"\uDAFF\uDFE8\uE012",nie
+trademarket/TradeMarketRevealItemsContainer.java,"What would you like to reveal\\?",nie
+trademarket/TradeMarketSellContainer.java,"\uDAFF\uDFE8\uE014(.+)?",nie
+trademarket/TradeMarketTradesContainer.java,"\uDAFF\uDFE8\uE013",nie

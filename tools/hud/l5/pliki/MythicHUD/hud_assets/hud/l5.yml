@@ -1,0 +1,278 @@
+# HUD v5 (20.10): kierunek obrazen, medal przed awansem, kafelki umiejetnosci.
+l5-obrazenia:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_obrazenia_kierunek%;val=brak} false hide
+  layers:
+    k-n:
+      texture: {path: assets/l1/ob_n.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=n} true hide
+    k-ne:
+      texture: {path: assets/l1/ob_ne.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=ne} true hide
+    k-e:
+      texture: {path: assets/l1/ob_e.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=e} true hide
+    k-se:
+      texture: {path: assets/l1/ob_se.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=se} true hide
+    k-s:
+      texture: {path: assets/l1/ob_s.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=s} true hide
+    k-sw:
+      texture: {path: assets/l1/ob_sw.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=sw} true hide
+    k-w:
+      texture: {path: assets/l1/ob_w.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=w} true hide
+    k-nw:
+      texture: {path: assets/l1/ob_nw.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      conditions:
+        - placeholder{ph=%hud_obrazenia_kierunek%;val=nw} true hide
+    dane:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-awans:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_awans_blisko%;val=tak} true hide
+  layers:
+    pierscien:
+      texture: {path: assets/l1/medal_awans.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um1-gotowa:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_1_stan%;val=gotowa} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>1'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#FFF1CC>%hud_umiejetnosc_1_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    tlo:
+      texture: {path: assets/l1/um_gotowa.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um1-odnowienie:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_1_stan%;val=odnowienie} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>1'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#8B7F86>%hud_umiejetnosc_1_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    cd:
+      text: '<#F36D62>%hud_umiejetnosc_1_cd%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 12, y: -2}
+    tlo:
+      texture: {path: assets/l1/um_odnowienie.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um2-gotowa:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_2_stan%;val=gotowa} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>2'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#FFF1CC>%hud_umiejetnosc_2_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    tlo:
+      texture: {path: assets/l1/um_gotowa.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um2-odnowienie:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_2_stan%;val=odnowienie} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>2'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#8B7F86>%hud_umiejetnosc_2_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    cd:
+      text: '<#F36D62>%hud_umiejetnosc_2_cd%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 12, y: -2}
+    tlo:
+      texture: {path: assets/l1/um_odnowienie.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um3-gotowa:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_3_stan%;val=gotowa} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>3'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#FFF1CC>%hud_umiejetnosc_3_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    tlo:
+      texture: {path: assets/l1/um_gotowa.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um3-odnowienie:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_3_stan%;val=odnowienie} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>3'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#8B7F86>%hud_umiejetnosc_3_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    cd:
+      text: '<#F36D62>%hud_umiejetnosc_3_cd%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 12, y: -2}
+    tlo:
+      texture: {path: assets/l1/um_odnowienie.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um4-gotowa:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_4_stan%;val=gotowa} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>4'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#FFF1CC>%hud_umiejetnosc_4_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    tlo:
+      texture: {path: assets/l1/um_gotowa.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l5-um4-odnowienie:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%player_health%;v=0;o=>} true hide
+    - placeholder{ph=%hud_umiejetnosc_4_stan%;val=odnowienie} true hide
+  layers:
+    nr:
+      text: '<#D5A96B>4'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -2}
+    skrot:
+      text: '<#8B7F86>%hud_umiejetnosc_4_skrot%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 2, y: -11}
+    cd:
+      text: '<#F36D62>%hud_umiejetnosc_4_cd%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 12, y: -2}
+    tlo:
+      texture: {path: assets/l1/um_odnowienie.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}

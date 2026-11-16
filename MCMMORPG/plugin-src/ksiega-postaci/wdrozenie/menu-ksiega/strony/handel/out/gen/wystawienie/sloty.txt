@@ -1,0 +1,54 @@
+00 | fill
+01 | fill
+02 | fill
+03 | fill
+04 | grzbiet (rezerwa techniczna)
+05 | fill
+06 | fill
+07 | fill
+08 | fill
+09 | fill
+10 | fill
+11 | fill
+12 | fill
+13 | grzbiet (rezerwa techniczna)
+14 | sell_day_1
+15 | sell_day_3
+16 | sell_day_7
+17 | info
+18 | fill
+19 | fill
+20 | fill
+21 | fill
+22 | grzbiet (rezerwa techniczna)
+23 | sell_player_item
+24 | fill
+25 | zamknij
+26 | zamknij
+27 | sell_7
+28 | sell_8
+29 | sell_9
+30 | sell_4
+31 | grzbiet (rezerwa techniczna)
+32 | sell_confirm
+33 | sell_confirm
+34 | zamknij
+35 | zamknij
+36 | sell_5
+37 | sell_6
+38 | sell_1
+39 | sell_2
+40 | grzbiet (rezerwa techniczna)
+41 | sell_confirm
+42 | sell_confirm
+43 | home
+44 | home
+45 | sell_3
+46 | sell_dot
+47 | sell_0
+48 | sell_backspace
+49 | grzbiet (rezerwa techniczna)
+50 | fill
+51 | fill
+52 | home
+53 | home

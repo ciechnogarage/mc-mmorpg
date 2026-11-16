@@ -1,0 +1,6 @@
+U+4AC0 hub_glowne  # chowance_menazeria
+U+4AC4 chowance_menazeria  # chowance_hodowla
+U+4AC8 chowance_menazeria  # chowance_lochy
+U+4ACC chowance_menazeria  # chowance_ranking
+U+4AD0 chowance_menazeria  # chowance_magazyn
+U+4AD4 chowance_menazeria  # chowance_bestiariusz

@@ -1,0 +1,37 @@
+schema_version: 1
+register_kind: domain01_runtime_evidence_register
+notes:
+  - Fixture with an invalid configuration hash.
+records:
+  - record_id: IDENTITY-002-A
+    scenario_id: IDENTITY-002
+    contract_id: account-character-contract
+    server_start_log: logs/items/latest.log
+    test_case_id: IDENTITY-002
+    commit: abcdef1234567890
+    backend: dev-items
+    paper_version: 1.21.11
+    plugin_jar_inventory: docs/plugin_manifest.yaml
+    configuration_hashes:
+      coretools: not-a-sha256
+    command_or_runner: mineflayer identity harness
+    log_paths:
+      - MCMMORPG/logs/latest.log
+    account_id: acct-002
+    account_namespace: mcmmorpg:account:dev-offline:v1
+    account_assurance_level: dev_offline_unverified
+    character_namespace: mcmmorpg:character:mmoprofiles-profile:v1
+    profile_id: 11111111-1111-1111-1111-111111111112
+    transaction_id: 22222222-2222-2222-2222-222222222223
+    correlation_id: 33333333-3333-3333-3333-333333333334
+    state_before:
+      selected_profile: 11111111-1111-1111-1111-111111111111
+    state_after:
+      selected_profile: 11111111-1111-1111-1111-111111111112
+    database_evidence:
+      profile_mapping_row: present
+    restart_point: after_second_profile_create
+    result: distinct_profile_ids_observed
+    duplicate_count: 0
+    rollback_result: not_required
+    evidence_hash: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb

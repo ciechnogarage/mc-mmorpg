@@ -1,0 +1,280 @@
+{
+ "name": "Zasoby",
+ "derivative": "OLD_GROWTH_BIRCH_FOREST",
+ "vanillaDerivative": "OLD_GROWTH_BIRCH_FOREST",
+ "color": "#5aaa96",
+ "layers": [
+  {
+   "palette": [
+    {
+     "block": "minecraft:moss_block"
+    },
+    {
+     "block": "minecraft:moss_block"
+    },
+    {
+     "block": "minecraft:moss_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:grass_block"
+    },
+    {
+     "block": "minecraft:rooted_dirt"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 1
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:dirt"
+    }
+   ],
+   "minHeight": 2,
+   "maxHeight": 3
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:andesite"
+    },
+    {
+     "block": "minecraft:tuff"
+    }
+   ],
+   "minHeight": 10,
+   "maxHeight": 18
+  }
+ ],
+ "decorators": [
+  {
+   "chance": 0.06,
+   "variance": {
+    "style": "CELLULAR",
+    "zoom": 0.3,
+    "fracture": {
+     "style": "SIMPLEX",
+     "zoom": 0.2,
+     "multiplier": 10
+    }
+   },
+   "style": {
+    "style": "SIMPLEX",
+    "zoom": 0.3,
+    "fracture": {
+     "style": "STATIC",
+     "multiplier": 8
+    }
+   },
+   "palette": [
+    {
+     "block": "minecraft:dandelion"
+    },
+    {
+     "block": "minecraft:short_grass"
+    },
+    {
+     "block": "minecraft:poppy"
+    },
+    {
+     "block": "minecraft:blue_orchid"
+    },
+    {
+     "block": "minecraft:allium"
+    },
+    {
+     "block": "minecraft:azure_bluet"
+    },
+    {
+     "block": "minecraft:red_tulip"
+    },
+    {
+     "block": "minecraft:orange_tulip"
+    },
+    {
+     "block": "minecraft:white_tulip"
+    },
+    {
+     "block": "minecraft:pink_tulip"
+    },
+    {
+     "block": "minecraft:oxeye_daisy"
+    },
+    {
+     "block": "minecraft:cornflower"
+    },
+    {
+     "block": "minecraft:lily_of_the_valley"
+    }
+   ]
+  },
+  {
+   "chance": 0.02,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "weight": 1,
+     "block": "minecraft:short_grass"
+    },
+    {
+     "block": "minecraft:short_grass"
+    },
+    {
+     "block": "minecraft:short_grass"
+    },
+    {
+     "chance": 7,
+     "block": "minecraft:short_grass"
+    },
+    {
+     "block": "minecraft:dandelion"
+    },
+    {
+     "block": "minecraft:poppy"
+    },
+    {
+     "block": "minecraft:blue_orchid"
+    },
+    {
+     "block": "minecraft:allium"
+    },
+    {
+     "block": "minecraft:azure_bluet"
+    },
+    {
+     "block": "minecraft:red_tulip"
+    },
+    {
+     "block": "minecraft:orange_tulip"
+    },
+    {
+     "block": "minecraft:white_tulip"
+    },
+    {
+     "block": "minecraft:pink_tulip"
+    },
+    {
+     "block": "minecraft:oxeye_daisy"
+    },
+    {
+     "block": "minecraft:cornflower"
+    },
+    {
+     "block": "minecraft:lily_of_the_valley"
+    },
+    {
+     "block": "minecraft:dandelion"
+    },
+    {
+     "block": "minecraft:poppy"
+    },
+    {
+     "block": "minecraft:blue_orchid"
+    },
+    {
+     "block": "minecraft:allium"
+    },
+    {
+     "block": "minecraft:azure_bluet"
+    },
+    {
+     "block": "minecraft:red_tulip"
+    },
+    {
+     "block": "minecraft:orange_tulip"
+    },
+    {
+     "block": "minecraft:white_tulip"
+    },
+    {
+     "block": "minecraft:pink_tulip"
+    },
+    {
+     "block": "minecraft:oxeye_daisy"
+    },
+    {
+     "block": "minecraft:cornflower"
+    },
+    {
+     "block": "minecraft:lily_of_the_valley"
+    }
+   ]
+  },
+  {
+   "chance": 0.02,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:tall_grass"
+    }
+   ]
+  },
+  {
+   "chance": 0.5,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:short_grass"
+    }
+   ]
+  },
+  {
+   "chance": 0.006,
+   "variance": {
+    "style": "STATIC"
+   },
+   "zoom": 0.2,
+   "palette": [
+    {
+     "block": "minecraft:rose_bush"
+    }
+   ]
+  }
+ ],
+ "generators": [
+  {
+   "generator": "wyspa_fale",
+   "min": 99,
+   "max": 103
+  }
+ ],
+ "objects": [
+  {
+   "chance": 0.12,
+   "density": 1,
+   "place": [
+    "trees/birch/antioch3",
+    "trees/birch/antioch4",
+    "trees/birch/antioch5"
+   ],
+   "rotation": {
+    "enabled": true,
+    "yAxis": {
+     "enabled": true,
+     "interval": 90,
+     "min": 0,
+     "max": 360
+    }
+   }
+  }
+ ]
+}

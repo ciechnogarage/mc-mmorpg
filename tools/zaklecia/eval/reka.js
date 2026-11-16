@@ -1,0 +1,25 @@
+'use strict'
+// Sonda: czy zaklecie w DRUGIEJ rece rusza przy uzyciu drugiej reki (miecz w glownej).
+setTimeout(() => { console.error('BLAD: limit czasu'); process.exit(2) }, 90000)
+const mineflayer = require('mineflayer'); const { Rcon } = require('rcon-client'); const rp = require('./resourcepack')
+const HOST = 'zaklecia-proba'; const sleep = ms => new Promise(r => setTimeout(r, ms))
+const clean = s => String(s).replace(/§./g, '').replace(/\x1b\[[0-9;]*m/g, '').trim()
+;(async () => {
+  const rcon = await Rcon.connect({ host: HOST, port: 25575, password: 'zaklecia' }); const cmd = async c => clean(await rcon.send(c))
+  const bot = mineflayer.createBot({ host: HOST, port: 25565, username: 'MagTest', version: '1.21.11' }); rp.attach(bot._client)
+  let cz = {}; bot._client.on('world_particles', p => { const k = p.particle?.type; cz[k] = (cz[k] || 0) + 1 })
+  await new Promise(r => bot.once('spawn', r)); await sleep(2000)
+  await cmd('minecraft:clear MagTest'); await cmd('minecraft:kill @e[type=zombie]'); await cmd('minecraft:tp MagTest 0.5 -60 0.5 0 0')
+  await cmd('mm mobs spawn ZAK_KUKLA 1 world,0.5,-60,4.5'); await cmd('mmocore admin resource-mana set MagTest 100')
+  await cmd('mm items give MagTest ZAKLECIE_PLOMIENIE'); await sleep(500)
+  await cmd('minecraft:item replace entity MagTest weapon.offhand from entity MagTest hotbar.0')
+  await cmd('minecraft:item replace entity MagTest hotbar.0 with minecraft:iron_sword'); await sleep(800)
+  bot.setQuickBarSlot(0); const z = Object.values(bot.entities).find(e => e.name === 'zombie'); if (z) await bot.lookAt(z.position.offset(0, 1.2, 0), true)
+  console.log('reka:', bot.heldItem?.name, '| druga:', bot.inventory.slots[45]?.name)
+  const m0 = await cmd('papi parse MagTest %mmocore_mana%'); cz = {}
+  bot.activateItem(true); await sleep(2000); bot.deactivateItem()
+  await sleep(600)
+  console.log('mana', m0, '->', await cmd('papi parse MagTest %mmocore_mana%'), '| HP kukly', await cmd('data get entity @e[type=zombie,limit=1] Health'))
+  console.log('czastki', JSON.stringify(cz))
+  bot.quit(); await rcon.end(); process.exit(0)
+})().catch(e => { console.error('BLAD', e); process.exit(1) })

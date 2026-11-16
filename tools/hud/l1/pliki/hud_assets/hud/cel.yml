@@ -1,0 +1,61 @@
+# Pierwszy aktywny cel w tej konfiguracji to samouczek Chowancow.
+cel-chowance:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%chowance_kroki_aktywne%;val=true} true hide
+    - placeholder{ph=%chowance_ma_zadanie_mmocore%;val=tak} false hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%luckperms_meta_ui_goal%;val=off} false hide
+  layers:
+    tytul:
+      text: '<#FFE5A1>Pierwsze kroki %chowance_kroki_postep%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 6, y: -5}
+    krok:
+      text: '<#FFFFFF>%chowance_kroki_opis%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 6, y: -16}
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 128, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+# Aktywnie podjete zadanie ma pierwszenstwo przed samouczkiem. Boolean pochodzi z
+# Chowance, bo MMOCore zwraca pusty tekst zamiast stabilnego stanu PAPI.
+cel-mmocore:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%chowance_ma_zadanie_mmocore%;val=tak} true hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%luckperms_meta_ui_goal%;val=off} false hide
+  layers:
+    tytul:
+      text: '<#FFE5A1>%mmocore_quest% %mmocore_quest_progress%%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 6, y: -5}
+    krok:
+      text: '<#FFFFFF>%mmocore_quest_objective%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 6, y: -16}
+    tlo-b:
+      texture: {path: assets/l1/cel_b.png}
+      scale: 0.5
+      offset: {x: 128, y: 0}
+    tlo:
+      texture: {path: assets/l1/cel_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}

@@ -1,0 +1,112 @@
+name: 'Warsztat: Rybaka'
+max-queue-size: 10
+command:
+  name: 'warsztat-fishing'
+  description: 'Otwiera warsztat profesji fishing'
+  usage: '/warsztat-fishing'
+  permission: ''
+  aliases: []
+recipes:
+  'prof_fish_oil':
+    output: 'mmoitems{type=MATERIAL,id=PROF_FISH_OIL}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=fishing,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_CATCH,amount=5}'
+    triggers:
+      - 'exp{profession=fishing,amount=12}'
+  'prof_clam':
+    output: 'mmoitems{type=MATERIAL,id=PROF_CLAM}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=fishing,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_CATCH,amount=8}'
+    triggers:
+      - 'exp{profession=fishing,amount=28}'
+  'prof_pearl':
+    output: 'mmoitems{type=MATERIAL,id=PROF_PEARL}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=fishing,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CLAM,amount=3}'
+    triggers:
+      - 'exp{profession=fishing,amount=55}'
+  'prof_rare_fish':
+    output: 'mmoitems{type=MATERIAL,id=PROF_RARE_FISH}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=fishing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RAW_CATCH,amount=10}'
+    triggers:
+      - 'exp{profession=fishing,amount=95}'
+  'prof_water_essence':
+    output: 'mmoitems{type=MATERIAL,id=PROF_WATER_ESSENCE}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=fishing,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CLAM,amount=8}'
+    triggers:
+      - 'exp{profession=fishing,amount=120}'
+gui-layout:
+  name: '&f䬤䬥䬦䬧'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [46]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [47]
+
+    queued_item:
+      slots: [36, 37, 38, 39]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: AIR
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26]

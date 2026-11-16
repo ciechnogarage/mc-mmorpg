@@ -1,0 +1,24 @@
+id: vanilla_inventory
+type: vanilla
+enabled: true
+slots:
+  GLOVES:
+    type: accessory
+    material: GOLD_NUGGET
+    item_model: 'nexo:mmo_icon_gloves'
+    name: '&6Rękawice'
+    slot: 9
+    restrictions:
+      - 'mmoitemstype{type=GLOVES}'
+    lore:
+      - '&7Przeciągnij tu rękawice.'
+  BELT:
+    type: accessory
+    material: GOLD_NUGGET
+    item_model: 'nexo:mmo_icon_belt'
+    name: '&6Pas'
+    slot: 10
+    restrictions:
+      - 'mmoitemstype{type=BELT}'
+    lore:
+      - '&7Przeciągnij tu pas.'

@@ -1,12 +1,18 @@
-# Plugin manifest - source of truth for orchestrator and plugin-admin.
-# Versions below were observed from staging jar names and the Paper startup log.
+# Canonical plugin manifest for inventory tooling, orchestration, and operations.
+# docs/technical/plugin-manifest.yaml is a superseded 2026-07-22 review snapshot.
+# Versions below were observed from repository runtime jar names and existing runtime evidence.
+
+manifest_version: 1
+document_status: current
+canonical: true
+supersedes_current_inventory_ref: docs/technical/plugin-manifest.yaml
 
 server:
   target_minecraft_version: 1.21.11
   runtime: Paper 1.21.11-127-main@bd74bf6
   environment: staging
   server_folder: MCMMORPG
-  last_scanned: 2026-06-24
+  last_scanned: 2026-08-12
   scan_source:
     - MCMMORPG/plugins
     - MCMMORPG/logs/latest.log
@@ -52,8 +58,8 @@ plugins:
     source_path: MCMMORPG/plugin-src/character-stage
 
   - name: CoreTools
-    jar: CoreTools-1.4.1.jar
-    current_version: 1.4.1
+    jar: CoreTools-1.4.2.jar
+    current_version: 1.4.2
     role: tools/dependency
     owner: plugin_architect
     license_status: unknown
@@ -116,12 +122,7 @@ plugins:
     license_status: unknown
     update_policy: staging_required
     criticality: high
-    vendor_pack_note: >-
-      The default "Overworld V3000" pack (plugins/Iris/packs/overworld/, dimension
-      version 31100) is vendor content and is git-ignored, not tracked. Restore it
-      with `/iris download overworld` on Iris 3.9.1, or fetch the matching
-      IrisDimensions overworld release. Authored packs (packs/level_1, packs/empty)
-      remain tracked. De-track evidence: docs/ai/cleanup-inventory-2026-07-13.md.
+    vendor_pack_note: 'The default "Overworld V3000" pack (plugins/Iris/packs/overworld/, dimension version 31100) is vendor content and is git-ignored, not tracked. Restore it with `/iris download overworld` on Iris 3.9.1, or fetch the matching IrisDimensions overworld release. Authored packs (packs/level_1, packs/empty) remain tracked. De-track evidence: docs/ai/cleanup-inventory-2026-07-13.md.'
 
   - name: LibsDisguises
     jar: LibsDisguises-11.0.15-Free.jar
@@ -140,17 +141,6 @@ plugins:
     license_status: unknown
     update_policy: staging_required
     criticality: critical
-
-  - name: MCPets
-    jar: MCPets 4.1.6 (1.21.+).jar
-    current_version: 4.1.6
-    role: pets
-    owner: cosmetics_pets_designer
-    license_status: unknown
-    update_policy: staging_required
-    criticality: low
-    runtime_status: yaml_fallback_accepted_staging_mvp
-    runtime_note: SQL fallback is accepted only for staging MVP if pets are not required by the first vertical slice.
 
   - name: MEG-Molang
     jar: MEG-Molang-R1.0.0.jar

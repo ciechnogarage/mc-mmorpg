@@ -1,0 +1,10 @@
+# Ruchy TESTOWE silnika (właściciel: Agent A).
+TEST_DRAPNIECIE: {nazwa: "Drapnięcie (test)", typ: BESTIA, kategoria: FIZYCZNY, moc: 40, celnosc: 100, kontakt: true, odnowienie: 2.0}
+TEST_ISKRA: {nazwa: "Iskra (test)", typ: OGIEN, kategoria: SPECJALNY, moc: 40, celnosc: 100, odnowienie: 3.0,
+  efekty: [{rodzaj: STATUS, status: OPARZENIE, szansa: 10, cel: PRZECIWNIK, czas: 3}]}
+TEST_WARKNIECIE: {nazwa: "Warknięcie (test)", typ: BESTIA, kategoria: STATUS, celnosc: 100,
+  efekty: [{rodzaj: STAT, stat: ATAK, zmiana: -1, cel: PRZECIWNIK}]}
+TEST_PLOMIEN: {nazwa: "Płomień (test)", typ: OGIEN, kategoria: SPECJALNY, moc: 90, celnosc: 100, odnowienie: 6.0}
+TEST_STRUMIEN: {nazwa: "Strumień (test)", typ: WODA, kategoria: SPECJALNY, moc: 40, celnosc: 100}
+TEST_KOLYSANKA: {nazwa: "Kołysanka (test)", typ: WODA, kategoria: STATUS, celnosc: 75,
+  efekty: [{rodzaj: STATUS, status: SEN, szansa: 100, cel: PRZECIWNIK, czas: 2}]}

@@ -1,0 +1,60 @@
+Version: 2
+Gamerule:
+  minecraft:
+    advance_time: false
+    advance_weather: false
+    block_drops: true
+    block_explosion_drop_decay: true
+    command_block_output: true
+    command_blocks_work: true
+    drowning_damage: true
+    elytra_movement_check: true
+    ender_pearls_vanish_on_death: true
+    entity_drops: true
+    fall_damage: false
+    fire_damage: true
+    fire_spread_radius_around_player: 128
+    forgive_dead_players: true
+    freeze_damage: true
+    global_sound_events: true
+    immediate_respawn: true
+    keep_inventory: true
+    lava_source_conversion: false
+    limited_crafting: false
+    locator_bar: true
+    log_admin_commands: true
+    max_block_modifications: 32768
+    max_command_forks: 65536
+    max_command_sequence_length: 65536
+    max_entity_cramming: 24
+    max_snow_accumulation_height: 1
+    mob_drops: true
+    mob_explosion_drop_decay: true
+    mob_griefing: false
+    natural_health_regeneration: true
+    player_movement_check: true
+    players_sleeping_percentage: 100
+    projectiles_can_break_blocks: true
+    raids: false
+    random_tick_speed: 0
+    reduced_debug_info: false
+    respawn_radius: 10
+    send_command_feedback: true
+    show_advancement_messages: false
+    show_death_messages: true
+    spawn_mobs: false
+    spawn_monsters: false
+    spawn_patrols: false
+    spawn_phantoms: false
+    spawn_wandering_traders: false
+    spawn_wardens: false
+    spawner_blocks_work: true
+    spectators_generate_chunks: true
+    spread_vines: false
+    tnt_explodes: false
+    tnt_explosion_drop_decay: false
+    universal_anger: false
+    water_source_conversion: true
+Difficulty: NORMAL
+WorldTime: 12000
+WorldWeather: CLEAR

@@ -1,0 +1,214 @@
+meta:
+  document: decision-registry
+  domain: "00"
+status: active
+purpose: Central registry for Domain 00 product-governance decisions.
+rules:
+  - Approved decisions require intake traceability.
+  - Open questions and conflicts stay linked from the governing decision rows.
+decisions:
+  - decision_id: PRODUCT-GOV-001
+    title: Domain 00 central product governance authority
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      Domain 00 owns the central product definition, cross-domain governance
+      boundaries, ownership records, governance dependencies, open governance
+      questions, and product release-stage framing.
+    source_intake_ids:
+      - INTAKE-001
+      - INTAKE-002
+    conflict_ids:
+      - CONFLICT-001
+      - CONFLICT-002
+    open_questions: []
+    dependencies: []
+  - decision_id: PRODUCT-GOV-002
+    title: Source labels do not become product truth automatically
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      Observed source labels such as accepted, partial, or blocked do not become
+      Domain 00 product truth without explicit governance review.
+    source_intake_ids:
+      - INTAKE-001
+      - INTAKE-002
+    conflict_ids:
+      - CONFLICT-001
+    open_questions:
+      - PRODUCT-QUESTION-005
+    dependencies:
+      - PRODUCT-GOV-001
+  - decision_id: PRODUCT-GOV-003
+    title: Adopt Domain 08/09/11/13/19 ownership split and retire placeholder map
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      Domain 08 owns quests and narrative semantics. Domain 09 owns professions
+      and crafting semantics. Domain 11 owns PvP seasonal competitive-state,
+      eligibility, reward-envelope, and reset-matrix semantics only. Domain 13
+      owns liveops, monetization, season lifecycle policy, season-program
+      packaging policy, and title/prestige/cosmetic persistence-policy framing.
+      Domain 19 owns social and guild systems. The prior unresolved placeholder
+      ownership map for 08, 09, 11, and 13 is retired.
+    source_intake_ids:
+      - INTAKE-003
+      - INTAKE-004
+      - INTAKE-005
+    conflict_ids:
+      - CONFLICT-003
+      - CONFLICT-004
+      - CONFLICT-005
+    open_questions:
+      - PRODUCT-QUESTION-003
+      - PRODUCT-QUESTION-004
+      - PRODUCT-QUESTION-005
+    dependencies:
+      - PRODUCT-GOV-001
+      - PRODUCT-GOV-002
+  - decision_id: PRODUCT-GOV-004
+    title: Accept the quest world-fact, objective-credit, reward, and presentation handoffs
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      Domain 06 publishes observed world facts without quest conclusions. Domain
+      08 exclusively owns quest definitions, quest state, objective credit, and
+      reward entitlement. Domain 10 owns reward policy and valuation, Domain 01
+      coordinates reward mutation, and Domain 14 consumes a read-only projection
+      and sends commands back to Domain 08. The accepted boundary is defined by
+      docs/contracts/quest-domain-handoff-contract.yaml; runtime and release
+      claims remain blocked until its evidence gates pass.
+    source_intake_ids:
+      - INTAKE-003
+    conflict_ids:
+      - CONFLICT-003
+    open_questions: []
+    dependencies:
+      - PRODUCT-GOV-003
+  - decision_id: PRODUCT-GOV-005
+    title: Accept the profession item, economy, transaction, and PvP overlay handoffs
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      Domain 09 exclusively owns profession definitions, process eligibility,
+      process result, and profession progression. Domain 05 owns durable item
+      and stack-lot semantics, Domain 10 owns economic policy and valuation,
+      Domain 01 coordinates craft transactions, and Domain 11 applies only a
+      contextual competitive overlay without mutating the durable item. The
+      accepted boundary is defined by
+      docs/contracts/profession-domain-handoff-contract.yaml; runtime and release
+      claims remain blocked until its evidence gates pass.
+    source_intake_ids:
+      - INTAKE-004
+    conflict_ids:
+      - CONFLICT-004
+    open_questions: []
+    dependencies:
+      - PRODUCT-GOV-003
+  - decision_id: PRODUCT-GOV-006
+    title: Adopt Tier 0.1 player segments and audience hierarchy
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      MC MMORPG primarily serves self-directed inhabitants of a persistent MMO
+      world. The product supports multiple meaningful activity families and play
+      rhythms without mandatory combat-first progression, while preserving
+      specialization, interdependence, context-appropriate progression advantage,
+      and explicit deliberately-not-primary expectations. The canonical wording
+      and evidence boundaries are defined by docs/product/00-tier-0-product-identity.md.
+      This decision does not define the final first-class-path registry.
+    source_intake_ids:
+      - INTAKE-007
+    conflict_ids: []
+    open_questions: []
+    dependencies:
+      - PRODUCT-GOV-001
+      - PRODUCT-GOV-002
+  - decision_id: PRODUCT-GOV-007
+    title: Adopt Tier 0.2 jobs-to-be-done and unmet-needs hypothesis
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      The primary player seeks autonomous progress now, lasting accomplishment
+      over time, and a real place in the shared player ecosystem without being
+      forced to play an unrelated style. This is approved product intent and an
+      unmet-needs hypothesis; it is not market validation or runtime outcome
+      evidence. Canonical wording is in docs/product/00-tier-0-product-identity.md.
+    source_intake_ids:
+      - INTAKE-008
+    conflict_ids: []
+    open_questions: []
+    dependencies:
+      - PRODUCT-GOV-006
+  - decision_id: PRODUCT-GOV-008
+    title: Adopt Tier 0.3 distinctive promise and progression grammar
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      The product promises earned identity, multiple meaningful paths, real
+      player interdependence, remembered accomplishment, and path-appropriate
+      embodiment in the Minecraft world. Paths share a progression grammar but
+      do not share one endgame peak or one public expression of mastery. The
+      exact first-class-path set, path cards, market differentiation, and runtime
+      fulfilment remain unresolved. Canonical wording is in
+      docs/product/00-tier-0-product-identity.md.
+    source_intake_ids:
+      - INTAKE-009
+    conflict_ids: []
+    open_questions:
+      - PRODUCT-QUESTION-005
+    dependencies:
+      - PRODUCT-GOV-006
+      - PRODUCT-GOV-007
+  - decision_id: PRODUCT-GOV-009
+    title: Adopt Tier 0.4 product anti-goals
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      AG-01 through AG-10 in docs/product/00-tier-0-product-identity.md are
+      binding product boundaries. Teams may not bypass them with local waivers,
+      player-facing experiments, retention, revenue, schedule, or local metrics.
+      A change requires a new explicit Domain 00 decision and cannot retroactively
+      convert a historical violation into PASS. Exact operational thresholds and
+      account-wide enforcement remain unresolved blockers.
+    source_intake_ids:
+      - INTAKE-010
+    conflict_ids: []
+    open_questions:
+      - PRODUCT-QUESTION-004
+    dependencies:
+      - PRODUCT-GOV-006
+      - PRODUCT-GOV-007
+      - PRODUCT-GOV-008
+  - decision_id: PRODUCT-GOV-010
+    title: Adopt the canonical Tier 0 first-class path registry
+    status: approved
+    domain_owner: "00"
+    exact_decision: >-
+      The canonical Tier 0 path set contains exactly thirteen first-class paths:
+      Islands, Dungeons, PvP, Guild, Pets, Miner, Lumberjack, Harvester,
+      Blacksmith, Armorer, Alchemist, Artificer, and Cook. Each profession keeps
+      an independent status. Builder / Architect is a candidate. Trade and
+      market, collection, hybrid building, quests and narrative, classes and
+      builds, itemization, economy, social basics, public events, and raids are
+      supporting capabilities. Required submodes and subsystems remain surfaces
+      of their parent path. Scope approval never implies runtime or release
+      readiness. Canonical identities, cards, owners, surfaces, statuses, and
+      claim rules are defined by
+      docs/product/00-first-class-path-registry.yaml.
+    source_intake_ids:
+      - INTAKE-011
+    conflict_ids:
+      - CONFLICT-005
+      - CONFLICT-006
+    open_questions:
+      - PRODUCT-QUESTION-003
+      - PRODUCT-QUESTION-004
+      - PRODUCT-QUESTION-005
+    dependencies:
+      - PRODUCT-GOV-003
+      - PRODUCT-GOV-005
+      - PRODUCT-GOV-006
+      - PRODUCT-GOV-007
+      - PRODUCT-GOV-008
+      - PRODUCT-GOV-009

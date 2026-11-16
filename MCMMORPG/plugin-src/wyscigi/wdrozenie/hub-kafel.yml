@@ -1,0 +1,10 @@
+  wyscigi_kafel:
+    material: nexo-mmo_icon_blank
+    slots: [43, 44, 52, 53]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Wyścigi Chowańców'
+    lore:
+      - '&7Czasówka albo wyścig z innymi.'
+      - '&7Wierzchowiec z wypożyczalni, równe szanse.'
+    left_click_commands:
+      - '[openguimenu] wyscigi'

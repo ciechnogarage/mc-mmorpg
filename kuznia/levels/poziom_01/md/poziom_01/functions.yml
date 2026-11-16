@@ -1,0 +1,170 @@
+Version: 1
+Functions:
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_przybycie
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 104.0
+    z: 59.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 10.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_start
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 101.0
+    z: 59.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 5.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_zasadzka_laka
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: -2.2
+    y: 101.0
+    z: 35.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_zasadzka_wilki
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 6.5
+    y: 101.0
+    z: 10.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_brama_gaju
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 1.4
+    y: 102.0
+    z: -4.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_arena_boss
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 101.0
+    z: -40.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 14.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: poziom_01_zwyciestwo
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 102.0
+    z: -40.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: WIEZA_P01_ALPHA
+    delayTicks: 40
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionFinishDungeon
+  leave: true
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 103.0
+    z: -40.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: WIEZA_P01_ALPHA
+    delayTicks: 300
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []

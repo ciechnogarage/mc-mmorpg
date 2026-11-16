@@ -296,39 +296,39 @@ Initial NPC roster:
 | `Runesmith` | Profession/Crafting | Enchant/rune preview |
 | `Artisan` | Profession/Crafting | Artisan/jewel preview |
 
-## Agent Handoff
+## Domain Handoff
 
-`minecraft-dungeon-world`:
+Dungeon and world:
 
 - propose Portal Nexus world placement and dungeon selector access;
 - map `level_1` entry requirements;
 - avoid direct board-to-dungeon start.
 
-`minecraft-mobs-models`:
+Mobs and models:
 
 - define MythicMobs city NPC ownership model;
 - keep NPCs resettable and not baked into world templates;
 - prepare NPC definitions by district.
 
-`minecraft-ui-hud-menus`:
+UI, HUD and menus:
 
 - board menu / city pointers;
 - Portal Nexus selector UI handoff;
 - holograms or short signs for districts.
 
-`minecraft-rpg-systems`:
+RPG systems:
 
 - starter skill claim/selection;
 - basic equipment handoff;
 - no final balance values.
 
-`minecraft-permissions-economy`:
+Permissions and economy:
 
 - money-based basic gear access;
 - minimal permissions for city services;
 - CMI/Vault integration sanity.
 
-`minecraft-release-qa`:
+Release QA:
 
 - validate new player path from spawn to Portal Nexus selector;
 - confirm board does not directly start dungeon;
@@ -345,4 +345,3 @@ Initial NPC roster:
 - Portal Nexus opens dungeon selection.
 - Basic gear and starter skill services are discoverable before dungeon entry.
 - MythicMobs is the NPC implementation path.
-

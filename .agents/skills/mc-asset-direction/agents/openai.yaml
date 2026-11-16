@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC Asset Direction"
+  short_description: "Direct Minecraft asset briefs and silhouettes"
+  default_prompt: "Use $mc-asset-direction to define a scoped AssetSpec, select profiles and references, and set evidence-bound art criteria."

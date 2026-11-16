@@ -1,0 +1,117 @@
+# Okno postaci L1 (18.10). W walce, w walce Chowancow i w trybie kompakt zwija sie do portretu.
+# Trzy elementy zwiniete, bo warunki MythicHUD lacza sie jak "i" (nie ma "lub"); rysuja sie w tym samym miejscu.
+l1-okno:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} false hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=compact} false hide
+  layers:
+    nick:
+      text: '<#FFF1CC>%player_name%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 46, y: -8}
+    klasa:
+      text: '<#D5A96B>%mmocore_class%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 44, y: -20}
+    exp:
+      texture: {path: assets/l1/exp_fill.png}
+      scale: 0.5
+      offset: {x: 43, y: -33}
+      function: {listener: doswiadczenie, increment: 106, orientation: horizontal}
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 6, y: -34}
+    tlo-b:
+      texture: {path: assets/l1/okno_b.png}
+      scale: 0.5
+      offset: {x: 128, y: 0}
+    tlo:
+      texture: {path: assets/l1/okno_a.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l1-okno-walka:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%mmocore_in_combat%;val=true} true hide
+  layers:
+    alarm:
+      texture: {path: assets/l1/portret_alarm.png}
+      scale: 0.5
+      offset: {x: 5, y: -5}
+      conditions:
+        - progress{l=hp;o=<;v=30%} true hide
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 6, y: -34}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/l1/okno_zwin.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l1-okno-chowance:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%chowance_w_walce%;val=tak} true hide
+  layers:
+    alarm:
+      texture: {path: assets/l1/portret_alarm.png}
+      scale: 0.5
+      offset: {x: 5, y: -5}
+      conditions:
+        - progress{l=hp;o=<;v=30%} true hide
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 6, y: -34}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/l1/okno_zwin.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+l1-okno-kompakt:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=off} false hide
+    - placeholder{ph=%luckperms_meta_ui_hud%;val=compact} true hide
+  layers:
+    alarm:
+      texture: {path: assets/l1/portret_alarm.png}
+      scale: 0.5
+      offset: {x: 5, y: -5}
+      conditions:
+        - progress{l=hp;o=<;v=30%} true hide
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 6, y: -34}
+    hp:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/l1/okno_zwin.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}

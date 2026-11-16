@@ -1,0 +1,33 @@
+# Wariant B: bez podpisów i zakładek. Przegrody są w vanilla hotbar.png.
+hotbar-zbroja:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+  layers:
+    liczba:
+      text: '<#FFF1CC>%zbroja-dane-value%'
+      font: default
+      outlined: true
+      align: center
+      offset: {x: 26, y: -4}
+    zbroja-dane:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: armor, increment: 1, orientation: horizontal}
+    tlo:
+      texture: {path: assets/karta/zbroja_skrzydlo.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+hotbar-glod:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+  layers:
+    fill:
+      texture: {path: assets/karta/glod_fill.png}
+      scale: 0.5
+      offset: {x: 15, y: -10}
+      function: {listener: food, increment: 16, orientation: horizontal}
+    tlo:
+      texture: {path: assets/karta/glod_skrzydlo.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}

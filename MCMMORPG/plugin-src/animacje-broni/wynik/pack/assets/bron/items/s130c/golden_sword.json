@@ -1,0 +1,77 @@
+{
+ "model": {
+  "type": "minecraft:condition",
+  "property": "minecraft:using_item",
+  "on_true": {
+   "type": "minecraft:range_dispatch",
+   "property": "minecraft:use_duration",
+   "scale": 0.05,
+   "entries": [
+    {
+     "threshold": 0.4,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130c1/golden_sword"
+     }
+    },
+    {
+     "threshold": 0.8,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130c2/golden_sword"
+     }
+    },
+    {
+     "threshold": 1.2,
+     "model": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130c3/golden_sword"
+     }
+    }
+   ],
+   "fallback": {
+    "type": "minecraft:model",
+    "model": "bron:item/s130c/golden_sword"
+   }
+  },
+  "on_false": {
+   "type": "minecraft:condition",
+   "property": "minecraft:view_entity",
+   "on_true": {
+    "type": "minecraft:condition",
+    "property": "minecraft:keybind_down",
+    "keybind": "key.left",
+    "on_true": {
+     "type": "minecraft:model",
+     "model": "bron:item/s130kl/golden_sword"
+    },
+    "on_false": {
+     "type": "minecraft:condition",
+     "property": "minecraft:keybind_down",
+     "keybind": "key.right",
+     "on_true": {
+      "type": "minecraft:model",
+      "model": "bron:item/s130kp/golden_sword"
+     },
+     "on_false": {
+      "type": "minecraft:condition",
+      "property": "minecraft:keybind_down",
+      "keybind": "key.back",
+      "on_true": {
+       "type": "minecraft:model",
+       "model": "bron:item/s130kt/golden_sword"
+      },
+      "on_false": {
+       "type": "minecraft:model",
+       "model": "bron:item/s130/golden_sword"
+      }
+     }
+    }
+   },
+   "on_false": {
+    "type": "minecraft:model",
+    "model": "bron:item/s130/golden_sword"
+   }
+  }
+ }
+}

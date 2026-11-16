@@ -1,33 +1,54 @@
-# MCMMORPG — per-domenowe serwery dev w Dockerze za Velocity.
-# on-demand: `mc up <domena>` startuje velocity + ten backend; `mc down <domena>` gasi backend.
-# Izolacja: każdy backend to osobny kontener/proces — padnięcie jednego nie rusza reszty.
-
+# MCMMORPG per-domain dev servers behind Velocity.
+# `mc up <world|items|hub|minioncore>` starts Velocity plus one backend.
 name: mcmmorpg
 
 x-backend: &backend
   image: itzg/minecraft-server:java21
   tty: true
   stdin_open: true
-  restart: "no"                 # on-demand, NIE auto-restart (izolacja świadoma)
+  restart: "no"
   networks: [mcnet]
+  depends_on:
+    mariadb:
+      condition: service_healthy
   environment: &backend-env
     EULA: "TRUE"
     TYPE: "CUSTOM"
-    CUSTOM_SERVER: "/data/paper.jar"   # pinowany Paper 1.21.11 (bez pobierania przez itzg)
+    CUSTOM_SERVER: "/data/paper.jar"
     USE_AIKAR_FLAGS: "TRUE"
-    ENABLE_AUTOPAUSE: "FALSE"          # SIGSTOP zawiesza RCON/bota — gasimy jawnie przez `mc down`
-    ONLINE_MODE: "FALSE"              # gracze/boty przez proxy (offline dev)
+    ENABLE_AUTOPAUSE: "FALSE"
+    ONLINE_MODE: "FALSE"
     ENABLE_RCON: "TRUE"
     RCON_PASSWORD: "${RCON_PASSWORD}"
-    SERVER_PORT: "25565"             # wewnętrzny port stały; host nie mapuje backendów
+    SERVER_PORT: "25565"
     MAX_PLAYERS: "20"
     SPAWN_PROTECTION: "0"
+    OPS: ""
     OVERRIDE_SERVER_PROPERTIES: "TRUE"
-    # velocity modern forwarding jest w /data/config/paper-global.yml (secret wstrzyknięty przy buildzie)
 
 services:
+  mariadb:
+    image: mariadb:11.8
+    container_name: mcmmorpg-mariadb
+    restart: "no"
+    environment:
+      MARIADB_DATABASE: "${MARIADB_DATABASE:-mcmmorpg}"
+      MARIADB_USER: "${MARIADB_USER:-mcmmorpg}"
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD:?set MARIADB_PASSWORD in docker/.env}"
+      MARIADB_ROOT_PASSWORD: "${MARIADB_ROOT_PASSWORD:?set MARIADB_ROOT_PASSWORD in docker/.env}"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks: [mcnet]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p\"$$MARIADB_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+
   velocity:
-    image: itzg/bungeecord
+    image: itzg/bungeecord:java25
     container_name: velocity
     environment:
       TYPE: "VELOCITY"
@@ -38,7 +59,7 @@ services:
       - "${VELOCITY_PORT:-25565}:25565"
     mem_limit: 768m
     networks: [mcnet]
-    restart: unless-stopped          # proxy always-on (tani, trzyma punkt wejścia)
+    restart: unless-stopped
 
   srv-world:
     <<: *backend
@@ -51,7 +72,37 @@ services:
       LEVEL: "world"
     volumes:
       - ./servers/world:/data
+    ports:
+      - "127.0.0.1:${COMPANION_BRIDGE_PORT_WORLD:-25580}:25580"
     mem_limit: 5g
+
+  srv-minioncore:
+    <<: *backend
+    container_name: srv-minioncore
+    profiles: ["minioncore"]
+    environment:
+      <<: *backend-env
+      INIT_MEMORY: "512M"
+      MAX_MEMORY: "1536M"
+      LEVEL: "world"
+      MAX_PLAYERS: "70"
+    volumes:
+      - ./servers/minioncore:/data
+    mem_limit: 2g
+
+  srv-petcore:
+    <<: *backend
+    container_name: srv-petcore
+    profiles: ["petcore"]
+    environment:
+      <<: *backend-env
+      INIT_MEMORY: "512M"
+      MAX_MEMORY: "1536M"
+      LEVEL: "world"
+      MAX_PLAYERS: "20"
+    volumes:
+      - ./servers/petcore:/data
+    mem_limit: 2g
 
   srv-items:
     <<: *backend
@@ -64,6 +115,8 @@ services:
       LEVEL: "world"
     volumes:
       - ./servers/items:/data
+    ports:
+      - "127.0.0.1:${COMPANION_BRIDGE_PORT_ITEMS:-25581}:25580"
     mem_limit: 2600m
 
   srv-hub:
@@ -77,8 +130,13 @@ services:
       LEVEL: "world"
     volumes:
       - ./servers/hub:/data
+    ports:
+      - "127.0.0.1:${COMPANION_BRIDGE_PORT_HUB:-25582}:25580"
     mem_limit: 2g
 
 networks:
   mcnet:
     name: mcmmorpg_net
+
+volumes:
+  mariadb_data:

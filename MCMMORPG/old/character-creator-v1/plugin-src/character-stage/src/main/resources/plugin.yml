@@ -1,0 +1,19 @@
+name: CharacterStage
+version: ${version}
+main: pl.mcmmorpg.characterstage.CharacterStagePlugin
+api-version: "1.21"
+author: OpenAI Codex
+softdepend:
+  - MMOProfiles
+  - CoreTools
+  - DecentHolograms
+  - ModelEngine
+  - LibsDisguises
+commands:
+  characterstage:
+    description: Character stage control command
+    usage: /characterstage <reload|stage|leave>
+    permission: characterstage.admin
+permissions:
+  characterstage.admin:
+    default: op

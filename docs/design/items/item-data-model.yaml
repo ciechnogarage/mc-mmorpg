@@ -1,0 +1,236 @@
+schema_version: 1
+
+status: draft
+updated_at: "2026-07-31"
+owner_domain: "05-itemization"
+
+closes_ticket: "Domain 05: Item Data Model and Invariants"
+source_plan: "domain-05-item-data-model-tech-plan"
+
+notes:
+  - "Draft planning file. Not runtime truth."
+  - "This file records domain-05 SEMANTIC boundaries only. It is not a persistence schema."
+  - "Every durable-shell field is a placeholder owned by domain 01 and must not be finalized here."
+  - "Field lists are semantic slots, not serialization formats, column names, or PDC keys."
+  - "Affix structure is referenced as a dependency only. Affix taxonomy work is out of scope for this file."
+
+authority_split:
+  domain_05_owns:
+    - "meaning of item fields"
+    - "definition semantics"
+    - "generation semantics"
+    - "affix and requirement semantics"
+    - "binding semantics as gameplay state"
+    - "capacity semantics as gameplay state"
+  domain_01_owns:
+    - "global identity contract for durable item instances"
+    - "owner identity envelope format and namespace rules"
+    - "transaction and idempotency envelope rules"
+    - "revision/concurrency semantics"
+    - "event envelope for item mutation flows"
+    - "durable storage authority split versus cache/adapter layers"
+
+physical_model_v1:
+  conceptual_layers: 3
+  durable_shapes: 2
+  approved:
+    - "item_definition is a separate definition layer"
+    - "item_instance is a separate durable instance layer"
+    - "generation_specification is represented as an embedded snapshot block inside item_instance"
+  rejected_for_v1:
+    - "a separate durable generation_specification entity with its own lifecycle and persistence identity"
+
+layers:
+
+  item_definition:
+    semantic_owner: "05-itemization"
+    durable_contract_authority: "not_applicable_v1"
+    persistence_shape: "separate_definition_layer"
+    description: "Static archetype layer, reusable across many generated instances."
+    semantic_fields:
+      - "definition_id"
+      - "slot_id"
+      - "item_tags"
+      - "archetype"
+      - "implicit_stats_or_rules"
+      - "allowed_affix_groups"
+      - "default_binding_policy"
+      - "visual_or_model_hooks"
+      - "material_or_content_identity"
+    forbidden_fields:
+      - field: "per_owner_state"
+        reason: "Definitions are not player-owned."
+      - field: "rolled_affix_values"
+        reason: "Rolled values belong to a concrete item_instance."
+      - field: "capacity_state"
+        reason: "Capacity is instance state, not archetype state."
+      - field: "revision_or_transaction_envelope"
+        reason: "Durable mutation envelope is domain-01 shell state on item_instance."
+    cross_references:
+      slot_id: "docs/design/items/equipment-slots.yaml"
+      allowed_affix_groups: "pending_affix_taxonomy"
+
+  generation_specification:
+    semantic_owner: "05-itemization"
+    durable_contract_authority: "not_applicable_v1"
+    persistence_shape: "embedded_snapshot_in_item_instance"
+    description: "Provenance layer describing how a valid item_instance was allowed to be produced."
+    semantic_fields:
+      - "source_type"
+      - "source_id"
+      - "item_tier"
+      - "item_level"
+      - "rarity"
+      - "guaranteed_affixes_or_constraints"
+      - "generation_seed_or_provenance_payload"
+    required_version_stamp:
+      - "definition_revision"
+      - "slot_registry_version"
+      - "affix_taxonomy_version"
+    projection_rule:
+      direction: "template_or_spec -> embedded_snapshot"
+      one_way: true
+      post_projection_authority: "embedded snapshot only"
+      external_material_after_projection: "non_authoritative"
+    must_not_become_in_v1:
+      - "a separate durable object with its own identity"
+      - "a second authority for ownership or revision state"
+      - "a second runtime authority for provenance after item creation"
+
+  item_instance:
+    semantic_owner: "05-itemization"
+    durable_contract_authority: "01-data-contracts"
+    persistence_shape: "separate_durable_instance_layer"
+    description: "The only player-ownable durable item entity."
+    domain_05_semantic_fields:
+      - "definition_id"
+      - "generation_snapshot"
+      - "rolled_affixes"
+      - "requirement_snapshot"
+      - "binding_state"
+      - "initial_capacity"
+      - "remaining_capacity"
+      - "modification_count"
+      - "content_version"
+    domain_01_shell_fields:
+      status: "placeholder_pending_domain_01"
+      note: "Names below are semantic needs, not approved contract field names. Domain 05 must not fix their format."
+      contract_authority:
+        contract_owner: "01-data-contracts"
+        persistence_owner: "01-data-contracts"
+        runtime_authority: "01-data-contracts"
+        integration_coordinator: "01-data-contracts"
+      required_by_domain_05:
+        - need: "item_instance_id"
+          why: "Stable durable identity for one concrete item."
+          domain_05_must_not: "define format, namespace, or generation algorithm"
+        - need: "owner identity envelope"
+          why: "Bind the instance to an account/character without a local owner model."
+          domain_05_must_not: "invent a local owner scope enum as its own authority"
+        - need: "revision / concurrency field"
+          why: "Fence concurrent mutation and support expected_revision checks."
+          domain_05_must_not: "define concurrency algorithm or conflict resolution"
+        - need: "transaction / idempotency linkage"
+          why: "Link the instance to the committing modification operation."
+          domain_05_must_not: "define idempotency key format or retention"
+        - need: "persistence status semantics"
+          why: "Distinguish durable authority from cache/adapter state."
+          domain_05_must_not: "declare a storage backend or PDC key layout"
+    history_rule:
+      keeps: "current state and current operation pointers only"
+      does_not_keep: "unbounded durable modification history"
+      history_home: "domain-01 durable operation ledger or event stream"
+
+owner_identity_direction:
+  rule: "Domain 05 depends on a shared owner_ref / identity envelope defined by domain 01."
+  forbidden_local_model:
+    example: "owner.scope: account|character|container declared as domain-05 authority"
+    reason: "Creates a second ownership authority next to domain 01."
+  v1_compatibility_requirements:
+    account_id: "uses the domain-01 account namespace policy"
+    character_id: "follows the domain-01 v1 MMOProfiles-profile-equivalent direction"
+  container_metadata:
+    allowed: true
+    constraint: "Placement or container metadata must not replace durable ownership identity."
+
+invariants:
+  - id: "ITEM-INV-001"
+    rule: "item_instance_id is globally unique."
+    authority: "01-data-contracts"
+  - id: "ITEM-INV-002"
+    rule: "Runtime item identity must not depend on display name, lore, or GUI slot."
+    authority: "05-itemization"
+  - id: "ITEM-INV-003"
+    rule: "definition_id must resolve to an existing item_definition."
+    authority: "05-itemization"
+  - id: "ITEM-INV-004"
+    rule: "The generation snapshot must be semantically valid for the referenced definition."
+    authority: "05-itemization"
+  - id: "ITEM-INV-005"
+    rule: "Rolled affixes must be valid against item semantics and, once it exists, the affix taxonomy."
+    authority: "05-itemization"
+    blocked_by: "affix taxonomy does not exist yet"
+  - id: "ITEM-INV-006"
+    rule: "Binding state must be explicit, never inferred from placement."
+    authority: "05-itemization"
+  - id: "ITEM-INV-007"
+    rule: "Owner identity must use the shared domain-01 identity envelope."
+    authority: "01-data-contracts"
+  - id: "ITEM-INV-008"
+    rule: "Mutation must respect the revision and idempotency rules defined by domain 01."
+    authority: "01-data-contracts"
+  - id: "ITEM-INV-009"
+    rule: "PDC may serve as runtime cache or adapter state, but not as sole durable authority for valuable item instances."
+    authority: "01-data-contracts"
+  - id: "ITEM-INV-010"
+    rule: "item_instance keeps only current state and current operation pointers, not unbounded durable operation history."
+    authority: "05-itemization"
+  - id: "ITEM-INV-011"
+    rule: "An old item_instance must not be revalidated against current globals without its recorded contract version stamps."
+    authority: "05-itemization"
+
+downstream_may_assume:
+  - "Generators produce one instance plus an embedded generation snapshot."
+  - "Crafting and loot consumers need no separate generation-object lookup in v1."
+  - "Modification flows operate on one durable instance object, not two peer durable objects."
+  - "External generation templates or recipes are inputs only, never co-authoritative runtime provenance."
+
+downstream_must_not_assume:
+  - "Domain 05 controls persistence shape independently of domain 01."
+  - "Lore or display-name parsing can stand in for durable identity."
+  - "Consumer plugins may invent their own durable item identity model."
+  - "Old item instances can be safely revalidated against current globals without recorded contract versions."
+
+non_goals:
+  - "Final domain-01 item-instance contract document."
+  - "Database schema, PDC key layout, or migration scripts."
+  - "Affix taxonomy definition."
+  - "Consumer-specific adapters for loot, crafting, market, or GUI."
+  - "Any claim that this model is implemented in a running plugin."
+
+placeholders_pending_domain_01:
+  - id: "PLACEHOLDER-D01-ITEM-IDENTITY"
+    blocks: "final item_instance_id semantics"
+    unblocked_by: "domain-01 item-instance durable contract shell"
+  - id: "PLACEHOLDER-D01-OWNER-ENVELOPE"
+    blocks: "final owner_ref shape on item_instance"
+    unblocked_by: "domain-01 account/character identity envelope contract"
+  - id: "PLACEHOLDER-D01-REVISION"
+    blocks: "final revision/concurrency field semantics"
+    unblocked_by: "domain-01 concurrency semantics"
+  - id: "PLACEHOLDER-D01-TXN-LINKAGE"
+    blocks: "final transaction/idempotency linkage on item_instance"
+    unblocked_by: "domain-01 transaction envelope contract"
+
+placeholders_pending_other_domains:
+  - id: "PLACEHOLDER-D03-STATS"
+    blocks: "requirement_snapshot and rolled_affixes concrete semantics"
+    unblocked_by: "domain-03 canonical stat dictionary"
+  - id: "PLACEHOLDER-D03-BUDGET"
+    blocks: "item budget math referenced by generation semantics"
+    unblocked_by: "domain-03 symbolic budget weights"
+
+open_questions:
+  - "Whether requirement_snapshot is frozen at generation or recomputed against the definition at equip time."
+  - "How definition_revision changes interact with already generated instances (revalidate, grandfather, or migrate)."
+  - "Whether content_version and definition_revision are one stamp or two independent stamps."

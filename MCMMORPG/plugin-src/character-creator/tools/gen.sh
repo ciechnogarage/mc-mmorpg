@@ -20,7 +20,7 @@ for name in CFG OUT GLYPHS PACK; do
   fi
 done
 
-exec docker run --rm \
+exec docker run --rm --name "gen-grafika-cc-$$" --memory 1g \
   -u "$(id -u):$(id -g)" \
   -v "$(dirname "$here"):$(dirname "$here")" \
   -w "$here" \

@@ -1,0 +1,36 @@
+klasa,umiejetnosc,kombinacja,mana,strona
+archer,Arrow Bomb,LEFT-RIGHT-RIGHT,45,1
+archer,Escape,LEFT-LEFT-LEFT,20,2
+archer,Arrow Storm,LEFT-RIGHT-LEFT,35,2
+archer,Arrow Shield,LEFT-LEFT-RIGHT,30,2
+archer,Angelic Ascension,F,,9
+archer,The Twilight Zone,F,,9
+archer,Extinction Event,F,,9
+warrior,Bash,RIGHT-LEFT-RIGHT,40,1
+warrior,Charge,RIGHT-RIGHT-RIGHT,25,2
+warrior,Uppercut,RIGHT-LEFT-LEFT,40,2
+warrior,War Scream,RIGHT-RIGHT-LEFT,30,2
+warrior,Beyond Salvation,F,,9
+warrior,Judgement,F,,9
+warrior,Zenith Stance,F,,9
+assassin,Spin Attack,RIGHT-LEFT-RIGHT,40,1
+assassin,Dash,RIGHT-RIGHT-RIGHT,20,2
+assassin,Smoke Bomb,RIGHT-RIGHT-LEFT,35,2
+assassin,Multihit,RIGHT-LEFT-LEFT,40,2
+assassin,Pierce the Veil,F,,9
+assassin,Serpent's Garden,F,,9
+assassin,Another Self,F,,9
+mage,Meteor,RIGHT-LEFT-LEFT,50,1
+mage,Teleport,RIGHT-RIGHT-RIGHT,25,2
+mage,Heal,RIGHT-LEFT-RIGHT,35,2
+mage,Ice Snake,RIGHT-RIGHT-LEFT,30,2
+mage,Dawn,F,,9
+mage,Tangled Origin,F,,9
+mage,Gravitational Collapse,F,,9
+shaman,Totem,RIGHT-LEFT-RIGHT,30,1
+shaman,Haul,RIGHT-RIGHT-RIGHT,15,2
+shaman,Uproot,RIGHT-RIGHT-LEFT,30,2
+shaman,Aura,RIGHT-LEFT-LEFT,40,2
+shaman,Patchwork Abomination,F,,9
+shaman,Monument to Gloom,F,,9
+shaman,Awakened,F,,9

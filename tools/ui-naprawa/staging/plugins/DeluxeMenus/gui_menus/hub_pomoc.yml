@@ -1,0 +1,43 @@
+menu_title: '&f䨔䨕䨖䨗'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    update: true
+    display_name: '&ePomoc'
+    lore:
+      - '&7Menu otworzysz klawiszem &fQ&7,'
+      - '&7także z pustą ręką.'
+      - '&7Zaklęcia wybierzesz przez &fShift+Q&7.'
+  sterowanie:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eSterowanie'
+    lore:
+      - '&7Q — menu główne, także z pustą ręką.'
+      - '&7Shift+Q — szybki wybór zaklęć.'
+      - '&7E — okno postaci.'
+      - '&7F — pasek umiejętności.'
+      - '&7Shift+F — zamień wyposażone zestawy broni.'
+      - '&7PPM — lewa dłoń (trzymaj).'
+      - '&7LPM — prawa dłoń (klik).'
+  o_menu:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bO menu'
+    lore:
+      - '&7Wszystko, co serwer umie, jest tutaj.'
+      - '&7Nie musisz znać żadnych komend.'
+  pierwsze_kroki:
+    material: nexo-mmo_icon_blank
+    slots: [24, 25, 33, 34]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&dPierwsze kroki'
+    lore:
+      - '&7Aktualny krok: &f%chowance_kroki_opis%'
+      - '&7Postęp: &f%chowance_kroki_postep%'

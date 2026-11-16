@@ -1,0 +1,6 @@
+{
+  "name": "@mmorpg-bots/minion-loadtest",
+  "version": "0.1.0",
+  "private": true,
+  "main": "minion-loadtest.js"
+}

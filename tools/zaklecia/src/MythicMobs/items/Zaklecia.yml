@@ -1,0 +1,67 @@
+# Zaklecia w dloni w stylu Skyrima (TEST 2026-09-29). Zrodlo prawdy: tools/zaklecia/src.
+# Zaklecie koncentracji: trzymasz PPM -> strumien (Crucible ~onUse), puszczasz -> koniec (~onCancelUse).
+# Consumable daje trzymanie przycisku i poze postaci; 3600 s = praktycznie nigdy sie nie "zje".
+# Baza TRIAL_KEY: 0 przepisow i 0 odblokowan (BLAZE_POWDER dawal toast przepisow i byl paliwem statywu).
+ZAKLECIE_PLOMIENIE:
+  Id: TRIAL_KEY
+  Display: '<!i><#ff9a3c>Płomienie'
+  Lore:
+  - '<!i><#8a7a6a>Zaklęcie · Zniszczenie · Nowicjusz'
+  - ''
+  - '<!i><gray>Z dłoni bucha strumień ognia,'
+  - '<!i><gray>który trawi wszystko przed tobą.'
+  - ''
+  - '<!i><#ffcf6b>Przytrzymaj PPM <gray>— rzucaj zaklęcie'
+  - '<!i><gray>Obrażenia: <#ff6a3c>8 od ognia/s'
+  - '<!i><gray>Zasięg: <white>6 bloków <gray>· Koszt: <#6ab4ff>4 many/s'
+  - '<!i><gray>Trafieni płoną jeszcze przez chwilę.'
+  Options:
+    ItemModel: zaklecia:plomienie
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  Consumable:
+    ConsumeSeconds: 3600
+    Animation: BOW
+    HasParticles: false
+    Sound: minecraft:intentionally_empty
+  UseEffects:
+    CanSprint: false
+    SpeedMultiplier: 0.5
+  Skills:
+  - skill{s=Zak_Plomienie_Start} ~onUse
+  - skill{s=Zak_Plomienie_Stop} ~onCancelUse
+  - skill{s=Zak_Stop_Wszystko} ~onUnHeld
+  - skill{s=Zak_Plomienie_Dlon} ~onTimer:4
+
+ZAKLECIE_ODMROZENIE:
+  Id: TRIAL_KEY
+  Display: '<!i><#9fe3ff>Odmrożenie'
+  Lore:
+  - '<!i><#6a7a8a>Zaklęcie · Zniszczenie · Nowicjusz'
+  - ''
+  - '<!i><gray>Lodowaty podmuch mrozi ciało'
+  - '<!i><gray>i spowalnia każdy ruch celu.'
+  - ''
+  - '<!i><#bfefff>Przytrzymaj PPM <gray>— rzucaj zaklęcie'
+  - '<!i><gray>Obrażenia: <#8fdcff>7 od mrozu/s'
+  - '<!i><gray>Zasięg: <white>6 bloków <gray>· Koszt: <#6ab4ff>5 many/s'
+  - '<!i><gray>Spowalnia i wysysa wytrzymałość.'
+  Options:
+    ItemModel: zaklecia:odmrozenie
+    PreventStacking: true
+    PreventAnvil: true
+    PreventCrafting: true
+  Consumable:
+    ConsumeSeconds: 3600
+    Animation: BOW
+    HasParticles: false
+    Sound: minecraft:intentionally_empty
+  UseEffects:
+    CanSprint: false
+    SpeedMultiplier: 0.5
+  Skills:
+  - skill{s=Zak_Odmrozenie_Start} ~onUse
+  - skill{s=Zak_Odmrozenie_Stop} ~onCancelUse
+  - skill{s=Zak_Stop_Wszystko} ~onUnHeld
+  - skill{s=Zak_Odmrozenie_Dlon} ~onTimer:4

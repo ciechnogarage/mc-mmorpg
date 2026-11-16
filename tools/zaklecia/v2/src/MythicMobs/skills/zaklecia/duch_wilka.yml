@@ -1,0 +1,38 @@
+Zak_Duch_wilka_Laduj_P:
+  Skills:
+  - effect:particles{p=soul;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Duch_wilka_Gotowe_P:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Duch_wilka_Wystrzal_P:
+  Skills:
+  - effect:particles{p=soul;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+Zak_Duch_wilka_Laduj_L:
+  Skills:
+  - effect:particles{p=soul;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Duch_wilka_Gotowe_L:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Duch_wilka_Wystrzal_L:
+  Skills:
+  - effect:particles{p=soul;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin
+
+Zak_Duch_wilka_Laduj_Obie:
+  Skills:
+  - effect:particles{p=soul;a=5;hs=0.15;vs=0.15} @self
+
+Zak_Duch_wilka_Gotowe_Obie:
+  Skills:
+  - sound{s=block.beacon.activate;v=0.4;p=1.5} @self
+
+Zak_Duch_wilka_Wystrzal_Obie:
+  Skills:
+  - effect:particles{p=soul;a=18;hs=0.4;vs=0.4} @origin
+  - sound{s=entity.evoker.prepare_summon;v=0.5;p=1.3} @origin

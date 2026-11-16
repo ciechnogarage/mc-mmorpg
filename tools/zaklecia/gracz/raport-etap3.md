@@ -1,0 +1,5 @@
+Zlecenie etapu 3 jest wykonane. Poprawiłem harness, odtworzyłem C01 z nadaną biegłością i przeprowadziłem A–F dwukrotnie przez kolejkę. **Każdy przebieg zakończył się wynikiem 97 PASS, 10 FAIL, 1 celowy SKIP i 0 BLAD.** Nie uruchamiałem niebezpiecznego testu PvP ani nie zmieniałem pluginów.
+
+Diagnoza wskazuje, dlaczego mana i strumień mogą pojawić się bez obrażeń: trafienie przechodzi później przez stożek, linię wzroku i filtry MythicMobs. Bot potwierdził też, że miecz w prawej dłoni nie blokuje czaru stale. Dostępne pomiary nie rozstrzygają, który konkretny filtr odrzucił cel w K08b2.
+
+Gotowe pliki: [raport-etap3.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/raport-etap3.md) (22 linie), [OCENA.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/OCENA.md) i [README.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/README.md).

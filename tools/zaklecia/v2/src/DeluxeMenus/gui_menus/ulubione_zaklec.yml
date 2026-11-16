@@ -1,0 +1,265 @@
+# Szybkie ulubione (Shift + Q), jak Q w Skyrimie. Widac tylko zaklecia z gwiazdka (Ksiega: Shift+LPM).
+# LPM = prawa dlon, PPM = lewa. Tytul (glif panelu + znaki przesuniecia) wpisuje wpnij_menu.py z hub_umiejetnosci.
+menu_title: 'Ulubione zaklęcia'
+size: 27
+update_interval: 1
+items:
+
+  'uzdrowienie_innego':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:uzdrowienie_innego'
+    update: true
+    slot: 3
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_uzdrowienie_innego%'
+          output: '★'
+    display_name: '&a&lUzdrowienie innego'
+    lore:
+      - '&7Wskazana niewroga istota · 6 bloków · 8 HP · 2 many'
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% uzdrowienie_innego prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% uzdrowienie_innego lewa'
+      - '[close]'
+
+  'zasklepienie_ran':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:zasklepienie_ran'
+    update: true
+    slot: 4
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_zasklepienie_ran%'
+          output: '★'
+    display_name: '&a&lZasklepienie ran'
+    lore:
+      - '&7Siebie · 12 HP · 3 many'
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% zasklepienie_ran prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% zasklepienie_ran lewa'
+      - '[close]'
+
+  'wielkie_uzdrowienie':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:wielkie_uzdrowienie'
+    update: true
+    slot: 5
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_wielkie_uzdrowienie%'
+          output: '★'
+    display_name: '&a&lWielkie uzdrowienie'
+    lore:
+      - '&7Siebie i sojusznicy · 5 bloków · 16 HP · 5 many'
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% wielkie_uzdrowienie prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% wielkie_uzdrowienie lewa'
+      - '[close]'
+
+  'plomienie':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:plomienie'
+    update: true
+    slot: 11
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_plomienie%'
+          output: '★'
+    display_name: '&6&lPłomienie'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% plomienie prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% plomienie lewa'
+      - '[close]'
+
+  'odmrozenie':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:odmrozenie'
+    update: true
+    slot: 15
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_odmrozenie%'
+          output: '★'
+    display_name: '&b&lOdmrożenie'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% odmrozenie prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% odmrozenie lewa'
+      - '[close]'
+
+  'przywolany_miecz':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:przywolany_miecz'
+    update: true
+    slot: 19
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_przywolany_miecz%'
+          output: '★'
+    display_name: '&d&lPrzywołany miecz'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% przywolany_miecz prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% przywolany_miecz lewa'
+      - '[close]'
+
+  'duch_wilka':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:duch_wilka'
+    update: true
+    slot: 20
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_duch_wilka%'
+          output: '★'
+    display_name: '&d&lDuch wilka'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% duch_wilka prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% duch_wilka lewa'
+      - '[close]'
+
+  'atronach_ognia':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:atronach_ognia'
+    update: true
+    slot: 21
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_atronach_ognia%'
+          output: '★'
+    display_name: '&d&lAtronach ognia'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% atronach_ognia prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% atronach_ognia lewa'
+      - '[close]'
+
+  'leczenie_dloni':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:leczenie_dloni'
+    update: true
+    slot: 23
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_leczenie_dloni%'
+          output: '★'
+    display_name: '&d&lLeczenie dłoni'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% leczenie_dloni prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% leczenie_dloni lewa'
+      - '[close]'
+
+  'uspokojenie':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:uspokojenie'
+    update: true
+    slot: 24
+    view_requirement:
+      requirements:
+        ulubione:
+          type: string equals
+          input: '%zaklecia_ulubione_uspokojenie%'
+          output: '★'
+    display_name: '&d&lUspokojenie'
+    lore:
+      - '&eLPM &7— do prawej dłoni'
+      - '&ePPM &7— do lewej dłoni'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% uspokojenie prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% uspokojenie lewa'
+      - '[close]'
+
+  'puste':
+    material: GLASS_PANE
+    update: true
+    slot: 13
+    display_name: '&f&lPuste dłonie'
+    lore:
+      - '&7Prawa: &f%zaklecia_prawa%'
+      - '&7Lewa: &f%zaklecia_lewa%'
+      - ''
+      - '&eLPM &7— opróżnij prawą dłoń'
+      - '&ePPM &7— opróżnij lewą dłoń'
+    left_click_commands:
+      - '[console] zaklecia przypisz %player_name% nic prawa'
+      - '[close]'
+    right_click_commands:
+      - '[console] zaklecia przypisz %player_name% nic lewa'
+      - '[close]'
+
+  'ksiega':
+    material: TRIAL_KEY
+    item_model: 'zaklecia:plomienie'
+    slot: 22
+    display_name: '&6Księga zaklęć'
+    lore:
+      - '&7Wszystkie zaklęcia. Gwiazdkę (ulubione)'
+      - '&7dajesz tam przez &eShift+LPM&7.'
+    left_click_commands:
+      - '[openguimenu] ksiega_zaklec'
+
+  'zamknij':
+    material: nexo-hub_zamknij
+    slot: 26
+    display_name: '&c&lZamknij'
+    left_click_commands:
+      - '[close]'

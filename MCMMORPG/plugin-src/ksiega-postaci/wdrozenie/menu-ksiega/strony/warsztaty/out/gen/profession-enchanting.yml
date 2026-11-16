@@ -1,0 +1,123 @@
+name: 'Warsztat: Zaklinacza'
+max-queue-size: 10
+command:
+  name: 'warsztat-enchanting'
+  description: 'Otwiera warsztat profesji enchanting'
+  usage: '/warsztat-enchanting'
+  permission: ''
+  aliases: []
+recipes:
+  'prof_rune_blank':
+    output: 'mmoitems{type=MATERIAL,id=PROF_RUNE_BLANK}'
+    crafting-time: 1
+    conditions:
+      - 'profession{profession=enchanting,level=1}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_CUT_STONE,amount=2}'
+    triggers:
+      - 'exp{profession=enchanting,amount=12}'
+  'prof_charged_rune':
+    output: 'mmoitems{type=MATERIAL,id=PROF_CHARGED_RUNE}'
+    crafting-time: 2
+    conditions:
+      - 'profession{profession=enchanting,level=15}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_RUNE_BLANK,amount=2}'
+    triggers:
+      - 'exp{profession=enchanting,amount=28}'
+  'prof_enchant_dust':
+    output: 'mmoitems{type=MATERIAL,id=PROF_ENCHANT_DUST}'
+    crafting-time: 3
+    conditions:
+      - 'profession{profession=enchanting,level=30}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_ARCANE_CRYSTAL,amount=1}'
+    triggers:
+      - 'exp{profession=enchanting,amount=55}'
+  'prof_staff_focus':
+    output: 'mmoitems{type=MATERIAL,id=PROF_STAFF_FOCUS}'
+    crafting-time: 4
+    conditions:
+      - 'profession{profession=enchanting,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_STAFF_CORE,amount=1}'
+    triggers:
+      - 'exp{profession=enchanting,amount=95}'
+  'prof_awakening_seal':
+    output: 'mmoitems{type=MATERIAL,id=PROF_AWAKENING_SEAL}'
+    crafting-time: 5
+    conditions:
+      - 'profession{profession=enchanting,level=45}'
+    ingredients:
+      - 'mmoitem{type=MATERIAL,id=PROF_MASTER_CHARM,amount=1}'
+    triggers:
+      - 'exp{profession=enchanting,amount=120}'
+  'prof_awakened_staff':
+    output: 'mmoitems{type=STAFF,id=PROF_AWAKENED_STAFF}'
+    crafting-time: 12
+    conditions:
+      - 'profession{profession=enchanting,level=30}'
+    ingredients:
+      - 'mmoitem{type=STAFF,id=PROF_UNAWAKENED_STAFF,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_STAFF_FOCUS,amount=1}'
+      - 'mmoitem{type=MATERIAL,id=PROF_CHARGED_RUNE,amount=2}'
+    triggers:
+      - 'exp{profession=enchanting,amount=100}'
+gui-layout:
+  name: '&f䬜䬝䬞䬟'
+  slots: 54
+  enable_right_click_preview: false
+  items:
+    previous_queue_item:
+      function: previous_queue_item
+      item: ARROW
+      name: '&6Poprzednie wyroby'
+      slots: [46]
+
+    next_queue_item:
+      function: next_queue_item
+      item: ARROW
+      name: '&6Następne wyroby'
+      slots: [47]
+
+    queued_item:
+      slots: [36, 37, 38, 39]
+      existing:
+        name: '&6Kolejka:&f {name}'
+        delay_format: 'smhdMy'
+        lore:
+          - '{ready}&7&oWyrob gotowy.'
+          - '{queue}&7Pozostalo: &c{time_left}'
+          - ''
+          - '{ready}&e> Kliknij, aby odebrac!'
+          - '{queue}&e> Kliknij, aby anulowac'
+      none:
+        item: GRAY_STAINED_GLASS_PANE
+        name: '&7Kolejka pusta'
+
+    recipe:
+      function: recipe
+      delay_format: smhdMy
+      craft:
+        name: '&aWytwórz &f{name}'
+        name_multiple: '&aWytwórz &f{amount}x {name}'
+        lore:
+          - '{conditions}'
+          - '{conditions}&8Wymagania:'
+          - '{crafting_time}'
+          - '{crafting_time}&7Czas: &c{crafting_time}'
+          - '{ingredients}'
+          - '{ingredients}&8Składniki:'
+          - '{lore}'
+          - ''
+          - '&eKliknij, aby wytworzyć.'
+      upgrade:
+        name: '&eUlepsz &f{name}'
+        lore:
+          - '{conditions}'
+          - '{ingredients}'
+          - '{lore}'
+      none:
+        item: AIR
+        name: '&7Brak receptury'
+      slots: [14, 15, 16, 17, 23, 24, 25, 26]

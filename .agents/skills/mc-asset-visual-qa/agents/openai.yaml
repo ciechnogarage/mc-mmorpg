@@ -1,0 +1,4 @@
+interface:
+  display_name: "MC Asset Visual QA"
+  short_description: "Review Minecraft asset visuals independently"
+  default_prompt: "Use $mc-asset-visual-qa for a fresh read-only critique of current renders and an evidence-bound art verdict."

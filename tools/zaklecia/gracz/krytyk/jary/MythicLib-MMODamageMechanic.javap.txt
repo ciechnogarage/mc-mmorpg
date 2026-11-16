@@ -1,0 +1,370 @@
+Compiled from "MMODamageMechanic.java"
+public class io.lumine.mythic.lib.comp.mythicmobs.mechanic.MMODamageMechanic extends io.lumine.mythic.core.skills.damage.DamagingMechanic implements io.lumine.mythic.api.skills.ITargetedEntitySkill {
+  protected final io.lumine.mythic.api.skills.placeholders.PlaceholderDouble amount;
+
+  protected final boolean ignoreMMOAttack;
+
+  private final io.lumine.mythic.api.skills.placeholders.PlaceholderString damageTypes;
+
+  private final io.lumine.mythic.api.skills.placeholders.PlaceholderString elementName;
+
+  public io.lumine.mythic.lib.comp.mythicmobs.mechanic.MMODamageMechanic(io.lumine.mythic.core.skills.SkillExecutor, java.io.File, java.lang.String, io.lumine.mythic.api.config.MythicLineConfig);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: invokespecial #1                  // Method io/lumine/mythic/core/skills/damage/DamagingMechanic."<init>":(Lio/lumine/mythic/core/skills/SkillExecutor;Ljava/io/File;Ljava/lang/String;Lio/lumine/mythic/api/config/MythicLineConfig;)V
+       9: aload_0
+      10: aload         4
+      12: iconst_2
+      13: anewarray     #7                  // class java/lang/String
+      16: dup
+      17: iconst_0
+      18: ldc           #9                  // String amount
+      20: aastore
+      21: dup
+      22: iconst_1
+      23: ldc           #11                 // String a
+      25: aastore
+      26: ldc           #13                 // String 1
+      28: iconst_0
+      29: anewarray     #7                  // class java/lang/String
+      32: invokeinterface #15,  4           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+      37: invokestatic  #21                 // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.of:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      40: putfield      #27                 // Field amount:Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      43: aload_0
+      44: aload         4
+      46: iconst_3
+      47: anewarray     #7                  // class java/lang/String
+      50: dup
+      51: iconst_0
+      52: ldc           #32                 // String ignoreMMOAttack
+      54: aastore
+      55: dup
+      56: iconst_1
+      57: ldc           #34                 // String immo
+      59: aastore
+      60: dup
+      61: iconst_2
+      62: ldc           #36                 // String immoa
+      64: aastore
+      65: iconst_0
+      66: invokeinterface #38,  3           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getBoolean:([Ljava/lang/String;Z)Z
+      71: putfield      #42                 // Field ignoreMMOAttack:Z
+      74: aload_0
+      75: aload_0
+      76: aload         4
+      78: iconst_3
+      79: anewarray     #7                  // class java/lang/String
+      82: dup
+      83: iconst_0
+      84: ldc           #45                 // String type
+      86: aastore
+      87: dup
+      88: iconst_1
+      89: ldc           #47                 // String t
+      91: aastore
+      92: dup
+      93: iconst_2
+      94: ldc           #49                 // String types
+      96: aastore
+      97: aconst_null
+      98: iconst_0
+      99: anewarray     #7                  // class java/lang/String
+     102: invokeinterface #15,  4           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     107: invokevirtual #51                 // Method placeholders:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     110: putfield      #55                 // Field damageTypes:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     113: aload_0
+     114: aload_0
+     115: aload         4
+     117: iconst_3
+     118: anewarray     #7                  // class java/lang/String
+     121: dup
+     122: iconst_0
+     123: ldc           #59                 // String element
+     125: aastore
+     126: dup
+     127: iconst_1
+     128: ldc           #61                 // String el
+     130: aastore
+     131: dup
+     132: iconst_2
+     133: ldc           #63                 // String e
+     135: aastore
+     136: aconst_null
+     137: iconst_0
+     138: anewarray     #7                  // class java/lang/String
+     141: invokeinterface #15,  4           // InterfaceMethod io/lumine/mythic/api/config/MythicLineConfig.getString:([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     146: invokevirtual #51                 // Method placeholders:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     149: putfield      #65                 // Field elementName:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     152: return
+
+  private io.lumine.mythic.api.skills.placeholders.PlaceholderString placeholders(java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnonnull     8
+       4: aconst_null
+       5: goto          12
+       8: aload_1
+       9: invokestatic  #68                 // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderString.of:(Ljava/lang/String;)Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+      12: areturn
+
+  private java.util.List<io.lumine.mythic.lib.damage.DamageType> findDamageTypes(io.lumine.mythic.api.skills.SkillCaster);
+    Code:
+       0: aload_0
+       1: getfield      #55                 // Field damageTypes:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+       4: aload_1
+       5: invokeinterface #72,  2           // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderString.get:(Lio/lumine/mythic/api/skills/SkillCaster;)Ljava/lang/String;
+      10: astore_2
+      11: aload_2
+      12: invokevirtual #76                 // Method java/lang/String.isEmpty:()Z
+      15: ifne          27
+      18: aload_2
+      19: ldc           #80                 // String NONE
+      21: invokevirtual #82                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      24: ifeq          31
+      27: invokestatic  #86                 // InterfaceMethod java/util/List.of:()Ljava/util/List;
+      30: areturn
+      31: aload_2
+      32: ldc           #91                 // String \\,
+      34: invokevirtual #93                 // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+      37: astore_3
+      38: new           #97                 // class java/util/ArrayList
+      41: dup
+      42: aload_3
+      43: arraylength
+      44: invokespecial #99                 // Method java/util/ArrayList."<init>":(I)V
+      47: astore        4
+      49: aload_3
+      50: astore        5
+      52: aload         5
+      54: arraylength
+      55: istore        6
+      57: iconst_0
+      58: istore        7
+      60: iload         7
+      62: iload         6
+      64: if_icmpge     94
+      67: aload         5
+      69: iload         7
+      71: aaload
+      72: astore        8
+      74: aload         4
+      76: aload         8
+      78: invokestatic  #102                // Method io/lumine/mythic/lib/UtilityMethods.enumName:(Ljava/lang/String;)Ljava/lang/String;
+      81: invokestatic  #108                // Method io/lumine/mythic/lib/damage/DamageType.valueOf:(Ljava/lang/String;)Lio/lumine/mythic/lib/damage/DamageType;
+      84: invokevirtual #114                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      87: pop
+      88: iinc          7, 1
+      91: goto          60
+      94: aload         4
+      96: areturn
+
+  public io.lumine.mythic.api.skills.SkillResult castAtEntity(io.lumine.mythic.api.skills.SkillMetadata, io.lumine.mythic.api.adapters.AbstractEntity);
+    Code:
+       0: aload_2
+       1: invokeinterface #117,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.isDead:()Z
+       6: ifne          46
+       9: aload_2
+      10: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+      15: instanceof    #126                // class org/bukkit/entity/LivingEntity
+      18: ifeq          46
+      21: aload_1
+      22: invokeinterface #128,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCaster:()Lio/lumine/mythic/api/skills/SkillCaster;
+      27: invokeinterface #134,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillCaster.isUsingDamageSkill:()Z
+      32: ifne          46
+      35: aload_2
+      36: invokeinterface #139,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getHealth:()D
+      41: dconst_0
+      42: dcmpg
+      43: ifgt          50
+      46: getstatic     #143                // Field io/lumine/mythic/api/skills/SkillResult.INVALID_TARGET:Lio/lumine/mythic/api/skills/SkillResult;
+      49: areturn
+      50: aload_0
+      51: getfield      #27                 // Field amount:Lio/lumine/mythic/api/skills/placeholders/PlaceholderDouble;
+      54: aload_1
+      55: aload_2
+      56: invokeinterface #149,  3          // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderDouble.get:(Lio/lumine/mythic/core/skills/placeholders/PlaceholderMeta;Lio/lumine/mythic/api/adapters/AbstractEntity;)D
+      61: aload_1
+      62: invokeinterface #152,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getPower:()F
+      67: f2d
+      68: dmul
+      69: dstore_3
+      70: aload_0
+      71: getfield      #65                 // Field elementName:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+      74: ifnonnull     81
+      77: aconst_null
+      78: goto          108
+      81: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+      84: invokevirtual #162                // Method io/lumine/mythic/lib/MythicLib.getElements:()Lio/lumine/mythic/lib/manager/ElementManager;
+      87: aload_0
+      88: getfield      #65                 // Field elementName:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+      91: aload_1
+      92: invokeinterface #128,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCaster:()Lio/lumine/mythic/api/skills/SkillCaster;
+      97: invokeinterface #72,  2           // InterfaceMethod io/lumine/mythic/api/skills/placeholders/PlaceholderString.get:(Lio/lumine/mythic/api/skills/SkillCaster;)Ljava/lang/String;
+     102: invokestatic  #102                // Method io/lumine/mythic/lib/UtilityMethods.enumName:(Ljava/lang/String;)Ljava/lang/String;
+     105: invokevirtual #166                // Method io/lumine/mythic/lib/manager/ElementManager.get:(Ljava/lang/String;)Lio/lumine/mythic/lib/element/Element;
+     108: astore        5
+     110: aload_0
+     111: getfield      #55                 // Field damageTypes:Lio/lumine/mythic/api/skills/placeholders/PlaceholderString;
+     114: ifnonnull     123
+     117: invokestatic  #86                 // InterfaceMethod java/util/List.of:()Ljava/util/List;
+     120: goto          133
+     123: aload_0
+     124: aload_1
+     125: invokeinterface #128,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCaster:()Lio/lumine/mythic/api/skills/SkillCaster;
+     130: invokevirtual #171                // Method findDamageTypes:(Lio/lumine/mythic/api/skills/SkillCaster;)Ljava/util/List;
+     133: astore        6
+     135: aload_0
+     136: getfield      #42                 // Field ignoreMMOAttack:Z
+     139: ifne          201
+     142: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+     145: invokevirtual #175                // Method io/lumine/mythic/lib/MythicLib.getDamage:()Lio/lumine/mythic/lib/manager/DamageManager;
+     148: aload_2
+     149: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+     154: invokevirtual #179                // Method io/lumine/mythic/lib/manager/DamageManager.getRegisteredAttackMetadata:(Lorg/bukkit/entity/Entity;)Lio/lumine/mythic/lib/damage/AttackMetadata;
+     157: dup
+     158: astore        7
+     160: ifnull        201
+     163: aload         5
+     165: ifnonnull     183
+     168: aload         7
+     170: invokevirtual #185                // Method io/lumine/mythic/lib/damage/AttackMetadata.getDamage:()Lio/lumine/mythic/lib/damage/DamageMetadata;
+     173: dload_3
+     174: aload         6
+     176: invokevirtual #190                // Method io/lumine/mythic/lib/damage/DamageMetadata.add:(DLjava/util/List;)Lio/lumine/mythic/lib/damage/DamageMetadata;
+     179: pop
+     180: goto          197
+     183: aload         7
+     185: invokevirtual #185                // Method io/lumine/mythic/lib/damage/AttackMetadata.getDamage:()Lio/lumine/mythic/lib/damage/DamageMetadata;
+     188: dload_3
+     189: aload         5
+     191: aload         6
+     193: invokevirtual #195                // Method io/lumine/mythic/lib/damage/DamageMetadata.add:(DLio/lumine/mythic/lib/element/Element;Ljava/util/List;)Lio/lumine/mythic/lib/damage/DamageMetadata;
+     196: pop
+     197: getstatic     #198                // Field io/lumine/mythic/api/skills/SkillResult.SUCCESS:Lio/lumine/mythic/api/skills/SkillResult;
+     200: areturn
+     201: aload_1
+     202: invokeinterface #128,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getCaster:()Lio/lumine/mythic/api/skills/SkillCaster;
+     207: invokeinterface #201,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillCaster.getEntity:()Lio/lumine/mythic/api/adapters/AbstractEntity;
+     212: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+     217: astore        8
+     219: aload_1
+     220: invokeinterface #205,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getVariables:()Lio/lumine/mythic/core/skills/variables/VariableRegistry;
+     225: ldc           #211                // String MMOSkillMetadata
+     227: invokevirtual #213                // Method io/lumine/mythic/core/skills/variables/VariableRegistry.has:(Ljava/lang/String;)Z
+     230: ifeq          256
+     233: aload_1
+     234: invokeinterface #205,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getVariables:()Lio/lumine/mythic/core/skills/variables/VariableRegistry;
+     239: ldc           #211                // String MMOSkillMetadata
+     241: invokevirtual #219                // Method io/lumine/mythic/core/skills/variables/VariableRegistry.get:(Ljava/lang/String;)Lio/lumine/mythic/core/skills/variables/Variable;
+     244: invokevirtual #222                // Method io/lumine/mythic/core/skills/variables/Variable.get:()Ljava/lang/Object;
+     247: checkcast     #227                // class io/lumine/mythic/lib/skill/SkillMetadata
+     250: invokevirtual #229                // Method io/lumine/mythic/lib/skill/SkillMetadata.getCaster:()Lio/lumine/mythic/lib/player/PlayerMetadata;
+     253: goto          280
+     256: aload         8
+     258: instanceof    #126                // class org/bukkit/entity/LivingEntity
+     261: ifeq          279
+     264: aload         8
+     266: checkcast     #126                // class org/bukkit/entity/LivingEntity
+     269: getstatic     #232                // Field io/lumine/mythic/lib/api/player/EquipmentSlot.MAIN_HAND:Lio/lumine/mythic/lib/api/player/EquipmentSlot;
+     272: iconst_1
+     273: invokestatic  #238                // InterfaceMethod io/lumine/mythic/lib/api/stat/provider/StatProvider.get:(Lorg/bukkit/entity/LivingEntity;Lio/lumine/mythic/lib/api/player/EquipmentSlot;Z)Lio/lumine/mythic/lib/api/stat/provider/StatProvider;
+     276: goto          280
+     279: aconst_null
+     280: astore        9
+     282: aload         5
+     284: ifnonnull     300
+     287: new           #191                // class io/lumine/mythic/lib/damage/DamageMetadata
+     290: dup
+     291: dload_3
+     292: aload         6
+     294: invokespecial #243                // Method io/lumine/mythic/lib/damage/DamageMetadata."<init>":(DLjava/util/List;)V
+     297: goto          312
+     300: new           #191                // class io/lumine/mythic/lib/damage/DamageMetadata
+     303: dup
+     304: dload_3
+     305: aload         5
+     307: aload         6
+     309: invokespecial #246                // Method io/lumine/mythic/lib/damage/DamageMetadata."<init>":(DLio/lumine/mythic/lib/element/Element;Ljava/util/List;)V
+     312: astore        10
+     314: new           #186                // class io/lumine/mythic/lib/damage/AttackMetadata
+     317: dup
+     318: aload         10
+     320: aload_2
+     321: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+     326: checkcast     #126                // class org/bukkit/entity/LivingEntity
+     329: aload         9
+     331: invokespecial #249                // Method io/lumine/mythic/lib/damage/AttackMetadata."<init>":(Lio/lumine/mythic/lib/damage/DamageMetadata;Lorg/bukkit/entity/LivingEntity;Lio/lumine/mythic/lib/api/stat/provider/StatProvider;)V
+     334: astore        11
+     336: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+     339: invokevirtual #175                // Method io/lumine/mythic/lib/MythicLib.getDamage:()Lio/lumine/mythic/lib/manager/DamageManager;
+     342: aload         11
+     344: invokevirtual #252                // Method io/lumine/mythic/lib/manager/DamageManager.markAsMetadata:(Lio/lumine/mythic/lib/damage/AttackMetadata;)Lio/lumine/mythic/lib/damage/AttackMetadata;
+     347: pop
+     348: aload_0
+     349: aload_1
+     350: aload_2
+     351: dload_3
+     352: invokevirtual #256                // Method doDamage:(Lio/lumine/mythic/api/skills/SkillMetadata;Lio/lumine/mythic/api/adapters/AbstractEntity;D)V
+     355: getstatic     #260                // Field io/lumine/mythic/core/logging/MythicLogger$DebugLevel.MECHANIC:Lio/lumine/mythic/core/logging/MythicLogger$DebugLevel;
+     358: ldc_w         #266                // String + MMODamageMechanic fired for {0} with {1} power
+     361: iconst_2
+     362: anewarray     #268                // class java/lang/Object
+     365: dup
+     366: iconst_0
+     367: dload_3
+     368: invokestatic  #270                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+     371: aastore
+     372: dup
+     373: iconst_1
+     374: aload_1
+     375: invokeinterface #152,  1          // InterfaceMethod io/lumine/mythic/api/skills/SkillMetadata.getPower:()F
+     380: invokestatic  #275                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     383: aastore
+     384: invokestatic  #280                // Method io/lumine/mythic/core/logging/MythicLogger.debug:(Lio/lumine/mythic/core/logging/MythicLogger$DebugLevel;Ljava/lang/String;[Ljava/lang/Object;)V
+     387: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+     390: invokevirtual #175                // Method io/lumine/mythic/lib/MythicLib.getDamage:()Lio/lumine/mythic/lib/manager/DamageManager;
+     393: aload_2
+     394: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+     399: invokevirtual #286                // Method io/lumine/mythic/lib/manager/DamageManager.unmarkAsMetadata:(Lorg/bukkit/entity/Entity;)Lio/lumine/mythic/lib/damage/AttackMetadata;
+     402: pop
+     403: goto          479
+     406: astore        12
+     408: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+     411: invokevirtual #291                // Method io/lumine/mythic/lib/MythicLib.getLogger:()Ljava/util/logging/Logger;
+     414: getstatic     #295                // Field java/util/logging/Level.SEVERE:Ljava/util/logging/Level;
+     417: aload_2
+     418: invokeinterface #301,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getUniqueId:()Ljava/util/UUID;
+     423: invokestatic  #305                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     426: invokedynamic #308,  0            // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     431: invokevirtual #311                // Method java/util/logging/Logger.log:(Ljava/util/logging/Level;Ljava/lang/String;)V
+     434: aload         12
+     436: invokevirtual #317                // Method java/lang/Exception.printStackTrace:()V
+     439: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+     442: invokevirtual #175                // Method io/lumine/mythic/lib/MythicLib.getDamage:()Lio/lumine/mythic/lib/manager/DamageManager;
+     445: aload_2
+     446: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+     451: invokevirtual #286                // Method io/lumine/mythic/lib/manager/DamageManager.unmarkAsMetadata:(Lorg/bukkit/entity/Entity;)Lio/lumine/mythic/lib/damage/AttackMetadata;
+     454: pop
+     455: goto          479
+     458: astore        13
+     460: getstatic     #156                // Field io/lumine/mythic/lib/MythicLib.plugin:Lio/lumine/mythic/lib/MythicLib;
+     463: invokevirtual #175                // Method io/lumine/mythic/lib/MythicLib.getDamage:()Lio/lumine/mythic/lib/manager/DamageManager;
+     466: aload_2
+     467: invokeinterface #122,  1          // InterfaceMethod io/lumine/mythic/api/adapters/AbstractEntity.getBukkitEntity:()Lorg/bukkit/entity/Entity;
+     472: invokevirtual #286                // Method io/lumine/mythic/lib/manager/DamageManager.unmarkAsMetadata:(Lorg/bukkit/entity/Entity;)Lio/lumine/mythic/lib/damage/AttackMetadata;
+     475: pop
+     476: aload         13
+     478: athrow
+     479: getstatic     #198                // Field io/lumine/mythic/api/skills/SkillResult.SUCCESS:Lio/lumine/mythic/api/skills/SkillResult;
+     482: areturn
+    Exception table:
+       from    to  target type
+         348   387   406   Class java/lang/Exception
+         348   387   458   any
+         406   439   458   any
+         458   460   458   any
+}

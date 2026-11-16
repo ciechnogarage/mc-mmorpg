@@ -1,0 +1,274 @@
+schema_version: 1
+status: proposed
+updated_at: "2026-07-31"
+owner_domain: "10-economy"
+source_plan: "docs/design/economy/economy-model.md"
+notes:
+  - "Draft planning registry. Not runtime truth."
+  - "This file defines economy-facing currency classes, allowed uses, custody scope, and market restrictions."
+  - "It distinguishes primary money from premium balances and itemized currency resources."
+  - "No plugin, GUI, or lore string may silently define a new currency. Every economy-facing currency requires an explicit registry entry."
+  - "Specific drop tables, NPC prices, and item-operation costs live in companion files, not here."
+
+asset_form_vocabulary:
+  - BALANCE
+  - ITEM_STACK
+  - CONTRACT_ONLY
+
+scope_vocabulary:
+  - ACCOUNT
+  - CHARACTER
+  - STACK_LOT
+  - CONTRACT
+
+identity_model_vocabulary:
+  - ACCOUNT_BALANCE
+  - STACK_LOT
+  - CONTRACT_CLAIM
+
+settlement_vocabulary:
+  - PRIMARY_MONEY
+  - PREMIUM_ONLY
+  - ITEM_OPERATION_ONLY
+  - SERVICE_ONLY
+  - NOT_SETTLEMENT_TENDER
+
+tradeability_vocabulary:
+  - AH_ALLOWED
+  - DIRECT_TRADE_ALLOWED
+  - ESCROW_ALLOWED
+  - ACCOUNT_ONLY
+  - NON_TRADEABLE
+
+rules:
+  one_explicit_registry_row_per_currency: true
+  primary_money_must_be_explicitly_identified: true
+  premium_balance_is_not_normal_market_tender: true
+  itemized_currency_is_not_implicit_money: true
+  taxes_default_to_primary_money_only: true
+  npc_baseline_prices_default_to_primary_money_only: true
+  currency_requires_owner_domain: true
+  currency_requires_asset_form: true
+  currency_requires_scope: true
+  currency_requires_settlement_role: true
+  silent_currency_aliases_forbidden: true
+  direct_premium_to_gold_conversion_forbidden: true
+  ordinary_goods_pricing_in_premium_forbidden: true
+  itemized_currency_requires_stack_lot_identity: true
+  stack_lot_contract_ref: docs/contracts/stack-lot-contract.yaml
+  service_tender_must_be_distinct_from_operation_fuel: true
+
+economy_invariants:
+  - id: CUR-INV-001
+    rule: "Only one primary money exists in v1 economy: gold."
+  - id: CUR-INV-002
+    rule: "Premium balance must not act as ordinary player-market tender."
+  - id: CUR-INV-003
+    rule: "Itemized currency may be valuable and tradeable without becoming mandatory universal payment."
+  - id: CUR-INV-004
+    rule: "Taxes, standard AH settlement, and default service settlement denominate in gold unless a later contract explicitly overrides a narrow case."
+  - id: CUR-INV-005
+    rule: "No economy system may infer currency identity from display name, lore, or transient UI labels."
+  - id: CUR-INV-006
+    rule: "Any new currency class introduced later requires a new registry row and explicit source/sink budgeting."
+
+currency_classes:
+  primary_money:
+    description: "General-purpose money used for broad economy settlement."
+    allowed_asset_forms:
+      - BALANCE
+    default_scope: ACCOUNT
+    expected_uses:
+      - player_trade
+      - auction_house_prices
+      - service_payment
+      - npc_prices
+      - taxes_and_fees
+      - escrow_settlement
+
+  premium_balance:
+    description: "Monetization balance kept outside ordinary player economy."
+    allowed_asset_forms:
+      - BALANCE
+    default_scope: ACCOUNT
+    expected_uses:
+      - item_shop
+      - monetization_entitlements
+      - cosmetic_or_service_store_unlocks
+
+  itemized_currency:
+    description: "PoE-like currency resources consumed by item operations and tradeable only where the market eligibility matrix allows."
+    allowed_asset_forms:
+      - ITEM_STACK
+    default_scope: STACK_LOT
+    expected_uses:
+      - rerolls
+      - upgrades
+      - crafting_modification
+      - item_quality_progression
+
+entries:
+  - id: gold
+    display_name: "Gold"
+    owner_domain: "10"
+    asset_form: BALANCE
+    scope: ACCOUNT
+    identity_model: ACCOUNT_BALANCE
+    settlement_role: PRIMARY_MONEY
+    class_ref: primary_money
+    tradeability:
+      - ACCOUNT_ONLY
+    can_price_ordinary_goods: true
+    can_price_services: true
+    can_be_service_operation_fuel: false
+    can_pay_taxes: true
+    can_pay_npc_prices: true
+    can_back_escrow: true
+    can_be_directly_traded_as_balance: false
+    can_be_listed_as_market_item: false
+    sink_budget_required: true
+    source_budget_required: true
+    premium_conversion_policy: forbidden
+    notes:
+      - "Gold is the only primary money in v1."
+      - "Gold lives account-wide even when a transaction is initiated by character_id."
+      - "Gold is the baseline unit for AH fees, service fees, and taxes."
+      - "This v1 authority supersedes earlier tentative wording in upstream shell contracts."
+
+  - id: premium_shop_balance
+    display_name: "Premium Shop Balance"
+    owner_domain: "13"
+    asset_form: BALANCE
+    scope: ACCOUNT
+    identity_model: ACCOUNT_BALANCE
+    settlement_role: PREMIUM_ONLY
+    class_ref: premium_balance
+    tradeability:
+      - ACCOUNT_ONLY
+      - NON_TRADEABLE
+    can_price_ordinary_goods: false
+    can_price_services: false
+    can_be_service_operation_fuel: false
+    can_pay_taxes: false
+    can_pay_npc_prices: false
+    can_back_escrow: false
+    can_be_directly_traded_as_balance: false
+    can_be_listed_as_market_item: false
+    sink_budget_required: false
+    source_budget_required: false
+    premium_conversion_policy: n_a
+    notes:
+      - "Separate from the player economy."
+      - "Must not become a shadow market currency for ordinary trade."
+
+  - id: reroll_currency_items
+    display_name: "Reroll Currency Items"
+    owner_domain: "10"
+    asset_form: ITEM_STACK
+    scope: STACK_LOT
+    identity_model: STACK_LOT
+    settlement_role: ITEM_OPERATION_ONLY
+    class_ref: itemized_currency
+    tradeability:
+      - AH_ALLOWED
+      - DIRECT_TRADE_ALLOWED
+      - ESCROW_ALLOWED
+    can_price_ordinary_goods: false
+    can_price_services: false
+    can_be_service_operation_fuel: true
+    can_pay_taxes: false
+    can_pay_npc_prices: false
+    can_back_escrow: true
+    can_be_directly_traded_as_balance: false
+    can_be_listed_as_market_item: true
+    reservation_unit: STACK_LOT
+    split_merge_tracking_required: true
+    stack_lot_contract_ref: docs/contracts/stack-lot-contract.yaml
+    sink_budget_required: true
+    source_budget_required: true
+    premium_conversion_policy: forbidden
+    notes:
+      - "Tradeable itemized currency used to reroll item outcomes."
+      - "May become an informal high-end value reference without becoming official tax tender."
+      - "Final item ids and operation bindings belong in later companion files."
+      - "When used in services, this is customer-supplied operation fuel, not service tender."
+
+  - id: upgrade_currency_items
+    display_name: "Upgrade Currency Items"
+    owner_domain: "10"
+    asset_form: ITEM_STACK
+    scope: STACK_LOT
+    identity_model: STACK_LOT
+    settlement_role: ITEM_OPERATION_ONLY
+    class_ref: itemized_currency
+    tradeability:
+      - AH_ALLOWED
+      - DIRECT_TRADE_ALLOWED
+      - ESCROW_ALLOWED
+    can_price_ordinary_goods: false
+    can_price_services: false
+    can_be_service_operation_fuel: true
+    can_pay_taxes: false
+    can_pay_npc_prices: false
+    can_back_escrow: true
+    can_be_directly_traded_as_balance: false
+    can_be_listed_as_market_item: true
+    reservation_unit: STACK_LOT
+    split_merge_tracking_required: true
+    stack_lot_contract_ref: docs/contracts/stack-lot-contract.yaml
+    sink_budget_required: true
+    source_budget_required: true
+    premium_conversion_policy: forbidden
+    notes:
+      - "Tradeable itemized currency used for upgrades and quality progression."
+      - "Economic value comes from item-improvement demand, not from universal payment status."
+      - "When used in services, this is customer-supplied operation fuel, not service tender."
+
+  - id: craft_modifier_currency_items
+    display_name: "Craft Modifier Currency Items"
+    owner_domain: "10"
+    asset_form: ITEM_STACK
+    scope: STACK_LOT
+    identity_model: STACK_LOT
+    settlement_role: ITEM_OPERATION_ONLY
+    class_ref: itemized_currency
+    tradeability:
+      - AH_ALLOWED
+      - DIRECT_TRADE_ALLOWED
+      - ESCROW_ALLOWED
+    can_price_ordinary_goods: false
+    can_price_services: false
+    can_be_service_operation_fuel: true
+    can_pay_taxes: false
+    can_pay_npc_prices: false
+    can_back_escrow: true
+    can_be_directly_traded_as_balance: false
+    can_be_listed_as_market_item: true
+    reservation_unit: STACK_LOT
+    split_merge_tracking_required: true
+    stack_lot_contract_ref: docs/contracts/stack-lot-contract.yaml
+    sink_budget_required: true
+    source_budget_required: true
+    premium_conversion_policy: forbidden
+    notes:
+      - "Tradeable itemized currency used to add, alter, or constrain crafting and modification behavior."
+      - "This class exists to support PoE-like economy instruments without turning them into universal money."
+      - "When used in services, this is customer-supplied operation fuel, not service tender."
+
+future_extension_rules:
+  regional_tokens:
+    status: reserved_not_enabled
+    note: "Regional or faction tokens may exist later, but are not primary money in v1 and require explicit registry rows."
+  service_vouchers:
+    status: reserved_not_enabled
+    note: "Contract-only or entitlement-like service credits require a separate row if introduced."
+  event_currencies:
+    status: reserved_not_enabled
+    note: "Seasonal or event currencies must be explicitly non-primary unless a future accepted plan supersedes this registry."
+
+non_goals:
+  - "Exact drop-rate tuning."
+  - "Exact NPC price tables."
+  - "The full source-and-sink matrix."
+  - "The binding policy for every item class."
+  - "Runtime implementation proof in any plugin."

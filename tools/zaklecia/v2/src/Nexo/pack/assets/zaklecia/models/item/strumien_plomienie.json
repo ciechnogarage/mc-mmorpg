@@ -1,0 +1,76 @@
+{
+ "textures": {
+  "s": "zaklecia:item/strumien_ogien",
+  "particle": "zaklecia:item/strumien_ogien"
+ },
+ "elements": [
+  {
+   "from": [
+    -6.0,
+    8,
+    0
+   ],
+   "to": [
+    22.0,
+    8,
+    16
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#s",
+     "uv": [
+      0,
+      16,
+      16,
+      0
+     ]
+    }
+   }
+  },
+  {
+   "from": [
+    -6.0,
+    8,
+    0
+   ],
+   "to": [
+    22.0,
+    8,
+    16
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": -45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#s",
+     "uv": [
+      0,
+      16,
+      16,
+      0
+     ]
+    }
+   }
+  }
+ ]
+}

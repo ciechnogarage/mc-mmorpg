@@ -1,0 +1,9 @@
+ZAK_KUKLA:
+  Type: ZOMBIE
+  Display: 'Kukla'
+  Health: 200
+  Options:
+    NoAI: true
+    PreventSunburn: true
+    Despawn: false
+    Persistent: true

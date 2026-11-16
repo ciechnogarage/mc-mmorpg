@@ -1,0 +1,65 @@
+{
+  "name": "Sunken Root Ruins",
+  "derivative": "LUSH_CAVES",
+  "vanillaDerivative": "LUSH_CAVES",
+  "color": "#31593a",
+  "generators": [
+    {
+      "generator": "dungeon_ruins_001_broken_ruins",
+      "min": 122,
+      "max": 128
+    }
+  ],
+  "layers": [
+    {
+      "palette": [
+        { "block": "minecraft:mossy_stone_bricks", "weight": 5 },
+        { "block": "minecraft:cracked_stone_bricks", "weight": 3 },
+        { "block": "minecraft:mud_bricks", "weight": 2 },
+        { "block": "minecraft:rooted_dirt", "weight": 1 }
+      ],
+      "minHeight": 1,
+      "maxHeight": 1
+    },
+    {
+      "palette": [
+        { "block": "minecraft:stone_bricks", "weight": 4 },
+        { "block": "minecraft:mangrove_roots", "weight": 2 },
+        { "block": "minecraft:moss_block", "weight": 2 }
+      ],
+      "minHeight": 2,
+      "maxHeight": 3
+    }
+  ],
+  "decorators": [
+    {
+      "chance": 0.24,
+      "palette": [
+        { "block": "minecraft:moss_carpet" },
+        { "block": "minecraft:vine" }
+      ]
+    },
+    {
+      "chance": 0.08,
+      "palette": [
+        { "block": "minecraft:glow_lichen" },
+        { "block": "minecraft:water" }
+      ]
+    }
+  ],
+  "notes": {
+    "mood": "Low green organic light, wet abandoned ruin, root poison tutorial.",
+    "structures": [
+      "collapsed_gate_start",
+      "flooded_hallway_01",
+      "root_overgrown_courtyard",
+      "broken_archive_room",
+      "moss_chapel_small"
+    ],
+    "mobSpawnIntent": [
+      "dungeon_ruins_001_root_thrall",
+      "dungeon_ruins_001_mossbone_sentinel",
+      "dungeon_ruins_001_swamp_spore_caster"
+    ]
+  }
+}

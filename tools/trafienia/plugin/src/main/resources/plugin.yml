@@ -1,0 +1,14 @@
+name: Trafienia
+version: '${version}'
+main: pl.mcmmorpg.trafienia.Trafienia
+api-version: '1.21'
+depend: [ModelEngine]
+softdepend: [MythicLib, MMOItems]
+description: Trafienia w czesci ciala modeli ModelEngine - blysk trafionej czesci, luk ciosu, odcinanie konczyn.
+commands:
+  trafienia:
+    description: Trafienia - narzedzia testowe
+    permission: trafienia.admin
+permissions:
+  trafienia.admin:
+    default: op

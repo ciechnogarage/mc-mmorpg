@@ -1,0 +1,193 @@
+# Cztery ćwiartki na ekran; U+4A60..U+4A7F.
+sklep_1:
+  font: minecraft:default
+  texture: nexo:gui/sklep_1
+  ascent: 13
+  height: 111
+  char: "䩠"
+sklep_2:
+  font: minecraft:default
+  texture: nexo:gui/sklep_2
+  ascent: 13
+  height: 111
+  char: "䩡"
+sklep_3:
+  font: minecraft:default
+  texture: nexo:gui/sklep_3
+  ascent: -98
+  height: 111
+  char: "䩢"
+sklep_4:
+  font: minecraft:default
+  texture: nexo:gui/sklep_4
+  ascent: -98
+  height: 111
+  char: "䩣"
+sklep_ilosc_1:
+  font: minecraft:default
+  texture: nexo:gui/sklep_ilosc_1
+  ascent: 13
+  height: 111
+  char: "䩤"
+sklep_ilosc_2:
+  font: minecraft:default
+  texture: nexo:gui/sklep_ilosc_2
+  ascent: 13
+  height: 111
+  char: "䩥"
+sklep_ilosc_3:
+  font: minecraft:default
+  texture: nexo:gui/sklep_ilosc_3
+  ascent: -98
+  height: 111
+  char: "䩦"
+sklep_ilosc_4:
+  font: minecraft:default
+  texture: nexo:gui/sklep_ilosc_4
+  ascent: -98
+  height: 111
+  char: "䩧"
+skup_1:
+  font: minecraft:default
+  texture: nexo:gui/skup_1
+  ascent: 13
+  height: 111
+  char: "䩨"
+skup_2:
+  font: minecraft:default
+  texture: nexo:gui/skup_2
+  ascent: 13
+  height: 111
+  char: "䩩"
+skup_3:
+  font: minecraft:default
+  texture: nexo:gui/skup_3
+  ascent: -98
+  height: 111
+  char: "䩪"
+skup_4:
+  font: minecraft:default
+  texture: nexo:gui/skup_4
+  ascent: -98
+  height: 111
+  char: "䩫"
+skup_ilosc_1:
+  font: minecraft:default
+  texture: nexo:gui/skup_ilosc_1
+  ascent: 13
+  height: 111
+  char: "䩬"
+skup_ilosc_2:
+  font: minecraft:default
+  texture: nexo:gui/skup_ilosc_2
+  ascent: 13
+  height: 111
+  char: "䩭"
+skup_ilosc_3:
+  font: minecraft:default
+  texture: nexo:gui/skup_ilosc_3
+  ascent: -98
+  height: 111
+  char: "䩮"
+skup_ilosc_4:
+  font: minecraft:default
+  texture: nexo:gui/skup_ilosc_4
+  ascent: -98
+  height: 111
+  char: "䩯"
+rynek_1:
+  font: minecraft:default
+  texture: nexo:gui/rynek_1
+  ascent: 13
+  height: 111
+  char: "䩰"
+rynek_2:
+  font: minecraft:default
+  texture: nexo:gui/rynek_2
+  ascent: 13
+  height: 111
+  char: "䩱"
+rynek_3:
+  font: minecraft:default
+  texture: nexo:gui/rynek_3
+  ascent: -98
+  height: 111
+  char: "䩲"
+rynek_4:
+  font: minecraft:default
+  texture: nexo:gui/rynek_4
+  ascent: -98
+  height: 111
+  char: "䩳"
+moje_oferty_1:
+  font: minecraft:default
+  texture: nexo:gui/moje_oferty_1
+  ascent: 13
+  height: 111
+  char: "䩴"
+moje_oferty_2:
+  font: minecraft:default
+  texture: nexo:gui/moje_oferty_2
+  ascent: 13
+  height: 111
+  char: "䩵"
+moje_oferty_3:
+  font: minecraft:default
+  texture: nexo:gui/moje_oferty_3
+  ascent: -98
+  height: 111
+  char: "䩶"
+moje_oferty_4:
+  font: minecraft:default
+  texture: nexo:gui/moje_oferty_4
+  ascent: -98
+  height: 111
+  char: "䩷"
+kupno_1:
+  font: minecraft:default
+  texture: nexo:gui/kupno_1
+  ascent: 13
+  height: 111
+  char: "䩸"
+kupno_2:
+  font: minecraft:default
+  texture: nexo:gui/kupno_2
+  ascent: 13
+  height: 111
+  char: "䩹"
+kupno_3:
+  font: minecraft:default
+  texture: nexo:gui/kupno_3
+  ascent: -98
+  height: 111
+  char: "䩺"
+kupno_4:
+  font: minecraft:default
+  texture: nexo:gui/kupno_4
+  ascent: -98
+  height: 111
+  char: "䩻"
+wystawienie_1:
+  font: minecraft:default
+  texture: nexo:gui/wystawienie_1
+  ascent: 13
+  height: 111
+  char: "䩼"
+wystawienie_2:
+  font: minecraft:default
+  texture: nexo:gui/wystawienie_2
+  ascent: 13
+  height: 111
+  char: "䩽"
+wystawienie_3:
+  font: minecraft:default
+  texture: nexo:gui/wystawienie_3
+  ascent: -98
+  height: 111
+  char: "䩾"
+wystawienie_4:
+  font: minecraft:default
+  texture: nexo:gui/wystawienie_4
+  ascent: -98
+  height: 111
+  char: "䩿"

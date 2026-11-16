@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "blocker_input_id": "domain-17-reward-idempotency-prerequisite-checkpoint-blocker-2026-07-31",
+  "ticket_id": "domain-17-reward-idempotency-prerequisite-checkpoint",
+  "scenario_id": "reward_restart_recovery",
+  "gate_id": "reward_restart_recovery_prerequisites",
+  "result": {
+    "verdict": "BLOCKED",
+    "release_effect": "blocks_release",
+    "failure_family": "prerequisite_blocked"
+  },
+  "environment_control": {
+    "workspace_root": "/home/przemek/projects/MC",
+    "lease_required": "dev-qa",
+    "lease": null,
+    "lease_status": "unavailable",
+    "runtime_touched": false,
+    "staging_touched": false,
+    "rollback": {
+      "method": "not_required_no_runtime_or_config_mutation",
+      "proof_paths": [
+        "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/rollback-restore-proof.md"
+      ]
+    }
+  },
+  "files_or_areas": [
+    "docs/qa/e2e-scenarios.yaml",
+    "docs/qa/release-gates.yaml",
+    "docs/qa/legacy-evidence-migration-snapshot.yaml",
+    "tools/qa",
+    "MCMMORPG/_validation",
+    "MCMMORPG/plugins/CMI",
+    "MCMMORPG/plugins/MMOInventory",
+    "MCMMORPG/plugins/MMOCore",
+    "MCMMORPG/plugins/MMOItems"
+  ],
+  "proposed_or_applied_changes": [
+    "Recorded a docs-only prerequisite checkpoint for reward restart recovery.",
+    "Recorded normalized blockers for missing lease, missing transaction/idempotency ownership, and missing duplicate-rejection proof source."
+  ],
+  "capability_matrix": {
+    "reward_transaction_id": "missing_owner_and_source",
+    "idempotency_key": "missing_owner_and_source",
+    "currency_provider": "partial_static_signal_not_authoritative",
+    "inventory_storage": "partial_static_signal_not_authoritative",
+    "duplicate_rejection_proof_path": "missing"
+  },
+  "blockers": [
+    {
+      "blocker_id": "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+      "reason": "No active dev-qa lease is available, so runtime-safe inspection was not performed."
+    },
+    {
+      "blocker_id": "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+      "reason": "No static source identifies durable reward_transaction_id or idempotency_key ownership."
+    },
+    {
+      "blocker_id": "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+      "reason": "No static source names a runner or API path that can prove durable duplicate rejection across restart recovery."
+    }
+  ],
+  "validation": [
+    "MCMMORPG/infra/bin/mc-lease validate passed.",
+    "MCMMORPG/infra/bin/mc-lease show qa reported zero active qa leases.",
+    "Static allowed-path inspection found CMI/Vault and MMOInventory config signals but no durable transaction/idempotency proof source."
+  ],
+  "risks": [
+    "Reward duplication remains release-blocking until a runtime-safe proof source and owner mapping exist.",
+    "Static plugin config cannot establish cross-plugin transaction coupling or restart durability."
+  ],
+  "next_owner": "domain-17 reward/economy runtime owner",
+  "why_not_pass": "No dev-qa lease exists for runtime inspection, and static inspection did not identify reward_transaction_id, idempotency_key, or duplicate-rejection proof ownership."
+}

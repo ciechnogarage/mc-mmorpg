@@ -1,0 +1,5 @@
+Zlecenie etapu 1 zapisałem w katalogu roboczym: [plan testów](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/PLAN.md), [harness bota](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/bot/run.sh), [scenariusz prawdziwego klienta](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/klient-prawdziwy.md), [review kodu](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/review-kodu.md) i [raport końcowy](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/raport-etap1.md).
+
+Składnia skryptów i 9 lokalnych testów przeszły. Testów na serwerze nie uruchomiłem: dostęp do Dockera kończy się błędem uprawnień. Do etapu 2 służą `bash bot/przygotuj.sh` i `bash bot/run.sh`.
+
+Najpoważniejsze ustalenie review to możliwa trwała utrata nośnika po śmierci. Raport oznacza też lukę klona: bez Wiary i Chowanców nie da się miarodajnie ocenić balansu czarów ani laski skalowanej Wiarą.

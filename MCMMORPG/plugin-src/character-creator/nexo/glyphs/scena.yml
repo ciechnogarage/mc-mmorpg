@@ -1,0 +1,14 @@
+# Scena kreatora (plugin CharacterCreator, pakiet scene) — sciemnienie ekranu.
+#
+# Czarny kwadrat 16x16 rozciagniety na caly ekran w TYTULE. Tytul rysuje sie w skali 4,
+# wiec height 512 daje 2048 px GUI — wiecej niz ekran przy kazdym guiScale.
+# ascent 253 = height/2 - 3: tytul stoi 10 jednostek nad srodkiem ekranu, a linia bazowa
+# fontu lezy 7 jednostek pod gora wiersza — tak srodek glifu wypada na srodku ekranu.
+# font minecraft:default OBOWIAZKOWY (tytul rysuje sie tym fontem), a przed glifem kolor
+# bialy (inaczej tint tytulu przyciemnia teksture).
+scena_czern:
+  font: minecraft:default
+  texture: nexo:gui/scena_czern
+  ascent: 253
+  height: 512
+  char: 䈀

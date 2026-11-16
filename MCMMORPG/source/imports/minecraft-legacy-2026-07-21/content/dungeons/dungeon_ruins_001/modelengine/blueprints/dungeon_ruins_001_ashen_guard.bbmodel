@@ -1,0 +1,793 @@
+{
+  "meta": {
+    "format_version": "5.0",
+    "model_format": "free",
+    "box_uv": false
+  },
+  "name": "dungeon_ruins_001_ashen_guard",
+  "model_identifier": "dungeon_ruins_001_ashen_guard",
+  "visible_box": [
+    5,
+    4,
+    0
+  ],
+  "resolution": {
+    "width": 64,
+    "height": 64
+  },
+  "elements": [
+    {
+      "name": "body",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        -3,
+        8,
+        -2
+      ],
+      "to": [
+        3,
+        19,
+        2
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        0,
+        13.5,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    },
+    {
+      "name": "head",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        -2.5,
+        19,
+        -2.5
+      ],
+      "to": [
+        2.5,
+        24,
+        2.5
+      ],
+      "autouv": 0,
+      "color": 5,
+      "origin": [
+        0,
+        21.5,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    },
+    {
+      "name": "left_arm",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        3,
+        10,
+        -1.5
+      ],
+      "to": [
+        5.5,
+        18,
+        1.5
+      ],
+      "autouv": 0,
+      "color": 6,
+      "origin": [
+        4.25,
+        14,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    },
+    {
+      "name": "right_arm",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        -5.5,
+        10,
+        -1.5
+      ],
+      "to": [
+        -3,
+        18,
+        1.5
+      ],
+      "autouv": 0,
+      "color": 6,
+      "origin": [
+        -4.25,
+        14,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    },
+    {
+      "name": "left_leg",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        0.5,
+        0,
+        -1.5
+      ],
+      "to": [
+        2.5,
+        8,
+        1.5
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        1.5,
+        4,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    },
+    {
+      "name": "right_leg",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        -2.5,
+        0,
+        -1.5
+      ],
+      "to": [
+        -0.5,
+        8,
+        1.5
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        -1.5,
+        4,
+        0
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    },
+    {
+      "name": "ember_core",
+      "box_uv": false,
+      "render_order": "default",
+      "locked": false,
+      "from": [
+        -1,
+        12,
+        -3
+      ],
+      "to": [
+        1,
+        15,
+        -2
+      ],
+      "autouv": 0,
+      "color": 6,
+      "origin": [
+        0,
+        13.5,
+        -2.5
+      ],
+      "uv_offset": [
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": null
+        }
+      }
+    }
+  ],
+  "outliner": [
+    "body",
+    "head",
+    "left_arm",
+    "right_arm",
+    "left_leg",
+    "right_leg",
+    "ember_core"
+  ],
+  "textures": [],
+  "animations": {
+    "dungeon_ruins_001_ashen_guard.idle": {
+      "name": "idle",
+      "loop": "loop",
+      "override": false,
+      "length": 0.8,
+      "animators": {
+        "body": {
+          "name": "body",
+          "type": "bone",
+          "keyframes": [
+            {
+              "channel": "rotation",
+              "time": 0,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            },
+            {
+              "channel": "rotation",
+              "time": 0.4,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "dungeon_ruins_001_ashen_guard.walk": {
+      "name": "walk",
+      "loop": "loop",
+      "override": false,
+      "length": 0.8,
+      "animators": {
+        "body": {
+          "name": "body",
+          "type": "bone",
+          "keyframes": [
+            {
+              "channel": "rotation",
+              "time": 0,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            },
+            {
+              "channel": "rotation",
+              "time": 0.4,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 4
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "dungeon_ruins_001_ashen_guard.attack": {
+      "name": "attack",
+      "loop": "once",
+      "override": true,
+      "length": 0.8,
+      "animators": {
+        "body": {
+          "name": "body",
+          "type": "bone",
+          "keyframes": [
+            {
+              "channel": "rotation",
+              "time": 0,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            },
+            {
+              "channel": "rotation",
+              "time": 0.4,
+              "data_points": [
+                {
+                  "x": -12,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "dungeon_ruins_001_ashen_guard.cast": {
+      "name": "cast",
+      "loop": "once",
+      "override": true,
+      "length": 0.8,
+      "animators": {
+        "body": {
+          "name": "body",
+          "type": "bone",
+          "keyframes": [
+            {
+              "channel": "rotation",
+              "time": 0,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            },
+            {
+              "channel": "rotation",
+              "time": 0.4,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "dungeon_ruins_001_ashen_guard.death": {
+      "name": "death",
+      "loop": "once",
+      "override": true,
+      "length": 1.4,
+      "animators": {
+        "body": {
+          "name": "body",
+          "type": "bone",
+          "keyframes": [
+            {
+              "channel": "rotation",
+              "time": 0,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            },
+            {
+              "channel": "rotation",
+              "time": 0.4,
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

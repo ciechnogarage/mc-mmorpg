@@ -1,0 +1,32 @@
+# Agent B — recenzja rundy 3 A (wersja robocza)
+
+## N2, filtr broni
+
+`KsiegaPostaci/Bron.java:795` przed zmianą anulował każde `EntityDamageByEntityEvent` od gracza przy slocie poza 0/1 albo nośniku w głównej dłoni. Aktualny diff względem `1e1c108` blokuje tylko wtedy, gdy `MythicLib.getDamage().getRegisteredAttackMetadata(cel)` jest `MeleeAttackMetadata`. Bajtkod MythicLib `DamageManager.findAttack` najpierw szuka metadanych zarejestrowanych na celu, dopiero później tworzy `MeleeAttackMetadata` dla zwykłego zdarzenia. `AttackEventListener.registerEvents` ma `HIGHEST`, `ignoreCancelled=true`; `DamageManager.InternalListener.unregisterCustomAttacks` usuwa metadane na `MONITOR`. MythicLib jest zależnością `KsiegaPostaci`, więc zwykle rejestruje listener wcześniej, ale konkretny porządek i metadane MMOItems wymagają kontroli wykonania. Ostateczna ocena wymaga `BR3`, `BR3M` (prawdziwy miecz MMOItems), `STAT3`, prób każdego czaru i klasowych skilli MMOCore.
+
+**Ryzyko nakładki/skryptu, stan bieżący poprawny:** A usunął `MythicMobs/skills/zaklecia/{plomienie,odmrozenie}.yml` z nakładki, a `kolejka/runner.sh` w `build bazowy` odtwarza tylko pliki nadal obecne w nakładce. `a-r3-01.out` nie wymienia tych YAML; jednak bezpośredni odczyt klona po `a-r3-01` wykazał już oryginalne cztery `mmodamage{...}`. Mechanizm przywrócenia nie jest udokumentowany w logu, ale stan klona wystarcza do dalszych testów. Po zwykłym buildzie A trzeba potwierdzić go ponownie.
+
+Kontrola obejścia: `Bron.shoot` pozostaje osobnym filtrem łuku, więc slot5 łuku powinien być zablokowany mimo przepuszczenia typu PROJECTILE w `damage`; wymagana próba `BR3` łuk0/5. Metadane samego typu PROJECTILE nie dowodzą, że zwykły cios mieczem można bezpiecznie dopuścić; kontrola miecz0/5 musi wykazać zachowanie zasady broni. MMOCore skille klas nie mają tu jeszcze sondy wykonania.
+
+Kontrola bazowa `a-r3-02`: `N_damage` Płomienie slot5 tylko 3 HP zapłonu i Odmrożenie 0 HP; `N_melee` miecz slot5 20→20 HP, slot0 20→18,12 HP. Potem `N_r1` z sondą PvP-wilk zerwał połączenie z RCON i wyłączył klon; reszta zbiorczego filtra (w tym `STAT2`) nie została wykonana. Nie interpretować ich braku jako PASS/FAIL.
+
+## Pozostałe zmiany
+
+- **N3, zwykły przedmiot → nośnik:** w bazowej grupie C zwykły kamień był potwierdzony w `SelectedItem` po wyposażeniu, a po interakcji w tym samym kroku `SelectedItem` pokazał `debug_stick`. `Nosnik.odswiezPusta` tworzy nośnik tylko gdy wybrany slot stał się pusty; sam nie usuwa kamienia. `DwieBronie.odswiez` dotyka tylko swoich oznaczonych przedmiotów. To wskazuje na inną zmianę slotu/przedmiotu przed odświeżeniem Zaklęć, ale bez dziennika pakietów i debug nie przypisuję winy Księdze ani DwieBronie. A nie ma jeszcze w diffie pewnej poprawki N3.
+- `Zaklecia/Nosnik.java:157` waliduje id przed zmianą slotu; `Zaklecia.java:103` przed zatrzymaniem rzutu. **AKCEPT warunkowo**, do testu N9 invalid-id.
+- `Wybor.java:195` wiąże opóźniony LPM z obiektem bieżącej sesji; zamknięcie na śmierć/wyjście/zmianę świata w liniach 223–231. **AKCEPT warunkowo**, do sondy dwóch sesji i pakietów BossBar.
+- `Rzucanie.java` zatrzymuje automat po zmianie świata i woła `odrzutowe.wyjscie`; ta metoda (`RzutyOdrzutowe.java:109`) usuwa też znaczniki wszystkich aktywnych run gracza. **AKCEPT statycznie**, do sondy po zmianie świata.
+- `DiagnostykaObrazen` powstaje wyłącznie przy `debug:true` w `Zaklecia.java:63`; `debug:false` w nakładce, więc ścieżka debugowa nie rejestruje listenerów. **AKCEPT statycznie**, potwierdzić runtime.
+- `EfektyCzasowe.java` dodaje logi pod `debug`, bez zmiany trafiania sojusznika. **AKCEPT jako diagnostykę**, decyzja właściciela o `support.party_other:true` nadal otwarta.
+- `Strumien.java` dodaje drugi, węższy `ItemDisplay` widoczny wyłącznie dla rzucającego i ukrywa przed nim pełny model; `strumien.waski-dla-rzucajacego` domyślnie `true`. **Warunkowo**, bo efekt w pierwszej osobie wymaga klienta. Nowy wariant tworzy dwa byty na każdy aktywny strumień i aktualizuje oba co tik, więc koszt CPU/packetów wymaga PERF2. Dla sondy opóźnień trzeba liczyć tylko strumień żyjący do puszczenia przycisku, aby nie pomylić go z pełnym modelem ukrytym zaraz po spawnie.
+- **N9 „mana bez efektu” — warunkowo.** `RzutyOdrzutowe.java:185–202` pobiera manę dopiero po `wykonano`. W pierwszym diffie `Skille.cast/cele/punkt` ignorowały zwracany przez `BukkitAPIHelper.castSkill(...)` wynik `boolean`, lecz A poprawił je w trakcie rundy na `return ...castSkill(...)` (API potwierdzone `javap` MythicMobs 5.11.2). Poprawia to odrzucenie przez API, ale nie dowodzi, że wywołanie zwracające `true` faktycznie zmieniło HP/cel; wymagana sonda FAIL→PASS.
+
+Źródła diffów: worktree `zaklecia-naprawy` względem `24cc940`, `ksiega-naprawy-zaklecia` względem `1e1c108`; ta recenzja opisuje stan w toku, ostateczny werdykt po buildzie i sondach.
+
+## Uzupełnienie r4, po `a-r4-04`
+
+Nowy `Bron.damage`: gdy metadane są nieobecne, filtruje jak zwykły cios; przepuszcza tylko jawne metadane inne niż `MeleeAttackMetadata`. To usuwa zależność od kolejności listenerów. Sondy `N2-plomienie-slot5`, `N2-odmrozenie-slot5`, `N2-melee-slot5`, `N2-melee-slot0` mają PASS na buildzie A r4 (`8b0763118967`, Księga `d1603ff68676`). Jeszcze potrzeba kontroli `BR3`/`BR3M`, całego katalogu czarów i finalnego buildu A.
+
+Porównanie identycznych ID `a-r4-02` bazowy → `a-r4-04` A: PASS→FAIL dla `B14-zasklepienie_ran-prawa`, `B15-wielkie_uzdrowienie-prawa` tylko z powodu latencji 10→12 i 6→11 tików; host w tym czasie miał load zwykle 8–14, więc te czasy są niewiarygodne. `C-jedzenie` PASS→FAIL jest zmianą funkcjonalną (po PPM chleb zastąpiony przez `debug_stick`), możliwa niestabilność N3; diagnostyka A r4 jest w toku. Dwa nowe ID `C01-miecz-bez-czaru`, `C01-miecz-wanilia` kończą się FAIL przy 0 obrażeń; brak bazowych odpowiedników, więc nie da się z tego samego porównania nazwać ich regresją. A uzyskał też 15 zmian FAIL→PASS, m.in. N2 slot5 obu czarów, N5 leczenie i N9 invalid-id.
+
+Diagnostyka `a-r4-08.serwer.log` pokazuje m.in. `slot stary=0 nowy=5 przedmiot=BREAD`, po czym `slot stary=5 nowy=0 przedmiot=DEBUG_STICK`; tak samo dla POTION/BOW/STONE. W `bot/scenariusze/C.js:equip()` po nieudanym potwierdzeniu `SelectedItem` (700 ms) harness cyklicznie wysyła `k.cyfra(1..9)`, co może przestawić gracza z wybranego przedmiotu na nośnik. Brak w tych wpisach dowodu, że `Nosnik.odswiezPusta` sam zamienił przedmiot; nie przypisuję C-jedzenie jako pewnej regresji produkcyjnej bez dalszego rozdzielenia działania harnessu.

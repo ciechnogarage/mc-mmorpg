@@ -1,0 +1,3 @@
+# Cechy TESTOWE silnika (właściciel: Agent A).
+TEST_ZAR: {nazwa: "Żar (test)", rodzaj: WZMOCNIENIE_TYPU_PRZY_NISKIM_HP, parametry: {typ: OGIEN, mnoznik: 1.5, prog_hp: 33}}
+TEST_ODPORNY_SEN: {nazwa: "Czujność (test)", rodzaj: ODPORNOSC_NA_STATUS, parametry: {status: SEN}}

@@ -1,0 +1,132 @@
+version: 1
+captured_at: "2026-08-03T15:16:09+02:00"
+scope_id: domain-16-deployment-rollback-baseline
+backend: staging-docker-baseline
+environment: staging
+deployment_path: legacy-docker-mc-hub
+target_slice: hub
+commit: f0f9526b46b7
+
+runbook_ref: docs/technical/deployment-runbook.md
+boot_evidence_ref: docs/audits/2026-08-03/domain-16-staging-boot-evidence.yaml
+compatibility_evidence_ref: docs/audits/2026-08-03/domain-16-plugin-compatibility-evidence.yaml
+restore_evidence_ref: docs/audits/2026-08-03/domain-16-restore-test-evidence.yaml
+status_vocabulary_ref: docs/technical/status-and-evidence-vocabulary.md#canonical-status-and-evidence-rules
+
+started_at: "2026-08-03T15:14:17+02:00"
+finished_at: "2026-08-03T15:16:09+02:00"
+runner: codex
+
+commands:
+  - "cd MCMMORPG/docker && ./mc ps"
+  - "cd MCMMORPG/docker && ./mc down hub"
+  - "docker inspect -f '{{.Name}} {{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} {{.State.FinishedAt}}' srv-hub velocity mcmmorpg-mariadb"
+  - "docker logs --tail 80 srv-hub"
+  - "cd MCMMORPG/docker && ./mc up hub"
+  - "docker inspect -f '{{.Name}} {{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} {{.State.StartedAt}} {{.State.FinishedAt}}' srv-hub velocity mcmmorpg-mariadb"
+  - "docker logs --tail 120 srv-hub"
+  - "docker exec srv-hub rcon-cli list"
+
+log_paths:
+  - docker://srv-hub
+  - docker://velocity
+  - docker://mcmmorpg-mariadb
+
+evidence_ref_ids:
+  - EVID-STAGING-BOOT-COMPOSE-PS-2026-08-03
+  - EVID-COMPAT-HUB-CMI-CHAIN-2026-08-03
+
+evidence_refs:
+  - evidence_id: EVID-DEPLOY-PREFLIGHT-2026-08-03
+    source_type: command
+    source_path: MCMMORPG/docker/mc
+    observed_at: 2026-08-03
+    scope: preflight state before deployment drill
+    summary: "Preflight on the observed legacy helper path showed `srv-hub`, `velocity`, and `mcmmorpg-mariadb` all `running|healthy` before the drill."
+    command: "cd MCMMORPG/docker && ./mc ps"
+
+  - evidence_id: EVID-DEPLOY-HUB-STOP-2026-08-03
+    source_type: runtime_test
+    source_path: MCMMORPG/docker/mc
+    observed_at: 2026-08-03
+    scope: controlled degradation step used as the rollback trigger checkpoint
+    summary: "The legacy helper path successfully stopped `srv-hub`; the container moved to `exited`, while `velocity` and `mcmmorpg-mariadb` remained `running|healthy`."
+    command: "cd MCMMORPG/docker && ./mc down hub"
+
+  - evidence_id: EVID-DEPLOY-HUB-SHUTDOWN-LOG-2026-08-03
+    source_type: log
+    source_path: docker://srv-hub
+    observed_at: 2026-08-03
+    scope: shutdown integrity during the rollback checkpoint
+    summary: "`srv-hub` emitted an orderly shutdown sequence: ProtocolLib, Vault, PlaceholderAPI, and LuckPerms disabled cleanly, world save completed, and `mc-server-runner` logged `Done`."
+    command: "docker logs --tail 80 srv-hub"
+
+  - evidence_id: EVID-DEPLOY-HUB-UP-2026-08-03
+    source_type: runtime_test
+    source_path: MCMMORPG/docker/mc
+    observed_at: 2026-08-03
+    scope: rollback/recovery to the last known-good hub slice
+    summary: "The same legacy helper path successfully re-started `srv-hub`; after startup delay the slice returned to `running|healthy` without disturbing `velocity` or `mcmmorpg-mariadb`."
+    command: "cd MCMMORPG/docker && ./mc up hub"
+
+  - evidence_id: EVID-DEPLOY-HUB-STARTUP-LOG-2026-08-03
+    source_type: log
+    source_path: docker://srv-hub
+    observed_at: 2026-08-03
+    scope: startup integrity after rollback to the known-good slice
+    summary: "`srv-hub` logged `PlaceholderAPI hooked`, `CMI Permission plugin: LuckPerms5.5.36`, `RCON running on 0.0.0.0:25575`, and `Done (27.928s)` before health became green."
+    command: "docker logs --tail 120 srv-hub"
+    notes: "Warnings remained consistent with the pre-existing baseline: offline/insecure mode, SQLite foreign-key limitations in Guilds, MythicLib warnings, and outdated-version notices."
+
+  - evidence_id: EVID-DEPLOY-HUB-RCON-PROBE-2026-08-03
+    source_type: command
+    source_path: docker://srv-hub
+    observed_at: 2026-08-03
+    scope: validation-channel availability after rollback
+    summary: "Direct `rcon-cli` probe did not return a useful payload in this run, so health and log-based checks remained the primary validation signals."
+    command: "docker exec srv-hub rcon-cli list"
+
+verdict: BLOCKED
+requested_status_transition: none
+status_update_applied: false
+
+scenario_verdicts:
+  legacy_helper_preflight: PASS
+  legacy_helper_slice_restart: PASS
+  legacy_helper_slice_rollback: PASS
+  release_safe_deployment_path: BLOCKED
+
+blockers:
+  - blocker_id: BLK-DEPLOY-001
+    status_family: release_status
+    summary: "The tested path is still the observed legacy `docker/mc` flow; there is no canonical selector mapping to the target `mcenv` interface."
+    required_evidence: "A tested deployment exercise on the canonical target-state selector model, or an approved mapping artifact tying legacy slices to `mcenv` selectors."
+    owner: domain-16
+    scope: deployment-path-mapping
+
+  - blocker_id: BLK-DEPLOY-002
+    status_family: release_status
+    summary: "Recovery gates remain only partially tested, so deployment evidence cannot claim full release-safe rollback semantics."
+    required_evidence: "Recovery evidence that covers the full mixed local-file plus MariaDB scope, not only the archived template and logical DB probe."
+    owner: domain-16
+    scope: recovery-precondition
+
+  - blocker_id: BLK-DEPLOY-003
+    status_family: runtime_status
+    summary: "This drill proves slice lifecycle control on `hub`, not rollback of changed jar/config/runtime inputs."
+    required_evidence: "A deployment exercise that changes a named runtime input and then reverts it with explicit before/after proof."
+    owner: domain-16
+    scope: deployment-change-revert
+
+summary: |
+  A real deployment/rollback control drill was executed on the running staging baseline using the currently observed legacy helper path
+  `MCMMORPG/docker/mc`. The `hub` slice was healthy before the drill, then was intentionally stopped, observed in a degraded state while
+  `velocity` and MariaDB stayed healthy, and finally brought back to `running|healthy` with the same startup footprint as before. This is
+  enough to prove that Domain 16 can perform and recover from a targeted backend lifecycle operation on the legacy path. It is not enough
+  to upgrade release status, because the tested path is not yet the canonical `mcenv` selector model and the drill did not revert an actual
+  jar/config change.
+
+notes:
+  - "This artifact proves legacy-path deployment control for one slice, not the target-state `mcenv` rollout model."
+  - "Hub restart reached `healthy` again at 2026-08-03T15:16:09+02:00 with `velocity` and `mcmmorpg-mariadb` still healthy."
+  - "The observed warning classes after restart matched the prior baseline and were treated as known compatibility/security caveats, not new deployment regressions."

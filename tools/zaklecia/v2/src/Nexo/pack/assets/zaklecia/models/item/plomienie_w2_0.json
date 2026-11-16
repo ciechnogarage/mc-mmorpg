@@ -1,0 +1,125 @@
+{
+ "textures": {
+  "p": "zaklecia:item/plomien",
+  "particle": "zaklecia:item/plomien"
+ },
+ "elements": [
+  {
+   "from": [
+    8,
+    8,
+    0
+   ],
+   "to": [
+    24,
+    8,
+    16
+   ],
+   "shade": false,
+   "light_emission": 15,
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8,
+     8,
+     8
+    ]
+   },
+   "faces": {
+    "up": {
+     "texture": "#p",
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "rotation": 90
+    }
+   }
+  }
+ ],
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    45
+   ],
+   "translation": [
+    0,
+    -3,
+    -4
+   ],
+   "scale": [
+    0.488,
+    0.488,
+    0.488
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    -45,
+    -45
+   ],
+   "translation": [
+    0,
+    -3,
+    -4
+   ],
+   "scale": [
+    0.488,
+    0.488,
+    0.488
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    28,
+    68,
+    45
+   ],
+   "translation": [
+    1.5,
+    2.6,
+    -1
+   ],
+   "scale": [
+    0.2154,
+    0.2154,
+    0.2154
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    28,
+    -68,
+    -45
+   ],
+   "translation": [
+    1.5,
+    2.6,
+    -1
+   ],
+   "scale": [
+    0.2154,
+    0.2154,
+    0.2154
+   ]
+  },
+  "head": {
+   "translation": [
+    0,
+    8,
+    0
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  }
+ }
+}

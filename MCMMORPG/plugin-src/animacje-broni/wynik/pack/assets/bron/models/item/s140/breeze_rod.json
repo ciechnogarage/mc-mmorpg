@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/breeze_rod",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    55
+   ],
+   "translation": [
+    -0.0,
+    7.078,
+    -0.043
+   ],
+   "scale": [
+    1.19,
+    1.19,
+    1.19
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -55
+   ],
+   "translation": [
+    0.0,
+    7.078,
+    -0.043
+   ],
+   "scale": [
+    1.19,
+    1.19,
+    1.19
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    -90,
+    25
+   ],
+   "translation": [
+    1.13,
+    4.375,
+    1.558
+   ],
+   "scale": [
+    0.816,
+    0.816,
+    0.816
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    90,
+    -25
+   ],
+   "translation": [
+    1.13,
+    4.375,
+    1.558
+   ],
+   "scale": [
+    0.816,
+    0.816,
+    0.816
+   ]
+  }
+ }
+}

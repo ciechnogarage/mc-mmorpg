@@ -1,0 +1,9 @@
+# Runda 1 — przypadki brzegowe
+
+Scenariusz `bot/scenariusze/EDGE.js` wykonuje śmierć przy `keep_inventory=false`, wypełnienie wszystkich 36 slotów plecaka/hotbara (z zachowaniem już zajętych), zmianę do drugiego świata utworzonego przez Multiverse na klonie, śmierć i relog z paskiem Shift+Q oraz wyzerowanie many podczas siedmiu reprezentatywnych typów zaklęć. Każdy krok uruchamia kontrolę niezmienników; flaga keepInventory jest przywracana w `finally`.
+
+Test drugiego świata na klonie tworzy trwały świat testowy `zak_b_r1`; samo istnienie świata nie jest dowodem poprawnego posprzątania run i przywołańców w starym świecie, więc należy czytać także kontrolę encji po sprzątaniu.
+
+`kolejka/b-1-26.out`, JAR md5 `1a1994fbc239`: 12 PASS / 2 FAIL / 0 BLAD; wszystkie 16 testów jednostkowych harnessu PASS. `keep_inventory=false`: śmierć od upadku i pusty placeholder dłoni potwierdzone (PASS). Pełny ekwipunek 36/36 podczas przywołania miecza: przed/po 0 rozbieżności Inventory (PASS). Multiverse utworzył `zak_b_r1`, gracz został przeniesiony do drugiego świata, potem wrócił (PASS). `b-1-24.out`, ten sam JAR, pierwszy raz zatrzymał się na limicie odpowiedzi RCON przy tworzeniu świata; świat jednak powstał i po obsłużeniu długiej odpowiedzi ponowienie przeszło.
+
+Śmierć z otwartym paskiem: 0 pakietów BossBar REMOVE (`EDGE-smierc-pasek` FAIL). Późniejszy checker odnotował brak REMOVE dla tych samych dwóch identyfikatorów po interakcji Q (`INV-EDGE-mana-plomienie` FAIL). Po relogu trwającym 1,2 s z otwartym paskiem nie ma magicznych BossBarów po powrocie (PASS). Zerowanie many w trakcie Płomieni, Ognistego pocisku, Runy ognia, Osłony, Przywołanego miecza, Ducha wilka i Uspokojenia: każde kończy ze stanem `gotowa`, mana 0,2–0,3 po regeneracji, bez wartości ujemnej (7 PASS). Po końcowym sprzątaniu 0 osieroconych encji w arenie; w krokach EDGE checker nie zgłosił różnic Inventory ani nowego wyjątku Zaklec poza problemem pasków.

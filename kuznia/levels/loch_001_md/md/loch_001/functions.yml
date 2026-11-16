@@ -1,0 +1,508 @@
+Version: 1
+Functions:
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_przybycie
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 103.0
+    z: 126.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionCheckpoint
+  savePoint: false
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 2.0
+    y: 102.0
+    z: 118.0
+    pitch: 0.0
+    yaw: 0.0
+  pitch: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: true
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_starcie_A
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 24.0
+    y: 103.0
+    z: 98.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 11.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_populacja
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 0.0
+    y: 104.0
+    z: 127.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_zasadzka_C
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 51.0
+    y: 103.0
+    z: 63.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 5.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionCheckpoint
+  savePoint: false
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 56.0
+    y: 101.0
+    z: 53.0
+    pitch: 0.0
+    yaw: 0.0
+  pitch: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: true
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 6.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_szept_kwiat
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 61.0
+    y: 105.0
+    z: 71.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 7.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_szept_zakatek
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 63.0
+    y: 103.0
+    z: 84.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 4.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_szept_boss
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 58.0
+    y: 104.0
+    z: 51.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 5.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_okruszek_plecak_w1
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 13.0
+    y: 104.0
+    z: 95.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 3.5
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_okruszek_plecak_w2
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 24.0
+    y: 104.0
+    z: 83.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 3.5
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_okruszek_tarcza
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 57.0
+    y: 104.0
+    z: 66.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 3.5
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_ziele_zbior
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: -4.0
+    y: 102.0
+    z: 108.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 1.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_ziele_zbior
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 22.0
+    y: 103.0
+    z: 104.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 1.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_ziele_zbior
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 36.0
+    y: 103.0
+    z: 90.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 1.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_skrytki_budz
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 16.0
+    y: 104.0
+    z: 105.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 12.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_skrytka_w1
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 10.0
+    y: 103.0
+    z: 92.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 2.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_skrytka_w2
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 20.0
+    y: 103.0
+    z: 78.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 2.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_dziennik
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 55.0
+    y: 102.0
+    z: 56.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 2.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_skarb
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 64.0
+    y: 102.0
+    z: 82.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 2.8
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_latarnia_budz
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 56.0
+    y: 104.0
+    z: 93.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 8.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_boss_intro
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 58.0
+    y: 104.0
+    z: 45.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerDistance
+    delayTicks: 0
+    forEachPlayer: false
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 9.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionMythicSkill
+  mythicSkill: loch_001_koniec
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 58.0
+    y: 102.0
+    z: 42.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: L001_STARY_KORZEN
+    delayTicks: 20
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []
+- ==: net.playavalon.mythicdungeons.dungeons.functions.FunctionFinishDungeon
+  leave: true
+  targetType:
+    ==: net.playavalon.mythicdungeons.api.parents.FunctionTargetType
+    value: PARTY
+  location:
+    ==: org.bukkit.Location
+    x: 58.0
+    y: 103.0
+    z: 42.0
+    pitch: 0.0
+    yaw: 0.0
+  trigger:
+    ==: net.playavalon.mythicdungeons.dungeons.triggers.TriggerMythicMobDeath
+    mob: L001_STARY_KORZEN
+    delayTicks: 480
+    limitToRoom: false
+    count: 1
+    allowRetrigger: false
+    radius: 0.0
+    conditions: []

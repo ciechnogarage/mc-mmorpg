@@ -1,0 +1,40 @@
+# Pasek aktywnego Chowańca (SPEC §5: MythicHUD — HP i poziom aktywnego stwora). Agent B.
+# Dane z placeholderów silnika (KONTRAKT §14): aktywny_nazwa/poziom/hp/hpmax/exp_procent/istnieje.
+# Ukryty, gdy gracz nie ma przywołanego stwora albo jest w SPECTATOR (kreator postaci — jak 'sword').
+chowaniec:
+  conditions:
+  # 2026-09-30: warunki były odwrócone (hide chowa, gdy wynik ≠ podany) — pasek nie pokazywał się nigdy w survivalu.
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - placeholder{ph=%chowance_aktywny_istnieje%;val=tak} true hide
+    - placeholder{ph=%chowance_walka_aktywna%;val=tak} false hide   # w walce panele chowance-walka-*
+  # Kolejność: pierwsza warstwa rysuje się NA WIERZCHU — rama (ciemne tło) musi być ostatnia.
+  layers:
+    nazwa:
+      text: "<#F2D27A>%chowance_aktywny_nazwa% <gray>poz. <white>%chowance_aktywny_poziom%"
+      font: "default"
+      outlined: true
+      align: right
+      offset: {x: 1, y: 10}
+    hp:
+      texture:
+        path: assets/chowance/hp.png
+      color: white
+      offset: {x: 2, y: -2}
+      function:
+        listener: chowaniec_hp
+        increment: 92
+        orientation: horizontal
+    exp:
+      texture:
+        path: assets/chowance/exp.png
+      color: white
+      offset: {x: 2, y: -6}
+      function:
+        listener: chowaniec_exp
+        increment: 92
+        orientation: horizontal
+    rama:
+      texture:
+        path: assets/chowance/rama.png
+      color: white
+      offset: {x: 0, y: 0}

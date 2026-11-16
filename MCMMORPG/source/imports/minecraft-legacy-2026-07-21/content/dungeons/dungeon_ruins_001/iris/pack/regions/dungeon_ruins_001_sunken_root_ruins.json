@@ -1,0 +1,6 @@
+{
+  "name": "Sunken Root Ruins",
+  "landBiomes": [ "dungeon_ruins_001_sunken_root_ruins" ],
+  "seaBiomes": [ "dungeon_ruins_001_sunken_root_ruins" ],
+  "shoreBiomes": [ "dungeon_ruins_001_sunken_root_ruins" ]
+}

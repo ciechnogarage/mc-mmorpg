@@ -1,0 +1,16 @@
+# TYLKO NA KLONIE (wgraj.sh): te same mechaniki co trafienia zaklec Plomienie/Odmrozenie (mmodamage MythicLib z zywiolem),
+# rzucone przez gracza na Kosiarza. Bez TargetConditions mmoCanTarget: przy `mm test cast` nie przepuszcza celu.
+TRAF_TEST_OGIEN:
+  Skills:
+  - skill{s=TRAF_TEST_OGIEN_TRAF} @EntitiesInRadius{r=8;types=VINDICATOR}
+TRAF_TEST_OGIEN_TRAF:
+  Skills:
+  - mmodamage{a=4;t=SKILL,MAGIC;element=FIRE}
+  - ignite{ticks=40}
+TRAF_TEST_LOD:
+  Skills:
+  - skill{s=TRAF_TEST_LOD_TRAF} @EntitiesInRadius{r=8;types=VINDICATOR}
+TRAF_TEST_LOD_TRAF:
+  Skills:
+  - mmodamage{a=3.5;t=SKILL,MAGIC;element=ICE}
+  - freeze{ticks=160}

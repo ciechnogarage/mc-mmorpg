@@ -1,0 +1,28 @@
+names:
+  # Losowe imiona w klimacie rasy (przycisk "Losuj imie" w ksiedze "Nowa postac"): poczatek + koncowka.
+  # Naprawa 2026-09-30: wieksza pula (ok. 500-700 kombinacji na rase, bylo ~170), zadnych cyfr.
+  # Kazde wylosowane imie przechodzi NameRules (dlugosc, filtr names.blocked) i nie moze byc zajete.
+  czlowiek:
+    start: [Bor, Rad, Jar, Mir, Sta, Dobr, Wit, Bol, Zby, Ciech, Przem, Wal, Gost, Lech, Mies, Sob,
+            Święt, Krze, Mści, Dziers, Racib, Siem, Bogu, Jaro, Ziem, Tom, Wład, Czes, Grzy]
+    end: [osław, omir, owit, ogost, obor, ek, an, imir, idar, ko, uch, osz, ota, isz, ard, omił, ierz, aw, ysław, ian]
+  elf:
+    start: [Ae, Ela, Fae, Gal, Ith, Lae, Mir, Syl, Thal, Ely, Cae, Nim, Ser, Ara, Lue,
+            Ere, Ilu, Oro, Qui, Tae, Ven, Yla, Aur, Cel, Fin, Lir, Nae, Rho, Vae]
+    end: [rion, wen, dril, thas, riel, lith, nor, ael, andil, iel, ara, ethil, orin, wyn, las, mir, dhel, ion, quen, sara, thiel]
+  ork:
+    start: [Gro, Kra, Mug, Thra, Zog, Gor, Brak, Urg, Dur, Snag, Grim, Rok, Yaz, Mog,
+            Bol, Drak, Ghaz, Hrum, Kag, Lug, Nar, Ruk, Skar, Tuk, Vor, Zar, Bur, Grut]
+    end: [gash, nak, dush, rok, gul, thak, mok, zug, grub, bag, ok, ash, gor, tar, ruk, dak, muk, zor, hul, kar]
+  nieumarly:
+    start: [Mor, Vex, Sil, Kar, Nyx, Ash, Grav, Vel, Mal, Sor, Ze, Obs, Cryp, Um,
+            Dre, Gho, Lich, Mourn, Rav, Sep, Tho, Vor, Wra, Xal, Yrg, Hal, Kor, Nec]
+    end: [grim, thul, mar, vane, rik, ius, oth, ane, ekh, ul, is, orn, thas, ra, mos, eth, oon, ax, iel, ur]
+  # Filtr imion (NameRules): slowo z listy gdziekolwiek w imieniu = odmowa. Porownanie bez wielkosci
+  # liter, polskich znakow, podkreslnikow i powtorzen, z podstawowym leetspeakiem (0=o, 1=i, 3=e, 4=a,
+  # 5=s, 7=t, 8=b, 9=g). Unikac krotkich slow, ktore siedza w zwyklych imionach (ass, cum, nazi, suka).
+  # Pusta lista = lista wbudowana w plugin.
+  blocked: [kurw, chuj, huj, pierdol, pierdziel, jeban, jebac, jebie, zajeb, wyjeb, pojeb, spierdal,
+            skurwysyn, skurwiel, cipa, cipsk, pizda, pizdzi, dziwk, szmata, fiut, kutas, pedal, cwel,
+            debil, kretyn, sukinsyn, hitler, fuck, shit, bitch, whore, slut, cunt, pussy, nigger, nigga,
+            faggot, retard, porn, penis, vagina]

@@ -1,7 +1,9 @@
 'use strict'
 /** Pelny cykl: wejscie -> kreator -> wybor -> zatwierdzenie -> wyjscie w bezpieczne miejsce. */
 const H = require('../lib/harness'); const F = require('../lib/flow')
-const EXIT = { x: 239.5, y: 63, z: 208.5 }
+// Musi byc to samo, co 'creator-room.exit' w config.yml. Przeniesione 2026-09-20 ze
+// 239.5/63/208.5 — tamto miejsce jest pod woda.
+const EXIT = { x: 149.5, y: 99, z: 197.5 }
 module.exports = async function (r) {
   const bot = await H.connect('EvCykl' + Date.now() % 100000)
   try {

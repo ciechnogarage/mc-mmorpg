@@ -1,0 +1,15 @@
+# No timer or autonomous combat skills. PetCore invokes the one utility skill
+# only after the lease, content mode and allow-list checks pass.
+PetCore_GlobalPetSpawn:
+  Skills:
+    - effect:sound{s=entity.wolf.ambient;volume=0.35;pitch=1.1} @self
+
+PetCore_GlobalPetDeath:
+  Skills:
+    - effect:sound{s=entity.wolf.death;volume=0.45;pitch=1.0} @self
+
+PetCore_GlobalPetPulse:
+  Cooldown: 3
+  Skills:
+    - effect:sound{s=entity.wolf.pant;volume=0.35;pitch=1.3} @self
+    - particles{particle=heart;amount=2;hSpread=0.2;vSpread=0.25;yOffset=0.7} @self

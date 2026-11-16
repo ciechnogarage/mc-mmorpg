@@ -1,0 +1,154 @@
+# Karta 142x66 GUI. 2x textures split into 124+18 GUI; first layer is on top.
+karta-wedrowca:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+  layers:
+    poziom:
+      text: '<#FFF1CC>%mmocore_level%'
+      font: default
+      outlined: true
+      align: center
+      offset: {x: 34, y: -49}
+    nick:
+      text: '<#FFF1CC>%player_name%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 44, y: -5}
+    klasa:
+      text: '<#D5A96B>%mmocore_class%'
+      font: default
+      outlined: true
+      align: right
+      offset: {x: 43, y: -19}
+    alarm-portret:
+      texture: {path: assets/karta/portret_alarm.png}
+      scale: 0.5
+      offset: {x: 3, y: -21}
+      conditions:
+        - progress{l=hp;o=<;v=25%} true hide
+    hp-uschnięcie:
+      texture: {path: assets/karta/hp_uschniecie.png}
+      scale: 0.5
+      offset: {x: 47, y: -34}
+      function: {listener: health, increment: 90, orientation: horizontal}
+      conditions:
+        - effect{e=wither} true hide
+    hp-trucizna:
+      texture: {path: assets/karta/hp_trucizna.png}
+      scale: 0.5
+      offset: {x: 47, y: -34}
+      function: {listener: health, increment: 90, orientation: horizontal}
+      conditions:
+        - effect{e=poison} true hide
+    absorpcja:
+      texture: {path: assets/karta/absorpcja.png}
+      scale: 0.5
+      offset: {x: 47, y: -40}
+      function: {listener: absorpcja, increment: 90, orientation: horizontal}
+      conditions:
+        - progress{l=absorpcja;o=>;v=0} true hide
+    hp:
+      texture: {path: assets/karta/hp.png}
+      scale: 0.5
+      offset: {x: 47, y: -34}
+      function: {listener: health, increment: 90, orientation: horizontal}
+    mana-ikona:
+      texture: {path: assets/karta/kropla.png}
+      scale: 0.5
+      offset: {x: 45, y: -44}
+    stamina-ikona:
+      texture: {path: assets/karta/blysk.png}
+      scale: 0.5
+      offset: {x: 45, y: -52}
+    mana:
+      texture: {path: assets/karta/mana.png}
+      scale: 0.5
+      offset: {x: 54, y: -46}
+      function: {listener: mana, increment: 84, orientation: horizontal}
+    stamina-alarm:
+      texture: {path: assets/karta/stamina.png}
+      scale: 0.5
+      color: '#8A6A30'
+      offset: {x: 54, y: -54}
+      function: {listener: stamina, increment: 84, orientation: horizontal}
+      conditions:
+        - progress{l=stamina;o=<;v=20%} true hide
+    stamina:
+      texture: {path: assets/karta/stamina.png}
+      scale: 0.5
+      offset: {x: 54, y: -54}
+      function: {listener: stamina, increment: 84, orientation: horizontal}
+    doswiadczenie:
+      texture: {path: assets/karta/exp.png}
+      scale: 0.5
+      offset: {x: 47, y: -62}
+      function: {listener: doswiadczenie, increment: 90, orientation: horizontal}
+    medalion:
+      texture: {path: assets/karta/medalion.png}
+      scale: 0.5
+      offset: {x: 24, y: -45}
+    glowa:
+      head: {size: 4}
+      align: right
+      offset: {x: 8, y: -52}
+    tlo-koniec:
+      texture: {path: assets/karta/karta_koniec.png}
+      scale: 0.5
+      offset: {x: 124, y: 0}
+    tlo:
+      texture: {path: assets/karta/karta_tlo.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+
+# Napisy warunkowe: warunki na warstwach TEKSTOWYCH sa ignorowane (zmierzone w kliencie 03.10),
+# dlatego kazdy stan to osobny asset z warunkiem assetu. Warstwa 'hp'/'stamina' (dane.png) daje
+# %hp-value% i progress{l=...}.
+karta-hp-ok:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - progress{l=hp;o=>=;v=25%} true hide
+  layers:
+    tekst:
+      text: '<#FFF1CC>%hp-value% / %hp-max%'
+      font: default
+      outlined: true
+      align: center
+      offset: {x: 92, y: -33}
+    hp:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+karta-hp-niskie:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - progress{l=hp;o=<;v=25%} true hide
+  layers:
+    tekst:
+      text: '<#F36D62>%hp-value% / %hp-max%'
+      font: default
+      outlined: true
+      align: center
+      offset: {x: 92, y: -33}
+    hp:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: health, increment: 1, orientation: horizontal}
+karta-stamina-niska:
+  conditions:
+    - placeholder{ph=%player_gamemode%;val=SPECTATOR} false hide
+    - progress{l=stamina;o=<;v=20%} true hide
+  layers:
+    znak:
+      text: '<#F36D62>!'
+      font: default
+      outlined: true
+      align: left
+      offset: {x: 134, y: -50}
+    stamina:
+      texture: {path: assets/karta/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: stamina, increment: 1, orientation: horizontal}

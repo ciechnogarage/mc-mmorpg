@@ -1,0 +1,83 @@
+# HUD v4: cel walki, loch, zdobycz, ostrzezenia.
+l4-layout:
+  elements:
+    cel-walki-zwykly:
+      asset: l4-cel-walki-zwykly
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -65, y: 130}
+    loch:
+      asset: l4-loch
+      align: right
+      position: {x: 100.0, y: 70.0}
+      offset: {x: -234, y: -32}
+    zdobycz1-exp:
+      asset: l4-zdobycz1-exp
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 34}
+    zdobycz1-profesja:
+      asset: l4-zdobycz1-profesja
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 34}
+    zdobycz1-przedmiot:
+      asset: l4-zdobycz1-przedmiot
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 34}
+    zdobycz2-exp:
+      asset: l4-zdobycz2-exp
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 44}
+    zdobycz2-profesja:
+      asset: l4-zdobycz2-profesja
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 44}
+    zdobycz2-przedmiot:
+      asset: l4-zdobycz2-przedmiot
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 44}
+    zdobycz3-exp:
+      asset: l4-zdobycz3-exp
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 54}
+    zdobycz3-profesja:
+      asset: l4-zdobycz3-profesja
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 54}
+    zdobycz3-przedmiot:
+      asset: l4-zdobycz3-przedmiot
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 54}
+    zdobycz4-exp:
+      asset: l4-zdobycz4-exp
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 64}
+    zdobycz4-profesja:
+      asset: l4-zdobycz4-profesja
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 64}
+    zdobycz4-przedmiot:
+      asset: l4-zdobycz4-przedmiot
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 140, y: 64}
+    ostrz-zuzycie:
+      asset: l4-ostrz-zuzycie
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -91, y: 64}
+    ostrz-pelny:
+      asset: l4-ostrz-pelny
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -91, y: 64}

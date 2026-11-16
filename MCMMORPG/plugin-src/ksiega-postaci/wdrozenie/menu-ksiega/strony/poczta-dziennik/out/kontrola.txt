@@ -1,0 +1,7 @@
+dziennik_przygod: 8 itemów, 19 zajętych slotów, 18 placeholderów z DZIENNIK.md.
+poczta: 4 itemy, 21 zajętych slotów; odczyt i [close] w poprawnej kolejności.
+hub_glowne: 12/12 starych itemów i wszystkie stare komendy zachowane; zmiana tylko bloków dziennik/poczta.
+Usunięte Wstecz/Zamknij: brak w wejściowych blokach; nie dodano duplikatu plakietki.
+Oba menu: sloty 0–53, grzbiet wolny, duplikaty 0, update true, update_interval 20.
+Grafika: 4 ćwiartki na menu 176×222, arkusz 704×444, paleta K12, osierocone piksele 0.
+Glify: U+4B00–U+4B07; rodzic obu: hub_glowne.

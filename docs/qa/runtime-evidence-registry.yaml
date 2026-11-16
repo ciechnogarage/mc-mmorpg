@@ -1,0 +1,432 @@
+schema_version: 1
+metadata:
+  registry_id: domain-17-runtime-evidence-registry
+  domain: 17
+  stage: 1
+  authority: normative_shape_non_authoritative_records_empty
+  source_of_truth_status: inactive_until_cutover
+  validator: tools/qa/validate-schemas.mjs
+  cutover_checklist:
+    checklist_id: DOMAIN_17_QA_SOURCE_OF_TRUTH_CUTOVER
+    path: docs/qa/cutover-checklist.md
+    registry_population_item: D17-CUTOVER-03
+    current_status: open
+  migration_snapshot:
+    snapshot_id: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+    path: docs/qa/legacy-evidence-migration-snapshot.yaml
+    sha256: 6304f8f4d55db58d914b91eaa5f9d91edd9dd163df66b1bcf77623ae724c291e
+    required_reference_field: migration_snapshot_ref
+    legacy_source_ids:
+      - runtime_evidence_register_2026_07_13
+      - vertical_slice_e2e_runtime_gate
+      - persistence_restart_matrix
+  record_contract:
+    required_provenance_fields:
+      - migration_snapshot_ref
+      - legacy_source_ids
+      - legacy_sha256
+      - legacy_status_mapping
+    required_context_fields:
+      - domain
+      - system
+      - environment
+      - test_type
+      - scenario_id
+    required_build_fields:
+      - build.commit
+      - build.paper
+      - build.plugin_manifest_hash
+      - build.plugin_jar_inventory_hash
+      - build.configuration_hashes
+    required_execution_fields:
+      - execution.runner
+      - execution.backend
+      - execution.docker_volume_id
+      - execution.test_account_uuid
+      - execution.started_at
+      - execution.finished_at
+      - execution.executed_by
+      - execution.log_paths
+      - execution.environment_control.lease
+      - execution.environment_control.workspace_root
+      - execution.environment_control.runtime_touched
+      - execution.environment_control.staging_touched
+      - execution.environment_control.rollback.method
+      - execution.environment_control.rollback.proof_paths
+    required_result_fields:
+      - result.verdict
+      - result.observations
+    invalidation_rules:
+      - missing build.commit invalidates the record
+      - missing build.plugin_manifest_hash invalidates the record
+      - missing scenario_id invalidates the record
+      - missing migration_snapshot_ref invalidates migrated evidence
+      - mismatched migration snapshot hash requires review before migration
+  artifact_pointer_policy:
+    embed_large_logs: false
+    artifacts_live_in:
+      - MCMMORPG/logs
+      - MCMMORPG/_validation/reports
+      - tools/qa/reports
+      - docs/qa/evidence
+    required_artifact_fields:
+      - kind
+      - path
+      - sha256
+      - produced_at
+      - retention_note
+  blocker_resolution_policy:
+    notes_live_in: docs/qa/blocker-resolution-notes
+    record_fields:
+      - blockers
+      - result.blocker_ids
+      - result.observations
+    required_blocker_fields:
+      - blocker_id
+      - source_id
+      - status
+      - owner
+      - resolution_evidence_paths
+      - release_effect
+  baseline_note: >
+    This registry defines the normative Stage 1 record shape and provenance
+    requirements. It intentionally contains no runtime evidence records until
+    downstream tickets collect or migrate real proof. The legacy inputs remain
+    active runtime truth until DOMAIN_17_QA_SOURCE_OF_TRUTH_CUTOVER is complete.
+records:
+  - evidence_id: character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked
+    superseded_by: character_creator_login_persistence_character_persistence_prerequisite_blocked_2026_08_06_blocked
+    scenario_id: character_creator_login_persistence
+    domain: character
+    system: character_creator_login_persistence
+    environment: dev-qa
+    test_type: character_persistence_runtime_evidence
+    contract_status: blocked
+    runtime_status: blocked
+    release_effect: blocks_release
+    migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+    legacy_source_ids:
+      - runtime_evidence_register_2026_07_13
+      - vertical_slice_e2e_runtime_gate
+      - persistence_restart_matrix
+    legacy_sha256:
+      - a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf
+      - aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79
+      - 87b9b8a1dc78db66ada1bb01dd7f5b378627cc2e5b19bd53f3e0f77d36326df9
+    legacy_status_mapping:
+      - BLOCKED remains result.verdict BLOCKED for environment/prerequisite blocker evidence
+      - No runtime_status verified promotion is allowed without runtime and player proof
+    proof_level_mapping:
+      supported_levels:
+        - STATIC_CONTRACT
+        - RUNTIME_PROOF
+        - INTEGRATION_PROOF
+        - PLAYER_PROOF
+      requiredProof:
+        - STATIC_CONTRACT
+        - RUNTIME_PROOF
+        - PLAYER_PROOF
+      achievedProof:
+        - STATIC_CONTRACT
+      missingProof:
+        - RUNTIME_PROOF
+        - PLAYER_PROOF
+      highest_achieved: STATIC_CONTRACT
+    preconditions:
+      - Required explicit dev-qa lease must exist before runtime work.
+      - Runtime backend must be isolated before Mineflayer/RCON validation.
+      - Rollback proof must exist before runtime mutation.
+    steps:
+      - Ran MCMMORPG/infra/bin/mc-lease validate.
+      - Ran MCMMORPG/infra/bin/mc-lease show qa.
+      - Stopped before runtime execution because no active dev-qa lease exists.
+    assertions:
+      - No runtime evidence may be claimed without a valid dev-qa lease.
+      - Missing lease blocks character persistence runtime verification.
+      - No rollback of runtime state is required when runtime_touched is false.
+    artifacts:
+      - kind: foundation-runtime-report
+        path: docs/qa/evidence/character_creator_login_persistence_no_lease/foundation-report.json
+        sha256: 20db76af305430ecccd6d3464e0eef95f74cdcf6ff0fd5f31d10a8a8a8493bc7
+      - kind: lease-proof
+        path: docs/qa/evidence/character_creator_login_persistence_no_lease/lease-proof.txt
+        sha256: d2d90dbb92243ceb536536364185864c67ace60d14674472c304a7eff5c35183
+      - kind: rollback-restore-proof
+        path: docs/qa/evidence/character_creator_login_persistence_no_lease/rollback-restore-proof.md
+        sha256: f68373638cf6c783e6e52d9b16b0eb0134710ebf877a360c19b92a21ae7424b8
+      - kind: emitted-evidence-record
+        path: docs/qa/evidence/character_creator_login_persistence_no_lease/evidence-record.json
+        sha256: 16c087f197e941f05aa07fa1830eb71ee3326d1a606de948c15091740adc44c6
+    build:
+      paper: baseline-no-runtime
+      plugin_manifest_hash: baseline-no-runtime
+      commit: baseline-no-runtime
+      plugin_jar_inventory_hash: not_collected_no_valid_lease
+      configuration_hashes: {}
+    execution:
+      runner: tools/qa/adapters/foundation-runtime.mjs
+      backend: dev-qa
+      docker_volume_id: not_allocated_no_valid_lease
+      test_account_uuid: not_created_no_valid_lease
+      started_at: "2026-07-31T00:00:00Z"
+      finished_at: "2026-07-31T00:00:00Z"
+      executed_by: domain-17-character-persistence-evidence-records
+      log_paths:
+        - docs/qa/evidence/character_creator_login_persistence_no_lease/lease-proof.txt
+      environment_control:
+        lease: none
+        workspace_root: /home/przemek/projects/MC
+        runtime_touched: false
+        staging_touched: false
+        rollback:
+          method: not_required_no_runtime_touched
+          proof_paths:
+            - docs/qa/evidence/character_creator_login_persistence_no_lease/rollback-restore-proof.md
+    result:
+      verdict: BLOCKED
+      proof_level: STATIC_CONTRACT
+      blocker_ids:
+        - D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE
+        - missing_runtime_evidence
+      observations:
+        - mc-lease registry is valid.
+        - mc-lease show qa reported zero active leases for the required scope.
+        - Runtime validation was not attempted.
+        - No backend, Docker container, RCON session, Mineflayer bot, world data, player data, plugin config, or staging state was touched.
+  - evidence_id: character_creator_login_persistence_character_persistence_prerequisite_blocked_2026_08_06_blocked
+    supersedes: character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked
+    scenario_id: character_creator_login_persistence
+    domain: character
+    system: character_creator_login_persistence
+    environment: dev-qa
+    test_type: character_persistence_runtime_admission
+    contract_status: proposed
+    runtime_status: blocked
+    release_effect: blocks_release
+    migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+    legacy_source_ids:
+      - runtime_evidence_register_2026_07_13
+      - vertical_slice_e2e_runtime_gate
+      - persistence_restart_matrix
+    legacy_sha256:
+      - a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf
+      - aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79
+      - 87b9b8a1dc78db66ada1bb01dd7f5b378627cc2e5b19bd53f3e0f77d36326df9
+    legacy_status_mapping:
+      - This record supersedes the obsolete no-lease blocker with current prerequisite evidence.
+      - No runtime_status verified promotion is allowed without runtime and player proof.
+    evidence_types: []
+    contract_refs: []
+    metadata: {}
+    proof_level_mapping:
+      supported_levels:
+        - STATIC_CONTRACT
+        - RUNTIME_PROOF
+        - INTEGRATION_PROOF
+        - PLAYER_PROOF
+      requiredProof:
+        - STATIC_CONTRACT
+        - RUNTIME_PROOF
+        - PLAYER_PROOF
+      achievedProof:
+        - STATIC_CONTRACT
+      missingProof:
+        - RUNTIME_PROOF
+        - PLAYER_PROOF
+      highest_achieved: STATIC_CONTRACT
+    preconditions:
+      - docs/contracts/account-character-contract.yaml must be approved and runtime-ready.
+      - The dev-qa secret environment must exist so the isolated backend can start.
+      - A disposable account UUID, field-based snapshot collector, duplicate-profile assertion, and rollback plan must exist before mutation.
+    steps:
+      - Ran MCMMORPG/infra/bin/mc-lease validate.
+      - Ran MCMMORPG/infra/bin/mc-lease export-env qa.
+      - Ran MCMMORPG/infra/bin/mcenv ps dev qa.
+      - Ran node MCMMORPG/_validation/validate_character_sector.js.
+      - Ran node MCMMORPG/_validation/check_character_stage_scaffold.js.
+      - Stopped before runtime execution because the governing contract is proposed/blocked and the isolated backend cannot start without its secret environment.
+    assertions:
+      - The active lease is dev-qa; the historic no-lease reason no longer applies.
+      - No account UUID, bot transcript, before/after snapshots, restart/reconnect proof, or backend logs were produced because runtime was not admitted.
+      - Field-based snapshot comparison and duplicate-profile prevention remain unverified at runtime and cannot be promoted from static checks.
+    artifacts:
+      - kind: foundation-runtime-report
+        path: docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/foundation-report.json
+        sha256: 7ebf0c7fb11fe357183621e980cb6c2610c2b2ac8747a2e7e8ededaed22c46a3
+      - kind: lease-proof
+        path: docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/lease-proof.txt
+        sha256: 3b72e22600d9c200e742dad9e41be558a17d617aaab51bed2c4ecf5136062349
+      - kind: runtime-admission
+        path: docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/runtime-admission.txt
+        sha256: e2e85a641b0bba310bb8d55f1eb4ecf98705d7bbc745e9488893d388569d8581
+      - kind: static-inspection
+        path: docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/static-inspection.md
+        sha256: b138a576fa7417d69ad09e2deda607da5b9ac18abadddeaa4000287697b61c7e
+      - kind: rollback-restore-proof
+        path: docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/rollback-restore-proof.md
+        sha256: 8f49ec24efd41689bb17e349f64c5018e8faacaaa49aa5fa6d196de6591c842c
+    build:
+      paper: baseline-no-runtime
+      plugin_manifest_hash: baseline-no-runtime
+      commit: baseline-no-runtime
+      plugin_jar_inventory_hash: not_collected_runtime_not_admitted
+      configuration_hashes: {}
+    execution:
+      runner: tools/qa/adapters/foundation-runtime.mjs
+      backend: dev-qa-not-provisioned
+      docker_volume_id: not-created-runtime-not-admitted
+      test_account_uuid: not-created-prerequisite-blocked
+      started_at: "2026-08-06T10:04:14Z"
+      finished_at: "2026-08-06T10:04:25Z"
+      executed_by: domain-17-character-persistence-evidence-records
+      log_paths:
+        - docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/runtime-admission.txt
+      environment_control:
+        lease: dev-qa
+        workspace_root: /home/przemek/projects/MC
+        runtime_touched: false
+        staging_touched: false
+        rollback:
+          method: not_required_no_runtime_mutation
+          proof_paths:
+            - docs/qa/evidence/character_creator_login_persistence_prerequisite_blocked_2026-08-06/rollback-restore-proof.md
+    result:
+      verdict: BLOCKED
+      proof_level: STATIC_CONTRACT
+      blocker_ids:
+        - D17-CHARACTER-PERSISTENCE-CONTRACT-NOT-APPROVED
+        - D17-CHARACTER-PERSISTENCE-DEV-QA-RUNTIME-NOT-PROVISIONED
+        - missing_runtime_evidence
+      observations:
+        - Owner Domain 02 must approve and make the account-character contract runtime-ready before a persistence PASS can be attempted.
+        - Lease owner dff7e768-43cf-417d-80c2-77cfca371e14 must provision the dev-qa secret environment and isolated stack before a bot run can be admitted.
+        - No runtime or staging state was touched.
+  - evidence_id: reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked
+    scenario_id: reward_restart_recovery
+    domain: economy
+    system: quest_reward
+    environment: dev-qa
+    test_type: reward_idempotency_runtime_evidence
+    contract_status: blocked
+    runtime_status: blocked
+    release_effect: blocks_release
+    migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+    legacy_source_ids:
+    - runtime_evidence_register_2026_07_13
+    - vertical_slice_e2e_runtime_gate
+    legacy_sha256:
+    - a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf
+    - aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79
+    legacy_status_mapping:
+    - Prerequisite BLOCKED remains result.verdict BLOCKED for reward idempotency evidence materialization.
+    - No runtime_status verified promotion is allowed without reward_transaction_id, idempotency_key, runtime duplicate-rejection
+      proof, and player-visible restart recovery proof.
+    proof_level_mapping:
+      supported_levels:
+      - STATIC_CONTRACT
+      - RUNTIME_PROOF
+      - INTEGRATION_PROOF
+      - PLAYER_PROOF
+      requiredProof:
+      - STATIC_CONTRACT
+      - RUNTIME_PROOF
+      - INTEGRATION_PROOF
+      - PLAYER_PROOF
+      achievedProof:
+      - STATIC_CONTRACT
+      missingProof:
+      - RUNTIME_PROOF
+      - INTEGRATION_PROOF
+      - PLAYER_PROOF
+      highest_achieved: STATIC_CONTRACT
+    preconditions:
+    - Scenario reward_restart_recovery must already exist in docs/qa/e2e-scenarios.yaml.
+    - Prerequisite checkpoint decision must be consumed before runtime evidence materialization.
+    - A valid explicit dev-qa lease must exist before runtime work.
+    - reward_transaction_id owner must be explicit before PASS evidence can be collected.
+    - idempotency_key owner must be explicit before PASS evidence can be collected.
+    - duplicate_rejection_proof_path must identify an API, telemetry query, or runner before PASS evidence can be collected.
+    steps:
+    - Read docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/decision.yaml.
+    - Read docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json.
+    - Ran MCMMORPG/infra/bin/mc-lease validate.
+    - Ran MCMMORPG/infra/bin/mc-lease show qa.
+    - Stopped before runtime execution because no active dev-qa lease exists and the prerequisite checkpoint is blocked.
+    - Materialized this deterministic BLOCKED adapter input for evaluator consumption.
+    assertions:
+    - Runtime PASS cannot be claimed when reward_transaction_id ownership is missing.
+    - Runtime PASS cannot be claimed when idempotency_key ownership is missing.
+    - Runtime PASS cannot be claimed without durable duplicate-rejection proof across restart recovery.
+    - No duplicate currency or item instance proof exists in this record because runtime was not touched.
+    - No rollback of runtime state is required when runtime_touched is false.
+    artifacts:
+    - kind: foundation-runtime-report
+      path: docs/qa/evidence/reward_restart_recovery_no_lease/foundation-report.json
+      sha256: e94a89fba6c71a3feff8ddcf23e05953d5af50cf6791d7c289d1360378bf23df
+    - kind: prerequisite-decision
+      path: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/decision.yaml
+      sha256: 7949012cae8256c1e30d734449d416f5a519e2c4e90fb6a207ca40f8c3dc244e
+    - kind: prerequisite-blocker-input
+      path: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json
+      sha256: da54d96a7a16358fdd8b5724adb2edc4f08f389fd6c3962e7547246a1f20b79e
+    - kind: prerequisite-lease-proof
+      path: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/lease-proof.txt
+      sha256: 71b60374fd75a77c2e595e6514aaebb723026754ab532c191cea80550903038d
+    - kind: prerequisite-static-inspection-summary
+      path: docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/static-inspection-summary.txt
+      sha256: f6b722cdab8f901745f44900314622725897d29290ce2f32e6c745bfb88d7b62
+    - kind: lease-proof
+      path: docs/qa/evidence/reward_restart_recovery_no_lease/lease-proof.txt
+      sha256: 6532b2d774be859004694f6615547af98be4c1a1f6c4b84a51f61d29d7e4e90c
+    - kind: rollback-restore-proof
+      path: docs/qa/evidence/reward_restart_recovery_no_lease/rollback-restore-proof.md
+      sha256: 33a776abfe22cb30224cf74c7a1e3bdb279eee24d7d01818c6b8f13c76fdd383
+    - kind: normalized-blocker-input
+      path: docs/qa/evidence/reward_restart_recovery_no_lease/evaluator-blocker-input.json
+      sha256: be011e88eb1c9080923c0c687b34b669714cdd0c56efffd97acb2caf8d3c7b6c
+    build:
+      paper: baseline-no-runtime
+      plugin_manifest_hash: baseline-no-runtime
+      commit: baseline-no-runtime
+      plugin_jar_inventory_hash: not_collected_no_valid_lease
+      configuration_hashes: {}
+    execution:
+      runner: tools/qa/adapters/foundation-runtime.mjs
+      backend: dev-qa
+      docker_volume_id: not_allocated_no_valid_lease
+      test_account_uuid: not_created_no_valid_lease
+      started_at: '2026-08-03T00:00:00Z'
+      finished_at: '2026-08-03T00:00:00Z'
+      executed_by: domain-17-reward-idempotency-evidence-records
+      log_paths:
+      - docs/qa/evidence/reward_restart_recovery_no_lease/lease-proof.txt
+      - docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/static-inspection-summary.txt
+      environment_control:
+        lease: none
+        workspace_root: /home/przemek/projects/MC
+        runtime_touched: false
+        staging_touched: false
+        rollback:
+          method: not_required_no_runtime_or_config_mutation
+          proof_paths:
+          - docs/qa/evidence/reward_restart_recovery_no_lease/rollback-restore-proof.md
+          - docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/rollback-restore-proof.md
+    result:
+      verdict: BLOCKED
+      proof_level: STATIC_CONTRACT
+      blocker_ids:
+      - D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE
+      - D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING
+      - D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING
+      - missing_runtime_evidence
+      - economy_duplication_risk
+      - restart_recovery_failure
+      observations:
+      - Prerequisite checkpoint decision is BLOCKED.
+      - mc-lease registry is valid.
+      - mc-lease show qa reported zero active leases for the required scope.
+      - Static prerequisite inspection found no durable reward_transaction_id source, idempotency_key source, or duplicate-rejection
+        proof path.
+      - Runtime validation was not attempted.
+      - No backend, Docker container, RCON session, Mineflayer bot, world data, player data, plugin config, runtime state, or
+        staging state was touched.

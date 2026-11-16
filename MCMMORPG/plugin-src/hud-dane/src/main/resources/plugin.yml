@@ -1,0 +1,6 @@
+name: HudDane
+version: ${version}
+main: pl.mcmmorpg.huddane.HudDane
+api-version: '1.21'
+description: Placeholdery HUD-a (druzyna, przywolance, efekty z czasem) dla MythicHUD.
+depend: [PlaceholderAPI, MMOCore, MythicMobs]

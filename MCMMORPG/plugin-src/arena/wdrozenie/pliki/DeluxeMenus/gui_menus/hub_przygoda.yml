@@ -1,0 +1,86 @@
+# Sekcja PRZYGODA. Wejscie: menu glowne (hub_glowne, slot 14).
+#
+# LOCHY: kafelek 'loch_001' (Loch 001 — Kwietna Polana, fragment 1). Wejscie komenda z konsoli
+# (gracz nigdy nie wpisuje komendy - pamiec menu-zamiast-komend). [console] PRZED [close]:
+# [close] przed komenda zabija okno (pamiec deluxemenus-pulapki).
+menu_title: '&f䄐&fPrzygoda'
+size: 27
+items:
+
+  'loch_001':
+    material: FLOWERING_AZALEA
+    slot: 11
+    display_name: '&d&lLoch 001 &8» &aKwietna Polana'
+    lore:
+      - ''
+      - '&7Gaj oszalał, a Stary Korzeń nie wypuszcza'
+      - '&7nikogo z Kwietnej Polany.'
+      - ''
+      - '&8▸ &7Poziom: &f1–5   &8▸ &7Czas: &f10–15 min'
+      - '&8▸ &7Solo albo drużyna do 4 osób'
+      - '&8▸ &75 sekretów, ranny druid, Stary Korzeń'
+      - ''
+      - '&aKliknij, aby wyruszyć.'
+    left_click_requirement:
+      requirements:
+        poza_arena:
+          type: '!string equals'
+          input: '%player_world%'
+          output: 'arena'
+      deny_commands:
+        - '[message] &cNajpierw wyjdź z areny: Q → Drużyna → Arena.'
+    left_click_commands:
+      - '[console] md play loch_001 %player_name%'
+      - '[close]'
+
+  'zadania':
+    material: nexo-hub_zadania
+    slot: 13
+    display_name: '&a&lZadania'
+    lore:
+      - ''
+      - '&7Dziennik zadań.'
+    left_click_commands:
+      - '[player] quests'
+
+  # WYLACZONE, bo NIC NIE ROBI — sprawdzone botem: '/waypoints' nie otwiera okna.
+  # 'plugins/MMOCore/waypoints/default_waypoints.yml' definiuje jeden punkt, a gracz nie
+  # ma odkrytego zadnego. Wlaczyc razem z pierwszymi prawdziwymi punktami podrozy.
+  # 'punkty_podrozy':
+  #   material: ENDER_EYE
+  #   slot: 13
+  #   display_name: '&b&lPunkty podróży'
+  #   lore:
+  #     - ''
+  #     - '&7Odkryte punkty szybkiej podróży.'
+  #   left_click_commands:
+  #     - '[player] waypoints'
+
+  'mapa':
+    material: FILLED_MAP
+    slot: 15
+    display_name: '&e&lMapa świata'
+    lore:
+      - ''
+      - '&7Mapa na cały ekran: myszą celujesz,'
+      - '&7PPM przeciągasz, kółkiem przybliżasz.'
+      - '&7Shift — wyjście.'
+      - ''
+      - '&eKliknij, aby otworzyć.'
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    left_click_commands:
+      - '[console] mapa pelna %player_name%'
+
+  'wstecz':
+    material: nexo-hub_wstecz
+    slot: 18
+    display_name: '&7Wstecz'
+    left_click_commands:
+      - '[openguimenu] hub_glowne'
+
+  'zamknij':
+    material: nexo-hub_zamknij
+    slot: 26
+    display_name: '&c&lZamknij'
+    left_click_commands:
+      - '[close]'

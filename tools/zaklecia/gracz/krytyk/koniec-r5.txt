@@ -1,0 +1,3 @@
+Runda 5 zakończona. Wyniki recenzji, własnych sond i osobnych przebiegów regresji są w [raport-r5.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/krytyk/raport-r5.md). Zapisałem [koniec-r5.txt](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/krytyk/koniec-r5.txt).
+
+Fuzzer wykonał 1000/1000 kroków bez rozjazdu. Wykryłem problem z regułą tarczy: aktywna konfiguracja Księgi pomija `SHIELD`, a wynik zależy też od kolejności zakładania tarczy i czaru. Klon i build pozostały bez zmian. STOP.

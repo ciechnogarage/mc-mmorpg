@@ -1,0 +1,73 @@
+{
+ "parent": "minecraft:item/stick",
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    -22,
+    16,
+    17
+   ],
+   "translation": [
+    0,
+    2.5,
+    -2.1
+   ],
+   "scale": [
+    1.33,
+    1.33,
+    1.33
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    -22,
+    -16,
+    -17
+   ],
+   "translation": [
+    0,
+    2.5,
+    -2.1
+   ],
+   "scale": [
+    1.33,
+    1.33,
+    1.33
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    -18,
+    17,
+    10
+   ],
+   "translation": [
+    -0.7,
+    2.5,
+    -2.8
+   ],
+   "scale": [
+    1.12,
+    1.12,
+    1.12
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    -18,
+    -17,
+    -10
+   ],
+   "translation": [
+    -0.7,
+    2.5,
+    -2.8
+   ],
+   "scale": [
+    1.12,
+    1.12,
+    1.12
+   ]
+  }
+ }
+}

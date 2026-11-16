@@ -1,0 +1,76 @@
+{
+ "name": "Sciezka",
+ "derivative": "PLAINS",
+ "vanillaDerivative": "PLAINS",
+ "color": "#aa8250",
+ "layers": [
+  {
+   "palette": [
+    {
+     "block": "minecraft:dirt_path"
+    },
+    {
+     "block": "minecraft:dirt_path"
+    },
+    {
+     "block": "minecraft:dirt_path"
+    },
+    {
+     "block": "minecraft:dirt_path"
+    },
+    {
+     "block": "minecraft:dirt_path"
+    },
+    {
+     "block": "minecraft:dirt_path"
+    },
+    {
+     "block": "minecraft:coarse_dirt"
+    },
+    {
+     "block": "minecraft:coarse_dirt"
+    },
+    {
+     "block": "minecraft:coarse_dirt"
+    },
+    {
+     "block": "minecraft:gravel"
+    },
+    {
+     "block": "minecraft:gravel"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 1
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:dirt"
+    }
+   ],
+   "minHeight": 2,
+   "maxHeight": 3
+  },
+  {
+   "palette": [
+    {
+     "block": "minecraft:stone"
+    },
+    {
+     "block": "minecraft:andesite"
+    }
+   ],
+   "minHeight": 8,
+   "maxHeight": 16
+  }
+ ],
+ "decorators": [],
+ "generators": [
+  {
+   "generator": "wyspa_fale",
+   "min": 100,
+   "max": 100
+  }
+ ]
+}

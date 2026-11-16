@@ -1,0 +1,38 @@
+{
+ "id": "poziom_01",
+ "zones": [
+  "pustka",
+  "brzeg",
+  "laka",
+  "gaj",
+  "polana",
+  "sciezka",
+  "pobocze"
+ ],
+ "blue": {
+  "pustka": 18,
+  "brzeg": 55,
+  "laka": 91,
+  "gaj": 128,
+  "polana": 165,
+  "sciezka": 201,
+  "pobocze": 238
+ },
+ "spawn_xz": [
+  0,
+  59
+ ],
+ "arena_xz": [
+  0,
+  -40
+ ],
+ "pixels_per_zone": {
+  "pustka": 36271,
+  "brzeg": 5197,
+  "laka": 12397,
+  "gaj": 5871,
+  "polana": 3609,
+  "sciezka": 209,
+  "pobocze": 1982
+ }
+}

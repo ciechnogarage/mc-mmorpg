@@ -1,0 +1,3 @@
+Runda 9 wykonana bez commitów i bez zatrzymywania klona. Zasłanianie, Sakwa oraz odkładanie zaklęcia przy zakładaniu broni do lewej ręki przeszły sondy bazowe FAIL → końcowe PASS. DB3 i pozostałe wymagane regresje przeszły; w C pozostał jeden FAIL kontrolnego zwykłego miecza, występujący także na bazowym world1.
+
+Szczegóły i wyniki prób: [szczegoly-r9.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/naprawy/szczegoly-r9.md).

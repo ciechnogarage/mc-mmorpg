@@ -44,7 +44,7 @@ final class Placeholdery extends PlaceholderExpansion {
             int masz = Przedmioty.ile(p, poz.z().id());
             return switch (pole) {
                 case "tytul" -> (poz.oddane() ? "§8" : "§6§l") + "Dostarcz " + poz.z().ilosc() + "× " + d.nazwa(poz.z().id());
-                case "opis" -> "§7Tier " + d.rzymska(poz.tier()) + " · " + d.tiery.get(poz.tier()).nazwa();
+                case "opis" -> "§7Tier " + d.rzymska(poz.tier()) + " · " + (d.tiery.get(poz.tier()) == null ? "" : d.tiery.get(poz.tier()).nazwa());
                 case "masz" -> String.valueOf(Math.min(masz, poz.z().ilosc()));
                 case "ilosc" -> String.valueOf(poz.z().ilosc());
                 case "id" -> poz.z().id();

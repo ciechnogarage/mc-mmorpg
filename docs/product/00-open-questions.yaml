@@ -1,0 +1,181 @@
+meta:
+  document: open-questions
+  domain: "00"
+  status: active
+  purpose: Central unresolved product questions that still affect contract boundaries, persistence, release framing, or runtime truth.
+
+rules:
+  - Questions stay open until explicit decision or de-scope closes them.
+  - Use stable ids so decisions, conflicts, and ownership rows can cross-link here.
+
+questions:
+  - question_id: PRODUCT-QUESTION-001
+    title: What exact contract handoff closes world facts, quest state, and quest reward entitlement?
+    status: resolved
+    area: domain_08_quests_and_narrative
+    why_it_matters: >-
+      Domain 08 ownership is now approved, but release-critical quest flows
+      still depend on a clean contract handoff from 06 world facts into 08
+      objective credit and from 08 quest entitlement into 10 reward policy and
+      14 user-facing flow.
+    affected_domains:
+      - "06"
+      - "08"
+      - "10"
+      - "14"
+      - "18"
+    blocking: false
+    related_decision_ids:
+      - PRODUCT-GOV-003
+      - PRODUCT-GOV-010
+      - PRODUCT-GOV-004
+    related_conflict_ids:
+      - CONFLICT-003
+    owner_to_answer: "00"
+    evidence_needed:
+      - explicit 06 -> 08 world-fact handoff
+      - explicit 08 -> 10 reward-entitlement handoff
+      - downstream release impact statement for quest-driven product slices
+    target_resolution: before quest-dependent release claims advance
+    resolution_contract_refs:
+      - docs/contracts/quest-domain-handoff-contract.yaml
+    resolved_at: "2026-08-12"
+    resolution: >-
+      The accepted handoff assigns world facts to 06, quest state/objective
+      credit/reward entitlement to 08, reward policy to 10, transaction
+      coordination to 01, and presentation projection to 14. Runtime and
+      release evidence remain separate downstream gates.
+    notes: Ownership and the cross-domain contract boundary are approved; implementation evidence is still blocked.
+
+  - question_id: PRODUCT-QUESTION-002
+    title: What exact profession contract closes persistence, itemization, economy, and PvP overlays?
+    status: resolved
+    area: domain_09_professions_and_crafting
+    why_it_matters: >-
+      Domain 09 ownership is now approved, but crafting outputs and profession
+      progression still need a clean handoff into item semantics, economy
+      consequences, and any PvP overlays.
+    affected_domains:
+      - "05"
+      - "09"
+      - "10"
+      - "11"
+      - "12"
+      - "18"
+    blocking: false
+    related_decision_ids:
+      - PRODUCT-GOV-003
+      - PRODUCT-GOV-005
+    related_conflict_ids:
+      - CONFLICT-004
+    owner_to_answer: "00"
+    evidence_needed:
+      - explicit 09 -> 05 crafted-output semantics boundary
+      - explicit 09 -> 10 sink and reward-economy handoff
+      - explicit 09 -> 11 PvP overlay rule where crafted outputs affect combat
+    target_resolution: before profession-dependent release claims advance
+    resolution_contract_refs:
+      - docs/contracts/profession-domain-handoff-contract.yaml
+    resolved_at: "2026-08-12"
+    resolution: >-
+      The accepted handoff assigns profession eligibility, results, and
+      progression to 09; item and custody semantics to 05; economic policy to
+      10; transaction coordination to 01; and a non-mutating contextual PvP
+      overlay to 11. Runtime and release evidence remain downstream gates.
+    notes: Ownership and the cross-domain contract boundary are approved; implementation evidence is still blocked.
+
+  - question_id: PRODUCT-QUESTION-003
+    title: What downstream contract bundle closes seasonal reward envelopes, guild projections, and guild treasury payouts?
+    status: open
+    area: cross_domain_11_10_13_19
+    why_it_matters: >-
+      Domain 11 ownership is now approved and Domain 19 is introduced, but
+      seasonal release framing still depends on downstream contract artifacts
+      for reward envelopes, guild projection records, guild treasury payout
+      targets, and season-close replay/audit paths.
+    affected_domains:
+      - "10"
+      - "11"
+      - "13"
+      - "17"
+      - "19"
+    blocking: true
+    related_decision_ids:
+      - PRODUCT-GOV-003
+    related_conflict_ids:
+      - CONFLICT-005
+    owner_to_answer: "00"
+    evidence_needed:
+      - authored reward envelope contract updates
+      - authored guild projection and roster-snapshot contract closure
+      - explicit guild treasury payout target model
+    target_resolution: before PvP-season and guild-season release framing advance
+    notes: Ownership is approved. The remaining gap is contract authoring and payout/audit closure.
+
+  - question_id: PRODUCT-QUESTION-004
+    title: What authoritative persistence and reset boundary applies across 02, 11, and 13?
+    status: open
+    area: cross_domain_02_11_13
+    why_it_matters: >-
+      Ownership is approved for 11 and 13, but seasonal transitions still need
+      an explicit persistence owner review and authoritative statement on what
+      resets, what persists, and how product release framing communicates that
+      boundary to players.
+    affected_domains:
+      - "02"
+      - "11"
+      - "13"
+      - "17"
+    blocking: true
+    related_decision_ids:
+      - PRODUCT-GOV-003
+      - PRODUCT-GOV-009
+      - PRODUCT-GOV-010
+    related_conflict_ids:
+      - CONFLICT-002
+      - CONFLICT-005
+    owner_to_answer: "00"
+    evidence_needed:
+      - explicit persistence-owner review from 02
+      - release-gate language for seasonal transitions
+      - approved statement on competitive reset versus durable player state
+    target_resolution: before seasonal release-stage advancement beyond governance proposal
+    notes: >-
+      PRODUCT-GOV-009 establishes the anti-goal against silently resetting or
+      invalidating durable accomplishment, but it intentionally does not close
+      the exact 02/11/13 persistence and reset matrix. This remains a contract
+      and release-boundary question.
+
+  - question_id: PRODUCT-QUESTION-005
+    title: How should companion direction be treated in product truth while runtime remains blocked?
+    status: open
+    area: domain_12_companion_systems
+    why_it_matters: >-
+      Repo sources document companion authority direction, but runtime and
+      release status remain blocked. Domain 00 still needs an explicit
+      governance boundary for how far product truth can go without runtime
+      verification.
+    affected_domains:
+      - "02"
+      - "09"
+      - "10"
+      - "12"
+      - "17"
+    blocking: true
+    related_decision_ids:
+      - PRODUCT-GOV-002
+      - PRODUCT-GOV-008
+      - PRODUCT-GOV-010
+    related_conflict_ids:
+      - CONFLICT-006
+    owner_to_answer: "00"
+    evidence_needed:
+      - runtime verification path for companion authority
+      - reconciliation between documented direction and blocked runtime state
+      - release-gate statement for companion-dependent slices
+    target_resolution: before companion-dependent claims move beyond proposed governance direction
+    notes: >-
+      PRODUCT-GOV-010 classifies Pets as a first-class path while explicitly
+      keeping delivery blocked. It does not promote blocked companion runtime or
+      release readiness. Domain 00 continues to separate product scope from
+      runtime truth.

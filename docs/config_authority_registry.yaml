@@ -1,158 +1,350 @@
-# Draft registry for cross-domain MMO contracts.
-# This is a design boundary, not a claim that every target is implemented.
 version: 1
-status: draft
-last_reviewed: 2026-07-12
+registry_scope: observed_and_proposed_technical_implementation_authority
+authority_layers:
+  product_semantic_authority:
+    canonical_source: docs/product/00-domain-ownership.yaml
+    approved_decisions_source: docs/product/00-decision-registry.yaml
+    rule: Product ownership wins for product semantics and is never inferred from a plugin or adapter name in this registry.
+  technical_implementation_authority:
+    field: contracts[].authority
+    rule: An unresolved value means no technical implementation authority is selected or proven; it does not mean the product domain lacks an approved owner.
+status_vocabulary:
+  contract_status:
+  - draft
+  - proposed
+  - accepted
+  - superseded
+  - rejected
+  runtime_status:
+  - not_tested
+  - blocked
+  - partial
+  - verified
+  - failed
+  release_status:
+  - blocked
+  - conditional
+  - approved
+contract_status: accepted
+runtime_status: partial
+release_status: blocked
+last_reviewed: '2026-08-12'
 design_index: docs/foundation-index.md
 runtime_manifest: docs/plugin_manifest.yaml
-
+product_governance:
+  master_bible: docs/product/00-master-product-bible.md
+  ownership_registry: docs/product/00-domain-ownership.yaml
+  decision_registry: docs/product/00-decision-registry.yaml
+  open_questions: docs/product/00-open-questions.yaml
+  intake_registry: docs/product/00-current-state-intake.yaml
+  conflict_registry: docs/product/00-conflict-registry.yaml
+  release_roadmap: docs/product/00-release-roadmap.md
 rules:
-  - every shared concept has one durable authority
-  - plugin configs are adapters and must reference stable contract IDs
-  - seasonal state is isolated from persistent character and cosmetic state
-  - unresolved authority is a blocker for cross-domain implementation
-
+- shared one durable authority
+- plugin configs adapters stable contract IDs
+- seasonal state isolated persistent character cosmetic state
+- unresolved authority blocker cross-domain implementation
+- registry statuses remain observed source metadata
+- product semantic ownership comes only from Domain 00 ownership and decision registries
+- unresolved implementation authority does not reopen approved product ownership
 contracts:
-  - id: player_profile
-    domain: social
-    authority: MMOProfiles
-    current_adapter: MCMMORPG/plugins/MMOProfiles
-    target_persistence: mariadb
-    consumers: [CharacterStage, MMOCore, MMOInventory, Guilds, MCPets]
-    status: adapter_observed_target_db_unverified
-    evidence: MCMMORPG/plugins/MMOProfiles/config.yml
-
-  - id: character_stage
-    domain: ux
-    authority: CharacterStage
-    current_adapter: MCMMORPG/plugin-src/character-stage
-    target_persistence: player_profile
-    consumers: [MMOProfiles, CoreTools, DecentHolograms, ModelEngine]
-    status: source_present_runtime_flow_unverified
-    evidence: MCMMORPG/plugin-src/character-stage/README.md
-
-  - id: class_progression
-    domain: combat
-    authority: MMOCore
-    current_adapter: MCMMORPG/plugins/MMOCore
-    target_persistence: player_profile
-    consumers: [MythicLib, MMOItems, MMOInventory, MythicHUD]
-    status: adapter_observed_contract_pending
-    evidence: docs/class-subclass-foundation-v0.0.1.md
-
-  - id: combat_formulas
-    domain: combat
-    authority: MythicLib
-    current_adapter: MCMMORPG/plugins/MythicLib
-    target_persistence: player_profile
-    consumers: [MMOCore, MMOItems, MythicMobs, MythicDungeons]
-    status: authority_requires_runtime_formula_audit
-    evidence: docs/damage-defense-foundation-v0.0.1.md
-
-  - id: item_definition
-    domain: itemization
-    authority: MMOItems
-    current_adapter: MCMMORPG/plugins/MMOItems
-    target_persistence: config_and_player_profile
-    consumers: [MMOCore, MMOInventory, MythicCrucible, Nexo, CMI]
-    status: adapter_observed_contract_pending
-    evidence: docs/itemization-foundation-v0.0.1.md
-
-  - id: inventory_and_storage
-    domain: itemization
-    authority: MMOInventory
-    current_adapter: MCMMORPG/plugins/MMOInventory
-    target_persistence: mariadb
-    consumers: [MMOItems, MMOCore, CMI, Guilds]
-    status: adapter_observed_target_db_unverified
-    evidence: docs/loadout-bank-storage-foundation-v0.0.1.md
-
-  - id: currency_and_economy
-    domain: economy
-    authority: CMI_Vault
-    current_adapter: MCMMORPG/plugins/CMI
-    target_persistence: mariadb
-    consumers: [Vault, MMOItems, MMOInventory, Guilds, MythicDungeons]
-    status: staging_provider_observed_global_contract_pending
-    evidence: docs/economy-crafting-loot-foundation-v0.0.1.md
-
-  - id: loot_and_rewards
-    domain: world_pve
-    authority: MythicMobs_MythicDungeons
-    current_adapter: MCMMORPG/plugins/MythicMobs
-    target_persistence: player_profile_and_season_state
-    consumers: [MMOItems, CMI_Vault, Professions, Achievements]
-    status: split_authority_requires_reward_contract
-    evidence: docs/loot-reward-table-001-foundation-v0.0.1.md
-
-  - id: world_and_dungeons
-    domain: world_pve
-    authority: MythicDungeons
-    current_adapter: MCMMORPG/plugins/MythicDungeons
-    target_persistence: world_templates_and_instance_state
-    consumers: [MythicMobs, Iris, WorldGuard, Multiverse, ModelEngine]
-    status: level_1_content_present_runtime_reset_unverified
-    evidence: docs/level-1-dungeon-island-foundation-v0.0.1.md
-
-  - id: mobs_and_bosses
-    domain: world_pve
-    authority: MythicMobs
-    current_adapter: MCMMORPG/plugins/MythicMobs
-    target_persistence: config_and_runtime_instance_state
-    consumers: [ModelEngine, MMOItems, MythicDungeons, MythicLib]
-    status: adapter_observed_model_binding_requires_live_proof
-    evidence: MCMMORPG/_validation/check_modelengine_binding.js
-
-  - id: pet_progression
-    domain: pets
-    authority: MCPets
-    current_adapter: MCMMORPG/plugins/MCPets
-    target_persistence: mariadb
-    consumers: [MMOProfiles, MMOCore, Professions, MythicMobs]
-    status: yaml_fallback_only_staging_limits_unverified
-    evidence: docs/pet-companion-minion-system-foundation-v0.0.1.md
-
-  - id: guilds_and_social
-    domain: social
-    authority: Guilds
-    current_adapter: MCMMORPG/plugins/Guilds
-    target_persistence: mariadb
-    consumers: [MMOProfiles, CMI_Vault, WorldGuard, PvP_Season]
-    status: adapter_observed_contract_pending
-    evidence: docs/guilds-foundation-v0.0.1.md
-
-  - id: pvp_season
-    domain: pvp
-    authority: unresolved
-    current_adapter: none
-    target_persistence: mariadb_season_schema
-    consumers: [MMOProfiles, Guilds, CMI_Vault, Leaderboards]
-    status: blocker_no_dedicated_pvp_authority
-    evidence: docs/pvp-foundation-v0.0.1.md
-
-  - id: professions
-    domain: economy
-    authority: unresolved
-    current_adapter: none
-    target_persistence: mariadb
-    consumers: [MMOProfiles, MMOItems, CMI_Vault, MythicDungeons, MCPets]
-    status: blocker_no_dedicated_profession_authority
-    evidence: docs/professions-foundation-v0.0.1.md
-
-  - id: quests_and_objectives
-    domain: world_pve
-    authority: unresolved
-    current_adapter: none
-    target_persistence: mariadb
-    consumers: [MMOProfiles, MythicDungeons, MythicMobs, Guilds]
-    status: blocker_no_dedicated_quest_authority
-    evidence: docs/quest-contract-objective-foundation-v0.0.1.md
-
-  - id: seasons_prestige_cosmetics
-    domain: meta
-    authority: unresolved
-    current_adapter: none
-    target_persistence: mariadb_persistent_and_seasonal_split
-    consumers: [MMOProfiles, PvP_Season, Guilds, MCPets]
-    status: blocker_reset_boundary_not_implemented
-    evidence: docs/seasons-prestige-cosmetics-foundation-v0.0.1.md
+- id: player_profile
+  domain: social
+  authority: MMOProfiles
+  current_adapter: MCMMORPG/plugins/MMOProfiles
+  target_persistence: mariadb
+  consumers:
+  - CharacterStage
+  - MMOCore
+  - MMOInventory
+  - Guilds
+  - PetCore
+  evidence: MCMMORPG/plugins/MMOProfiles/config.yml
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: character_stage
+  domain: ux
+  authority: CharacterStage
+  current_adapter: MCMMORPG/plugin-src/character-stage
+  target_persistence: player_profile
+  consumers:
+  - MMOProfiles
+  - CoreTools
+  - DecentHolograms
+  - ModelEngine
+  evidence: MCMMORPG/plugin-src/character-stage/README.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: class_progression
+  domain: combat
+  authority: MMOCore
+  current_adapter: MCMMORPG/plugins/MMOCore
+  target_persistence: player_profile
+  consumers:
+  - MythicLib
+  - MMOItems
+  - MMOInventory
+  - MythicHUD
+  evidence: docs/class-subclass-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: combat_formulas
+  domain: combat
+  authority: MythicLib
+  current_adapter: MCMMORPG/plugins/MythicLib
+  target_persistence: player_profile
+  consumers:
+  - MMOCore
+  - MMOItems
+  - MythicMobs
+  - MythicDungeons
+  evidence: docs/damage-defense-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: item_definition
+  domain: itemization
+  authority: MMOItems
+  current_adapter: MCMMORPG/plugins/MMOItems
+  target_persistence: config_and_player_profile
+  consumers:
+  - MMOCore
+  - MMOInventory
+  - MythicCrucible
+  - Nexo
+  - CMI
+  evidence: docs/itemization-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: inventory_and_storage
+  domain: itemization
+  authority: MMOInventory
+  current_adapter: MCMMORPG/plugins/MMOInventory
+  target_persistence: mariadb
+  consumers:
+  - MMOItems
+  - MMOCore
+  - CMI
+  - Guilds
+  evidence: docs/loadout-bank-storage-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: currency_and_economy
+  domain: economy
+  authority: CMI_Vault
+  current_adapter: MCMMORPG/plugins/CMI
+  target_persistence: mariadb
+  consumers:
+  - Vault
+  - MMOItems
+  - MMOInventory
+  - Guilds
+  - MythicDungeons
+  evidence: docs/economy-crafting-loot-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: loot_and_rewards
+  domain: world_pve
+  authority: MythicMobs_MythicDungeons
+  current_adapter: MCMMORPG/plugins/MythicMobs
+  target_persistence: player_profile_and_season_state
+  consumers:
+  - MMOItems
+  - CMI_Vault
+  - Professions
+  - Achievements
+  evidence: docs/loot-reward-table-001-foundation-v0.0.1.md
+  status: split_authority_requires_reward_contract
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: world_and_dungeons
+  domain: world_pve
+  authority: MythicDungeons
+  current_adapter: MCMMORPG/plugins/MythicDungeons
+  target_persistence: world_templates_and_instance_state
+  consumers:
+  - MythicMobs
+  - Iris
+  - WorldGuard
+  - Multiverse
+  - ModelEngine
+  evidence: docs/level-1-dungeon-island-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: mobs_and_bosses
+  domain: world_pve
+  authority: MythicMobs
+  current_adapter: MCMMORPG/plugins/MythicMobs
+  target_persistence: config_and_runtime_instance_state
+  consumers:
+  - ModelEngine
+  - MMOItems
+  - MythicDungeons
+  - MythicLib
+  evidence: MCMMORPG/_validation/check_modelengine_binding.js
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: pet_progression
+  domain: pets
+  authority: PetCore
+  current_adapter: none
+  target_persistence: petcore_mariadb_keyed_by_pet_subject_id
+  consumers:
+  - MMOProfiles
+  - MMOCore
+  - Professions
+  - MythicMobs
+  evidence: docs/adr/ADR-003-petcore-companion-authority.md
+  status: petcore_selected_mcpets_legacy_only_runtime_not_implemented
+  product_semantic_owner: "12"
+  product_owner_status: proposed_with_blocked_runtime
+  contract_status: accepted
+  runtime_status: blocked
+  release_status: blocked
+- id: guilds_and_social
+  domain: social
+  authority: Guilds
+  current_adapter: MCMMORPG/plugins/Guilds
+  target_persistence: mariadb
+  consumers:
+  - MMOProfiles
+  - CMI_Vault
+  - WorldGuard
+  - PvP_Season
+  evidence: docs/guilds-foundation-v0.0.1.md
+  contract_status: accepted
+  runtime_status: partial
+  release_status: blocked
+- id: pvp_season
+  domain: pvp
+  authority: unresolved
+  product_semantic_owner: "11"
+  product_owner_status: approved
+  implementation_gap: No PvP season runtime authority or adapter is selected; reward, payout, and reset handoffs remain open.
+  current_adapter: none
+  target_persistence: mariadb_season_schema
+  consumers:
+  - MMOProfiles
+  - Guilds
+  - CMI_Vault
+  - Leaderboards
+  evidence: docs/pvp-foundation-v0.0.1.md
+  contract_status: proposed
+  runtime_status: blocked
+  release_status: blocked
+- id: professions
+  domain: economy
+  authority: Domain09ProfessionService
+  product_semantic_owner: "09"
+  product_owner_status: approved
+  implementation_gap: Runtime service and adapters are not implemented; semantic persistence and item/economy/PvP handoffs are accepted in the evidence contract.
+  current_adapter: none
+  target_persistence: mariadb
+  consumers:
+  - MMOProfiles
+  - MMOItems
+  - CMI_Vault
+  - MythicDungeons
+  - PetCore
+  evidence: docs/contracts/profession-domain-handoff-contract.yaml
+  contract_status: accepted
+  runtime_status: blocked
+  release_status: blocked
+- id: quests_and_objectives
+  domain: world_pve
+  authority: Domain08QuestService
+  product_semantic_owner: "08"
+  product_owner_status: approved
+  implementation_gap: Runtime service and adapters are not implemented; semantic world-fact, objective-credit, reward, and presentation handoffs are accepted in the evidence contract.
+  current_adapter: none
+  target_persistence: mariadb
+  consumers:
+  - MMOProfiles
+  - MythicDungeons
+  - MythicMobs
+  - Guilds
+  evidence: docs/contracts/quest-domain-handoff-contract.yaml
+  contract_status: accepted
+  runtime_status: blocked
+  release_status: blocked
+- id: seasons_prestige_cosmetics
+  domain: meta
+  authority: unresolved
+  product_semantic_owner: "13"
+  product_owner_status: approved
+  implementation_gap: No season-program runtime authority or adapter is selected; the 02/11/13 persistence and reset boundary remains open.
+  current_adapter: none
+  target_persistence: mariadb_persistent_and_seasonal_split
+  consumers:
+  - MMOProfiles
+  - PvP_Season
+  - Guilds
+  - PetCore
+  evidence: docs/seasons-prestige-cosmetics-foundation-v0.0.1.md
+  contract_status: proposed
+  runtime_status: blocked
+  release_status: blocked
+- id: account_identity
+  domain: account
+  authority: Domain01AccountService
+  current_adapter: none
+  target_persistence: account_database
+  consumers:
+  - Domain02CharacterService
+  - MonetizationDomain
+  - CosmeticDomain
+  contract_status: proposed
+  runtime_status: blocked
+  release_status: blocked
+  evidence: docs/contracts/account-character-model.md
+- id: character_identity_lifecycle
+  domain: characters
+  authority: Domain02CharacterService
+  current_adapter: none
+  target_persistence: domain02_character_database
+  consumers:
+  - MMOProfilesAdapter
+  - MMOCoreAdapter
+  - CharacterStage
+  - PetCore
+  - UXDomain
+  contract_status: proposed
+  runtime_status: blocked
+  release_status: blocked
+  evidence: docs/contracts/account-character-model.md
+- id: mmoprofiles_plugin_profile
+  domain: plugin_profiles
+  authority: MMOProfiles
+  current_adapter: MCMMORPG/plugins/MMOProfiles
+  target_persistence: plugin_profile_storage_mapped_to_character_id
+  consumers:
+  - Domain02CharacterService
+  - CharacterStage
+  - MMOCore
+  - MMOInventory
+  contract_status: proposed
+  runtime_status: blocked
+  release_status: blocked
+  evidence: docs/contracts/character-scope-registry.yaml
+- id: character_stage_presentation
+  domain: ux
+  authority: CharacterStage
+  current_adapter: MCMMORPG/plugin-src/character-stage
+  target_persistence: none_reads_domain02_character_state
+  consumers:
+  - Domain02CharacterService
+  - CoreTools
+  - UXDomain
+  contract_status: proposed
+  runtime_status: blocked
+  release_status: blocked
+  evidence: MCMMORPG/plugin-src/character-stage/README.md

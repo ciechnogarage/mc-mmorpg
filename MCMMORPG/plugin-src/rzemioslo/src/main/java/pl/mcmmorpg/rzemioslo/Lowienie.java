@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -26,6 +27,9 @@ final class Lowienie implements Listener {
     private final Map<UUID, Long> podpowiedz = new HashMap<>();
 
     Lowienie(Rzemioslo plugin) { this.plugin = plugin; }
+
+    @EventHandler
+    public void naWyjscie(PlayerQuitEvent e) { podpowiedz.remove(e.getPlayer().getUniqueId()); }
 
     private record Wedka(int slot, ItemStack item, Dane.Narz narz) {}
 

@@ -1,0 +1,7 @@
+# Runda 1 — rozjazd licznika papieru
+
+W pierwszym przebiegu fuzzera `b-1-18.out` alarmy po śmierci i otwarciu menu były fałszywe: checker czytał dolną część aktywnego okna `generic_9x6`. `b-1-19.out`–`b-1-23.out`, JAR md5 `1a1994fbc239`, wykazały zgodność serwera z głównym `bot.inventory`; finalny checker nie czyta już okna jako ekwipunku gracza. Sondy D/I2 po tej zmianie nie zgłaszają rozbieżności.
+
+Ponowny fuzzer `b-1-27.out`, ten sam JAR, ujawnił w seedach 104729/65537/99991 wąską różnicę papieru: serwerowy slot 14 lub 15 ma 2–4 szt., główne `bot.inventory` klienta ma 1 szt. FI (`b-1-29.out`, ten sam JAR) odtworzył slot14 serwer 2 : klient 1 po krokach 22–23 prefiksu seeda 65537. W pobliżu różnicy zapisano pakiet `set_slot` aktywnego okna 5, slot59, `itemCount:1`, co odpowiada wizualnemu licznikowi klienta. Inne alarmy FI, m.in. zgniłe mięso w slocie0 po zabiciu huska, są chwilowe i nie dowodzą trwałej utraty.
+
+Przebieg FI kończy się bez różnicy papieru, więc nie klasyfikuję tego jako trwałej duplikacji przedmiotów. Jest to potwierdzony przejściowy rozjazd stanu serwera i klienta w długiej sekwencji zawierającej menu, Shift+Q i śmierć. Minimalizacja `b-1-32.out`, JAR md5 `5d7400d4e847`, nie odtworzyła dokładnej sygnatury na nowym kliencie przy pełnym 23-krokowym prefiksie (1 próba, 1 PASS / 1 FAIL / 0 BLAD). Zmienił się też JAR, więc nie jest to dowód usunięcia przyczyny. Nie ma podstaw do przypisania rozjazdu pluginowi Zaklec bez krótszego odtworzenia i porównania z pakietem otwartego okna.

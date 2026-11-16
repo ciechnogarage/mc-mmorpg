@@ -1,0 +1,7 @@
+# Paski HP w panelach walki (HudWalki → %chowance_walka_*_hp%).
+chowance_walka_on_hp:
+  value: '%chowance_walka_on_hp%'
+  max: '%chowance_walka_on_hpmax%'
+chowance_walka_ja_hp:
+  value: '%chowance_walka_ja_hp%'
+  max: '%chowance_walka_ja_hpmax%'

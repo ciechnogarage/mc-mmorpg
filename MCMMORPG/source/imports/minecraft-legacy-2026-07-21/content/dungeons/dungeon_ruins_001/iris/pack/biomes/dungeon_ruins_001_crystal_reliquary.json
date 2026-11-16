@@ -1,0 +1,64 @@
+{
+  "name": "Crystal Reliquary",
+  "derivative": "DRIPSTONE_CAVES",
+  "vanillaDerivative": "DRIPSTONE_CAVES",
+  "color": "#4f8ca8",
+  "generators": [
+    {
+      "generator": "dungeon_ruins_001_crystal_floor",
+      "min": 122,
+      "max": 128
+    }
+  ],
+  "layers": [
+    {
+      "palette": [
+        { "block": "minecraft:deepslate_tiles", "weight": 4 },
+        { "block": "minecraft:polished_deepslate", "weight": 3 },
+        { "block": "minecraft:calcite", "weight": 2 },
+        { "block": "minecraft:amethyst_block", "weight": 1 }
+      ],
+      "minHeight": 1,
+      "maxHeight": 1
+    },
+    {
+      "palette": [
+        { "block": "minecraft:tinted_glass", "weight": 2 },
+        { "block": "minecraft:crying_obsidian", "weight": 1 },
+        { "block": "minecraft:deepslate_bricks", "weight": 4 }
+      ],
+      "minHeight": 2,
+      "maxHeight": 3
+    }
+  ],
+  "decorators": [
+    {
+      "chance": 0.12,
+      "palette": [
+        { "block": "minecraft:amethyst_cluster" },
+        { "block": "minecraft:small_amethyst_bud" }
+      ]
+    },
+    {
+      "chance": 0.06,
+      "palette": [
+        { "block": "minecraft:glow_lichen" }
+      ]
+    }
+  ],
+  "notes": {
+    "mood": "Cyan and violet magic archive with shield crystals and pale glow.",
+    "structures": [
+      "crystal_bridge_gap",
+      "reliquary_archive_mid",
+      "fractured_rune_pylon",
+      "suspended_crystal_chamber",
+      "arcane_lock_room"
+    ],
+    "mobSpawnIntent": [
+      "dungeon_ruins_001_crystal_acolyte",
+      "dungeon_ruins_001_reliquary_guardian",
+      "dungeon_ruins_001_arcane_shardling"
+    ]
+  }
+}

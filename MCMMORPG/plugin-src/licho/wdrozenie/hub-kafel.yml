@@ -1,0 +1,10 @@
+  licho_kafel:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&2Licho nie śpi'
+    lore:
+      - '&7Chowanie się w beczkach i snopkach.'
+      - '&7Licho kontra Zamawiacze, 2-12 graczy.'
+    left_click_commands:
+      - '[openguimenu] licho'

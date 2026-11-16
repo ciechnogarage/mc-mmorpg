@@ -1,0 +1,23 @@
+# Cel zadania v5: lewa kolumna (patrz v5.py).
+cel-layout:
+  elements:
+    zadanie-kier-e0:
+      asset: l5-zadanie-kier-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -62}
+    zadanie-e0:
+      asset: l5-zadanie-e0
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -62}
+    zadanie-kier-e1:
+      asset: l5-zadanie-kier-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 10, y: -75}
+    zadanie-e1:
+      asset: l5-zadanie-e1
+      align: right
+      position: {x: 0.0, y: 100.0}
+      offset: {x: 4, y: -75}

@@ -1,0 +1,115 @@
+schema_version: 1
+snapshot_kind: config_authority_registry_v1_snapshot
+source_registry:
+  path: docs/config_authority_registry.yaml
+  sha256: f37125ee29e5e000dc90452c56336243134bdd26a7b865d24756d4975b31c215
+  captured_at: '2026-07-21'
+  source_role: migration_input_not_runtime_truth
+notes:
+  - Immutable baseline for Domain 01 pre-runtime migration.
+  - Do not treat legacy accepted or partial statuses as current runtime approval.
+  - Migration state belongs in config-authority-registry-migration-ledger.yaml, not in this snapshot.
+registry_summary:
+  version: 1
+  contract_count: 16
+  top_level_status:
+    contract_status: accepted
+    runtime_status: partial
+    release_status: blocked
+contract_digests:
+  - legacy_id: player_profile
+    source_digest: 855d629e4a29da168cb06e14316b9bd423a7f768e4a3550db3dc52c01e53511e
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: character_stage
+    source_digest: 6ac5bca39fa38458d3b400a661a6ec9d69619549ac7a4d26e2e5db4a61ea2a99
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: class_progression
+    source_digest: 1f00a6b6f812b08aa937a7d7f9309493868259307a5b661f69a6d1668eed36a0
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: combat_formulas
+    source_digest: 758feee534cea57921853e1425a57f18a12087cced9f31e3a2fc0b25d7a76db3
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: item_definition
+    source_digest: 78f6be8db6a67ca53dd21421a7cdabdc2c8cd6782ed3be2a13387f77c7d81eba
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: inventory_and_storage
+    source_digest: a3bce46ab7c853e75efcbc18273f32e8805ef091fb0ed96ce0a115778f1385ae
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: currency_and_economy
+    source_digest: 575bfcab86641a1ab580fba4d0c4f8f76eb96be4f234204163b0c6096d7a12cb
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: loot_and_rewards
+    source_digest: 5e18024bbb76a727bc8e41473af9e4417622f5099a16416bcb77294f97bc1352
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: world_and_dungeons
+    source_digest: 009fadfc559177925edfd7275d5b7500f03ca62bc30556a285ab0fdbf56126f2
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: mobs_and_bosses
+    source_digest: 20831c8bd3fb0e0afae683b8b29cdbe6be96fc391fcb4bedae565b0bf47168a9
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: pet_progression
+    source_digest: 13fabc26d268b266c040db1bcc475c8bfbcf8e201000da97af35dfc27d470e38
+    observed_status:
+      contract_status: accepted
+      runtime_status: blocked
+      release_status: blocked
+  - legacy_id: guilds_and_social
+    source_digest: 24356e72283cdb278a21ec8daf9ac0e552ad5b38e9beca0a741283ae584c5273
+    observed_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+  - legacy_id: pvp_season
+    source_digest: fcc93a581b2a176975f506c2b7008c9985749da92eef52e3b30db9ad430e5726
+    observed_status:
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+  - legacy_id: professions
+    source_digest: 1919ad821568b8628ff73eb7e2ac5712393063a71d2eca7443d8c1535c7e1a83
+    observed_status:
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+  - legacy_id: quests_and_objectives
+    source_digest: 83f8d627138d50ea134ba036fb98029d9cf6d3bab1c16055986d2223100feb30
+    observed_status:
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked
+  - legacy_id: seasons_prestige_cosmetics
+    source_digest: ad52bd29dd62f7c47ee2c5eba28593f083d26b53e068d54325f074cbfad963aa
+    observed_status:
+      contract_status: proposed
+      runtime_status: blocked
+      release_status: blocked

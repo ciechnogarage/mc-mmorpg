@@ -1,0 +1,165 @@
+{
+  "evidence_id": "reward_restart_recovery_reward_restart_recovery_no_dev_qa_lease_blocked",
+  "scenario_id": "reward_restart_recovery",
+  "domain": "economy",
+  "system": "quest_reward",
+  "environment": "dev-qa",
+  "test_type": "reward_idempotency_runtime_evidence",
+  "contract_status": "blocked",
+  "runtime_status": "blocked",
+  "release_effect": "blocks_release",
+  "migration_snapshot_ref": "domain-17-legacy-evidence-migration-snapshot-2026-07-31",
+  "legacy_source_ids": [
+    "runtime_evidence_register_2026_07_13",
+    "vertical_slice_e2e_runtime_gate"
+  ],
+  "legacy_sha256": [
+    "a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf",
+    "aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79"
+  ],
+  "legacy_status_mapping": [
+    "Prerequisite BLOCKED remains result.verdict BLOCKED for reward idempotency evidence materialization.",
+    "No runtime_status verified promotion is allowed without reward_transaction_id, idempotency_key, runtime duplicate-rejection proof, and player-visible restart recovery proof."
+  ],
+  "proof_level_mapping": {
+    "supported_levels": [
+      "STATIC_CONTRACT",
+      "RUNTIME_PROOF",
+      "INTEGRATION_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "requiredProof": [
+      "STATIC_CONTRACT",
+      "RUNTIME_PROOF",
+      "INTEGRATION_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "achievedProof": [
+      "STATIC_CONTRACT"
+    ],
+    "missingProof": [
+      "RUNTIME_PROOF",
+      "INTEGRATION_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "highest_achieved": "STATIC_CONTRACT"
+  },
+  "preconditions": [
+    "Scenario reward_restart_recovery must already exist in docs/qa/e2e-scenarios.yaml.",
+    "Prerequisite checkpoint decision must be consumed before runtime evidence materialization.",
+    "A valid explicit dev-qa lease must exist before runtime work.",
+    "reward_transaction_id owner must be explicit before PASS evidence can be collected.",
+    "idempotency_key owner must be explicit before PASS evidence can be collected.",
+    "duplicate_rejection_proof_path must identify an API, telemetry query, or runner before PASS evidence can be collected."
+  ],
+  "steps": [
+    "Read docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/decision.yaml.",
+    "Read docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json.",
+    "Ran MCMMORPG/infra/bin/mc-lease validate.",
+    "Ran MCMMORPG/infra/bin/mc-lease show qa.",
+    "Stopped before runtime execution because no active dev-qa lease exists and the prerequisite checkpoint is blocked.",
+    "Materialized this deterministic BLOCKED adapter input for evaluator consumption."
+  ],
+  "assertions": [
+    "Runtime PASS cannot be claimed when reward_transaction_id ownership is missing.",
+    "Runtime PASS cannot be claimed when idempotency_key ownership is missing.",
+    "Runtime PASS cannot be claimed without durable duplicate-rejection proof across restart recovery.",
+    "No duplicate currency or item instance proof exists in this record because runtime was not touched.",
+    "No rollback of runtime state is required when runtime_touched is false."
+  ],
+  "artifacts": [
+    {
+      "kind": "foundation-runtime-report",
+      "path": "docs/qa/evidence/reward_restart_recovery_no_lease/foundation-report.json",
+      "sha256": "e94a89fba6c71a3feff8ddcf23e05953d5af50cf6791d7c289d1360378bf23df"
+    },
+    {
+      "kind": "prerequisite-decision",
+      "path": "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/decision.yaml",
+      "sha256": "7949012cae8256c1e30d734449d416f5a519e2c4e90fb6a207ca40f8c3dc244e"
+    },
+    {
+      "kind": "prerequisite-blocker-input",
+      "path": "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/blocker-input.json",
+      "sha256": "da54d96a7a16358fdd8b5724adb2edc4f08f389fd6c3962e7547246a1f20b79e"
+    },
+    {
+      "kind": "prerequisite-lease-proof",
+      "path": "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/lease-proof.txt",
+      "sha256": "71b60374fd75a77c2e595e6514aaebb723026754ab532c191cea80550903038d"
+    },
+    {
+      "kind": "prerequisite-static-inspection-summary",
+      "path": "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/static-inspection-summary.txt",
+      "sha256": "f6b722cdab8f901745f44900314622725897d29290ce2f32e6c745bfb88d7b62"
+    },
+    {
+      "kind": "lease-proof",
+      "path": "docs/qa/evidence/reward_restart_recovery_no_lease/lease-proof.txt",
+      "sha256": "6532b2d774be859004694f6615547af98be4c1a1f6c4b84a51f61d29d7e4e90c"
+    },
+    {
+      "kind": "rollback-restore-proof",
+      "path": "docs/qa/evidence/reward_restart_recovery_no_lease/rollback-restore-proof.md",
+      "sha256": "33a776abfe22cb30224cf74c7a1e3bdb279eee24d7d01818c6b8f13c76fdd383"
+    },
+    {
+      "kind": "normalized-blocker-input",
+      "path": "docs/qa/evidence/reward_restart_recovery_no_lease/evaluator-blocker-input.json",
+      "sha256": "be011e88eb1c9080923c0c687b34b669714cdd0c56efffd97acb2caf8d3c7b6c"
+    }
+  ],
+  "build": {
+    "paper": "baseline-no-runtime",
+    "plugin_manifest_hash": "baseline-no-runtime",
+    "commit": "baseline-no-runtime",
+    "plugin_jar_inventory_hash": "not_collected_no_valid_lease",
+    "configuration_hashes": {}
+  },
+  "execution": {
+    "runner": "tools/qa/adapters/foundation-runtime.mjs",
+    "backend": "dev-qa",
+    "docker_volume_id": "not_allocated_no_valid_lease",
+    "test_account_uuid": "not_created_no_valid_lease",
+    "started_at": "2026-08-03T00:00:00Z",
+    "finished_at": "2026-08-03T00:00:00Z",
+    "executed_by": "domain-17-reward-idempotency-evidence-records",
+    "log_paths": [
+      "docs/qa/evidence/reward_restart_recovery_no_lease/lease-proof.txt",
+      "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/static-inspection-summary.txt"
+    ],
+    "environment_control": {
+      "lease": "none",
+      "workspace_root": "/home/przemek/projects/MC",
+      "runtime_touched": false,
+      "staging_touched": false,
+      "rollback": {
+        "method": "not_required_no_runtime_or_config_mutation",
+        "proof_paths": [
+          "docs/qa/evidence/reward_restart_recovery_no_lease/rollback-restore-proof.md",
+          "docs/qa/evidence/reward_restart_recovery_prerequisite_checkpoint/rollback-restore-proof.md"
+        ]
+      }
+    }
+  },
+  "result": {
+    "verdict": "BLOCKED",
+    "proof_level": "STATIC_CONTRACT",
+    "blocker_ids": [
+      "D17-REWARD-IDEMPOTENCY-NO-DEV-QA-LEASE",
+      "D17-REWARD-IDEMPOTENCY-TRANSACTION-PROOF-MISSING",
+      "D17-REWARD-IDEMPOTENCY-DUPLICATE-REJECTION-PROOF-MISSING",
+      "missing_runtime_evidence",
+      "economy_duplication_risk",
+      "restart_recovery_failure"
+    ],
+    "observations": [
+      "Prerequisite checkpoint decision is BLOCKED.",
+      "mc-lease registry is valid.",
+      "mc-lease show qa reported zero active leases for the required scope.",
+      "Static prerequisite inspection found no durable reward_transaction_id source, idempotency_key source, or duplicate-rejection proof path.",
+      "Runtime validation was not attempted.",
+      "No backend, Docker container, RCON session, Mineflayer bot, world data, player data, plugin config, runtime state, or staging state was touched."
+    ]
+  }
+}

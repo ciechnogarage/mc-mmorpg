@@ -1,0 +1,7 @@
+name: FullscreenPoc
+version: 0.1
+main: poc.FullscreenPoc
+api-version: '1.21'
+depend: [packetevents]
+commands:
+  fs: {}

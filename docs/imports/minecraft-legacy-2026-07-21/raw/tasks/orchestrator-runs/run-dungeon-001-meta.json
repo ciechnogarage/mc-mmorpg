@@ -1,0 +1,24 @@
+{
+  "run_id": "run-dungeon-001-meta",
+  "source": "cursor_meta_orchestrator",
+  "mode": "langgraph_minecraft",
+  "note": "Meta dispatch artifact for DUNGEON-001. LangGraph attempt run-2026-05-24_193517 failed: Codex profile `orchestrator` missing on secondary home. Add profiles to ~/.codex and codex2 per ops/codex-team/registry.yaml then re-run run-orchestrator-graph.ps1.",
+  "langgraph_attempt": "tasks/orchestrator-runs/run-2026-05-24_193517.json",
+  "langgraph_routing_verified": true,
+  "workflow": "dungeon_content_pipeline",
+  "risk_class": "R2",
+  "route_path": "config_work",
+  "feature_spec_summary": "dungeon_001: Iris pack + MD CLASSIC map; PNG zones; signals dungeon_001_*; MaxInstances 5; ChunkGenerator iris:dungeon_001",
+  "config_change_summary": "Cloned plugins/Iris/packs/dungeon_001 and plugins/MythicDungeons/maps/dungeon_001 from loch; updated config.yml; synced iris/pack; MythicMobs/mobs/dungeon_001.yml stub",
+  "qa_result_summary": "Pending: guard:dungeon-001 + in-game MD editor flow per DUNGEON_001_EDITOR_RUNBOOK.md",
+  "artifacts": [
+    "design/levels/dungeon_001/",
+    "tools/setup-dungeon-001.py",
+    "tasks/codex-team-packets/WP-dungeon-001-*.json"
+  ],
+  "login_routing": {
+    "orchestrator": "secondary",
+    "config_worker": "secondary",
+    "qa_reviewer": "primary"
+  }
+}

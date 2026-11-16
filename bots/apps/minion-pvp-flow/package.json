@@ -1,0 +1,9 @@
+{
+  "name": "@mmorpg-bots/minion-pvp-flow",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "@mmorpg-bots/bot-core": "workspace:*",
+    "@mmorpg-bots/mmo-bridge": "workspace:*"
+  }
+}

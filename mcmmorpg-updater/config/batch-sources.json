@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "registrations": [
+    {
+      "manifest_name": "PlaceholderAPI",
+      "plugin_id": "placeholderapi",
+      "kind": "public-source",
+      "source_id": "placeholderapi-modrinth",
+      "adapter": "modrinth-project-versions",
+      "project": "modrinth/placeholderapi",
+      "project_id": "lKEzGugV",
+      "official_url": "https://modrinth.com/plugin/placeholderapi",
+      "compatibility": {
+        "loaders": ["paper", "bukkit", "spigot", "purpur"],
+        "release_types": ["release"]
+      }
+    },
+    {
+      "manifest_name": "MMOCore",
+      "plugin_id": "mmocore",
+      "kind": "premium-or-login",
+      "adapter": "phoenixdevt-devbuilds",
+      "official_url": "https://phoenixdevt.fr/devbuilds",
+      "reason": "PhoenixDevt account-gated/dev-build source is authoritative; do not infer updates from Modrinth search."
+    },
+    {
+      "manifest_name": "MMOInventory",
+      "plugin_id": "mmoinventory",
+      "kind": "premium-or-login",
+      "adapter": "phoenixdevt-devbuilds",
+      "official_url": "https://phoenixdevt.fr/devbuilds",
+      "reason": "PhoenixDevt account-gated/dev-build source is authoritative; do not infer updates from Modrinth search."
+    },
+    {
+      "manifest_name": "MMOProfiles",
+      "plugin_id": "mmoprofiles",
+      "kind": "premium-or-login",
+      "adapter": "phoenixdevt-devbuilds",
+      "official_url": "https://phoenixdevt.fr/devbuilds",
+      "reason": "PhoenixDevt account-gated/dev-build source is authoritative; do not infer updates from Modrinth search."
+    },
+    {
+      "manifest_name": "MMOItems",
+      "plugin_id": "mmoitems",
+      "kind": "premium-or-login",
+      "adapter": "phoenixdevt-devbuilds",
+      "official_url": "https://phoenixdevt.fr/devbuilds",
+      "reason": "PhoenixDevt account-gated/dev-build source is authoritative; do not infer updates from Modrinth search."
+    },
+    {
+      "manifest_name": "ModelEngine",
+      "plugin_id": "modelengine",
+      "kind": "premium-or-login",
+      "adapter": "mythiccraft-resource",
+      "official_url": "https://mythiccraft.io/index.php?resources/model-engine.1213/",
+      "reason": "MythicCraft account-aware resource page is authoritative; public search results are not sufficient."
+    },
+    {
+      "manifest_name": "MythicCrucible",
+      "plugin_id": "mythiccrucible",
+      "kind": "premium-or-login",
+      "adapter": "mythiccraft-resource",
+      "official_url": "https://mythiccraft.io/index.php?resources/crucible-custom-items-armor-furniture-blocks-more.2/",
+      "reason": "MythicCraft account-aware premium/dev resource is authoritative; public search results are not sufficient."
+    },
+    {
+      "manifest_name": "MythicDungeons",
+      "plugin_id": "mythicdungeons",
+      "kind": "premium-or-login",
+      "adapter": "mythiccraft-resource",
+      "official_url": "https://mythiccraft.io/index.php?resources/mythic-dungeons.869/",
+      "reason": "MythicCraft/Spigot account-aware resource and dev-build pages are authoritative; Modrinth exact-name search must not be treated as complete."
+    },
+    {
+      "manifest_name": "MythicHUD",
+      "plugin_id": "mythichud",
+      "kind": "premium-or-login",
+      "adapter": "mythiccraft-resource",
+      "official_url": "https://mythiccraft.io/",
+      "reason": "MythicCraft account-gated resource is authoritative; public search results are not sufficient."
+    },
+    {
+      "manifest_name": "MythicLib-dist",
+      "plugin_id": "mythiclib",
+      "kind": "premium-or-login",
+      "adapter": "phoenixdevt-devbuilds",
+      "official_url": "https://phoenixdevt.fr/devbuilds",
+      "reason": "PhoenixDevt/MythicCraft dependency source is authoritative for this installed build; public Modrinth compatibility alone is incomplete."
+    },
+    {
+      "manifest_name": "MythicMobs",
+      "plugin_id": "mythicmobs",
+      "kind": "premium-or-login",
+      "adapter": "mythiccraft-resource",
+      "official_url": "https://mythiccraft.io/index.php?resources/mythicmobs.1/",
+      "reason": "MythicCraft resource/dev-build pages are authoritative; public search results are not sufficient."
+    },
+    {
+      "manifest_name": "nexo",
+      "plugin_id": "nexo",
+      "kind": "premium-or-login",
+      "adapter": "voxel-shop-updates",
+      "resource_id": 6901,
+      "official_url": "https://voxel.shop/product/6901/nexo/updates",
+      "reason": "Voxel account-gated product updates page is authoritative; public search results are not sufficient."
+    }
+  ],
+  "modrinth_search": {
+    "adapter": "modrinth-search-v2",
+    "max_results": 10,
+    "search": {
+      "host": "api.modrinth.com",
+      "project_path": "/v2",
+      "path_prefix": "/v2/search",
+      "max_bytes": 1048576
+    },
+    "project": {
+      "host": "api.modrinth.com",
+      "project_path": "/v2",
+      "path_prefix": "/v2/project/",
+      "max_bytes": 2097152
+    },
+    "artifact": {
+      "host": "cdn.modrinth.com",
+      "max_bytes": 134217728
+    },
+    "redirects": {
+      "max": 0,
+      "same_host_only": true
+    }
+  }
+}

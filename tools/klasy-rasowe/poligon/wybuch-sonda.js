@@ -1,0 +1,17 @@
+const mineflayer=require('/g/node_modules/mineflayer');const {attach}=require('/e/lib/resourcepack.js');const {rcon}=require('/s/rcon.js')
+const sleep=ms=>new Promise(r=>setTimeout(r,ms))
+const F=bot=>bot._client.write('block_dig',{status:6,location:{x:0,y:0,z:0},face:0,sequence:0})
+;let hp0;(async()=>{const nick=process.env.NICK||'ElfSonda';const bot=mineflayer.createBot({host:process.env.MC_HOST,username:nick,auth:'offline',version:'1.21.11'});attach(bot._client)
+const msg=[];bot.on('messagestr',m=>msg.push('C:'+m));bot.on('actionBar',m=>msg.push('A:'+m.toString()))
+await new Promise(r=>bot.once('spawn',r));await sleep(5000);await rcon(`cc testpostac ${nick} ${process.env.RASA||'elf'} ${process.env.ARCH||'mag'}`);await sleep(15000)
+for(let l=2;l<=7;l++){await rcon(`mmocore admin level set ${nick} main ${l}`);await sleep(1500)}
+await rcon(`minecraft:tp ${nick} 300.5 -59 296.5 0 0`);await rcon('minecraft:kill @e[name="Wilk Gajowy"]');await rcon('mm mobs spawn GAJ_WILK 1 world,300.5,-59,304.5');await sleep(800);await rcon('execute as @e[name="Wilk Gajowy"] run data merge entity @s {NoAI:1b}');await sleep(500)
+const w=bot.nearestEntity(e=>e.name==='wolf');if(w)await bot.lookAt(w.position.offset(0,.4,0),true)
+await rcon(`mmocore admin resource-mana set ${nick} 200`)
+const pas=[];for(let s=1;s<=5;s++)pas.push((await rcon(`papi parse ${nick} %mmocore_bound_${s}%`)).trim());console.log('pasek',pas.join('|'),'bron slot',bot.quickBarSlot,'klasa',(await rcon(`papi parse ${nick} %mmocore_class_id% %mmocore_level% %mmocore_mana%`)).trim())
+const bron=bot.quickBarSlot;const wolne=[...Array(9).keys()].filter(s=>s!==bron);msg.length=0
+const k=Number(process.env.KLAWISZ||0);const hp=async()=>(await rcon('data get entity @e[name="Wilk Gajowy",limit=1] Health')).replace(/.*data: /,'').trim();F(bot);await sleep(300);const t0=Date.now();bot.setQuickBarSlot(wolne[k]);await sleep(300);console.log('HP +0.3s',hp0=await hp());await sleep(1000);console.log('HP +1.3s',await hp());F(bot);await sleep(300)
+console.log('po rzucie mana',(await rcon(`papi parse ${nick} %mmocore_mana%`)).trim(),'wilk',(await rcon('data get entity @e[name="Wilk Gajowy",limit=1] Health')).trim().slice(-12))
+console.log('EFEKTY WILKA',(await rcon('data get entity @e[name="Wilk Gajowy",limit=1] active_effects')).replace(/.*data: /,'').slice(0,160));console.log('EFEKTY GRACZA',(await rcon(`data get entity ${nick} active_effects`)).replace(/.*data: /,'').slice(0,200))
+console.log('KOMUNIKATY',JSON.stringify(msg.filter(m=>!/❤/.test(m)).slice(0,10)))
+bot.quit();await sleep(300);process.exit(0)})()

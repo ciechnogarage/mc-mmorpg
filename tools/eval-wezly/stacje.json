@@ -1,0 +1,2285 @@
+[
+ {
+  "plik": "profession-alchemy.yml",
+  "cmd": "warsztat-alchemy",
+  "gui": "Warsztat: Alchemika",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_alchemical_base",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ALCHEMICAL_BASE",
+    "outNazwa": "Baza alchemiczna",
+    "outMat": "GLASS_BOTTLE",
+    "czas": 1,
+    "profesja": "alchemy",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_HERBAL_EXTRACT",
+      "ilosc": 1,
+      "nazwa": "Ekstrakt zielarski",
+      "mat": "HONEY_BOTTLE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_antidote",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ANTIDOTE",
+    "outNazwa": "Antidotum",
+    "outMat": "POTION",
+    "czas": 2,
+    "profesja": "alchemy",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MEDICINAL_HERB",
+      "ilosc": 3,
+      "nazwa": "Zioło lecznicze",
+      "mat": "DANDELION"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_weapon_oil",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_WEAPON_OIL",
+    "outNazwa": "Olej do broni",
+    "outMat": "HONEY_BOTTLE",
+    "czas": 3,
+    "profesja": "alchemy",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FISH_OIL",
+      "ilosc": 2,
+      "nazwa": "Olej rybi",
+      "mat": "HONEY_BOTTLE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_combat_tonic",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_COMBAT_TONIC",
+    "outNazwa": "Tonik bojowy",
+    "outMat": "POTION",
+    "czas": 4,
+    "profesja": "alchemy",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_VENOM_SAC",
+      "ilosc": 1,
+      "nazwa": "Woreczek jadowy",
+      "mat": "SPIDER_EYE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_alchemical_solvent",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ALCHEMICAL_SOLVENT",
+    "outNazwa": "Rozpuszczalnik alchemiczny",
+    "outMat": "DRAGON_BREATH",
+    "czas": 5,
+    "profesja": "alchemy",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ALCHEMICAL_CROP",
+      "ilosc": 2,
+      "nazwa": "Plon alchemiczny",
+      "mat": "CHORUS_FRUIT"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-building.yml",
+  "cmd": "warsztat-building",
+  "gui": "Warsztat: Budowniczego",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_mortar",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_MORTAR",
+    "outNazwa": "Zaprawa",
+    "outMat": "CLAY_BALL",
+    "czas": 1,
+    "profesja": "building",
+    "poziom": 0,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CLAY_LUMP",
+      "ilosc": 8,
+      "nazwa": "Gruda gliny",
+      "mat": "CLAY_BALL"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_carved_stone",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CARVED_STONE",
+    "outNazwa": "Rzeźbiony kamień",
+    "outMat": "CHISELED_STONE_BRICKS",
+    "czas": 2,
+    "profesja": "building",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CUT_STONE",
+      "ilosc": 4,
+      "nazwa": "Kamień konstrukcyjny",
+      "mat": "SMOOTH_STONE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_support_beam",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_SUPPORT_BEAM",
+    "outNazwa": "Belka nośna",
+    "outMat": "STRIPPED_OAK_LOG",
+    "czas": 3,
+    "profesja": "building",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SEASONED_TIMBER",
+      "ilosc": 4,
+      "nazwa": "Sezonowane drewno",
+      "mat": "OAK_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_decorative_fitting",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_DECORATIVE_FITTING",
+    "outNazwa": "Okucie dekoracyjne",
+    "outMat": "LANTERN",
+    "czas": 4,
+    "profesja": "building",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CARVED_FITTING",
+      "ilosc": 2,
+      "nazwa": "Rzeźbione okucie",
+      "mat": "MANGROVE_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_reinforced_block",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_REINFORCED_BLOCK",
+    "outNazwa": "Blok zbrojony",
+    "outMat": "POLISHED_DEEPSLATE",
+    "czas": 5,
+    "profesja": "building",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_METAL_PLATE",
+      "ilosc": 2,
+      "nazwa": "Metalowa płyta",
+      "mat": "HEAVY_WEIGHTED_PRESSURE_PLATE"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-cooking.yml",
+  "cmd": "warsztat-cooking",
+  "gui": "Warsztat: Kucharza",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_trail_ration",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_TRAIL_RATION",
+    "outNazwa": "Racja podróżna",
+    "outMat": "BREAD",
+    "czas": 1,
+    "profesja": "cooking",
+    "poziom": 0,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_QUALITY_GRAIN",
+      "ilosc": 2,
+      "nazwa": "Dobre ziarno",
+      "mat": "WHEAT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_fisher_stew",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_FISHER_STEW",
+    "outNazwa": "Gulasz rybaka",
+    "outMat": "MUSHROOM_STEW",
+    "czas": 2,
+    "profesja": "cooking",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RARE_FISH",
+      "ilosc": 1,
+      "nazwa": "Rzadka ryba",
+      "mat": "TROPICAL_FISH"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_hunter_roast",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_HUNTER_ROAST",
+    "outNazwa": "Pieczeń myśliwego",
+    "outMat": "COOKED_BEEF",
+    "czas": 3,
+    "profesja": "cooking",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CURED_HIDE",
+      "ilosc": 1,
+      "nazwa": "Wyprawiona skóra",
+      "mat": "LEATHER"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_harvest_feast",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_HARVEST_FEAST",
+    "outNazwa": "Uczta żniwna",
+    "outMat": "PUMPKIN_PIE",
+    "czas": 4,
+    "profesja": "cooking",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ALCHEMICAL_CROP",
+      "ilosc": 1,
+      "nazwa": "Plon alchemiczny",
+      "mat": "CHORUS_FRUIT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_banquet",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_MASTER_BANQUET",
+    "outNazwa": "Mistrzowska uczta",
+    "outMat": "CAKE",
+    "czas": 5,
+    "profesja": "cooking",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_COMBAT_TONIC",
+      "ilosc": 1,
+      "nazwa": "Tonik bojowy",
+      "mat": "POTION"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-enchanting.yml",
+  "cmd": "warsztat-enchanting",
+  "gui": "Warsztat: Zaklinacza",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   15
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_rune_blank",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_RUNE_BLANK",
+    "outNazwa": "Pusta runa",
+    "outMat": "PAPER",
+    "czas": 1,
+    "profesja": "enchanting",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CUT_STONE",
+      "ilosc": 2,
+      "nazwa": "Kamień konstrukcyjny",
+      "mat": "SMOOTH_STONE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_charged_rune",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CHARGED_RUNE",
+    "outNazwa": "Naładowana runa",
+    "outMat": "ENCHANTED_BOOK",
+    "czas": 2,
+    "profesja": "enchanting",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RUNE_BLANK",
+      "ilosc": 2,
+      "nazwa": "Pusta runa",
+      "mat": "PAPER"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_enchant_dust",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ENCHANT_DUST",
+    "outNazwa": "Pył zaklęć",
+    "outMat": "GLOWSTONE_DUST",
+    "czas": 3,
+    "profesja": "enchanting",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ARCANE_CRYSTAL",
+      "ilosc": 1,
+      "nazwa": "Kryształ arkanów",
+      "mat": "DIAMOND"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_staff_focus",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_STAFF_FOCUS",
+    "outNazwa": "Ognisko kostura",
+    "outMat": "AMETHYST_CLUSTER",
+    "czas": 4,
+    "profesja": "enchanting",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_STAFF_CORE",
+      "ilosc": 1,
+      "nazwa": "Korpus kostura",
+      "mat": "BLAZE_ROD"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_awakening_seal",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_AWAKENING_SEAL",
+    "outNazwa": "Pieczęć przebudzenia",
+    "outMat": "NETHER_STAR",
+    "czas": 5,
+    "profesja": "enchanting",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MASTER_CHARM",
+      "ilosc": 1,
+      "nazwa": "Mistrzowski talizman",
+      "mat": "HEART_OF_THE_SEA"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_awakened_staff",
+    "idx": 5,
+    "slot": 15,
+    "outTyp": "STAFF",
+    "outId": "PROF_AWAKENED_STAFF",
+    "outNazwa": "Przebudzony kostur",
+    "outMat": "BLAZE_ROD",
+    "czas": 12,
+    "profesja": "enchanting",
+    "poziom": 30,
+    "xp": 100.0,
+    "skladniki": [
+     {
+      "typ": "STAFF",
+      "id": "PROF_UNAWAKENED_STAFF",
+      "ilosc": 1,
+      "nazwa": "Nieprzebudzony kostur",
+      "mat": "STICK"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_STAFF_FOCUS",
+      "ilosc": 1,
+      "nazwa": "Ognisko kostura",
+      "mat": "AMETHYST_CLUSTER"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CHARGED_RUNE",
+      "ilosc": 2,
+      "nazwa": "Naładowana runa",
+      "mat": "ENCHANTED_BOOK"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-farming.yml",
+  "cmd": "warsztat-farming",
+  "gui": "Warsztat: Farmera",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_quality_grain",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_QUALITY_GRAIN",
+    "outNazwa": "Dobre ziarno",
+    "outMat": "WHEAT",
+    "czas": 1,
+    "profesja": "farming",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FRESH_HARVEST",
+      "ilosc": 12,
+      "nazwa": "Świeży zbiór",
+      "mat": "WHEAT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_flax_fiber",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_FLAX_FIBER",
+    "outNazwa": "Włókno lniane",
+    "outMat": "STRING",
+    "czas": 2,
+    "profesja": "farming",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FRESH_HARVEST",
+      "ilosc": 6,
+      "nazwa": "Świeży zbiór",
+      "mat": "WHEAT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_fine_wool",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_FINE_WOOL",
+    "outNazwa": "Delikatna wełna",
+    "outMat": "WHITE_WOOL",
+    "czas": 3,
+    "profesja": "farming",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RAW_FLEECE",
+      "ilosc": 4,
+      "nazwa": "Surowe runo",
+      "mat": "WHITE_WOOL"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_bait_mix",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_BAIT_MIX",
+    "outNazwa": "Mieszanka zanętowa",
+    "outMat": "BEETROOT_SEEDS",
+    "czas": 4,
+    "profesja": "farming",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FRESH_HARVEST",
+      "ilosc": 10,
+      "nazwa": "Świeży zbiór",
+      "mat": "WHEAT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_alchemical_crop",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ALCHEMICAL_CROP",
+    "outNazwa": "Plon alchemiczny",
+    "outMat": "CHORUS_FRUIT",
+    "czas": 5,
+    "profesja": "farming",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FRESH_HARVEST",
+      "ilosc": 8,
+      "nazwa": "Świeży zbiór",
+      "mat": "WHEAT"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-fishing.yml",
+  "cmd": "warsztat-fishing",
+  "gui": "Warsztat: Rybaka",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_fish_oil",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_FISH_OIL",
+    "outNazwa": "Olej rybi",
+    "outMat": "HONEY_BOTTLE",
+    "czas": 1,
+    "profesja": "fishing",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RAW_CATCH",
+      "ilosc": 5,
+      "nazwa": "Świeży połów",
+      "mat": "COD"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_clam",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CLAM",
+    "outNazwa": "Małż",
+    "outMat": "NAUTILUS_SHELL",
+    "czas": 2,
+    "profesja": "fishing",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RAW_CATCH",
+      "ilosc": 8,
+      "nazwa": "Świeży połów",
+      "mat": "COD"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_pearl",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_PEARL",
+    "outNazwa": "Perła",
+    "outMat": "ENDER_PEARL",
+    "czas": 3,
+    "profesja": "fishing",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CLAM",
+      "ilosc": 3,
+      "nazwa": "Małż",
+      "mat": "NAUTILUS_SHELL"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_rare_fish",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_RARE_FISH",
+    "outNazwa": "Rzadka ryba",
+    "outMat": "TROPICAL_FISH",
+    "czas": 4,
+    "profesja": "fishing",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RAW_CATCH",
+      "ilosc": 10,
+      "nazwa": "Świeży połów",
+      "mat": "COD"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_water_essence",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_WATER_ESSENCE",
+    "outNazwa": "Esencja wody",
+    "outMat": "PRISMARINE_CRYSTALS",
+    "czas": 5,
+    "profesja": "fishing",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CLAM",
+      "ilosc": 8,
+      "nazwa": "Małż",
+      "mat": "NAUTILUS_SHELL"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-herbalism.yml",
+  "cmd": "warsztat-herbalism",
+  "gui": "Warsztat: Zielarza",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_dried_herbs",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_DRIED_HERBS",
+    "outNazwa": "Suszone zioła",
+    "outMat": "DRIED_KELP",
+    "czas": 1,
+    "profesja": "herbalism",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MEDICINAL_HERB",
+      "ilosc": 3,
+      "nazwa": "Zioło lecznicze",
+      "mat": "DANDELION"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_herbal_extract",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_HERBAL_EXTRACT",
+    "outNazwa": "Ekstrakt zielarski",
+    "outMat": "HONEY_BOTTLE",
+    "czas": 2,
+    "profesja": "herbalism",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MOONLEAF",
+      "ilosc": 3,
+      "nazwa": "Księżycowy liść",
+      "mat": "BLUE_ORCHID"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_alchemical_crop",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ALCHEMICAL_CROP",
+    "outNazwa": "Plon alchemiczny",
+    "outMat": "CHORUS_FRUIT",
+    "czas": 3,
+    "profesja": "herbalism",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REDCAP",
+      "ilosc": 4,
+      "nazwa": "Czerwony kapelusz",
+      "mat": "RED_MUSHROOM"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_refined_moonleaf",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_MOONLEAF",
+    "outNazwa": "Księżycowy liść",
+    "outMat": "BLUE_ORCHID",
+    "czas": 4,
+    "profesja": "herbalism",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MEDICINAL_HERB",
+      "ilosc": 5,
+      "nazwa": "Zioło lecznicze",
+      "mat": "DANDELION"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_rich_extract",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_HERBAL_EXTRACT",
+    "outNazwa": "Ekstrakt zielarski",
+    "outMat": "HONEY_BOTTLE",
+    "czas": 5,
+    "profesja": "herbalism",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_DRIED_HERBS",
+      "ilosc": 2,
+      "nazwa": "Suszone zioła",
+      "mat": "DRIED_KELP"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REDCAP",
+      "ilosc": 2,
+      "nazwa": "Czerwony kapelusz",
+      "mat": "RED_MUSHROOM"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-hunting.yml",
+  "cmd": "warsztat-hunting",
+  "gui": "Warsztat: Myśliwego",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_cured_hide",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CURED_HIDE",
+    "outNazwa": "Wyprawiona skóra",
+    "outMat": "LEATHER",
+    "czas": 1,
+    "profesja": "hunting",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BEAST_SCRAP",
+      "ilosc": 5,
+      "nazwa": "Łup z bestii",
+      "mat": "LEATHER"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_sinew",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_SINEW",
+    "outNazwa": "Ścięgno",
+    "outMat": "STRING",
+    "czas": 2,
+    "profesja": "hunting",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BEAST_SCRAP",
+      "ilosc": 8,
+      "nazwa": "Łup z bestii",
+      "mat": "LEATHER"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_beast_bone",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_BEAST_BONE",
+    "outNazwa": "Kość bestii",
+    "outMat": "BONE",
+    "czas": 3,
+    "profesja": "hunting",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BEAST_SCRAP",
+      "ilosc": 10,
+      "nazwa": "Łup z bestii",
+      "mat": "LEATHER"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_monster_trophy",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_MONSTER_TROPHY",
+    "outNazwa": "Trofeum potwora",
+    "outMat": "GHAST_TEAR",
+    "czas": 4,
+    "profesja": "hunting",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BEAST_BONE",
+      "ilosc": 4,
+      "nazwa": "Kość bestii",
+      "mat": "BONE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_venom_sac",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_VENOM_SAC",
+    "outNazwa": "Woreczek jadowy",
+    "outMat": "SPIDER_EYE",
+    "czas": 5,
+    "profesja": "hunting",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BEAST_SCRAP",
+      "ilosc": 12,
+      "nazwa": "Łup z bestii",
+      "mat": "LEATHER"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-jewelcrafting.yml",
+  "cmd": "warsztat-jewelcrafting",
+  "gui": "Warsztat: Jubilera",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_cut_gem",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CUT_GEM",
+    "outNazwa": "Oszlifowany klejnot",
+    "outMat": "EMERALD",
+    "czas": 1,
+    "profesja": "jewelcrafting",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ROUGH_CRYSTAL",
+      "ilosc": 2,
+      "nazwa": "Surowy kryształ",
+      "mat": "AMETHYST_SHARD"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_silver_setting",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_SILVER_SETTING",
+    "outNazwa": "Srebrna oprawa",
+    "outMat": "IRON_NUGGET",
+    "czas": 2,
+    "profesja": "jewelcrafting",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SILVER_ORE",
+      "ilosc": 3,
+      "nazwa": "Ruda srebra",
+      "mat": "RAW_IRON"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_pearl_setting",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_PEARL_SETTING",
+    "outNazwa": "Perłowa oprawa",
+    "outMat": "ENDER_EYE",
+    "czas": 3,
+    "profesja": "jewelcrafting",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_PEARL",
+      "ilosc": 1,
+      "nazwa": "Perła",
+      "mat": "ENDER_PEARL"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_empty_socket",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_EMPTY_SOCKET",
+    "outNazwa": "Puste gniazdo",
+    "outMat": "ECHO_SHARD",
+    "czas": 4,
+    "profesja": "jewelcrafting",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CUT_GEM",
+      "ilosc": 2,
+      "nazwa": "Oszlifowany klejnot",
+      "mat": "EMERALD"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_charm",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_MASTER_CHARM",
+    "outNazwa": "Mistrzowski talizman",
+    "outMat": "HEART_OF_THE_SEA",
+    "czas": 5,
+    "profesja": "jewelcrafting",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_PEARL_SETTING",
+      "ilosc": 2,
+      "nazwa": "Perłowa oprawa",
+      "mat": "ENDER_EYE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_silver_signet",
+    "idx": 5,
+    "slot": null,
+    "outTyp": "RING",
+    "outId": "PROF_SILVER_SIGNET",
+    "outNazwa": "Srebrny sygnet",
+    "outMat": "EMERALD",
+    "czas": 4,
+    "profesja": "jewelcrafting",
+    "poziom": 15,
+    "xp": 40.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CUT_GEM",
+      "ilosc": 1,
+      "nazwa": "Oszlifowany klejnot",
+      "mat": "EMERALD"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SILVER_SETTING",
+      "ilosc": 1,
+      "nazwa": "Srebrna oprawa",
+      "mat": "IRON_NUGGET"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_moonleaf_amulet",
+    "idx": 6,
+    "slot": null,
+    "outTyp": "NECKLACE",
+    "outId": "PROF_MOONLEAF_AMULET",
+    "outNazwa": "Amulet z ksiezycowym lisciem",
+    "outMat": "EMERALD",
+    "czas": 6,
+    "profesja": "jewelcrafting",
+    "poziom": 30,
+    "xp": 75.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_PEARL_SETTING",
+      "ilosc": 1,
+      "nazwa": "Perłowa oprawa",
+      "mat": "ENDER_EYE"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MOONLEAF",
+      "ilosc": 2,
+      "nazwa": "Księżycowy liść",
+      "mat": "BLUE_ORCHID"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_luck_charm",
+    "idx": 7,
+    "slot": null,
+    "outTyp": "CHARM",
+    "outId": "PROF_LUCK_CHARM",
+    "outNazwa": "Talizman szczescia",
+    "outMat": "NETHER_STAR",
+    "czas": 8,
+    "profesja": "jewelcrafting",
+    "poziom": 45,
+    "xp": 140.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MASTER_CHARM",
+      "ilosc": 1,
+      "nazwa": "Mistrzowski talizman",
+      "mat": "HEART_OF_THE_SEA"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MONSTER_TROPHY",
+      "ilosc": 1,
+      "nazwa": "Trofeum potwora",
+      "mat": "GHAST_TEAR"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-mining.yml",
+  "cmd": "warsztat-mining",
+  "gui": "Warsztat: Górnika",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_refined_iron",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_REFINED_IRON",
+    "outNazwa": "Rafinowane żelazo",
+    "outMat": "IRON_INGOT",
+    "czas": 1,
+    "profesja": "mining",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ORE_CHUNK",
+      "ilosc": 3,
+      "nazwa": "Bryła urobku",
+      "mat": "RAW_IRON"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_silver_ore",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_SILVER_ORE",
+    "outNazwa": "Ruda srebra",
+    "outMat": "RAW_IRON",
+    "czas": 2,
+    "profesja": "mining",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ORE_CHUNK",
+      "ilosc": 6,
+      "nazwa": "Bryła urobku",
+      "mat": "RAW_IRON"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_raw_gem",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_RAW_GEM",
+    "outNazwa": "Surowy klejnot",
+    "outMat": "AMETHYST_SHARD",
+    "czas": 3,
+    "profesja": "mining",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ROUGH_STONE",
+      "ilosc": 6,
+      "nazwa": "Surowy kamień",
+      "mat": "COBBLESTONE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_cut_stone",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CUT_STONE",
+    "outNazwa": "Kamień konstrukcyjny",
+    "outMat": "SMOOTH_STONE",
+    "czas": 4,
+    "profesja": "mining",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ROUGH_STONE",
+      "ilosc": 8,
+      "nazwa": "Surowy kamień",
+      "mat": "COBBLESTONE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_arcane_crystal",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ARCANE_CRYSTAL",
+    "outNazwa": "Kryształ arkanów",
+    "outMat": "DIAMOND",
+    "czas": 5,
+    "profesja": "mining",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_RAW_GEM",
+      "ilosc": 3,
+      "nazwa": "Surowy klejnot",
+      "mat": "AMETHYST_SHARD"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-smithing.yml",
+  "cmd": "warsztat-smithing",
+  "gui": "Warsztat: Kowala",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_steel_mechanism",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_STEEL_MECHANISM",
+    "outNazwa": "Stalowy mechanizm",
+    "outMat": "PISTON",
+    "czas": 1,
+    "profesja": "smithing",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 3,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_metal_plate",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_METAL_PLATE",
+    "outNazwa": "Metalowa płyta",
+    "outMat": "HEAVY_WEIGHTED_PRESSURE_PLATE",
+    "czas": 2,
+    "profesja": "smithing",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 5,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_arrowheads",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ARROWHEADS",
+    "outNazwa": "Groty strzał",
+    "outMat": "IRON_NUGGET",
+    "czas": 3,
+    "profesja": "smithing",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 2,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_metal_repair_kit",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_METAL_REPAIR_KIT",
+    "outNazwa": "Zestaw naprawczy kowala",
+    "outMat": "ANVIL",
+    "czas": 4,
+    "profesja": "smithing",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_METAL_PLATE",
+      "ilosc": 2,
+      "nazwa": "Metalowa płyta",
+      "mat": "HEAVY_WEIGHTED_PRESSURE_PLATE"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_blade_blank",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_MASTER_BLADE_BLANK",
+    "outNazwa": "Mistrzowska głownia",
+    "outMat": "NETHERITE_SCRAP",
+    "czas": 5,
+    "profesja": "smithing",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_ARCANE_CRYSTAL",
+      "ilosc": 1,
+      "nazwa": "Kryształ arkanów",
+      "mat": "DIAMOND"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_axe_head",
+    "idx": 5,
+    "slot": 15,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_AXE_HEAD",
+    "outNazwa": "Głowica siekiery",
+    "outMat": "IRON_AXE",
+    "czas": 3,
+    "profesja": "smithing",
+    "poziom": 15,
+    "xp": 40.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_METAL_PLATE",
+      "ilosc": 2,
+      "nazwa": "Metalowa płyta",
+      "mat": "HEAVY_WEIGHTED_PRESSURE_PLATE"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 2,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_farmer_hoe",
+    "idx": 6,
+    "slot": 16,
+    "outTyp": "TOOL",
+    "outId": "PROF_FARMER_HOE",
+    "outNazwa": "Motyka farmera",
+    "outMat": "IRON_HOE",
+    "czas": 4,
+    "profesja": "smithing",
+    "poziom": 15,
+    "xp": 45.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_METAL_PLATE",
+      "ilosc": 1,
+      "nazwa": "Metalowa płyta",
+      "mat": "HEAVY_WEIGHTED_PRESSURE_PLATE"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 2,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_WEAPON_HANDLE",
+      "ilosc": 1,
+      "nazwa": "Rękojeść",
+      "mat": "STICK"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_herb_sickle",
+    "idx": 7,
+    "slot": 19,
+    "outTyp": "TOOL",
+    "outId": "PROF_HERB_SICKLE",
+    "outNazwa": "Sierp zielarza",
+    "outMat": "SHEARS",
+    "czas": 4,
+    "profesja": "smithing",
+    "poziom": 15,
+    "xp": 45.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 3,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_WEAPON_HANDLE",
+      "ilosc": 1,
+      "nazwa": "Rękojeść",
+      "mat": "STICK"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_hunter_knife",
+    "idx": 8,
+    "slot": 20,
+    "outTyp": "TOOL",
+    "outId": "PROF_HUNTER_KNIFE",
+    "outNazwa": "Nóż myśliwski",
+    "outMat": "IRON_SWORD",
+    "czas": 4,
+    "profesja": "smithing",
+    "poziom": 15,
+    "xp": 50.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_REFINED_IRON",
+      "ilosc": 2,
+      "nazwa": "Rafinowane żelazo",
+      "mat": "IRON_INGOT"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CURED_HIDE",
+      "ilosc": 1,
+      "nazwa": "Wyprawiona skóra",
+      "mat": "LEATHER"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SINEW",
+      "ilosc": 1,
+      "nazwa": "Ścięgno",
+      "mat": "STRING"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_farmer_hoe",
+    "idx": 9,
+    "slot": 21,
+    "outTyp": "TOOL",
+    "outId": "PROF_MASTER_FARMER_HOE",
+    "outNazwa": "Mistrzowska motyka farmera",
+    "outMat": "DIAMOND_HOE",
+    "czas": 8,
+    "profesja": "smithing",
+    "poziom": 45,
+    "xp": 140.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MASTER_BLADE_BLANK",
+      "ilosc": 1,
+      "nazwa": "Mistrzowska głownia",
+      "mat": "NETHERITE_SCRAP"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_STEEL_MECHANISM",
+      "ilosc": 1,
+      "nazwa": "Stalowy mechanizm",
+      "mat": "PISTON"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CARVED_FITTING",
+      "ilosc": 1,
+      "nazwa": "Rzeźbione okucie",
+      "mat": "MANGROVE_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_herb_sickle",
+    "idx": 10,
+    "slot": 22,
+    "outTyp": "TOOL",
+    "outId": "PROF_MASTER_HERB_SICKLE",
+    "outNazwa": "Mistrzowski sierp zielarza",
+    "outMat": "SHEARS",
+    "czas": 8,
+    "profesja": "smithing",
+    "poziom": 45,
+    "xp": 140.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MASTER_BLADE_BLANK",
+      "ilosc": 1,
+      "nazwa": "Mistrzowska głownia",
+      "mat": "NETHERITE_SCRAP"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_METAL_PLATE",
+      "ilosc": 2,
+      "nazwa": "Metalowa płyta",
+      "mat": "HEAVY_WEIGHTED_PRESSURE_PLATE"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_WEAPON_HANDLE",
+      "ilosc": 1,
+      "nazwa": "Rękojeść",
+      "mat": "STICK"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_hunter_knife",
+    "idx": 11,
+    "slot": 23,
+    "outTyp": "TOOL",
+    "outId": "PROF_MASTER_HUNTER_KNIFE",
+    "outNazwa": "Mistrzowski nóż myśliwski",
+    "outMat": "DIAMOND_SWORD",
+    "czas": 8,
+    "profesja": "smithing",
+    "poziom": 45,
+    "xp": 150.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MASTER_BLADE_BLANK",
+      "ilosc": 1,
+      "nazwa": "Mistrzowska głownia",
+      "mat": "NETHERITE_SCRAP"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CURED_HIDE",
+      "ilosc": 2,
+      "nazwa": "Wyprawiona skóra",
+      "mat": "LEATHER"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SINEW",
+      "ilosc": 2,
+      "nazwa": "Ścięgno",
+      "mat": "STRING"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-tailoring.yml",
+  "cmd": "warsztat-tailoring",
+  "gui": "Warsztat: Krawca",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_cloth_bolt",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CLOTH_BOLT",
+    "outNazwa": "Zwój tkaniny",
+    "outMat": "WHITE_CARPET",
+    "czas": 1,
+    "profesja": "tailoring",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FLAX_FIBER",
+      "ilosc": 3,
+      "nazwa": "Włókno lniane",
+      "mat": "STRING"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_leather_panel",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_LEATHER_PANEL",
+    "outNazwa": "Panel skórzany",
+    "outMat": "LEATHER",
+    "czas": 2,
+    "profesja": "tailoring",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CURED_HIDE",
+      "ilosc": 3,
+      "nazwa": "Wyprawiona skóra",
+      "mat": "LEATHER"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_bowstring",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_BOWSTRING",
+    "outNazwa": "Cięciwa",
+    "outMat": "STRING",
+    "czas": 3,
+    "profesja": "tailoring",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SINEW",
+      "ilosc": 3,
+      "nazwa": "Ścięgno",
+      "mat": "STRING"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_robe_lining",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_ROBE_LINING",
+    "outNazwa": "Podszycie szaty",
+    "outMat": "PURPLE_CARPET",
+    "czas": 4,
+    "profesja": "tailoring",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_FINE_WOOL",
+      "ilosc": 3,
+      "nazwa": "Delikatna wełna",
+      "mat": "WHITE_WOOL"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_fabric_repair_kit",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_FABRIC_REPAIR_KIT",
+    "outNazwa": "Zestaw naprawczy krawca",
+    "outMat": "SHEARS",
+    "czas": 5,
+    "profesja": "tailoring",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CLOTH_BOLT",
+      "ilosc": 2,
+      "nazwa": "Zwój tkaniny",
+      "mat": "WHITE_CARPET"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_leather_gloves",
+    "idx": 5,
+    "slot": null,
+    "outTyp": "GLOVES",
+    "outId": "PROF_LEATHER_GLOVES",
+    "outNazwa": "Skorzane rekawice",
+    "outMat": "LEATHER_HORSE_ARMOR",
+    "czas": 4,
+    "profesja": "tailoring",
+    "poziom": 15,
+    "xp": 40.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_LEATHER_PANEL",
+      "ilosc": 2,
+      "nazwa": "Panel skórzany",
+      "mat": "LEATHER"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SINEW",
+      "ilosc": 1,
+      "nazwa": "Ścięgno",
+      "mat": "STRING"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_traveler_belt",
+    "idx": 6,
+    "slot": null,
+    "outTyp": "BELT",
+    "outId": "PROF_TRAVELER_BELT",
+    "outNazwa": "Pas podroznika",
+    "outMat": "LEATHER",
+    "czas": 4,
+    "profesja": "tailoring",
+    "poziom": 15,
+    "xp": 40.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_LEATHER_PANEL",
+      "ilosc": 1,
+      "nazwa": "Panel skórzany",
+      "mat": "LEATHER"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CLOTH_BOLT",
+      "ilosc": 1,
+      "nazwa": "Zwój tkaniny",
+      "mat": "WHITE_CARPET"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "plik": "profession-woodworking.yml",
+  "cmd": "warsztat-woodworking",
+  "gui": "Warsztat: Drwala-stolarza",
+  "guiSlots": 27,
+  "recipeSlots": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25
+  ],
+  "maQueueItem": false,
+  "maPaginacje": false,
+  "receptury": [
+   {
+    "klucz": "prof_seasoned_timber",
+    "idx": 0,
+    "slot": 10,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_SEASONED_TIMBER",
+    "outNazwa": "Sezonowane drewno",
+    "outMat": "OAK_LOG",
+    "czas": 1,
+    "profesja": "woodworking",
+    "poziom": 1,
+    "xp": 12.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_OAK_TIMBER",
+      "ilosc": 8,
+      "nazwa": "Twarde drewno dębowe",
+      "mat": "OAK_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_weapon_handle",
+    "idx": 1,
+    "slot": 11,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_WEAPON_HANDLE",
+    "outNazwa": "Rękojeść",
+    "outMat": "STICK",
+    "czas": 2,
+    "profesja": "woodworking",
+    "poziom": 15,
+    "xp": 28.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SEASONED_TIMBER",
+      "ilosc": 2,
+      "nazwa": "Sezonowane drewno",
+      "mat": "OAK_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_bow_limb",
+    "idx": 2,
+    "slot": 12,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_BOW_LIMB",
+    "outNazwa": "Łęczysko",
+    "outMat": "BOW",
+    "czas": 3,
+    "profesja": "woodworking",
+    "poziom": 30,
+    "xp": 55.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BIRCH_LATH",
+      "ilosc": 8,
+      "nazwa": "Giętkie drewno brzozowe",
+      "mat": "BIRCH_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_staff_core",
+    "idx": 3,
+    "slot": 13,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_STAFF_CORE",
+    "outNazwa": "Korpus kostura",
+    "outMat": "BLAZE_ROD",
+    "czas": 4,
+    "profesja": "woodworking",
+    "poziom": 45,
+    "xp": 95.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SEASONED_TIMBER",
+      "ilosc": 4,
+      "nazwa": "Sezonowane drewno",
+      "mat": "OAK_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_carved_fitting",
+    "idx": 4,
+    "slot": 14,
+    "outTyp": "MATERIAL",
+    "outId": "PROF_CARVED_FITTING",
+    "outNazwa": "Rzeźbione okucie",
+    "outMat": "MANGROVE_LOG",
+    "czas": 5,
+    "profesja": "woodworking",
+    "poziom": 45,
+    "xp": 120.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SPRUCE_RESIN",
+      "ilosc": 10,
+      "nazwa": "Żywiczne drewno świerkowe",
+      "mat": "SPRUCE_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_unawakened_staff",
+    "idx": 5,
+    "slot": 15,
+    "outTyp": "STAFF",
+    "outId": "PROF_UNAWAKENED_STAFF",
+    "outNazwa": "Nieprzebudzony kostur",
+    "outMat": "STICK",
+    "czas": 8,
+    "profesja": "woodworking",
+    "poziom": 30,
+    "xp": 80.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_STAFF_CORE",
+      "ilosc": 1,
+      "nazwa": "Korpus kostura",
+      "mat": "BLAZE_ROD"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CARVED_FITTING",
+      "ilosc": 2,
+      "nazwa": "Rzeźbione okucie",
+      "mat": "MANGROVE_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_lumber_axe",
+    "idx": 6,
+    "slot": 16,
+    "outTyp": "TOOL",
+    "outId": "PROF_LUMBER_AXE",
+    "outNazwa": "Siekiera drwala",
+    "outMat": "IRON_AXE",
+    "czas": 5,
+    "profesja": "woodworking",
+    "poziom": 15,
+    "xp": 50.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_AXE_HEAD",
+      "ilosc": 1,
+      "nazwa": "Głowica siekiery",
+      "mat": "IRON_AXE"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_WEAPON_HANDLE",
+      "ilosc": 1,
+      "nazwa": "Rękojeść",
+      "mat": "STICK"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SEASONED_TIMBER",
+      "ilosc": 2,
+      "nazwa": "Sezonowane drewno",
+      "mat": "OAK_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_fishing_rod",
+    "idx": 7,
+    "slot": 19,
+    "outTyp": "TOOL",
+    "outId": "PROF_FISHING_ROD",
+    "outNazwa": "Wędka rybaka",
+    "outMat": "FISHING_ROD",
+    "czas": 5,
+    "profesja": "woodworking",
+    "poziom": 15,
+    "xp": 50.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SEASONED_TIMBER",
+      "ilosc": 2,
+      "nazwa": "Sezonowane drewno",
+      "mat": "OAK_LOG"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BOWSTRING",
+      "ilosc": 1,
+      "nazwa": "Cięciwa",
+      "mat": "STRING"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CARVED_FITTING",
+      "ilosc": 1,
+      "nazwa": "Rzeźbione okucie",
+      "mat": "MANGROVE_LOG"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_lumber_axe",
+    "idx": 8,
+    "slot": 20,
+    "outTyp": "TOOL",
+    "outId": "PROF_MASTER_LUMBER_AXE",
+    "outNazwa": "Mistrzowska siekiera drwala",
+    "outMat": "DIAMOND_AXE",
+    "czas": 9,
+    "profesja": "woodworking",
+    "poziom": 45,
+    "xp": 150.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_MASTER_BLADE_BLANK",
+      "ilosc": 1,
+      "nazwa": "Mistrzowska głownia",
+      "mat": "NETHERITE_SCRAP"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_AXE_HEAD",
+      "ilosc": 1,
+      "nazwa": "Głowica siekiery",
+      "mat": "IRON_AXE"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CARVED_FITTING",
+      "ilosc": 2,
+      "nazwa": "Rzeźbione okucie",
+      "mat": "MANGROVE_LOG"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_WEAPON_HANDLE",
+      "ilosc": 1,
+      "nazwa": "Rękojeść",
+      "mat": "STICK"
+     }
+    ]
+   },
+   {
+    "klucz": "prof_master_fishing_rod",
+    "idx": 9,
+    "slot": 21,
+    "outTyp": "TOOL",
+    "outId": "PROF_MASTER_FISHING_ROD",
+    "outNazwa": "Mistrzowska wędka rybaka",
+    "outMat": "FISHING_ROD",
+    "czas": 9,
+    "profesja": "woodworking",
+    "poziom": 45,
+    "xp": 150.0,
+    "skladniki": [
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_SEASONED_TIMBER",
+      "ilosc": 4,
+      "nazwa": "Sezonowane drewno",
+      "mat": "OAK_LOG"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_CARVED_FITTING",
+      "ilosc": 2,
+      "nazwa": "Rzeźbione okucie",
+      "mat": "MANGROVE_LOG"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_BOWSTRING",
+      "ilosc": 2,
+      "nazwa": "Cięciwa",
+      "mat": "STRING"
+     },
+     {
+      "typ": "MATERIAL",
+      "id": "PROF_STAFF_CORE",
+      "ilosc": 1,
+      "nazwa": "Korpus kostura",
+      "mat": "BLAZE_ROD"
+     }
+    ]
+   }
+  ]
+ }
+]

@@ -1,0 +1,46 @@
+stage: mid
+display: "MID / Sunken Catacombs"
+biome: dr001_mid_sunken_catacombs
+intent: "Positional water encounter, cleanse pressure, aqueduct rune puzzle, and interrupt check."
+objectives:
+  - id: dr001_mid_activate_aqueduct_runes
+    type: interact_sequence
+    target_nexo_id: dr001_rune_pedestal
+    count: 4
+    scoreboard_line: "&fRuny: &b%dr001_runes%/4"
+    failure_spawn:
+      mob: DR001_BoneMason
+      amount: 1
+    completion_signal: dr001_aqueduct_runes_aligned
+  - id: dr001_mid_survive_flood_phase
+    type: survive
+    duration_seconds: 90
+    hazards:
+      - trap_cursed_water_01
+      - DR001_CisternLeech
+    scoreboard_line: "&fZalanie: &b%dr001_flood_time%s"
+    completion_signal: dr001_flood_phase_survived
+  - id: dr001_mid_defeat_nhalruun
+    type: boss
+    target_mob: DR001_CisternOracleNhalruun
+    prerequisites:
+      - dr001_aqueduct_runes_aligned
+      - dr001_flood_phase_survived
+    completion_signal: dr001_nhalruun_defeated
+  - id: dr001_mid_unlock_crown_bridge
+    type: transition
+    target: crown_bridge_01
+    prerequisites:
+      - dr001_nhalruun_defeated
+    completion_signal: dr001_mid_complete
+checkpoint:
+  id: cp_after_nhalruun
+  activation_signal: dr001_checkpoint_after_nhalruun
+transition:
+  next_stage: end
+  unlock_signal: dr001_mid_complete
+manual_editor_notes:
+  - "Mirror rune success/failure must be wired in editor or custom trigger layer after local runtime verification."
+  - "Cleanse behavior depends on DR001_CLEANSING_DRAUGHT integration and must be tested in staging."
+cleanup:
+  despawn_mobs_with_prefix: DR001_

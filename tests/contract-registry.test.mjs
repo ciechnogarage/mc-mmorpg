@@ -13,6 +13,6 @@ test('contract registry passes structural and path validation', () => {
   });
 
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
-  assert.match(result.stdout, /16 contracts validated/);
-  assert.match(result.stdout, /4 unresolved blocker/);
+  assert.match(result.stdout, /20 contracts validated \(static declarations only\)/);
+  assert.match(result.stdout, /2 unresolved blocker/);
 });

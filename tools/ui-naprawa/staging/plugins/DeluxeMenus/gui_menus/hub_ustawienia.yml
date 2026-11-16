@@ -1,0 +1,113 @@
+menu_title: '&f䨐䨑䨒䨓'
+size: 54
+update_interval: 20
+items:
+  info:
+    material: nexo-mmo_icon_blank
+    slots: [0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21, 27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eUstawienia'
+    lore:
+      - '&7Każdą opcję zmieniasz jednym kliknięciem.'
+      - '&7Aktualny stan sprawdzisz w dymku.'
+  karta_ukryta:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    priority: 1
+    view_requirement:
+      requirements:
+        stan: {type: string equals, input: '%luckperms_meta_ui_hud%', output: 'off'}
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eKarta postaci'
+    lore: ['&7Teraz: &cukryta', '&eKliknij, aby pokazać pełną.']
+    left_click_commands: ['[console] lp user %player_name% meta set ui_hud full', '[refresh]']
+  karta_kompaktowa:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    priority: 2
+    view_requirement:
+      requirements:
+        stan: {type: string equals, input: '%luckperms_meta_ui_hud%', output: 'compact'}
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eKarta postaci'
+    lore: ['&7Teraz: &akompaktowa', '&7HP i mana w narożniku.', '&eKliknij, aby ukryć.']
+    left_click_commands: ['[console] lp user %player_name% meta set ui_hud off', '[refresh]']
+  karta_stary_kontrast:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    priority: 3
+    view_requirement:
+      requirements:
+        stan: {type: string equals, input: '%luckperms_meta_ui_hud%', output: 'contrast'}
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eKarta postaci'
+    lore: ['&7Teraz: &fpoprzedni preset', '&eKliknij, aby pokazać pełną.']
+    left_click_commands: ['[console] lp user %player_name% meta set ui_hud full', '[refresh]']
+  karta_pelna:
+    material: nexo-mmo_icon_blank
+    slots: [5, 6, 14, 15]
+    priority: 4
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eKarta postaci'
+    lore: ['&7Teraz: &apełna', '&eKliknij, aby zmniejszyć.']
+    left_click_commands: ['[console] lp user %player_name% meta set ui_hud compact', '[refresh]']
+
+  cel_ukryty:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    priority: 1
+    view_requirement:
+      requirements:
+        stan: {type: string equals, input: '%luckperms_meta_ui_goal%', output: 'off'}
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eCel wyprawy'
+    lore: ['&7Teraz: &cukryty', '&eKliknij, aby pokazać.']
+    left_click_commands: ['[console] lp user %player_name% meta set ui_goal on', '[refresh]']
+  cel_widoczny:
+    material: nexo-mmo_icon_blank
+    slots: [7, 8, 16, 17]
+    priority: 2
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eCel wyprawy'
+    lore: ['&7Teraz: &awidoczny', '&eKliknij, aby ukryć.']
+    left_click_commands: ['[console] lp user %player_name% meta set ui_goal off', '[refresh]']
+
+  minimapa_wlaczona:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    priority: 1
+    view_requirement:
+      requirements:
+        stan: {type: string equals, input: '%nminimap_enabled%', output: 'true'}
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eMinimapa'
+    lore: ['&7Teraz: &awłączona', '&eKliknij, aby wyłączyć.']
+    left_click_commands: ['[player] minimap disable', '[refresh]']
+  minimapa_wylaczona:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    priority: 2
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eMinimapa'
+    lore: ['&7Teraz: &cwyłączona', '&eKliknij, aby włączyć.']
+    left_click_commands: ['[player] minimap enable', '[refresh]']
+
+  radar_wlaczony:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    priority: 1
+    view_requirement:
+      requirements:
+        stan: {type: string equals, input: '%nminimap_radar%', output: 'true'}
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eRadar istot'
+    lore: ['&7Teraz: &awłączony', '&eKliknij, aby wyłączyć.']
+    left_click_commands: ['[player] minimap radar disable', '[refresh]']
+  radar_wylaczony:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    priority: 2
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&eRadar istot'
+    lore: ['&7Teraz: &cwyłączony', '&eKliknij, aby włączyć.']
+    left_click_commands: ['[player] minimap radar enable', '[refresh]']

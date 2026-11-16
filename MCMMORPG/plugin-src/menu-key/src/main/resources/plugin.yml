@@ -1,0 +1,11 @@
+name: MenuKey
+version: ${version}
+main: pl.mcmmorpg.menukey.MenuKeyPlugin
+api-version: '1.21'
+
+# ProtocolLib jest TWARDA zaleznoscia, bo caly plugin to jeden nasluch pakietu — bez niego
+# nie ma czego wlaczac.
+depend: [ProtocolLib]
+# Chcemy wstac PO DeluxeMenus, zeby komenda, ktora wolamy, juz istniala przy pierwszym
+# wcisnieciu klawisza.
+softdepend: [DeluxeMenus]

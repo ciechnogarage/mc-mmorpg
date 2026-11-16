@@ -1,0 +1,5 @@
+name: ZakleciaDiag
+version: '0.1'
+main: pl.mcmmorpg.zakleciadiag.ZakleciaDiag
+api-version: '1.21'
+depend: [Zaklecia]

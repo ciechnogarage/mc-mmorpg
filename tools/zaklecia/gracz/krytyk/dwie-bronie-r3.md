@@ -1,0 +1,7 @@
+# DwieBronie × Zaklęcia — ślad statyczny i sonda DB3
+
+Źródło pluginu: `dwie-bronie/.../DwieBronie.java` (worktree `dwie-bronie`), konfiguracja klona `data/plugins/DwieBronie/config.yml`, `debug:false`. `DwieBronie.dwieBronie` (linia 109) wymaga rzeczywistej broni MMOItems o `ATTACK_DAMAGE>0` w obu dłoniach i spełnionych wymagań lewej. Nośnik Zaklęć nie powinien spełnić tego warunku, więc PPM lewej broni (`puszczenie`, linia 258), PPM zapasowy (`ppmBezUzbrojenia`, linia 392) i skala lewego ciosu (`przedCiosem`, linia 195) nie powinny włączyć się przy układach broń+zaklęcie.
+
+Jednak `odswiez` co 5 tików (linia 171) skanuje 36 slotów oraz lewą dłoń i zapisuje przedmioty oznaczone własnym PDC. To jest niezależna ścieżka zmian ekwipunku, którą trzeba obserwować pakietowo przy N3. Plugin ma listener `PlayerQuitEvent` rozbrajający przedmioty, lecz nie ma analogicznego listenera śmierci; przy śmierci wyposażonej pary broni przedmiot upuszczony ze znacznikiem `dwiebronie:ppm` może zachować komponent `CONSUMABLE` aż do podniesienia. Wymaga testu; nie stwierdzam jeszcze regresji w parze broń+zaklęcie.
+
+Sonda `bot/scenariusze/DB3.js`: dla obu orientacji (broń główna + zaklęcie lewe; zaklęcie główne + broń lewa) wykonuje PPM, LPM, Shift+Q, F, zmianę slotu i śmierć, rejestrując HP, manę i obie dłonie. `DB3S` powtarza oba układy dla wszystkich 15 zaklęć (30 komórek) i sprawdza, czy DwieBronie nie zabiera drugiej dłoni po rzucie. `b-3-01.hold` zostanie zmienione na `.req` po końcowym buildzie A, aby mierzyć ostatni JAR.

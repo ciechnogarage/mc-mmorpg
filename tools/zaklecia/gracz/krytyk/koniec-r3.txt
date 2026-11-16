@@ -1,0 +1,3 @@
+Runda 3 zakończona. [Raport](</home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/krytyk/raport-r3.md>) i [plik statusowy](</home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/krytyk/koniec-r3.txt>) są gotowe.
+
+Potwierdziłem 10/10 i 20/20 trwałych strumieni. W próbach wieloosobowych wykryłem `ConcurrentModificationException` przy śmierci rzucającego; raport zawiera też werdykt o integracji DwieBronie i ograniczenia pomiarów. STOP.

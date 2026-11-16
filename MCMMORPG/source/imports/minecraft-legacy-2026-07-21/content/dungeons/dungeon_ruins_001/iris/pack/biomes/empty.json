@@ -1,0 +1,15 @@
+{
+  "name": "Empty",
+  "derivative": "THE_VOID",
+  "vanillaDerivative": "THE_VOID",
+  "color": "#000000",
+  "layers": [
+    {
+      "palette": [
+        { "block": "minecraft:air" }
+      ],
+      "minHeight": 1,
+      "maxHeight": 1
+    }
+  ]
+}

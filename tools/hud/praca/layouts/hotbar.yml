@@ -1,0 +1,17 @@
+hotbar-layout:
+  elements:
+    zbroja:
+      asset: hotbar-zbroja
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: -133, y: 22}
+    glod:
+      asset: hotbar-glod
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 98, y: 22}
+    powietrze:
+      asset: vanilla-air
+      align: right
+      position: {x: 50.0, y: 0.0}
+      offset: {x: 98, y: 64}

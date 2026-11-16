@@ -1,0 +1,61 @@
+schema_version: 1
+ledger_kind: config_authority_registry_migration_ledger
+source_registry:
+  path: docs/config_authority_registry.yaml
+  sha256: f37125ee29e5e000dc90452c56336243134bdd26a7b865d24756d4975b31c215
+  captured_at: "2026-07-21"
+source_snapshot:
+  path: docs/contracts/migration/config-authority-registry-v1-snapshot.yaml
+  captured_at: "2026-07-21"
+allowed_dispositions:
+  - keep_as_migration_source
+  - split_into_claims
+  - mapped_to_v2_contract
+  - blocked_pending_identity
+  - blocked_pending_runtime_evidence
+  - superseded_after_cutover
+  - legacy_only
+  - rejected
+notes:
+  - Scaffold only. Do not treat an empty ledger as migrated state.
+  - Crosslinks and per-legacy claim dispositions land in the seed ticket, not in this scaffold.
+  - docs/config_authority_registry.yaml remains the v1 source artifact; this file is the overlay for migration state.
+entries:
+  - legacy_id: player_profile
+    source_digest: 855d629e4a29da168cb06e14316b9bd423a7f768e4a3550db3dc52c01e53511e
+    source_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+    source_claims:
+      - authority:MMOProfiles
+      - target_persistence:mariadb
+      - consumers:CharacterStage,MMOCore,MMOInventory,Guilds,MCPets
+    disposition: mapped_to_v2_contract
+    target_contract_id: account-character-contract
+    target_contract_version: 2
+    inverse_supersession_present: true
+    consumer_migration_status: in_progress
+    identity_backfill_status: not_started
+    runtime_gate_status: not_started
+    cutover_status: not_started
+    rollback: revert ledger entry and continue treating player_profile as v1 migration input only
+  - legacy_id: character_stage
+    source_digest: 6ac5bca39fa38458d3b400a661a6ec9d69619549ac7a4d26e2e5db4a61ea2a99
+    source_status:
+      contract_status: accepted
+      runtime_status: partial
+      release_status: blocked
+    source_claims:
+      - authority:CharacterStage
+      - target_persistence:player_profile
+      - consumers:MMOProfiles,CoreTools,DecentHolograms,ModelEngine
+    disposition: mapped_to_v2_contract
+    target_contract_id: account-character-contract
+    target_contract_version: 2
+    inverse_supersession_present: true
+    consumer_migration_status: in_progress
+    identity_backfill_status: not_started
+    runtime_gate_status: not_started
+    cutover_status: not_started
+    rollback: revert ledger entry and continue treating character_stage as v1 migration input only

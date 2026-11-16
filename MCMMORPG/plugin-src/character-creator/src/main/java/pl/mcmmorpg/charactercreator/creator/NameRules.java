@@ -44,7 +44,8 @@ public final class NameRules {
     ILLEGAL_CHARS("Dozwolone są tylko litery (w tym polskie), cyfry i podkreślnik."),
     NO_LETTER("Imię musi zawierać przynajmniej jedną literę."),
     RESERVED_PREFIX("To imię jest zarezerwowane dla obsługi serwera."),
-    DUPLICATE("Postać o tym imieniu już istnieje — wybierz inne.");
+    DUPLICATE("Postać o tym imieniu już istnieje — wybierz inne."),
+    OFFENSIVE("To imię jest niedozwolone — wybierz inne.");
 
     private final String message;
 
@@ -54,7 +55,9 @@ public final class NameRules {
 
     /** Gotowy komunikat dla gracza — konkretny powod, nie ogolne "zle imie". */
     public String message() {
-      return message;
+      // Tekst z configu (teksty.imie.<powod>), domyslnie jak w kodzie. Bez Bukkita w testach
+      // Teksty ma pusta mape, wiec testy widza tekst domyslny.
+      return pl.mcmmorpg.charactercreator.Teksty.plain("imie." + name().toLowerCase(java.util.Locale.ROOT).replace('_', '-'), message);
     }
   }
 
@@ -103,7 +106,90 @@ public final class NameRules {
         return Result.reject(Rejection.RESERVED_PREFIX);
       }
     }
+    if (isOffensive(name)) {
+      return Result.reject(Rejection.OFFENSIVE);
+    }
     return Result.of(name);
+  }
+
+  // --- filtr wulgaryzmow (2026-09-30) ---------------------------------------------------
+
+  /**
+   * Wbudowana lista na wypadek configu bez {@code names.blocked}. Celowo slowa DLUZSZE:
+   * krotkie angielskie ("ass", "cum") siedza w zwyklych imionach (Kassandra, Cumulus).
+   * Porownanie po {@link #filterKey} — "Kuuurw4", "kurwa_" i "KÚRWA" to ten sam klucz.
+   */
+  static final List<String> DEFAULT_BLOCKED = List.of(
+      "kurw", "chuj", "huj", "pierdol", "pierdziel", "jeban", "jebac", "jebie", "zajeb",
+      "wyjeb", "pojeb", "spierdal", "skurwysyn", "skurwiel", "cipa", "cipsk", "pizda", "pizdzi",
+      "dziwk", "szmata", "fiut", "kutas", "pedal", "cwel", "debil", "kretyn", "sukinsyn",
+      "hitler", "fuck", "shit", "bitch", "whore", "slut", "cunt", "pussy",
+      "nigger", "nigga", "faggot", "retard", "porn", "penis", "vagina");
+
+  private static volatile List<String> blocked = keys(DEFAULT_BLOCKED);
+
+  /** Lista z configu ({@code names.blocked}); pusta albo null = lista wbudowana. */
+  public static void setBlockedWords(java.util.Collection<String> words) {
+    blocked = keys(words == null || words.isEmpty() ? DEFAULT_BLOCKED : words);
+  }
+
+  private static List<String> keys(java.util.Collection<String> words) {
+    List<String> out = new java.util.ArrayList<>();
+    for (String w : words) {
+      String k = filterKey(w);
+      if (k.length() >= 3) {
+        out.add(k);
+      }
+    }
+    return List.copyOf(out);
+  }
+
+  /** Czy imie zawiera slowo z listy (po sprowadzeniu obu stron do {@link #filterKey}). */
+  public static boolean isOffensive(String name) {
+    String key = filterKey(name);
+    // "chój" / "hój" — ó pisane zamiast u; sprawdzamy oba odczyty.
+    String alt = key.replace('o', 'u');
+    for (String word : blocked) {
+      if (key.contains(word) || alt.contains(word)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Klucz porownania: male litery, bez polskich znakow i akcentow, podstawowy leetspeak
+   * (0-o, 1-i, 3-e, 4-a, 5-s, 7-t, 8-b, 9-g, @-a, $-s), bez podkreslnikow, powtorzone
+   * litery zlane ("kuuurwa" -> "kurwa").
+   */
+  static String filterKey(String raw) {
+    if (raw == null) {
+      return "";
+    }
+    String s = Normalizer.normalize(raw.toLowerCase(Locale.ROOT).replace('ł', 'l'), Normalizer.Form.NFKD)
+        .replaceAll("\\p{M}+", "");
+    StringBuilder out = new StringBuilder(s.length());
+    for (int i = 0; i < s.length(); i++) {
+      char c = switch (s.charAt(i)) {
+        case '0' -> 'o';
+        case '1', '!', '|' -> 'i';
+        case '3' -> 'e';
+        case '4', '@' -> 'a';
+        case '5', '$' -> 's';
+        case '7' -> 't';
+        case '8' -> 'b';
+        case '9' -> 'g';
+        default -> s.charAt(i);
+      };
+      if (c < 'a' || c > 'z') {
+        continue;
+      }
+      if (out.length() > 0 && out.charAt(out.length() - 1) == c) {
+        continue;
+      }
+      out.append(c);
+    }
+    return out.toString();
   }
 
   /**

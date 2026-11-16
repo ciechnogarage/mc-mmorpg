@@ -615,7 +615,7 @@ Asset T2/T3 nie jest gotowy, jesli brakuje review roli, staging evidence albo de
 
 Ten standard dopasowuje sie do obecnej struktury repo:
 
-- `AGENTS.md` i `docs/ai/standard-map.md` wymagaja klasyfikacji T2/T3, ochrony live i walidacji przez zrodla lokalne.
+- `docs/ai/standard-map.md` wymaga klasyfikacji T2/T3, ochrony live i walidacji przez zrodla lokalne.
 - `content/dungeons/dungeon_ruins_001/README_ASSETS.md` wymaga finalnych `dr001_*` assetow i traktuje legacy `dungeon_ruins_001_*` jako reference only.
 - `content/dungeons/dungeon_ruins_001/modelengine/models.md` definiuje aktywne DR001 ModelEngine ID i wymagane animacje.
 - `content/dungeons/dungeon_ruins_001/modelengine/animation_requirements.md` mapuje eventy encounterow na animacje i MythicMobs triggers.

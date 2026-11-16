@@ -1,0 +1,340 @@
+title: Domain 04 Skill Library Contract
+status: proposed
+updated_at: 2026-08-12
+
+contract:
+  id: domain_04_skill_library_contract
+  schema_version: 1
+  semantic_owner_domain: "04"
+  purpose: >
+    Governing contract for Domain 04 skill definitions. This contract defines
+    skill identity, ownership, classification, requirements, execution, scaling
+    references, control references, and runtime boundaries.
+  scope:
+    includes:
+      - stable Domain 04 skill identity
+      - skill source ownership and eligibility references
+      - skill classification and targeting shape
+      - references to Domain 03 formulas, coefficient sets, effects, resources, cooldowns, and control categories
+      - runtime provider references
+    excludes:
+      - concrete class skill designs
+      - CLS-* content
+      - final damage, healing, cooldown, resource, range, duration, and scaling values
+      - local combat formulas
+      - Domain 03-owned combat, stat, resource, cooldown, damage, mitigation, and crowd-control rule definitions
+
+source_of_truth:
+  domain_04:
+    - docs/design/classes/skill-library-contract.yaml
+    - docs/design/classes/class-framework.md
+    - docs/design/classes/domain-02-03-alignment.md
+  legacy_design_input:
+    - docs/class-skill-kits-foundation-v0.0.1.md
+  upstream_required_domain_03_contracts:
+    - stat-dictionary
+    - combat-stat-contract
+    - damage-event-contract
+    - damage-formula-contract
+    - coefficient-set-contract
+    - effect-contract
+    - activation-contract
+    - range-profile-contract
+    - cast-time-rule-contract
+    - channel-time-rule-contract
+    - state-requirement-contract
+    - resource-requirement-contract
+    - resource-contract
+    - cooldown-contract
+    - cc-taxonomy-contract
+    - pvp-mode-modifier-contract
+
+ownership_policy:
+  skill_id:
+    owner_domain: "04"
+    stability: semantically_stable
+    rules:
+      - skill_id is the canonical Domain 04 semantic identifier.
+      - skill_id is not inferred from display text, plugin ids, provider ids, menu labels, or implementation_ref.
+      - changing runtime provider, provider id, or implementation_ref must not rewrite skill_id.
+  source:
+    fields:
+      source_type: class | subclass | weapon_school | race | faction | religion | legacy
+      source_id: string
+    rules:
+      - every skill must identify the Domain 04 semantic source that grants or owns it
+      - source_type and source_id do not define runtime provider behavior
+  persistence_boundary:
+    owner_domain: "02"
+    persisted_state_examples:
+      - character.progression.learned_skill_ids
+      - character.loadout.equipped_skill_ids
+    rules:
+      - Domain 04 defines skill meaning and eligibility
+      - Domain 02 persists learned and equipped state
+
+skill_record_schema:
+  required_fields:
+    - skill_id
+    - schema_version
+    - ownership
+    - classification
+    - targeting
+    - requirements
+    - execution
+    - scaling
+    - control
+    - d03_consumer_bindings
+    - runtime
+    - lifecycle
+  fields:
+    skill_id:
+      type: string
+      owner_domain: "04"
+      rule: stable semantic id, separate from runtime ids
+    schema_version:
+      type: integer
+    display:
+      optional: true
+      fields:
+        name_key: string
+        description_key: string
+        icon_ref: string
+    ownership:
+      fields:
+        source_type: class | subclass | weapon_school | race | faction | religion | legacy
+        source_id: string
+    classification:
+      fields:
+        activation_type: "active | passive | toggle | reactive"
+        ability_tags: list[string]
+        mechanic_tags: list[string]
+        catalogued_mechanic_ids: list[namespaced_id]
+        damage_family_id: string | null
+        damage_school_id: string | null
+        effect_ids: list[string]
+      rules:
+        - ability_tags and mechanic_tags are classification labels only
+        - catalogued_mechanic_ids is the closed reachable-mechanic set used to require exactly one Domain 03 binding per executable mechanic
+        - effect_ids must reference approved Domain 03 effect definitions
+        - damage_family_id must reference an approved Domain 03 top-level damage family contract
+        - damage_school_id must reference an approved Domain 03 damage school or elemental taxonomy contract
+        - Domain 04 must not hardcode the final family or school vocabulary before Domain 03 acceptance
+    targeting:
+      fields:
+        target_type: "self | unit | area | direction | ground | none"
+        range_profile_id: string | null
+        target_cap: integer | null
+    requirements:
+      fields:
+        character_level_requirement_id: string | null
+        class_ids: list[string]
+        subclass_ids: list[string]
+        weapon_school_ids: list[string]
+        state_requirement_ids: list[string]
+        resource_requirement_ids: list[string]
+      rules:
+        - requirements may reference approved class, subclass, weapon school, state, and resource contracts
+        - requirements must not define new stats, mitigation behavior, cooldown behavior, or combat formulas
+    execution:
+      fields:
+        cast_time_rule_id: string | null
+        channel_time_rule_id: string | null
+        global_cooldown_rule_id: string
+        cooldown_rule_id: string
+        charge_rule_id: string | null
+        resource_costs:
+          type: list[resource_cost]
+          item_fields:
+            resource_id: string
+            cost_rule_id: string
+            cost_value_id: string | null
+        snapshot_rule: "cast | impact | periodic_tick"
+      rules:
+        - cooldown_rule_id, global_cooldown_rule_id, charge_rule_id, and resource_costs must reference Domain 03 contracts
+        - resource_costs must not inline regeneration, persistence, reset, or spend-order rules
+    scaling:
+      fields:
+        formula_id: string
+        coefficient_set_id: string
+      rules:
+        - formula_id must reference an approved Domain 03 damage, healing, utility, or mechanic formula
+        - coefficient_set_id must reference an approved Domain 03 coefficient set
+        - skill records must not contain local textual formulas
+    control:
+      fields:
+        interruptible: boolean
+        cancellable: boolean
+        movement_rule: "allowed | slowed | forbidden"
+        cc_category_id: string | null
+      rules:
+        - cc_category_id must resolve through the Domain 03 CC taxonomy
+        - control fields may select approved categories and movement rules only
+        - control fields must not define diminishing returns, PvP CC policy, poise, tenacity, stagger, stealth, detection, or interrupt semantics locally
+    d03_consumer_bindings:
+      type: list[d03_mechanic_consumer_binding]
+      item_fields:
+        mechanic_id: namespaced_id
+        mechanic_contract_version: positive_integer
+        required_readiness: RUNTIME_VERIFIED
+        mechanic_contract_ref: immutable_ref
+        gate_transition_envelope_ref: path_at_sha256
+        contract_bundle_digest: sha256
+        build_digest: sha256
+      rules:
+        - every catalogued combat mechanic executable by the skill has exactly one binding for its mechanic_id
+        - formula_id, coefficient_set_id, effect_ids, mechanic_tags, control refs, and provider refs do not substitute for a binding
+        - draft and design-only records may use an empty list only while implementation_provider is none and lifecycle status is not above validated
+        - missing, duplicate, stale, digest-mismatched, downgraded, or revoked binding suppresses or rejects that mechanic fail-closed
+        - mechanic_contract_ref and gate_transition_envelope_ref use immutable path@sha256 identity
+    runtime:
+      fields:
+        implementation_provider: "mmocore | mythicmobs | custom | none"
+        implementation_ref: string | null
+        provider_skill_id: string | null
+      rules:
+        - implementation_provider, implementation_ref, and provider_skill_id are adapter references only
+        - runtime provider ids do not define skill_id semantics
+        - provider behavior must conform to referenced Domain 03 contracts
+    lifecycle:
+      fields:
+        status: "draft | validated | runtime_verified | released"
+        validation_refs: list[string]
+
+consumer_binding_policy:
+  schema_version: 1
+  binding_field: d03_consumer_bindings
+  reachable_mechanic_source_field: classification.catalogued_mechanic_ids
+  coverage_mode: EXACTLY_ONE_PER_REACHABLE_MECHANIC
+  required_readiness: RUNTIME_VERIFIED
+  authority_snapshot_request_field: d03_authority_snapshot_ref
+  authority_registry_ref: docs/contracts/domain-03-combat-mechanic-authority-registry.yaml@5c0dfed489c5a3fc4b415e0508102ec501d8026fc0c387f72019d9b6632d8cf8
+  authority_contract_ref: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-03-combat-core-revision/index.md@33b076efb539dc5b0007c372d939ed447be6216116f975d95b20c76bf42e32e4
+  authority_content_verification: registry_snapshot_and_contract_sha256
+  authority_scope_mode: EXACT_REACHABLE_SET
+  required_item_fields:
+    - mechanic_id
+    - mechanic_contract_version
+    - required_readiness
+    - mechanic_contract_ref
+    - gate_transition_envelope_ref
+    - contract_bundle_digest
+    - build_digest
+  immutable_lineage_fields:
+    - mechanic_id
+    - mechanic_contract_version
+    - mechanic_contract_ref
+    - gate_transition_envelope_ref
+    - contract_bundle_digest
+    - build_digest
+  planning_constraint:
+    allowed_lifecycle_statuses: [draft, validated]
+    empty_bindings_allowed: true
+    implementation_provider: none
+    implementation_ref: null
+    provider_skill_id: null
+  executable_constraint:
+    allowed_lifecycle_statuses: [runtime_verified, released]
+    empty_bindings_allowed: false
+    forbidden_implementation_providers: [none]
+    implementation_ref_required: true
+    provider_skill_id_required: true
+    all_reachable_mechanics_must_resolve: true
+  forbidden_fallback_sources:
+    - formula_id
+    - coefficient_set_id
+    - effect_ids
+    - mechanic_tags
+    - control_refs
+    - implementation_provider
+    - implementation_ref
+    - provider_skill_id
+  failure_precedence:
+    - fallback_attempt
+    - duplicate
+    - missing
+    - stale
+    - digest_mismatch
+    - downgraded
+    - revoked
+  failure_outcomes:
+    missing:
+      reason_code: D03_BINDING_MISSING
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+    duplicate:
+      reason_code: D03_BINDING_DUPLICATE
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+    stale:
+      reason_code: D03_BINDING_STALE
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+    digest_mismatch:
+      reason_code: D03_BINDING_DIGEST_MISMATCH
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+    downgraded:
+      reason_code: D03_BINDING_READINESS_DOWNGRADED
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+    revoked:
+      reason_code: D03_BINDING_REVOKED
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+    fallback_attempt:
+      reason_code: D03_BINDING_FALLBACK_FORBIDDEN
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+
+forbidden_local_fields:
+  formulas:
+    - formula_text
+    - formula
+    - expression
+    - equation
+    - script_body
+    - inline_math
+  domain_03_owned_rules:
+    - stat_definition
+    - damage_formula_definition
+    - mitigation_order
+    - critical_rule
+    - resource_regeneration_rule
+    - resource_persistence_rule
+    - cooldown_cap_rule
+    - cooldown_recovery_rule
+    - cc_diminishing_returns_rule
+    - pvp_scaling_rule
+    - poise_rule
+    - tenacity_rule
+    - stealth_detection_rule
+
+validation_policy:
+  minimum_release_gates:
+    - skill_id is stable and not derived from runtime ids
+    - source_type and source_id identify the Domain 04 owner
+    - formula_id and coefficient_set_id resolve through approved Domain 03 contracts
+    - effect_ids resolve through approved Domain 03 effect definitions
+    - resource_costs resolve through approved Domain 03 resource cost rules
+    - cooldown_rule_id and global_cooldown_rule_id resolve through approved Domain 03 cooldown rules
+    - cc_category_id is null or resolves through the Domain 03 CC taxonomy
+    - no forbidden local formula or Domain 03-owned rule fields are present
+    - runtime adapter refs are present only as implementation details
+    - every executable catalogued combat mechanic has exactly one complete Domain 03 consumer binding
+    - every consumer binding requires literal RUNTIME_VERIFIED and resolves one immutable contract, gate-envelope, bundle-digest, and build-digest lineage
+    - a missing, stale, mismatched, downgraded, or revoked binding blocks executable mapping and lifecycle above validated without fallback

@@ -1,0 +1,27 @@
+schema_version: 1
+registry_id: content-template-registry
+template_id: item.weapon.sword
+content_type: item
+item_family: weapon
+item_subfamily: sword
+version: 1
+schema: schemas/items/item.schema.json
+template: templates/items/item.template.yaml
+generator: tools/generators/create-item
+runtime_adapter: null
+runtime_plugin: MMOItems
+runtime_targets:
+  file: MCMMORPG/plugins/MMOItems/item/sword.yml
+  section_key_pattern: '^[A-Z0-9_]+$'
+  format: mmoitems-item
+cardinality: one_subject_per_target
+allowed_normalization_contract: docs/production/contracts/mmoitems-item-normalization.yaml
+section_schema_contract: docs/production/contracts/mmoitems-item-section-schema.yaml
+pilot_section_key: ASHEN_VANGUARD
+owners:
+  contract: domain-05
+  runtime: domain-16
+  pipeline: domain-18
+  qa: domain-17
+pilot_subjects:
+  - item.weapon.sword.ashen_vanguard

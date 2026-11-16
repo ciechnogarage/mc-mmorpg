@@ -1,0 +1,15 @@
+# Cel przycisku 'wstecz' pauzy: menu, ktore sie nie otwiera, tylko zamyka okno (warunek nigdy niespelniony).
+menu_title: '&8'
+size: 9
+open_requirement:
+  requirements:
+    nigdy:
+      type: string equals
+      input: 'a'
+      output: 'b'
+  deny_commands:
+    - '[close]'
+items:
+  nic:
+    material: nexo-mmo_icon_blank
+    slot: 0

@@ -1,0 +1,461 @@
+# Loch 002 - Bagna Zgnilych Korzeni. WYGLAD ZASTEPCZY (vanilla Type) do czasu modeli ModelEngine.
+# Zasady (pamiec mythicmobs-rozstawione-moby): Despawn persistent, bez randomstroll, summon level=1.
+L002_PIJAWKA:
+  Type: ENDERMITE
+  Display: '&2Pijawka'
+  Health: 6
+  # 1.5 -> 1: rój 3 Pijawek zabijal stojacego gracza w kilka sekund (sonda trasy 29.09); poziom Pniaczka z 001
+  Damage: 1
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 11
+    MovementSpeed: 0.32
+    PreventOtherDrops: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_SCRAP} 1 0.3
+  - mmoitem{type=MATERIAL;id=PROF_VENOM_SAC} 1 0.06
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # reguła drowning_damage dotyczy tylko graczy - endermit w wodzie tonal po ~15 s (zasadzka z wody znikala sama, sonda 29.09)
+  - potion{type=WATER_BREATHING;duration=999999;level=0;hasParticles=false} @self ~onSpawn
+  # ukaszenie czasem zatruwa (lekcja statusu: trucizna nie zabija, ale zjada zycie)
+  - potion{type=POISON;duration=50;level=0} @target ~onAttack 0.2 ?variableequals{var=world.l002_dzwon;value=0}
+  - sound{s=entity.silverfish.hurt;v=0.6;p=0.6} @self ~onDamaged
+  - particles{p=block;m=MUD;a=10;hs=0.3;vs=0.2;s=0.05} @self ~onDeath
+  - command{c="mmocore admin exp give <trigger.name> main 8"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> hunting 2"} @trigger ~onDeath ?~isplayer
+
+L002_MULOWIEC:
+  Type: DROWNED
+  Display: '&aMułowiec'
+  Health: 26
+  Damage: 3
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 12
+    MovementSpeed: 0.19
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+    PreventRandomEquipment: true
+  Equipment:
+  - MUD HEAD
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_CLAY_LUMP} 1 0.6
+  - mmoitem{type=MATERIAL;id=PROF_FLAX_FIBER} 1 0.35
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  # slad mulu: co 1,5 s zostawia plame (zyje 4 s) spowalniajaca w r=1.6 - kontra: nie idz jego sladem
+  - skill{s=L002_SLAD} @selflocation ~onTimer:30
+  - sound{s=block.mud.step;v=1;p=0.6} @self ~onTimer:30
+  - command{c="mmocore admin exp give <trigger.name> main 25"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> hunting 6"} @trigger ~onDeath ?~isplayer
+
+L002_KOSCIEJ:
+  Type: BOGGED
+  Display: '&2Kościej Bagienny'
+  Health: 18
+  Damage: 2
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 18
+    # stoi w miejscu jak wiezyczka (lekcja zasiegu widzenia): lucznik bez ruchu dalej celuje i strzela
+    MovementSpeed: 0
+    KnockbackResistance: 1
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_BEAST_BONE} 1 0.5
+  Skills:
+  - command{c="mmocore admin exp give <trigger.name> main 20"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> hunting 5"} @trigger ~onDeath ?~isplayer
+
+L002_SZEPTUCHA:
+  Type: WITCH
+  Display: '&5Szeptucha'
+  Health: 30
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 16
+    MovementSpeed: 0
+    PreventOtherDrops: true
+    PreventItemPickup: true
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_MEDICINAL_HERB} 1-2 0.6
+  - mmoitem{type=MATERIAL;id=PROF_REDCAP} 1 0.4
+  Skills:
+  # WYWAR: kanal 3 s oslaniajacy sojusznikow w r=8; 3 ciosy w trakcie przerywaja (wzorzec Kory ze Starego Korzenia)
+  - skill{s=L002_WYWAR} @self ~onTimer:60
+  - variableadd{var=caster.wywar_ciosy;amount=1} @self ~onDamaged
+  - skill{s=L002_WYWAR_PEKA} @self ~onTimer:5 ?variableequals{var=caster.wywar;value=1} ?variableequals{var=caster.wywar_ciosy;value=3}
+  - skill{s=L002_WYWAR_PEKA} @self ~onTimer:5 ?variableequals{var=caster.wywar;value=1} ?variableequals{var=caster.wywar_ciosy;value=4}
+  - skill{s=L002_WYWAR_PEKA} @self ~onTimer:5 ?variableequals{var=caster.wywar;value=1} ?variableequals{var=caster.wywar_ciosy;value=5}
+  - command{c="mmocore admin exp give <trigger.name> main 40"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> hunting 8"} @trigger ~onDeath ?~isplayer
+
+L002_SZEPTUCHA_CHATA:
+  Template: L002_SZEPTUCHA
+  Display: '&5Szeptucha'
+  Skills:
+  - setvariable{var=world.l002_szeptucha;val=1;type=INTEGER} @self ~onDeath
+  - message{m="<gray>Kocioł przed chatą Szeptuchy wciąż bulgocze.</gray>"} @PlayersInRadius{r=20} ~onDeath
+
+L002_KOKONIARA:
+  Type: SPIDER
+  Display: '&f&lKokoniara'
+  Health: 70
+  Damage: 4
+  Armor: 1
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 14
+    MovementSpeed: 0.28
+    KnockbackResistance: 0.5
+    PreventOtherDrops: true
+    AlwaysShowName: true
+  BossBar:
+    Enabled: true
+    Title: '&f&lKokoniara'
+    Range: 24
+    Color: WHITE
+    Style: SEGMENTED_6
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_SINEW} 2 1
+  - mmoitem{type=MATERIAL;id=PROF_VENOM_SAC} 1 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  - command{c="attribute <caster.uuid> minecraft:scale base set 1.6"} @self ~onSpawn
+  - potion{type=WATER_BREATHING;duration=999999;level=0;hasParticles=false} @self ~onSpawn
+  - addtag{tag=l002_elita} @self ~onSpawn
+  - skill{s=L002_KOKON_RZUT} @target ~onTimer:50
+  - skill{s=L002_KOKONIARA_SKOK} @target ~onTimer:40
+  - skill{s=L002_MLODE} @self ~onTimer:20 ?healthpercent{p=<50%}
+  - sound{s=entity.spider.death;v=1.3;p=0.5} @self ~onDeath
+  - command{c="mmocore admin exp give <trigger.name> main 120"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <trigger.name> hunting 25"} @trigger ~onDeath ?~isplayer
+
+L002_PAJECZE:
+  Type: CAVE_SPIDER
+  Display: '&7Młode Kokoniary'
+  Health: 5
+  Damage: 1
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 12
+    PreventOtherDrops: true
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  - command{c="mmocore admin exp give <trigger.name> main 5"} @trigger ~onDeath ?~isplayer
+
+# kokon na graczu: bij go (3 ciosy), zanim zacisnie sie trucizna
+L002_KOKON:
+  Type: ZOMBIE
+  Display: '<white>Kokon</white> <gray>(bij!)</gray>'
+  Health: 5
+  Options:
+    Invisible: true
+    NoAI: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+  Equipment:
+  - COBWEB HEAD
+  Skills:
+  - skill{s=L002_KOKON_ZYCIE} @self ~onSpawn
+  - skill{s=L002_KOKON_PEKA} @self ~onDeath
+
+# kokon z rybakiem Borkiem (przed filarem kokonu z terenu) - bij, zeby uwolnic
+L002_KOKON_BORKA:
+  Type: ZOMBIE
+  Display: '<white>Kokon</white> <gray>- ktoś w nim jęczy (bij)</gray>'
+  Health: 12
+  Options:
+    Invisible: true
+    NoAI: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    KnockbackResistance: 1
+  Equipment:
+  - WHITE_WOOL HEAD
+  Skills:
+  - particles{p=block;m=COBWEB;a=4;hs=0.4;vs=0.6;s=0.01;y=1} @self ~onTimer:20
+  - skill{s=L002_BOREK_WOLNY} @self ~onDeath
+
+L002_BOREK:
+  Type: VILLAGER
+  Display: '<aqua>Rybak Borek</aqua>'
+  Health: 20
+  Options:
+    NoAI: true
+    Invincible: true
+    Despawn: persistent
+    AlwaysShowName: true
+    PreventOtherDrops: true
+  Skills:
+  - skill{s=L002_BOREK_ROZMOWA} @trigger ~onInteract
+
+L002_WELA:
+  Type: VILLAGER
+  Display: '<aqua>Rybaczka Wela</aqua>'
+  Health: 20
+  Options:
+    NoAI: true
+    Invincible: true
+    Despawn: persistent
+    AlwaysShowName: true
+    PreventOtherDrops: true
+  Skills:
+  - skill{s=L002_WELA_ROZMOWA} @trigger ~onInteract
+
+L002_TOPIELICA:
+  Type: DROWNED
+  Display: '&2&lTopielica'
+  Health: 200
+  Damage: 5
+  Armor: 2
+  Faction: topiel
+  Options:
+    Despawn: persistent
+    FollowRange: 24
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.8
+    PreventOtherDrops: true
+    PreventSunburn: true
+    PreventItemPickup: true
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+  BossBar:
+    Enabled: true
+    Title: '&2&lTopielica, Matka Mułu'
+    Range: 48
+    Color: GREEN
+    Style: SEGMENTED_10
+  Equipment:
+  - MANGROVE_ROOTS HEAD
+  Drops:
+  - mmoitem{type=MATERIAL;id=PROF_WATER_ESSENCE} 1-2 1
+  - mmoitem{type=MATERIAL;id=PROF_CLAM} 2 1
+  - mmoitem{type=MATERIAL;id=PROF_PEARL} 1 0.3
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  - randomlookaround
+  AITargetSelectors:
+  - clear
+  - attacker
+  - players
+  Skills:
+  - command{c="attribute <caster.uuid> minecraft:scale base set 2.4"} @self ~onSpawn
+  - addtag{tag=l002_boss} @self ~onSpawn
+  - skill{s=L002_WLOSY} @target ~onTimer:60
+  - skill{s=L002_WLOSY} @target ~onTimer:45 ?healthpercent{p=<25%}
+  - skill{s=L002_KALUZA} @target ~onTimer:70
+  - skill{s=L002_NURT} @self ~onTimer:40
+  - skill{s=L002_SKRZEK} @self ~onTimer:20 ?healthpercent{p=<60%}
+  - skill{s=L002_GNIEW} @self ~onTimer:20 ?healthpercent{p=<25%}
+  - sound{s=entity.elder_guardian.death;v=1.2;p=0.8} @self ~onDeath
+  - particles{p=block;m=MUD;a=150;hs=2;vs=2.5;s=0.1;y=2} @self ~onDeath
+  - command{c="mmocore admin exp give <trigger.name> hunting 40"} @trigger ~onDeath ?~isplayer
+  - command{c="mmocore admin exp give <target.name> main 200"} @PlayersInWorld ~onDeath
+
+# kiscie skrzeku przy studniach (faza 2): 6 s na rozbicie, potem 2 Pijawki
+L002_SKRZEK:
+  Type: ZOMBIE
+  Display: '<green>Skrzek</green> <gray>(rozbij)</gray>'
+  Health: 6
+  Options:
+    Invisible: true
+    NoAI: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+  Equipment:
+  - SLIME_BLOCK HEAD
+  Skills:
+  - skill{s=L002_SKRZEK_WYLEG} @self ~onSpawn
+  - particles{p=item_slime;a=20;hs=0.4;vs=0.4;y=1.5} @self ~onDeath
+  - command{c="mmocore admin exp give <trigger.name> main 4"} @trigger ~onDeath ?~isplayer
+
+L002_STUDNIA:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - addtag{tag=l002_studnia} @self ~onSpawn
+  - particles{p=bubble_pop;a=6;hs=0.8;vs=0.2;y=-0.5} @self ~onTimer:20
+
+L002_KORBA_1:
+  Type: ZOMBIE
+  Display: '<gold>Kołowrót śluzy</gold> <gray>(PPM)</gray>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - TRIPWIRE_HOOK HEAD
+  Skills:
+  - particles{p=glow;a=2;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:20
+  - skill{s=L002_SLUZA_1} @trigger ~onInteract
+
+L002_KORBA_2:
+  Type: ZOMBIE
+  Display: '<gold>Kołowrót śluzy</gold> <gray>(PPM)</gray>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - TRIPWIRE_HOOK HEAD
+  Skills:
+  - particles{p=glow;a=2;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:20
+  - skill{s=L002_SLUZA_2} @trigger ~onInteract
+
+L002_KORBA_3:
+  Type: ZOMBIE
+  Display: '<gold>Kołowrót śluzy</gold> <gray>(PPM)</gray>'
+  Health: 1
+  Options:
+    Invisible: true
+    NoAI: true
+    Invincible: true
+    Silent: true
+    Collidable: false
+    Despawn: persistent
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    AlwaysShowName: true
+    ShowName: true
+  Equipment:
+  - TRIPWIRE_HOOK HEAD
+  Skills:
+  - particles{p=glow;a=2;hs=0.3;vs=0.3;s=0.01;y=1.7} @self ~onTimer:20
+  - skill{s=L002_SLUZA_3} @trigger ~onInteract
+
+# ZGNILA WODA: gracz stojacy w wodzie dostaje trucizne (odnawiana co 1 s); po Dzwonie Topielcow - oczyszczenie.
+# Trzy emitery w roznych chunkach (pojedynczy emiter z ~onTimer bywal martwy ~1/3 instancji - pamiec).
+L002_ZGNILA_WODA:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  # mechanika MM zamiast vanillowego effect z konsoli (konsola logowala "Applied effect Poison" co sekunde na gracza).
+  # Warunek "w wodzie" MUSI byc w TargetConditions metaskilla: inline ?inliquid na tej linii sprawdza ZNACZNIK (rzucajacego),
+  # nie gracza - zmierzone debugiem MM 5.11.2 w instancji MD (30.09).
+  - skill{s=L002_ZGNILA_TIK} @PlayersInRadius{r=320} ~onTimer:20
+
+L002_KLIMAT:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - particles{p=glow;a=5;hs=10;vs=2;s=0;y=2} @self ~onTimer:20
+  - particles{p=white_smoke;a=6;hs=10;vs=0.2;s=0.005;y=0.3} @self ~onTimer:30
+  - sound{s=entity.frog.ambient;v=0.6;p=0.8} @self ~onTimer:160
+  - sound{s=entity.drowned.ambient_water;v=0.3;p=0.5} @self ~onTimer:420
+
+L002_SWIT:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - particles{p=glow;a=12;hs=10;vs=3;s=0;y=2} @self ~onTimer:15
+  - particles{p=end_rod;a=2;hs=8;vs=3;s=0.01;y=2} @self ~onTimer:30
+
+# sekwencja po smierci Topielicy (caster = ten znacznik -> delay bezpieczny)
+L002_FINAL:
+  Type: ARMOR_STAND
+  Options:
+    Invisible: true
+    Marker: true
+    Invincible: true
+    Silent: true
+    Despawn: persistent
+  Skills:
+  - skill{s=L002_FINAL_SEKWENCJA} @self ~onSpawn

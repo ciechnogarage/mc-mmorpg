@@ -1,0 +1,16 @@
+MMOItems/item
+MMOItems/item-tiers.yml
+MMOItems/item-sets.yml
+MMOItems/upgrade-templates.yml
+MMOItems/custom-stats.yml
+MMOItems/config.yml
+MMOItems/modifiers
+MMOItems/crafting-stations/profession-smithing.yml
+MMOItems/crafting-stations/profession-tailoring.yml
+MMOItems/crafting-stations/profession-jewelcrafting.yml
+MMOItems/language/stats.yml
+MMOItems/language/lore-format.yml
+MythicMobs/droptables/Bestiariusz.yml
+MythicMobs/droptables/Przedmioty.yml
+MythicLib/config.yml
+Nexo/pack/assets/przedmioty

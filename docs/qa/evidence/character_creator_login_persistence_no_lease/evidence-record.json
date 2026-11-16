@@ -1,0 +1,124 @@
+{
+  "evidence_id": "character_creator_login_persistence_character_persistence_no_dev_qa_lease_blocked",
+  "scenario_id": "character_creator_login_persistence",
+  "domain": "character",
+  "system": "character_creator_login_persistence",
+  "environment": "dev-qa",
+  "test_type": "character_persistence_runtime_evidence",
+  "contract_status": "blocked",
+  "runtime_status": "blocked",
+  "release_effect": "blocks_release",
+  "migration_snapshot_ref": "domain-17-legacy-evidence-migration-snapshot-2026-07-31",
+  "legacy_source_ids": [
+    "runtime_evidence_register_2026_07_13",
+    "vertical_slice_e2e_runtime_gate",
+    "persistence_restart_matrix"
+  ],
+  "legacy_sha256": [
+    "a8ee0595912d21774acd37df56a2a7767d413053704f2cd7a8ee785b4b3b9cbf",
+    "aee96082c030b76be4bddaabae9942cce34f726d9fa10ea27eb44a52ab345e79",
+    "87b9b8a1dc78db66ada1bb01dd7f5b378627cc2e5b19bd53f3e0f77d36326df9"
+  ],
+  "legacy_status_mapping": [
+    "BLOCKED remains result.verdict BLOCKED for environment/prerequisite blocker evidence",
+    "No runtime_status verified promotion is allowed without runtime and player proof"
+  ],
+  "proof_level_mapping": {
+    "supported_levels": [
+      "STATIC_CONTRACT",
+      "RUNTIME_PROOF",
+      "INTEGRATION_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "requiredProof": [
+      "STATIC_CONTRACT",
+      "RUNTIME_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "achievedProof": [
+      "STATIC_CONTRACT"
+    ],
+    "missingProof": [
+      "RUNTIME_PROOF",
+      "PLAYER_PROOF"
+    ],
+    "highest_achieved": "STATIC_CONTRACT"
+  },
+  "preconditions": [
+    "Required explicit dev-qa lease must exist before runtime work.",
+    "Runtime backend must be isolated before Mineflayer/RCON validation.",
+    "Rollback proof must exist before runtime mutation."
+  ],
+  "steps": [
+    "Ran MCMMORPG/infra/bin/mc-lease validate.",
+    "Ran MCMMORPG/infra/bin/mc-lease show qa.",
+    "Stopped before runtime execution because no active dev-qa lease exists."
+  ],
+  "assertions": [
+    "No runtime evidence may be claimed without a valid dev-qa lease.",
+    "Missing lease blocks character persistence runtime verification.",
+    "No rollback of runtime state is required when runtime_touched is false."
+  ],
+  "artifacts": [
+    {
+      "kind": "foundation-runtime-report",
+      "path": "docs/qa/evidence/character_creator_login_persistence_no_lease/foundation-report.json",
+      "sha256": "20db76af305430ecccd6d3464e0eef95f74cdcf6ff0fd5f31d10a8a8a8493bc7"
+    },
+    {
+      "kind": "lease-proof",
+      "path": "docs/qa/evidence/character_creator_login_persistence_no_lease/lease-proof.txt",
+      "sha256": "d2d90dbb92243ceb536536364185864c67ace60d14674472c304a7eff5c35183"
+    },
+    {
+      "kind": "rollback-restore-proof",
+      "path": "docs/qa/evidence/character_creator_login_persistence_no_lease/rollback-restore-proof.md",
+      "sha256": "f68373638cf6c783e6e52d9b16b0eb0134710ebf877a360c19b92a21ae7424b8"
+    }
+  ],
+  "build": {
+    "paper": "baseline-no-runtime",
+    "plugin_manifest_hash": "baseline-no-runtime",
+    "commit": "baseline-no-runtime",
+    "plugin_jar_inventory_hash": "not_collected_no_valid_lease",
+    "configuration_hashes": {}
+  },
+  "execution": {
+    "runner": "tools/qa/adapters/foundation-runtime.mjs",
+    "backend": "dev-qa",
+    "docker_volume_id": "not_allocated_no_valid_lease",
+    "test_account_uuid": "not_created_no_valid_lease",
+    "started_at": "2026-07-31T00:00:00Z",
+    "finished_at": "2026-07-31T00:00:00Z",
+    "executed_by": "domain-17-character-persistence-evidence-records",
+    "log_paths": [
+      "docs/qa/evidence/character_creator_login_persistence_no_lease/lease-proof.txt"
+    ],
+    "environment_control": {
+      "lease": "none",
+      "workspace_root": "/home/przemek/projects/MC",
+      "runtime_touched": false,
+      "staging_touched": false,
+      "rollback": {
+        "method": "not_required_no_runtime_touched",
+        "proof_paths": [
+          "docs/qa/evidence/character_creator_login_persistence_no_lease/rollback-restore-proof.md"
+        ]
+      }
+    }
+  },
+  "result": {
+    "verdict": "BLOCKED",
+    "proof_level": "STATIC_CONTRACT",
+    "blocker_ids": [
+      "D17-CHARACTER-PERSISTENCE-NO-DEV-QA-LEASE",
+      "missing_runtime_evidence"
+    ],
+    "observations": [
+      "mc-lease registry is valid.",
+      "mc-lease show qa reported zero active leases for the required scope.",
+      "Runtime validation was not attempted.",
+      "No backend, Docker container, RCON session, Mineflayer bot, world data, player data, plugin config, or staging state was touched."
+    ]
+  }
+}

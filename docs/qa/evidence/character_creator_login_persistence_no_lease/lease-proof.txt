@@ -1,0 +1,10 @@
+Command: MCMMORPG/infra/bin/mc-lease validate
+Result: PASS
+Output: mc-lease: registry is valid
+
+Command: MCMMORPG/infra/bin/mc-lease show qa
+Result: BLOCKED
+Output: mc-lease: expected exactly one active lease for scope 'qa', found 0
+
+Conclusion: character persistence runtime validation was not attempted because
+the required explicit dev-qa lease is absent.

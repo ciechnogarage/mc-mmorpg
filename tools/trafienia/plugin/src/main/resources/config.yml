@@ -1,0 +1,243 @@
+# Trafienia (prototyp 12.10) — trafienia w części ciała modeli ModelEngine.
+# Kapsuły: [kosc_a, kosc_b, promien_px] — końce to pozycje kości z ME (idą za animacją); ta sama kość dwa razy = kula.
+log: true
+zasieg: 4.5                     # zasięg promieni ciosu (bloki)
+mocny-od-naladowania: 0.9       # naładowanie paska ataku od którego cios jest "mocny" (szerszy łuk)
+udzial-pobocznej-czesci: 0.5    # część przecięta łukiem, ale nie główna, traci tyle obrażeń z wytrzymałości
+blysk-ticki: 6
+odpad-ticki: 120                # ile odcięta część leży na ziemi
+# Energia ciosu: każda nowo przecięta część zabiera swój 'opor'. Gdy energia się skończy, ostrze UTYKA w tej części
+# (dalsze części łuku nic nie dostają). Twarda część odbija ostrze, miękka (snop) wciąga — gracz na chwilę zwalnia.
+# Celując poniżej tej części wysokości moba, obuch i topór idą płasko z boku (z góry trafiłyby najpierw w biodra)
+nisko-do: 0.45
+# Łuk sięga do odległości celowanego punktu + tyle (bloki): dalsze części za celem nie dostają
+glownia: 0.35
+energia:
+  lekki: 0.8
+  mocny: 1.6
+
+# Łuk ciosu: os poziom (cięcie), pion (obuch z góry), skos, brak (pchnięcie, pięść, pocisk). Kąty = połowa łuku w stopniach.
+luki:
+  ciecie:    {os: poziom, lekki: 16, mocny: 40, krok: 8}
+  obuch:     {os: pion,   lekki: 12, mocny: 30, krok: 6}
+  topor:     {os: skos,   lekki: 12, mocny: 32, krok: 8}
+  pchniecie: {os: brak,   lekki: 0,  mocny: 0,  krok: 1}
+  piesc:     {os: brak,   lekki: 0,  mocny: 0,  krok: 1}
+  pocisk:    {os: brak,   lekki: 0,  mocny: 0,  krok: 1}
+bronie:
+  - {zawiera: [SPEAR, TRIDENT], rodzaj: pchniecie}
+  - {zawiera: [MACE, SHOVEL], rodzaj: obuch}
+  - {zawiera: [_AXE], rodzaj: topor}
+  - {zawiera: [SWORD, HOE], rodzaj: ciecie}
+bron-domyslna: piesc
+# Typ MMOItems -> rodzaj ciosu (pierwszeństwo przed nazwą materiału; brak wpisu = po materiale)
+bronie-mmoitems:
+  SWORD: ciecie
+  LONG_SWORD: ciecie
+  GREATSWORD: ciecie
+  KATANA: ciecie
+  KOSA: ciecie
+  SIERP: ciecie
+  THRUSTING_SWORD: pchniecie
+  DAGGER: pchniecie
+  SPEAR: pchniecie
+  LANCE: pchniecie
+  AXE: topor
+  GREATAXE: topor
+  HALBERD: topor
+  HAMMER: obuch
+  GREATHAMMER: obuch
+  STAFF: obuch          # kostur w walce wręcz to kij
+  GREATSTAFF: obuch
+  GAUNTLET: piesc
+# Zachwianie (zamiast ogłuszenia): pasek ładowany siłą ciosów. prog = ułamek max HP, wzrost = mnożnik progu po każdym
+# zachwianiu (w grupie nie da się trzymać moba w miejscu), bez ciosów przez spadek-po ticków pasek opada.
+zachwianie:
+  prog: 0.25
+  wzrost: 1.5
+  spadek-po: 60
+  spadek-na-s: 0.1
+  czas: 30
+  wklad: {obuch: 1.0, piesc: 0.6, topor: 0.5, pchniecie: 0.3, ciecie: 0.2, pocisk: 0.1}
+# Cios w broń moba (kosa): żelazo o żelazo, bez obrażeń dla moba.
+zderzenie:
+  odrzut-moba: 0.35
+  odrzut-gracza: 0.25
+  odtracenie-ticki: 12
+
+# Materiał części decyduje, co cios robi z CIAŁEM, nie ile zabiera HP (HP: mnożniki miejsca w częściach).
+# rana (cięcie, rąbanie) -> odcięcie; zgniot (obuch) -> złamanie kija w środku (kończyna zostaje, wiotczeje).
+# palnosc: jak szybko część płonie (0 = nie płonie). Pchnięcie i strzała nie zużywają pul w słomie.
+materialy:
+  sloma:        # płótno wypchane słomą na drewnianym krzyżaku: obuch łamie kij w środku, ostrze rozpruwa
+    palnosc: 1.0
+    ciecie:    {rana: 1.0}
+    topor:     {rana: 1.8, zgniot: 0.5}
+    obuch:     {zgniot: 1.0}
+    piesc:     {zgniot: 0.3}
+  worek:        # głowa z płótna: bez pul (nie odpada), płonie
+    palnosc: 1.0
+  pedy:         # żywe pędy Szczepu: tną się łatwo, grot też je przetnie
+    palnosc: 1.2
+    ciecie:    {rana: 1.5}
+    topor:     {rana: 1.5}
+    obuch:     {zgniot: 0.6}
+    piesc:     {zgniot: 0.3}
+    pchniecie: {rana: 0.6}
+    pocisk:    {rana: 0.6}
+  drewno:       # kosisko: miecz ledwo nacina, topór rąbie, obuch łamie
+    palnosc: 0.3
+    ciecie:    {rana: 0.35}
+    topor:     {rana: 1.6}
+    obuch:     {zgniot: 1.3}
+    piesc:     {zgniot: 0.2}
+  stal:
+    palnosc: 0
+  cialo:
+    palnosc: 0.2
+    ciecie:    {rana: 1.0}
+    topor:     {rana: 1.4}
+    obuch:     {zgniot: 1.0}
+    piesc:     {zgniot: 0.4}
+  kosc:         # szkielety: ostrze ślizga się po kości, obuch ją kruszy
+    palnosc: 0
+    ciecie:    {rana: 0.4}
+    topor:     {rana: 0.9}
+    obuch:     {zgniot: 1.5}
+    piesc:     {zgniot: 0.6}
+
+modele:
+  # Kosiarz (Loch 004): słomiany strach na drewnianym krzyżaku (poprzeczka przez ramiona, pal w tułowiu, kije w nogawkach),
+  # ożywiony przez pędy Szczepu wyrastające z głowy. Kosa i kapelusz to przedmioty, nie ciało.
+  # mnozniki = obrażenia dla HP zależne od miejsca (zwykły mob: ×0,75–×1,5); wytrzymałość części = ułamek max HP.
+  l004_kosiarz:
+    czesci:
+      glowa:
+        kapsuly: [[traf_glowa_a, traf_glowa_b, 3.4]]
+        kosci: [glowa]
+        material: worek
+        mnozniki: {domyslny: 1.15, pchniecie: 1.4, pocisk: 1.3}     # grot w oko-świetlik
+        opor: 0.5
+        zachwianie: 1.5
+        sasiedzi: [kapelusz, pedy, tulow]
+      pedy:             # źródło życia: przecięte = Szczep traci chwyt (ospały na stałe)
+        kapsuly: [[traf_pedy_a, traf_pedy_b, 1.6]]
+        kosci: [pedy]
+        material: pedy
+        mnozniki: {domyslny: 1.5}
+        opor: 0.1
+        priorytet: 2
+        efekt: sloma
+        blysk: '9CFF6A'
+        sasiedzi: [kapelusz, glowa]
+        spalenie: 2
+        odciecie: {wytrzymalosc: 0.08, przez: [rana, zgniot], ukryj: [pedy], tag: traf_bez_pedow}
+      kapelusz:         # ubranie: cios w niego nie rani; rozcięty albo strącony spada, spalony znika
+        kapsuly: [[traf_kapelusz_c, traf_kapelusz_d, 1.4], [traf_kapelusz_a, traf_kapelusz_b, 1.4]]   # rondo przód-tył (wystaje przed twarz) i bok-bok
+        kosci: [kapelusz]
+        material: sloma
+        przedmiot: true
+        opor: 0.1
+        priorytet: 1
+        efekt: sloma
+        sasiedzi: [glowa, pedy]
+        spalenie: 2
+        odciecie: {wytrzymalosc: 0.06, przez: [rana, zgniot], ukryj: [kapelusz], tag: traf_bez_kapelusza}
+      tulow:            # snop na palu: ostrze grzęźnie, obuch może złamać pal (garbi się, krótszy zamach)
+        kapsuly: [[traf_brzuch_a, traf_brzuch_b, 3.6], [traf_piers_a, traf_piers_b, 4.2]]
+        kosci: [tulow, barki]
+        material: sloma
+        mnozniki: {domyslny: 1.0, obuch: 0.9, pchniecie: 0.9}
+        opor: 2.0
+        efekt: sloma
+        sasiedzi: [bark_l, bark_r, noga_l, noga_r, glowa]
+        zgniecenie: {wytrzymalosc: 0.35, animacja: zgarbiony, tag: traf_pal_pekniety}
+      bark_l:
+        kapsuly: [[ramie_l, przedramie_l, 1.8]]
+        kosci: [ramie_l]
+        material: sloma
+        mnozniki: {domyslny: 0.9}
+        opor: 0.4
+        efekt: sloma
+        zachwianie: 0.6
+        sasiedzi: [tulow, reka_l]
+      bark_r:
+        kapsuly: [[ramie_r, przedramie_r, 1.8]]
+        kosci: [ramie_r]
+        material: sloma
+        mnozniki: {domyslny: 0.9}
+        opor: 0.4
+        efekt: sloma
+        zachwianie: 0.6
+        sasiedzi: [tulow, reka_r]
+      reka_l:           # obuch łamie poprzeczkę krzyżaka: ręka zwisa
+        kapsuly: [[przedramie_l, dlon_l, 1.7], [dlon_l, dlon_l, 1.8]]
+        kosci: [przedramie_seg_l, dlon_l]
+        material: sloma
+        mnozniki: {domyslny: 0.9}
+        opor: 0.3
+        efekt: sloma
+        zachwianie: 0.6
+        sasiedzi: [bark_l]
+        spalenie: 6
+        odciecie:    {wytrzymalosc: 0.22, kikut: kikut_reka_l, ukryj: [przedramie_l], tagi: [traf_bez_reka_l, traf_jedna_reka]}
+        zgniecenie:  {wytrzymalosc: 0.22, animacja: zwis_l, tagi: [traf_zwis_reka_l, traf_jedna_reka]}
+      reka_r:
+        kapsuly: [[przedramie_r, dlon_r, 1.7], [dlon_r, dlon_r, 1.8]]
+        kosci: [przedramie_seg_r, dlon_r]
+        material: sloma
+        mnozniki: {domyslny: 0.9}
+        opor: 0.3
+        efekt: sloma
+        zachwianie: 0.6
+        sasiedzi: [bark_r]
+        spalenie: 6
+        odciecie:    {wytrzymalosc: 0.22, kikut: kikut_reka_r, ukryj: [przedramie_r], tagi: [traf_bez_reka_r, traf_bez_kosy]}
+        zgniecenie:  {wytrzymalosc: 0.22, animacja: zwis_r, ukryj: [kosisko, ostrze, kikut_kosiska], tagi: [traf_zwis_reka_r, traf_bez_kosy]}
+      kosisko:          # broń: cios w nią to zderzenie, nie rana; topór przerąbuje, obuch łamie (wbite w ziemię: 2× łatwiej)
+        kapsuly: [[traf_kosisko_a, traf_kosisko_b, 1.1]]
+        kosci: [kosisko]
+        material: drewno
+        przedmiot: true
+        bron: true
+        opor: 1.0
+        twarda: true
+        efekt: drewno
+        blysk: 'FFE0B0'
+        zachwianie: 0.8
+        odciecie: {wytrzymalosc: 0.2, przez: [rana, zgniot], kikut: kikut_kosiska, ukryj: [kosisko, ostrze], tag: traf_kosa_zlamana}
+      ostrze:
+        kapsuly: [[traf_kosisko_b, traf_ostrze_b, 1.4]]
+        kosci: [ostrze]
+        material: stal
+        przedmiot: true
+        bron: true
+        opor: 1.5
+        twarda: true
+        efekt: iskry
+        blysk: 'FFFFFF'
+        zachwianie: 0.8
+      noga_l:           # obuch łamie kij w nogawce: pada na kolano, potem kuleje
+        kapsuly: [[noga_l, golen_l, 1.9], [golen_l, traf_stopa_l, 1.8]]
+        kosci: [noga_l, golen_l]
+        material: sloma
+        mnozniki: {domyslny: 0.9, obuch: 1.2, topor: 1.0}
+        opor: 0.4
+        efekt: sloma
+        zachwianie: 1.2
+        sasiedzi: [tulow]
+        spalenie: 8
+        odciecie:   {wytrzymalosc: 0.25, kikut: kikut_noga_l, ukryj: [noga_l], tagi: [traf_bez_noga_l, traf_noga_chora], animacja: kuleje_l, predkosc: 0.45, chod: walk_bez_l}
+        zgniecenie: {wytrzymalosc: 0.25, animacja: 'klek_l,kuleje_l', predkosc: 0.7, ogluszenie: 30, tagi: [traf_kolano_l, traf_noga_chora], chod: walk_kolano_l}
+      noga_r:
+        kapsuly: [[noga_r, golen_r, 1.9], [golen_r, traf_stopa_r, 1.8]]
+        kosci: [noga_r, golen_r]
+        material: sloma
+        mnozniki: {domyslny: 0.9, obuch: 1.2, topor: 1.0}
+        opor: 0.4
+        efekt: sloma
+        zachwianie: 1.2
+        sasiedzi: [tulow]
+        spalenie: 8
+        odciecie:   {wytrzymalosc: 0.25, kikut: kikut_noga_r, ukryj: [noga_r], tagi: [traf_bez_noga_r, traf_noga_chora], animacja: kuleje_r, predkosc: 0.45, chod: walk_bez_r}
+        zgniecenie: {wytrzymalosc: 0.25, animacja: 'klek_r,kuleje_r', predkosc: 0.7, ogluszenie: 30, tagi: [traf_kolano_r, traf_noga_chora], chod: walk_kolano_r}

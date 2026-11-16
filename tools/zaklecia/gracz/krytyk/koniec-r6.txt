@@ -1,0 +1,3 @@
+Runda 6 zakończona. Wyniki i uzasadnienie są w [raporcie-r6.md](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/krytyk/raport-r6.md); zapisałem też [koniec-r6.txt](/home/dev/Desktop/Przemek/MC/tools/zaklecia/gracz/krytyk/koniec-r6.txt).
+
+**AKCEPT** dla odkładania lewego zaklęcia przy zakładaniu broni: trzy ziarna fuzzera wykonały po 1000 kroków bez utraty lub duplikacji przedmiotów. **ODRZUĆ** obecną regułę pięciu promieni zasłaniania: sonda wykazała widoczny skraj celu, którego nie da się trafić. Build pozostał bez zmian; `keep_inventory` i PvP przywrócono do wartości wyjściowych. STOP.

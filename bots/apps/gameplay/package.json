@@ -1,0 +1,12 @@
+{
+  "name": "@mmorpg-bots/gameplay",
+  "version": "0.1.0",
+  "main": "combat-check.js",
+  "dependencies": {
+    "@mmorpg-bots/bot-core": "*",
+    "@mmorpg-bots/safe-protocol": "*",
+    "@mmorpg-bots/mmo-bridge": "*",
+    "@mmorpg-bots/qa": "*",
+    "@mmorpg-bots/skills": "*"
+  }
+}

@@ -1,0 +1,1013 @@
+title: Domain 04 Validation Contract
+status: proposed
+updated_at: 2026-08-12
+contract:
+  id: domain_04_validation_contract
+  schema_version: 1
+  semantic_owner_domain: '04'
+  purpose: 'Closed list of Domain 04 invariants, the cross-domain checks that tie
+    Domain 04 to Domains 02, 03, 05, and 14, and the runtime evidence gates required
+    before a Domain 04 definition may claim runtime_verified. This contract binds
+    validators to already accepted Domain 04 documents. It does not introduce new
+    gameplay semantics and does not approve CLS-* content.
+
+    '
+  scope:
+    includes:
+    - closed invariant list for class, skill, loadout, progression/respec, weapon
+      school, and race
+    - cross-domain invariants for Domains 02, 03, 05, and 14
+    - runtime evidence gates required before runtime_verified
+    - declared open cross-domain gaps that block validated
+    excludes:
+    - CLS-* class content
+    - Domain 03 formula, resource, cooldown, control, and PvP rule definitions
+    - Domain 05 item instance rules
+    - Domain 14 HUD and input rules
+    - execution of the runtime evidence itself
+cls_gate:
+  concrete_class_definitions_in_scope: false
+  note: 'This contract validates framework shape and cross-domain references only.
+    No validator in this contract may mark a CLS-* class definition ready, and no
+    CLS-* work is opened by this document.
+
+    '
+source_documents:
+  domain_04:
+  - docs/design/classes/domain-02-03-alignment.md
+  - docs/design/classes/class-framework.md
+  - docs/design/classes/skill-library-contract.yaml
+  - docs/design/classes/combat-loadout.md
+  - docs/design/classes/weapon-schools.md
+  - docs/design/classes/race-framework.md
+  domain_02:
+  - docs/contracts/character-scope-registry.yaml
+  - docs/contracts/account-character-contract.yaml
+  domain_03_authority:
+  - docs/contracts/domain-03-combat-mechanic-authority-registry.yaml
+  - docs/contracts/domain-03-authority-snapshots/ready-direct-damage.yaml
+  - docs/contracts/domain-03-authority-snapshots/ready-direct-periodic-damage.yaml
+  - docs/contracts/domain-03-authority-snapshots/downgraded-direct-damage.yaml
+  - docs/contracts/domain-03-authority-snapshots/revoked-direct-damage.yaml
+vocabularies:
+  enforcement:
+  - static
+  - runtime
+  - hybrid
+  lifecycle_status:
+  - draft
+  - validated
+  - runtime_verified
+  - released
+  invariant_groups:
+  - class
+  - skill
+  - loadout
+  - progression_respec
+  - weapon_school
+  - race
+  - cross_domain
+  evidence_channel:
+  - rcon
+  - mineflayer
+  - plugin_api
+  - logs
+  - real_client
+  backend:
+  - dev_lease_backend
+  forbidden_backends:
+  - staging
+  - world
+  - items
+  - hub
+lifecycle_policy:
+  static_validation_max_status: validated
+  runtime_verified_requires_runtime_evidence: true
+  rules:
+  - static validation may advance a Domain 04 definition to validated only
+  - runtime_verified requires every runtime evidence gate in this contract
+  - a passing YAML or markdown parse is never runtime evidence
+  - released additionally requires Domain 17 release QA acceptance and is outside
+    this contract
+mirrors:
+  domain_04_owned_identifiers:
+    source_document: docs/design/classes/domain-02-03-alignment.md
+    section: '## Ownership'
+    values:
+    - class_id
+    - subclass_id
+    - race_id
+    - skill_id
+    - weapon_school_id
+  domain_02_persisted_keys:
+    source_document: docs/design/classes/domain-02-03-alignment.md
+    section: '## Domain 02 Persistence Fields'
+    values:
+    - character.identity.race_id
+    - character.identity.class_id
+    - character.identity.subclass_id
+    - character.progression.learned_skill_ids
+    - character.progression.weapon_school_unlock_ids
+    - character.loadout.active_loadout_id
+    - character.loadout.equipped_skill_ids
+    - character.progression.talent_allocations
+    - character.progression.respec_state
+    - character.progression.legacy_technique_ids
+    - character.progression.faith_scar_ids
+  domain_03_upstream_contracts:
+    source_document: docs/design/classes/domain-02-03-alignment.md
+    section: '## Domain 03 Upstream Gates'
+    values:
+    - stat-dictionary
+    - combat-stat-contract
+    - damage-event-contract
+    - stat-contribution-contract
+    - damage-formula-contract
+    - coefficient-set-contract
+    - effect-contract
+    - activation-contract
+    - range-profile-contract
+    - cast-time-rule-contract
+    - channel-time-rule-contract
+    - state-requirement-contract
+    - resource-requirement-contract
+    - resource-contract
+    - cooldown-contract
+    - cc-taxonomy-contract
+    - pvp-mode-modifier-contract
+  class_mandatory_components:
+    source_document: docs/design/classes/class-framework.md
+    section: '## Mandatory Class Components'
+    values:
+    - Identity
+    - Resources
+    - Equipment permissions
+    - Progression
+    - Loadout
+    - Integration
+    - Lifecycle
+  class_progression_required_references:
+    source_document: docs/design/classes/class-framework.md
+    section: '## Progression Contract'
+    values:
+    - level_curve_id
+    - unlock_table_id
+    - talent_tree_ids
+    - optional subclass_unlock_rule_id
+  loadout_slot_model:
+    source_document: docs/design/classes/combat-loadout.md
+    section: '## Slot Model'
+    slots:
+      active_skill: 4
+      mobility_skill: 1
+      utility_skill: 1
+      passive_skill: 3
+      relic: 1
+invariants:
+- id: D04-INV-CLASS-001
+  group: class
+  covers_source_requirement: Identity
+  statement: 'class_id and subclass_id are stable Domain 04 semantic ids and are never
+    inferred from MMOCore ids, plugin ids, display names, menu labels, or item ids.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CLASS-002
+  group: class
+  covers_source_requirement: Resources
+  statement: 'primary_resource_id and secondary_resource_id resolve to Domain 03 resource
+    contracts, and a class never declares regeneration, persistence, reset, or spend-order
+    behavior locally.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CLASS-003
+  group: class
+  covers_source_requirement: Equipment permissions
+  statement: 'allowed_weapon_schools resolve to weapon school registry entries, and
+    armor permissions stay Domain 04 relationship declarations consumed by Domain
+    05 item compatibility.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CLASS-004
+  group: class
+  covers_source_requirement: Progression
+  statement: 'level_curve_id, unlock_table_id, and talent_tree_ids resolve, subclass_unlock_rule_id
+    is null or resolves, and no final unlock level or talent math is inlined into
+    the class record.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CLASS-005
+  group: class
+  covers_source_requirement: Loadout
+  statement: 'loadout_rule_id resolves to the combat loadout contract and default_skill_ids
+    form a playable starting loadout that fits the declared slot model without exceeding
+    any slot count.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CLASS-006
+  group: class
+  covers_source_requirement: Integration
+  statement: 'mmocore_class_id and every other runtime adapter reference remain implementation
+    details, and combat_contract_version points at an approved Domain 03 contract
+    version.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CLASS-007
+  group: class
+  covers_source_requirement: Lifecycle
+  statement: 'a class or subclass reaches runtime_verified only after every runtime
+    evidence gate in this contract is satisfied on an allocated dev lease backend;
+    static validation stops at validated.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-SKILL-001
+  group: skill
+  covers_source_requirement: skill_id is stable and not derived from runtime ids
+  statement: 'skill_id is the canonical Domain 04 semantic id and never changes because
+    a runtime provider, provider_skill_id, or implementation_ref changed.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-002
+  group: skill
+  covers_source_requirement: source_type and source_id identify the Domain 04 owner
+  statement: 'every skill declares ownership.source_type and ownership.source_id that
+    identify the Domain 04 semantic source granting the skill.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-003
+  group: skill
+  covers_source_requirement: formula_id and coefficient_set_id resolve through approved
+    Domain 03 contracts
+  statement: 'scaling.formula_id and scaling.coefficient_set_id resolve to approved
+    Domain 03 formula and coefficient set contracts, and no skill carries a local
+    textual formula.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-004
+  group: skill
+  covers_source_requirement: effect_ids resolve through approved Domain 03 effect definitions
+  statement: >
+    classification.effect_ids resolve approved Domain 03 effect definitions,
+    and damage family / damage school vocabulary remain Domain 03-owned.
+    Domain 04 does not hardcode the final taxonomy.
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-005
+  group: skill
+  covers_source_requirement: resource_costs resolve through approved Domain 03 resource
+    cost rules
+  statement: 'every execution.resource_costs entry resolves to an approved Domain
+    03 resource and cost rule, never inlines regeneration, persistence, reset, or
+    spend-order rules, and the declared cost is actually spent at execution.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-SKILL-006
+  group: skill
+  covers_source_requirement: cooldown_rule_id and global_cooldown_rule_id resolve
+    through approved Domain 03 cooldown rules
+  statement: 'every active skill declares cooldown_rule_id and global_cooldown_rule_id
+    that resolve to approved Domain 03 cooldown rules, charge_rule_id is null or resolves
+    the same way, and the resolved rules govern the observed runtime cooldown.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-SKILL-007
+  group: skill
+  covers_source_requirement: cc_category_id is null or resolves through the Domain
+    03 CC taxonomy
+  statement: 'control.cc_category_id is null or resolves through the Domain 03 CC
+    taxonomy, and no skill declares diminishing returns, PvP CC policy, poise, tenacity,
+    stagger, stealth, detection, or interrupt semantics locally.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-008
+  group: skill
+  covers_source_requirement: no forbidden local formula or Domain 03-owned rule fields
+    are present
+  statement: 'no skill record contains any field listed in skill-library-contract.yaml
+    forbidden_local_fields.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-009
+  group: skill
+  covers_source_requirement: runtime adapter refs are present only as implementation
+    details
+  statement: 'implementation_provider, implementation_ref, and provider_skill_id appear
+    only as adapter references, and provider behavior conforming to the referenced
+    Domain 03 contracts is proven by runtime evidence, not by the presence of the
+    fields.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-SKILL-010
+  group: skill
+  covers_source_requirement: every executable catalogued combat mechanic has exactly one complete Domain 03 consumer binding
+  statement: >
+    every catalogued combat mechanic reachable from the skill execution graph
+    has exactly one d03_consumer_bindings entry with all seven required fields;
+    duplicate mechanic_id entries and generic formula, effect, tag, control, or
+    provider references without a binding are invalid
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-SKILL-011
+  group: skill
+  covers_source_requirement: every consumer binding requires literal RUNTIME_VERIFIED and resolves one immutable contract, gate-envelope, bundle-digest, and build-digest lineage
+  statement: >
+    every Domain 03 consumer binding requires literal RUNTIME_VERIFIED and its
+    mechanic contract version/ref, gate transition envelope, contract bundle
+    digest, and build digest resolve one non-revoked readiness lineage before
+    the mechanic can execute or the consumer can advance above validated
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-SKILL-012
+  group: skill
+  covers_source_requirement: a missing, stale, mismatched, downgraded, or revoked binding blocks executable mapping and lifecycle above validated without fallback
+  statement: >
+    missing, stale, digest-mismatched, downgraded, or revoked Domain 03 binding
+    suppresses or rejects the mechanic at admission, leaves the consumer at no
+    more than validated, and never falls back to a local formula, effect,
+    mechanic tag, or provider behavior
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-LOADOUT-001
+  group: loadout
+  covers_source_requirement: no loadout can exceed slot counts
+  statement: 'a persisted or edited loadout never holds more entries than the declared
+    slot model allows for any slot type.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-LOADOUT-002
+  group: loadout
+  covers_source_requirement: a skill cannot be equipped into a wrong slot type
+  statement: 'a skill is accepted only into a slot type its source and classification
+    tags allow, and an ineligible entry fails closed instead of executing from the
+    wrong slot.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-LOADOUT-003
+  group: loadout
+  covers_source_requirement: passive skills do not consume active slots without an
+    explicit accepted hybrid contract
+  statement: 'passive_skill entries never consume active_skill, mobility_skill, or
+    utility_skill capacity unless an explicitly accepted Domain 04 hybrid slot contract
+    exists.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-LOADOUT-004
+  group: loadout
+  covers_source_requirement: combat lockout blocks all loadout edits
+  statement: 'while combat lockout is active, every loadout edit is rejected, including
+    relic and passive edits, while execution from the already equipped loadout continues.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: runtime
+  max_status_granted: runtime_verified
+- id: D04-INV-LOADOUT-005
+  group: loadout
+  covers_source_requirement: reconnect preserves the last valid loadout without duplicate
+    unlocks
+  statement: 'reconnect restores the last valid active loadout without duplicating
+    learned skills, unlocks, relics, or passive state, and without resetting cooldowns
+    or resource state.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: runtime
+  max_status_granted: runtime_verified
+- id: D04-INV-LOADOUT-006
+  group: loadout
+  covers_source_requirement: restart preserves identifiers without duplicate unlocks
+    or slot entries
+  statement: 'server restart preserves active_loadout_id and equipped slot identifiers
+    without duplicating unlocks or slot entries, and adapters revalidate every entry
+    before execution after boot.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: runtime
+  max_status_granted: runtime_verified
+- id: D04-INV-LOADOUT-007
+  group: loadout
+  covers_source_requirement: Relic does not consume any ordinary skill slot
+  statement: 'the relic slot is dedicated, and no accessory, artifact, bracelet, or
+    armor slot silently acts as a relic substitute.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-PROG-001
+  group: progression_respec
+  covers_source_requirement: level_curve_id
+  statement: 'every character level in the curve referenced by level_curve_id is resolvable,
+    with no undefined level inside the declared range.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-PROG-002
+  group: progression_respec
+  covers_source_requirement: unlock_table_id
+  statement: 'an unlock from the referenced unlock table is granted at most once per
+    character; reconnect, restart, and migration never double-grant it.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: runtime
+  max_status_granted: runtime_verified
+- id: D04-INV-PROG-003
+  group: progression_respec
+  covers_source_requirement: talent_tree_ids
+  statement: 'every entry in character.progression.talent_allocations resolves to
+    a talent tree referenced by the class or subclass contract.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-PROG-004
+  group: progression_respec
+  covers_source_requirement: optional subclass_unlock_rule_id
+  statement: 'character.identity.subclass_id stays null until the referenced subclass_unlock_rule_id
+    grants it.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-PROG-005
+  group: progression_respec
+  statement: 'a respec returns exactly the declared allocation budget and never resets
+    cooldowns, resource state, or equipped loadout eligibility as a side effect.
+
+    '
+  source_document: docs/design/classes/class-framework.md
+  enforcement: runtime
+  max_status_granted: runtime_verified
+- id: D04-INV-PROG-006
+  group: progression_respec
+  statement: 'character.progression.legacy_technique_ids and character.progression.faith_scar_ids
+    are permanent state; an ordinary respec never removes them, a Domain 04 policy
+    change never rewrites them without an explicit migration contract, and death,
+    respawn, and reconnect preserve them.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-WEAPON-001
+  group: weapon_school
+  covers_source_requirement: every referenced weapon_school_id resolves to one registry
+    entry
+  statement: 'every referenced weapon_school_id resolves to exactly one weapon school
+    registry entry.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-WEAPON-002
+  group: weapon_school
+  covers_source_requirement: each weapon school has gameplay semantics beyond allowed
+    item ids
+  statement: 'each weapon school declares the minimum attack profile, skill constraint,
+    and animation runtime fields, so it carries gameplay meaning rather than a list
+    of allowed item ids.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-WEAPON-003
+  group: weapon_school
+  covers_source_requirement: class and subclass allowed_weapon_schools reference existing
+    ids
+  statement: 'class allowed_weapon_schools and subclass equipment deltas reference
+    only existing weapon school ids.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-WEAPON-004
+  group: weapon_school
+  covers_source_requirement: skill weapon_school_ids reference existing ids and do
+    not bypass class, subclass, loadout, resource, cooldown, formula, or effect requirements
+  statement: 'skill weapon_school_ids reference existing ids and compose with, rather
+    than replace, class, subclass, loadout, resource, cooldown, formula, and effect
+    requirements.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-WEAPON-005
+  group: weapon_school
+  covers_source_requirement: Domain 05 item definitions reference weapon schools only
+    as compatibility identifiers, not semantic definitions
+  statement: 'Domain 05 item definitions reference weapon schools as compatibility
+    identifiers only and never redefine their gameplay meaning.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-WEAPON-006
+  group: weapon_school
+  covers_source_requirement: runtime adapter ids, plugin ids, display text, and item
+    ids do not define or rewrite weapon_school_id
+  statement: 'runtime adapter ids, plugin ids, display text, and item ids never define
+    or rewrite weapon_school_id, and the runtime adapter must be observed using the
+    semantic id before runtime_verified.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-WEAPON-007
+  group: weapon_school
+  covers_source_requirement: no concrete item-instance exception is required for a
+    class or skill to pass compatibility
+  statement: 'no class or skill needs a concrete item-instance exception to satisfy
+    weapon school compatibility.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-001
+  group: race
+  covers_source_requirement: every race_id is a stable Domain 04 semantic id persisted
+    by Domain 02
+  statement: 'race_id is a stable Domain 04 semantic id persisted by Domain 02 as
+    character.identity.race_id.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-002
+  group: race
+  covers_source_requirement: every race has exactly one declared bounded contribution
+    package
+  statement: 'every race declares exactly one contribution_budget package and does
+    not occupy more than one primary build niche.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-003
+  group: race
+  covers_source_requirement: every combat-affecting race mechanic references approved
+    Domain 03 contracts
+  statement: 'every combat-affecting race mechanic resolves through approved Domain
+    03 effect, formula, coefficient, resource, cooldown, and control contracts.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-004
+  group: race
+  covers_source_requirement: every race-sourced skill reference exists in the Domain
+    04 skill library
+  statement: 'every race-sourced skill reference resolves to a skill in the Domain
+    04 skill library contract.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-005
+  group: race
+  covers_source_requirement: no class or subclass requires one race for baseline viability
+  statement: 'no class or subclass baseline loop, subclass unlock, required skill,
+    required weapon school, or resource model requires a specific race_id.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-006
+  group: race
+  covers_source_requirement: no race requires one class, faction, religion, Legacy
+    Technique, or Faith Scar for practical viability
+  statement: 'no race depends on a single class, faction, religion, Legacy Technique,
+    or Faith Scar to stay practically viable.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-007
+  group: race
+  covers_source_requirement: race, faction, religion, Legacy Technique, and Faith
+    Scar stacking stays inside the declared budget
+  statement: 'combined race, faction, religion, Legacy Technique, and Faith Scar contributions
+    stay inside the declared stack_group_id budget.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-008
+  group: race
+  covers_source_requirement: Domain 08 relationship state is not silently inferred
+    from race alone
+  statement: 'race never grants Domain 08 membership, rank, trust, exile, conversion,
+    or reconciliation state by itself.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-RACE-009
+  group: race
+  covers_source_requirement: no final percentage bonuses, concrete race list, or selector
+    narrative is required to validate this framework
+  statement: 'the race framework validates without final percentage bonuses, a concrete
+    race roster, or selector narrative content.
+
+    '
+  source_document: docs/design/classes/race-framework.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-001
+  group: cross_domain
+  related_domains:
+  - '02'
+  statement: 'Domain 04 owns the meaning of class_id, subclass_id, race_id, skill_id,
+    and weapon_school_id; Domain 02 persists them and never becomes their semantic
+    authority.
+
+    '
+  source_document: docs/design/classes/domain-02-03-alignment.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-002
+  group: cross_domain
+  related_domains:
+  - '02'
+  statement: 'every Domain 04 key declared persisted in domain-02-03-alignment.md
+    exists as an entry in docs/contracts/character-scope-registry.yaml carrying semantic_owner_domain
+    04 and persistence_owner_domain 02.
+
+    '
+  source_document: docs/design/classes/domain-02-03-alignment.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-003
+  group: cross_domain
+  related_domains:
+  - '03'
+  statement: 'Domain 04 never defines stats, damage formulas, mitigation order, crit
+    rules, cooldown caps, resource semantics, CC diminishing returns, or PvP scaling;
+    every combat-executing reference resolves into the declared Domain 03 upstream
+    contract set, and no Domain 04 path forks the base combat pipeline at runtime.
+
+    '
+  source_document: docs/design/classes/domain-02-03-alignment.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+- id: D04-INV-CROSS-004
+  group: cross_domain
+  related_domains:
+  - '03'
+  statement: 'the Domain 03 contracts required by the skill library contract are a
+    subset of the Domain 03 upstream gate list in domain-02-03-alignment.md, so the
+    skill contract cannot reference an ungated Domain 03 contract.
+
+    '
+  source_document: docs/design/classes/skill-library-contract.yaml
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-005
+  group: cross_domain
+  related_domains:
+  - '05'
+  statement: 'Domain 05 consumes weapon_school_id and armor permissions as item definition
+    compatibility only; no item instance may satisfy or bypass a Domain 04 requirement.
+
+    '
+  source_document: docs/design/classes/weapon-schools.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-006
+  group: cross_domain
+  related_domains:
+  - '05'
+  statement: 'relic item data stay Domain 05 owned; Domain 04 owns only whether a
+    class, subclass, or loadout rule allows a relic reference and which combat activation
+    contract it may point at.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-007
+  group: cross_domain
+  related_domains:
+  - '14'
+  statement: 'Domain 14 consumes slot counts, slot types, the dedicated relic input,
+    edit lock rules, and unmet requirement messages from Domain 04 and never redefines
+    them.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: static
+  max_status_granted: validated
+- id: D04-INV-CROSS-008
+  group: cross_domain
+  related_domains:
+  - '14'
+  statement: 'Domain 14 presentation state is never the source of loadout eligibility;
+    a hidden, greyed, or missing control must still fail closed in the Domain 04 eligibility
+    check.
+
+    '
+  source_document: docs/design/classes/combat-loadout.md
+  enforcement: hybrid
+  max_status_granted: runtime_verified
+runtime_evidence_gates:
+- id: D04-RG-COST
+  topic: cost
+  proves: 'executing a skill spends the Domain 03 resource cost referenced by its
+    resource_costs entry, and an insufficient resource blocks execution instead of
+    executing for free.
+
+    '
+  evidence_channel: plugin_api
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-SKILL-005
+- id: D04-RG-COOLDOWN
+  topic: cooldown
+  proves: 'cooldown and global cooldown behave per the referenced Domain 03 cooldown
+    rules, and no Domain 04 path resets or bypasses a running cooldown, including
+    loadout swap and respec.
+
+    '
+  evidence_channel: plugin_api
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-SKILL-006
+  - D04-INV-SKILL-009
+  - D04-INV-PROG-005
+- id: D04-RG-RECONNECT
+  topic: reconnect
+  proves: 'reconnect restores the last valid loadout without duplicating unlocks,
+    relics, or passive state, and without resetting cooldowns or resources.
+
+    '
+  evidence_channel: mineflayer
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-LOADOUT-005
+  - D04-INV-LOADOUT-007
+- id: D04-RG-DEATH-RESPAWN
+  topic: death_respawn
+  proves: 'death and respawn preserve learned skills, equipped slots, talent allocations,
+    legacy techniques, and faith scars, and do not silently clear an active combat
+    lockout.
+
+    '
+  evidence_channel: mineflayer
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-PROG-006
+  - D04-INV-LOADOUT-004
+- id: D04-RG-WEAPON-SWAP
+  topic: weapon_swap
+  proves: 'swapping the equipped weapon re-evaluates weapon school eligibility through
+    the semantic weapon_school_id, and an ineligible skill fails closed rather than
+    executing from the wrong school.
+
+    '
+  evidence_channel: mineflayer
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-WEAPON-006
+  - D04-INV-LOADOUT-002
+  - D04-INV-CROSS-008
+- id: D04-RG-PARTY
+  topic: party
+  proves: 'party context does not duplicate, share, or bypass per-character loadout,
+    cooldown, resource, or unlock state.
+
+    '
+  evidence_channel: plugin_api
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-LOADOUT-001
+  - D04-INV-PROG-002
+- id: D04-RG-PVP
+  topic: pvp
+  proves: 'PvP combat engagement locks loadout edits after dealing or receiving damage,
+    and PvP modifiers resolve through the Domain 03 pvp-mode-modifier contract rather
+    than a Domain 04 local rule.
+
+    '
+  evidence_channel: mineflayer
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-LOADOUT-004
+  - D04-INV-CROSS-003
+- id: D04-RG-D03-CONSUMER-BINDING
+  topic: d03_consumer_binding
+  proves: >
+    an executable skill resolves one non-revoked RUNTIME_VERIFIED Domain 03
+    binding per mechanic with matching contract, gate-envelope, bundle, and
+    build digests; missing, stale, mismatched, downgraded, and revoked fixtures
+    are rejected without local formula, effect, tag, or provider fallback
+  evidence_contract:
+    reachable_mechanic_source_field: classification.catalogued_mechanic_ids
+    coverage_mode: EXACTLY_ONE_PER_REACHABLE_MECHANIC
+    required_readiness: RUNTIME_VERIFIED
+    immutable_lineage_fields:
+      - mechanic_id
+      - mechanic_contract_version
+      - mechanic_contract_ref
+      - gate_transition_envelope_ref
+      - contract_bundle_digest
+      - build_digest
+    lifecycle_provider_constraints:
+      planning_empty_bindings_max_status: validated
+      planning_implementation_provider: none
+      executable_empty_bindings_allowed: false
+      executable_implementation_provider_none_allowed: false
+      executable_implementation_ref_required: true
+      executable_provider_skill_id_required: true
+    forbidden_fallback_sources:
+      - formula_id
+      - coefficient_set_id
+      - effect_ids
+      - mechanic_tags
+      - control_refs
+      - implementation_provider
+      - implementation_ref
+      - provider_skill_id
+    failure_precedence:
+      - fallback_attempt
+      - duplicate
+      - missing
+      - stale
+      - digest_mismatch
+      - downgraded
+      - revoked
+    required_negative_outcomes:
+      missing: D03_BINDING_MISSING
+      duplicate: D03_BINDING_DUPLICATE
+      stale: D03_BINDING_STALE
+      digest_mismatch: D03_BINDING_DIGEST_MISMATCH
+      downgraded: D03_BINDING_READINESS_DOWNGRADED
+      revoked: D03_BINDING_REVOKED
+      fallback_attempt: D03_BINDING_FALLBACK_FORBIDDEN
+    required_outcome_semantics:
+      admission: REJECT_MECHANIC
+      lifecycle_ceiling: validated
+      executable_provider: DISABLED
+      fallback: FORBIDDEN
+  evidence_channel: plugin_api
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-SKILL-011
+  - D04-INV-SKILL-012
+- id: D04-RG-RESTART-RECOVERY
+  topic: restart_recovery
+  proves: 'a backend restart restores active_loadout_id and equipped slot identifiers
+    without duplicate unlocks or extra slot entries, and adapters revalidate every
+    entry before the first post-boot execution.
+
+    '
+  evidence_channel: logs
+  backend: dev_lease_backend
+  lease_required: true
+  covers_invariants:
+  - D04-INV-LOADOUT-006
+  - D04-INV-CLASS-007
+open_cross_domain_gaps:
+- id: D04-GAP-D03-UPSTREAM-CONTRACTS
+  owner_domain: '03'
+  detection: manual
+  statement: Domain 03 upstream contracts listed in domain-02-03-alignment.md do not
+    exist as repository contract files yet, so Domain 04 formula, coefficient set,
+    effect, activation, range profile, cast/channel time, state requirement, resource
+    requirement, resource, cooldown, control, and PvP modifier references remain unresolved.
+  blocks_lifecycle_status: validated
+  blocks_invariants:
+  - D04-INV-SKILL-003
+  - D04-INV-SKILL-004
+  - D04-INV-SKILL-005
+  - D04-INV-SKILL-006
+  - D04-INV-SKILL-007
+  - D04-INV-CLASS-002
+  - D04-INV-RACE-003
+  resolution_owner: Domain 03 combat core contract tickets
+semantic_validator_contract:
+  command: python3 scripts/check-domain-04-validation-contract.py docs/design/classes/domain-04-validation-contract.yaml
+  required_checks:
+  - yaml_parses
+  - required_top_level_sections_present
+  - vocabularies_are_closed
+  - invariant_ids_unique_and_prefixed
+  - every_invariant_group_is_populated
+  - static_enforcement_never_grants_runtime_verified
+  - source_documents_exist
+  - mirrors_match_source_documents
+  - group_coverage_matches_source_requirements
+  - cross_domain_invariants_cover_02_03_05_14
+  - runtime_evidence_gate_topics_complete
+  - runtime_evidence_gates_require_dev_lease_backend
+  - runtime_gate_covered_invariants_resolve
+  - every_runtime_or_hybrid_invariant_is_covered_by_a_gate
+  - skill_contract_upstream_domain_03_refs_are_gated
+  - d03_consumer_binding_schema_and_policy_are_exact
+  - d03_consumer_binding_failure_outcomes_are_structured_and_fail_closed
+  - d03_consumer_binding_lifecycle_and_provider_constraints_are_exact
+  - d03_consumer_binding_runtime_claim_and_evidence_contract_are_exact
+  - d04_skill_record_validator_contract_is_exact
+  - declared_gaps_still_detectable
+  explicitly_not_checked:
+  - runtime behavior of any plugin or adapter
+  - existence of Domain 03 upstream contract files
+  - existence of concrete CLS-* class definitions
+  - balance, tuning, or final numeric values
+record_validator_contract:
+  command: python3 scripts/check-domain-04-skill-record.py <validation-request.yaml>
+  request_kind: domain_04_skill_record_validation
+  authority_input: d03_authority_snapshot_ref
+  authority_registry_ref: docs/contracts/domain-03-combat-mechanic-authority-registry.yaml@5c0dfed489c5a3fc4b415e0508102ec501d8026fc0c387f72019d9b6632d8cf8
+  authority_contract_ref: /home/przemek/.traycer/epics/b638c9da-033f-4f61-8587-60459f79e9b2/artifacts/domain-03-combat-core-revision/index.md@33b076efb539dc5b0007c372d939ed447be6216116f975d95b20c76bf42e32e4
+  authority_content_verification: registry_snapshot_and_contract_sha256
+  authority_scope_mode: EXACT_REACHABLE_SET
+  output_format: json
+  exactly_one_output_object: true
+  accepted_exit_code: 0
+  rejected_exit_code: 1
+  static_validation_only: true

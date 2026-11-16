@@ -8,7 +8,7 @@ softdepend: [PlaceholderAPI, MMOProfiles, DeluxeMenus, CoreTools]
 commands:
   mistrzostwo:
     description: Mistrzostwa profesji (wywolywane przez menu z konsoli; admin).
-    usage: /mistrzostwo <okno|wybierz|zmien|info|nadaj|odbierz|zdejmij-cooldown|reload> ...
+    usage: /mistrzostwo <okno|porzuc|potwierdz|wybierz|zmien|info|nadaj|odbierz|zdejmij-cooldown|kamien|reload> ...
     permission: mistrzostwa.admin
 permissions:
   mistrzostwa.admin:

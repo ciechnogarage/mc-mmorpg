@@ -1,0 +1,131 @@
+schema_version: 1
+metadata:
+  gate_registry_id: domain-17-release-gates
+  domain: 17
+  stage: 1
+  authority: normative_shape_non_authoritative_until_cutover
+  source_of_truth_status: inactive_until_cutover
+  validator: tools/qa/validate-schemas.mjs
+  scenario_registry_path: docs/qa/e2e-scenarios.yaml
+  runtime_registry_path: docs/qa/runtime-evidence-registry.yaml
+  migration_snapshot_ref: domain-17-legacy-evidence-migration-snapshot-2026-07-31
+  baseline_note: 'Gates are fail-closed policy contracts. They do not claim release readiness until runtime evidence records
+    exist for the same build context and DOMAIN_17_QA_SOURCE_OF_TRUTH_CUTOVER is complete.
+
+    '
+gate_policy:
+  evidence_max_age_hours: 168
+  required_build_context_fields:
+  - commit
+  - paper
+  - plugin_manifest_hash
+  aggregation_rules:
+    missing_evidence: blocks_release
+    stale_evidence: reject_record
+    unknown_status: fail_closed
+    missing_scenario_ref: fail_closed
+    environment_blocker_verdict: BLOCKED
+    environment_blocker_is_product_fail: false
+    partial_runtime_status_supports_candidate: false
+    prerequisite_blocker_supports_candidate: false
+  default_blockers:
+  - unresolved_critical_contract_error
+  - missing_runtime_evidence
+  - failed_player_visible_e2e
+  - economy_duplication_risk
+  - persistence_failure
+  - restart_recovery_failure
+  - database_migration_without_rollback
+  - performance_budget_exceeded
+  - critical_startup_exception
+  - plugin_dependency_mismatch
+  - unapproved_snapshot_build
+  - missing_backup
+  performance_gate:
+    status: scaffolding_only
+    active_blocker_until_ready: false
+    activation_requires:
+    - threshold
+    - authority_source
+    - runner
+    - normalization_environment
+    missing_measurement_verdict: INSUFFICIENT_EVIDENCE
+    pass_without_measurement_allowed: false
+  promotion_policy:
+    mode: evidence_driven_fail_closed
+    requires_runtime_touched: true
+    lease_pattern: dev-*
+    reject_fixture_or_test_provenance: true
+    requires_contract_status: approved
+    requires_selected_required_evidence_ids: true
+build_context:
+  commit: baseline-no-runtime
+  paper: baseline-no-runtime
+  plugin_manifest_hash: baseline-no-runtime
+gates:
+- gate_id: character_creator_login_persistence_prerequisites
+  gate_type: prerequisite
+  release_status: candidate
+  release_effect: supports_candidate
+  required_scenarios:
+  - character_creator_login_persistence
+  required_contracts:
+  - docs/contracts/account-character-contract.yaml
+  required_metadata:
+  - account_id_authority
+  - character_id_authority
+  - profile_id_authority
+  - character_stage_authority
+  - persistence_storage_owner
+  - test_account_uuid
+  - restart_recovery_rollback_proof
+  blocker_ids_when_missing:
+  - unresolved_critical_contract_error
+  - persistence_failure
+  - restart_recovery_failure
+  - missing_backup
+  candidate_rule: supports_candidate_only_when_required_scenario_has_release_grade_pass_evidence
+  required_verdict: PASS
+  required_runtime_status: verified
+  required_release_effect_after_evidence: supports_candidate
+- gate_id: reward_restart_recovery_prerequisites
+  gate_type: prerequisite
+  release_status: candidate
+  release_effect: supports_candidate
+  required_scenarios:
+  - reward_restart_recovery
+  required_contracts:
+  - docs/contracts/reward-contract.yaml
+  - docs/contracts/reward-transaction-contract.yaml
+  required_metadata:
+  - reward_transaction_id_owner
+  - idempotency_key_owner
+  - currency_provider_owner
+  - inventory_storage_owner
+  - duplicate_rejection_proof_path
+  - interrupted_recovery_rollback_policy
+  blocker_ids_when_missing:
+  - unresolved_critical_contract_error
+  - economy_duplication_risk
+  - restart_recovery_failure
+  - database_migration_without_rollback
+  candidate_rule: supports_candidate_only_when_required_scenario_has_release_grade_pass_evidence
+  required_verdict: PASS
+  required_runtime_status: verified
+  required_release_effect_after_evidence: supports_candidate
+- gate_id: stage_1_exemplar_release_gate
+  gate_type: release
+  release_status: candidate
+  release_effect: supports_candidate
+  required_scenarios:
+  - character_creator_login_persistence
+  - reward_restart_recovery
+  required_runtime_status: verified
+  required_verdict: PASS
+  required_release_effect_after_evidence: supports_candidate
+  current_blockers:
+  - missing_runtime_evidence
+  stale_evidence_rule: reject_if_build_context_differs
+  missing_evidence_rule: block_release
+  release_readiness_claim_allowed: true
+  candidate_rule: supports_candidate_only_when_all_required_scenarios_have_release_grade_pass_evidence

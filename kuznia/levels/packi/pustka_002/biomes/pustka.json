@@ -1,0 +1,25 @@
+{
+ "name": "Pustka",
+ "derivative": "THE_VOID",
+ "vanillaDerivative": "THE_VOID",
+ "color": "#101015",
+ "layers": [
+  {
+   "palette": [
+    {
+     "block": "minecraft:air"
+    }
+   ],
+   "minHeight": 1,
+   "maxHeight": 1
+  }
+ ],
+ "decorators": [],
+ "generators": [
+  {
+   "generator": "wyspa_fale",
+   "min": 98,
+   "max": 102
+  }
+ ]
+}

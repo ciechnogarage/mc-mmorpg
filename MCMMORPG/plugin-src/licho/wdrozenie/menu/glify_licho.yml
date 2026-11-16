@@ -1,0 +1,49 @@
+# Licho nie spi: cztery cwiartki na strone; char U+4C40 + 4*strona + N-1.
+licho_1:
+  font: minecraft:default
+  texture: nexo:gui/licho_1
+  ascent: 13
+  height: 111
+  char: 䱀
+licho_2:
+  font: minecraft:default
+  texture: nexo:gui/licho_2
+  ascent: 13
+  height: 111
+  char: 䱁
+licho_3:
+  font: minecraft:default
+  texture: nexo:gui/licho_3
+  ascent: -98
+  height: 111
+  char: 䱂
+licho_4:
+  font: minecraft:default
+  texture: nexo:gui/licho_4
+  ascent: -98
+  height: 111
+  char: 䱃
+licho_pauza_1:
+  font: minecraft:default
+  texture: nexo:gui/licho_pauza_1
+  ascent: 13
+  height: 111
+  char: 䱄
+licho_pauza_2:
+  font: minecraft:default
+  texture: nexo:gui/licho_pauza_2
+  ascent: 13
+  height: 111
+  char: 䱅
+licho_pauza_3:
+  font: minecraft:default
+  texture: nexo:gui/licho_pauza_3
+  ascent: -98
+  height: 111
+  char: 䱆
+licho_pauza_4:
+  font: minecraft:default
+  texture: nexo:gui/licho_pauza_4
+  ascent: -98
+  height: 111
+  char: 䱇
