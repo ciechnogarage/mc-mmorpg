@@ -34,8 +34,12 @@ items:
     lore:
       - '&7Kup podstawowe narzędzia'
       - '&7i zaopatrzenie.'
+      - ''
+      - '&7Towar ma Zbigniew na rynku.'
+      - '&eKliknij — wskażę drogę.'
     left_click_commands:
-      - '[console] core-shops sklep %player_name%'
+      - '[console] mieszkancy prowadz kupiec %player_name%'
+      - '[close]'
   skup:
     material: nexo-mmo_icon_blank
     slots: [24, 25, 33, 34]
@@ -44,5 +48,9 @@ items:
     lore:
       - '&7Sprzedaj surowce od ręki.'
       - '&7Skup płaci mniej niż gracze.'
+      - ''
+      - '&7Skupuje Zdzisław na rynku.'
+      - '&eKliknij — wskażę drogę.'
     left_click_commands:
-      - '[console] core-shops skup %player_name%'
+      - '[console] mieszkancy prowadz skupca %player_name%'
+      - '[close]'

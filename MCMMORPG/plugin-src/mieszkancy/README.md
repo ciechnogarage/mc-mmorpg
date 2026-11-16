@@ -11,8 +11,15 @@ z rozmową i usługami oraz dodaje miastu ruch, światło i dźwięk. Świat: `s
 - **Rozmowa** — okno Paper Dialog (`Okna.java`): kwestia + opcje. Opcja może wykonać komendę konsoli
   (`%gracz%`), odpowiedzieć tekstem albo poprowadzić do innego NPC. Kliknięcia przez
   `customClick(Key, BinaryTagHolder)` (nie callback — gubi kliknięcia, `mc-gui-pack-dialogi`).
-- **Usługi tylko u NPC** (decyzja właściciela 16.11: „tak tylko u NPC”): naprawa, rozbiórka, aukcje, sakwa,
-  modlitwa. Menu Q tylko wskazuje drogę: `[console] mieszkancy prowadz <id> %player_name%` → ślad cząsteczek
+- **Czysty ekran w rozmowie** (`Hud.java`; właściciel 16.11: „hud ma się niczemu i nikomu nie wpierdalać”) —
+  na czas okna znika HUD MythicHUD (karta, tracker, kafelki), minimapa NMinimap i napisy w świecie w promieniu 24 bl.
+  (tylko dla rozmawiającego, `hideEntity`). Wraca po „Do widzenia”, po opcji z usługą, po ESC, po odejściu >4 bl.
+  lub 120 s (`Okna.pilnuj`) i przy wejściu do gry (marker PDC `mieszkancy:rozmowa_hud`).
+  Pułapki: `HudHolder.removeLayout/addLayout` (MythicHUD 1.3.4) nie wysyłają paska — po nich `send()`, inaczej
+  pierwsza rozmowa po wejściu zostawia kartę na oknie (klon 16.11, 2/2 bez, 2/2 z poprawką). HudDane co cykl
+  dokłada wariant l3 — wymaga HudDane z flagą `huddane:schowany` (gałąź `hud-dane-schowany`).
+- **Usługi tylko u NPC** (decyzja właściciela 16.11: „tak tylko u NPC”, „sklep i skup tylko u npc”): sklep
+  (Zbigniew, `kupiec`), skup (Zdzisław, `skupca`), naprawa, rozbiórka, aukcje, sakwa, modlitwa. Menu Q tylko wskazuje drogę: `[console] mieszkancy prowadz <id> %player_name%` → ślad cząsteczek
   i pasek akcji „→ Imię · Rola · N m” do NPC (poza Stolicą: tekst z `gdzie`).
 - **Życie miasta (`config.yml`)** — `napisy` (TextDisplay zamiast tabliczek; `usun-tabliczki` zdejmuje stare),
   `efekty` (cząsteczki/dźwięki, osobno dzień/noc, m.in. dzwon co 2 min słyszalny w całym mieście),
@@ -24,7 +31,7 @@ z rozmową i usługami oraz dodaje miastu ruch, światło i dźwięk. Świat: `s
 - Wszystko tyka tylko, gdy ktoś jest w promieniu `promien-aktywny` (120) od `srodek`; inaczej `aktywne=false`.
 - `tick()` = NPC × gracze w świecie (porównanie odległości). Encje: 26×3 (NPC) + 8 przechodniów + 9 zwierząt + 18 napisów + 12 towarów.
 - Pomiar 16.11 na klonie (`paper:mspt`, 1 gracz, 60 s): życie uśpione 1,0–1,2 ms, gracz w Stolicy 1,8–2,5 ms
-  (różnica zawiera też tykanie samych chunków miasta). Tłumu (20/100 graczy) nie mierzono.
+  (różnica zawiera też tykanie samych chunków miasta); po chowaniu HUD 3,5–4,2 ms (1 gracz, klient QA). Tłumu (20/100 graczy) nie mierzono.
 
 ## Komendy (`mieszkancy.admin`, OP/konsola)
 | Komenda | Co |

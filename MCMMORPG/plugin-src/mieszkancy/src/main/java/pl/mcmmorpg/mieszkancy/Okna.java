@@ -42,7 +42,7 @@ public final class Okna implements Listener {
   private final Map<UUID, Integer> wersja = new ConcurrentHashMap<>();
   private final Map<UUID, Biezace> biezace = new ConcurrentHashMap<>();
 
-  private record Biezace(int wersja, List<Consumer<Player>> akcje, Runnable ponow) {}
+  private record Biezace(int wersja, List<Consumer<Player>> akcje, Runnable ponow, long od, org.bukkit.Location gdzie) {}
 
   public record Przycisk(String etykieta, String podpowiedz, Consumer<Player> akcja) {}
 
@@ -76,7 +76,8 @@ public final class Okna implements Listener {
       Player on = Bukkit.getPlayer(id);
       if (on != null && on.isOnline()) pokaz(on, tytul, tresc, przyciski, wyjscie);
     };
-    biezace.put(id, new Biezace(w, akcje, ponow));
+    biezace.put(id, new Biezace(w, akcje, ponow, System.currentTimeMillis(), p.getLocation()));
+    m.hud.schowaj(p);
     p.showDialog(d);
   }
 
@@ -113,7 +114,20 @@ public final class Okna implements Listener {
     }
     biezace.remove(p.getUniqueId());
     wersja.merge(p.getUniqueId(), 1, Integer::sum);
-    cur.akcje().get(b).accept(p);
+    try { cur.akcje().get(b).accept(p); }
+    finally { if (!biezace.containsKey(p.getUniqueId())) m.hud.przywroc(p); }   // akcja nie otworzyła kolejnego okna
+  }
+
+  /** Co sekundę: HUD wraca, gdy okna już nie ma, a my o tym nie wiemy (ESC bez exitAction, okno zastąpione innym
+   *  oknem/menu), czyli gracz odszedł o > 4 bloki od miejsca rozmowy albo okno wisi > 2 min. */
+  void pilnuj(Player p) {
+    if (!m.hud.schowany(p)) return;
+    Biezace cur = biezace.get(p.getUniqueId());
+    boolean koniec = cur == null || System.currentTimeMillis() - cur.od() > 120_000
+        || cur.gdzie().getWorld() != p.getWorld() || cur.gdzie().distanceSquared(p.getLocation()) > 16;
+    if (!koniec) return;
+    if (cur != null) { biezace.remove(p.getUniqueId()); wersja.merge(p.getUniqueId(), 1, Integer::sum); p.closeDialog(); }
+    m.hud.przywroc(p);
   }
 
   @EventHandler

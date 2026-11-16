@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -54,6 +55,7 @@ public final class Mieszkancy extends JavaPlugin implements Listener {
   public volatile boolean aktywne;
 
   public Okna okna;
+  Hud hud;
   public Dymki dymki;
   public Npcs npcs;
   public Zycie zycie;
@@ -67,6 +69,7 @@ public final class Mieszkancy extends JavaPlugin implements Listener {
     kluczSmiec = new NamespacedKey(this, "encja");
     saveDefaultConfig();
     if (!new File(getDataFolder(), "npc.yml").exists()) saveResource("npc.yml", false);
+    hud = new Hud(this);
     okna = new Okna(this);
     dymki = new Dymki(this);
     npcs = new Npcs(this);
@@ -84,6 +87,7 @@ public final class Mieszkancy extends JavaPlugin implements Listener {
 
   @Override
   public void onDisable() {
+    for (Player p : Bukkit.getOnlinePlayers()) { if (hud.schowany(p)) { p.closeDialog(); hud.przywroc(p); } }
     dymki.usunWszystkie();
     npcs.usunWszystkie();
     zycie.usunWszystkie();
@@ -139,9 +143,19 @@ public final class Mieszkancy extends JavaPlugin implements Listener {
       for (Player p : w.getPlayers()) if (p.getLocation().distanceSquared(srodek) < r2) { a = true; break; }
     }
     aktywne = a;
+    for (Player p : Bukkit.getOnlinePlayers()) okna.pilnuj(p);
     if (w == null) return;
     npcs.dostaw(w);
     zycie.dostaw(w);
+  }
+
+  /** Wyszedł w trakcie rozmowy (albo serwer padł): HUD wraca po wejściu. 40 ticków = MythicHUD zdąży zbudować HudHolder
+   *  z PDC, a HudDane minie swoją zwłokę 1,5 s. */
+  @EventHandler
+  public void wejscie(PlayerJoinEvent e) {
+    Player p = e.getPlayer();
+    if (!hud.schowany(p)) return;
+    Bukkit.getScheduler().runTaskLater(this, () -> { if (p.isOnline()) hud.przywroc(p); }, 40L);
   }
 
   /** Stare villagery Stolicy v2 (MythicMobs NoAI) i nasze resztki — usuwane przy wczytaniu chunka. */
