@@ -8,6 +8,9 @@ commands:
   ksiegaportal:
     description: Otwiera portal MENU z konsoli.
     permission: ksiegapostaci.portal.admin
+  ksiegareka:
+    description: Odklada bron z reki pod zaklecie i przywraca ja (umowa z pluginem Zaklecia).
+    permission: ksiegapostaci.portal.admin
 permissions:
   ksiegapostaci.portal.admin:
     default: op

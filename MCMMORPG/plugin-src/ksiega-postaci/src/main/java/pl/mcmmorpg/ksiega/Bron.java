@@ -70,6 +70,10 @@ final class Bron implements Listener {
   // Nośnik zaklęcia (i pusta dłoń) z pluginu Zaklecia - nie broń, ale ma zostać w ręce.
   private final NamespacedKey spellKey = new NamespacedKey("zaklecia", "nosnik");
   private final NamespacedKey leftSpellKey = new NamespacedKey("zaklecia", "lewa_zaklec");
+  private final NamespacedKey rightSpellSlotKey = new NamespacedKey("zaklecia", "slot_zaklec");
+  // Broń odłożona do zapasu, bo zaklęcie zajęło rękę — wraca po wyborze „Pusta” (putAwayForSpell).
+  private final NamespacedKey stashedRightKey = new NamespacedKey("ksiega", "pod_zakleciem_prawa");
+  private final NamespacedKey stashedLeftKey = new NamespacedKey("ksiega", "pod_zakleciem_lewa");
   // Nakładki z wdrozenie/klon/generuj.py: klon widać w slocie, w dłoni nic (właściciel 03.10).
   private final Set<String> hiddenModels = new HashSet<>();
   // Gracze w trakcie wyjscia (od PlayerQuitEvent do konca ticku). Paper zrzuca przedmiot z kursora
@@ -123,6 +127,87 @@ final class Bron implements Listener {
     try { MMOPlayerData.get(player).getActionBar().show(40, 40L, message); }
     catch (Throwable ignored) { player.sendActionBar(net.kyori.adventure.text.Component.text(
         "Odłożono zaklęcie z lewej ręki")); }
+  }
+
+  private void putAwayRightSpell(Player player) {
+    PlayerInventory inventory = player.getInventory();
+    if (!spell(inventory.getItem(RIGHT))) return;
+    inventory.setItem(RIGHT, null);
+    player.getPersistentDataContainer().remove(rightSpellSlotKey);
+  }
+
+  /**
+   * Umowa z pluginem Zaklecia (komenda konsoli {@code ksiegareka <gracz> odloz <prawa|lewa>}):
+   * zaklęcie z paska Shift+Q zajmuje AKTYWNĄ rękę (prawa = hotbar 0, lewa = offhand), więc broń tej ręki
+   * idzie do zapasu tej ręki (11/12), a gdy zapas jest zajęty — do plecaka 14–35. Wcześniej Zaklecia
+   * wkładały nośnik w wolny slot paska, a lewą broń wyrzucały addItem-em na pasek: dwie te same bronie
+   * na pasku, z czego jedna „w ręce” jako nieaktualny obraz (zgłoszenie właściciela 16.11).
+   * @return true, gdy ręka jest wolna dla zaklęcia
+   */
+  boolean putAwayForSpell(Player player, boolean right) {
+    canonical(player);
+    PlayerInventory inventory = player.getInventory();
+    int hand = right ? RIGHT : LEFT, spare = right ? RIGHT_SPARE : LEFT_SPARE;
+    ItemStack item = inventory.getItem(hand);
+    // Obrazy rąk (slot 1 i 13) odświeżamy zawsze — tik później, gdy nośnik jest już w ręce.
+    refreshLater(player);
+    if (Przedmioty.empty(item) || virtual(item) || spell(item)) return true;
+    boolean toSpare = Przedmioty.empty(real(inventory, spare)) && (right
+        ? !twoHanded(item) || Przedmioty.empty(real(inventory, LEFT_SPARE))
+        : !twoHanded(real(inventory, RIGHT_SPARE)));
+    if (toSpare) {
+      inventory.setItem(spare, item);
+      inventory.setItem(hand, null);
+      player.getPersistentDataContainer().set(right ? stashedRightKey : stashedLeftKey,
+          PersistentDataType.BYTE, (byte) 1);
+    } else if (canStore(inventory, item, 14, 35)) {
+      if (store(inventory, item, 14, 35) != null) return false;
+      inventory.setItem(hand, null);
+    } else return false;
+    return true;
+  }
+
+  /** {@code ksiegareka <gracz> przywroc <prawa|lewa>}: po zdjęciu zaklęcia („Pusta”) broń odłożona do zapasu wraca. */
+  void restoreAfterSpell(Player player, boolean right) {
+    canonical(player);
+    NamespacedKey flag = right ? stashedRightKey : stashedLeftKey;
+    if (!player.getPersistentDataContainer().has(flag)) { refreshLater(player); return; }
+    player.getPersistentDataContainer().remove(flag);
+    PlayerInventory inventory = player.getInventory();
+    int hand = right ? RIGHT : LEFT, spare = right ? RIGHT_SPARE : LEFT_SPARE;
+    ItemStack weapon = real(inventory, spare);
+    ItemStack current = inventory.getItem(hand);
+    boolean free = Przedmioty.empty(current) || virtual(current);
+    boolean fits = right
+        ? rightAllowed(weapon) && (!twoHanded(weapon) || Przedmioty.empty(real(inventory, LEFT)))
+        : leftAllowed(weapon) && !twoHanded(real(inventory, RIGHT));
+    if (free && !Przedmioty.empty(weapon) && weapon(weapon) && fits) {
+      inventory.setItem(spare, null);
+      inventory.setItem(hand, weapon);
+    }
+    refreshLater(player);
+  }
+
+  /**
+   * {@code ksiegareka <gracz> uzbroj}: koniec zestawu startowego (CoreTools, klasy-rasowe.yml). {@code mi give}
+   * kładzie przedmioty w pierwszy wolny slot, a sloty 1–4 zajmują już ikony Księgi — tarcza lądowała w slocie 5
+   * albo w plecaku, lewa ręka zostawała pusta (16.11, nowa postać na klonie). Pierwsza broń, którą wolno trzymać
+   * w lewej, idzie do pustej lewej ręki; broń dwuręczna i przedmioty nie-broń zostają, gdzie są.
+   */
+  void equipStartingLeft(Player player) {
+    canonical(player);
+    PlayerInventory inventory = player.getInventory();
+    if (!Przedmioty.empty(real(inventory, LEFT)) || twoHanded(real(inventory, RIGHT))) { refreshLater(player); return; }
+    for (int slot = 0; slot < 36; slot++) {
+      if (slot == RIGHT || slot == LEFT_IMAGE || slot == RIGHT_IMAGE || slot == RIGHT_SPARE || slot == LEFT_SPARE
+          || consumableSlot(slot)) continue;
+      ItemStack item = inventory.getItem(slot);
+      if (Przedmioty.empty(item) || virtual(item) || spell(item) || !weapon(item) || twoHanded(item)) continue;
+      inventory.setItem(slot, null);
+      inventory.setItemInOffHand(item);
+      break;
+    }
+    refreshLater(player);
   }
 
   private boolean consumableSlot(int slot) { return slot >= HEALTH && slot <= UTILITY; }
@@ -687,10 +772,17 @@ final class Bron implements Listener {
     ItemStack spareRight = real(inventory, RIGHT_SPARE), spareLeft = real(inventory, LEFT_SPARE);
     if (!validPair(player, activeRight, activeLeft)
         || !validPair(player, spareRight, spareLeft)) return;
-    if (spell(inventory.getItemInOffHand())) {
-      if (Przedmioty.empty(spareLeft)) return;
+    // Zaklęcie w ręce = nakładka na pusty slot ręki: Shift+F je chowa i wraca broń z zapasu
+    // (zaklęcie nie ląduje w zapasie). Bez broni w zapasie nie ma czego zamieniać.
+    boolean spellRight = spell(activeRight), spellLeft = spell(inventory.getItemInOffHand());
+    if (spellRight || spellLeft) {
+      if (Przedmioty.empty(spareRight) && Przedmioty.empty(spareLeft)) return;
+      putAwayRightSpell(player);
       putAwayLeftSpell(player);
+      if (spellRight) activeRight = null;
     }
+    player.getPersistentDataContainer().remove(stashedRightKey);
+    player.getPersistentDataContainer().remove(stashedLeftKey);
     inventory.setItem(RIGHT, spareRight);
     inventory.setItem(LEFT, spareLeft);
     inventory.setItem(RIGHT_SPARE, activeRight);

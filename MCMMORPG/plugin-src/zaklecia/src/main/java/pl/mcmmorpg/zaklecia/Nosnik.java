@@ -164,31 +164,69 @@ final class Nosnik implements Listener {
     else p.getPersistentDataContainer().remove(kluczLewej);
   }
 
+  /** Ksiega postaci (okno E, stale sloty) obsluguje komende konsoli ksiegareka — wtedy zaklecie zajmuje aktywna reke. */
+  private boolean ksiegaRak() { return org.bukkit.Bukkit.getPluginCommand("ksiegareka") != null; }
+
+  private void ksiegaRak(Player p, String akcja, boolean prawa) {
+    org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(),
+        "ksiegareka " + p.getName() + " " + akcja + " " + (prawa ? "prawa" : "lewa"));
+  }
+
+  private static boolean wolne(ItemStack i) { return i == null || i.getType().isAir(); }
+
   /** @return komunikat dla gracza (co sie stalo). */
   String przypisz(Player p, String id, boolean prawa) {
     Ksiega.Zaklecie z = id == null ? null : ksiega.poId.get(id);
     if (id != null && z == null) return "§cNieznane zaklęcie: " + id;
     if (id != null && !plugin.bramka.wolno(p)) return Bramka.ODMOWA;
     PlayerInventory inv = p.getInventory();
+    // Z Ksiega postaci zaklecie zajmuje AKTYWNA reke (prawa = slot 0, lewa = offhand), a bron tej reki Ksiega
+    // odklada do zapasu reki (11/12) albo plecaka; „Pusta” oddaje ja z zapasu. Wczesniej nosnik szedl w wolny slot
+    // paska, a lewa bron addItem-em na pasek: dwie te same bronie na pasku (zgloszenie wlasciciela 16.11).
+    boolean ksiegaRak = ksiegaRak();
     if (!prawa) {
       ItemStack teraz = inv.getItemInOffHand();
-      // Klon wizualny okna E (ksiega:klon) to tylko obraz broni ze slotu 1 — prawdziwa bron oddaje sama ksiega-postaci.
-      if (teraz.hasItemMeta() && teraz.getItemMeta().getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
-      else if (!teraz.getType().isAir() && !jest(teraz)) {
-        if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
-        inv.setItemInOffHand(null);
+      if (id == null) {
+        if (jest(teraz)) inv.setItemInOffHand(null);
+        ustawLewa(p, false); usunPuste(p);
+        if (ksiegaRak) ksiegaRak(p, "przywroc", false);
+        return "§7Lewa dłoń jest pusta.";
       }
-      if (id == null) { inv.setItemInOffHand(null); ustawLewa(p, false); usunPuste(p); return "§7Lewa dłoń jest pusta."; }
+      if (ksiegaRak) {
+        // Ksiega najpierw wraca do ukladu kanonicznego (prawdziwa lewa w offhandzie), odklada ja i tik pozniej
+        // odswieza obraz lewej (slot 1) — juz z zakleciem w offhandzie.
+        ksiegaRak(p, "odloz", false);
+        ItemStack po = inv.getItemInOffHand();
+        if (!wolne(po) && !jest(po))
+          return "§cZwolnij miejsce w ekwipunku — broń z lewej dłoni nie ma gdzie trafić.";
+      } else {
+        // Klon wizualny okna E (ksiega:klon) to tylko obraz broni ze slotu 1 — prawdziwa bron oddaje sama ksiega-postaci.
+        if (teraz.hasItemMeta() && teraz.getItemMeta().getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
+        else if (!teraz.getType().isAir() && !jest(teraz)) {
+          if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
+          inv.setItemInOffHand(null);
+        }
+      }
       inv.setItemInOffHand(zrob(z));
       ustawLewa(p, true);
       odswiezPusta(p);
       return "§f" + z.nazwa() + " §7w lewej dłoni.";
     }
-    // prawa: jeden nosnik w pasku/plecaku naraz — stary znika, nowy wchodzi w jego miejsce albo w wolny slot
+    // prawa: jeden nosnik w pasku/plecaku naraz — stary znika
     int miejsce = -1;
     for (int s = 0; s < 36; s++) if (jest(inv.getItem(s))) { inv.setItem(s, null); if (s < 9 && miejsce < 0) miejsce = s; }
-    if (id == null) { ustawSlot(p, -1); odswiezPusta(p); return "§7Prawa dłoń jest pusta."; }
-    if (miejsce < 0) {
+    if (id == null) {
+      ustawSlot(p, -1);
+      if (ksiegaRak) ksiegaRak(p, "przywroc", true);
+      odswiezPusta(p);
+      return "§7Prawa dłoń jest pusta.";
+    }
+    if (ksiegaRak) {
+      ksiegaRak(p, "odloz", true);
+      if (!wolne(inv.getItem(0)) && !jest(inv.getItem(0)))
+        return "§cZwolnij miejsce w ekwipunku — broń z prawej dłoni nie ma gdzie trafić.";
+      miejsce = 0;
+    } else if (miejsce < 0) {
       int wybrany = inv.getHeldItemSlot();
       ItemStack w = inv.getItem(wybrany);
       if (w == null || w.getType().isAir()) miejsce = wybrany;

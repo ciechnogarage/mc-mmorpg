@@ -35,6 +35,26 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
       placeholdery.register();
     }
     getCommand("ksiegaportal").setExecutor(portal);
+    // Umowa z pluginem Zaklecia (bez zaleznosci miedzy pluginami, jak "mapa zamknij"):
+    // ksiegareka <gracz> odloz|przywroc <prawa|lewa> — zaklecie z paska Shift+Q zajmuje aktywna reke.
+    // ksiegareka <gracz> uzbroj — koniec zestawu startowego (CoreTools klasy-rasowe.yml): bron do lewej reki.
+    getCommand("ksiegareka").setExecutor((sender, command, label, args) -> {
+      if (args.length == 2 && args[1].equalsIgnoreCase("uzbroj")) {
+        Player player = Bukkit.getPlayerExact(args[0]);
+        if (player == null) sender.sendMessage("Brak gracza " + args[0]);
+        else bron.equipStartingLeft(player);
+        return true;
+      }
+      if (args.length != 3) { sender.sendMessage("ksiegareka <gracz> odloz|przywroc <prawa|lewa>"); return true; }
+      Player player = Bukkit.getPlayerExact(args[0]);
+      if (player == null) { sender.sendMessage("Brak gracza " + args[0]); return true; }
+      boolean right = args[2].equalsIgnoreCase("prawa");
+      if (args[1].equalsIgnoreCase("odloz")) {
+        bron.putAwayForSpell(player, right);   // komunikat o braku miejsca daje Zaklecia (sprawdza reke po odlozeniu)
+      } else if (args[1].equalsIgnoreCase("przywroc")) bron.restoreAfterSpell(player, right);
+      else sender.sendMessage("ksiegareka <gracz> odloz|przywroc <prawa|lewa>");
+      return true;
+    });
     MMOItems.plugin.getInventory().register(bizuteria.supplier());
     for (Listener listener : new Listener[] {this, bizuteria, sakwa, ksiazka, bron, ukrywanie,
         portal, new PotwierdzenieZadania(this)}) {
@@ -59,7 +79,9 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
 
   void message(Player player, String key) {
     player.sendActionBar(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
-        .deserialize(getConfig().getString("komunikaty." + key, "&cBlad.")));
+        .deserialize(java.util.Objects.requireNonNullElse(
+            // getString bez drugiego argumentu siega do domyslnego config.yml z jara (nowe klucze bez edycji serwera)
+            getConfig().getString("komunikaty." + key), "&cBlad.")));
   }
 
   void refreshLater(Player player) {

@@ -147,6 +147,21 @@ Nadzorca powinien potwierdzić kompilację sygnatur Paper i MMOItems oraz zachow
 `plugins/MMOCore/config.yml` -> `skill-casting.ignore-sneak: true`. Przy `false` Shift+F oprócz zamiany broni
 włącza też tryb SKILL CASTING. Z `true`: Shift+F = zamiana zestawu broni, samo F = pasek umiejętności (bez zmian).
 
+## Zaklęcie w ręce i zestaw startowy (`ksiegareka`, 16.11)
+Komenda konsoli (`ksiegapostaci.portal.admin`), umowa z pluginem Zaklecia bez zależności między pluginami (jak `mapa zamknij`):
+- `ksiegareka <gracz> odloz <prawa|lewa>` — `Zaklecia/Nosnik.przypisz` przed włożeniem nośnika. Broń z tej ręki idzie
+  do pustego zapasu tej ręki (11/12, z regułą dwuręczności; flaga PDC `ksiega:pod_zakleciem_*`), inaczej do plecaka 14–35.
+  Brak miejsca → broń zostaje, Zaklecia pokazuje „Zwolnij miejsce…”. Prawe zaklęcie zawsze w slocie 0, lewe w offhandzie;
+  obrazy 1/13 pokazują zaklęcie (wcześniej `addItem` przenosił broń na pasek → dwie te same bronie, slot 1 dalej z tarczą).
+- `ksiegareka <gracz> przywroc <prawa|lewa>` — po wyborze „Pusta” broń odłożona do zapasu wraca do ręki.
+- Shift+F z zaklęciem w ręce: zaklęcia zdjęte, potem zwykła zamiana z zapasem (gdy oba zapasy puste — nic).
+- `ksiegareka <gracz> uzbroj` — koniec zestawu startowego (`tools/klasy-rasowe/generuj_klasy.py` → CoreTools
+  `klasy-rasowe.yml`): `mi give` kładzie w pierwszy wolny slot, a 1–4 zajmują ikony, więc tarcza lądowała w 5 albo
+  w plecaku. Pierwsza broń dozwolona w lewej (nie dwuręczna) idzie do pustej lewej ręki.
+Sprawdzono 16.11 na klonie `pasek-eq` klientem QA (konto bez OP): LPM/PPM z buławą+tarczą, przy wybranym slocie 1,
+„Pusta”, pełny zapas i plecak, Claymore (dwuręczna), nowa postać wojownik i akolita.
+Znane: przy dwuręcznej w prawej lewe zaklęcie może zostać w offhandzie (tak jak przed zmianą) — czeka na decyzję.
+
 ## Klawisz F (decyzja właściciela 15.11: każdy klawisz robi jedną rzecz)
 Samo F = wyłącznie tryb skilli MMOCore: Księga anuluje `PlayerSwapHandItemsEvent` i nie rusza rąk (wcześniej
 F przekładało broń z prawej do lewej przy zaklęciu w lewej i zamieniało ręce, a MMOCore w tym samym naciśnięciu

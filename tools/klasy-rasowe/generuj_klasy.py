@@ -715,6 +715,9 @@ def main():
         mech = [f'    - command{{c="mi give {START_BRON[g][0]} {START_BRON[g][1]} %player_name% 1"}} @Self' for g in bron]
         if any(g in bron for g in ('luk', 'luk_dlugi', 'kusza')):
             mech.append('    - command{c="minecraft:give %player_name% minecraft:arrow 32"} @Self')
+        # mi give kładzie w pierwszy wolny slot (1-4 zajmują ikony Księgi) -> tarcza lądowała w slocie 5/plecaku.
+        # Księga wkłada pierwszą broń dozwoloną w lewej do pustej lewej ręki (ksiega-postaci, 16.11).
+        mech.append('    - command{c="ksiegareka %player_name% uzbroj"} @Self')
         mech += [f'    - script{{s=klasa_start_zbroja_{zestaw.lower()}_{sl}}} @Self' for sl in ('helm', 'napiersnik', 'nogi', 'buty')]
         # Zestaw RAZ na postać (2026-09-27): zmienna CoreTools na profilu MMOProfiles. Bez tego
         # przełączenie postaci wydawało zestaw od nowa — kreator przy wyborze profilu wołał
