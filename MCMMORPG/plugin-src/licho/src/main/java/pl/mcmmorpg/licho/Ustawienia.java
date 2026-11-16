@@ -33,6 +33,8 @@ final class Ustawienia {
   final int cwBoty, cwRozproszenie, cwLowy, cwPrzeprowadzkaMin, cwPrzeprowadzkaMax, cwPsotaCo, cwLot;
   final double cwUcieczkaMin, cwUcieczkaMax, cwSpokoj;
   final List<String> cwImiona;
+  final int chChowanie, chLowy, chSzukajacy, chCiosCo, chUpor;
+  final double chWzrok, chKrok, chPogonTraf;
 
   Ustawienia(FileConfiguration c) {
     swiat = c.getString("swiat", "licho");
@@ -94,6 +96,14 @@ final class Ustawienia {
     cwUcieczkaMax = Math.max(cwUcieczkaMin + 1, c.getDouble("cwiczenie.ucieczka-max", 12));
     List<String> im = c.getStringList("cwiczenie.imiona");
     cwImiona = im.isEmpty() ? List.of("Psotek", "Skrzat", "Kłębek", "Mruk", "Pokrzyk", "Bieda") : im;
+    chChowanie = s(c, "chowaj.chowanie", 25);
+    chLowy = s(c, "chowaj.lowy", 150);
+    chSzukajacy = Math.max(1, Math.min(4, c.getInt("chowaj.szukajacy", 2)));
+    chWzrok = c.getDouble("chowaj.wzrok", 10);
+    chKrok = Math.max(0.05, Math.min(0.4, c.getDouble("chowaj.krok", 0.2)));
+    chCiosCo = s(c, "chowaj.sprawdzanie-co", 1.5);
+    chUpor = s(c, "chowaj.upor", 20);
+    chPogonTraf = Math.max(0, Math.min(1, c.getDouble("chowaj.pogon-trafia", 0.6)));
   }
 
   /** {ile: nazwa} -> rosnąco po progu. */

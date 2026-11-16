@@ -49,7 +49,7 @@ scenariusz('licho-cwiczenie-nieidealne', async ({ w, polacz }) => {
   w.sprawdz('a-poza', (await stan.wymiar(A.username)) === skadA, await stan.wymiar(A.username));
 
   // 2) B (sam w poczekalni): podpowiedź, Q w zagrodzie = pauza -> Opuść (slot 7), potem TRENING z menu Licha
-  w.sprawdz('b-podpowiedz', /Sam\? Możesz poćwiczyć/.test(eB.czat.slice(-8).join(' ')), eB.czat.slice(-2).join(' | '));
+  w.sprawdz('b-podpowiedz', /Sam\? .*SZUKAJ.*CHOWAJ/.test(eB.czat.slice(-8).join(' ')), eB.czat.slice(-2).join(' | '));
   const pauza = await otworzHub(B).catch(() => null);
   w.sprawdz('b-pauza', pauza && !!pauza.slots[7], 'Q w zagrodzie otwiera pauzę');
   await kliknijSlot(B, 7, { noweOkno: false });

@@ -13,7 +13,8 @@ items:
       - '&7i snopkach, Zamawiacze je tropią.'
       - '&7Od 2 do 12 graczy, runda ok. 4 min.'
       - '&7Bez łupu: rekordy i tytuły.'
-      - '&7Sam? &fTRENING&7: łowy na boty-Licha.'
+      - '&7Sam? Trening z botami:'
+      - '&fSZUKAJ &7(łowisz) albo &fCHOWAJ &7(jesteś Lichem).'
   dolacz:
     material: nexo-mmo_icon_blank
     slots: [5, 6, 14, 15]
@@ -24,6 +25,8 @@ items:
       - '&7Odliczanie rusza przy 2 graczach.'
       - '&7Role losuje gra: 1 Zamawiacz'
       - '&7na każdych 4 graczy.'
+      - '&7Wolisz rolę? W grze &fQ &7→ &fLICHEM&7/&fŁOWIĘ&7.'
+      - '&7Teraz: %licho_chce%'
       - ''
       - '&fKliknij, by dołączyć.'
     left_click_commands:
@@ -73,9 +76,9 @@ items:
     material: nexo-mmo_icon_blank
     slots: [41, 42, 50, 51]
     item_flags: [HIDE_ADDITIONAL_TOOLTIP]
-    display_name: '&aĆwiczenie z botami'
+    display_name: '&aTrening: szukasz botów'
     lore:
-      - '&7Grasz sam jako Zamawiacz:'
+      - '&7Grasz jako Zamawiacz:'
       - '&7w zagrodzie chowają się &f3 boty-Licha&7.'
       - '&7Trafione Licho ucieka i zastyga'
       - '&7gdzie indziej, &f3 trafienia &7= zamówione.'
@@ -86,3 +89,21 @@ items:
     left_click_commands:
       - '[close]'
       - '[console] licho cwiczenie %player_name%'
+  chowaj:
+    material: nexo-mmo_icon_blank
+    slots: [43, 44, 52, 53]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aTrening: chowasz się'
+    lore:
+      - '&7Jesteś &6Lichem&7: masz 25 s,'
+      - '&7by wcielić się w sprzęt (&fPPM&7).'
+      - '&7Potem bramą wychodzą &f2 boty-Zamawiacze&7.'
+      - '&7Widzą Licho w ruchu, słyszą szept'
+      - '&7i psotę, okadzają. &f3 trafienia &7= złapane.'
+      - '&7Przetrwaj 2,5 min.'
+      - '&8Nie liczy się do rekordów ani tytułów.'
+      - ''
+      - '&fKliknij, by zacząć.'
+    left_click_commands:
+      - '[close]'
+      - '[console] licho chowaj %player_name%'

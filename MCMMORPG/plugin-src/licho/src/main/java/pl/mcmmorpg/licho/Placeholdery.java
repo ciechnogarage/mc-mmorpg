@@ -22,6 +22,7 @@ final class Placeholdery extends PlaceholderExpansion {
       case "postep_licho" -> or(plugin.rekordy.postep(op.getUniqueId(), true));
       case "postep_zamawiacz" -> or(plugin.rekordy.postep(op.getUniqueId(), false));
       case "min_graczy" -> String.valueOf(plugin.u.tytulyMinGraczy);
+      case "chce" -> { Uczestnik.Rola r = plugin.chce.get(op.getUniqueId()); yield r == null ? "&flosuje gra" : r == Uczestnik.Rola.LICHO ? "&aLicho" : "&cZamawiacz"; }
       default -> null;
     };
   }

@@ -1,5 +1,5 @@
 'use strict';
-// Licho — ćwiczenie solo z botami-Lichami, jak gracz (konto bez OP): kreator -> Q -> Drużyna -> LICHO -> TRENING,
+// Licho — ćwiczenie solo z botami-Lichami, jak gracz (konto bez OP): kreator -> Q -> Drużyna -> LICHO -> SZUKAJ,
 // boty w stanie rundy, łowy, pozorny blok bota, trafienie -> ucieczka na inne miejsce, pogoń aż do złapania
 // (wszystkich botów, jeśli zdąży), koniec, powrót, brak encji. Rekordy (plik) sprawdza wywołujący z hosta.
 // RCON tylko do obserwacji (`licho stan`, stan.*).
@@ -25,8 +25,8 @@ async function trening(w, bot, tag) {
   w.sprawdz(`${tag}-druzyna`, !!dr.slots[25], `Drużyna: kafel LICHO w slocie 25 (${tytulOkna(dr)?.slice(0, 40)})`);
   const menu = await kliknijSlot(bot, 25);
   const k = menu.slots[41];
-  const nazwa = k && JSON.stringify(k.components || k.nbt || k).match(/Ćwiczenie z botami/);
-  w.sprawdz(`${tag}-kafel`, !!nazwa, `slot 41: ${k ? k.name : 'pusty'} ${nazwa ? 'Ćwiczenie z botami' : ''}`);
+  const nazwa = k && JSON.stringify(k.components || k.nbt || k).match(/Trening: szukasz botów/);
+  w.sprawdz(`${tag}-kafel`, !!nazwa, `slot 41: ${k ? k.name : 'pusty'} ${nazwa ? 'Trening: szukasz botów' : ''}`);
   await kliknijSlot(bot, 41, { noweOkno: false });
   return true;
 }

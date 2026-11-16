@@ -30,3 +30,45 @@ items:
     left_click_commands:
       - '[close]'
       - '[console] licho wyjdz %player_name%'
+  chce_licho:
+    material: nexo-mmo_icon_blank
+    slots: [23, 24, 32, 33]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Wolę być Lichem'
+    lore:
+      - '&7Przy losowaniu ról masz'
+      - '&7pierwszeństwo do Licha.'
+      - '&71 na 4 graczy i tak łowi.'
+      - ''
+      - '&7Teraz: %licho_chce%'
+      - '&fKliknij, by wybrać.'
+    left_click_commands:
+      - '[close]'
+      - '[console] licho chce %player_name% licho'
+  chce_zamawiacz:
+    material: nexo-mmo_icon_blank
+    slots: [25, 26, 34, 35]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&bWolę łowić'
+    lore:
+      - '&7Przy losowaniu ról masz'
+      - '&7pierwszeństwo do Zamawiacza.'
+      - ''
+      - '&7Teraz: %licho_chce%'
+      - '&fKliknij, by wybrać.'
+    left_click_commands:
+      - '[close]'
+      - '[console] licho chce %player_name% zamawiacz'
+  chce_obojetnie:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&fLosuj rolę'
+    lore:
+      - '&7Rolę wybiera gra.'
+      - ''
+      - '&7Teraz: %licho_chce%'
+      - '&fKliknij, by wybrać.'
+    left_click_commands:
+      - '[close]'
+      - '[console] licho chce %player_name% obojetnie'

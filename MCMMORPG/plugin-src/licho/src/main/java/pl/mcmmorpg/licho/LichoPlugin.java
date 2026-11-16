@@ -64,6 +64,8 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
   private final Set<UUID> wlasnyTeleport = new HashSet<>();
   private final Set<UUID> obserwatorzy = new HashSet<>();   // admin/QA oglądający zagrodę (komenda konsoli), nie odsyłani
   private final Map<UUID, String> profilNaStarcie = new HashMap<>();
+  /** Preferencja roli z menu pauzy (LICHEM / ŁOWIĘ / LOSUJ = brak wpisu); w pamięci do restartu serwera. */
+  final Map<UUID, Uczestnik.Rola> chce = new HashMap<>();
   private File plikPowrotow;
   private Plugin profile;
   private Klawisze klawisze;
@@ -180,6 +182,40 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
     String problem = dolacz(p, true);
     if (problem != null) return problem;
     if (nowa) runda.zacznijCwiczenie();
+    return null;
+  }
+
+  /**
+   * Trening CHOWAJ (menu: przycisk CHOWAJ): gracz jest Lichem, szukają go boty-Zamawiacze. Tylko pusta zagroda albo
+   * gracz sam w poczekalni — z innymi ludźmi gra się zwykłą rundę.
+   */
+  String chowaj(Player p) {
+    Uczestnik x = uczestnik(p.getUniqueId());
+    if (runda != null) {
+      if (x != null && runda.faza == Runda.Faza.POCZEKALNIA && runda.ludzie() == 1) { runda.zacznijChowaj(); return null; }
+      if (x != null) return "Już grasz.";
+      return runda.cwiczenie ? "W zagrodzie trwa trening innego gracza — poczekaj albo dołącz SZUKAJ." : "W zagrodzie trwa runda z graczami — dołącz przyciskiem DOŁĄCZ.";
+    }
+    String problem = dolacz(p, true);
+    if (problem != null) return problem;
+    runda.zacznijChowaj();
+    return null;
+  }
+
+  /** Preferencja roli: gra uwzględnia ją przy losowaniu (chętni pierwsi), ale 1 Zamawiacz na naZamawiacza graczy musi być. */
+  String ustawChce(Player p, String co) {
+    Uczestnik.Rola rola = switch (co.toLowerCase(Locale.ROOT)) {
+      case "licho" -> Uczestnik.Rola.LICHO;
+      case "zamawiacz" -> Uczestnik.Rola.ZAMAWIACZ;
+      case "obojetnie" -> null;
+      default -> throw new IllegalArgumentException(co);
+    };
+    if (rola == null) chce.remove(p.getUniqueId()); else chce.put(p.getUniqueId(), rola);
+    Uczestnik x = uczestnik(p.getUniqueId());
+    boolean wRundzie = runda != null && x != null && runda.faza != Runda.Faza.POCZEKALNIA;
+    String jak = rola == null ? "Rolę losuje gra." : rola == Uczestnik.Rola.LICHO ? "Wolisz być <white>Lichem</white>." : "Wolisz <white>łowić</white> (Zamawiacz).";
+    p.sendMessage(MM.deserialize(PREFIKS + "<gray>" + jak + (rola == null ? "" : " Chętni mają pierwszeństwo, ale 1 na " + u.naZamawiacza + " graczy musi łowić.")
+        + (wRundzie ? " Zadziała od następnej rundy." : "") + "</gray>"));
     return null;
   }
 
@@ -394,7 +430,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
 
   // ------------------------------------------------------------------ komenda (konsola / menu)
   @Override public boolean onCommand(CommandSender s, Command c, String l, String[] a) {
-    if (a.length == 0) { s.sendMessage("/licho dolacz <gracz> | cwiczenie <gracz> | wyjdz <gracz> | rekordy [gracz] | zbuduj | stan | start [s] | obserwuj <gracz> | przeladuj"); return true; }
+    if (a.length == 0) { s.sendMessage("/licho dolacz <gracz> | cwiczenie <gracz> | chowaj <gracz> | chce <gracz> licho|zamawiacz|obojetnie | wyjdz <gracz> | rekordy [gracz] | zbuduj | stan | start [s] | obserwuj <gracz> | przeladuj"); return true; }
     Player p = a.length > 1 ? Bukkit.getPlayerExact(a[1]) : null;
     switch (a[0].toLowerCase(Locale.ROOT)) {
       case "dolacz" -> {
@@ -412,6 +448,21 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
           p.sendMessage(MM.deserialize(PREFIKS + "<red>" + problem + "</red>"));
           s.sendMessage("Odmowa: " + problem);
         } else s.sendMessage("OK");
+      }
+      case "chowaj" -> {
+        if (p == null) { s.sendMessage("Brak gracza"); return true; }
+        String problem = chowaj(p);
+        if (problem != null) {
+          p.sendMessage(MM.deserialize(PREFIKS + "<red>" + problem + "</red>"));
+          s.sendMessage("Odmowa: " + problem);
+        } else s.sendMessage("OK");
+      }
+      case "chce" -> {
+        if (p == null || a.length < 3 || !List.of("licho", "zamawiacz", "obojetnie").contains(a[2].toLowerCase(Locale.ROOT))) {
+          s.sendMessage("/licho chce <gracz> licho|zamawiacz|obojetnie"); return true;
+        }
+        ustawChce(p, a[2]);
+        s.sendMessage("OK " + (chce.get(p.getUniqueId()) == null ? "obojetnie" : chce.get(p.getUniqueId())));
       }
       case "wyjdz" -> {
         if (p == null) { s.sendMessage("Brak gracza"); return true; }

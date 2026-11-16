@@ -7,8 +7,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Interaction;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /** Gracz w rundzie. Licho = niewidzialny gracz + wyświetlacz sprzętu + zaczepa (hitbox); Zamawiacz = zwykły gracz. */
@@ -40,6 +44,16 @@ final class Uczestnik {
   Block lotCel;
   int lotStart, lotKoniec, przeprowadzkaOd;
 
+  // bot-Zamawiacz treningu CHOWAJ: postać (Mannequin) chodzi po polach osiągalnych od bramy, sprawdza sprzęty i goni Licho
+  Mannequin postac;
+  List<Block> trasa;             // kolejne pola do przejścia (null = stoi)
+  int trasaI;
+  Block kratka;                  // ostatnie pole, na którym stał
+  Location podejrzenie;          // gdzie chce szukać (szept, psota, kichnięcie, ruch Licha); null = obchód
+  int podejrzenieDo, ciosyTu, utknal;
+  boolean pogon;                 // widzi ruszające się Licho
+  final Set<Block> sprawdzone = new HashSet<>();
+
   // stan sprzed gry, przywracany przy wyjściu
   GameMode trybPrzed;
   boolean latanieDozwolonePrzed;
@@ -52,7 +66,7 @@ final class Uczestnik {
     bot = false;
   }
 
-  /** Bot-Licho: losowe UUID, którego nie ma żaden gracz. */
+  /** Bot (Licho w SZUKAJ, Zamawiacz w CHOWAJ): losowe UUID, którego nie ma żaden gracz. */
   Uczestnik(String nick) {
     id = UUID.randomUUID();
     this.nick = nick;

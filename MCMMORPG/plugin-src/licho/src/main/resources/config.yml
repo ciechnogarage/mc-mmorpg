@@ -79,6 +79,20 @@ cwiczenie:
   psota-co: 30              # psota (śmiech + iskry), gdy Zamawiacz jest w zasięgu psota-sluch
   imiona: [Psotek, Skrzat, Kłębek, Mruk, Pokrzyk, Bieda]
 
+# Trening CHOWAJ (menu Licha): gracz jest Lichem, szukają go boty-Zamawiacze (postacie Mannequin, bez AI moba —
+# chodzą po polach osiągalnych od bramy, liczonych raz na trening). Bot: obchód sprzętów, sprawdzanie ciosem sprzętów
+# przy podejrzanym miejscu (szept, psota, kichnięcie z okadzania; z błędem kilku bloków), pościg za Lichem, które
+# rusza się w jego zasięgu wzroku. Złapane Licho = koniec treningu. Koszt: 1 encja na bota, BFS trasy rzadko (≤ ~2 tys. pól).
+chowaj:
+  chowanie: 25              # tyle s na schowanie się, potem boty wychodzą bramą
+  lowy: 150
+  szukajacy: 2              # botów-Zamawiaczy (1–4)
+  wzrok: 10                 # widzi ruszające się Licho do tylu bloków (bez ścian po drodze)
+  krok: 0.2                 # bloków na tick (0.2 = 4 bl./s, chód gracza ~4,3)
+  sprawdzanie-co: 1.5       # cios w podejrzany sprzęt co tyle s
+  upor: 20                  # tyle s szuka w jednym podejrzanym miejscu
+  pogon-trafia: 0.6         # szansa trafienia w pościgu (z zasięgu ciosu)
+
 mapa:
   nazwa: 'Zagroda Zielarki'
   obszar: [-23, 60, -21, 23, 70, 21]   # x1 y1 z1 x2 y2 z2 — poza nim gracz wraca do bramy

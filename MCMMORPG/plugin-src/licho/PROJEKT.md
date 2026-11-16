@@ -34,6 +34,12 @@ do świtu (koniec rundy); Zamawiacze, gdy „zamówią” (złapią) wszystkie.
 3. Limit 12 graczy na rundę; jedna runda naraz (mapa jedna), kolejni czekają na następną.
 4. **Ćwiczenie (decyzja właściciela 15.11: „B, na razie tylko bot-licho”)**: kafel TRENING w menu, gracz sam jako
    Zamawiacz przeciw 3 botom-Lichom; rozproszenie 5 s, łowy 150 s; nie liczy się do rekordów ani tytułów. Bez bota-Zamawiacza.
+5. **Trening i wybór roli (decyzja właściciela 16.11: „tak tak tak” na A+B+C)** — właściciel nie mógł się wcielić,
+   bo TRENING zawsze dawał Zamawiacza, a w rundzie rolę losuje gra:
+   A. Kafel CHOWAJ: gracz jako Licho przeciw 2 botom-Zamawiaczom (chowanie 25 s, łowy 150 s, bez rekordów); dotychczasowy
+      TRENING nazywa się SZUKAJ.
+   B. Preferencja roli w pauzie (LICHEM / ŁOWIĘ / LOSUJ): chętni mają pierwszeństwo w losowaniu, liczba Zamawiaczy bez zmian.
+   C. Podpowiedzi: PPM Zamawiacza = „wcielać się może tylko Licho”, czat poczekalni mówi, że role losuje gra i gdzie wybrać.
 
 ## Punkty i ranking (bez nagród przedmiotowych)
 Licho: +1 co 10 s w ukryciu, +5 za psotę, +15 za przetrwanie. Zamawiacz: +3 za trafienie, +10 za złapanie.

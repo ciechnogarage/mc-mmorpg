@@ -85,20 +85,38 @@ def trening(x, y):
     E((x+9, y+5, x+19, y+15), 'gold1', 'ink')                       # głowa-snopek
     beczka(x, y, 29, 13)
 
+def chowaj(x, y):
+    """Trening CHOWAJ: beczka z oczami (Ty jako Licho) i latarnia bota-Zamawiacza, który szuka."""
+    M.field(x, y)
+    beczka(x, y, 6, 12)
+    L([(x+40, y+6), (x+40, y+12)], 'stone2')                         # uchwyt latarni
+    R((x+35, y+12, x+45, y+26), 'wood2', 'ink')                     # latarnia
+    R((x+37, y+15, x+43, y+23), 'gold1')                            # płomień
+    R((x+39, y+17, x+41, y+21), 'paper3')
+    for dx, dy in ((31, 30), (48, 30), (33, 34), (46, 34)): R((x+dx, y+dy, x+dx, y+dy), 'gold2')   # poświata
+
+def kostka(x, y):
+    """LOSUJ: kostka do gry — rolę wybiera gra."""
+    M.field(x, y)
+    R((x+14, y+8, x+38, y+32), 'paper3', 'ink')
+    for dx, dy in ((18, 12), (25, 19), (32, 26), (32, 12), (18, 26)): R((x+dx, y+dy, x+dx+2, y+dy+2), 'ink')
+
 # ------------------------------------------------------------------ strony
 def strona_glowna():
     W.hero_frame(14, 34, hero_licho)
     M.opis(('Licho chowa się', 'w sprzętach.', 'Zamawiacze', 'je tropią.'))
     kafle = [((194, 34), 'dolacz', 'DOŁĄCZ', dolacz), ((266, 34), 'licho', 'LICHO', licho_ikona),
              ((194, 106), 'zamawiacz', 'ŁOWY', ziola), ((266, 106), 'rekordy', 'REKORDY', M.puchar),
-             ((194, 178), 'cwiczenie', 'TRENING', trening)]        # ĆWICZENIE ma 33 px (> 32) -> TRENING
+             ((194, 178), 'cwiczenie', 'SZUKAJ', trening), ((266, 178), 'chowaj', 'CHOWAJ', chowaj)]   # ĆWICZENIE ma 33 px (> 32)
     for (x, y), _, podpis, p in kafle: W.tile(x, y, podpis, p, podpis)
     return [(M.sloty(x, y, 2), k) for (x, y), k, _, _ in kafle]
 
 def strona_pauza():
     W.hero_frame(14, 34, hero_licho)
-    M.opis(('Gra trwa,', 'gdy tu jesteś.', 'Wróć albo', 'opuść zagrodę.'))
-    kafle = [((194, 34), 'wracaj', 'WRACAJ', M.strzalka), ((266, 34), 'opusc', 'OPUŚĆ', M.drzwi)]
+    M.opis(('Gra trwa,', 'gdy tu jesteś.', 'Wybierz rolę', 'na następną.'))
+    kafle = [((194, 34), 'wracaj', 'WRACAJ', M.strzalka), ((266, 34), 'opusc', 'OPUŚĆ', M.drzwi),
+             ((194, 106), 'chce_licho', 'LICHEM', licho_ikona), ((266, 106), 'chce_zamawiacz', 'ŁOWIĘ', ziola),
+             ((194, 178), 'chce_obojetnie', 'LOSUJ', kostka)]
     for (x, y), _, podpis, p in kafle: W.tile(x, y, podpis, p, podpis)
     return [(M.sloty(x, y, 2), k) for (x, y), k, _, _ in kafle]
 
@@ -115,9 +133,10 @@ def menu_yml(ident, tytul_znaki, uklad):
     if ident == 'licho':
         s += M.yml_item('info', M.LEWA, '&2Licho nie śpi', ['&7Zagroda Zielarki o zmierzchu.', '&7Licho chowa się w beczkach', '&7i snopkach, Zamawiacze je tropią.',
                                                              '&7Od 2 do 12 graczy, runda ok. 4 min.', '&7Bez łupu: rekordy i tytuły.',
-                                                             '&7Sam? &fTRENING&7: łowy na boty-Licha.'])
+                                                             '&7Sam? Trening z botami:', '&fSZUKAJ &7(łowisz) albo &fCHOWAJ &7(jesteś Lichem).'])
         tekst = {
-            'dolacz': ('&aDołącz do gry', ['&7Wchodzisz do poczekalni.', '&7Odliczanie rusza przy 2 graczach.', '&7Role losuje gra: 1 Zamawiacz', '&7na każdych 4 graczy.', '',
+            'dolacz': ('&aDołącz do gry', ['&7Wchodzisz do poczekalni.', '&7Odliczanie rusza przy 2 graczach.', '&7Role losuje gra: 1 Zamawiacz', '&7na każdych 4 graczy.',
+                                           '&7Wolisz rolę? W grze &fQ &7→ &fLICHEM&7/&fŁOWIĘ&7.', '&7Teraz: %licho_chce%', '',
                                            '&fKliknij, by dołączyć.'], ['[close]', '[console] licho dolacz %player_name%']),
             'licho': ('&6Jak grać Lichem', ['&fPPM &7na beczkę/snopek = wcielenie', '&7Stój &f1,5 s &7= wskakujesz w siatkę', '&7i wyglądasz jak prawdziwy sprzęt.',
                                             '&fF &7psota: trzęsiesz się, &e+5 pkt', '&7Co 40 s sam &7szepczesz (słychać).', '&7Masz &f3 iskry&7: trafienie zabiera jedną.',
@@ -127,15 +146,27 @@ def menu_yml(ident, tytul_znaki, uklad):
             'rekordy': ('&eRekordy zagrody', ['&7Najlepsze wyniki i Twoje miejsce.', '', '&7Twój tytuł: %licho_tytul%', '&7Licho: %licho_postep_licho%',
                                               '&7Zamawiacz: %licho_postep_zamawiacz%', '&8Liczą się dokończone rundy od %licho_min_graczy% graczy.'],
                         ['[close]', '[console] licho rekordy %player_name%']),
-            'cwiczenie': ('&aĆwiczenie z botami', ['&7Grasz sam jako Zamawiacz:', '&7w zagrodzie chowają się &f3 boty-Licha&7.', '&7Trafione Licho ucieka i zastyga',
+            'cwiczenie': ('&aTrening: szukasz botów', ['&7Grasz jako Zamawiacz:', '&7w zagrodzie chowają się &f3 boty-Licha&7.', '&7Trafione Licho ucieka i zastyga',
                                                    '&7gdzie indziej, &f3 trafienia &7= zamówione.', '&7Łowy ok. 2,5 min.', '&8Nie liczy się do rekordów ani tytułów.', '',
                                                    '&fKliknij, by zacząć.'], ['[close]', '[console] licho cwiczenie %player_name%']),
+            'chowaj': ('&aTrening: chowasz się', ['&7Jesteś &6Lichem&7: masz 25 s,', '&7by wcielić się w sprzęt (&fPPM&7).', '&7Potem bramą wychodzą &f2 boty-Zamawiacze&7.',
+                                                 '&7Widzą Licho w ruchu, słyszą szept', '&7i psotę, okadzają. &f3 trafienia &7= złapane.',
+                                                 '&7Przetrwaj 2,5 min.', '&8Nie liczy się do rekordów ani tytułów.', '', '&fKliknij, by zacząć.'],
+                       ['[close]', '[console] licho chowaj %player_name%']),
         }
     else:  # pauza
         s += M.yml_item('info', M.LEWA, '&6Pauza', ['&7Gra trwa dalej, gdy tu jesteś.'])
         tekst = {'wracaj': ('&aWracaj', ['&7Zamknij i graj dalej.'], ['[close]']),
                  'opusc': ('&cOpuść zagrodę', ['&7Wracasz tam, skąd przyszedłeś.', '&7Licho, które wychodzi,', '&7liczy się jako złapane.'],
-                           ['[close]', '[console] licho wyjdz %player_name%'])}
+                           ['[close]', '[console] licho wyjdz %player_name%']),
+                 'chce_licho': ('&6Wolę być Lichem', ['&7Przy losowaniu ról masz', '&7pierwszeństwo do Licha.', '&71 na 4 graczy i tak łowi.', '',
+                                                     '&7Teraz: %licho_chce%', '&fKliknij, by wybrać.'],
+                                ['[close]', '[console] licho chce %player_name% licho']),
+                 'chce_zamawiacz': ('&bWolę łowić', ['&7Przy losowaniu ról masz', '&7pierwszeństwo do Zamawiacza.', '',
+                                                     '&7Teraz: %licho_chce%', '&fKliknij, by wybrać.'],
+                                    ['[close]', '[console] licho chce %player_name% zamawiacz']),
+                 'chce_obojetnie': ('&fLosuj rolę', ['&7Rolę wybiera gra.', '', '&7Teraz: %licho_chce%', '&fKliknij, by wybrać.'],
+                                    ['[close]', '[console] licho chce %player_name% obojetnie'])}
     for sl, k in uklad:
         n, lore, kom = tekst[k]
         s += M.yml_item(k, sl, n, lore, kom)
