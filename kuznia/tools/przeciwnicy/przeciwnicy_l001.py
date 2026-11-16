@@ -196,9 +196,10 @@ L1R_KOTWA:
   Skills:
   - potion{{type=INVISIBILITY;duration=999999;level=0;hasParticles=false}} @self ~onSpawn
   - particles{{p=glow;a=6;hs=0.3;vs=0.5;y=1.6}} @self ~onTimer:10
-  # co 10 s budzi 1 Pniaczka (puls)
-  - sound{{s=block.chorus_flower.grow;v=1.6;p=0.7}} @self ~onTimer:200
-  - summon{{type=L1R_PNIACZEK;amount=1;noise=1.5}} @self ~onTimer:200
+  # co 10 s budzi 1 Pniaczka (puls), tylko gdy gracz < 16 bl. i obok sa najwyzej 2 Pniaczki
+  # (blockout 16.11: bez warunkow Kotwa dokladala Pniaczka co 10 s od startu instancji, 32 w sali po 6 min)
+  - sound{{s=block.chorus_flower.grow;v=1.6;p=0.7}} @self ~onTimer:200 ?playerwithin{{d=16}} ?mobsinradius{{types=L1R_PNIACZEK;amount=0to2;radius=10}}
+  - summon{{type=L1R_PNIACZEK;amount=1;noise=1.5}} @self ~onTimer:200 ?playerwithin{{d=16}} ?mobsinradius{{types=L1R_PNIACZEK;amount=0to2;radius=10}}
 
 {V8}
 # ---- elita S6 ----

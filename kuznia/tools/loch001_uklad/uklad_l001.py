@@ -72,6 +72,7 @@ KORYTARZE = [
     ("S4W","J",  [(35,49),(52,50)], 3, "zjazd, bez powrotu"),
     ("S4E","J",  [(85,49),(68,50)], 3, "zjazd, bez powrotu"),
     ("J","S5",   [(60,46),(60,40)], 5, "grube korzenie do obu Kotw"),
+    ("J","R",    [(60,56),(60,61)], 3, "wyjście na dno rozpadliny (sale stykają się brzegami, a brzeg superelipsy zostaje skałą)"),
     ("S5","O2",  [(60,20),(60,19)], 5, "mur Bramy"),
     ("O2","S6",  [(66,15),(85,15)], 3, ""),
     ("S6","S8",  [(90,9),(90,4),(40,4),(40,8)], 3, "S7 Korzenny Tunel: Kwiat bez cienia, dzwon coraz bliżej"),

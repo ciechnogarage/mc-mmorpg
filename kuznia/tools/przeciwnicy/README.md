@@ -93,6 +93,11 @@ pętla trwa bez końca, ale się nie mnoży (1 Pniaczek → 1 pąk → 1 Pniacze
 encji daje limit 12 pąków na instancję (niżej);
 (2) Sowiedź ZOSTAJE bez złagodzenia (łapa 6) — nieuważny ginie 3/3. Generator bez zmian (stan 0010a39).
 
+Kotwa (zmiana 16.11, blockout Lochu 001, klon l001-blockout): puls „1 Pniaczek co 10 s” idzie tylko przy graczu
+`?playerwithin{d=16}` i gdy w promieniu 10 bl. są najwyżej 2 Pniaczki (`?mobsinradius{types=L1R_PNIACZEK;amount=0to2;radius=10}`).
+Powód: bez warunków Kotwa sypała od startu instancji, w sali Kotwy było 32 Pniaczki po 6 min, zanim gracz tam doszedł.
+Wynik przy Kotwie w przejściu botem: raport kroku 4 (`kuznia/tools/loch001_uklad/`).
+
 ### Limit 12 pąków na instancję (karta §13 w.1) — 16.11, klon l001-kolejka
 Jak (od 16.11 w datapacku `l1r`, generowanym przez `przeciwnicy_l001.py`, słownik `DATAPACK`): każdy pąk przy `~onSpawn`
 (`L1R_PAK_KOLEJKA`) dostaje tag `l1r_pq` i woła `execute as <uuid> at @s run function l1r:kolejka`: IsBaby, numer z rosnącego
