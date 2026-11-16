@@ -1,41 +1,39 @@
+# Drzewko archetypu (paczka B naprawy klas, 25.10). Źródło: tools/klasy-rasowe/serwer/plugins/MMOCore/skill-trees/.
+# Układ węzłów = rogue-marksman.yml (łańcuch 21 węzłów od a1). Bez COOLDOWN_REDUCTION (sufit CDR: README serwer/).
 id: 'mage-arcane-mage'
-name: '&4Mage'
+name: '&5Mag'
 type: CUSTOM
 lore:
-  - '&6Available to Mages only'
+  - '&6Dla maga: moc i studnia many'
 max-point-spent: 21
 
 icon:
-  material: BOOK
-  #item_flags: [HIDE_ATTRIBUTES]
-  #custom_model_data: 10
-  #custom_model_data_string: 'off_hand'
-  #item_model: 'minecraft:dirt'
-  #tooltip_style: 'myplugin:tooltip_style_1'
+  material: BLAZE_ROD
+  item_flags: [HIDE_ATTRIBUTES]
 
 nodes:
 
-  #### A
+#### A
   a1:
-    name: 'Mana Regen I'
+    name: 'Moc arkanów I'
     coordinates:
-      x: 1
-      y: -2
+      x: -3
+      y: 0
 
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MANA_REGENERATION";amount=1;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eMana regen in pts/sec +1"
+        - "&7Obrażenia magiczne: &a+2%"
       1:
-        - "&eMana regen in pts/sec +1"
+        - "&7Obrażenia magiczne: &a+2%"
   a2:
-    name: 'Mana Regen II'
+    name: 'Moc arkanów II'
     coordinates:
-      x: 0
-      y: -2
+      x: -2
+      y: 0
 
     parents:
       strong:
@@ -44,17 +42,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MANA_REGENERATION";amount=2;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eMana regen in pts/sec +2"
+        - "&7Obrażenia magiczne: &a+3%"
       1:
-        - "&eMana regen in pts/sec +2"
+        - "&7Obrażenia magiczne: &a+3%"
   a3:
-    name: 'Mana Regen III'
+    name: 'Moc arkanów III'
     coordinates:
       x: -1
-      y: -2
+      y: 0
 
     parents:
       strong:
@@ -63,19 +61,18 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MANA_REGENERATION";amount=2;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eMana regen in pts/sec +2"
+        - "&7Obrażenia magiczne: &a+5%"
       1:
-        - "&eMana regen in pts/sec +2"
+        - "&7Obrażenia magiczne: &a+5%"
 
-  ## B
-
+#### B
   b1:
-    name: 'Offense I'
+    name: 'Głęboka studnia I'
     coordinates:
-      x: -2
+      x: -1
       y: -1
 
     parents:
@@ -85,17 +82,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SKILL_DAMAGE";amount=5;type="FLAT"}'
+          - 'stat{stat="MAX_MANA";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional ability damage in +%5"
+        - "&7Maksymalna mana: &a+3"
       1:
-        - "&eAdditional ability damage in +%5"
+        - "&7Maksymalna mana: &a+3"
   b2:
-    name: 'Offense II'
+    name: 'Głęboka studnia II'
     coordinates:
-      x: -3
-      y: 0
+      x: -1
+      y: -2
 
     parents:
       strong:
@@ -104,17 +101,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SKILL_DAMAGE";amount=5;type="FLAT"}'
+          - 'stat{stat="MAX_MANA";amount=4;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional ability damage in +%5"
+        - "&7Maksymalna mana: &a+4"
       1:
-        - "&eAdditional ability damage in +%5"
+        - "&7Maksymalna mana: &a+4"
   b3:
-    name: 'Offense III'
+    name: 'Głęboka studnia III'
     coordinates:
-      x: -2
-      y: 1
+      x: 0
+      y: -2
 
     parents:
       strong:
@@ -123,20 +120,19 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SKILL_DAMAGE";amount=10;type="FLAT"}'
+          - 'stat{stat="MAX_MANA";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional ability damage in +%10"
+        - "&7Maksymalna mana: &a+5"
       1:
-        - "&eAdditional ability damage in +%10"
+        - "&7Maksymalna mana: &a+5"
 
-  ## C
-
+#### C
   c1:
-    name: 'Spell Vamp I'
+    name: 'Przypływ many I'
     coordinates:
-      x: -2
-      y: 2
+      x: 1
+      y: -2
 
     parents:
       strong:
@@ -145,17 +141,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SPELL_VAMPIRISM";amount=2;type="FLAT"}'
+          - 'stat{stat="MANA_REGENERATION";amount=0.1;type="FLAT"}'
     lores:
       0:
-        - "&ePercentage of damage you gain back as health when inflicting skill damage +%2"
+        - "&7Regeneracja many: &a+0,1/s"
       1:
-        - "&ePercentage of damage you gain back as health when inflicting skill damage +%2"
+        - "&7Regeneracja many: &a+0,1/s"
   c2:
-    name: 'Spell Vamp II'
+    name: 'Przypływ many II'
     coordinates:
-      x: -1
-      y: 2
+      x: 2
+      y: -2
 
     parents:
       strong:
@@ -164,17 +160,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SPELL_VAMPIRISM";amount=2;type="FLAT"}'
+          - 'stat{stat="MANA_REGENERATION";amount=0.15;type="FLAT"}'
     lores:
       0:
-        - "&ePercentage of damage you gain back as health when inflicting skill damage +%2"
+        - "&7Regeneracja many: &a+0,15/s"
       1:
-        - "&ePercentage of damage you gain back as health when inflicting skill damage +%2"
+        - "&7Regeneracja many: &a+0,15/s"
   c3:
-    name: 'Spell Vamp III'
+    name: 'Przypływ many III'
     coordinates:
-      x: 0
-      y: 2
+      x: 3
+      y: -2
 
     parents:
       strong:
@@ -183,20 +179,19 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SPELL_VAMPIRISM";amount=6;type="FLAT"}'
+          - 'stat{stat="MANA_REGENERATION";amount=0.25;type="FLAT"}'
     lores:
       0:
-        - "&ePercentage of damage you gain back as health when inflicting skill damage +%6"
+        - "&7Regeneracja many: &a+0,25/s"
       1:
-        - "&ePercentage of damage you gain back as health when inflicting skill damage +%6"
+        - "&7Regeneracja many: &a+0,25/s"
 
-  ## D
-
+#### D
   d1:
-    name: 'Additional Exp I'
+    name: 'Krytyczne zaklęcie I'
     coordinates:
-      x: 0
-      y: 1
+      x: 3
+      y: -1
 
     parents:
       strong:
@@ -205,17 +200,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=2;type="FLAT"}'
+          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional MMOCore main class experience +%2"
+        - "&7Szansa na krytyk umiejętności: &a+2%"
       1:
-        - "&eAdditional MMOCore main class experience +%2"
+        - "&7Szansa na krytyk umiejętności: &a+2%"
   d2:
-    name: 'Additional Exp II'
+    name: 'Krytyczne zaklęcie II'
     coordinates:
-      x: 0
-      y: 0
+      x: 4
+      y: -1
 
     parents:
       strong:
@@ -224,16 +219,16 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=3;type="FLAT"}'
+          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional MMOCore main class experience +%3"
+        - "&7Szansa na krytyk umiejętności: &a+3%"
       1:
-        - "&eAdditional MMOCore main class experience +%3"
+        - "&7Szansa na krytyk umiejętności: &a+3%"
   d3:
-    name: 'Additional Exp III'
+    name: 'Krytyczne zaklęcie III'
     coordinates:
-      x: 1
+      x: 4
       y: 0
 
     parents:
@@ -243,20 +238,19 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=5;type="FLAT"}'
+          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional MMOCore main class experience +%5"
+        - "&7Szansa na krytyk umiejętności: &a+5%"
       1:
-        - "&eAdditional MMOCore main class experience +%5"
+        - "&7Szansa na krytyk umiejętności: &a+5%"
 
-  ## E
-
+#### E
   e1:
-    name: 'Magic Resistance I'
+    name: 'Osłona arkanów I'
     coordinates:
-      x: 2
-      y: 0
+      x: 4
+      y: 1
 
     parents:
       strong:
@@ -265,17 +259,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eReduce magic damage dealt by potions %5"
+        - "&7Odporność na magię: &a+2%"
       1:
-        - "&eReduce magic damage dealt by potions %5"
+        - "&7Odporność na magię: &a+2%"
   e2:
-    name: 'Magic Resistance II'
+    name: 'Osłona arkanów II'
     coordinates:
-      x: 2
-      y: 1
+      x: 4
+      y: 2
 
     parents:
       strong:
@@ -284,16 +278,16 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eReduce magic damage dealt by potions %5"
+        - "&7Odporność na magię: &a+3%"
       1:
-        - "&eReduce magic damage dealt by potions %5"
+        - "&7Odporność na magię: &a+3%"
   e3:
-    name: 'Magic Resistance III'
+    name: 'Osłona arkanów III'
     coordinates:
-      x: 2
+      x: 3
       y: 2
 
     parents:
@@ -303,19 +297,18 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=10;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eReduce magic damage dealt by potions %10"
+        - "&7Odporność na magię: &a+5%"
       1:
-        - "&eReduce magic damage dealt by potions %10"
+        - "&7Odporność na magię: &a+5%"
 
-  ## F
-
+#### F
   f1:
-    name: 'Skill Crit Chance I'
+    name: 'Wytrwałość uczonego I'
     coordinates:
-      x: 3
+      x: 2
       y: 2
 
     parents:
@@ -325,17 +318,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="MAX_HEALTH";amount=1;type="FLAT"}'
     lores:
       0:
-        - "&eIncreases the chance of dealing skill crits +%5"
+        - "&7Maksymalne zdrowie: &a+1"
       1:
-        - "&eIncreases the chance of dealing skill crits +%5"
+        - "&7Maksymalne zdrowie: &a+1"
   f2:
-    name: 'Skill Crit Chance II'
+    name: 'Wytrwałość uczonego II'
     coordinates:
-      x: 4
-      y: 2
+      x: 2
+      y: 1
 
     parents:
       strong:
@@ -344,16 +337,16 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=10;type="FLAT"}'
+          - 'stat{stat="MAX_HEALTH";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eIncreases the chance of dealing skill crits +%10"
+        - "&7Maksymalne zdrowie: &a+2"
       1:
-        - "&eIncreases the chance of dealing skill crits +%10"
+        - "&7Maksymalne zdrowie: &a+2"
   f3:
-    name: 'Skill Crit Chance III'
+    name: 'Wytrwałość uczonego III'
     coordinates:
-      x: 4
+      x: 1
       y: 1
 
     parents:
@@ -363,20 +356,19 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="SKILL_CRITICAL_STRIKE_CHANCE";amount=15;type="FLAT"}'
+          - 'stat{stat="MAX_HEALTH";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eIncreases the chance of dealing skill crits +%15"
+        - "&7Maksymalne zdrowie: &a+3"
       1:
-        - "&eIncreases the chance of dealing skill crits +%15"
+        - "&7Maksymalne zdrowie: &a+3"
 
-  ## G
-
+#### G
   g1:
-    name: 'Skills IV'
+    name: 'Pijawka zaklęć I'
     coordinates:
-      x: 4
-      y: 0
+      x: 0
+      y: 1
 
     parents:
       strong:
@@ -385,17 +377,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE";amount=1;type="FLAT"}'
+          - 'stat{stat="SPELL_VAMPIRISM";amount=1;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional magic skill damage in +%1"
+        - "&7Wampiryzm czarów: &a+1%"
       1:
-        - "&eAdditional magic skill damage in +%1"
+        - "&7Wampiryzm czarów: &a+1%"
   g2:
-    name: 'Skills V'
+    name: 'Pijawka zaklęć II'
     coordinates:
-      x: 4
-      y: -1
+      x: 0
+      y: 2
 
     parents:
       strong:
@@ -404,17 +396,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE";amount=2;type="FLAT"}'
+          - 'stat{stat="SPELL_VAMPIRISM";amount=1;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional magic skill damage in +%2"
+        - "&7Wampiryzm czarów: &a+1%"
       1:
-        - "&eAdditional magic skill damage in +%2"
+        - "&7Wampiryzm czarów: &a+1%"
   g3:
-    name: 'Skills VI'
+    name: 'Pijawka zaklęć III'
     coordinates:
-      x: 4
-      y: -2
+      x: -1
+      y: 2
 
     parents:
       strong:
@@ -423,29 +415,9 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MAGIC_DAMAGE";amount=2;type="FLAT"}'
+          - 'stat{stat="SPELL_VAMPIRISM";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional magic skill damage in +%2"
+        - "&7Wampiryzm czarów: &a+2%"
       1:
-        - "&eAdditional magic skill damage in +%2"
-
-# This section is to change display options for nodes and paths depending on:
-# - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.
-# - their state: is the node/path unlocked, locked, maxed out... ?
-#
-# All of this is to "hide" the grid pattern of the chest inventory UI and give the
-# impression of a clean 2D skill tree UI.
-#
-# This config section is optional; if you do not provide it the one provided in the skill tree CUSTOM GUI CONFIG will be used.
-#
-# Please refer to the default config file 'combat.yml' for syntax examples and explanations.
-#########################
-#display:
-#  paths:
-#    unlocked:
-#      up: 'WHITE_DYE:0'
-#      ....
-#    ...
-#  nodes:
-#    ....
+        - "&7Wampiryzm czarów: &a+2%"

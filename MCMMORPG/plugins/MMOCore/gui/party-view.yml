@@ -1,5 +1,5 @@
 # GUI display name
-name: Party ({players}/{max})
+name: '&f䪔䪕䪖䪗'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -7,11 +7,11 @@ slots: 54
 
 items:
   member:
-    slots: [ 10,12,14,16,28,30,32,34 ]
+    slots: [ 23, 24, 25, 26, 32, 33, 34, 35 ]
     function: member
     empty:
       item: GRAY_STAINED_GLASS_PANE
-      name: '&aNo Player'
+      name: '&aBrak gracza'
     member:
 
       #custom_model_data_float: 0.45        # 1.20.4+ Float custom model data. Either this, or string option above works completely fine
@@ -28,17 +28,21 @@ items:
       item: PLAYER_HEAD
       name: '&a{name}'
       lore:
-        - '&7Level {level} {class}'
-        - '&7Online Since: {since}'
+        - '&7Poziom {level} {class}'
+        - '&7Online od: {since}'
   leave:
-    slots: [ 50 ]
+    slots: [ 29 ]
     function: leave
-    item: REDSTONE
-    name: '&cLeave Party'
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
+    name: '&cOpuść drużynę'
     lore: { }
   request:
-    slots: [ 48 ]
+    slots: [ 27 ]
     function: invite
-    item: WRITABLE_BOOK
-    name: '&aInvite a player..'
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
+    name: '&aZaproś gracza...'
     lore: { }

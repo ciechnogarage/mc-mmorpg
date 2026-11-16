@@ -1,0 +1,12 @@
+# PLIK GENEROWANY: MCMMORPG/profesje/generuj.py (profesje v2, PROJEKT.md).
+# XP daje WYLACZNIE plugin Rzemioslo (wezly, lowiska, zwloki, receptury, zlecenia).
+# Zadnych zrodel vanilli (statyw, stol zaklec, kowadlo, on-fish) — audyt.py bramka "vanilla".
+# Krzywa profesje_v2.txt: poziom L kosztuje (20+2L) akcji biezacego tieru.
+name: Budownictwo
+max-level: 100
+experience:
+  base: 4
+  per-level: 0.5
+exp-curve: profesje_v2
+exp-sources: {}
+exp-table: mistrz_building

@@ -6,7 +6,12 @@ config-version: 10
 # (guild names, members, etc.) at a set interval.
 auto-save:
   enabled: true
-  interval: 1800 # In seconds (1800 = 30 minutes)
+  # 2026-09-23 (sesja "sloty"): 300 s WE WSZYSTKICH CZTERECH (MMOCore, MMOProfiles, MMOInventory,
+  # CoreTools) = tyle co autozapis swiata Papera (bukkit.yml ticks-per.autosave 6000). Rowne okna
+  # zamykaja rozjazd danych miedzy pluginami po crashu (dupe przedmiotu wyrzuconego przed crashem)
+  # i skracaja strate z 30 do 5 min. Interwal czyta sie RAZ przy starcie pluginu
+  # (MythicLib AutoSaveRunnable) — wchodzi po restarcie, reload go nie zmienia.
+  interval: 300
   log: true
 
 # MySQL Support
@@ -14,9 +19,9 @@ mysql:
   enabled: false
   host: localhost
   port: 3306
-  database: disabled
-  user: disabled
-  pass: disabled
+  database: minecraft
+  user: mmolover
+  pass: ILovePhoenixDev
   maxPoolSize: 10
   maxLifeTime: 300000
   connectionTimeOut: 10000
@@ -127,19 +132,19 @@ skill-casting:
 
   # General options
   open: SWAP_HANDS
-  ignore-sneak: false
+  ignore-sneak: true
   use-lowest-keybinds: true
 
   # Messages and sounds
   message:
     enter:
-      message: '&e&l☄ &a&lSKILL CASTING &e&l☄'
+      message: '&e&l☄ &aTryb umiejętności &7— klawisze paska rzucają skille, &fF &7wychodzi &e&l☄'
       action-bar: true
       duration: 20
       priority: 31
       sound: BLOCK_END_PORTAL_FRAME_FILL,1,2
     quit:
-      message: '&e&l☄ &c&lSKILL CASTING &e&l☄'
+      message: '&e&l☄ &cTryb umiejętności wyłączony &e&l☄'
       action-bar: true
       priority: 31
       sound: BLOCK_FIRE_EXTINGUISH,1,2
@@ -173,7 +178,7 @@ action-bar:
 
   # Whether or not to use the default action bar.
   # (This doesn't change any other action bars provided by MMOCore.)
-  enabled: true
+  enabled: false
 
   # The amount of ticks before updating the info
   ticks-to-update: 5
@@ -272,11 +277,13 @@ enable-global-skill-tree-gui: true
 enable-specific-skill-tree-gui: true
 
 # Requires a SERVER reload when changed.
+# 2026-09-27 (decyzja właściciela): ekwipunek zostaje po śmierci, kara = utrata EXP + osłabienie
+# (CoreTools/Scripts/kara-smierci.yml). 10% bieżącego EXP poziomu; poziom nie spada.
 death-exp-loss:
-  enabled: false
+  enabled: true
 
   # Percentage of current EXP you lose when dying.
-  percent: 30
+  percent: 10
 
 # When set to true, passive skills must be bound in order to take effect.
 # When set to false, unlocked skills will take effect right away.
@@ -315,7 +322,7 @@ combat-log:
 # skills, etc.) when selecting a new class. Turn this off if you
 # do not plan on using the Default player class if, for instance,
 # players are asked to select a class right away on login.
-save-default-class-info: true
+save-default-class-info: false
 
 waypoints:
 

@@ -6,6 +6,206 @@ name: 'Wybierz specjalizację'
 slots: 27
 
 items:
+  # Specjalizacje (2026-09-25, prototyp Ork × Wojownik). Funkcja 'sub-class-<id klasy>'
+  # (z bajtkodu SubclassSelect). Wybór kosztuje 1 punkt klasy i NIE zeruje poziomu
+  # (zmierzone: tools/klasy-rasowe/run.sh). Zmierzone też sondą: kafelek podklasy, której
+  # klasa gracza NIE ma, jest niewidoczny i nie zasłania własnych, nawet w tym samym slocie.
+  # 32 specjalizacje: każda para w slotach 11 i 15 tego jednego okna. Kafelki sub-* są
+  # GENEROWANE (tools/klasy-rasowe/generuj_klasy.py).
+  # /class wymaga uprawnienia mmocore.class-select (nadane grupie default 2026-09-25);
+  # bez niego MMOCore odmawia PO CICHU — ani okna, ani komunikatu.
+  sub-bastion:
+    function: sub-class-bastion
+    slots: [ 11 ]
+    name: '&f&lNieugięty'
+    lore:
+      - '{lore}'
+  sub-czempion:
+    function: sub-class-czempion
+    slots: [ 15 ]
+    name: '&e&lCzempion Areny'
+    lore:
+      - '{lore}'
+  sub-widmo:
+    function: sub-class-widmo
+    slots: [ 11 ]
+    name: '&8&lTruciciel'
+    lore:
+      - '{lore}'
+  sub-jastrzab:
+    function: sub-class-jastrzab
+    slots: [ 15 ]
+    name: '&6&lŁowca Nagród'
+    lore:
+      - '{lore}'
+  sub-elementalista:
+    function: sub-class-elementalista
+    slots: [ 11 ]
+    name: '&b&lWładca Żywiołów'
+    lore:
+      - '{lore}'
+  sub-przywolywacz:
+    function: sub-class-przywolywacz
+    slots: [ 15 ]
+    name: '&d&lChronomanta'
+    lore:
+      - '{lore}'
+  sub-serafin:
+    function: sub-class-serafin
+    slots: [ 11 ]
+    name: '&f&lŻywa Relikwia'
+    lore:
+      - '{lore}'
+  sub-hierofant:
+    function: sub-class-hierofant
+    slots: [ 15 ]
+    name: '&e&lChorąży Świętych'
+    lore:
+      - '{lore}'
+  sub-straznik-cierni:
+    function: sub-class-straznik_cierni
+    slots: [ 11 ]
+    name: '&2&lRóżany Rycerz'
+    lore:
+      - '{lore}'
+  sub-tancerz-ostrzy:
+    function: sub-class-tancerz_ostrzy
+    slots: [ 15 ]
+    name: '&a&lTancerz Ostrzy'
+    lore:
+      - '{lore}'
+  sub-cien-lisci:
+    function: sub-class-cien_lisci
+    slots: [ 11 ]
+    name: '&2&lTkacz Sideł'
+    lore:
+      - '{lore}'
+  sub-sokol:
+    function: sub-class-sokol
+    slots: [ 15 ]
+    name: '&6&lSrebrna Cięciwa'
+    lore:
+      - '{lore}'
+  sub-tkacz-zywiolow:
+    function: sub-class-tkacz_zywiolow
+    slots: [ 11 ]
+    name: '&b&lPieśniarz Burz'
+    lore:
+      - '{lore}'
+  sub-straznik-zywiolow:
+    function: sub-class-straznik_zywiolow
+    slots: [ 15 ]
+    name: '&3&lWładca Zwierciadeł'
+    lore:
+      - '{lore}'
+  sub-ostrze-ksiezyca:
+    function: sub-class-ostrze_ksiezyca
+    slots: [ 11 ]
+    name: '&f&lOstrze Księżyca'
+    lore:
+      - '{lore}'
+  sub-opiekun-duchow:
+    function: sub-class-opiekun_duchow
+    slots: [ 15 ]
+    name: '&b&lPrzewodnik Ogników'
+    lore:
+      - '{lore}'
+  sub-tyran:
+    function: sub-class-tyran
+    slots: [ 11 ]
+    name: '&c&lTyran'
+    lore:
+      - '{lore}'
+  sub-krwioburca:
+    function: sub-class-krwioburca
+    slots: [ 15 ]
+    name: '&4&lKrwioburca'
+    lore:
+      - '{lore}'
+  sub-lowca-bestii:
+    function: sub-class-lowca_bestii
+    slots: [ 11 ]
+    name: '&6&lZaklinacz Bestii'
+    lore:
+      - '{lore}'
+  sub-lowca-kosci:
+    function: sub-class-lowca_kosci
+    slots: [ 15 ]
+    name: '&7&lKościany Grot'
+    lore:
+      - '{lore}'
+  sub-burzownik:
+    function: sub-class-burzownik
+    slots: [ 11 ]
+    name: '&e&lBurzownik'
+    lore:
+      - '{lore}'
+  sub-totemista:
+    function: sub-class-totemista
+    slots: [ 15 ]
+    name: '&2&lGłos Bębna'
+    lore:
+      - '{lore}'
+  sub-awatar-wojny:
+    function: sub-class-awatar_wojny
+    slots: [ 11 ]
+    name: '&c&lAwatar Wojny'
+    lore:
+      - '{lore}'
+  sub-szept-przodkow:
+    function: sub-class-szept_przodkow
+    slots: [ 15 ]
+    name: '&5&lWołający Przodków'
+    lore:
+      - '{lore}'
+  sub-straznik-grobu:
+    function: sub-class-straznik_grobu
+    slots: [ 11 ]
+    name: '&7&lKustosz Krypt'
+    lore:
+      - '{lore}'
+  sub-zniwiarz:
+    function: sub-class-zniwiarz
+    slots: [ 15 ]
+    name: '&5&lŻniwiarz'
+    lore:
+      - '{lore}'
+  sub-cien:
+    function: sub-class-cien
+    slots: [ 11 ]
+    name: '&8&lDusiciel'
+    lore:
+      - '{lore}'
+  sub-strzelec-grobu:
+    function: sub-class-strzelec_grobu
+    slots: [ 15 ]
+    name: '&7&lŁucznik Ciszy'
+    lore:
+      - '{lore}'
+  sub-duszozerca:
+    function: sub-class-duszozerca
+    slots: [ 11 ]
+    name: '&5&lDuszożerca'
+    lore:
+      - '{lore}'
+  sub-nekromanta:
+    function: sub-class-nekromanta
+    slots: [ 15 ]
+    name: '&8&lZwiastun Zarazy'
+    lore:
+      - '{lore}'
+  sub-awatar-otchlani:
+    function: sub-class-awatar_otchlani
+    slots: [ 11 ]
+    name: '&5&lAwatar Otchłani'
+    lore:
+      - '{lore}'
+  sub-pasterz-umarlych:
+    function: sub-class-pasterz_umarlych
+    slots: [ 15 ]
+    name: '&8&lPan Kurhanów'
+    lore:
+      - '{lore}'
   back:
     function: back
     slots: [ 26 ]
@@ -22,80 +222,5 @@ items:
     #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
 
     item: RED_STAINED_GLASS_PANE
-    name: '&cWróć do archetypu'
+    name: '&7Wróć'
     lore: [ ]
-  straznik:
-    slots: [ 10 ]
-    function: sub-class-straznik
-    name: '&a&lStraznik'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  berserker:
-    slots: [ 11 ]
-    function: sub-class-berserker
-    name: '&c&lBerserker'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  gladiator:
-    slots: [ 12 ]
-    function: sub-class-gladiator
-    name: '&6&lGladiator'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  zabojca:
-    slots: [ 13 ]
-    function: sub-class-zabojca
-    name: '&7&lZabojca'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  sabotazysta:
-    slots: [ 14 ]
-    function: sub-class-sabotazysta
-    name: '&2&lSabotazysta'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  cien:
-    slots: [ 15 ]
-    function: sub-class-cien
-    name: '&8&lCien'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  strzelec:
-    slots: [ 16 ]
-    function: sub-class-strzelec
-    name: '&e&lStrzelec'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  tropiciel:
-    slots: [ 10 ]
-    function: sub-class-tropiciel
-    name: '&a&lTropiciel'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  bestiariusz:
-    slots: [ 11 ]
-    function: sub-class-bestiariusz
-    name: '&2&lBestiariusz'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  piromanta:
-    slots: [ 12 ]
-    function: sub-class-piromanta
-    name: '&c&lPiromanta'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  kriomanta:
-    slots: [ 13 ]
-    function: sub-class-kriomanta
-    name: '&b&lKriomanta'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  burzomanta:
-    slots: [ 14 ]
-    function: sub-class-burzomanta
-    name: '&9&lBurzomanta'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  kapelan:
-    slots: [ 15 ]
-    function: sub-class-kapelan
-    name: '&f&lKapelan'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  inkwizytor:
-    slots: [ 16 ]
-    function: sub-class-inkwizytor
-    name: '&6&lInkwizytor'
-    lore: [ '{lore}', '', '{attribute-lore}' ]
-  rytualista:
-    slots: [ 22 ]
-    function: sub-class-rytualista
-    name: '&5&lRytualista'
-    lore: [ '{lore}', '', '{attribute-lore}' ]

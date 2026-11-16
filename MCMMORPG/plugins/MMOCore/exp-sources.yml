@@ -1,8 +1,33 @@
-#A list of experience source that can be loaded using 'from{source="test-exp-source"}'
-test-exp-source:
-  - 'damagedealt{type=physical;amount=250}'
-  - 'move{type=WALK;amount=300}'
-  - 'from{source=test2}'
-
-test2:
-  - 'eat{type=CARROT;amount="50"}'
+# Tabele zrodel EXP KLASY (MMOCore). Odwolanie w pliku klasy: main-exp-sources: ['from{source=klasa-swiat}']
+# Dokumentacja: docs/Plugins-wiki-local/mmocore/wiki/md/level-sources.md:34 (tabele), :49 (from), :52 (killmythicmob).
+# klasa-swiat: moby Bestiariusza (MythicMobs/mobs/Bestiariusz.yml). EXP = 0,4 x HP moba, rozrzut +-15%.
+# Rachunek (tools/klasy-rasowe/serwer/README.md): Akt 1 = 9000 EXP do poz. 10; lochy 001-010 (pierwsze przejscie,
+# 0,6 x 200 x N) daja 6600, swiat ma dac reszte ~2400 i nie byc szybszy od lochu (~40 EXP/min).
+# Nowy mob Bestiariusza = nowy wiersz (bez wiersza mob nie daje EXP klasy). Generator klas tego pliku nie pisze.
+klasa-swiat:
+  # T1
+  - 'killmythicmob{type=BEAST_FOREST_HARE;amount=4-6}'   # HP 12
+  - 'killmythicmob{type=BEAST_MOOR_SHEEP;amount=5-7}'   # HP 16
+  - 'killmythicmob{type=BEAST_WILD_BOAR;amount=9-12}'   # HP 26
+  - 'killmythicmob{type=UNDEAD_GRAVE_CRAWLER;amount=10-13}'   # HP 28
+  - 'killmythicmob{type=UNDEAD_BONE_ARCHER;amount=8-11}'   # HP 24
+  - 'killmythicmob{type=BEAST_CAVE_SPIDERLING;amount=7-9}'   # HP 20
+  # T2
+  - 'killmythicmob{type=BEAST_DIRE_WOLF;amount=19-25}'   # HP 55
+  - 'killmythicmob{type=BEAST_MARSH_LURKER;amount=20-28}'   # HP 60
+  - 'killmythicmob{type=UNDEAD_PLAGUE_BEARER;amount=24-32}'   # HP 70
+  - 'killmythicmob{type=BEAST_FROST_BEAR;amount=31-41}'   # HP 90
+  - 'killmythicmob{type=UNDEAD_CRYPT_GUARD;amount=27-37}'   # HP 80
+  - 'killmythicmob{type=BEAST_VENOM_STALKER;amount=22-30}'   # HP 65
+  - 'killmythicmob{type=HUMANOID_ROAD_BANDIT;amount=26-34}'   # HP 75
+  - 'killmythicmob{type=MAGIC_WANDERING_WISP;amount=15-21}'   # HP 45
+  # T3
+  - 'killmythicmob{type=ELITE_ALPHA_WOLF;amount=58-78}'   # HP 170
+  - 'killmythicmob{type=ELITE_SWAMP_HAG;amount=54-74}'   # HP 160
+  - 'killmythicmob{type=ELITE_BONE_CHAMPION;amount=75-101}'   # HP 220
+  - 'killmythicmob{type=ELITE_TROLL_MAULER;amount=95-129}'   # HP 280
+  - 'killmythicmob{type=ELITE_ARCANE_WRAITH;amount=61-83}'   # HP 180
+  # T4
+  - 'killmythicmob{type=BOSS_FOREST_WARDEN;amount=306-414}'   # HP 900
+  - 'killmythicmob{type=BOSS_CRYPT_LORD;amount=374-506}'   # HP 1100
+  - 'killmythicmob{type=BOSS_VENOM_MATRIARCH;amount=272-368}'   # HP 800

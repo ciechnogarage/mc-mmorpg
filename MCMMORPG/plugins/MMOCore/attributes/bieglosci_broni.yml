@@ -1,0 +1,110 @@
+# BIEGŁOŚCI BRONI (2026-09-26) — PLIK GENEROWANY: tools/klasy-rasowe/generuj_klasy.py.
+# Jak bieglosci_zbroi.yml: ukryte (brak w attribute-view, max-points 0), wartość WYŁĄCZNIE
+# ze statystyki klasy additional-bieglosc-<grupa>. Broń MMOItems ma required-bieglosc-<grupa>: 1
+# (tools/klasy-rasowe/latacz_broni.py). Żaden PRZEDMIOT nie daje biegłości. Typy bez grupy
+# (LUTE, CATALYST, MAIN/OFF_CATALYST, ORNAMENT) są wolne: to przedmioty-statystyki z ręki.
+bieglosc_miecz:
+    # typy MMOItems: SWORD, LONG_SWORD, THRUSTING_SWORD
+    name: 'Biegłość: miecze'
+    max-points: 0
+    buff: {}
+bieglosc_sztylet:
+    # typy MMOItems: DAGGER, GAUNTLET
+    name: 'Biegłość: sztylety i pięściaki'
+    max-points: 0
+    buff: {}
+bieglosc_luk:
+    # typy MMOItems: BOW
+    name: 'Biegłość: łuki'
+    max-points: 0
+    buff: {}
+bieglosc_kostur:
+    # typy MMOItems: WAND, STAFF, STAVE
+    name: 'Biegłość: różdżki i kostury'
+    max-points: 0
+    buff: {}
+bieglosc_bulawa:
+    # typy MMOItems: HAMMER
+    name: 'Biegłość: buławy'
+    max-points: 0
+    buff: {}
+bieglosc_tarcza:
+    # typy MMOItems: SHIELD
+    name: 'Biegłość: tarcze'
+    max-points: 0
+    buff: {}
+bieglosc_drzewcowa:
+    # typy MMOItems: HALBERD, LANCE
+    name: 'Biegłość: broń drzewcowa'
+    max-points: 0
+    buff: {}
+bieglosc_kusza:
+    # typy MMOItems: CROSSBOW, MUSKET
+    name: 'Biegłość: kusze i muszkiety'
+    max-points: 0
+    buff: {}
+bieglosc_grimuar:
+    # typy MMOItems: TOME
+    name: 'Biegłość: grimuary'
+    max-points: 0
+    buff: {}
+bieglosc_klinga:
+    # typy MMOItems: KATANA
+    name: 'Biegłość: elfie klingi'
+    max-points: 0
+    buff: {}
+bieglosc_luk_dlugi:
+    # typy MMOItems: GREATBOW
+    name: 'Biegłość: łuki długie'
+    max-points: 0
+    buff: {}
+bieglosc_kostur_dwureczny:
+    # typy MMOItems: GREATSTAFF
+    name: 'Biegłość: kostury dwuręczne'
+    max-points: 0
+    buff: {}
+bieglosc_sierp:
+    # typy MMOItems: SIERP
+    name: 'Biegłość: sierpy'
+    max-points: 0
+    buff: {}
+bieglosc_topor:
+    # typy MMOItems: AXE, GREATAXE
+    name: 'Biegłość: topory'
+    max-points: 0
+    buff: {}
+bieglosc_wlocznia:
+    # typy MMOItems: SPEAR
+    name: 'Biegłość: włócznie'
+    max-points: 0
+    buff: {}
+bieglosc_totem:
+    # typy MMOItems: TALISMAN
+    name: 'Biegłość: totemy'
+    max-points: 0
+    buff: {}
+bieglosc_mlot_dwureczny:
+    # typy MMOItems: GREATHAMMER
+    name: 'Biegłość: młoty dwuręczne'
+    max-points: 0
+    buff: {}
+bieglosc_miecz_dwureczny:
+    # typy MMOItems: GREATSWORD
+    name: 'Biegłość: miecze dwuręczne'
+    max-points: 0
+    buff: {}
+bieglosc_lancuch:
+    # typy MMOItems: WHIP
+    name: 'Biegłość: łańcuchy'
+    max-points: 0
+    buff: {}
+bieglosc_filakterium:
+    # typy MMOItems: FILAKTERIUM
+    name: 'Biegłość: filakteria'
+    max-points: 0
+    buff: {}
+bieglosc_kosa:
+    # typy MMOItems: KOSA
+    name: 'Biegłość: kosy'
+    max-points: 0
+    buff: {}

@@ -1,91 +1,95 @@
-
 #####################################
-# Attribute menu UI config
+# Okno atrybutów (/attributes) — etap 0 przebudowy klas, 2026-09-29: po polsku, 4 atrybuty
 #####################################
+# Bonusy atrybutów definiuje attributes/default_attributes.yml; tu tylko wygląd.
 
-# This file only defines the layout and visuals of the attribute menu, which players
-# can open using /attributes. You cannot edit the existing attributes, or buffs given
-# by attributes here. Please use attributes/default_attributes.yml to edit those.
+name: '&f䪄䪅䪆䪇'
 
-# GUI display name
-name: 'Atrybuty Postaci'
-
-# Number of slots in your inventory. Must be
-# between 9 and 54 and must be a multiple of 9.
-slots: 27
+# Liczba slotów: 9-54, wielokrotność 9.
+slots: 54
 
 items:
   reallocate:
-    slots: [ 26 ]
+    slots: [ 37 ]
     function: reallocation
-
-    #custom_model_data_float: 0.45        # 1.20.4+ Float custom model data. Either this, or string option above works completely fine
-    #custom_model_data: 0                 # 1.14-1.20.3 Custom model data. Prefer using custom_model_data_string on 1.20.4+
-    #tooltip: 'myplugin:tooltip_asset_id' # You can edit the slot icon tooltip that way
-    #custom_model_data_string: 'test'     # 1.20.4+ string custom model data
-    #item_model: 'minecraft:dirt'         # 1.21.2+ item model
-    #skull_texture: '......'              # SKull texture value or URL
-    #hide_tooltip: false                  # True or false, for vanilla tooltip
-    #unbreakable: false                   # Is it unbreakable or not?
-    #fake_attribute: false                # Should MythicLib add a fake attribute modifier? Useful for 1.20 or lower to hide vanilla attributes from the item
-    #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
-
-    item: CAULDRON
-    name: '&aReset atrybutów'
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
+    name: '&aPunkty atrybutów'
     lore:
       - ''
-      - 'Wydano łącznie &6{total}&7 punktów atrybutów.'
-      - '&7Prawy klik resetuje rozdział punktów.'
+      - '&7Wydane łącznie: &6{total}'
+      - '&7Prawy klik: rozdziel punkty od nowa.'
       - ''
-      - '&eKoszt: 1 punkt resetu atrybutów.'
-      - '&e◆ Punkty resetu atrybutów: &6{points}'
+      - '&eKosztuje 1 punkt zmiany atrybutów.'
+      - '&e◆ Punkty zmiany atrybutów: &6{points}'
   str:
-    slots: [ 11 ]
+    slots: [ 23 ]
     function: attribute_strength
-    name: '&a{name}'
+    name: '&c{name}'
     item: GOLDEN_APPLE
-    lore: # {buffs} returns amount of buffs
+    lore:
+      - '&8Główny atrybut wojownika'
       - ''
-      - '&7Wydane punkty: &6{spent}&7/&6{max}'
-      - '&7Aktualnie {name}: &6&l{current}'
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
       - ''
-      - '&8Po ulepszeniu:'
+      - '&8Za każdy punkt:'
       - '&7  +{buff_weapon_damage}% obrażeń broni (&a+{total_weapon_damage}%&7)'
       - '&7  +{buff_max_health}% maks. zdrowia (&a+{total_max_health}%&7)'
       - ''
-      - '&eKliknij, aby wydać 1 punkt atrybutu.'
-      - '&e◆ Dostępne punkty atrybutów: {attribute_points}'
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
   dex:
-    slots: [ 13 ]
+    slots: [ 24 ]
     function: attribute_dexterity
-    name: '&a{name}'
+    name: '&7{name}'
     item: LEATHER_BOOTS
     item-flags: [ 'HIDE_ATTRIBUTES' ]
     lore:
+      - '&8Główny atrybut ninji'
       - ''
-      - '&7Wydane punkty: &6{spent}&7/&6{max}'
-      - '&7Aktualnie {name}: &6&l{current}'
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
       - ''
-      - '&8Po ulepszeniu:'
+      - '&8Za każdy punkt:'
       - '&7  +{buff_physical_damage}% obrażeń fizycznych (&a+{total_physical_damage}%&7)'
-      - '&7  +{buff_projectile_damage}% obrażeń dystansowych (&a+{total_projectile_damage}%&7)'
+      - '&7  +{buff_projectile_damage}% obrażeń pocisków (&a+{total_projectile_damage}%&7)'
       - '&7  +{buff_attack_speed}% szybkości ataku (&a+{total_attack_speed}%&7)'
       - ''
-      - '&eKliknij, aby wydać 1 punkt atrybutu.'
-      - '&e◆ Dostępne punkty atrybutów: {attribute_points}'
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
   int:
-    slots: [ 15 ]
+    slots: [ 25 ]
     function: attribute_intelligence
-    name: '&a{name}'
+    name: '&d{name}'
     item: BOOK
     lore:
+      - '&8Główny atrybut maga'
       - ''
-      - '&7Wydane punkty: &6{spent}&7/&6{max}'
-      - '&7Aktualnie {name}: &6&l{current}'
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
       - ''
-      - '&8Po ulepszeniu:'
+      - '&8Za każdy punkt:'
       - '&7  +{buff_magic_damage}% obrażeń magicznych (&a+{total_magic_damage}%&7)'
-      - '&7  +{buff_cooldown_reduction}% redukcji cooldownów (&a+{total_cooldown_reduction}%&7)'
+      - '&7  +{buff_cooldown_reduction}% skrócenia odnowienia (&a+{total_cooldown_reduction}%&7)'
       - ''
-      - '&eKliknij, aby wydać 1 punkt atrybutu.'
-      - '&e◆ Dostępne punkty atrybutów: {attribute_points}'
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
+  wiara:
+    slots: [ 26 ]
+    function: attribute_wiara
+    name: '&e{name}'
+    item: TOTEM_OF_UNDYING
+    lore:
+      - '&8Główny atrybut akolity'
+      - ''
+      - '&7Wydane: &6{spent}&7/&6{max}'
+      - '&7Obecnie: &6&l{current}'
+      - ''
+      - '&8Za każdy punkt:'
+      - '&7  +{buff_skill_damage}% obrażeń umiejętności (&a+{total_skill_damage}%&7)'
+      - '&7  +{buff_max_mana}% puli zasobu (&a+{total_max_mana}%&7)'
+      - ''
+      - '&eKliknij, aby wydać 1 punkt.'
+      - '&e◆ Wolne punkty: {attribute_points}'
