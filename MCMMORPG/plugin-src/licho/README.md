@@ -31,6 +31,14 @@ Decyzja co 5 ticków: widzi ruszające się Licho do `chowaj.wzrok` bl. (rayTrac
 sprzęty do 3,5 bl. (zastygłe Licho też); inaczej obchód losowych sprzętów. Zastygłe Licho tuż obok (≤2,2 bl.) bot
 czasem „wyczuwa” (15%/s). Psota liczy też boty-Zamawiaczy jako słuchaczy (`najblizszyZamawiacz`). Złapane = koniec
 („Złapane!”), przetrwanie = „Świt!”. Bez rekordów (`cwiczenie = true`).
+**Licho nie widzi na sobie zbroi ani przedmiotów w ręce**: INVISIBILITY (vanilla) nie chowa zbroi ani trzymanych rzeczy
+w WŁASNYM kliencie (F5, pierwsza osoba), a `hidePlayer` działa tylko na innych. Do 16.11 Licho biegało w diamentowej
+zbroi z mieczem „wewnątrz” bloku (zgłoszenie właściciela). Teraz `Klawisze.bezRzeczy` (PacketEvents, tylko gracze-Licha):
+w wychodzących WINDOW_ITEMS/SET_SLOT okna 0 sloty 5–8 i 36–45, w SET_SLOT okna −2 i SET_PLAYER_INVENTORY sloty 0–8
+i 36–40 idą jako puste. Serwer nic nie zdejmuje; klik w ekwipunek w roli jest anulowany (`klikEkwipunku`), a po roli
+`updateInventory()` oddaje widok (`bezRzeczy(p,false)` w `odslon` i `sprzatnij`). Sprawdzone 16.11 klientem QA A/B
+(ta sama zbroja, `execute if items … armor.*` = 1111): stary jar — zbroja widoczna w F5 tył/przód/bieg i miecz w 1. os.;
+nowy — sam blok, pusty pasek, po wyjściu miecz wraca. Boty po zmianie: chowaj 25/25, rola 23/23, cwiczenie 19/19.
 **WDROŻONE** na world1 15.11 21:25 UTC z gałęzi `licho-cwiczenie` (3a15908 + 8c2de22), jar `licho-0.1.0-202611151842.jar` (md5 b6519e55);
 cofnięcie `/opt/docker/mc/data/world1/backups/licho-20261115-212426/cofnij.sh`.
 **CHOWAJ + wybór roli WDROŻONE** na world1 16.11 19:40 UTC z gałęzi `licho-rola` (78d5f34), jar `licho-0.1.0-202611161723.jar`
