@@ -5,6 +5,7 @@ import io.lumine.mythic.lib.api.item.NBTItem;
 import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.comp.interaction.InteractionType;
 import io.lumine.mythic.lib.damage.DamageType;
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import io.papermc.paper.datacomponent.DataComponentType;
@@ -163,6 +164,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Integer> ostatnieMachniecie = new HashMap<>();
   /** Gracze kopiacy blok (LPM trzymany na bloku): klient macha w petli, to nie sa ciosy (19.10: 62 "ciosy" i pusty pasek w 2 s). */
   private final Set<UUID> kopie = new HashSet<>();
+  private final Set<UUID> doDopasowania = new HashSet<>();   // jedno dopasowanie rak na tick, choc zdarzen bywa kilka
   private final Map<UUID, Integer> tickProgramowegoZamachu = new HashMap<>(); // echo zamachu z API przychodzi pozniej
   private final Map<UUID, Krwawiacy> krwawiacy = new HashMap<>();
   private final Map<UUID, RytmStan> serie = new HashMap<>();
@@ -513,7 +515,19 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   private void pozniej(HumanEntity kto) {
     // zwykly scheduler Bukkita: harmonogram encji (p.getScheduler()) Paper wylacza po smierci gracza
-    if (kto instanceof Player p) getServer().getScheduler().runTask(this, () -> dopasujDlonie(p));
+    if (kto instanceof Player p && doDopasowania.add(p.getUniqueId()))
+      getServer().getScheduler().runTask(this, () -> { doDopasowania.remove(p.getUniqueId()); dopasujDlonie(p); });
+  }
+
+  /** Bron wlozona do reki przez plugin albo komende (Shift+F Ksiegi: anulowana zamiana + setItem, `mi give`) nie daje
+   *  klikniecia ani zamiany rak - bez tego komponenty (consumable = PPM) czekaly na zegar co 10 t (do 0,5 s martwego PPM). */
+  @EventHandler(priority = EventPriority.MONITOR)
+  public void zmianaWReku(PlayerInventorySlotChangeEvent e) {
+    Player p = e.getPlayer();
+    int s = e.getSlot();
+    if (s != p.getInventory().getHeldItemSlot() && s != 40) return;   // 40 = lewa reka
+    if (e.getNewItemStack().isSimilar(e.getOldItemStack())) return;
+    pozniej(p);
   }
 
   @EventHandler(priority = EventPriority.MONITOR)

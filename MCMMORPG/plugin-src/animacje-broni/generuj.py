@@ -120,6 +120,10 @@ MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20
          'szerokosc_celu': 0.65, 'szerokosc_luku': 1.45,
          'krok_szturchniecia': 0.18, 'dystans_kroku': 1.5, 'krok_wypadu': 0.4, 'krok_biegu': 0.65,
          'krok_boczny': 0.32, 'odskok': 0.35, 'odrzut_szturchniecia': 0.45,
+         # zwod (Shift w ladowaniu): koszt x2 w serii w oknie (t) do x max; swieze A/D w zwrot_okno t po zwodzie ->
+         # nastepny mocny zaczety w zwrot_waznosc t laduje sie o przyspieszenie szybciej (README „Zwód”)
+         'zwod': 'true', 'zwod_stamina': 0.5, 'zwod_seria_okno': 60, 'zwod_mnoznik_max': 4,
+         'zwod_zwrot_okno': 10, 'zwod_zwrot_waznosc': 40, 'zwod_przyspieszenie': 0.25,
          'brak_staminy': 'Za mało staminy na mocny cios'}
 # stamina = koszt wariantu w lekkich ciosach TEJ broni (model jednostek, sekcja STAMINA):
 # placisz za to, co mocny daje ponad lekki - skumulowane obrazenia i efekt. Wypad x1,3 + przebicie linii,
@@ -432,6 +436,10 @@ def main():
                          (', '.join(atak['gdy']), atak['zamach'], atak['rodzaj']))
     linie.append('materialy-z-modelami:')
     linie += ['  - %s' % m for m in sorted(materialy)]
+    linie += ['# Sygnal ZAMACH (start ladowania mocnego ciosu) do mobow MythicMobs, ktore celuja w gracza, sa przed nim i w promieniu',
+              '# zasieg (bloki). Reakcja tylko w mobach z linia ~onSignal:ZAMACH (mythicmobs/Reakcje_Zamach.yml); koszt = jedno',
+              '# wyszukanie encji na poczatku ladowania, najwyzej co 10 tickow na gracza.',
+              'sygnaly_mobow: {wlaczone: true, zasieg: 5}']
     os.makedirs(a.out, exist_ok=True)
     open(os.path.join(a.out, 'config.yml'), 'w').write('\n'.join(linie) + '\n')
 
