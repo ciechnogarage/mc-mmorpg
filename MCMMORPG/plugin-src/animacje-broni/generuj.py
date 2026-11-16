@@ -12,7 +12,8 @@ import argparse, json, math, os, re, sys, zipfile
 # FEELING BRONI: typ MMOItems -> ustawienia. Rodzaj obrazen: ciete (ostrze tnie), klute (grot/szpic kluje),
 # obuchowe (tepa bron miazdzy). Waga: czas zamachu (vanilla 6 tickow), ladowanie = minimalne naladowanie ciosu (ciezka
 # bron nie da sie "klikac"), ciezka = nizszy, glebszy dzwiek trafienia. zasieg = max zasieg ciosu (vanilla 3 bloki).
-# garda = Shift+PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat, opoznienie w s, spowolnienie ruchu przy gardzie).
+# garda = Shift+PPM blokuje ciosy z przodu (redukcja 0..1 obrazen, kat = pol-kat przodu (60, jak STRONA.przod; bok i tyl
+# bron nie blokuje), opoznienie w s, spowolnienie ruchu przy gardzie).
 # wzor = kopia zestawu vanillowej broni (IRON_SPEAR: pchniecie trafiajace wszystko w linii, zasieg 2-4,5, szarza PPM).
 # drzewce = halabarda: trzecie ogniwo lekkiego lancucha uderza trzonkiem.
 # garda_oburacz = bron dwureczna: Shift+PPM w pozie kuszy (obie rece z przodu), a model w trakcie PPM (using_item) obraca
@@ -21,9 +22,9 @@ GARDA_OBURACZ = {'tp_rot': [90, 0, -45], 'tp_trans': [0, 4, 0], 'fp_rot': [-30, 
 # katy 3. osoby dobrane na zrzutach 2.10 (qa: warianty a-f, wybrany e - glowica wyraznie nad glowa)
 UNIESIONY_MLOT = {'tp_rot': [-90, 0, 45], 'tp_trans': [0, 6, 0],
                  'fp_rot': [-15, 0, -12], 'fp_trans': [-2, 8, -4]}
-G_MIECZ = {'redukcja': 0.4, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
+G_MIECZ = {'redukcja': 0.4, 'kat': 60, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 # topor i bulawa (18.10 wlasciciel: "popraw blok dla toporow i bulaw"): zaslona trzonkiem, bez jelca -> slabiej niz miecz, bez parowania
-G_TOPOR = {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.15, 'spowolnienie': 0.5}
+G_TOPOR = {'redukcja': 0.35, 'kat': 60, 'opoznienie': 0.15, 'spowolnienie': 0.5}
 PAROWANIE = {'okno': 6, 'riposta_ticki': 30, 'riposta_mnoznik': 1.5}
 KRWAWIENIE = {'procent': 0.25, 'czas': 60, 'stosy': 1}
 PANCERZ = {'procent': 0.30}
@@ -31,19 +32,19 @@ PCHNIECIE_MIECZA = {'gdy': ['wykonczenie'], 'zamach': 'stab', 'rodzaj': 'klute'}
 TYPY = {
     'SWORD':           {'zamach': 'whack', 'czas': 6,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'LONG_SWORD':      {'zamach': 'whack', 'czas': 7,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': G_MIECZ, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
-    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': {'redukcja': 0.3, 'kat': 90, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+    'KATANA':          {'zamach': 'whack', 'czas': 5,  'rodzaj': 'ciete', 'atak_pchniecie': PCHNIECIE_MIECZA, 'garda': {'redukcja': 0.3, 'kat': 60, 'opoznienie': 0.1, 'spowolnienie': 0.6}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'AXE':             {'zamach': 'whack', 'czas': 8,  'rodzaj': 'ciete', 'ladowanie': 0.6, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE,
                         'garda': G_TOPOR},
     'GREATSWORD':      {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'zasieg': 3.3,
                         'poza': 'crossbow', 'garda_oburacz': True,
-                        'garda': {'redukcja': 0.55, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
+                        'garda': {'redukcja': 0.55, 'kat': 60, 'opoznienie': 0.3, 'spowolnienie': 0.35}, 'reakcja': 'krytyk', 'parowanie': PAROWANIE},
     'GREATAXE':        {'zamach': 'whack', 'czas': 10, 'skala': 1.30, 'rodzaj': 'ciete', 'ciezka': True, 'ladowanie': 0.8, 'reakcja': 'krwawienie', 'krwawienie': KRWAWIENIE,
                         'poza': 'crossbow', 'garda_oburacz': True,
-                        'garda': {'redukcja': 0.5, 'kat': 90, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
+                        'garda': {'redukcja': 0.5, 'kat': 60, 'opoznienie': 0.3, 'spowolnienie': 0.35}},
     'HALBERD':         {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'ciezka': True, 'wzor': 'IRON_SPEAR',
                         'zasieg': 4.5,
                         'poza': 'crossbow', 'garda_oburacz': True,
-                        'garda': {'redukcja': 0.35, 'kat': 90, 'opoznienie': 0.2, 'spowolnienie': 0.5},
+                        'garda': {'redukcja': 0.35, 'kat': 60, 'opoznienie': 0.2, 'spowolnienie': 0.5},
                         'drzewce': True},
     'LANCE':           {'zamach': 'stab',  'czas': 8,  'skala': 1.30, 'rodzaj': 'klute', 'wzor': 'IRON_SPEAR'},
     'SPEAR':           {'rodzaj': 'klute'},   # materialy *_SPEAR maja juz caly vanillowy zestaw wloczni
@@ -147,7 +148,19 @@ CIEZKIE_WARIANTY = {
 STAMINA = {'wlaczona': 'true', 'zestaw': 10, 'zestawy': '[7, 10, 14]', 'ciosy_na_sekunde': 1.6,
            'regeneracja': 1.6, 'oddech_ticki': 20, 'zmeczenie_obrazenia': 0.6, 'szturchniecie': 0.5,
            'blok_min': 0.5, 'blok_max': 3.0, 'blok_prog_hp': 0.25, 'tarcza': 0.5, 'parowanie_zwrot': 1.0,
-           'peknieta_garda_ticki': 40, 'wspolczynnik_min': 0.4, 'wspolczynnik_max': 2.5}
+           'peknieta_garda_ticki': 40, 'wspolczynnik_min': 0.4, 'wspolczynnik_max': 2.5, 'blok_obuch': 2.0}
+# Strona trafienia (25.10, encyklopedia "Przedmioty" -> "Strona trafienia"; wlasciciel: "ma blokowac od frontu w % ...
+# po bokach wiecej a z tylu najwiecej"). Kat miedzy patrzeniem ofiary a kierunkiem, z ktorego przyszedl cios:
+# przod <= przod st., bok do tyl st., dalej tyl. Bez gardy obrazenia x1 / x mnoznik_bok / x mnoznik_tyl (gracze i moby,
+# w obie strony; sztylet z ukrycia ZASTEPUJE mnoznik_tyl). Blok (garda broni, tarcza) liczy vanilla z warstw komponentu
+# blocks_attacks; plugin go tylko oslabia: ponizej prog_staminy maks. staminy liniowo do 0, belt z kuszy przebija
+# belt_przebija bloku, a blok nie przekracza limit_bloku (PvP limit_bloku_pvp) obrazen.
+STRONA = {'wlaczona': 'true', 'przod': 60, 'tyl': 120, 'mnoznik_bok': 1.1, 'mnoznik_tyl': 1.25,
+          'limit_bloku': 0.9, 'limit_bloku_pvp': 0.75, 'prog_staminy': 0.25, 'belt_przebija': 0.5}
+# Tarcza (material SHIELD, PPM jak w vanilli): warstwa przodu = "Sila bloku" przedmiotu (MMOITEMS_BLOCK_POWER %),
+# przycieta do przod..przod_max (dzis tarcze maja 30% - bazy 70-85% w etapie 3), warstwa boku = bok (przod ja zawiera).
+# Losowy blok MythicLib (block-rating) wylacza MythicLib/stats.yml BLOCK_RATING '0 = 0'.
+TARCZA = {'przod': 0.70, 'przod_max': 0.85, 'bok': 0.30, 'opoznienie': 0.25}
 KOMBO = {'mnoznik_1': 1.2, 'mnoznik_2': 1.4}
 RYTM = {'prog_rytmu': 0.7, 'okno_rytmu': 24, 'koszt_rytmu': 2, 'dlugosc': 3,
         'mnoznik': 1.4, 'luk_mnoznik': 0.5, 'krok_boczny_mnoznik': 0.35}
@@ -380,7 +393,7 @@ def main():
     linie = ['# WYGENEROWANE przez plugin-src/animacje-broni/generuj.py (klient %s) - nie edytowac recznie.' % wersja,
              '# typ MMOItems -> feeling broni; opis pol w TYPY w generuj.py. skala = model trzymania <przestrzen>:<skala>/<material>',
              'przestrzen-modeli: %s' % PRZESTRZEN, 'debug: false']
-    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM), ('kombo', KOMBO), ('stamina', STAMINA)):
+    for nazwa, dane in (('mocny', MOCNY), ('rytm', RYTM), ('kombo', KOMBO), ('stamina', STAMINA), ('strona', STRONA), ('tarcza', TARCZA)):
         linie.append('%s: {%s}' % (nazwa, ', '.join('%s: %s' % kv for kv in dane.items())))
     linie.append('ciezkie_warianty:')
     for nazwa, dane in CIEZKIE_WARIANTY.items():
@@ -406,6 +419,11 @@ def main():
         elif 'ciezkie' in u:
             linie.append('    skala: s100')
         for k in ('garda', 'parowanie', 'uderzenie', 'z_ukrycia', 'krwawienie', 'pancerz', 'ciezkie', 'luk_lekki'):
+            if k == 'z_ukrycia' and k in u:
+                linie += ['    # plecy = cios w plecy (>strona.tyl st. od wzroku celu), ZASTEPUJE ogolny strona.mnoznik_tyl;',
+                          '    # ukrycie = plecy + kucanie, gdy cel nie wie o atakujacym: mob bez celu = atakujacy; gracz: nie widzi go',
+                          '    # (stozek st. od wzroku + linia wzroku) albo atakujacy niewidzialny, i brak wymiany ciosow tej pary',
+                          '    # przez swiadomosc_s (0 = tylko widzenie). Domyslnie stozek 60, swiadomosc_s 5.']
             if k in u:
                 linie.append('    %s: {%s}' % (k, ', '.join('%s: %s' % kv for kv in u[k].items())))
         if 'atak_pchniecie' in u:

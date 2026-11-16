@@ -9,6 +9,9 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.BlocksAttacks;
+import io.papermc.paper.datacomponent.item.blocksattacks.DamageReduction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +43,7 @@ final class Wytrzymalosc implements Listener {
   private int zestaw;
   private List<Integer> zestawy = List.of(7, 10, 14);
   private double ciosyNaSekunde, regeneracja, zmeczenieObrazenia, szturchniecie;
-  private double blokMin, blokMax, blokProgHp, tarcza, parowanieZwrot, wspMin, wspMax;
+  private double blokMin, blokMax, blokProgHp, tarcza, parowanieZwrot, wspMin, wspMax, blokObuch;
   private int oddechTicki, peknietaGardaTicki;
   /** Wlasna regeneracja dodaje stamine przez MMOCore - ten znacznik przepuszcza ja przez anulowanie. */
   private boolean regenerujemy;
@@ -62,6 +64,7 @@ final class Wytrzymalosc implements Listener {
     blokMax = s.getDouble("blok_max", 3.0);
     blokProgHp = s.getDouble("blok_prog_hp", 0.25);
     tarcza = s.getDouble("tarcza", 0.5);
+    blokObuch = s.getDouble("blok_obuch", 2.0);
     parowanieZwrot = s.getDouble("parowanie_zwrot", 1.0);
     peknietaGardaTicki = s.getInt("peknieta_garda_ticki", 40);
     wspMin = s.getDouble("wspolczynnik_min", 0.4);
@@ -92,6 +95,12 @@ final class Wytrzymalosc implements Listener {
   double kosztMocnego(Player p, double mnoznikWariantu) { return kosztLekkiego(p) * mnoznikWariantu; }
 
   double kosztSzturchniecia(Player p) { return kosztLekkiego(p) * szturchniecie; }
+
+  /** Stamina jako ulamek maks. (0..1); 1, gdy brak danych. */
+  double ulamekStaminy(Player p) {
+    double maks = MMOPlayerData.get(p).getStatMap().getStat("MAX_STAMINA");
+    return maks <= 0 ? 1 : Math.max(0, Math.min(1, stamina(p) / maks));
+  }
 
   double stamina(Player p) {
     PlayerData d = PlayerData.get(p);
@@ -163,26 +172,31 @@ final class Wytrzymalosc implements Listener {
 
   /**
    * Zablokowany cios kosztuje tyle, ile wazyl: od blok_min L (lekki cios) do blok_max L (cios za blok_prog_hp
-   * maks. zdrowia lub wiecej); tarcza polowe. Brak staminy = garda peka (cooldown przedmiotu, opuszczona reka).
+   * maks. zdrowia lub wiecej); tarcza polowe, cios bronia obuchowa gracza x blok_obuch. Brak staminy = garda peka
+   * (cooldown przedmiotu, opuszczona reka). Liczy sie cios w kacie najszerszej warstwy blocks_attacks aktywnej gardy
+   * (bron: przod, tarcza: przod i bok) - takze gdy oslabiony blok (AnimacjeBroni#stronaTrafienia) spadl do zera.
    */
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void blok(EntityDamageByEntityEvent e) {
     // obrazenia 0 = udane parowanie (AnimacjeBroni#parowanie) - ono zwraca stamine zamiast kosztowac;
     // ~0 to nie cios (zmierzone na klonie: SLIME o nieustalonym pochodzeniu, 2e-8 co tick przy dotyku) - inaczej garda topnialaby od widm
     if (!wlaczona || !(e.getEntity() instanceof Player p) || !p.isBlocking() || e.getDamage() < 0.01) return;
-    Vector doNapastnika = e.getDamager().getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
-    Vector patrzy = p.getLocation().getDirection().setY(0);
-    if (doNapastnika.lengthSquared() < 1e-4 || patrzy.lengthSquared() < 1e-4
-        || Math.toDegrees(doNapastnika.angle(patrzy)) > 90) return;
     ItemStack garda = p.getActiveItem();
+    BlocksAttacks ba = garda.getData(DataComponentTypes.BLOCKS_ATTACKS);
+    if (ba == null) return;
+    double katGardy = 0;
+    for (DamageReduction r : ba.damageReductions()) katGardy = Math.max(katGardy, r.horizontalBlockingAngle());
+    double kat = plugin.katTrafienia(p, e.getDamager());
+    if (Double.isNaN(kat) || kat > katGardy) return;
     boolean zTarcza = garda.getType() == Material.SHIELD;
     var hp = p.getAttribute(Attribute.MAX_HEALTH);
     double prog = Math.max(1, (hp == null ? 20 : hp.getValue()) * blokProgHp);
     double l = blokMin + (blokMax - blokMin) * Math.min(1, e.getDamage() / prog);
-    double koszt = jednostka(p) * l * (zTarcza ? tarcza : 1);
+    boolean obuch = e.getDamager() instanceof Player napastnik && plugin.obuchowa(napastnik);
+    double koszt = jednostka(p) * l * (zTarcza ? tarcza : 1) * (obuch ? blokObuch : 1);
     boolean ok = wydaj(p, koszt);
-    plugin.dbgWytrzymalosci(String.format(java.util.Locale.ROOT, "BLOK_STAMINA cios=%.2f L=%.2f koszt=%.2f tarcza=%b peka=%b",
-        e.getDamage(), l, koszt, zTarcza, !ok));
+    plugin.dbgWytrzymalosci(String.format(java.util.Locale.ROOT, "BLOK_STAMINA cios=%.2f L=%.2f koszt=%.2f tarcza=%b obuch=%b kat=%d peka=%b",
+        e.getDamage(), l, koszt, zTarcza, obuch, Math.round(kat), !ok));
     if (ok) return;
     wydajIleSie(p, koszt);
     if (!garda.getType().isAir()) p.setCooldown(garda, peknietaGardaTicki);

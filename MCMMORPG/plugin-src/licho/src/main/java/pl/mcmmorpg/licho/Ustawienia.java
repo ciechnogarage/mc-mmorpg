@@ -30,6 +30,9 @@ final class Ustawienia {
   record Prog(int ile, String nazwa) {}
   final int tytulyMinGraczy;
   final List<Prog> tytulyLicho, tytulyZamawiacz;
+  final int cwBoty, cwRozproszenie, cwLowy, cwPrzeprowadzkaMin, cwPrzeprowadzkaMax, cwPsotaCo, cwLot;
+  final double cwUcieczkaMin, cwUcieczkaMax, cwSpokoj;
+  final List<String> cwImiona;
 
   Ustawienia(FileConfiguration c) {
     swiat = c.getString("swiat", "licho");
@@ -79,6 +82,18 @@ final class Ustawienia {
     tytulyMinGraczy = c.getInt("tytuly.min-graczy", 4);
     tytulyLicho = progi(c, "tytuly.licho");
     tytulyZamawiacz = progi(c, "tytuly.zamawiacz");
+    cwBoty = Math.max(1, Math.min(max - 1, c.getInt("cwiczenie.boty", 3)));
+    cwRozproszenie = s(c, "cwiczenie.rozproszenie", 5);
+    cwLowy = s(c, "cwiczenie.lowy", 150);
+    cwPrzeprowadzkaMin = s(c, "cwiczenie.przeprowadzka-co-min", 40);
+    cwPrzeprowadzkaMax = Math.max(cwPrzeprowadzkaMin, s(c, "cwiczenie.przeprowadzka-co-max", 70));
+    cwSpokoj = c.getDouble("cwiczenie.przeprowadzka-spokoj", 6);
+    cwPsotaCo = s(c, "cwiczenie.psota-co", 30);
+    cwLot = Math.max(5, Math.min(59, s(c, "cwiczenie.lot", 1.5)));
+    cwUcieczkaMin = c.getDouble("cwiczenie.ucieczka-min", 4);
+    cwUcieczkaMax = Math.max(cwUcieczkaMin + 1, c.getDouble("cwiczenie.ucieczka-max", 12));
+    List<String> im = c.getStringList("cwiczenie.imiona");
+    cwImiona = im.isEmpty() ? List.of("Psotek", "Skrzat", "Kłębek", "Mruk", "Pokrzyk", "Bieda") : im;
   }
 
   /** {ile: nazwa} -> rosnąco po progu. */
