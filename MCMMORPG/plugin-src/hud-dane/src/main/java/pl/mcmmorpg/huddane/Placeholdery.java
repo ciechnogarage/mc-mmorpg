@@ -50,7 +50,11 @@ final class Placeholdery extends PlaceholderExpansion {
       String[] z = pl.nawigacja.zadanie(p);
       return switch (k) {
         case "zadanie_jest" -> z == null ? "nie" : "tak";
-        case "zadanie_tytul" -> z == null ? "" : z[0];
+        case "zadanie_tytul" -> {
+          if (z == null) yield "";
+          String[] kr = pl.nawigacja.kierunek(p, z[2]);
+          yield pl.nawigacja.tytul(z[0], z[1], kr == null ? "" : kr[1] + " m");
+        }
         case "zadanie_postep" -> z == null ? "" : z[1];
         case "zadanie_krok" -> z == null ? "" : pl.nawigacja.krok(z[2]);
         case "zadanie_krok_1" -> z == null ? "" : pl.nawigacja.linia(z[2], 1);
