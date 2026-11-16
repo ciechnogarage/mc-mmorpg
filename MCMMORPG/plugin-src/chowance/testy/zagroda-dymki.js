@@ -108,12 +108,16 @@ scenariusz('chowance-zagroda-dymki', async ({ w, polacz, rcon }) => {
   await sleep(2000);
 
   log('krok 5');
-  // ---- 5. krok 1/4 (przywołanie): bez tytułu na środku ekranu, pasek + 1 linia czatu
-  const tytulT = A._e.titleT; const czatN = A._e.czat.length;
-  A.chat('/chw przywolaj 1'); await sleep(2600);
+  // ---- 5. krok 1/4 (przywołanie): bez tytułu, bez paska i bez czatu — postęp tylko w trackerze celu po lewej
+  //      (decyzja właściciela 16.11: „postęp nie może być po lewej na questach … nie będzie śmiecić”)
+  const tytulT = A._e.titleT; const czatN = A._e.czat.length; const histN = A._e.historia.length;
+  A.chat('/chw przywolaj 1'); await sleep(3200);
   const noweCzat = A._e.czat.slice(czatN).map(czysc);
+  const nowePaski = A._e.historia.slice(histN).filter(h => h.co === 'actionbar').map(h => czysc(h.txt));
+  const uiGoal = await stan.papi(A.username, '%luckperms_meta_ui_goal%');
   w.sprawdz('krok-bez-tytulu', A._e.titleT === tytulT, 'zaliczenie kroku nie pokazuje tytułu', `title="${czysc(A._e.title)}"`);
-  w.sprawdz('krok-pasek', /Krok 1\/4/.test(A._e.actionbar), 'pasek „Krok 1/4 ✔ · Dalej”', A._e.actionbar);
-  w.sprawdz('krok-czat-1-linia', noweCzat.filter(l => /Pierwsze kroki/.test(l)).length <= 1, 'najwyżej 1 linia „Pierwsze kroki” na czacie', noweCzat.join(' | '));
+  w.sprawdz('krok-bez-paska', !nowePaski.some(t => /Krok 1\/4/.test(t)), 'brak paska „Krok 1/4” przy widocznym trackerze', `ui_goal="${uiGoal}" paski: ${nowePaski.join(' | ')}`);
+  w.sprawdz('krok-bez-czatu', noweCzat.filter(l => /Pierwsze kroki/.test(l)).length === 0, '0 linii „Pierwsze kroki” na czacie', noweCzat.join(' | '));
+  w.sprawdz('krok-w-trackerze', (await stan.papi(A.username, '%chowance_kroki_postep%')).trim() === '1/4', 'tracker: postęp 1/4', await stan.papi(A.username, '%chowance_kroki_postep%'));
   console.log(A._e.opis({ okno: false, czat: 12 }));
 }, { limitMs: 480000 });

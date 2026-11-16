@@ -67,9 +67,13 @@ public final class PierwszeKroki implements Listener {
     // (klient QA 03.10: długi tekst wychodził poza ekran z obu stron).
     // Po 1,5 s: akcja kroku (np. „Przywołano: …” z Przywolania) pisze swój pasek zaraz po zdarzeniu i nadpisywała
     // „Krok N/4 ✔” (test zagroda-dymki 16.11) — bez tytułu pasek jest głównym znakiem postępu, więc idzie po niej.
+    // Decyzja właściciela 16.11: „postęp nie może być po lewej na questach skoro i tak tam są? nie będzie śmiecić” —
+    // gdy tracker celu MythicHUD (ui_goal) jest widoczny, krok pośredni = tylko dźwięk; tracker sam pokazuje N/4 i dalszy cel.
+    // Pasek + linia czatu zostają jako zapas dla gracza, który ukrył cel.
+    boolean tracker = celNaHud(p);
     String pasekKroku = dalej == 0 ? "<gold>Wszystkie pierwsze kroki ukończone!" : "<green>Krok " + krok + "/4 ✔ <gray>· Dalej: <white>" + c.ust.krokiOpisy.get(dalej - 1);
-    Bukkit.getScheduler().runTaskLater(c.plugin, () -> { if (p.isOnline()) c.pasek(p, pasekKroku); }, 30L);
-    if (dalej > 0) c.msg(p, "<gold>[Pierwsze kroki " + Kroki.postep(d.pierwszeKrokiMaska) + "/4]</gold> <white>" + c.ust.krokiWskazowki.get(dalej - 1));
+    if (dalej == 0 || !tracker) Bukkit.getScheduler().runTaskLater(c.plugin, () -> { if (p.isOnline()) c.pasek(p, pasekKroku); }, 30L);
+    if (dalej > 0 && !tracker) c.msg(p, "<gold>[Pierwsze kroki " + Kroki.postep(d.pierwszeKrokiMaska) + "/4]</gold> <white>" + c.ust.krokiWskazowki.get(dalej - 1));
     // Tytuł na środku ekranu tylko na koniec wszystkich kroków; pośrednie = pasek + dźwięk + jedna linia „jak”
     // (zgłoszenie 16.11: „czy musi spamować na cały ekran postęp questa”). Bieżący cel pokazuje też HUD (ui_goal).
     if (dalej == 0) {
