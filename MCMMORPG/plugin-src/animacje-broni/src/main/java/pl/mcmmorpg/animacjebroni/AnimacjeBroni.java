@@ -147,6 +147,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private final Map<UUID, Input> nowyInput = new HashMap<>(); // wejscie z PlayerInputEvent (getCurrentInput jeszcze stary)
   /** Sprint w chwili wcisniecia PPM (w trakcie ladowania sprint jest wylaczony, a z_rozbiegu ma byc osiagalny). */
   private final Set<UUID> sprintPrzyLadowaniu = new HashSet<>();
+  /** Tick zwodu (Shift w trakcie ladowania PPM): puszczenie PPM w tym ticku nie zadaje ciosu. */
+  private final Map<UUID, Integer> zwodTick = new HashMap<>();
+  private boolean zwodWlaczony;
+  private double zwodStamina;
   /** Tick ostatniego machniecia - naladowanie lekkiego ciosu do kosztu staminy liczone niezaleznie od licznika serwera. */
   private final Map<UUID, Integer> ostatnieMachniecie = new HashMap<>();
   /** Gracze kopiacy blok (LPM trzymany na bloku): klient macha w petli, to nie sa ciosy (19.10: 62 "ciosy" i pusty pasek w 2 s). */
@@ -217,6 +221,8 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     odnowienieMocnegoTicki = getConfig().getInt("mocny.odnowienie", 20);
     odnowienieSzturchniecia = getConfig().getInt("mocny.szturchniecie_odnowienie", 20);
     zmeczenieMocnego = getConfig().getInt("mocny.zmeczenie", 60);
+    zwodWlaczony = getConfig().getBoolean("mocny.zwod", true);
+    zwodStamina = getConfig().getDouble("mocny.zwod_stamina", 0.5);
     mnoznikSzturchniecia = getConfig().getDouble("mocny.szturchniecie_mnoznik", 0.5);
     bazowyMnoznikMocnego = getConfig().getDouble("mocny.bazowy_mnoznik", 0.8);
     progRytmu = getConfig().getDouble("rytm.prog_rytmu", 0.9);
@@ -515,6 +521,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     programowyZamach.remove(id);
     tickProgramowegoZamachu.remove(id);
     sprintPrzyLadowaniu.remove(id);
+    zwodTick.remove(id);
     ostatnieMachniecie.remove(id);
     kopie.remove(id);
   }
@@ -550,6 +557,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void wejscieRuchu(PlayerInputEvent e) {
+    zwod(e.getPlayer(), e.getInput());
     nowyInput.put(e.getPlayer().getUniqueId(), e.getInput());
     try { dopasujDlonie(e.getPlayer(), false); } finally { nowyInput.remove(e.getPlayer().getUniqueId()); }
   }
@@ -562,6 +570,35 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void podniesienie(EntityPickupItemEvent e) { if (e.getEntity() instanceof Player p) pozniej(p); }
+
+  /**
+   * Zwod: swieze wcisniecie Shift w trakcie ladowania mocnego ciosu (przed pelnym ladunkiem) przerywa ladowanie bez ciosu.
+   * Reka opada, wiec dopasujDlonie zaraz potem moze zalozyc garde; klient z trzymanym PPM sam ponawia uzycie.
+   * Seria i kombo nie przepadaja, odnowienie mocnego nie startuje. Koszt: mocny.zwod_stamina jednostek L.
+   */
+  private void zwod(Player p, Input nowe) {
+    if (!zwodWlaczony || !nowe.isSneak() || p.getCurrentInput().isSneak() || !p.isHandRaised()
+        || p.getActiveItemHand() != org.bukkit.inventory.EquipmentSlot.HAND
+        || !p.getInventory().getItemInOffHand().getType().isAir()) return;
+    ItemStack bron = p.getInventory().getItemInMainHand();
+    Ustawienie u = ustawienie(bron);
+    if (u == null || u.ciezkie() == null || maUmiejetnoscPpm(bron) || !bron.hasData(DataComponentTypes.CONSUMABLE)
+        || bron.hasData(DataComponentTypes.BLOCKS_ATTACKS) || p.getActiveItem().getType() != bron.getType()) return;
+    int ticki = p.getActiveItemUsedTime();
+    if (ticki >= u.ciezkie().pelne()) {
+      dbg("ZWOD typ=" + NBTItem.get(bron).getType() + " ticki=" + ticki + " wynik=za_pozno");
+      return;
+    }
+    UUID id = p.getUniqueId();
+    zwodTick.put(id, getServer().getCurrentTick());
+    sprintPrzyLadowaniu.remove(id);
+    sygnalMocnego.remove(id);
+    if (wytrzymalosc != null && wytrzymalosc.wlaczona())
+      wytrzymalosc.wydajIleSie(p, wytrzymalosc.jednostka(p) * zwodStamina);
+    p.clearActiveItem();
+    p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, SoundCategory.PLAYERS, 0.6f, 1.4f);
+    dbg("ZWOD typ=" + NBTItem.get(bron).getType() + " ticki=" + ticki + " wynik=zwod uniesiona=" + p.isHandRaised());
+  }
 
   /** Puszczenie PPM konczy ladowanie. Komponenty i zamach przestawiamy tick pozniej, po skonczeniu uzywania. */
   @EventHandler(priority = EventPriority.MONITOR)
@@ -608,6 +645,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     sygnalMocnego.remove(id);
     int teraz = getServer().getCurrentTick();
     int ticki = e.getTicksHeldFor();
+    Integer zw = zwodTick.remove(id);
+    if (zw != null && zw == teraz) {
+      dbg("MOCNY typ=" + NBTItem.get(item).getType() + " wariant=zwod ticki=" + ticki + " obrazenia=0");
+      return;
+    }
     if (odnowienieMocnego.getOrDefault(id, 0) > teraz) {
       dbg("MOCNY typ=" + NBTItem.get(item).getType() + " wariant=odnowienie ticki=" + ticki + " obrazenia=0 stamina=0");
       return;
