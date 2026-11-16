@@ -29,7 +29,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Szybki wybor jak ulubione w Skyrimie: Shift+Q wlacza pasek wszystkich zaklec Ksiegi (ulubione ★ na poczatku) jedna linia
- * w pasku akcji nad hotbarem (bez okna — gracz dalej chodzi i patrzy), Shift+Q albo Q wylacza. Gdy wlaczony: kolko
+ * w pasku akcji nad hotbarem (bez okna — gracz dalej chodzi i patrzy), Shift+Q albo Q wylacza, udany wybor tez. Gdy wlaczony: kolko
  * (albo klawisz 1-9) wybiera pozycje, LPM wklada ja do PRAWEJ dloni, PPM do LEWEJ (jak w vanilli). Po 15 s bez ruchu
  * zamyka sie sam.
  * Do 15.11 pasek byl dwoma BossBarami u gory; nachodzil na karte gracza MythicHUD (przy GUI 4 i 1080p u gory nie ma
@@ -178,10 +178,13 @@ final class Wybor implements Listener {
     String wynik = nosnik.przypisz(p, id, prawa);
     boolean sukces = !wynik.startsWith("§c");
     s.ostatnio = System.currentTimeMillis();
-    odswiez(p, s, PRIO_LISTA);
-    // komunikat chwile nad lista (lista wraca z timera albo od razu po ruchu kolkiem)
-    Nosnik.pasek(p, sukces ? "§f" + (id == null ? "Pusta" : ksiega.poId.get(id).nazwa())
-        + " §7→ " + (prawa ? "prawa" : "lewa") + " dłoń" : wynik, PRIO_KOMUNIKAT, TIKI_KOMUNIKATU);
+    // Udany wybor zamyka pasek (16.11: otwarty pasek po przypisaniu + drugie Shift+Q, ktore go zamykalo, dawaly
+    // „nie da się zdjąć” — kolko zmienialo slot, PPM rzucal zamiast zdejmowac). Odmowa zostawia pasek otwarty.
+    if (sukces) zamknij(p, p.getUniqueId()); else odswiez(p, s, PRIO_LISTA);
+    // „§7… dłoń jest pusta.” = zdjecie (takze ponownym wyborem tego samego zaklecia w tej dloni)
+    Nosnik.pasek(p, sukces && wynik.startsWith("§7") ? wynik : sukces ? "§f" + (id == null ? "Pusta" : ksiega.poId.get(id).nazwa())
+        + " §7→ " + (prawa ? "prawa" : "lewa") + " dłoń" : wynik,
+        sukces ? PRIO_RUCH : PRIO_KOMUNIKAT, TIKI_KOMUNIKATU);   // po zamknieciu (zgaszenie 41) komunikat musi przejsc
     if (sukces) {
       p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.3f);
       p.getPersistentDataContainer().set(kluczUmie(), PersistentDataType.BYTE, (byte) 1);

@@ -168,8 +168,23 @@ final class Nosnik implements Listener {
   private boolean ksiegaRak() { return org.bukkit.Bukkit.getPluginCommand("ksiegareka") != null; }
 
   private void ksiegaRak(Player p, String akcja, boolean prawa) {
-    org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(),
-        "ksiegareka " + p.getName() + " " + akcja + " " + (prawa ? "prawa" : "lewa"));
+    // Executor wprost, nie Bukkit.dispatchCommand: gdy przypisanie przychodzi z komendy konsoli (menu Ksiegi
+    // DeluxeMenus [console], RCON), zagniezdzona komenda wykonywala sie PO sprawdzeniu reki — gracz dostawal
+    // „broń z prawej dłoni nie ma gdzie trafić”, a miecz i tak szedl do zapasu, bez zaklecia w dloni
+    // (16.11, klon zaklecia-rece: menu 1. klik = nic, 2. klik = zaklecie). Pasek Shift+Q (zdarzenie gracza) dzialal.
+    org.bukkit.command.PluginCommand k = org.bukkit.Bukkit.getPluginCommand("ksiegareka");
+    if (k != null) k.execute(org.bukkit.Bukkit.getConsoleSender(), "ksiegareka",
+        new String[] {p.getName(), akcja, prawa ? "prawa" : "lewa"});
+  }
+
+  /** Zaklecie prawej dloni (jeden nosnik w pasku/plecaku, poza pusta dlonia) albo null. */
+  Ksiega.Zaklecie prawaDlon(Player p) {
+    PlayerInventory inv = p.getInventory();
+    for (int s = 0; s < 36; s++) {
+      ItemStack i = inv.getItem(s);
+      if (jest(i) && !pusta(i)) return ksiega.w(i);
+    }
+    return null;
   }
 
   private static boolean wolne(ItemStack i) { return i == null || i.getType().isAir(); }
@@ -180,6 +195,12 @@ final class Nosnik implements Listener {
     if (id != null && z == null) return "§cNieznane zaklęcie: " + id;
     if (id != null && !plugin.bramka.wolno(p)) return Bramka.ODMOWA;
     PlayerInventory inv = p.getInventory();
+    // Ponowny wybor tego samego zaklecia na te sama dlon zdejmuje je (jak w Skyrimie; decyzja wlasciciela 16.11:
+    // „ponowne wybranie spella nie wywala go z ręki”). Dotyczy Ksiegi zaklec, paska Shift+Q i komendy — wszystkie tu.
+    if (id != null) {
+      Ksiega.Zaklecie wDloni = prawa ? prawaDlon(p) : ksiega.w(inv.getItemInOffHand());
+      if (wDloni != null && wDloni.id().equals(id)) id = null;
+    }
     // Z Ksiega postaci zaklecie zajmuje AKTYWNA reke (prawa = slot 0, lewa = offhand), a bron tej reki Ksiega
     // odklada do zapasu reki (11/12) albo plecaka; „Pusta” oddaje ja z zapasu. Wczesniej nosnik szedl w wolny slot
     // paska, a lewa bron addItem-em na pasek: dwie te same bronie na pasku (zgloszenie wlasciciela 16.11).

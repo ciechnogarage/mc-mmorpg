@@ -10,6 +10,11 @@ Plugin prowadzi rzucanie zaklęć koncentracji, a MythicMobs rysuje efekty i zad
   jako konsola) lub pasek Shift+Q. Nośnika nie da się wyrzucić, przenieść, włożyć do ramki, doniczki, półki ani skarbca.
   Z ksiega-postaci (komenda `ksiegareka` istnieje) broń z ręki odkłada Księga (`ksiegareka <gracz> odloz|przywroc
   <prawa|lewa>`): prawe zaklęcie zawsze w slocie 0, lewe w offhandzie, „Pusta” oddaje broń. Bez Księgi — stary `addItem`.
+  **Ponowny wybór tego samego zaklęcia na tę samą dłoń zdejmuje je** (jak „Pusta”; Księga zaklęć, Shift+Q, komenda —
+  wszystko w `Nosnik.przypisz`; właściciel 16.11: „ponowne wybranie spella nie wywala go z ręki”). Udany wybór na pasku
+  Shift+Q zamyka pasek, odmowa zostawia go otwartym. `ksiegareka` wołana przez `PluginCommand.execute`, nie
+  `Bukkit.dispatchCommand`: z komendy konsoli (menu DeluxeMenus `[console]`, RCON) zagnieżdżony dispatch wykonywał się
+  po sprawdzeniu ręki → 1. klik w menu = „Zwolnij miejsce…”, miecz w zapasie, ręka pusta (klon 16.11).
 - **Bramka klasy** (`Bramka.java`, decyzja właściciela 21.10): rzucać i brać zaklęcie do dłoni mogą tylko klasy MMOCore
   z `plugins/Zaklecia/klasy.yml` → `dozwolone-klasy` (id klas, wielkość liter bez znaczenia). Plik pisze
   `tools/klasy-rasowe/generuj_klasy.py` (wszystkie klasy archetypów mag i akolita). Brak pliku lub pusta lista = bramka wyłączona.

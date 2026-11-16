@@ -429,6 +429,18 @@ final class Bron implements Listener {
           iconName(side), "§8Puste", key);
       return right ? icon : hiddenInHand(icon);
     }
+    if (spell(source)) {
+      // Zaklecie nie jest przedmiotem ekwipunku: obraz reki pokazuje dlon z nazwa zaklecia, nie ikone czaru
+      // w siatce okna E (wlasciciel 16.11: „chujowo jak wpada skill do eq przecież to nonsens”).
+      String side = right ? "pusta-prawa" : "pusta-lewa";
+      ItemMeta m = source.getItemMeta();
+      String nazwa = (m != null && m.hasDisplayName() ? m.getDisplayName()
+          : m != null && m.hasItemName() ? m.getItemName() : "zaklęcie").replaceAll("§.", "");
+      ItemStack icon = Przedmioty.icon(plugin.getConfig().getString("ikony." + side, "nexo:mmo_icon_gloves"),
+          (right ? "§7Prawa ręka: §f" : "§7Lewa ręka: §f") + nazwa,
+          "§8Zaklęcie w dłoni, broń w zapasie. Wybierz je jeszcze raz, żeby zdjąć.", key);
+      return right ? icon : hiddenInHand(icon);
+    }
     // Nowy stos kopiuje wyłącznie komponenty wizualne, nigdy CUSTOM_DATA/NBT/PDC MMOItems.
     ItemStack result = new ItemStack(source.getType(), 1);
     result.copyDataFrom(source, IMAGE_COMPONENTS::contains);

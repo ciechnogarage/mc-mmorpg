@@ -152,7 +152,12 @@ Komenda konsoli (`ksiegapostaci.portal.admin`), umowa z pluginem Zaklecia bez za
 - `ksiegareka <gracz> odloz <prawa|lewa>` — `Zaklecia/Nosnik.przypisz` przed włożeniem nośnika. Broń z tej ręki idzie
   do pustego zapasu tej ręki (11/12, z regułą dwuręczności; flaga PDC `ksiega:pod_zakleciem_*`), inaczej do plecaka 14–35.
   Brak miejsca → broń zostaje, Zaklecia pokazuje „Zwolnij miejsce…”. Prawe zaklęcie zawsze w slocie 0, lewe w offhandzie;
-  obrazy 1/13 pokazują zaklęcie (wcześniej `addItem` przenosił broń na pasek → dwie te same bronie, slot 1 dalej z tarczą).
+  wcześniej `addItem` przenosił broń na pasek → dwie te same bronie, slot 1 dalej z tarczą.
+- Obraz ręki z zaklęciem (1 lewa, 13 prawa) to ikona dłoni `ikony.pusta-*` z nazwą „Prawa/Lewa ręka: <zaklęcie>”,
+  nie kopia nośnika: zaklęcie nie jest przedmiotem ekwipunku i nie pokazuje się w siatce plecaka okna E (właściciel 16.11:
+  „chujowo jak wpada skill do eq przecież to nonsens”; klon zaklecia-rece: ikona czaru w 13 → `mmo_icon_right_hand`).
+- Gdy zapas ręki był zajęty i broń poszła do plecaka 14–35, zdjęcie zaklęcia jej NIE oddaje (flaga tylko dla zapasu) —
+  ręka zostaje pusta, broń w plecaku (sprawdzone na klonie 16.11, nic nie ginie).
 - `ksiegareka <gracz> przywroc <prawa|lewa>` — po wyborze „Pusta” broń odłożona do zapasu wraca do ręki.
 - Shift+F z zaklęciem w ręce: zaklęcia zdjęte, potem zwykła zamiana z zapasem (gdy oba zapasy puste — nic).
 - `ksiegareka <gracz> uzbroj` — koniec zestawu startowego (`tools/klasy-rasowe/generuj_klasy.py` → CoreTools
