@@ -18,13 +18,12 @@ L1R_PAK:
   Equipment:
   - FLOWERING_AZALEA HEAD
   Skills:
-  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
   - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
   - addtag{tag=l1r_pak} @self ~onSpawn
   - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
   - skill{s=L1R_PAK_DOJRZEWA} @self ~onSpawn
   - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
-  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn
+  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn   # tu tez IsBaby (funkcja l1r:kolejka)
   - skill{s=L1R_PAK_USYCHA} @self ~onTimer:5 ?hastag{t=l1r_usycha}
 L1R_PAK_DUZY:
   Type: ZOMBIE
@@ -42,13 +41,12 @@ L1R_PAK_DUZY:
   Equipment:
   - FLOWERING_AZALEA HEAD
   Skills:
-  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
   - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
   - addtag{tag=l1r_pak_duzy} @self ~onSpawn
   - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
   - skill{s=L1R_PAK_DUZY_DOJRZEWA} @self ~onSpawn
   - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
-  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn
+  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn   # tu tez IsBaby (funkcja l1r:kolejka)
   - skill{s=L1R_PAK_USYCHA} @self ~onTimer:5 ?hastag{t=l1r_usycha}
 L1R_PAK_SIEWCY:
   Type: ZOMBIE
@@ -65,13 +63,12 @@ L1R_PAK_SIEWCY:
   Equipment:
   - DANDELION HEAD
   Skills:
-  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
   - potion{type=INVISIBILITY;duration=999999;level=0;hasParticles=false} @self ~onSpawn
   - addtag{tag=l1r_pak} @self ~onSpawn
   - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
   - skill{s=L1R_PAK_SIEWCY_DOJRZEWA} @self ~onSpawn
   - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
-  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn
+  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn   # tu tez IsBaby (funkcja l1r:kolejka)
   - skill{s=L1R_PAK_USYCHA} @self ~onTimer:5 ?hastag{t=l1r_usycha}
 # Korzen: krag 3x3 na 8 s, spowalnia i trzyma WSZYSTKO (gracze i wrogowie)
 L1R_KORZEN:
@@ -103,7 +100,7 @@ L1R_PNIACZEK:
   - OAK_LEAVES HEAD
   Skills:
   # Baby: true NIE dziala na HUSK w 1.21.11 (klon 16.11: IsBaby 0b); data merge przy spawnie dziala (1b)
-  - command{c="minecraft:data merge entity <caster.uuid> {IsBaby:1b}"} @self ~onSpawn
+  - command{c="minecraft:execute as <caster.uuid> run function l1r:maly"} @self ~onSpawn
   - sound{s=block.azalea.step;v=1.2;p=1.4} @self ~onTimer:24
   - sound{s=entity.fox.squeak;v=0.8;p=1.6} @self ~onDeath
   - summon{type=L1R_PAK;amount=1;noise=0} @self ~onDeath

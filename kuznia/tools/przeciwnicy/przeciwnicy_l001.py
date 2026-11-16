@@ -59,13 +59,12 @@ L1R_PAK:
   Equipment:
   - FLOWERING_AZALEA HEAD
   Skills:
-  - command{{c="minecraft:data merge entity <caster.uuid> {{IsBaby:1b}}"}} @self ~onSpawn
   - potion{{type=INVISIBILITY;duration=999999;level=0;hasParticles=false}} @self ~onSpawn
   - addtag{{tag=l1r_pak}} @self ~onSpawn
   - setvariable{{var=caster.dojrzewa;val=1;type=INTEGER}} @self ~onSpawn
   - skill{{s=L1R_PAK_DOJRZEWA}} @self ~onSpawn
   - skill{{s=L1R_PAK_ZDEPTANY}} @self ~onDeath
-  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn
+  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn   # tu tez IsBaby (funkcja l1r:kolejka)
   - skill{{s=L1R_PAK_USYCHA}} @self ~onTimer:5 ?hastag{{t=l1r_usycha}}
 L1R_PAK_DUZY:
   Type: ZOMBIE
@@ -83,13 +82,12 @@ L1R_PAK_DUZY:
   Equipment:
   - FLOWERING_AZALEA HEAD
   Skills:
-  - command{{c="minecraft:data merge entity <caster.uuid> {{IsBaby:1b}}"}} @self ~onSpawn
   - potion{{type=INVISIBILITY;duration=999999;level=0;hasParticles=false}} @self ~onSpawn
   - addtag{{tag=l1r_pak_duzy}} @self ~onSpawn
   - setvariable{{var=caster.dojrzewa;val=1;type=INTEGER}} @self ~onSpawn
   - skill{{s=L1R_PAK_DUZY_DOJRZEWA}} @self ~onSpawn
   - skill{{s=L1R_PAK_ZDEPTANY}} @self ~onDeath
-  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn
+  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn   # tu tez IsBaby (funkcja l1r:kolejka)
   - skill{{s=L1R_PAK_USYCHA}} @self ~onTimer:5 ?hastag{{t=l1r_usycha}}
 L1R_PAK_SIEWCY:
   Type: ZOMBIE
@@ -106,13 +104,12 @@ L1R_PAK_SIEWCY:
   Equipment:
   - DANDELION HEAD
   Skills:
-  - command{{c="minecraft:data merge entity <caster.uuid> {{IsBaby:1b}}"}} @self ~onSpawn
   - potion{{type=INVISIBILITY;duration=999999;level=0;hasParticles=false}} @self ~onSpawn
   - addtag{{tag=l1r_pak}} @self ~onSpawn
   - setvariable{{var=caster.dojrzewa;val=1;type=INTEGER}} @self ~onSpawn
   - skill{{s=L1R_PAK_SIEWCY_DOJRZEWA}} @self ~onSpawn
   - skill{{s=L1R_PAK_ZDEPTANY}} @self ~onDeath
-  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn
+  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn   # tu tez IsBaby (funkcja l1r:kolejka)
   - skill{{s=L1R_PAK_USYCHA}} @self ~onTimer:5 ?hastag{{t=l1r_usycha}}
 # Korzen: krag 3x3 na 8 s, spowalnia i trzyma WSZYSTKO (gracze i wrogowie)
 L1R_KORZEN:
@@ -140,7 +137,7 @@ L1R_PNIACZEK:
   - OAK_LEAVES HEAD
   Skills:
   # Baby: true NIE dziala na HUSK w 1.21.11 (klon 16.11: IsBaby 0b); data merge przy spawnie dziala (1b)
-  - command{{c="minecraft:data merge entity <caster.uuid> {{IsBaby:1b}}"}} @self ~onSpawn
+  - command{{c="minecraft:execute as <caster.uuid> run function l1r:maly"}} @self ~onSpawn
   - sound{{s=block.azalea.step;v=1.2;p=1.4}} @self ~onTimer:24
   - sound{{s=entity.fox.squeak;v=0.8;p=1.6}} @self ~onDeath
 {PAK_MALY}
@@ -241,28 +238,24 @@ SKILLS = """# Skille przeciwnikow remake'u Lochu 001 (caster = mob, delay dozwol
 # ---- PAK (R1). Dojrzewanie: 4 s spokoju, 1 s pecznienia i swiecenia, skutek. Zdeptany = remove (test: czy opozniony
 #      lancuch umiera z rzucajacym - flaga caster.dojrzewa jako bezpiecznik). ----
 # ---- KOLEJKA R1 (karta §13 wiersz 1): limit 12 aktywnych pakow na instancje, 13. wypiera NAJSTARSZY AKTYWNY.
-#      Numer z jednego rosnacego licznika l1r.nr (porzadek wystarczy, swiat niepotrzebny); instancje rozdziela distance=..300
-#      w execute at <pak> (selektor z distance patrzy tylko w wymiar paka). Obiekt 'l1r_pak dummy' zaklada sie RAZ na
-#      serwer (scoreboard jest wspolny dla swiatow): minecraft:scoreboard objectives add l1r_pak dummy.
-#      Wszystkie linie w jednym ticku, wiec wspolne l1r.ile/l1r.min nie mieszaja sie miedzy instancjami.
+#      Logika w datapacku l1r (DATAPACK nizej, wynik levels/przeciwnicy/datapack/l1r -> <swiat>/datapacks/l1r):
+#      komendy wewnatrz funkcji nie loguja nic, jedno wywolanie z MM = 1 linia "Running function" (klon 16.11:
+#      2 linie na pak zamiast 5, przepelnienie bez dodatkowych linii). Obiekt l1r_pak zaklada #minecraft:load.
+#      Numer z jednego rosnacego licznika l1r.nr; instancje rozdziela distance=..300 (execute at <pak>, ten sam wymiar).
+#      Wszystko w jednym ticku, wiec wspolne l1r.ile/l1r.min nie mieszaja sie miedzy instancjami.
 #      Liczone i wybierane TYLKO paki z numerem (scores=1..): przy kilku pakach z jednego ticku (klon 16.11, spawn 14 naraz)
 #      pierwszy przechodzil kolejke, gdy reszta miala juz tag, ale nie numer (score 0) -> usychalo 13 zamiast 2.
 L1R_PAK_KOLEJKA:
   Skills:
   - addtag{tag=l1r_pq} @self
-  - command{c="minecraft:scoreboard players add l1r.nr l1r_pak 1"} @self
-  - command{c="minecraft:scoreboard players operation <caster.uuid> l1r_pak = l1r.nr l1r_pak"} @self
-  - command{c="minecraft:execute at <caster.uuid> store result score l1r.ile l1r_pak if entity @e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300]"} @self
-  - command{c="minecraft:execute if score l1r.ile l1r_pak matches 13.. run scoreboard players set l1r.min l1r_pak 2147483647"} @self
-  - command{c="minecraft:execute if score l1r.ile l1r_pak matches 13.. at <caster.uuid> as @e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300] run scoreboard players operation l1r.min l1r_pak < @s l1r_pak"} @self
-  - command{c="minecraft:execute if score l1r.ile l1r_pak matches 13.. at <caster.uuid> as @e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300] if score @s l1r_pak = l1r.min l1r_pak run tag @s add l1r_usycha"} @self
+  - command{c="minecraft:execute as <caster.uuid> at @s run function l1r:kolejka"} @self
 # usychanie: wypada z kolejki od razu (bez l1r_pq), nie dojrzewa (dojrzewa=0), 1 s szarzenia, remove bez ~onDeath
 L1R_PAK_USYCHA:
   Skills:
   - removetag{tag=l1r_pq} @self
   - removetag{tag=l1r_usycha} @self
   - setvariable{var=caster.dojrzewa;val=0;type=INTEGER} @self
-  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
+  - command{c="minecraft:execute as <caster.uuid> run function l1r:wypisz"} @self
   - sound{s=block.azalea_leaves.break;v=1.0;p=0.6} @self
   - particles{p=block;m=DEAD_BUSH;a=10;hs=0.3;vs=0.2;y=0.4} @self
   - delay 10
@@ -272,7 +265,7 @@ L1R_PAK_USYCHA:
 L1R_PAK_ZDEPTANY:
   Skills:
   - setvariable{var=caster.dojrzewa;val=0;type=INTEGER} @self
-  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
+  - command{c="minecraft:execute as <caster.uuid> run function l1r:wypisz"} @self
   - particles{p=block;m=FLOWERING_AZALEA_LEAVES;a=16;hs=0.3;vs=0.2;y=0.4} @self
   - sound{s=block.azalea_leaves.break;v=1.2;p=1.2} @self
 L1R_PAK_PECZNIEJE:
@@ -287,7 +280,7 @@ L1R_PAK_DOJRZEWA:
   - skill{s=L1R_PAK_PECZNIEJE} @self ?variableequals{var=caster.dojrzewa;value=1}
   - delay 20
   - summon{type=L1R_PNIACZEK;amount=1;noise=0} @self ?variableequals{var=caster.dojrzewa;value=1}
-  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
+  - command{c="minecraft:execute as <caster.uuid> run function l1r:wypisz"} @self
   - remove @self
 L1R_PAK_SIEWCY_DOJRZEWA:
   Skills:
@@ -295,7 +288,7 @@ L1R_PAK_SIEWCY_DOJRZEWA:
   - skill{s=L1R_PAK_PECZNIEJE} @self ?variableequals{var=caster.dojrzewa;value=1}
   - delay 20
   - summon{type=L1R_PNIACZEK;amount=3;noise=1} @self ?variableequals{var=caster.dojrzewa;value=1}
-  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
+  - command{c="minecraft:execute as <caster.uuid> run function l1r:wypisz"} @self
   - remove @self
 L1R_PAK_DUZY_DOJRZEWA:
   Skills:
@@ -303,7 +296,7 @@ L1R_PAK_DUZY_DOJRZEWA:
   - skill{s=L1R_PAK_PECZNIEJE} @self ?variableequals{var=caster.dojrzewa;value=1}
   - delay 20
   - summon{type=L1R_KORZEN;amount=1;noise=0} @self ?variableequals{var=caster.dojrzewa;value=1}
-  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
+  - command{c="minecraft:execute as <caster.uuid> run function l1r:wypisz"} @self
   - remove @self
 L1R_KORZEN_TRZYMA:
   Skills:
@@ -442,8 +435,31 @@ L1R_SOWIEDZ_WOLA:
   - summon{type=L1R_SOWIEDZ_MLODE;amount=2;noise=2} @self
 """
 
+# ---- datapack l1r: kolejka pakow bez spamu konsoli (wolany z MM: execute as <uuid> [at @s] run function l1r:X) ----
+SEL = "@e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300]"
+DATAPACK = {
+    "pack.mcmeta": '{"pack":{"description":"Loch 001: kolejka pakow (limit 12 na instancje)","pack_format":94,"min_format":94,"max_format":99}}\n',
+    "data/minecraft/tags/function/load.json": '{"values":["l1r:start"]}\n',
+    "data/l1r/function/start.mcfunction": "scoreboard objectives add l1r_pak dummy\n",
+    # @s = nowy pak (ma juz tag l1r_pq), pozycja = pak
+    "data/l1r/function/kolejka.mcfunction": f"""data merge entity @s {{IsBaby:1b}}
+scoreboard players add l1r.nr l1r_pak 1
+scoreboard players operation @s l1r_pak = l1r.nr l1r_pak
+execute store result score l1r.ile l1r_pak if entity {SEL}
+execute if score l1r.ile l1r_pak matches 13.. run function l1r:najstarszy
+""",
+    "data/l1r/function/najstarszy.mcfunction": f"""scoreboard players set l1r.min l1r_pak 2147483647
+execute as {SEL} run scoreboard players operation l1r.min l1r_pak < @s l1r_pak
+execute as {SEL} if score @s l1r_pak = l1r.min l1r_pak run tag @s add l1r_usycha
+""",
+    "data/l1r/function/wypisz.mcfunction": "scoreboard players reset @s l1r_pak\n",
+    "data/l1r/function/maly.mcfunction": "data merge entity @s {IsBaby:1b}\n",
+}
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     open(f"{OUT}/Przeciwnicy_L001.yml", "w").write(MOBS)
     open(f"{OUT}/Przeciwnicy_L001_skills.yml", "w").write(SKILLS)
-    print("zapisano", OUT)
+    for rel, txt in DATAPACK.items():
+        f = f"{OUT}/datapack/l1r/{rel}"; os.makedirs(os.path.dirname(f), exist_ok=True); open(f, "w").write(txt)
+    print("zapisano", OUT, "+ datapack/l1r")

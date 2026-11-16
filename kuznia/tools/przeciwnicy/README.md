@@ -60,7 +60,9 @@ bez zbroi) są liczbami SUROWYMI; ostatecznie dostroić po decyzji o formule i p
 ## Loch 001 remake — przeciwnicy L1R_* (16.11)
 Karta: `docs/lochy/akt1-v2/10-loch-001-kwietna-polana.md` (§0 protokół pąków R1, §5 bestiariusz, §13).
 - `przeciwnicy_l001.py` → `kuznia/levels/przeciwnicy/Przeciwnicy_L001{,_skills}.yml` (13 mobów L1R_*; Wilk/Korzeniak/Łucznik
-  to kopie Gaju v8 + pąk przy śmierci, więc na klon wgraj też `Przeciwnicy_Gaj_skills.yml`).
+  to kopie Gaju v8 + pąk przy śmierci, więc na klon wgraj też `Przeciwnicy_Gaj_skills.yml`) **oraz datapack**
+  `kuznia/levels/przeciwnicy/datapack/l1r/` → `<dane serwera>/world/datapacks/l1r` + `minecraft:reload` albo restart
+  (kolejka pąków i IsBaby; bez niego pąki nie mają limitu, a Pniaczki nie są małe).
 - `arena_l001.js` (bot BASTION poz. 2, MIECZ_KAMIENNY, klon bez kreatora, difficulty easy, obrona MythicLib `#damage# * 50 / (50 + #defense#)` jak world1):
   `run.sh <klon> arena_l001.js pak` (8 sprawdzeń R1), `… garda` (Korowiec), `… walka <MOB> nieuwazny|uwazny [POWT] [debug]`.
 
@@ -92,22 +94,45 @@ encji daje limit 12 pąków na instancję (niżej);
 (2) Sowiedź ZOSTAJE bez złagodzenia (łapa 6) — nieuważny ginie 3/3. Generator bez zmian (stan 0010a39).
 
 ### Limit 12 pąków na instancję (karta §13 w.1) — 16.11, klon l001-kolejka
-Jak: każdy pąk przy `~onSpawn` (`L1R_PAK_KOLEJKA`) dostaje tag `l1r_pq` i numer z rosnącego licznika `l1r.nr`
-(scoreboard `l1r_pak`, posiadacz = UUID pąka). Gdy w promieniu 300 bl. (`distance=..300` = ten sam świat i instancja)
-jest >12 aktywnych pąków z numerem, najmniejszy numer dostaje `l1r_usycha`; `~onTimer:5` (`L1R_PAK_USYCHA`) zdejmuje
-go z kolejki, zeruje `dojrzewa` (nie da Pniaczka), szary dym 1 s, `remove`. Każde zniknięcie pąka (zdeptany, dojrzał,
-usechł) robi `scoreboard players reset <uuid>`. **Przed pierwszym użyciem na serwerze (raz):**
-`minecraft:scoreboard objectives add l1r_pak dummy` (bez tego komendy kolejki padają, pąki działają bez limitu — nie sprawdzone).
+Jak (od 16.11 w datapacku `l1r`, generowanym przez `przeciwnicy_l001.py`, słownik `DATAPACK`): każdy pąk przy `~onSpawn`
+(`L1R_PAK_KOLEJKA`) dostaje tag `l1r_pq` i woła `execute as <uuid> at @s run function l1r:kolejka`: IsBaby, numer z rosnącego
+licznika `l1r.nr` (scoreboard `l1r_pak`, posiadacz = UUID pąka), a gdy w promieniu 300 bl. (`distance=..300` = ten sam świat
+i instancja) jest >12 aktywnych pąków z numerem, `l1r:najstarszy` daje najmniejszemu numerowi `l1r_usycha`; `~onTimer:5`
+(`L1R_PAK_USYCHA`) zdejmuje go z kolejki, zeruje `dojrzewa` (nie da Pniaczka), szary dym 1 s, `remove`. Każde zniknięcie pąka
+(zdeptany, dojrzał, usechł) woła `l1r:wypisz` (reset wyniku). Pniaczek: `l1r:maly` (IsBaby). Obiekt `l1r_pak` zakłada sam
+`#minecraft:load` (`l1r:start`) przy starcie i `/reload` (klon 16.11: `scoreboard objectives list` = `[l1r_pak]`).
+**Natywne `Options: Baby: true` i `Age: -1` nie działają ani na ZOMBIE, ani na HUSK** (klon 16.11: `IsBaby 0b` w 4/4), więc
+`data merge` zostaje; to dziś największy pojedynczy koszt pąka (niżej).
 
-Wynik `run.sh l001-kolejka arena_l001.js kolejka`: **7/7 PASS ×3 przebiegi**:
+**Dlaczego datapack, nie `command{}` z MM (pomiar 16.11, klon l001-tick, decyzja właściciela „zawsze tick i wydajność są
+najważniejsze … można iść przez to co polecasz”):** komendy wewnątrz funkcji nie logują nic, jedno wywołanie z MM = 1 linia
+`Running function`. Obciążenie: 60 serii × 14 pąków (840 pąków, każda seria przepełnia kolejkę o 2) pod `spark profiler
+--interval 1`, warianty na przemian A/B/A/B, parser `tools/spark-report/hot.py`/`pod.py`:
+
+| | komendy (160285a) | datapack |
+|---|---|---|
+| czas wątku głównego `CommandMechanic.castAtEntity` | 845 / 419 ms (≈0,5–1 ms na pąk) | 260 / 205 ms (≈0,25–0,3 ms na pąk) |
+| `mspt` śr./max z 1 min (spoczynek 0,3) | 1,9/28 i 1,3/48 ms | 1,2/15 i 1,0/17 ms |
+| max ticku z 10 s pod koniec | 18 i 13 ms | 7 i 6 ms |
+| linie logu na 840 pąków (z 1 linią „Named entity … died” na zabity pąk) | ≈6860 | ≈2555 |
+
+W wariancie z komendami ~połowa kosztu to samo logowanie (`CommandSourceStack.sendSuccess` → `sendSystemMessage` →
+`PaperAdventure.asAdventure`: 189–311 ms); w datapacku zostaje głównie `data merge` IsBaby (`DataCommands.mergeData`
+103–120 ms = zapis i odczyt całego NBT moba). Linie na pąk: komendy 5 (+ przy przepełnieniu 1 na każdy aktywny pąk),
+datapack 2, bez przepełnieniowych. Linia „Named entity … died” to vanilla dla każdego nazwanego moba (nie kolejka).
+Przeliczenie: bieg ~40–60 pąków (szacunek z karty, nie pomiar) = ~12–18 ms czasu wątku na cały bieg; AoE zabijające
+6 wrogów w jednym ticku = ~1,5–2 ms w tym ticku (komendy: 3–6 ms).
+
+Wynik `run.sh <klon> arena_l001.js kolejka` (wersja z komendami 16.11 7/7 ×3, klon l001-kolejka; datapack 16.11 klony l001-log/l001-tick:
+**10/11 PASS**, `pak` 8/8 ×6, `walka` PNIACZEK/SIEWCA/KORZENIAK uważny 2/2):
 - 14 pąków naraz → 12 aktywnych, usychają dwa najstarsze;
 - po zdeptaniu jest miejsce (nowy nie wypycha nikogo), następny wypycha najstarszego;
 - usychające nie dojrzewają (12 Pniaczków z 14 pąków);
 - dwie „instancje” 400 bl. od siebie liczą się osobno (10+10, potem A 12 / B 11);
 - scoreboard nie puchnie (po teście tylko `l1r.nr/ile/min`).
 
-Test pąków `… pak` po zmianie: 8/8 (1 z 2 przebiegów 7/8: `kotwa-budzi` 2 Pniaczki po 10,8 s — test czasowy, nie kolejka; do obserwacji).
-Koszt (`mspt`, klon bez graczy poza botem): spoczynek 0,3 ms śr.; 6 serii po 14 pąków co 0,8 s (84 spawny w 5 s, ponad każdą
+Test pąków `… pak` po zmianie: 8/8 (`kotwa-budzi` raz 7/8 — 2 Pniaczki po 10,8 s, test czasowy, nie kolejka; razem 16.11 13/14 biegów).
+Pierwszy pomiar wersji z komendami (`mspt`, klon bez graczy poza botem; dokładniejszy spark wyżej): spoczynek 0,3 ms śr.; 6 serii po 14 pąków co 0,8 s (84 spawny w 5 s, ponad każdą
 realną walkę) → 1,6 ms śr. w oknie 5 s, max tick 22 ms (max 22,8 ms był też w oknie 1 min przed testem — kosztu samego
 spawnu MM i kolejki nie rozdzieliłem).
 
@@ -116,8 +141,11 @@ Pułapki (16.11):
 - **Kilka pąków w jednym ticku** (14 naraz; w grze AoE zabija kilku wrogów naraz): tag dostawały wszystkie, numer jeszcze nie,
   więc pierwszy liczył 14 i uznawał siebie za najstarszego → usychało 13. Naprawa: liczyć i wybierać tylko `scores={l1r_pak=1..}`.
 - Murek areny stoi na x≈314 — pąk przywołany w murze ginie od razu (fałszywy FAIL testu).
-- **Spam konsoli**: każda komenda MM `command{}` loguje wynik — na pąk ~4 linie (`Added … l1r.nr`, `Set … Pąk`,
-  `Reset … Pąk`, `Modified entity data` z IsBaby) + przy przepełnieniu 1 linia `Set l1r.min` na każdy aktywny pąk.
-  Gamerule `send_command_feedback false` / `log_admin_commands false` nie usunęły linii (4–5 na pąk; klon, przywrócone).
-  Funkcja datapacku wołana przez `execute as` z RCON nie zalogowała nic (wołana z MM — nie sprawdzone). Bez linii byłaby
-  własna mechanika Java. Decyzja właściciela: zostawić / datapack / Java.
+- **Spam konsoli z `command{}` MM**: każda komenda loguje wynik (`Added … l1r.nr`, `Set … Pąk`, `Test passed`, `Modified entity
+  data`, przy przepełnieniu `Set l1r.min` na każdy aktywny pąk). Gamerule `send_command_feedback false` / `log_admin_commands
+  false` nie usunęły linii (klon, przywrócone). Stąd datapack (wyżej); zero linii dałaby tylko mechanika Java.
+- Bez obiektu `l1r_pak` (datapack nie wczytany): 3 linie `Unknown scoreboard objective` na pąk i brak limitu (13/14 aktywnych).
+- **Otwarte: `usychajace-nie-dojrzewaja` 11 zamiast 12 Pniaczków** — 1/4 biegów z komendami i 1/11 z datapackiem (tylko z botem;
+  bez bota ta sama sekwencja rcon 18/18). Rozliczenie kolejki w nieudanym biegu poprawne (16 wpisów, 4 wypisy, 10 pąków
+  dojrzało), ale wyrosło 9 Pniaczków z 10 (9 wywołań `l1r:maly`): jeden `summon` w `L1R_PAK_DOJRZEWA` nie dał moba. Sonda `say`
+  przed summonem: w 5 kolejnych biegach (5/5 PASS) wszystkie pąki miały `dojrzewa=1`, wpadki nie złapano. Przyczyny nie znam.
