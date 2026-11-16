@@ -19,6 +19,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from uklad_l001 import SALE, ZNACZNIKI, KORYTARZE, TRASA
 
 OX, OZ, OY = 200, 200, 40              # lokalne (0,0,0) -> świat (200, 40, 200); płaski świat klona, grunt y -59
+# druga kopia (test dwóch drużyn naraz): L1R_OFFSET=x,z python3 blockout_l001.py --out <katalog>
+if os.environ.get("L1R_OFFSET"): OX, OZ = map(int, os.environ["L1R_OFFSET"].split(","))
 X0, X1, Z0, Z1, Y0, Y1 = 8, 115, 0, 151, -24, 18   # masa skały (lokalnie)
 SKALA, TARAS, BRAMA = "minecraft:stone", "minecraft:mossy_cobblestone", "minecraft:oak_wood"
 WYS_KOR = 3                             # luz korytarza nad podłogą

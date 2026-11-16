@@ -12,7 +12,9 @@ const { goals } = require('mineflayer-pathfinder');
 const pvp = require('mineflayer-pvp').plugin;
 
 const STYL = process.argv[2] || 'uwazny';
-const D = JSON.parse(fs.readFileSync('/scen/wynik/trasa.json', 'utf8'));
+// argv: <styl> [trasa wzgl. /scen, domyślnie wynik/trasa.json] [dolacz = drugi bot w tej samej kopii: bez stawiania sceny]
+const D = JSON.parse(fs.readFileSync('/scen/' + (process.argv[3] || 'wynik/trasa.json'), 'utf8'));
+const DOLACZ = process.argv[4] === 'dolacz';
 const r1 = x => +(+x).toFixed(1);
 const ZAPOWIEDZI = {   // jak arena_l001.js: "glosnosc/wysokosc" -> [nazwa, unik, ms]
   '1.6/0.5': ['wilk-skok', 'bok', 700], '1.6/0.8': ['lucznik-naciag', 'bok', 900],
@@ -32,6 +34,12 @@ scenariusz(`przejscie-l001-${STYL}`, async ({ w, polacz, rcon }) => {
   const ow = c => rcon(`minecraft:execute in minecraft:overworld run ${c}`);
 
   // --- scena: wrogowie od startu na miejscach (decyzja 27.09), z tagiem bo + bo_<MOB> do warunków bram
+  // pąk sam dojrzewa w Pniaczka po 5 s (L1R_PAK_DOJRZEWA) i znika z tagiem bo -> liczenie po czasie ma wyścig
+  // (16.11, D2: 21/22 w obu kopiach na obciążonym hoście); dlatego 'wrogowie' = udane tagowanie przy ustawianiu
+  const bezPakow = D.wrogowie.filter(e => e.mob !== 'L1R_PAK').length;
+  const brak = []; let otagowane = 0;
+  if (DOLACZ) { const t0 = Date.now(); while (await ile(`@e[tag=bo,tag=!bo_L1R_PAK,${BOX}]`) < bezPakow && Date.now() - t0 < 90000) await sleep(1000); }
+  else {
   await ow(`minecraft:forceload add ${D.forceload}`);
   await rcon('minecraft:gamerule spawn_monsters false');
   // blockout stoi w 'world' klona, w regionie WG chw_perlowa_zatoka (x172-268, z316-412, bez flag): WG nie daje
@@ -43,11 +51,14 @@ scenariusz(`przejscie-l001-${STYL}`, async ({ w, polacz, rcon }) => {
   for (const e of D.wrogowie) {
     await rcon(`mm mobs spawn ${e.mob} 1 world,${e.x},${e.y},${e.z}`); await sleep(150);
     await ow(`minecraft:execute positioned ${e.x} ${e.y} ${e.z} run minecraft:tag @e[type=${TYP[e.mob]},tag=!bo,distance=..2.5,sort=nearest,limit=1] add bo_${e.mob}`);
-    await ow(`minecraft:execute positioned ${e.x} ${e.y} ${e.z} run minecraft:tag @e[tag=bo_${e.mob},tag=!bo,distance=..2.5,sort=nearest,limit=1] add bo`);
+    const r = await ow(`minecraft:execute positioned ${e.x} ${e.y} ${e.z} run minecraft:tag @e[tag=bo_${e.mob},tag=!bo,distance=..2.5,sort=nearest,limit=1] add bo`);
+    if (/Added tag/.test(r || '')) otagowane++; else brak.push(`${e.sala}:${e.mob}`);
+  }
   }
   await sleep(1500);
-  const otag = await ile('@e[tag=bo]');
-  w.sprawdz('wrogowie', otag === D.wrogowie.length, `z tagiem ${otag}/${D.wrogowie.length}`);
+  const otag = await ile(`@e[tag=bo,${BOX}]`);
+  if (!DOLACZ) w.sprawdz('wrogowie', otagowane === D.wrogowie.length, `ustawione ${otagowane}/${D.wrogowie.length}${brak.length ? ' brak ' + brak.join(',') : ''}`);
+  pomiar('wrogowie_po_1_5s', { z_tagiem: otag, wszystkich: D.wrogowie.length, bez_pakow: bezPakow });
   const ileTyp = {}; for (const e of D.wrogowie) ileTyp[e.mob] = (ileTyp[e.mob] || 0) + 1;
   pomiar('sklad', ileTyp);
 
@@ -153,7 +164,7 @@ scenariusz(`przejscie-l001-${STYL}`, async ({ w, polacz, rcon }) => {
   const pilnuj = setInterval(async () => {
     for (const [n, b] of Object.entries(D.bramy)) {
       if (otwarte[n]) continue;
-      if (await ile(`@e[tag=${b.tag}]`) === 0) {
+      if (await ile(`@e[tag=${b.tag},${BOX}]`) === 0) {
         await ow(`minecraft:fill ${b.fill} minecraft:air replace minecraft:oak_wood`);
         otwarte[n] = r1((Date.now() - tStart) / 1000); pomiar('brama', { n, s: otwarte[n] });
       }
@@ -228,8 +239,8 @@ scenariusz(`przejscie-l001-${STYL}`, async ({ w, polacz, rcon }) => {
   clearInterval(pilnuj);
   const calk = r1((Date.now() - tStart) / 1000);
   const dotarl = i >= D.trasa.length;
-  const zostalo = await ile('@e[tag=bo]');
-  const pozost = {}; for (const m of Object.keys(ileTyp)) pozost[m] = await ile(`@e[tag=bo_${m}]`);
+  const zostalo = await ile(`@e[tag=bo,${BOX}]`);
+  const pozost = {}; for (const m of Object.keys(ileTyp)) pozost[m] = await ile(`@e[tag=bo_${m},${BOX}]`);
   pomiar('wynik', { styl: STYL, dotarl, czas_s: calk, min: r1(calk / 60), walka_s: r1(walka.s), marsz_s: r1(calk - walka.s),
     zgony, hp_utracone: await hpScore(nick), odblok: odblokSum, paki_zdeptane: walka.paki, wrogowie_zostali: zostalo, pozost,
     bramy: otwarte, sale_s: salaCzas, smierci, reakcje, nieznane });
