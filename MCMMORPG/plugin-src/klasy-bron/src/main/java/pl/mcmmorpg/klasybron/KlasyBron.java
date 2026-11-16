@@ -3,6 +3,7 @@ package pl.mcmmorpg.klasybron;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.conditions.IEntityCondition;
 import io.lumine.mythic.bukkit.events.MythicConditionLoadEvent;
+import io.lumine.mythic.bukkit.events.MythicTargeterLoadEvent;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import java.util.Arrays;
 import java.util.Locale;
@@ -20,12 +21,19 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * <p>Zastepuje placeholder Crucible {@code <caster.item.hand.nbt.MMOITEMS_ITEM_TYPE>}, ktory po restarcie
  * serwera jest "Invalid Placeholder" (Crucible rejestruje go po wczytaniu skilli; dziala dopiero po mm reload).
+ *
+ * <p>Do tego targeter {@code @Celownik{r=20;s=0.3}} ({@link Celownik}) - cel Rozkazu akolity. Opis: README.md.
  */
 public final class KlasyBron extends JavaPlugin implements Listener {
 
   @Override
   public void onEnable() {
     getServer().getPluginManager().registerEvents(this, this);
+  }
+
+  @EventHandler
+  public void targeter(MythicTargeterLoadEvent e) {
+    if (e.getTargeterName().equalsIgnoreCase("celownik")) e.register(new Celownik(this, e.getConfig()));
   }
 
   @EventHandler

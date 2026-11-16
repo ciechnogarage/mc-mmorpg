@@ -41,6 +41,18 @@ def change_character(x,y):
     G([(x+3,y+18),(x+9,y+14),(x+9,y+22)],'gold2','ink')
     G([(x+49,y+18),(x+43,y+14),(x+43,y+22)],'gold2','ink')
 
+def specialization(x,y):
+    # Drogowskaz na rozwidleniu: specjalizacja = wybor jednej z dwoch drog na 10. poziomie.
+    field(x,y,'blue0')
+    G([(x+2,y+38),(x+2,y+31),(x+14,y+28),(x+38,y+28),(x+49,y+31),(x+49,y+38)],'green0')
+    G([(x+19,y+38),(x+23,y+30),(x+12,y+28),(x+16,y+28),(x+26,y+31),(x+36,y+28),(x+40,y+28),(x+29,y+30),(x+33,y+38)],'paper1','gold0')
+    R((x+24,y+6,x+27,y+33),'wood2','ink')
+    G([(x+5,y+12),(x+10,y+7),(x+23,y+7),(x+23,y+17),(x+10,y+17)],'paper2','ink')
+    L([(x+12,y+12),(x+20,y+12)],'red1')
+    G([(x+28,y+16),(x+41,y+16),(x+46,y+21),(x+41,y+26),(x+28,y+26)],'paper2','ink')
+    L([(x+31,y+21),(x+39,y+21)],'blue1')
+    W.star(x+42,y+6,'gold2'); W.star(x+8,y+25,'gold2')
+
 def skill(x,y):
     field(x,y,'wood1')
     G([(x+4,y+28),(x+17,y+24),(x+26,y+29),(x+36,y+24),(x+49,y+28),(x+46,y+36),(x+27,y+33),(x+6,y+36)],'paper2','ink')
@@ -303,7 +315,7 @@ def hero_travel(x,y):
     G([(x+41,y+19),(x+43,y+24),(x+41,y+28),(x+39,y+24)],'red1','ink')
 
 DESCRIPTIONS = {
-    'hub_postac': ('Twoja postać:', 'statystyki, atrybuty', 'i patron wiary.'),
+    'hub_postac': ('Twoja postać:', 'statystyki, atrybuty', 'wiara i ścieżka.'),
     'hub_umiejetnosci': ('Rozwijaj zdolności', 'klasy, drzewka', 'i księgę zaklęć.'),
     'hub_ekonomia': ('Kupuj i sprzedawaj.', 'Licytuj z graczami.'),
     'hub_spolecznosc': ('Drużyna, znajomi', 'i gildia razem', 'łatwiej przetrwać.'),
@@ -323,7 +335,7 @@ def description_card(lines, x=14, y=142):
     R((x+72,225,x+72,227),'paper4')
 
 PAGES = [
-    ('hub_postac','Postać',hero_character,[('Statystyki','Statystyki',stats),('Atrybuty','Atrybuty',attributes),('Wiara','Wiara',faith),('Zmień postać','Zmień postać',change_character)]),
+    ('hub_postac','Postać',hero_character,[('Statystyki','Statystyki',stats),('Atrybuty','Atrybuty',attributes),('Wiara','Wiara',faith),('Zmień postać','Zmień postać',change_character),('Specjalizacja','Ścieżka',specialization)]),
     ('hub_umiejetnosci','ZDOLNOŚCI',hero_mage,[('Umiejętności','Umiejętności',skill),('Drzewka rozwoju','Drzewka',tree),('Tryb rzucania','Rzucanie',casting),('Księga zaklęć','Zaklęcia',spellbook)]),
     ('hub_ekonomia','Handel',hero_trade,[('Dom aukcyjny','Aukcje',auction),('Sklep','Sklep',shop),('Skup','Skup',buyback)]),
     ('hub_spolecznosc','DRUŻYNA',hero_social,[('Drużyna','Drużyna',party),('Znajomi','Znajomi',friends),('Gildia','Gildia',guild)]),
@@ -332,7 +344,13 @@ PAGES = [
     ('stolica_podroze','Podróże',hero_travel,[('Loch 001','Loch 001',dungeon),('Kolejne lochy','Dalsze lochy',locked),('Wyspy','Wyspy',islands)]),
 ]
 
-def tile_positions(n):
+# Strona z wlasnym ukladem: 4 kafle jak dotad + specjalizacja pod Wiara (sloty 41,42,50,51).
+POSITIONS = {'hub_postac': [(194,34),(266,34),(194,106),(266,106),(194,178)]}
+
+def tile_positions(n, ident=None):
+    if ident in POSITIONS:
+        assert len(POSITIONS[ident]) == n
+        return POSITIONS[ident]
     if n == 1: return [(230,34)]
     if n == 2: return [(194,34),(266,34)]
     if n == 3: return [(194,34),(266,34),(230,106)]
@@ -382,7 +400,7 @@ def main():
         W.hero_frame(14,34,hero)
         description_card(DESCRIPTIONS[ident])
         placements=[]
-        for (x,y),(label,caption,painter) in zip(tile_positions(len(tiles)),tiles):
+        for (x,y),(label,caption,painter) in zip(tile_positions(len(tiles),ident),tiles):
             W.tile(x,y,label,painter,caption)
             placements.append((x,y,label))
             miniatures.append((ident,label,caption,painter))
@@ -395,7 +413,9 @@ def main():
         dest=OUT/ident; dest.mkdir(exist_ok=True)
         image.save(dest/f'{ident}_2x.png')
         for n,(left,top) in enumerate(((0,0),(176,0),(0,222),(176,222)),1):
-            image.crop((left,top,left+176,top+222)).save(dest/f'{ident}_{n}.png')
+            part=image.crop((left,top,left+176,top+222))
+            # Cwiartki 3-4 na world1 sa RGBA od 13.10 (piksele te same) - zapis jak na serwerze.
+            (part.convert('RGBA') if n>2 else part).save(dest/f'{ident}_{n}.png')
         slot_file(dest,ident,placements)
         codes=[0x4A00+4*i+j for j in range(4)]
         for n,code in enumerate(codes,1):

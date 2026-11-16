@@ -42,8 +42,8 @@ Skrzynia (sloty 0–53):
 38 | rząd 4, kol 2 | info
 39 | rząd 4, kol 3 | info
 40 | rząd 4, kol 4 | grzbiet
-41 | rząd 4, kol 5 | pusty
-42 | rząd 4, kol 6 | pusty
+41 | rząd 4, kol 5 | Specjalizacja
+42 | rząd 4, kol 6 | Specjalizacja
 43 | rząd 4, kol 7 | pusty
 44 | rząd 4, kol 8 | pusty
 45 | rząd 5, kol 0 | info
@@ -51,8 +51,8 @@ Skrzynia (sloty 0–53):
 47 | rząd 5, kol 2 | info
 48 | rząd 5, kol 3 | info
 49 | rząd 5, kol 4 | grzbiet
-50 | rząd 5, kol 5 | pusty
-51 | rząd 5, kol 6 | pusty
+50 | rząd 5, kol 5 | Specjalizacja
+51 | rząd 5, kol 6 | Specjalizacja
 52 | rząd 5, kol 7 | pusty
 53 | rząd 5, kol 8 | pusty
 
