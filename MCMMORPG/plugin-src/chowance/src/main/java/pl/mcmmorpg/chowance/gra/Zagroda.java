@@ -56,6 +56,7 @@ public final class Zagroda implements Listener {
   private final java.util.Set<UUID> zajete = ConcurrentHashMap.newKeySet();
   private final Map<UUID, Long> ostatniKlik = new ConcurrentHashMap<>();
   private final java.util.Set<UUID> powiadomieni = ConcurrentHashMap.newKeySet();
+  private final Dymki dymki;
 
   public Zagroda(Chowance c, Ciala ciala, Startery startery) {
     this.c = c;
@@ -63,6 +64,7 @@ public final class Zagroda implements Listener {
     this.startery = startery;
     this.kMlode = new NamespacedKey(c.plugin, "mlode");
     this.kPieczecOpiekuna = new NamespacedKey(c.plugin, "pieczec_opiekuna");
+    this.dymki = new Dymki(c);
   }
 
   private boolean wlaczona() { return c.ust.zagrodaWlaczona && !c.ust.zagrodaMiejsca.isEmpty(); }
@@ -135,6 +137,7 @@ public final class Zagroda implements Listener {
   }
 
   public void usunWszystkie() {
+    dymki.usunWszystkie();
     for (Integer i : List.copyOf(mlode.keySet())) usun(i);
     for (Integer i : List.copyOf(napisy.keySet())) usun(i);
   }
@@ -237,37 +240,38 @@ public final class Zagroda implements Listener {
 
   // ------------------------------------------------------------------ Strażniczka
 
-  /** PPM w Strażniczkę bez pierwszego chowańca. true = obsłużone (zamiast okna walki). */
-  public boolean rozmowa(Player p, String trenerId) {
+  /**
+   * PPM w Strażniczkę bez pierwszego chowańca. true = obsłużone (zamiast okna walki).
+   * Kwestie NPC idą do dymka nad głową mówiącego (tylko dla tego gracza), nie na czat (zgłoszenie 16.11);
+   * to, co gracz ma zrobić, zostaje na pasku akcji.
+   */
+  public boolean rozmowa(Player p, String trenerId, String nazwaTrenera, Entity npc) {
     if (!wlaczona()) return false;
     ProfilDane d = c.dane(p);
     if (d == null || d.starter) return false;
     if (!trenerId.equals(c.ust.zagrodaTrener)) {
-      c.msg(p, "<gray>Najpierw zdobądź chowańca — <white>Strażniczka Ogrodu</white> w Stolicy powierza młode nowym opiekunom.");
+      dymki.powiedz(p, npc, "<#E6C35C>" + nazwaTrenera, "Najpierw zdobądź chowańca. Strażniczka Ogrodu w Stolicy powierza młode nowym opiekunom.");
+      c.pasek(p, "<gold>Najpierw pierwszy chowaniec <gray>· Strażniczka Ogrodu (/chw starter)");
       return true;
     }
-    String kto = "<#9BD770>Strażniczka Ogrodu<gray>: <white>";
+    String kto = "<#9BD770>Strażniczka Ogrodu";
     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_AMBIENT, 0.7f, 1.3f);
     if (maPieczec(p)) {
-      p.sendMessage(Chowance.mm(kto + "Pieczęć już masz. Podejdź do zagrody i kliknij malucha, którego wybierzesz."));
-      c.pasek(p, "<gold>Kliknij wybrane młode <gray>(Pieczęć Opiekuna masz przy sobie)");
+      dymki.powiedz(p, npc, kto, "Pieczęć już masz. Wejdź za furtkę i kliknij malucha, którego wybierzesz.");
+      c.pasek(p, "<gold>Kliknij wybrane młode w zagrodzie <gray>(Pieczęć Opiekuna masz przy sobie)");
       return true;
     }
-    p.sendMessage(Chowance.mm(kto + "Nowa twarz! Te młode w zagrodzie szukają opiekunów."));
-    Bukkit.getScheduler().runTaskLater(c.plugin, () -> {
-      if (!p.isOnline()) return;
-      p.sendMessage(Chowance.mm(kto + "Każde walczy inaczej — przyjrzyj się im, kliknij, a opowiem ci o nim."));
-    }, 30L);
+    dymki.powiedz(p, npc, kto, "Nowa twarz! Te młode za furtką szukają opiekunów. Każde walczy inaczej — kliknij, a opowiem ci o nim.");
     Bukkit.getScheduler().runTaskLater(c.plugin, () -> {
       if (!p.isOnline()) return;
       ProfilDane teraz = c.dane(p);
       if (teraz == null || teraz.starter || maPieczec(p)) return;
-      p.sendMessage(Chowance.mm(kto + "Masz, to Pieczęć Opiekuna. Kliknij to młode, które wybierzesz — pieczęć zwiąże was. Tylko jedno, więź jest na zawsze."));
+      if (npc.isValid() && npc.getWorld().equals(p.getWorld())) dymki.powiedz(p, npc, kto, "Masz, to Pieczęć Opiekuna. Kliknij nią młode, które wybierzesz. Tylko jedno — więź jest na zawsze.");
       var reszta = p.getInventory().addItem(pieczec());
       for (ItemStack r : reszta.values()) p.getWorld().dropItemNaturally(p.getLocation(), r);
       p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.8f, 1.0f);
       c.pasek(p, "<gold>Otrzymano: Pieczęć Opiekuna <gray>· kliknij wybrane młode");
-    }, 60L);
+    }, 80L);
     return true;
   }
 
@@ -291,13 +295,13 @@ public final class Zagroda implements Listener {
     }
     if (startery.oferta(p).stream().noneMatch(x -> x.id().equals(g.id()))) {
       String lud = lud(g, true);
-      opis(p, g);
+      opis(p, le, g);
       c.pasek(p, "<red>" + g.nazwa() + " ufa tylko " + (lud == null ? "innym" : lud) + ".");
       return true;
     }
     // Pieczęć wystarczy mieć przy sobie: reguły rąk Księgi zdejmują zwykły przedmiot z dłoni (klient QA 18.10).
     if (!maPieczec(p)) {
-      opis(p, g);
+      opis(p, le, g);
       c.pasek(p, "<gold>Pieczęć Opiekuna da ci Strażniczka Ogrodu <gray>(PPM w nią)");
       return true;
     }
@@ -305,8 +309,8 @@ public final class Zagroda implements Listener {
     return true;
   }
 
-  /** Krótko o młodym: imię i rola w tytule, opis i ruchy na czacie. */
-  private void opis(Player p, Gatunek g) {
+  /** Krótko o młodym w dymku w miejscu jego etykiety (etykieta ukryta na ten czas): imię, typy, rola, opis, ruchy. */
+  private void opis(Player p, LivingEntity le, Gatunek g) {
     StringBuilder typy = new StringBuilder();
     for (Typ t : g.typy()) typy.append(typy.isEmpty() ? "" : "<gray>/").append(t.kolor()).append(t.nazwa());
     List<String> ruchy = new ArrayList<>();
@@ -314,14 +318,19 @@ public final class Zagroda implements Listener {
       var r = c.rej.ruch(id);
       if (r != null) ruchy.add(r.nazwa());
     }
-    p.sendMessage(Chowance.mm("<gold>" + g.nazwa() + " <dark_gray>· " + typy + " <dark_gray>· <gray>" + rola(g)));
-    if (!g.opis().isEmpty()) p.sendMessage(Chowance.mm("<gray><i>" + String.join(" ", g.opis())));
-    if (!ruchy.isEmpty()) p.sendMessage(Chowance.mm("<gray>Na start umie: <white>" + String.join(", ", ruchy)));
+    StringBuilder t = new StringBuilder("<gold><b>" + g.nazwa() + "</b> <dark_gray>· " + typy + " <dark_gray>· <gray>" + rola(g));
+    String opis = String.join(" ", g.opis());
+    if (!opis.isEmpty()) t.append("\n<#D0D0D0><i>").append(opis).append("</i>");
+    if (!ruchy.isEmpty()) t.append("\n<gray>Na start umie: <white>").append(String.join(", ", ruchy));
+    TextDisplay etykieta = napisDla(le);
+    Location gdzie = etykieta != null && etykieta.isValid() ? etykieta.getLocation() : le.getLocation().add(0, le.getHeight() + 0.4, 0);
+    dymki.pokaz(p, gdzie, t.toString(), Dymki.czasTicki(opis) + 40, etykieta);
     p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.4f, 1.6f);
   }
 
   /** Wiązanie młodego: zawsze udane (to nauka pieczęci, nie próba), model kurczy się w pieczęć. */
   private void wiaz(Player p, LivingEntity le, Gatunek g) {
+    dymki.zdejmij(p.getUniqueId());
     zabierzPieczecie(p);
     UUID id = le.getUniqueId();
     zajete.add(id);
@@ -385,8 +394,16 @@ public final class Zagroda implements Listener {
   }
 
   private TextDisplay napisDla(LivingEntity le) {
-    for (var e : mlode.entrySet()) if (e.getValue().equals(le)) return napisy.get(e.getKey());
-    return null;
+    UUID id = le.getUniqueId();
+    for (var e : mlode.entrySet()) if (e.getValue().getUniqueId().equals(id)) return napisy.get(e.getKey());
+    // Zapas: najbliższa etykieta nad młodym — gdyby kliknięto ciało spoza mapy (sierota, zob. sieroty() niżej).
+    TextDisplay best = null; double bd = 1.5 * 1.5;
+    for (TextDisplay t : napisy.values()) {
+      if (t == null || !t.isValid() || t.getWorld() != le.getWorld()) continue;
+      double dx = t.getX() - le.getX(), dz = t.getZ() - le.getZ(), d = dx * dx + dz * dz;
+      if (d < bd) { bd = d; best = t; }
+    }
+    return best;
   }
 
   // ------------------------------------------------------------------ droga
@@ -401,7 +418,7 @@ public final class Zagroda implements Listener {
     }, c.ust.starterOpoznienie);
   }
 
-  public void zapomnij(UUID gracz) { powiadomieni.remove(gracz); ostatniKlik.remove(gracz); }
+  public void zapomnij(UUID gracz) { powiadomieni.remove(gracz); ostatniKlik.remove(gracz); dymki.zdejmij(gracz); }
 
   /** /chw starter i przycisk w Menażerii: gdzie jest zagroda. */
   public void wskaz(Player p) {
@@ -429,6 +446,22 @@ public final class Zagroda implements Listener {
   }
 
   // ------------------------------------------------------------------ zdarzenia
+
+  /**
+   * Młode z poprzedniego wczytania chunku: moby CHW_* mają w MythicMobs {@code Despawn: false} (tryb NEVER, MM wiki
+   * mobs-options „Despawn”), więc ciało zapisuje się z chunkiem mimo setPersistent(false), a pilnuj() stawia obok nowe.
+   * Test zagroda-dymki 16.11: po rozładowaniu chunku 2 encje na stanowisko, klik w sierotę = opis bez etykiety.
+   */
+  @EventHandler
+  public void sieroty(org.bukkit.event.world.EntitiesLoadEvent e) {
+    for (Entity x : e.getEntities()) {
+      if (!mlode(x)) continue;
+      UUID id = x.getUniqueId();
+      if (mlode.values().stream().anyMatch(le -> le.getUniqueId().equals(id) && le.isValid())) continue;
+      c.log.info("Usuwam osierocone młode zagrody " + id + " (" + x.getType() + ")");
+      Mythic.usun(x);
+    }
+  }
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void ppm(PlayerInteractEntityEvent e) {

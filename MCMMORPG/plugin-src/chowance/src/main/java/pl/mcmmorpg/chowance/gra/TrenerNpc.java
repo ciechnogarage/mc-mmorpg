@@ -115,7 +115,7 @@ public final class TrenerNpc implements Listener {
     ProfilDane d = c.daneLubBlad(p);
     if (d == null) return;
     if (walki.wWalce(p) || pojedynki.wPojedynku(p)) { c.blad(p, "Już walczysz."); return; }
-    if (zagroda != null && zagroda.rozmowa(p, t.id())) return;
+    if (zagroda != null && zagroda.rozmowa(p, t.id(), t.nazwa(), e.getRightClicked())) return;
     if (d.druzyna.isEmpty()) { c.blad(p, "Nie masz chowańca w drużynie — weź go z magazynu (klawisz Q → Chowańce)."); return; }
     // Tick później i z zamknięciem ekwipunku: PPM z Dziennikiem w ręce otwierał menu Dziennika zamiast okna
     // trenera (klient QA 2026-09-27).
