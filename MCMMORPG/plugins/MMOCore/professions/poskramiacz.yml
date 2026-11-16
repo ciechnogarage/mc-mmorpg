@@ -1,0 +1,14 @@
+# Poskramiacz — profesja Chowańców (SPEC §7). Agent B, 2026-09-22.
+# Klucze wg klasy Profession (memory mmocore-profesje-klucze): exp-curve (NIE exp-curve-formula), exp-sources, max-level.
+# Krzywa z PLIKU (rzemioslo.txt), nie formuła — w formule {level} to poziom KLASY gracza.
+# Exp daje:
+#   - silnik Chowance przez API MMOCore: łapanie, oswojenie, wyklucie, ewolucja (KONTRAKT §16, kwoty w jego config.yml),
+#   - warsztat Poskramiacza (/warsztat-chowance): trigger exp{profession=poskramiacz} w każdej recepturze,
+#   - nagrody Bestiariusza (bestiariusz-nagrody.yml: mmocore admin exp give).
+# Poziom profesji podnosi limit drużyny/magazynu i szansę łapania (config.yml silnika) oraz odblokowuje receptury.
+# Poskramiacz NIE zajmuje slotu profesji z menu profesji (profession_main.yml) — jest dostępny każdemu (DECYZJE).
+name: Poskramiacz
+max-level: 50
+experience: { base: 8, per-level: 1 }
+exp-curve: rzemioslo
+exp-sources: {}

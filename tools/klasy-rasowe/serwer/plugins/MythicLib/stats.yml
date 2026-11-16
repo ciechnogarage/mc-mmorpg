@@ -44,7 +44,7 @@ min-max-values:
   COOLDOWN_REDUCTION: '0 = 35'
 
   # Mitigation
-  BLOCK_RATING: '0 = 80'
+  BLOCK_RATING: '0 = 0'
   DODGE_RATING: '0 = 80'
   PARRY_RATING: '0 = 80'
   BLOCK_POWER: '25 = 75'

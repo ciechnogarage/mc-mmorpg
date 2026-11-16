@@ -1,0 +1,185 @@
+# BURZOWNIK — specjalizacja klasy Szaman (10 poz.).
+# PLIK GENEROWANY: tools/klasy-rasowe/generuj_klasy.py — zmiany wprowadzać w generatorze.
+# Szkielet (zasób, umiejętności, drzewka): classes/mage/mage.yml.
+display:
+    name: 'Burzownik'
+    lore:
+    - 'Woła pioruny'
+    - 'na wrogów.'
+    - ''
+    - '&7Daje: &fobrażenia czarów'
+    - '&7Zbroja: &flekka'
+    - '&7Broń: &fróżdżki i kostury, totemy'
+    - '&7Poziom 10: &fGrom z Totemu'
+    item: 'TOTEM_OF_UNDYING'
+
+
+# Can either be the file name of a text file inside the 'exp-curves' folder, where
+# each line corresponds to the experience required to reach the next level.
+# Example: 'levels'
+#
+# Or a formula using the {level} placeholder (current player level) and PAPI placeholders.
+# The formula should return the total experience required to reach the next level
+# given the current player's level.
+# Example: '{level} * 200'
+exp-curve: '{level} * 200'
+
+# The maximum level players can reach
+# Akt 1 = poz. 10 (decyzja 29.09); max-level podnosi się razem z aktem (paczka B, B12)
+max-level: 10
+
+skill-trees:
+    - 'general'
+    - 'mage-arcane-mage'
+
+exp-table: class_exp_table
+
+skill-slots:
+    1:
+        name: "&aMiejsce umiejętności I"
+        unlocked-by-default: true
+        lore:
+            - '&a-50% czasu odnowienia &7aktywnych umiejętności'
+            - '&a+30% obrażeń &7aktywnych umiejętności'
+            - ''
+        formula: "<ACTIVE>"
+        skill-buffs:
+            - 'skill_buff{modifier="cooldown";amount=-50;type="RELATIVE"}'
+            - 'skill_buff{modifier="damage";amount=30;type="RELATIVE"}'
+        # Permanently binds a skill to this slot
+        # Players won't be able to change the skill in this slot
+    2:
+        name: "&aMiejsce umiejętności II"
+        unlocked-by-default: true
+        lore: []
+    3:
+        name: "&aMiejsce umiejętności III"
+        unlocked-by-default: true
+        lore: []
+    4:
+        name: "&aMiejsce umiejętności IV"
+        unlocked-by-default: true
+        lore: []
+    5:
+        name: "&bUmiejętność specjalizacji"
+        unlocked-by-default: true
+        lore: ['&7Od poziomu 10 wybranej specjalizacji']
+
+# This is the default mana display options, however it is not mandatory
+# to have it in your class config file. Other classes do not have this
+# section and therefore have the default mana display options.
+#
+# 'char' is the character used to generate the mana bar as a message
+# 'color' are also the colors used to generate the mana bar
+# 'icon' is the icon display on the player action bar
+# 'name' is basically displayed everywhere
+mana:
+    char: ■
+    icon: '&9⭐'
+    color:
+        full: AQUA
+        half: BLUE
+        empty: WHITE
+    name: 'Mana'
+
+cast-particle:
+    particle: SPELL_INSTANT
+    color:
+        red: 100
+        green: 149
+        blue: 237
+    power: 2
+
+# Special resource regeneration: (when out of combat),
+# players can regen a set % of their maximum mana/missing mana.
+# This % can scale with the player level.
+# It also works with other player resources: health, stellium and stamina!
+resource:
+    mana:
+    
+        # Scales with max mana.
+        type: MAX
+
+        # Regen from 3 to 10% of max mana every second
+        value:
+            base: 3
+            per-level: .1
+            max: 10
+
+        # Only regen when out of combat.
+        off-combat: true
+
+options:
+    # 2026-09-26: ukryta w /class — klasę nadaje kreator (konsola), a punkt klasy
+    # z 10 poziomu jest tylko na specjalizację.
+    display: false
+    off-combat-health-regen: true
+    off-combat-mana-regen: false
+    needs-permission: false
+
+attributes:
+    # biegłości (attributes/bieglosci_zbroi.yml, bieglosci_broni.yml)
+    additional-bieglosc-lekka:
+        base: 1
+        per-level: 0
+    additional-bieglosc-kostur:
+        base: 1
+        per-level: 0
+    additional-bieglosc-totem:
+        base: 1
+        per-level: 0
+    max-health:
+        base: 20.7
+        per-level: 0.4025
+    max-mana:
+        base: 32
+        per-level: 0.096
+    mana-regeneration:
+        base: 2
+        per-level: 0.018
+    health-regeneration:
+        base: 0.13
+        per-level: 0
+    movement-speed:
+        base: 0.1
+        per-level: 0
+    physical-damage:
+        base: 10
+        per-level: 0
+    magic-damage:
+        base: 5
+        per-level: 0.2
+
+skills:
+    SPEC_BURZOWNIK_GROM:
+        level: 10
+        max-level: 10
+    MAG_OKO_BURZY:
+        level: 1
+        max-level: 10
+    MAG_BARIERA:
+        level: 3
+        max-level: 10
+        wariant:
+            base: 1
+            per-level: 0
+    MAG_WYBUCH:
+        level: 5
+        max-level: 10
+        wariant:
+            base: 1
+            per-level: 0
+    MAG_MRUGNIECIE:
+        level: 7
+        max-level: 10
+        wariant:
+            base: 1
+            per-level: 0
+        cooldown:
+            base: 8
+            per-level: 0
+
+# Experience sources for main class experience.
+# EXP klasy tylko z tabeli klasa-swiat w exp-sources.yml (paczka B, B1; docs level-sources.md:34,49)
+main-exp-sources:
+- 'from{source=klasa-swiat}'

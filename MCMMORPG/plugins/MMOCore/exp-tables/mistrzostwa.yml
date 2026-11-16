@@ -1,0 +1,861 @@
+# WYGENEROWANE przez tools/krzywe-profesji/kamienie.py — nie edytowac recznie.
+# Kamienie milowe 55..100 (co 5). Opis i uzasadnienie w naglowku generatora.
+
+mistrz_mining:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% mining 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% mining 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% mining 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fGórnictwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% mining 100"}'
+
+mistrz_woodworking:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% woodworking 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% woodworking 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% woodworking 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fDrwalstwo i stolarstwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% woodworking 100"}'
+
+mistrz_herbalism:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% herbalism 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% herbalism 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% herbalism 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fZielarstwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% herbalism 100"}'
+
+mistrz_farming:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% farming 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% farming 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% farming 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fFarmerstwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% farming 100"}'
+
+mistrz_fishing:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% fishing 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% fishing 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% fishing 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fRybactwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% fishing 100"}'
+
+mistrz_hunting:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% hunting 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% hunting 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% hunting 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fMyślistwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% hunting 100"}'
+
+mistrz_jewelcrafting:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% jewelcrafting 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% jewelcrafting 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% jewelcrafting 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fJubilerstwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% jewelcrafting 100"}'
+
+mistrz_smithing:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% smithing 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% smithing 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% smithing 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fKowalstwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% smithing 100"}'
+
+mistrz_tailoring:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% tailoring 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% tailoring 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% tailoring 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fKrawiectwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% tailoring 100"}'
+
+mistrz_alchemy:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% alchemy 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% alchemy 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% alchemy 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fAlchemia &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% alchemy 100"}'
+
+mistrz_enchanting:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% enchanting 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% enchanting 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% enchanting 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fZaklinanie &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% enchanting 100"}'
+
+mistrz_cooking:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% cooking 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% cooking 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% cooking 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fGotowanie &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% cooking 100"}'
+
+mistrz_building:
+  poziom_55:
+    level: 55
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f55&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_60:
+    level: 60
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f60&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% building 60"}'
+  poziom_65:
+    level: 65
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f65&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_70:
+    level: 70
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f70&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_75:
+    level: 75
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f75&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% building 75"}'
+  poziom_80:
+    level: 80
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f80&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_85:
+    level: 85
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f85&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_90:
+    level: 90
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f90&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+      - 'command{format="mistrzostwo kamien %player_name% building 90"}'
+  poziom_95:
+    level: 95
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f95&7 — kamień milowy. &a+100 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=100}'
+  poziom_100:
+    level: 100
+    triggers:
+      - 'message{format="&6&l✦ &fBudownictwo &7osiąga poziom &f100&7 — kamień milowy. &a+500 $"}'
+      - 'sound{sound=UI_TOAST_CHALLENGE_COMPLETE;volume=0.8;pitch=1.2}'
+      - 'money{operation=GIVE;amount=500}'
+      - 'command{format="mistrzostwo kamien %player_name% building 100"}'
+

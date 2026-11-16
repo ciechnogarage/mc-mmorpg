@@ -148,7 +148,7 @@ races:
     traits:
       - '+15% życia'
       - '+10% obrażeń fizycznych'
-      - '-20% many (tylko mag)'
+      - '-20% zasobu archetypu (mana, Skupienie, Szał, Dusze)'
     helmet-color: '#6E9B4E'
     display: '&2Ork'
     permission: 'race.ork'
@@ -160,7 +160,7 @@ races:
     bonus: 'Dzieci Świtu'
     traits:
       - '+10% szybkości ruchu'
-      - 'szybsza regeneracja zasobu (poza akolitą)'
+      - 'zasób archetypu wolniej ucieka lub szybciej wraca (poza akolitą)'
       - '-10% życia'
     helmet-color: '#E8DCA8'
     display: '&bElf'
@@ -205,16 +205,16 @@ classes:
         difficulty: 1
         start-skill: 'Pchnięcie Korony'
         start-skill-level: 1
-        start-skill-text: 'doskok do celu w 8 bl. i 5 obrażeń'
-        description: "Zaprzysiężony obrońca Korony.\nStal, halabarda i dane słowo.\n\nZbroja: lekka, średnia\nBroń: miecze, broń drzewcowa"
+        start-skill-text: 'doskok do celu w 8 bl. za 5 obrażeń'
+        description: "Zaprzysiężony obrońca Korony.\nStal, halabarda i dane słowo.\n\nZbroja: lekka, średnia, ciężka\nBroń: miecze, tarcze, broń drzewcowa"
         bonus: 'Na 10 poz.: Nieugięty albo Czempion Areny'
         lore: 'Zaprzysiężony obrońca Korony. Stal, halabarda i dane słowo.'
-        armor: 'lekka, średnia'
-        weapons: 'miecze, broń drzewcowa'
+        armor: 'lekka, średnia, ciężka'
+        weapons: 'miecze, tarcze, broń drzewcowa'
         specializations:
           - name: '&fNieugięty'
             description: 'Mur, o który rozbija się szarża. Nie cofa się ani o krok.'
-            perks: 'więcej obrony, ciężka zbroja, tarcze'
+            perks: 'więcej obrony'
           - name: '&eCzempion Areny'
             description: 'Mistrz pojedynków i areny. Każdy cios waży więcej.'
             perks: 'obrażenia fizyczne'
@@ -224,16 +224,16 @@ classes:
         difficulty: 2
         start-skill: 'Przelot Gaju'
         start-skill-level: 1
-        start-skill-text: 'przelot przez cel do 8 bl. i cięcie'
-        description: "Szermierz świętych gajów.\nLekki krok, elfia klinga.\n\nZbroja: lekka, średnia\nBroń: miecze, elfie klingi"
+        start-skill-text: 'przelot przez cel do 8 bl., cięcie za 5'
+        description: "Szermierz świętych gajów.\nLekki krok, elfia klinga.\n\nZbroja: lekka, średnia, ciężka\nBroń: miecze, tarcze, elfie klingi"
         bonus: 'Na 10 poz.: Różany Rycerz albo Tancerz Ostrzy'
         lore: 'Szermierz świętych gajów. Lekki krok, elfia klinga.'
-        armor: 'lekka, średnia'
-        weapons: 'miecze, elfie klingi'
+        armor: 'lekka, średnia, ciężka'
+        weapons: 'miecze, tarcze, elfie klingi'
         specializations:
           - name: '&2Różany Rycerz'
             description: 'Obrońca różanego gaju. Piękny i kolczasty.'
-            perks: 'więcej obrony, ciężka zbroja, tarcze'
+            perks: 'więcej obrony'
           - name: '&aTancerz Ostrzy'
             description: 'Taniec klingi. Szybki i nieuchwytny.'
             perks: 'uniki'
@@ -244,15 +244,15 @@ classes:
         start-skill: 'Natarcie Wodza'
         start-skill-level: 1
         start-skill-text: 'doskok do 8 bl.; trafia do 3 wrogów w promieniu 3 bl. po 5 obrażeń'
-        description: "Prowadzi szarżę na czele hordy\ni nie zna odwrotu.\n\nZbroja: lekka, średnia\nBroń: miecze, topory"
+        description: "Prowadzi szarżę na czele hordy\ni nie zna odwrotu.\n\nZbroja: lekka, średnia, ciężka\nBroń: miecze, tarcze, topory"
         bonus: 'Na 10 poz.: Tyran albo Krwioburca'
         lore: 'Prowadzi szarżę na czele hordy i nie zna odwrotu.'
-        armor: 'lekka, średnia'
-        weapons: 'miecze, topory'
+        armor: 'lekka, średnia, ciężka'
+        weapons: 'miecze, tarcze, topory'
         specializations:
           - name: '&cTyran'
             description: 'Ściana żelaza. Przyjmuje ciosy, żeby drużyna mogła zadawać.'
-            perks: 'więcej obrony, ciężka zbroja, tarcze'
+            perks: 'więcej obrony'
           - name: '&4Krwioburca'
             description: 'Szał bitewny. Im więcej krwi, tym mocniej bije.'
             perks: 'trafienia krytyczne'
@@ -263,15 +263,15 @@ classes:
         start-skill: 'Marsz z Krypty'
         start-skill-level: 1
         start-skill-text: 'doskok do 6 bl.; do 3 wrogów w promieniu 2,5 bl. po 5 obrażeń'
-        description: "Rycerz, którego śmierć\nnie zatrzymała.\n\nZbroja: lekka, średnia\nBroń: miecze, miecze dwuręczne"
+        description: "Rycerz, którego śmierć\nnie zatrzymała.\n\nZbroja: lekka, średnia, ciężka\nBroń: miecze, tarcze, miecze dwuręczne"
         bonus: 'Na 10 poz.: Kustosz Krypt albo Żniwiarz'
         lore: 'Rycerz, którego śmierć nie zatrzymała.'
-        armor: 'lekka, średnia'
-        weapons: 'miecze, miecze dwuręczne'
+        armor: 'lekka, średnia, ciężka'
+        weapons: 'miecze, tarcze, miecze dwuręczne'
         specializations:
           - name: '&7Kustosz Krypt'
             description: 'Strzeże krypt. Nie ustępuje.'
-            perks: 'więcej obrony, ciężka zbroja, tarcze'
+            perks: 'więcej obrony'
           - name: '&5Żniwiarz'
             description: 'Zbiera życie z każdym cięciem.'
             perks: 'kradzież życia'
@@ -308,7 +308,7 @@ classes:
         difficulty: 3
         start-skill: 'Nić Arkanów'
         start-skill-level: 1
-        start-skill-text: 'linia do 20 bl. trafia do 3 wrogów po 4 obrażenia'
+        start-skill-text: 'linia do 20 bl. trafia do 3 wrogów po 4 obrażeń'
         description: "Przędzie magię jak nić.\nKostur z żywego drewna.\n\nZbroja: tylko tkanina\nBroń: różdżki i kostury, kostury dwuręczne"
         bonus: 'Na 10 poz.: Pieśniarz Burz albo Władca Zwierciadeł'
         lore: 'Przędzie magię jak nić. Kostur z żywego drewna.'
@@ -346,7 +346,7 @@ classes:
         difficulty: 3
         start-skill: 'Splot Duszy'
         start-skill-level: 1
-        start-skill-text: 'cel do 15 bl. otrzymuje 3 obrażenia'
+        start-skill-text: 'cel do 15 bl. otrzymuje 3 obrażeń'
         description: "Mag, który oszukał śmierć.\nJego dusza czeka w filakterium.\n\nZbroja: tylko tkanina\nBroń: różdżki i kostury, filakteria"
         bonus: 'Na 10 poz.: Duszożerca albo Zwiastun Zarazy'
         lore: 'Mag, który oszukał śmierć. Jego dusza czeka w filakterium.'
@@ -369,7 +369,7 @@ classes:
     races:
       czlowiek:
         display: '&eNosiciel Relikwii'
-        role: 'Wsparcie, drugi szereg'
+        role: 'Przywoływacz, drugi szereg'
         difficulty: 1
         start-skill: 'Straż Relikwii'
         start-skill-level: 1
@@ -382,17 +382,17 @@ classes:
         specializations:
           - name: '&fŻywa Relikwia'
             description: 'Święta moc w ludzkim ciele. Staje w pierwszym szeregu.'
-            perks: 'więcej obrony, ciężka zbroja'
+            perks: 'więcej obrony'
           - name: '&eChorąży Świętych'
             description: 'Niesie sztandar świętych. Duchy obrońców słuchają jego głosu.'
-            perks: 'więcej many'
+            perks: 'większa pula Dusz'
       elf:
         display: '&eWyrocznia'
-        role: 'Wsparcie, walka wręcz'
+        role: 'Przywoływacz, walka wręcz'
         difficulty: 2
         start-skill: 'Sierp Księżyca'
         start-skill-level: 1
-        start-skill-text: 'cięcie do 3 bl. za 3 obrażenia'
+        start-skill-text: 'cięcie do 3 bl. za 3 obrażeń'
         description: "Kapłanka księżyca.\nWidzi to, co nadejdzie.\n\nZbroja: lekka\nBroń: buławy, sierpy"
         bonus: 'Na 10 poz.: Ostrze Księżyca albo Przewodnik Ogników'
         lore: 'Kapłanka księżyca. Widzi to, co nadejdzie.'
@@ -407,11 +407,11 @@ classes:
             perks: 'większa pula Dusz'
       ork:
         display: '&eKapłan Krwi'
-        role: 'Wsparcie, walka wręcz'
+        role: 'Przywoływacz, walka wręcz'
         difficulty: 2
         start-skill: 'Przodek Młota'
         start-skill-level: 1
-        start-skill-text: 'cel do 4 bl. otrzymuje 4 obrażenia; pobliscy wrogowie w promieniu 2 bl. także'
+        start-skill-text: 'cel do 4 bl. otrzymuje 4 obrażeń; pobliscy wrogowie w promieniu 2 bl. także'
         description: "Składa ofiary\nbogom wojny.\n\nZbroja: lekka\nBroń: buławy, młoty dwuręczne"
         bonus: 'Na 10 poz.: Awatar Wojny albo Wołający Przodków'
         lore: 'Składa ofiary bogom wojny.'
@@ -423,14 +423,14 @@ classes:
             perks: 'obrażenia fizyczne, średnia zbroja'
           - name: '&5Wołający Przodków'
             description: 'Woła duchy wojowników z pól dawnych bitew.'
-            perks: 'więcej many'
+            perks: 'większa pula Dusz'
       nieumarly:
         display: '&ePasterz Ciszy'
-        role: 'Wsparcie, kradzież życia'
+        role: 'Przywoływacz, kradzież życia'
         difficulty: 2
         start-skill: 'Kosiarz Ciszy'
         start-skill-level: 1
-        start-skill-text: 'cięcie do 4 bl. za 4 obrażenia'
+        start-skill-text: 'cięcie do 4 bl. za 4 obrażeń'
         description: "Odstępca Spaczonej Ciszy.\nUkradł ciszę śmierci i tka z niej sługi.\n\nZbroja: lekka\nBroń: buławy, kosy"
         bonus: 'Na 10 poz.: Awatar Otchłani albo Pan Kurhanów'
         lore: 'Odstępca Spaczonej Ciszy. Ukradł ciszę śmierci i tka z niej sługi.'
@@ -457,7 +457,7 @@ classes:
         difficulty: 2
         start-skill: 'Bełt Listu Gończego'
         start-skill-level: 1
-        start-skill-text: 'bełt trafia do 15 bl. za 3,5 obrażeń i nakłada 1 Znamię'
+        start-skill-text: 'bełt trafia do 15 bl. za 3.5 obrażeń i nakłada 1 Znamię'
         description: "Cień miejskich zaułków.\nSztylet w rękawie, kusza pod płaszczem.\n\nZbroja: lekka\nBroń: sztylety i pięściaki, łuki, kusze i muszkiety"
         bonus: 'Na 10 poz.: Truciciel albo Łowca Nagród'
         lore: 'Cień miejskich zaułków. Sztylet w rękawie, kusza pod płaszczem.'
@@ -476,7 +476,7 @@ classes:
         difficulty: 2
         start-skill: 'Strzała z Korony'
         start-skill-level: 1
-        start-skill-text: 'po 0,6 s trafia do 20 bl. za 4 obrażenia i nakłada 1 Znamię'
+        start-skill-text: 'po 0,6 s trafia do 20 bl. za 4 obr'
         description: "Nikt go nie słyszy w lesie.\nŁuk długi i sztylet.\n\nZbroja: lekka\nBroń: sztylety i pięściaki, łuki, łuki długie"
         bonus: 'Na 10 poz.: Tkacz Sideł albo Srebrna Cięciwa'
         lore: 'Nikt go nie słyszy w lesie. Łuk długi i sztylet.'
@@ -495,7 +495,7 @@ classes:
         difficulty: 2
         start-skill: 'Ślad Kła'
         start-skill-level: 1
-        start-skill-text: 'trafia do 12 bl. za 3,5 obrażeń'
+        start-skill-text: 'trafia do 12 bl. za 3.5 obrażeń'
         description: "Łowca stepów, szybki jak wiatr.\nWłócznia i łuk.\n\nZbroja: lekka, średnia\nBroń: sztylety i pięściaki, łuki, włócznie"
         bonus: 'Na 10 poz.: Zaklinacz Bestii albo Kościany Grot'
         lore: 'Łowca stepów, szybki jak wiatr. Włócznia i łuk.'
@@ -514,7 +514,7 @@ classes:
         difficulty: 3
         start-skill: 'Pętla Grobu'
         start-skill-level: 1
-        start-skill-text: 'trafia cel do 10 bl., przyciąga go i nakłada 1 Znamię'
+        start-skill-text: 'trafia cel do 10 bl. za 3.5 obr., przyciąga go i nakłada 1 Znamię'
         description: "Upiór cmentarnych mgieł.\nŁańcuch i sztylet.\n\nZbroja: lekka\nBroń: sztylety i pięściaki, łuki, łańcuchy"
         bonus: 'Na 10 poz.: Dusiciel albo Łucznik Ciszy'
         lore: 'Upiór cmentarnych mgieł. Łańcuch i sztylet.'

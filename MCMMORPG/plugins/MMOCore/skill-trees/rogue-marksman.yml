@@ -1,8 +1,8 @@
 id: 'rogue-marksman'
-name: '&4Rogue & Marksman'
+name: '&4Ninja'
 type: CUSTOM
 lore:
-  - '&6Available to Rogues and Marksmen only'
+  - '&6Dla ninja'
 max-point-spent: 21
 
 icon:
@@ -17,7 +17,7 @@ nodes:
 
 #### A
   a1:
-    name: 'Additional Exp'
+    name: 'Doświadczenie klasy I'
     coordinates:
       x: -3
       y: 0
@@ -28,11 +28,11 @@ nodes:
           - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional MMOCore main class experience +%2"
+        - "&7Doświadczenie klasy: &a+2%"
       1:
-        - "&eAdditional MMOCore main class experience +%2"
+        - "&7Doświadczenie klasy: &a+2%"
   a2:
-    name: 'Additional Exp II'
+    name: 'Doświadczenie klasy II'
     coordinates:
       x: -2
       y: 0
@@ -47,11 +47,11 @@ nodes:
           - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional MMOCore main class experience +%3"
+        - "&7Doświadczenie klasy: &a+3%"
       1:
-        - "&eAdditional MMOCore main class experience +%3"
+        - "&7Doświadczenie klasy: &a+3%"
   a3:
-    name: 'Additional Exp III'
+    name: 'Doświadczenie klasy III'
     coordinates:
       x: -1
       y: 0
@@ -66,14 +66,14 @@ nodes:
           - 'stat{stat="ADDITIONAL_EXPERIENCE";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional MMOCore main class experience +%5"
+        - "&7Doświadczenie klasy: &a+5%"
       1:
-        - "&eAdditional MMOCore main class experience +%5"
+        - "&7Doświadczenie klasy: &a+5%"
 
 ## B
 
   b1:
-    name: 'Shooting Force I'
+    name: 'Siła krytyka I'
     coordinates:
       x: -1
       y: -1
@@ -85,14 +85,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ARROW_VELOCITY";amount=10;type="RELATIVE"}'
+          - 'stat{stat="CRITICAL_STRIKE_POWER";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eDetermines how far your weapon can shoot +%10"
+        - "&7Siła ciosu krytycznego: &a+5%"
       1:
-        - "&eDetermines how far your weapon can shoot +%10"
+        - "&7Siła ciosu krytycznego: &a+5%"
   b2:
-    name: 'Shooting Force II'
+    name: 'Siła krytyka II'
     coordinates:
       x: -1
       y: -2
@@ -104,14 +104,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ARROW_VELOCITY";amount=15;type="RELATIVE"}'
+          - 'stat{stat="CRITICAL_STRIKE_POWER";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eDetermines how far your weapon can shoot +%15"
+        - "&7Siła ciosu krytycznego: &a+5%"
       1:
-        - "&eDetermines how far your weapon can shoot +%15"
+        - "&7Siła ciosu krytycznego: &a+5%"
   b3:
-    name: 'Shooting Force III'
+    name: 'Siła krytyka III'
     coordinates:
       x: 0
       y: -2
@@ -123,17 +123,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="ARROW_VELOCITY";amount=25;type="RELATIVE"}'
+          - 'stat{stat="CRITICAL_STRIKE_POWER";amount=10;type="FLAT"}'
     lores:
       0:
-        - "&eDetermines how far your weapon can shoot +%25"
+        - "&7Siła ciosu krytycznego: &a+10%"
       1:
-        - "&eDetermines how far your weapon can shoot +%25"
+        - "&7Siła ciosu krytycznego: &a+10%"
 
 ## C
 
   c1:
-    name: 'Sustain I'
+    name: 'Kradzież życia I'
     coordinates:
       x: 1
       y: -2
@@ -148,11 +148,11 @@ nodes:
           - 'stat{stat="LIFESTEAL";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&ePercentage of damage you gain back as health when inflicting weapon damage +%1"
+        - "&7Kradzież życia: &a+2%"
       1:
-        - "&ePercentage of damage you gain back as health when inflicting weapon damage +%1"
+        - "&7Kradzież życia: &a+2%"
   c2:
-    name: 'Sustain II'
+    name: 'Kradzież życia II'
     coordinates:
       x: 2
       y: -2
@@ -167,11 +167,11 @@ nodes:
           - 'stat{stat="LIFESTEAL";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&ePercentage of damage you gain back as health when inflicting weapon damage +%2"
+        - "&7Kradzież życia: &a+2%"
       1:
-        - "&ePercentage of damage you gain back as health when inflicting weapon damage +%2"
+        - "&7Kradzież życia: &a+2%"
   c3:
-    name: 'Sustain III'
+    name: 'Kradzież życia III'
     coordinates:
       x: 3
       y: -2
@@ -186,14 +186,14 @@ nodes:
           - 'stat{stat="LIFESTEAL";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&ePercentage of damage you gain back as health when inflicting weapon damage +%2"
+        - "&7Kradzież życia: &a+2%"
       1:
-        - "&ePercentage of damage you gain back as health when inflicting weapon damage +%2"
+        - "&7Kradzież życia: &a+2%"
 
 ## D
 
   d1:
-    name: 'Knockback Resistance I'
+    name: 'Odporność na odrzut I'
     coordinates:
       x: 3
       y: -1
@@ -205,14 +205,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
-        - "&eThe chance of you to block the knockback +%5"
+        - "&7Odporność na odrzut: &a+5%"
       1:
-        - "&eThe chance of you to block the knockback +%5"
+        - "&7Odporność na odrzut: &a+5%"
   d2:
-    name: 'Knockback Resistance II'
+    name: 'Odporność na odrzut II'
     coordinates:
       x: 4
       y: -1
@@ -224,14 +224,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
-        - "&eThe chance of you to block the knockback +%5"
+        - "&7Odporność na odrzut: &a+5%"
       1:
-        - "&eThe chance of you to block the knockback +%5"
+        - "&7Odporność na odrzut: &a+5%"
   d3:
-    name: 'Knockback Resistance III'
+    name: 'Odporność na odrzut III'
     coordinates:
       x: 4
       y: 0
@@ -243,17 +243,17 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=5;type="FLAT"}'
+          - 'stat{stat="KNOCKBACK_RESISTANCE";amount=0.05;type="FLAT"}'
     lores:
       0:
-        - "&eThe chance of you to block the knockback +%5"
+        - "&7Odporność na odrzut: &a+5%"
       1:
-        - "&eThe chance of you to block the knockback +%5"
+        - "&7Odporność na odrzut: &a+5%"
 
 ## E
 
   e1:
-    name: 'Crit Chance I'
+    name: 'Szansa na cios krytyczny I'
     coordinates:
       x: 4
       y: 1
@@ -268,11 +268,11 @@ nodes:
           - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eCritical Strikes deal more damage in +%2 chance"
+        - "&7Szansa na cios krytyczny: &a+2%"
       1:
-        - "&eCritical Strikes deal more damage in +%2 chance"
+        - "&7Szansa na cios krytyczny: &a+2%"
   e2:
-    name: 'Crit Chance II'
+    name: 'Szansa na cios krytyczny II'
     coordinates:
       x: 4
       y: 2
@@ -287,11 +287,11 @@ nodes:
           - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=3;type="FLAT"}'
     lores:
       0:
-        - "&eCritical Strikes deal more damage in +%3 chance"
+        - "&7Szansa na cios krytyczny: &a+3%"
       1:
-        - "&eCritical Strikes deal more damage in +%3 chance"
+        - "&7Szansa na cios krytyczny: &a+3%"
   e3:
-    name: 'Crit Chance III'
+    name: 'Szansa na cios krytyczny III'
     coordinates:
       x: 3
       y: 2
@@ -306,14 +306,14 @@ nodes:
           - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=5;type="FLAT"}'
     lores:
       0:
-        - "&eCritical Strikes deal more damage in +%5 chance"
+        - "&7Szansa na cios krytyczny: &a+5%"
       1:
-        - "&eCritical Strikes deal more damage in +%5 chance"
+        - "&7Szansa na cios krytyczny: &a+5%"
 
 ## F
 
   f1:
-    name: 'Agility I'
+    name: 'Prędkość ruchu I'
     coordinates:
       x: 2
       y: 2
@@ -328,11 +328,11 @@ nodes:
           - 'stat{stat="MOVEMENT_SPEED";amount=2;type="RELATIVE"}'
     lores:
       0:
-        - "&eMovement Speed increase walk speed. +%2"
+        - "&7Prędkość ruchu: &a+2%"
       1:
-        - "&eMovement Speed increase walk speed. +%2"
+        - "&7Prędkość ruchu: &a+2%"
   f2:
-    name: 'Agility II'
+    name: 'Prędkość ruchu II'
     coordinates:
       x: 2
       y: 1
@@ -347,11 +347,11 @@ nodes:
           - 'stat{stat="MOVEMENT_SPEED";amount=2;type="RELATIVE"}'
     lores:
       0:
-        - "&eMovement Speed increase walk speed. +%2"
+        - "&7Prędkość ruchu: &a+2%"
       1:
-        - "&eMovement Speed increase walk speed. +%2"
+        - "&7Prędkość ruchu: &a+2%"
   f3:
-    name: 'Agility III'
+    name: 'Prędkość ruchu III'
     coordinates:
       x: 1
       y: 1
@@ -366,14 +366,14 @@ nodes:
           - 'stat{stat="MOVEMENT_SPEED";amount=6;type="RELATIVE"}'
     lores:
       0:
-        - "&eMovement Speed increase walk speed. +%6"
+        - "&7Prędkość ruchu: &a+6%"
       1:
-        - "&eMovement Speed increase walk speed. +%6"
+        - "&7Prędkość ruchu: &a+6%"
 
 ## G
 
   g1:
-    name: 'Projectile Damage I'
+    name: 'Obrażenia pocisków I'
     coordinates:
       x: 0
       y: 1
@@ -385,14 +385,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="RELATIVE"}'
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional skill/weapon projectile damage +%2"
+        - "&7Obrażenia pocisków: &a+2%"
       1:
-        - "&eAdditional skill/weapon projectile damage +%2"
+        - "&7Obrażenia pocisków: &a+2%"
   g2:
-    name: 'Projectile Damage II'
+    name: 'Obrażenia pocisków II'
     coordinates:
       x: 0
       y: 2
@@ -404,14 +404,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="RELATIVE"}'
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional skill/weapon projectile damage +%2"
+        - "&7Obrażenia pocisków: &a+2%"
       1:
-        - "&eAdditional skill/weapon projectile damage +%2"
+        - "&7Obrażenia pocisków: &a+2%"
   g3:
-    name: 'Projectile Damage III'
+    name: 'Obrażenia pocisków III'
     coordinates:
       x: -1
       y: 2
@@ -423,12 +423,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="PROJECTILE_DAMAGE";amount=6;type="RELATIVE"}'
+          - 'stat{stat="PROJECTILE_DAMAGE";amount=6;type="FLAT"}'
     lores:
       0:
-        - "&eAdditional skill/weapon projectile damage +%6"
+        - "&7Obrażenia pocisków: &a+6%"
       1:
-        - "&eAdditional skill/weapon projectile damage +%6"
+        - "&7Obrażenia pocisków: &a+6%"
 
 # This section is to change display options for nodes and paths depending on:
 # - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.

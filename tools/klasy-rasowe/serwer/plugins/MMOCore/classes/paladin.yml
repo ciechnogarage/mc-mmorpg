@@ -1,5 +1,5 @@
 display:
-    name: 'Acolyte'
+    name: 'Akolita'
     lore:
     - 'The paladin is a heavy tanky fighter'
     - 'who uses his mana to heal and protect'
@@ -47,31 +47,31 @@ exp-curve: '{level} * 200'
 
 skill-slots:
     1:
-        name: "&aSkill Slot I"
+        name: "&aMiejsce umiejętności I"
         unlocked-by-default: true
         lore: []
         # Permanently binds a skill to this slot
         # Players won't be able to change the skill in this slot
         #hardset: HUMAN_SHIELD
     2:
-        name: "&aSkill Slot II"
+        name: "&aMiejsce umiejętności II"
         unlocked-by-default: true
         lore: []
         #hardset: GREATER_HEALINGS
     3:
-        name: "&aSkill Slot III"
+        name: "&aMiejsce umiejętności III"
         unlocked-by-default: true
         lore: []
         #hardset: AMBERS
     4:
-        name: "&aSkill Slot IV"
+        name: "&aMiejsce umiejętności IV"
         unlocked-by-default: true
         lore: []
         #hardset: DEEP_WOUND
     5:
-        name: "&bDefensive Skill"
+        name: "&bUmiejętność specjalizacji"
         unlocked-by-default: true
-        lore: ['&7Defensive ability slot']
+        lore: ['&7Od poziomu 10 wybranej specjalizacji']
         hardset: HUMAN_SHIELD
 
 skill-trees:

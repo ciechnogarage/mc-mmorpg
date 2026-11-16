@@ -567,7 +567,8 @@ ZASOB = {
 
 def bez_skilli_demo(szkielet):
     """Pełny własny zestaw zastępuje demo skills i przypięcie tarczy w slocie 5."""
-    szkielet = szkielet.replace('name: "&bDefensive Skill"', 'name: "&bSkill specjalizacji"')
+    # szkielety (tools/klasy-rasowe/serwer/.../classes) sa po polsku od 16.11; zamiana zostaje dla starych kopii
+    szkielet = szkielet.replace('name: "&bDefensive Skill"', 'name: "&bUmiejętność specjalizacji"')
     szkielet = szkielet.replace("lore: ['&7Defensive ability slot']", "lore: ['&7Od poziomu 10 wybranej specjalizacji']")
     wynik = []
     for klucz, linie in sekcje(szkielet):

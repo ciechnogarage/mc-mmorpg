@@ -1,255 +1,186 @@
-# GUI display name
-name: 'Profil Postaci'
-
-# Number of slots in your inventory. Must be
-# between 9 and 54 and must be a multiple of 9.
+# Karta postaci. Glif Nexo rysuje panel pod ikonami standardowego GUI 6-rzedowego.
+# &f przed glifem zapobiega tintowi 0x404040. Przesuniecia: -8 i -169.
+name: '&f䪀䪁䪂䪃'
 slots: 54
 
 items:
-  mining_profession:
-    slots: [ 10 ]
-    function: profession_mining
-
-    #custom_model_data_float: 0.45        # 1.20.4+ Float custom model data. Either this, or string option above works completely fine
-    #custom_model_data: 0                 # 1.14-1.20.3 Custom model data. Prefer using custom_model_data_string on 1.20.4+
-    #tooltip: 'myplugin:tooltip_asset_id' # You can edit the slot icon tooltip that way
-    #custom_model_data_string: 'test'     # 1.20.4+ string custom model data
-    #item_model: 'minecraft:dirt'         # 1.21.2+ item model
-    #skull_texture: '......'              # SKull texture value or URL
-    #hide_tooltip: false                  # True or false, for vanilla tooltip
-    #unbreakable: false                   # Is it unbreakable or not?
-    #fake_attribute: false                # Should MythicLib add a fake attribute modifier? Useful for 1.20 or lower to hide vanilla attributes from the item
-    #item_flags: [HIDE_ENCHANTS, ....]    # Add item flags to your items. https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/ItemFlag.html
-
-    item: IRON_PICKAXE
-    name: '&aMining'
-    item-flags: [ 'HIDE_ATTRIBUTES' ]
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oMining unlocks rare ores and raw materials.'
-      - '&7&oThis is vital to your rise in power and strength,'
-      - '&7&omine frequently for unique and rare drops.'
-  woodcutting_profession:
-    slots: [ 11 ]
-    function: profession_woodcutting
-    item: IRON_AXE
-    name: '&aWoodcutting'
-    item-flags: [ 'HIDE_ATTRIBUTES' ]
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oThough it may seem like a boring task, woodcutting'
-      - '&7&ois vital to obtaining materials used for crafting and trade,'
-      - '&7&oand will help give you the upper hand in the arcane ways.'
-  farming_profession:
-    slots: [ 12 ]
-    function: profession_farming
-    item: IRON_HOE
-    name: '&aFarming'
-    item-flags: [ 'HIDE_ATTRIBUTES' ]
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oWith tons of new food and consumable recipes,'
-      - '&7&oyou will need to stay on top of the crops in order'
-      - '&7&oto obtain the best food and drinks to keep yourself healthy.'
-  fishing_profession:
-    slots: [ 19 ]
-    function: profession_fishing
-    item: FISHING_ROD
-    name: '&aFishing'
-    item-flags: [ 'HIDE_ATTRIBUTES' ]
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oFishing may give you unique drops you'
-      - '&7&ocan''t find anywhere else. The more you'
-      - '&7&ofish, the easier it becomes to find these.'
-      - ''
-      - '&7Fishing Strength: &c%mmocore_stat_fishing_strength%%'
-      - '&7Crit Fishing Rate: &c%mmocore_stat_critical_fishing_chance%%'
-      - '&7Crit Failure Rate: &c%mmocore_stat_critical_fishing_failure_chance%%'
-  alchemy_profession:
-    slots: [ 20 ]
-    function: profession_alchemy
-    item: BREWING_STAND
-    name: '&aAlchemy'
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oIn a world where you are no longer limited to'
-      - '&7&osimple potions, try learning tons of new brewing'
-      - '&7&orecipes to give yourself the edge on the battlefield.'
-  smithing_profession:
-    slots: [ 21 ]
-    function: profession_smithing
-    item: ANVIL
-    name: '&aSmithing'
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oStabbing enemies and having them laugh is the worst,'
-      - '&7&oPractice makes perfect when it comes to smithing.'
-      - '&7&o&nWar is won by the man with the pointiest stick.'
-  enchanting_profession:
-    slots: [ 28 ]
-    function: profession_enchanting
-    item: ENCHANTED_BOOK
-    name: '&aEnchanting'
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oLorem ipsum dolor sit amet, consectetur'
-      - '&7&oadipiscing elit. Proin malesuada maximus massa,'
-      - '&7&osodales imperdiet sapien fermentum at.'
-  smelting_profession:
-    slots: [ 29 ]
-    function: profession_smelting
-    item: FURNACE
-    name: '&aSmelting'
-    lore:
-      - ''
-      - '&7Current Level: &e{level}'
-      - '&8[&e{progress}&8] &e{percent}%'
-      - ''
-      - '&7&oSinging your eyebrows will become standard.'
-      - '&7&oYour long hours over the heat will make you'
-      - '&7&ofaster and more efficient with your oven.'
-  boost_display:
-    slots: [ 47,48,49,50,51 ]
-    function: boost
-    item: BARRIER
-
-    # Language options
-    booster_expired: '&cExpired!'
-
-    no-boost:
-      item: GRAY_STAINED_GLASS_PANE
-      name: '&aNo Booster'
-      lore: { }
-
-    # Profession experience boosters
-    profession:
-      item: EXPERIENCE_BOTTLE
-      name: '&aEXP Boost'
-      lore:
-        - '&7Amount: &6+{value}%'
-        - '&7Time left: &6{left}'
-        - '&7Profession: &6{profession}'
-        - '&7'
-        - '&eStarted by {author}'
-
-    # Main class experience boosters
-    main-level:
-      item: EXPERIENCE_BOTTLE
-      name: '&aEXP Boost'
-      lore:
-        - '&7Amount: &6+{value}%'
-        - '&7Time left: &6{left}'
-        - '&7'
-        - '&eStarted by {author}'
-  boost_next_page:
-    slots: [ 52 ]
-    function: boost-next
-    item: PLAYER_HEAD
-    texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
-    name: '&aDalej'
-    lore: { }
-  boost_prev_page:
-    slots: [ 46 ]
-    function: boost-previous
-    item: PLAYER_HEAD
-    texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
-    name: '&aWstecz'
-    lore: { }
-  party_info:
-    slots: [ 16 ]
-    function: party
-    item: CAKE
-    name: '&aParty Morale'
-    lore:
-      - '&7&oPlaying with your friends'
-      - '&7&ogreatly encourages you!'
-      - ''
-      - '&7Party Bonuses ({count}):'
-      - '&8+{buff_additional_experience}% Experience Earned!'
-      - '&8+{buff_health_regeneration} Health Regeneration'
-  player_progression:
+  naglowek_postac:
+    slots: [ 14 ]
+    item: NAME_TAG
+    name: '&6&lPOSTAĆ'
+    lore: ['&7Klasa, poziom, pochodzenie i wiara.']
+  naglowek_walka:
     slots: [ 15 ]
+    item: IRON_SWORD
+    name: '&c&lWALKA'
+    lore: ['&7Atak, obrona i magia.']
+    item-flags: [HIDE_ATTRIBUTES]
+  naglowek_profesje:
+    slots: [ 16 ]
+    item: CRAFTING_TABLE
+    name: '&e&lPROFESJE'
+    lore: ['&7Skrót poziomów wszystkich profesji.']
+  profil:
+    slots: [ 45 ]
     function: profile
     item: PLAYER_HEAD
     name: '&e{player}'
     lore:
-      - ''
-      - '&7Aktualny poziom: &e{level}'
-      - '&7Postęp: &e{exp} / {next_level}'
+      - '&7Klasa: &f{class}'
+      - '&7Poziom: &e{level}'
+      - '&7Doświadczenie: &f{exp}&7/&f{next_level}'
       - '&8[&e{progress}&8] &e{percent}%'
-      - '&7Punkty skilli: &6{skill_points}'
-      - ''
-      - '&7Aktualna klasa: &c{class}'
-      - '&7Punkty klasy: &c{class_points}'
-  attribute_physical:
+      - '&7Punkty umiejętności: &f{skill_points}'
+      - '&7Punkty klasy: &f{class_points}'
+  rasa:
+    slots: [ 46 ]
+    item: COMPASS
+    name: '&ePochodzenie'
+    lore:
+      - '&7Rasa: &f%wiary_rasa_nazwa%'
+      - '&8Rasa wynika z klasy postaci.'
+  wiara:
+    slots: [ 47 ]
+    item: TOTEM_OF_UNDYING
+    name: '&6Wiara'
+    lore:
+      - '&7Patron: &f%wiary_patron_imie%'
+      - '&7Atrybut Wiary: &f%wiary_wiara%'
+  zasoby:
+    slots: [ 48 ]
+    item: HEART_OF_THE_SEA
+    name: '&bZasoby'
+    lore:
+      - '&7Życie: &f%mmocore_health%&7/&f%mmocore_stat_max_health%'
+      - '&7Mana: &f%mmocore_mana%&7/&f%mmocore_stat_max_mana%'
+      - '&7Wytrzymałość: &f%mmocore_stamina%&7/&f%mmocore_stat_max_stamina%'
+  atak:
+    slots: [ 17 ]
+    item: NETHERITE_SWORD
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&cAtak'
+    lore: ['&7Obrażenia: &f%mmocore_stat_attack_damage%']
+  obrona:
+    slots: [ 23 ]
+    item: SHIELD
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&9Obrona'
+    lore: ['&7Pancerz: &f%mmocore_stat_armor%']
+  magia:
+    slots: [ 24 ]
+    item: BLAZE_ROD
+    name: '&dMagia'
+    lore: ['&7Obrażenia magiczne: &f%mmocore_stat_magic_damage%%']
+  krytyk:
+    slots: [ 25 ]
+    item: IRON_AXE
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&cTrafienie krytyczne'
+    lore:
+      - '&7Szansa: &f%mmocore_stat_critical_strike_chance%%'
+      - '&7Moc: &f%mmocore_stat_critical_strike_power%%'
+  pancernosc:
+    slots: [ 26 ]
+    item: NETHERITE_CHESTPLATE
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&9Pancerz i odporność'
+    lore: ['&7Wytrzymałość pancerza: &f%mmocore_stat_armor_toughness%']
+  mana:
     slots: [ 32 ]
-    function: stats
-    name: '&cFizyczne'
-    item: GOLDEN_APPLE
-    lore:
-      - ''
-      - 'Aktualna siła: &c&l{attribute_strength}'
-      - ''
-      - '✦ Attack Damage: &c{attack_damage} &7(&c{attack_damage_base} &7+ &c{attack_damage_extra}&7)'
-      - '✦ Attack Speed: &c{attack_speed} &7(&c{attack_speed_base} &7+ &c{attack_speed_extra}&7)'
-      - ''
-      - '❤ Max Health: &c{max_health} &7(&c{max_health_base} &7+ &c{max_health_extra}&7)'
-      - '❤ Health Regen: &c{health_regeneration} &7(&c{health_regeneration_base} &7+ &c{health_regeneration_extra}&7)'
-      - ''
-      - '✤ Max Stamina: &9{max_stamina} &7(&9{max_stamina_base} &7+ &9{max_stamina_extra}&7)'
-      - '✤ Stamina Regen: &9{stamina_regeneration} &7(&9{stamina_regeneration_base} &7+ &9{stamina_regeneration_extra}&7)'
-      - ''
-      - '❖ Armor: &c{armor} &7(&c{armor_base} &7+ &c{armor_extra}&7)'
-      - '❖ Armor Toughness: &c{armor_toughness} &7(&c{armor_toughness_base} &7+ &c{armor_toughness_extra}&7)'
-  attribute_dexterity:
+    item: LAPIS_LAZULI
+    name: '&dMana'
+    lore: ['&7Maksymalna mana: &f%mmocore_stat_max_mana%']
+  szybkosc_ataku:
     slots: [ 33 ]
-    function: stats
-    name: '&aZręczność'
-    item: LEATHER_BOOTS
-    item-flags: [ 'HIDE_ATTRIBUTES' ]
-    lore:
-      - ''
-      - 'Aktualna zręczność: &a&l{attribute_dexterity}'
-      - ''
-      - '✤ Knockback Resistance: &f{knockback_resistance} &7(&f{knockback_resistance_base} &7+ &f{knockback_resistance_extra}&7)'
-      - '✤ Movement Speed: &f{movement_speed} &7(&f{movement_speed_base} &7+ &f{movement_speed_extra}&7)'
-      - '✤ Speed Malus Reduction: &f{speed_malus_reduction}% &7(&f{speed_malus_reduction_base} &7+ &f{speed_malus_reduction_extra}&7)'
-  attribute_intelligence:
+    item: IRON_SWORD
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&cTempo walki'
+    lore: ['&7Szybkość ataku: &f%mmocore_stat_attack_speed%']
+  zycie:
     slots: [ 34 ]
-    function: stats
-    name: '&bIntelekt'
-    item: BOOK
+    item: GOLDEN_APPLE
+    name: '&9Życie'
+    lore: ['&7Maksymalne życie: &f%mmocore_stat_max_health%']
+  umiejetnosci_bojowe:
+    slots: [ 35 ]
+    item: ENCHANTED_BOOK
+    name: '&dZaklęcia i umiejętności'
+    lore: ['&7Obrażenia umiejętności: &f%mmocore_stat_skill_damage%%']
+  obrazenia_fizyczne:
+    slots: [ 41 ]
+    item: ARROW
+    name: '&cObrażenia fizyczne'
+    lore: ['&7Premia: &f%mmocore_stat_physical_damage%%']
+  regeneracja:
+    slots: [ 42 ]
+    item: GLISTERING_MELON_SLICE
+    name: '&9Regeneracja'
+    lore: ['&7Regeneracja życia: &f%mmocore_stat_health_regeneration%']
+  odnowienie:
+    slots: [ 43 ]
+    item: CLOCK
+    name: '&dOdnowienie'
     lore:
-      - ''
-      - 'Aktualna inteligencja: &b&l{attribute_intelligence}'
-      - ''
-      - '✤ Max Mana: &9{max_mana} &7(&9{max_mana_base} &7+ &9{max_mana_extra}&7)'
-      - '✤ Mana Regen: &9{mana_regeneration} &7(&9{mana_regeneration_base} &7+ &9{mana_regeneration_extra}&7)'
-      - ''
-      - '✤ Skill Cooldown Reduction: &9{cooldown_reduction} &7(&9{cooldown_reduction_base} &7+ &9{cooldown_reduction_extra}&7)'
-      - '✤ Extra Experience: &9{additional_experience} &7(&9{additional_experience_base} &7+ &9{additional_experience_extra}&7)'
-      - ''
-      - '❊ Max Stellium: &9{max_stellium} &7(&9{max_stellium_base} &7+ &9{max_stellium_extra}&7)'
-      - '❊ Stellium Regen: &9{stellium_regeneration} &7(&9{stellium_regeneration_base} &7+ &9{stellium_regeneration_extra}&7)'
+      - '&7Skrócenie odnowienia: &f%mmocore_stat_cooldown_reduction%%'
+      - '&7Regeneracja many: &f%mmocore_stat_mana_regeneration%'
+  profesje_surowce:
+    slots: [ 44 ]
+    item: IRON_PICKAXE
+    item-flags: [HIDE_ATTRIBUTES]
+    name: '&aZbieractwo'
+    lore:
+      - '&7Górnictwo: &f%mmocore_profession_mining%'
+      - '&7Drwal-stolarz: &f%mmocore_profession_woodworking%'
+      - '&7Zielarz: &f%mmocore_profession_herbalism%'
+      - '&7Rolnictwo: &f%mmocore_profession_farming%'
+  profesje_teren:
+    slots: [ 50 ]
+    item: FISHING_ROD
+    name: '&aTeren i zwierzęta'
+    lore:
+      - '&7Wędkarstwo: &f%mmocore_profession_fishing%'
+      - '&7Myślistwo: &f%mmocore_profession_hunting%'
+      - '&7Poskramiacz: &f%mmocore_profession_poskramiacz%'
+  profesje_rzemioslo:
+    slots: [ 51 ]
+    item: ANVIL
+    name: '&6Rzemiosło'
+    lore:
+      - '&7Kowalstwo: &f%mmocore_profession_smithing%'
+      - '&7Krawiectwo: &f%mmocore_profession_tailoring%'
+      - '&7Jubilerstwo: &f%mmocore_profession_jewelcrafting%'
+      - '&7Budownictwo: &f%mmocore_profession_building%'
+  profesje_wiedza:
+    slots: [ 52 ]
+    item: BREWING_STAND
+    name: '&dWiedza i kuchnia'
+    lore:
+      - '&7Alchemia: &f%mmocore_profession_alchemy%'
+      - '&7Zaklinanie: &f%mmocore_profession_enchanting%'
+      - '&7Gotowanie: &f%mmocore_profession_cooking%'
+  powrot:
+    slots: [ 27 ]
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
+    name: '&ePowrót do menu'
+    lore: ['&7Kliknij, aby otworzyć menu główne.']
+    script:
+      - 'command{format="dm open hub_glowne %player_name%"}'
+  umiejetnosci:
+    slots: [ 29 ]
+    item: PAPER
+    item_model: 'nexo:mmo_icon_blank'
+    hide-flags: true
+    name: '&bUmiejętności i drzewko'
+    lore: ['&7Kliknij, aby wybrać umiejętności lub drzewko.']
+    script:
+      - 'command{format="dm open hub_umiejetnosci %player_name%"}'
+  ekwipunek:
+    slots: [ 53 ]
+    item: PAPER
+    item_model: 'nexo:hub_ekwipunek'
+    name: '&6Ekwipunek'
+    lore:
+      - '&7Otwórz klawiszem &eE&7 po zamknięciu karty.'
+      - '&7Akcesoria zakładasz w górnym rzędzie ekwipunku.'

@@ -1,8 +1,8 @@
 id: 'general'
-name: '&4General'
+name: '&4Ogólne'
 type: CUSTOM
 lore:
-  - '&6General skill tree'
+  - '&6Podstawowe statystyki postaci'
 max-point-spent: 11
 
 icon:
@@ -17,20 +17,20 @@ nodes:
 
 #### A
   a1:
-    name: 'Mana Regen I'
+    name: 'Obrażenia umiejętności I'
     coordinates: -3,-2
 
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MANA_REGENERATION";amount=1;type="FLAT"}'
+          - 'stat{stat="SKILL_DAMAGE";amount=1;type="FLAT"}'
     lores:
       0:
-        - "Mana regen in pts/sec +1"
+        - "&7Obrażenia umiejętności: &a+1%"
       1:
-        - "Mana regen in pts/sec +1"
+        - "&7Obrażenia umiejętności: &a+1%"
   a2:
-    name: 'Mana Regen II'
+    name: 'Obrażenia umiejętności II'
     coordinates: -2,-2
 
     parents: 
@@ -40,14 +40,14 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MANA_REGENERATION";amount=2;type="FLAT"}'
+          - 'stat{stat="SKILL_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Mana regen in pts/sec +2"
+        - "&7Obrażenia umiejętności: &a+2%"
       1:
-        - "Mana regen in pts/sec +2"
+        - "&7Obrażenia umiejętności: &a+2%"
   a3:
-    name: 'Mana Regen III'
+    name: 'Obrażenia umiejętności III'
     coordinates: -1,-1
       
     parents: 
@@ -57,30 +57,30 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="MANA_REGENERATION";amount=2;type="FLAT"}'
+          - 'stat{stat="SKILL_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Mana regen in pts/sec +2"
+        - "&7Obrażenia umiejętności: &a+2%"
       1:
-        - "Mana regen in pts/sec +2"
+        - "&7Obrażenia umiejętności: &a+2%"
         
 #### B
   b1:
-    name: 'Health Regen I'
+    name: 'Regeneracja zdrowia I'
     coordinates: -3,0
 
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="HEALTH_REGENERATION";amount=1;type="FLAT"}'
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.1;type="FLAT"}'
     lores:
       0:
-        - "Health regen in pts/sec +1"
+        - "&7Regeneracja zdrowia: &a+0,1 HP/s"
       1:
-        - "Health regen in pts/sec +1"
+        - "&7Regeneracja zdrowia: &a+0,1 HP/s"
 
   b2:
-    name: 'Health Regen II'
+    name: 'Regeneracja zdrowia II'
     coordinates: -2,0
 
     parents: 
@@ -90,15 +90,15 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="HEALTH_REGENERATION";amount=2;type="FLAT"}'
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.15;type="FLAT"}'
     lores:
       0:
-        - "Health regen in pts/sec +2"
+        - "&7Regeneracja zdrowia: &a+0,15 HP/s"
       1:
-        - "Health regen in pts/sec +2"
+        - "&7Regeneracja zdrowia: &a+0,15 HP/s"
 
   b3:
-    name: 'Health Regen III'
+    name: 'Regeneracja zdrowia III'
     coordinates: -1,0
       
     parents: 
@@ -108,30 +108,30 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="HEALTH_REGENERATION";amount=2;type="FLAT"}'
+          - 'stat{stat="HEALTH_REGENERATION";amount=0.25;type="FLAT"}'
     lores:
       0:
-        - "Health regen in pts/sec +2"
+        - "&7Regeneracja zdrowia: &a+0,25 HP/s"
       1:
-        - "Health regen in pts/sec +2"
+        - "&7Regeneracja zdrowia: &a+0,25 HP/s"
 
 #### C
   c1:
-    name: 'Cooldown Reduction I'
+    name: 'Skrócenie odnowienia I'
     coordinates: -3,2
 
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="COOLDOWN_REDUCTION";amount=5;type="FLAT"}'
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Reduces cooldowns of item and player skills (5%)"
+        - "&7Skrócenie odnowienia: &a+2%"
       1:
-        - "Reduces cooldowns of item and player skills (5%)"
+        - "&7Skrócenie odnowienia: &a+2%"
 
   c2:
-    name: 'Cooldown Reduction II'
+    name: 'Skrócenie odnowienia II'
     coordinates: -2,2
 
     parents: 
@@ -141,15 +141,15 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="COOLDOWN_REDUCTION";amount=10;type="FLAT"}'
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=3;type="FLAT"}'
     lores:
       0:
-        - "Reduces cooldowns of item and player skills (10%)"
+        - "&7Skrócenie odnowienia: &a+3%"
       1:
-        - "Reduces cooldowns of item and player skills (10%)"
+        - "&7Skrócenie odnowienia: &a+3%"
 
   c3:
-    name: 'Cooldown Reduction III'
+    name: 'Skrócenie odnowienia III'
     coordinates: -1,1
 
     parents: 
@@ -159,16 +159,16 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="COOLDOWN_REDUCTION";amount=15;type="FLAT"}'
+          - 'stat{stat="COOLDOWN_REDUCTION";amount=5;type="FLAT"}'
     lores:
       0:
-        - "Reduces cooldowns of item and player skills (15%)"
+        - "&7Skrócenie odnowienia: &a+5%"
       1:
-        - "Reduces cooldowns of item and player skills (15%)"
+        - "&7Skrócenie odnowienia: &a+5%"
 
 #### D
   d1:
-    name: 'Crit Chance I'
+    name: 'Szansa na cios krytyczny I'
     coordinates: 0,0
 
     parents: 
@@ -183,12 +183,12 @@ nodes:
           - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Critical Strikes deal more damage in +%2 chance"
+        - "&7Szansa na cios krytyczny: &a+2%"
       1:
-        - "Critical Strikes deal more damage in +%2 chance"
+        - "&7Szansa na cios krytyczny: &a+2%"
 
   d2:
-    name: 'Crit Chance II'
+    name: 'Szansa na cios krytyczny II'
     coordinates: 1,0
 
     parents: 
@@ -201,12 +201,12 @@ nodes:
           - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=3;type="FLAT"}'
     lores:
       0:
-        - "Critical Strikes deal more damage in % chance"
+        - "&7Szansa na cios krytyczny: &a+3%"
       1:
-        - "Critical Strikes deal more damage in +%3 chance"
+        - "&7Szansa na cios krytyczny: &a+3%"
 
   d3:
-    name: 'Crit Chance III'
+    name: 'Szansa na cios krytyczny III'
     coordinates: 2,0
       
     parents:
@@ -219,14 +219,14 @@ nodes:
           - 'stat{stat="CRITICAL_STRIKE_CHANCE";amount=5;type="FLAT"}'
     lores:
       0:
-        - "Critical Strikes deal more damage in % chance"
+        - "&7Szansa na cios krytyczny: &a+5%"
       1:
-        - "Critical Strikes deal more damage in +%5 chance"
+        - "&7Szansa na cios krytyczny: &a+5%"
 
 
 #### E
   e1:
-    name: 'Damage Reduction I'
+    name: 'Redukcja obrażeń I'
     coordinates: 2,1
 
     parents:
@@ -239,12 +239,12 @@ nodes:
           - 'stat{stat="DAMAGE_REDUCTION";amount=1;type="FLAT"}'
     lores:
       0:
-        - "Reduces damage from any source in %."
+        - "&7Redukcja obrażeń: &a+1%"
       1:
-        - "Reduces damage from any source in +%1."
+        - "&7Redukcja obrażeń: &a+1%"
 
   e2:
-    name: 'Damage Reduction II'
+    name: 'Redukcja obrażeń II'
     coordinates: 2,2
 
     parents:
@@ -257,12 +257,12 @@ nodes:
           - 'stat{stat="DAMAGE_REDUCTION";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Reduces damage from any source in %."
+        - "&7Redukcja obrażeń: &a+2%"
       1:
-        - "Reduces damage from any source in +%2."
+        - "&7Redukcja obrażeń: &a+2%"
 
   e3:
-    name: 'Damage Reduction III'
+    name: 'Redukcja obrażeń III'
     coordinates: 3,2
 
     parents:
@@ -275,13 +275,13 @@ nodes:
           - 'stat{stat="DAMAGE_REDUCTION";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Reduces damage from any source in %."
+        - "&7Redukcja obrażeń: &a+2%"
       1:
-        - "Reduces damage from any source in +%2."
+        - "&7Redukcja obrażeń: &a+2%"
 
 #### F
   f1:
-    name: 'Force I'
+    name: 'Obrażenia broni I'
     coordinates: 2,-1
 
     parents:
@@ -294,12 +294,12 @@ nodes:
           - 'stat{stat="WEAPON_DAMAGE";amount=1;type="FLAT"}'
     lores:
       0:
-        - "Additional on-hit weapon damage in +%1."
+        - "&7Obrażenia broni: &a+1%"
       1:
-        - "Additional on-hit weapon damage in +%1."
+        - "&7Obrażenia broni: &a+1%"
 
   f2:
-    name: 'Force II'
+    name: 'Obrażenia broni II'
     coordinates: 2,-2
 
     parents:
@@ -312,12 +312,12 @@ nodes:
           - 'stat{stat="WEAPON_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Additional on-hit weapon damage in +%2."
+        - "&7Obrażenia broni: &a+2%"
       1:
-        - "Additional on-hit weapon damage in +%2."
+        - "&7Obrażenia broni: &a+2%"
 
   f3:
-    name: 'Force III'
+    name: 'Obrażenia broni III'
     coordinates: 3,-2
       
     parents:
@@ -330,14 +330,14 @@ nodes:
           - 'stat{stat="WEAPON_DAMAGE";amount=2;type="FLAT"}'
     lores:
       0:
-        - "Additional on-hit weapon damage in +%2."
+        - "&7Obrażenia broni: &a+2%"
       1:
-        - "Additional on-hit weapon damage in +%2."
+        - "&7Obrażenia broni: &a+2%"
 
 
 ##last line
   g1:
-    name: 'Life Steal'
+    name: 'Kradzież życia I'
     coordinates: 4,-1
       
     parents:
@@ -350,12 +350,12 @@ nodes:
           - 'stat{stat="LIFESTEAL";amount=3;type="FLAT"}'
     lores:
       0:
-        - "Percentage of damage you gain back as health when inflicting weapon damage."
+        - "&7Kradzież życia: &a+3%"
       1:
-        - "Percentage of damage you gain back as health when inflicting weapon damage +%3"
+        - "&7Kradzież życia: &a+3%"
 
   j1:
-    name: 'Max Health'
+    name: 'Maksymalne zdrowie I'
     coordinates: 4,0
       
     parents: 
@@ -366,15 +366,15 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="LIFESTEAL";amount=5;type="FLAT"}'
+          - 'stat{stat="MAX_HEALTH";amount=5;type="RELATIVE"}'
     lores:
       0:
-        - "Additional amount of health in +%5"
+        - "&7Maksymalne zdrowie: &a+5%"
       1:
-        - "Additional amount of health in +%5"
+        - "&7Maksymalne zdrowie: &a+5%"
 
   h1:
-    name: 'Magic Damage'
+    name: 'Odporność na magię I'
     coordinates: 4,1
       
     parents:
@@ -384,12 +384,12 @@ nodes:
     experience-table:
       first_table_item:
         triggers:
-          - 'stat{stat="LIFESTEAL";amount=3;type="FLAT"}'
+          - 'stat{stat="MAGIC_DAMAGE_REDUCTION";amount=3;type="FLAT"}'
     lores:
       0:
-        - "Additional magic skill damage in +%3"
+        - "&7Odporność na magię: &a+3%"
       1:
-        - "Additional magic skill damage in +%3"
+        - "&7Odporność na magię: &a+3%"
 
 # This section is to change display options for nodes and paths depending on:
 # - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.

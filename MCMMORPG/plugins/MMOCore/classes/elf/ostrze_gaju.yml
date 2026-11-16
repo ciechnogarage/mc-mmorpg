@@ -1,0 +1,171 @@
+# KLINGA GAJU — Elf × Wojownik (klasy rasowe, 2026-09-26).
+# PLIK GENEROWANY: tools/klasy-rasowe/generuj_klasy.py — zmiany wprowadzać w generatorze.
+# Szkielet (zasób, umiejętności, drzewka): classes/warrior.yml.
+display:
+    name: 'Klinga Gaju'
+    lore:
+    - 'Szermierz świętych gajów.'
+    - 'Lekki krok, elfia klinga.'
+    - ''
+    - '&7Zbroja: &flekka, średnia, ciężka'
+    - '&7Broń: &fmiecze, tarcze, elfie klingi'
+    - '&7Na 10 poziomie: &fRóżany Rycerz &7albo &fTancerz Ostrzy'
+    item: 'IRON_SWORD'
+
+
+# Can either be the file name of a text file inside the 'exp-curves' folder, where
+# each line corresponds to the experience required to reach the next level.
+# Example: 'levels'
+#
+# Or a formula using the {level} placeholder (current player level) and PAPI placeholders.
+# The formula should return the total experience required to reach the next level
+# given the current player's level.
+# Example: '{level} * 200'
+exp-curve: '{level} * 200'
+
+# The maximum level players can reach
+# Akt 1 = poz. 10 (decyzja 29.09); max-level podnosi się razem z aktem (paczka B, B12)
+max-level: 10
+
+skill-slots:
+    1:
+        name: "Miejsce umiejętności I"
+        unlocked-by-default: true
+        lore: []
+        # Permanently binds a skill to this slot
+        # Players won't be able to change the skill in this slot
+    2:
+        name: "Miejsce umiejętności II"
+        unlocked-by-default: true
+        lore: []
+    3:
+        name: "Miejsce umiejętności III"
+        unlocked-by-default: true
+        lore: []
+    4:
+        name: "Miejsce umiejętności IV"
+        unlocked-by-default: true
+        lore: []
+    5:
+        name: "&bUmiejętność specjalizacji"
+        unlocked-by-default: true
+        lore: ['&7Od poziomu 10 wybranej specjalizacji']
+
+skill-trees:
+    - 'general'
+    - 'warrior-paladin'
+
+# Warrior has rage which he gains while casting spells
+# Rage increase its skill damage. Use <mmocore.rage>
+# to get the player's rage (MythicMobs formulas)
+#
+# 'char' is the character used to generate the mana bar as a message
+# 'color' are also the colors used to generate the mana bar
+# 'icon' is the icon display on the player action bar
+# 'name' is basically displayed everywhere
+mana:
+    char: ♦
+    icon: '&c♦'
+    color: {full: DARK_RED, half: RED, empty: DARK_GRAY}
+    name: 'Szał'
+
+exp-table: class_exp_table
+
+# Rage charges when dealing weapon and physical damage.
+triggers:
+    weapon-damage:
+    - 'mana{operation=GIVE;amount=8-12}'
+    physical-damage:
+    - 'mana{operation=GIVE;amount=8-12}'
+
+cast-particle:
+    particle: REDSTONE
+    color:
+        red: 255
+        green: 0
+        blue: 0
+
+# Rage only decays when out of combat
+options:
+    # 2026-09-26: ukryta w /class — klasę nadaje kreator (konsola), a punkt klasy
+    # z 10 poziomu jest tylko na specjalizację.
+    display: false
+    off-combat-mana-regen: true
+    needs-permission: false
+skills:
+    WOJ_PRZELOT_GAJU:
+        level: 1
+        max-level: 10
+    WOJ_ROZPLATANIE:
+        level: 3
+        max-level: 10
+        wariant:
+            base: 2
+            per-level: 0
+        cooldown:
+            base: 4
+            per-level: 0
+    WOJ_OKRZYK:
+        level: 5
+        max-level: 10
+        wariant:
+            base: 2
+            per-level: 0
+    WOJ_GNIEW:
+        level: 7
+        max-level: 10
+        wariant:
+            base: 2
+            per-level: 0
+    
+attributes:
+    # biegłości (attributes/bieglosci_zbroi.yml, bieglosci_broni.yml)
+    additional-bieglosc-lekka:
+        base: 1
+        per-level: 0
+    additional-bieglosc-srednia:
+        base: 1
+        per-level: 0
+    additional-bieglosc-ciezka:
+        base: 1
+        per-level: 0
+    additional-bieglosc-miecz:
+        base: 1
+        per-level: 0
+    additional-bieglosc-tarcza:
+        base: 1
+        per-level: 0
+    additional-bieglosc-klinga:
+        base: 1
+        per-level: 0
+    mana-regeneration:
+        base: -2
+        per-level: 0
+    speed-malus-reduction:
+        base: 50
+        per-level: 2
+    max-mana:
+        base: 100
+        per-level: 0
+    max-health:
+        base: 21.6
+        per-level: 0.54
+    movement-speed:
+        base: 0.1155
+        per-level: 0
+    attack-damage:
+        base: 2
+        per-level: 0.1
+    attack-speed:
+        base: 4.2
+        per-level: 0
+
+
+# Experience sources for main class experience.
+# EXP klasy tylko z tabeli klasa-swiat w exp-sources.yml (paczka B, B1; docs level-sources.md:34,49)
+main-exp-sources:
+- 'from{source=klasa-swiat}'
+
+subclasses:
+    STRAZNIK_CIERNI: 10
+    TANCERZ_OSTRZY: 10

@@ -1,5 +1,5 @@
 display:
-    name: 'Warrior'
+    name: 'Wojownik'
     lore:
     - 'The warrior has extraordinary fighting and'
     - 'evolving capabilities, which grant him much'
@@ -55,31 +55,31 @@ max-level: 10
 
 skill-slots:
     1:
-        name: "Skill Slot I"
+        name: "Miejsce umiejętności I"
         unlocked-by-default: true
         lore: []
         # Permanently binds a skill to this slot
         # Players won't be able to change the skill in this slot
         #hardset: WEAKEN
     2:
-        name: "Skill Slot II"
+        name: "Miejsce umiejętności II"
         unlocked-by-default: true
         lore: []
         #hardset: COMBO_ATTACK
     3:
-        name: "Skill Slot III"
+        name: "Miejsce umiejętności III"
         unlocked-by-default: true
         lore: []
         #hardset: DEEP_WOUND
     4:
-        name: "Skill Slot IV"
+        name: "Miejsce umiejętności IV"
         unlocked-by-default: true
         lore: []
         #hardset: FIRE_BERSERKER
     5:
-        name: "&bDefensive Skill"
+        name: "&bUmiejętność specjalizacji"
         unlocked-by-default: true
-        lore: ['&7Defensive ability slot']
+        lore: ['&7Od poziomu 10 wybranej specjalizacji']
         hardset: HUMAN_SHIELD
 
 skill-trees:
@@ -101,7 +101,7 @@ mana:
         full: DARK_RED
         half: RED
         empty: WHITE
-    name: 'Rage'
+    name: 'Szał'
 
 exp-table: class_exp_table
 

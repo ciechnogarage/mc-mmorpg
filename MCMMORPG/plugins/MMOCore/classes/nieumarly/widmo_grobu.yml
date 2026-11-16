@@ -1,0 +1,151 @@
+# UPIÓR — Nieumarły × Ninja (klasy rasowe, 2026-09-26).
+# PLIK GENEROWANY: tools/klasy-rasowe/generuj_klasy.py — zmiany wprowadzać w generatorze.
+# Szkielet (zasób, umiejętności, drzewka): classes/rogue.yml.
+display:
+    name: 'Upiór'
+    lore:
+    - 'Upiór cmentarnych mgieł.'
+    - 'Łańcuch i sztylet.'
+    - ''
+    - '&7Zbroja: &flekka'
+    - '&7Broń: &fsztylety i pięściaki, łuki, łańcuchy'
+    - '&7Na 10 poziomie: &fDusiciel &7albo &fŁucznik Ciszy'
+    item: 'IRON_CHAIN'
+
+
+# Can either be the file name of a text file inside the 'exp-curves' folder, where
+# each line corresponds to the experience required to reach the next level.
+# Example: 'levels'
+#
+# Or a formula using the {level} placeholder (current player level) and PAPI placeholders.
+# The formula should return the total experience required to reach the next level
+# given the current player's level.
+# Example: '{level} * 200'
+exp-curve: '{level} * 200'
+
+# The maximum level players can reach
+# Akt 1 = poz. 10 (decyzja 29.09); max-level podnosi się razem z aktem (paczka B, B12)
+max-level: 10
+
+exp-table: class_exp_table
+
+skill-slots:
+    1:
+        name: "&aMiejsce umiejętności I"
+        unlocked-by-default: true
+        lore: []
+        # Permanently binds a skill to this slot
+        # Players won't be able to change the skill in this slot
+    2:
+        name: "&aMiejsce umiejętności II"
+        unlocked-by-default: true
+        lore: []
+    3:
+        name: "&aMiejsce umiejętności III"
+        unlocked-by-default: true
+        lore: []
+    4:
+        name: "&aMiejsce umiejętności IV"
+        unlocked-by-default: true
+        lore: []
+    5:
+        name: "&bUmiejętność specjalizacji"
+        unlocked-by-default: true
+        lore: ['&7Od poziomu 10 wybranej specjalizacji']
+
+skill-trees:
+    - 'general'
+    - 'rogue-marksman'
+
+options:
+    # 2026-09-26: ukryta w /class — klasę nadaje kreator (konsola), a punkt klasy
+    # z 10 poziomu jest tylko na specjalizację.
+    display: false
+    # Skupienie regeneruje się także podczas walki; zdrowie poza walką.
+    off-combat-mana-regen: false
+    off-combat-health-regen: true
+
+    needs-permission: false
+
+cast-particle:
+    particle: SPELL_WITCH
+skills:
+    NIN_PETLA_GROBU:
+        level: 1
+        max-level: 10
+    NIN_CIECIE:
+        level: 3
+        max-level: 10
+        wariant:
+            base: 0
+            per-level: 0
+    NIN_KROK:
+        level: 5
+        max-level: 10
+        wariant:
+            base: 0
+            per-level: 0
+    NIN_EGZEKUCJA:
+        level: 7
+        max-level: 10
+        wariant:
+            base: 0
+            per-level: 0
+
+attributes:
+    # biegłości (attributes/bieglosci_zbroi.yml, bieglosci_broni.yml)
+    additional-bieglosc-lekka:
+        base: 1
+        per-level: 0
+    additional-bieglosc-sztylet:
+        base: 1
+        per-level: 0
+    additional-bieglosc-luk:
+        base: 1
+        per-level: 0
+    additional-bieglosc-lancuch:
+        base: 1
+        per-level: 0
+    attack-speed:
+        base: 4.2
+        per-level: 0
+    max-health:
+        base: 20
+        per-level: 0.4
+    movement-speed:
+        base: 0.1092
+        per-level: 0
+    safe-fall-distance:
+        base: 5
+        per-level: 0
+    sneaking-speed:
+        base: 0.5
+        per-level: 0
+    JUMP_STRENGTH:
+        base: 0.5
+        per-level: 0
+    max-mana:
+        base: 100
+        per-level: 0
+    mana-regeneration:
+        base: 8
+        per-level: 0
+    lifesteal:
+        base: 3
+        per-level: 0
+
+
+# Experience sources for main class experience.
+# EXP klasy tylko z tabeli klasa-swiat w exp-sources.yml (paczka B, B1; docs level-sources.md:34,49)
+main-exp-sources:
+- 'from{source=klasa-swiat}'
+
+mana:
+    char: ✦
+    icon: '&f✦'
+    color: {full: WHITE, half: GRAY, empty: DARK_GRAY}
+    name: 'Skupienie'
+
+subclasses:
+    CIEN: 10
+    STRZELEC_GROBU: 10

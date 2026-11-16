@@ -1,0 +1,137 @@
+# PAN KURHANÓW — specjalizacja klasy Pasterz Ciszy (10 poz.).
+# PLIK GENEROWANY: tools/klasy-rasowe/generuj_klasy.py — zmiany wprowadzać w generatorze.
+# Szkielet (zasób, umiejętności, drzewka): classes/paladin.yml.
+display:
+    name: 'Pan Kurhanów'
+    lore:
+    - 'Wykrada głosy z kurhanów.'
+    - 'Umarli idą za jego szeptem.'
+    - ''
+    - '&7Daje: &fwiększa pula Dusz'
+    - '&7Zbroja: &flekka'
+    - '&7Broń: &fbuławy, kosy'
+    - '&7Poziom 10: &fGłosy Kurhanów'
+    item: 'NETHERITE_HOE'
+
+
+# Can either be the file name of a text file inside the 'exp-curves' folder, where
+# each line corresponds to the experience required to reach the next level.
+# Example: 'levels'
+#
+# Or a formula using the {level} placeholder (current player level) and PAPI placeholders.
+# The formula should return the total experience required to reach the next level
+# given the current player's level.
+# Example: '{level} * 200'
+exp-curve: '{level} * 200'
+
+skill-slots:
+    1:
+        name: "&aMiejsce umiejętności I"
+        unlocked-by-default: true
+        lore: []
+        # Permanently binds a skill to this slot
+        # Players won't be able to change the skill in this slot
+    2:
+        name: "&aMiejsce umiejętności II"
+        unlocked-by-default: true
+        lore: []
+    3:
+        name: "&aMiejsce umiejętności III"
+        unlocked-by-default: true
+        lore: []
+    4:
+        name: "&aMiejsce umiejętności IV"
+        unlocked-by-default: true
+        lore: []
+    5:
+        name: "&bUmiejętność specjalizacji"
+        unlocked-by-default: true
+        lore: ['&7Od poziomu 10 wybranej specjalizacji']
+
+skill-trees:
+    - 'general'
+    - 'akolita-przywolywacz'
+
+# The maximum level players can reach
+# Akt 1 = poz. 10 (decyzja 29.09); max-level podnosi się razem z aktem (paczka B, B12)
+max-level: 10
+
+exp-table: class_exp_table
+
+cast-particle:
+    particle: VILLAGER_HAPPY
+skills:
+    SPEC_PASTERZ_UMARLYCH_GLOS:
+        level: 10
+        max-level: 10
+    AKO_KOSIARZ_CISZY:
+        level: 1
+        max-level: 10
+    AKO_ZNIWO:
+        level: 3
+        max-level: 10
+    AKO_OPIEKA:
+        level: 5
+        max-level: 10
+        wariant:
+            base: 0
+            per-level: 0
+        mana:
+            base: 0
+            per-level: 0
+    AKO_ROZKAZ:
+        level: 7
+        max-level: 10
+
+attributes:
+    # biegłości (attributes/bieglosci_zbroi.yml, bieglosci_broni.yml)
+    additional-bieglosc-lekka:
+        base: 1
+        per-level: 0
+    additional-bieglosc-bulawa:
+        base: 1
+        per-level: 0
+    additional-bieglosc-kosa:
+        base: 1
+        per-level: 0
+    knockback-resistance:
+        base: 0.3
+        per-level: 0.01
+    speed-malus-reduction:
+        base: 30
+        per-level: 2
+    max-health:
+        base: 22
+        per-level: 0.5
+    attack-speed:
+        base: 4
+        per-level: 0
+    movement-speed:
+        base: 0.095
+        per-level: 0
+    max-mana:
+        base: 14
+        per-level: 0
+    mana-regeneration:
+        base: 0
+        per-level: 0
+    spell-vampirism:
+        base: 3
+        per-level: 0
+
+
+# Experience sources for main class experience.
+# EXP klasy tylko z tabeli klasa-swiat w exp-sources.yml (paczka B, B1; docs level-sources.md:34,49)
+main-exp-sources:
+- 'from{source=klasa-swiat}'
+
+# 2026-09-26: ukryta w /class — klasę nadaje kreator (konsola), a punkt klasy
+# z 10 poziomu jest tylko na specjalizację.
+options:
+    display: false
+
+mana:
+    char: ☠
+    icon: '&5☠'
+    color: {full: DARK_PURPLE, half: LIGHT_PURPLE, empty: GRAY}
+    name: 'Dusze'

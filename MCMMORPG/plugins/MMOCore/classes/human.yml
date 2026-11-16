@@ -1,55 +1,28 @@
-
-# Display options, it's not displayed anywhere so pointless.
-# Just need the name for reference and PAPI placeholders.
-display:
-    name: 'Origin'
-
-    # Icon used when displaying the class in the UI. By default,
-    # the default class is not displayed, making this option useless
-    item: BOOK
-
-# Technical starter phase class.
-# Public-facing race selection is handled separately through MMOProfiles + CoreTools.
-options:
-    default: true # Default class when joining the server for the first time
-    display: false # Does not display in the class UI
-    needs-permission: false # False by default
-    
-    # Only regens when out of combat
-    off-combat-health-regen: false
-    off-combat-mana-regen: false
-
-# Can either be the file name of a text file inside the 'exp-curves' folder, where
-# each line corresponds to the experience required to reach the next level.
-# Example: 'levels'
+# KLASA DOMYSLNA MMOCore — istnieje po to, zeby przestal lecec NPE przy wczytywaniu profilu.
 #
-# Or a formula using the {level} placeholder (current player level) and PAPI placeholders.
-# The formula should return the total experience required to reach the next level
-# given the current player's level.
-# Example: '{level} * 200'
-exp-curve: '{level} * 200'
+# Dlaczego: ClassManager#initialize szuka wsrod klas z plikow tej, ktora ma opcje 'default',
+# a gdy zadnej nie znajdzie, tworzy w locie PlayerClass("HUMAN", "Human", LEATHER_BOOTS)
+# i przypisuje ja WYLACZNIE do pola defaultClass — NIE rejestrujac jej w mapie klas.
+# Skutek byl taki, ze kazdy profil z wpisem 'class-info: HUMAN' konczyl sie przy wczytywaniu
+# wyjatkiem `NullPointerException: Could not find class 'HUMAN'`
+# (YAMLDatabaseImpl:118 -> Validate.notNull(classManager.get("HUMAN"))).
+#
+# Wpis 'class-info: HUMAN' powstaje przy KAZDYM wyborze klasy przez gracza, ktory jeszcze
+# zadnej nie ma — i klucz 'save-default-class-info: false' w config.yml tego NIE wylacza:
+# warunek w SavedClassInformation brzmi `!profess.hasOption(DEFAULT) || saveDefaultClassInfo`,
+# a syntetyczna klasa HUMAN nie ma ZADNYCH opcji, wiec hasOption(DEFAULT) jest falszywe
+# i zapis idzie mimo wszystko. Sprawdzone pomiarem: po przestawieniu klucza swiezo utworzony
+# profil nadal dostawal 'class-info: HUMAN', a jego wczytanie nadal rzucalo NPE.
+#
+# Ten plik daje tej klasie prawdziwa definicje, wiec classManager.get("HUMAN") ja znajduje.
+# Identyfikator bierze sie z nazwy pliku (human.yml -> HUMAN), czyli pasuje takze do wpisow
+# zapisanych wczesniej. Klasa jest celowo PUSTA: gracz siedzi w niej tylko do chwili, w
+# ktorej kreator postaci nada mu wlasciwa (mmocore class select), i nic z niej nie dostaje.
+display:
+    name: 'Bez klasy'
+    item: LEATHER_BOOTS
+    lore:
+    - 'Postać bez wybranej klasy.'
 
-exp-table: class_exp_table
-
-skill-slots:
-    1:
-        name: "&aStarter Slot I"
-        unlocked-by-default: true
-        lore: []
-    2:
-        name: "&aStarter Slot II"
-        unlocked-by-default: true
-        lore: []
-    3:
-        name: "&aStarter Slot III"
-        unlocked-by-default: true
-        lore: []
-    4:
-        name: "&aStarter Slot IV"
-        unlocked-by-default: true
-        lore: []
-
-# Experience sources for main class experience.
-main-exp-sources:
-- 'killmob{type=ZOMBIE;amount=1-3}'
-- 'killmob{type=ENDERMAN;amount=6-9}'
+options:
+    default: true

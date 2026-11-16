@@ -19,7 +19,7 @@
 # zapisanych wczesniej. Klasa jest celowo PUSTA: gracz siedzi w niej tylko do chwili, w
 # ktorej kreator postaci nada mu wlasciwa (mmocore class select), i nic z niej nie dostaje.
 display:
-    name: 'Human'
+    name: 'Bez klasy'
     item: LEATHER_BOOTS
     lore:
     - 'Postać bez wybranej klasy.'

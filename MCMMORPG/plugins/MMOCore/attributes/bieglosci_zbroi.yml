@@ -1,0 +1,27 @@
+# BIEGŁOŚCI ZBROI (2026-09-25, prototyp na Orku Wojowniku)
+#
+# Ukryte atrybuty: nie ma ich w gui/attribute-view.yml, a max-points: 0 blokuje wydawanie
+# punktów. Wartość bierze się WYŁĄCZNIE ze statystyki ADDITIONAL_<ID>, którą daje klasa
+# (sekcja 'attributes' w pliku klasy, klucz additional-bieglosc-*) albo węzeł drzewka
+# umiejętności (trigger stat{stat=ADDITIONAL_BIEGLOSC_CIEZKA;amount=1;type=FLAT}).
+# Sprawdzone w bajtkodzie MMOCore 1.13.1: wartość atrybutu = punkty + modyfikatory
+# + statystyka ADDITIONAL_<ID>; MMOItems 'required-bieglosc-*' czyta tę sumę.
+#
+# Zbroja w MMOItems: required-bieglosc-lekka / -srednia / -ciezka: 1. Tkanina nie ma
+# wymagania. ZASADA: żaden PRZEDMIOT nie daje biegłości — inaczej wraca łańcuch
+# "załóż A, żeby móc założyć B", z którym walczą Wynncraft i PoE. Technicznie MMOItems
+# na to POZWALA (statystyka ExtraAttribute dla każdego atrybutu MMOCore, bajtkod
+# MMOItems 6.10.1), więc pilnuje tego tylko konfiguracja: nie dodawać przedmiotom
+# statystyki dodatkowej biegłości (przegląd 2026-09-26: żaden przedmiot jej nie ma).
+bieglosc_lekka:
+    name: 'Biegłość w zbroi lekkiej'
+    max-points: 0
+    buff: {}
+bieglosc_srednia:
+    name: 'Biegłość w zbroi średniej'
+    max-points: 0
+    buff: {}
+bieglosc_ciezka:
+    name: 'Biegłość w zbroi ciężkiej'
+    max-points: 0
+    buff: {}
