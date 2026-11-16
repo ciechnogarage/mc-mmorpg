@@ -43,7 +43,23 @@ import org.bukkit.scheduler.BukkitTask;
 
 /** Zmienia tylko pakiety wysylane do klienta; nigdy nie modyfikuje ekwipunku gracza. */
 final class UkrywanieEkwipunku implements Listener {
-  private static final ItemStack EMPTY = new ItemStack(Material.AIR);
+  /**
+   * Niewidoczny wypelniacz pustych slotow okna Ksiegi, tylko w pakietach do klienta.
+   * Klient wysyla klawisz Q (wyrzuc) w otwartym oknie WYLACZNIE nad slotem z przedmiotem;
+   * nad pustym slotem nie wysyla nic i serwer nie moze zamknac menu. Po otwarciu kursor
+   * stoi na srodku okna (hub_glowne: pusta kolumna 4), wiec bez wypelniacza Q zamykalo
+   * menu dopiero po najechaniu na kafel. Model {@code ksiega:klon/pusty} = minecraft:empty.
+   */
+  private static final ItemStack FILLER = filler();
+
+  private static ItemStack filler() {
+    ItemStack item = new ItemStack(Material.PAPER);
+    ItemMeta meta = item.getItemMeta();
+    meta.setItemModel(org.bukkit.NamespacedKey.fromString("ksiega:klon/pusty"));
+    meta.setHideTooltip(true);
+    item.setItemMeta(meta);
+    return item;
+  }
   private static final Set<String> RETURNABLE = Set.of(
       "hub_glowne", "portal", "hub_postac", "hub_umiejetnosci", "hub_ekonomia",
       "hub_spolecznosc", "hub_ustawienia", "hub_pomoc", "stolica_podroze",
@@ -179,15 +195,20 @@ final class UkrywanieEkwipunku implements Listener {
       List<ItemStack> original = event.getPacket().getItemListModifier().read(0);
       if (original == null || original.size() < end) return;
       List<ItemStack> hidden = new ArrayList<>(original);
+      for (int slot = 0; slot < first; slot++)
+        if (Przedmioty.empty(hidden.get(slot))) hidden.set(slot, FILLER);
       ItemStack[] items = state.panelItems;
       for (int slot = first; slot < end; slot++)
-        hidden.set(slot, items[slot - first] == null ? EMPTY : items[slot - first]);
+        hidden.set(slot, Przedmioty.empty(items[slot - first]) ? FILLER : items[slot - first]);
       event.getPacket().getItemListModifier().write(0, hidden);
     } else if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
       int slot = event.getPacket().getIntegers().read(2);
       if (slot >= first && slot < end) {
         ItemStack item = state.panelItems[slot - first];
-        event.getPacket().getItemModifier().write(0, item == null ? EMPTY : item);
+        event.getPacket().getItemModifier().write(0, Przedmioty.empty(item) ? FILLER : item);
+      } else if (slot >= 0 && slot < first
+          && Przedmioty.empty(event.getPacket().getItemModifier().read(0))) {
+        event.getPacket().getItemModifier().write(0, FILLER);
       }
     }
   }
@@ -211,6 +232,25 @@ final class UkrywanieEkwipunku implements Listener {
         || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
         || !Przedmioty.empty(event.getCursor());
     if (blocked) event.setCancelled(true);
+    if (raw >= 0 && (bottom || Przedmioty.empty(event.getCurrentItem()))) {
+      // Klik w wypelniacz: klient sam przenosi go na kursor, a serwer (u niego slot pusty)
+      // nic nie odsyla -> slot zostaje pusty u klienta i Q nad nim przestaje dzialac.
+      // Pelny stan okna przechodzi przez mask(), wiec wypelniacz wraca, a kursor jest pusty.
+      Player player = (Player) event.getWhoClicked();
+      InventoryView view = event.getView();
+      Bukkit.getScheduler().runTask(plugin, () -> {
+        if (player.isOnline() && player.getOpenInventory() == view) player.updateInventory();
+      });
+    }
+    if (click == ClickType.DROP || click == ClickType.CONTROL_DROP) {
+      // Q wlacza i wylacza menu: drugie Q w dowolnym oknie Ksiegi (gora lub dolny panel) zamyka je.
+      Player player = (Player) event.getWhoClicked();
+      InventoryView view = event.getView();
+      Bukkit.getScheduler().runTask(plugin, () -> {
+        if (player.isOnline() && player.getOpenInventory() == view) player.closeInventory();
+      });
+      return;
+    }
     if (!bottom || state == null || (state.page == null && !state.portalEnabled)
         || !Przedmioty.empty(event.getCursor())
         || click != ClickType.LEFT && click != ClickType.RIGHT) return;

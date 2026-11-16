@@ -14,7 +14,19 @@ DeluxeMenus musi zawierać jeden z tych glifów. Dla tego okna ProtocolLib zamie
 wychodzące `WINDOW_ITEMS` i `SET_SLOT` na puste sloty gracza (lub przyciski panelu Q); nie zmienia
 ekwipunku serwera ani kursora. Kliknięcia dolnej części, przeciąganie,
 shift-klik, cyfry, F i Q są anulowane, żeby niewidocznych przedmiotów nie
-przenosić. Po zamknięciu okna stan maskowania znika; tick później
+przenosić.
+
+**Q włącza i wyłącza menu.** Klient wysyła Q w otwartym oknie (klik `DROP`/`CONTROL_DROP`)
+tylko nad slotem z przedmiotem, dlatego maska wkłada do pustych slotów (góra i dolny panel)
+niewidoczny wypełniacz: `PAPER` z `item_model` `ksiega:klon/pusty` (model `minecraft:empty`
+w packu Nexo) i ukrytym dymkiem. Istnieje tylko w pakietach. Q/Ctrl+Q nad dowolnym slotem
+okna Księgi zamyka je w następnym ticku. Klik w wypełniacz (klient bierze go na kursor,
+serwer nic nie odsyła) kończy się `updateInventory()` w następnym ticku. Ograniczenie
+klienta: Q w przerwie między siatką a panelem i poza oknem nie dociera do serwera.
+Sprawdzone 16.11.2026 klientem QA na klonie (20/20: 10 cykli, 9 miejsc okna, Ctrl+Q,
+podstrony, kliknięcia LPM/PPM/shift przed Q, ekwipunek bez zmian).
+
+Po zamknięciu okna stan maskowania znika; tick później
 `updateInventory()` przywraca klientowi prawdziwą zawartość. Wyjście gracza
 również usuwa stan. Wymagany jest `ProtocolLib.jar` na backendzie `items`.
 
