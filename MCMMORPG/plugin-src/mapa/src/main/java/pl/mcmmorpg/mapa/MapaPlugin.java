@@ -125,6 +125,9 @@ public final class MapaPlugin extends JavaPlugin implements Listener, org.bukkit
       Bukkit.getPluginManager().registerEvents(minimapMarkers, this);
     }
     Bukkit.getPluginManager().registerEvents(this, this);
+    // F (tryb skilli MMOCore) zamyka pelna mape: nowy tryb zamyka stary. Klasa ladowana tylko z MMOCore.
+    if (fullMap != null && mmoCoreEnabled())
+      Bukkit.getPluginManager().registerEvents(new TrybSkilliMost(fullMap), this);
     dialogs = new ZnacznikDialog(this);
     for (Player player : Bukkit.getOnlinePlayers()) {
       ownerKey(player);
@@ -555,6 +558,12 @@ public final class MapaPlugin extends JavaPlugin implements Listener, org.bukkit
       else openAtlas(target);
       return true;
     }
+    if (args.length == 2 && args[0].equalsIgnoreCase("zamknij")) {
+      // Zaklecia i Chowance zamykaja pelna mape, gdy otwieraja wlasny tryb na 1-9 (wolane jako konsola).
+      Player target = Bukkit.getPlayerExact(args[1]);
+      if (target != null && fullMap != null) fullMap.close(target);
+      return true;
+    }
     if (args.length == 2 && args[0].equalsIgnoreCase("pelna")) {
       Player target = Bukkit.getPlayerExact(args[1]);
       if (target == null) sender.sendMessage("Nie znaleziono gracza.");
@@ -600,8 +609,8 @@ public final class MapaPlugin extends JavaPlugin implements Listener, org.bukkit
   public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
     if (!sender.hasPermission("mapa.admin")) return List.of();
     List<String> opcje = new ArrayList<>();
-    if (args.length == 1) opcje.addAll(List.of("otworz", "pelna", "cel", "przeladuj"));
-    else if (args.length == 2 && List.of("otworz", "pelna", "cel").contains(args[0].toLowerCase(java.util.Locale.ROOT)))
+    if (args.length == 1) opcje.addAll(List.of("otworz", "pelna", "zamknij", "cel", "przeladuj"));
+    else if (args.length == 2 && List.of("otworz", "pelna", "zamknij", "cel").contains(args[0].toLowerCase(java.util.Locale.ROOT)))
       Bukkit.getOnlinePlayers().forEach(p -> opcje.add(p.getName()));
     else if (args.length == 3 && args[0].equalsIgnoreCase("cel")) {
       opcje.add("wyczysc");
@@ -616,6 +625,17 @@ public final class MapaPlugin extends JavaPlugin implements Listener, org.bukkit
       player.sendMessage("Pełna mapa jest niedostępna (brak MapEngine).");
       return;
     }
+    // Jeden tryb na klawiszach 1-9 naraz (decyzja wlasciciela 15.11): walka Chowancow blokuje mape,
+    // otwarcie mapy zamyka tryb skilli MMOCore i pasek zaklec.
+    if (player.hasMetadata("chowance_walka")) {
+      String tekst = "§cW walce chowańców mapa jest niedostępna.";
+      if (mmoCoreEnabled()) MMOCoreMost.odmowa(player, tekst);
+      else player.sendActionBar(net.kyori.adventure.text.Component.text(tekst));
+      return;
+    }
+    if (mmoCoreEnabled()) MMOCoreMost.wyjdzZTrybuSkilli(player);
+    if (Bukkit.getPluginManager().isPluginEnabled("Zaklecia"))
+      Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "zaklecia pasek zamknij " + player.getName());
     player.closeInventory();
     try {
       if (!fullMap.open(player, world, x, z)) player.sendMessage("Nie można otworzyć pełnej mapy.");

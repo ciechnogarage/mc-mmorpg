@@ -676,25 +676,9 @@ final class Bron implements Listener {
         || isImage(event.getOffHandItem())) {
       event.setCancelled(true); refreshLater(player); return;
     }
-    if (!player.isSneaking()) {
-      if (spell(inventory.getItemInOffHand()) && inventory.getHeldItemSlot() == RIGHT
-          && !Przedmioty.empty(inventory.getItem(RIGHT))
-          && weapon(inventory.getItem(RIGHT)) && leftAllowed(inventory.getItem(RIGHT))) {
-        event.setCancelled(true);
-        ItemStack incoming = inventory.getItem(RIGHT);
-        putAwayLeftSpell(player);
-        inventory.setItem(RIGHT, null);
-        inventory.setItemInOffHand(incoming);
-        refreshLater(player);
-        return;
-      }
-      if (inventory.getHeldItemSlot() != RIGHT
-          || !validPair(player, event.getMainHandItem(), event.getOffHandItem())) {
-        event.setCancelled(true); return;
-      }
-      refreshLater(player);
-      return;
-    }
+    // F bez Shiftu = tylko tryb skilli MMOCore (decyzja wlasciciela 15.11: kazdy klawisz robi jedna rzecz).
+    // Rece sie nie zmieniaja; przekladanie broni: Shift+F (komplet zapasowy) albo okno E.
+    if (!player.isSneaking()) { event.setCancelled(true); return; }
     event.setCancelled(true);
     if (player.getOpenInventory().getType() != InventoryType.CRAFTING) {
       plugin.message(player, "okno"); return;

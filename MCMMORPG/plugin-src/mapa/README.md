@@ -14,11 +14,14 @@ Parser `plugin.yml`: 1 komenda `mapa`, 1 uprawnienie `mapa.admin` (default op), 
 |---|---|---|---|
 | `/mapa otworz <gracz>` | OP/konsola | otwiera graczowi atlas | `MapaPlugin.java:552-557` |
 | `/mapa pelna <gracz>` | OP/konsola | otwiera pełną mapę w pozycji gracza (wymaga MapEngine) | `MapaPlugin.java:558-564`, `:614-626` |
+| `/mapa zamknij <gracz>` | konsola (Zaklecia, Chowance) | zamyka pełną mapę, gdy inny plugin otwiera swój tryb na 1–9 | `MapaPlugin.onCommand` |
 | `/mapa cel <gracz> <swiat> <x> <z> <nazwa...>` | OP/konsola | ustawia cel prowadzenia (świat musi pasować do `[a-z0-9_.-]+`) | `MapaPlugin.java:565-582` |
 | `/mapa cel <gracz> wyczysc` | OP/konsola | wyłącza prowadzenie | `MapaPlugin.java:568-572` |
 | `/mapa przeladuj` | OP/konsola | zamyka mapy i atlasy, `loadAll()` (config, kafle, tekstury, rejestr map), podmiana map graczy | `MapaPlugin.java:584-594` |
 
-Rozbieżności: brak (`usage` w `plugin.yml:10` i tekst `MapaPlugin.java` wymieniają te same 5 form). Tab-complete: `MapaPlugin.onTabComplete` (podkomendy, nick gracza, `wyczysc` i nazwy światów dla `cel`; tylko dla `mapa.admin`).
+Rozbieżności: brak (`usage` w `plugin.yml:10` i tekst `MapaPlugin.java` wymieniają te same 6 form).
+
+**Jeden tryb na 1–9 naraz** (decyzja właściciela 15.11, „nowy zamyka stary”): otwarcie pełnej mapy (`openFull`) wychodzi z trybu skilli MMOCore (`MMOCoreMost.wyjdzZTrybuSkilli`) i zamyka pasek zaklęć (`zaklecia pasek zamknij`); w walce Chowańców (metadane gracza `chowance_walka`) mapa się nie otwiera (komunikat w pasku akcji). F (tryb skilli, `PlayerEnterCastingModeEvent`) zamyka otwartą mapę (`TrybSkilliMost`, rejestrowany tylko z MMOCore). Tab-complete: `MapaPlugin.onTabComplete` (podkomendy, nick gracza, `wyczysc` i nazwy światów dla `cel`; tylko dla `mapa.admin`).
 Kto wydaje graczowi przedmiot mapy (sprawdzone, plugin Mapa sam nie tworzy mapy, tylko podmienia `map_id` istniejącej): skrypt CoreTools `plugins/CoreTools/Scripts/stale-sloty.yml` (`stale_sloty_wstaw_mapa_teraz`, wiersze 62-65) wstawia do pustego slotu 7 paska przedmiot MMOItems `MISCELLANEOUS:UI_MAPA` (`plugins/MMOItems/item/miscellaneous.yml:354`, materiał FILLED_MAP) i komendą konsoli `item modify ... map_id 30000`; potem `MapaPlugin.replaceLegacyMaps` (`:324-337`) podmienia 30000 na osobisty numer gracza. Klik w ten przedmiot w ekwipunku = konsola `mapa otworz <gracz>` (`stale-sloty.yml:123`); `mapa pelna <gracz>` wołają menu DeluxeMenus `hub_glowne.yml:21`, `hub_przygoda.yml:72`.
 
 ## Konfiguracja

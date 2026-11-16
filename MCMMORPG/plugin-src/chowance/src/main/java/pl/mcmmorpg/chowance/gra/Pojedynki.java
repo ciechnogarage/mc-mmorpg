@@ -238,6 +238,7 @@ public final class Pojedynki implements Listener {
     for (int s = 0; s < 2; s++) {
       Player p = pj.gracze[s];
       wgGracza.put(p.getUniqueId(), pj);
+      TrybWalki.wejdz(c, p);
       pj.slotPrzed[s] = p.getInventory().getHeldItemSlot();
       p.getInventory().setHeldItemSlot(8);
       c.msg(p, "<gold>Pojedynek z " + pj.gracze[1 - s].getName() + "! " + (c.ust.pojedynekAuto
@@ -309,6 +310,7 @@ public final class Pojedynki implements Listener {
     pj.startCiosow = System.currentTimeMillis() + c.ust.pojedynekWstepMs;
     przejmijCiala(pj);
     wgGracza.put(a.getUniqueId(), pj);
+    TrybWalki.wejdz(c, a);
     pj.slotPrzed[0] = a.getInventory().getHeldItemSlot();
     a.getInventory().setHeldItemSlot(8);
     c.msg(a, "<gold>Pojedynek z " + nazwaNpc + "! <yellow>Stwory walczą same.</yellow> <gray>Rozkazy: <white>1–4</white> ruch, <white>5</white> unik, <white>6</white> eliksir, <white>8×2</white> poddanie.");
@@ -1049,6 +1051,7 @@ public final class Pojedynki implements Listener {
       Player p = pj.gracze[s];
       if (p == null) continue;
       wgGracza.remove(p.getUniqueId());
+      TrybWalki.wyjdz(c, p);
       ProfilDane d = c.dane(p);
       if (pj.ciala[s] != null && pj.ciala[s] instanceof Mob m) m.setTarget(null);
       if (scena != null) scena.usunEtykiete(pj.ciala[s]);
@@ -1096,7 +1099,7 @@ public final class Pojedynki implements Listener {
       if (kamera != null) for (Player p : pj.gracze) if (p != null) kamera.wylacz(p);
       if (hud != null) for (Player p : pj.gracze) if (p != null) hud.ukryj(p);
       if (pj.npcNazwa != null && pj.ciala[1] != null) Mythic.usun(pj.ciala[1]);
-      for (Player p : pj.gracze) if (p != null) wgGracza.remove(p.getUniqueId());
+      for (Player p : pj.gracze) if (p != null) { wgGracza.remove(p.getUniqueId()); TrybWalki.wyjdz(c, p); }
       cofnijTeleport(pj);
     }
   }

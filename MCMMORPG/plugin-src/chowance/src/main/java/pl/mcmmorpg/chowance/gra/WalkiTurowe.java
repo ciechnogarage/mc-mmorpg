@@ -234,6 +234,7 @@ public final class WalkiTurowe implements Listener {
     for (Player p : w.gracze) if (p != null) {
       przywolania.odwolaj(p, true);
       wgGracza.put(p.getUniqueId(), w);
+      TrybWalki.wejdz(c, p);
     }
     for (int s = 0; s < 2; s++) w.uczestnicy[s].add(w.silnik.strony[s].akt().o.id);
     ustalKotwice(w);
@@ -964,6 +965,7 @@ public final class WalkiTurowe implements Listener {
       }
       if (d != null) d.brudne = true;
       wgGracza.remove(p.getUniqueId());
+      TrybWalki.wyjdz(c, p);
     }
     for (int s = 0; s < 2; s++) if (w.ciala[s] != null) scena.usunEtykiete(w.ciala[s]);
     for (int s = 0; s < 2; s++) if (w.ciala[s] != null && w.cialoNasze[s]) Mythic.usun(w.ciala[s]);

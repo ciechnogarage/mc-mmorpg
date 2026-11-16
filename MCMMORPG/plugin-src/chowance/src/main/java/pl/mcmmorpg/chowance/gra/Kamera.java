@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -246,11 +245,5 @@ public final class Kamera implements Listener {
   @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void ochrona(org.bukkit.event.entity.EntityDamageEvent e) {
     if (e.getEntity() instanceof Player p && aktywna(p) && e.getCause() != org.bukkit.event.entity.EntityDamageEvent.DamageCause.VOID) e.setCancelled(true);
-  }
-
-  /** F (castowanie skilli MMOCore) zablokowane w walce — klawisze 1–8 należą do walki chowańców. */
-  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-  public void castowanie(PlayerSwapHandItemsEvent e) {
-    if (aktywna(e.getPlayer())) e.setCancelled(true);
   }
 }
