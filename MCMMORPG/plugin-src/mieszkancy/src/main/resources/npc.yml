@@ -1,0 +1,502 @@
+# NPC Stolicy. Po zmianie: /mieszkancy przeladuj.
+#
+# miejsce: [x, y, z] (+ yaw; bez yaw = twarzą do Nexusu). Stopy są dosuwane do podłoża (±3 bloki) — koniec
+#          „lewitujących” villagerów ze Stolicy v2 (spawnery MM na Y o blok za wysoko, NoAI bez fizyki).
+# skorka:  klucz z CharacterCreator/skins.yml (<rasa>_<klasa>).
+# stroj:   glowa/tors/nogi/buty/reka/lewa; MATERIAL albo MATERIAL#RRGGBB dla skóry.
+# patrz:   gdzie NPC patrzy, gdy nikt nie podchodzi (jego warsztat); tam też lecą cząsteczki czynności.
+# czynnosc: co-tickow, machniecie, dzwiek, czastka (+ilosc, rozrzut, predkosc, kolor/blok/przedmiot).
+# zaczepki: dymek przy podejściu (4,5 m; raz na 90 s na NPC, raz na 6 s na gracza). rozmowa: pierwsza kwestia okna.
+# opcje:   etykieta, podpowiedz, i jedno z: komenda (konsola, %gracz%), odpowiedz (tekst + „Wróć”; z komendą = „Zgoda”),
+#          prowadz (id innego NPC — ślad do niego).
+# gdzie:   opis miejsca dla /mieszkancy prowadz, gdy gracz jest poza Stolicą.
+#
+# Usługi (naprawa, rozbiórka, aukcje, sakwa, modlitwa) są TYLKO tutaj — decyzja właściciela 16.11: „tak tylko u NPC”.
+# Menu Q wskazuje drogę: [console] mieszkancy prowadz <id> %player_name%.
+npc:
+  # ================= NEXUS I PRZYJAZD =================
+  straznik_nexusu:
+    imie: Radomir
+    rola: Strażnik Nexusu
+    kolor: "<#d9a8ff>"
+    miejsce: [0.5, 101, 19.5, 180]
+    patrz: [0, 106, 13]
+    gdzie: przy bramie lochu, na północ od głównej ulicy
+    skorka: elf_mag
+    stroj: {tors: NETHERITE_CHESTPLATE, nogi: "LEATHER_LEGGINGS#2a1f3a", buty: NETHERITE_BOOTS, reka: TRIDENT}
+    glos: block.respawn_anchor.charge
+    czynnosc: {co-tickow: 120, machniecie: false, dzwiek: block.amethyst_block.resonate, glosnosc: 0.5, czastka: REVERSE_PORTAL, ilosc: 12, rozrzut: [0.8, 1.2, 0.2], predkosc: 0.02}
+    zaczepki:
+      - "Brama słucha tylko tych, którzy są gotowi."
+      - "Kwietna Polana znów kwitnie. Tam zaczyna każdy."
+      - "Czujesz to drżenie? To Nexus oddycha."
+    rozmowa:
+      - "Nexus łączy Stolicę ze wszystkim, co leży pod nią. Na razie otwiera tylko jedną drogę — w dół, do Kwietnej Polany."
+      - "Trzymam bramę od trzydziestu zim. Wielu wchodzi. Nie wszyscy wracają tacy sami."
+    opcje:
+      - {etykieta: "<#d9a8ff>Wyrusz w podróż", podpowiedz: "<gray>Loch 001 i trasy Nexusu", komenda: "dm open stolica_podroze %gracz%", dzwiek: block.portal.trigger}
+      - etykieta: "<#d8cba8>Co jest za bramą?"
+        odpowiedz:
+          - "Kwietna Polana — stary ogród Korzenia, który zdziczał. Poziom od pierwszego do piątego, sam albo w drużynie do czterech."
+          - "Wróć, zanim zabraknie ci mikstur. Rynek jest za twoimi plecami."
+      - etykieta: "<#d8cba8>A te zamknięte pylony?"
+        odpowiedz:
+          - "Lewy prowadził na wyspy, prawy do głębszych lochów. Pieczęcie trzymają, póki Starsi nie zdecydują inaczej."
+
+  kronikarz_wypraw:
+    imie: Wincenty
+    rola: Kronikarz wypraw
+    kolor: "<#e0c27a>"
+    miejsce: [9.5, 101, 42.5, 270]
+    patrz: [13, 104, 42]
+    gdzie: przy tablicy przy głównej ulicy, zaraz za bramą miasta
+    skorka: czlowiek_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#4a3524", nogi: "LEATHER_LEGGINGS#2e2218", reka: WRITABLE_BOOK}
+    glos: item.book.page_turn
+    czynnosc: {co-tickow: 90, dzwiek: entity.villager.work_cartographer, glosnosc: 0.5, czastka: ENCHANT, ilosc: 6, rozrzut: [0.3, 0.4, 0.3], predkosc: 0.3}
+    zaczepki:
+      - "Nowa twarz! Zapiszę cię w kronice."
+      - "Tablica wie, gdzie co jest. Ja wiem lepiej."
+      - "Pierwszy raz w Stolicy? Pytaj śmiało."
+    rozmowa:
+      - "Każdy, kto schodzi z promu, trafia najpierw do mnie. Mapa miasta jest na tablicy — ale ja ci powiem, czego tam nie napisali."
+    opcje:
+      - {etykieta: "<#e0c27a>Tablica Stolicy", podpowiedz: "<gray>Dzielnice i kto gdzie stoi", komenda: "dm open stolica_v2_tablica %gracz%"}
+      - {etykieta: "<#d8cba8>Zaprowadź mnie na rynek", podpowiedz: "<gray>Handel, naprawa, sakwa", prowadz: kupiec}
+      - {etykieta: "<#d8cba8>Gdzie się nauczę rzemiosła?", prowadz: kowal}
+      - {etykieta: "<#d8cba8>Gdzie jest świątynia?", prowadz: kaplanka}
+      - etykieta: "<#d8cba8>Opowiedz o Stolicy"
+        odpowiedz:
+          - "Stolicę postawiono na wyspie, nad Nexusem — bo tylko tu jego światło nie pali ziemi."
+          - "Na zachodzie rynek, na wschodzie rzemiosła, na północy świątynia Starszych i Dom Bohaterów. Gubią się tylko ci, którzy nie pytają."
+
+  # ================= RYNEK =================
+  kupiec:
+    imie: Zbigniew
+    rola: Kupiec wyposażenia
+    kolor: "<#f0c060>"
+    miejsce: [-22.5, 101, 8.5, 90]
+    patrz: [-27, 103, 5]
+    gdzie: na rynku, przy czerwonej markizie
+    skorka: czlowiek_wojownik
+    stroj: {tors: "LEATHER_CHESTPLATE#8a2a2a", nogi: "LEATHER_LEGGINGS#3a2a1a", reka: IRON_SWORD}
+    glos: entity.villager.trade
+    czynnosc: {co-tickow: 100, dzwiek: item.armor.equip_iron, glosnosc: 0.5, czastka: CRIT, ilosc: 4, rozrzut: [0.4, 0.1, 0.2], predkosc: 0.05}
+    zaczepki:
+      - "Miecze, łuki, hełmy! Wszystko sprawdzone w lochu!"
+      - "Nie schodź na Polanę w samej koszuli."
+      - "Dla ciebie — uczciwa cena. Prawie."
+    rozmowa:
+      - "Dobra stal ratuje życie częściej niż modlitwa. Co bierzesz?"
+    opcje:
+      - {etykieta: "<#f0c060>Pokaż towar", podpowiedz: "<gray>Sklep z wyposażeniem", komenda: "core-shops sklep %gracz%", dzwiek: block.chest.open}
+      - etykieta: "<#d8cba8>Co polecasz na start?"
+        odpowiedz:
+          - "Broń twojej ścieżki, mikstury i coś na głowę. Resztę zdobędziesz na Polanie."
+          - "A jak już coś zniszczysz — Bolesław naprawi. Stoi przy kuźni, na końcu rynku."
+
+  skupca:
+    imie: Zdzisław
+    rola: Skup surowców
+    kolor: "<#f0c060>"
+    miejsce: [-22.5, 101, 19.5, 90]
+    patrz: [-27, 103, 16]
+    gdzie: na rynku, przy pomarańczowej markizie
+    skorka: ork_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#a0602a", nogi: "LEATHER_LEGGINGS#4a3a2a", reka: LEATHER}
+    glos: entity.villager.work_leatherworker
+    czynnosc: {co-tickow: 110, dzwiek: entity.villager.work_leatherworker, glosnosc: 0.5, czastka: BLOCK, blok: HAY_BLOCK, ilosc: 8, rozrzut: [0.3, 0.1, 0.3], predkosc: 0.1}
+    zaczepki:
+      - "Skóry, rudy, zioła — biorę wszystko."
+      - "Ciężkie plecy? Ulżę ci za parę monet."
+      - "Najlepsza skóra w Stolicy. Pytaj kogo chcesz."
+    rozmowa:
+      - "Przynosisz, ja ważę, ty liczysz monety. Proste jak drut."
+    opcje:
+      - {etykieta: "<#f0c060>Sprzedaj surowce", podpowiedz: "<gray>Skup", komenda: "core-shops skup %gracz%", dzwiek: entity.experience_orb.pickup}
+
+  licytator:
+    imie: Bartosz
+    rola: Licytator
+    kolor: "<#f0c060>"
+    miejsce: [-22.5, 101, 30.5, 90]
+    patrz: [-27, 103, 27]
+    gdzie: na rynku, przy żółtej markizie — dom aukcyjny
+    skorka: elf_akolita
+    stroj: {glowa: "LEATHER_HELMET#c9a227", tors: "LEATHER_CHESTPLATE#5a1f5a", nogi: "LEATHER_LEGGINGS#2a1a2a", reka: GOLD_INGOT}
+    glos: block.note_block.bell
+    czynnosc: {co-tickow: 140, dzwiek: block.note_block.bell, glosnosc: 0.4, ton: 1.2, czastka: WAX_ON, ilosc: 5, rozrzut: [0.4, 0.2, 0.2], predkosc: 0.2}
+    zaczepki:
+      - "Kto da więcej? Kto da więcej?!"
+      - "Rzadki łup z lochu — licytacja trwa!"
+      - "Masz coś, czego ktoś pragnie? Wystaw to."
+    rozmowa:
+      - "Tu gracze handlują z graczami. Ty wystawiasz, ktoś kupuje, ja biorę swoje. Wszyscy zadowoleni."
+    opcje:
+      - {etykieta: "<#f0c060>Dom aukcyjny", podpowiedz: "<gray>Kupuj i wystawiaj przedmioty", komenda: "ah mmoitems_example stolica %gracz%", dzwiek: block.note_block.bell}
+      - etykieta: "<#d8cba8>Jak tu się handluje?"
+        odpowiedz:
+          - "Wystawiasz przedmiot za cenę, jaką chcesz. Gdy ktoś go kupi, monety czekają na ciebie. Niesprzedane wrócą."
+
+  mistrz_napraw:
+    imie: Bolesław
+    rola: Mistrz napraw
+    kolor: "<#f0c060>"
+    miejsce: [-39.5, 101, 30.5, 0]
+    patrz: [-39, 102, 34]
+    gdzie: w kuźni na końcu rynku
+    skorka: ork_wojownik
+    stroj: {tors: "LEATHER_CHESTPLATE#3a2a1f", nogi: IRON_LEGGINGS, buty: IRON_BOOTS, reka: IRON_AXE}
+    glos: block.anvil.place
+    czynnosc: {co-tickow: 50, dzwiek: block.anvil.use, glosnosc: 0.45, czastka: LAVA, ilosc: 2, rozrzut: [0.15, 0.1, 0.15], predkosc: 0.0}
+    zaczepki:
+      - "Pęknięte ostrze? Dawaj, póki żar gorący."
+      - "Każda rysa ma swoją historię. I swoją cenę."
+      - "Słyszysz młot? To ja."
+    rozmowa:
+      - "Przynieś, co zniszczyłeś. Jak nie jest rozpadnięte na pół — złożę."
+    opcje:
+      - {etykieta: "<#f0c060>Napraw sprzęt", podpowiedz: "<gray>Stół napraw", komenda: "core-station repair_station %gracz%", dzwiek: block.anvil.use}
+      - {etykieta: "<#d8cba8>A jeśli nie da się naprawić?", prowadz: rozbieracz}
+
+  rozbieracz:
+    imie: Mieszko
+    rola: Rozbieracz sprzętu
+    kolor: "<#f0c060>"
+    miejsce: [-34.5, 101, 30.5, 0]
+    patrz: [-35, 102, 34]
+    gdzie: w kuźni na końcu rynku, przy szlifierce
+    skorka: nieumarly_wojownik
+    stroj: {tors: "LEATHER_CHESTPLATE#4a4a4a", nogi: CHAINMAIL_LEGGINGS, reka: IRON_PICKAXE}
+    glos: block.grindstone.use
+    czynnosc: {co-tickow: 70, dzwiek: block.grindstone.use, glosnosc: 0.4, czastka: ELECTRIC_SPARK, ilosc: 6, rozrzut: [0.2, 0.1, 0.2], predkosc: 0.1}
+    zaczepki:
+      - "Stare żelastwo? Rozbiorę na części."
+      - "Z każdego złomu coś zostaje."
+    rozmowa:
+      - "Bolesław ratuje, ja rozbieram. Dostaniesz z powrotem część surowca — lepiej niż wyrzucić."
+    opcje:
+      - {etykieta: "<#f0c060>Rozbierz przedmiot", podpowiedz: "<gray>Stół rozbiórki", komenda: "core-station deconstruct_station %gracz%", dzwiek: block.grindstone.use}
+
+  opiekunka_sakwy:
+    imie: Halina
+    rola: Opiekunka sakwy
+    kolor: "<#f0c060>"
+    miejsce: [-39.5, 101, -2.5, 270]
+    patrz: [-43, 103, -2]
+    gdzie: przy składzie na zachodnim krańcu rynku
+    skorka: czlowiek_mag
+    stroj: {tors: "LEATHER_CHESTPLATE#2a4a3a", nogi: "LEATHER_LEGGINGS#1a2a22", reka: BUNDLE}
+    glos: item.bundle.insert
+    czynnosc: {co-tickow: 120, dzwiek: block.barrel.open, glosnosc: 0.4}
+    zaczepki:
+      - "Twoje rzeczy są u mnie bezpieczne."
+      - "Za dużo dźwigasz, dziecko."
+    rozmowa:
+      - "Sakwa jest twoja i tylko twoja — każda postać ma własną. Zostaw tu surowce, zanim zejdziesz na dół."
+    opcje:
+      - {etykieta: "<#f0c060>Otwórz sakwę", podpowiedz: "<gray>Schowek postaci", komenda: "core-playervault sakwa %gracz%", dzwiek: block.barrel.open}
+
+  # ================= DOM BOHATERÓW =================
+  kronikarz_postaci:
+    imie: Teodor
+    rola: Kronikarz postaci
+    kolor: "<#e0c27a>"
+    miejsce: [-25.5, 101, -34.5, 270]
+    patrz: [-29, 105, -33]
+    gdzie: przed Domem Bohaterów, na północnym zachodzie
+    skorka: nieumarly_mag
+    stroj: {tors: "LEATHER_CHESTPLATE#2a2a3a", nogi: "LEATHER_LEGGINGS#1a1a22", reka: BOOK}
+    glos: item.book.page_turn
+    czynnosc: {co-tickow: 100, dzwiek: item.book.page_turn, glosnosc: 0.5, czastka: ENCHANT, ilosc: 5, rozrzut: [0.3, 0.3, 0.3], predkosc: 0.4}
+    zaczepki:
+      - "Każdy bohater ma swoją kartę. Twoja jest jeszcze pusta."
+      - "Herby czterech ścieżek. Którą idziesz?"
+    rozmowa:
+      - "Zapisuję, kim jesteś: rasa, ścieżka, siła. Jeśli chcesz wiedzieć, ile ci jeszcze brakuje — tu to zobaczysz."
+    opcje:
+      - {etykieta: "<#e0c27a>Karta postaci", podpowiedz: "<gray>Statystyki, klasa, rozwój", komenda: "dm open hub_postac %gracz%"}
+      - {etykieta: "<#d8cba8>Kto uczy umiejętności?", prowadz: mistrz_umiejetnosci}
+
+  mistrz_umiejetnosci:
+    imie: Gniewomir
+    rola: Mistrz umiejętności
+    kolor: "<#e0c27a>"
+    miejsce: [-29.5, 101, -23.5, 200]
+    patrz: [-29, 106, -28]
+    gdzie: przed Domem Bohaterów, przy czarnym herbie
+    skorka: ork_mag
+    stroj: {tors: "LEATHER_CHESTPLATE#1a1a1a", nogi: IRON_LEGGINGS, buty: IRON_BOOTS, reka: BLAZE_ROD}
+    glos: entity.evoker.prepare_attack
+    czynnosc: {co-tickow: 90, dzwiek: entity.illusioner.cast_spell, glosnosc: 0.3, czastka: WITCH, ilosc: 6, rozrzut: [0.4, 0.5, 0.4], predkosc: 0.05}
+    zaczepki:
+      - "Siła bez techniki to tylko machanie kijem."
+      - "Pokaż, co umiesz. Potem pokażę ci, czego nie umiesz."
+    rozmowa:
+      - "Każda ścieżka ma swoje techniki. Ucz się ich, rozwijaj — i nie pomyl ich w ogniu walki."
+    opcje:
+      - {etykieta: "<#e0c27a>Umiejętności", podpowiedz: "<gray>Drzewko i rozwój", komenda: "dm open hub_umiejetnosci %gracz%", dzwiek: entity.illusioner.cast_spell}
+
+  # ================= ŚWIĄTYNIA =================
+  kaplanka:
+    imie: Wiesława
+    rola: Kapłanka świątyni
+    kolor: "<#f3e3b0>"
+    miejsce: [0.5, 102, -35.5, 0]
+    patrz: [0, 104, -52]
+    gdzie: w świątyni Starszych, na północnym krańcu głównej ulicy
+    skorka: elf_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#e8e2cf", nogi: "LEATHER_LEGGINGS#d8cba8", buty: "LEATHER_BOOTS#c9b98f", reka: TOTEM_OF_UNDYING}
+    glos: block.amethyst_block.chime
+    czynnosc: {co-tickow: 80, machniecie: false, dzwiek: block.amethyst_block.chime, glosnosc: 0.5, ton: 0.8, czastka: END_ROD, ilosc: 3, rozrzut: [0.5, 0.6, 0.5], predkosc: 0.01}
+    zaczepki:
+      - "Starsi patrzą. Zawsze patrzą."
+      - "Pomódl się, wędrowcze. Droga jest długa."
+      - "Ordhun, Nysara, Vharun… którego słuchasz?"
+    rozmowa:
+      - "Trzech Starszych i dwunastu patronów ras. Ten, komu oddasz modlitwę, odda ci swoją łaskę — na jakiś czas."
+    opcje:
+      - {etykieta: "<#f3e3b0>Pomódl się", podpowiedz: "<gray>Błogosławieństwo patrona", komenda: "wiary modlitwa %gracz%", dzwiek: block.beacon.power_select}
+      - {etykieta: "<#d8cba8>Wybierz patrona", podpowiedz: "<gray>Wiary i dary", komenda: "dm open wiara %gracz%"}
+      - etykieta: "<#d8cba8>Kim są Starsi?"
+        odpowiedz:
+          - "Ordhun — Pierwszy Korzeń, z którego wyrosło życie. Nysara — Tkaczka Losu, która splata nici. Vharun — Sąd Umarłych, przed którym staje każdy."
+          - "Twoja rasa ma swoich patronów. Ich cokoły stoją przy wejściu."
+
+  # ================= MENAŻERIA I DRUŻYNY =================
+  opiekunka_chowancow:
+    imie: Ziemowita
+    rola: Opiekunka chowańców
+    kolor: "<#a8e08a>"
+    miejsce: [29.5, 101, -35.5, 90]
+    patrz: [42, 103, -51]
+    gdzie: przed Menażerią, na północnym wschodzie
+    skorka: elf_ninja
+    stroj: {tors: "LEATHER_CHESTPLATE#4a6a2a", nogi: "LEATHER_LEGGINGS#3a4a2a", reka: BONE}
+    glos: entity.wolf.ambient
+    czynnosc: {co-tickow: 120, dzwiek: entity.fox.ambient, glosnosc: 0.4, czastka: HAPPY_VILLAGER, ilosc: 4, rozrzut: [0.5, 0.4, 0.5], predkosc: 0.0}
+    zaczepki:
+      - "Ćśś, nie płosz ich."
+      - "Każdy chowaniec sam wybiera swojego pana."
+      - "Kot na sianie to Ruda. Nie daj się nabrać, gryzie."
+    rozmowa:
+      - "Chowańce rosną razem z tobą i walczą u twego boku. Zajrzyj do menażerii — może któryś już na ciebie czeka."
+    opcje:
+      - {etykieta: "<#a8e08a>Menażeria", podpowiedz: "<gray>Twoje chowańce", komenda: "dm open chowance_menazeria %gracz%", dzwiek: entity.cat.ambient}
+
+  opiekun_druzyn:
+    imie: Sławomir
+    rola: Opiekun drużyn
+    kolor: "<#8fc7e8>"
+    miejsce: [25.5, 101, 48.5, 90]
+    patrz: [30, 104, 48]
+    gdzie: przed Domem Drużyn, na południowym wschodzie
+    skorka: czlowiek_ninja
+    stroj: {tors: "LEATHER_CHESTPLATE#2a4a7a", nogi: "LEATHER_LEGGINGS#1a2a4a", reka: WHITE_BANNER}
+    glos: entity.player.levelup
+    czynnosc: {co-tickow: 150, dzwiek: item.armor.equip_leather, glosnosc: 0.4}
+    zaczepki:
+      - "Sam daleko nie zajdziesz."
+      - "Szukasz drużyny? Albo gildii z prawdziwego zdarzenia?"
+    rozmowa:
+      - "Do lochu najlepiej we czwórkę: ktoś trzyma, ktoś leczy, ktoś bije. Tu zbierzesz drużynę albo dołączysz do gildii."
+    opcje:
+      - {etykieta: "<#8fc7e8>Drużyny i gildie", podpowiedz: "<gray>Społeczność", komenda: "dm open hub_spolecznosc %gracz%", dzwiek: entity.player.levelup}
+
+  # ================= DZIEDZINIEC RZEMIOSŁ =================
+  gornik:
+    imie: Kazimierz
+    rola: Górnik
+    kolor: "<#d9b26a>"
+    miejsce: [26.5, 101, 7.5]
+    patrz: [26, 102, 4]
+    skorka: ork_wojownik
+    stroj: {glowa: "LEATHER_HELMET#5a4a3a", tors: "LEATHER_CHESTPLATE#4a3a2a", nogi: "LEATHER_LEGGINGS#3a2a1a", reka: IRON_PICKAXE}
+    glos: block.stone.break
+    czynnosc: {co-tickow: 45, dzwiek: block.stone.hit, glosnosc: 0.5, czastka: BLOCK, blok: STONE, ilosc: 6, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.1}
+    zaczepki: ["Ruda sama nie wyjdzie z ziemi.", "Kilof, hełm i cierpliwość — to cały fach."]
+    rozmowa: ["Górnictwo to podstawa. Bez rudy kowal ma tylko pięści."]
+    opcje:
+      - {etykieta: "<#d9b26a>Warsztat górnika", podpowiedz: "<gray>Receptury górnictwa", komenda: "mi stations open profession-mining %gracz%", dzwiek: block.stone.break}
+
+  drwal:
+    imie: Bogumił
+    rola: Drwal i stolarz
+    kolor: "<#d9b26a>"
+    miejsce: [34.5, 101, 7.5]
+    patrz: [31, 102, 12]
+    skorka: czlowiek_wojownik
+    stroj: {tors: "LEATHER_CHESTPLATE#6a3a1a", nogi: "LEATHER_LEGGINGS#3a2a1a", reka: IRON_AXE}
+    glos: block.wood.break
+    czynnosc: {co-tickow: 50, dzwiek: block.wood.hit, glosnosc: 0.5, czastka: BLOCK, blok: OAK_PLANKS, ilosc: 6, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.1}
+    zaczepki: ["Pachnie żywicą, co?", "Dobra deska nie lubi pośpiechu."]
+    rozmowa: ["Drewno to łuki, tarcze, trzonki. Pokażę ci, jak z kłody zrobić coś, co ocali ci skórę."]
+    opcje:
+      - {etykieta: "<#d9b26a>Warsztat stolarski", podpowiedz: "<gray>Receptury stolarstwa", komenda: "mi stations open profession-woodworking %gracz%", dzwiek: block.wood.place}
+
+  kowal:
+    imie: Bogdan
+    rola: Kowal
+    kolor: "<#d9b26a>"
+    miejsce: [28.5, 101, 17.5]
+    patrz: [28, 102, 12]
+    gdzie: na dziedzińcu rzemiosł, na wschód od Nexusu
+    skorka: nieumarly_wojownik
+    stroj: {tors: IRON_CHESTPLATE, nogi: "LEATHER_LEGGINGS#2a1a1a", buty: IRON_BOOTS, reka: IRON_AXE}
+    glos: block.anvil.place
+    czynnosc: {co-tickow: 40, dzwiek: block.anvil.use, glosnosc: 0.5, czastka: LAVA, ilosc: 2, rozrzut: [0.15, 0.1, 0.15], predkosc: 0.0}
+    zaczepki: ["Młot, kowadło, żar. Reszta to gadanie.", "Chcesz się nauczyć? Najpierw się oparzysz."]
+    rozmowa: ["Tu się wykuwa broń i zbroję. Przynieś rudę od Kazimierza, a pokażę ci resztę."]
+    opcje:
+      - {etykieta: "<#d9b26a>Kuźnia", podpowiedz: "<gray>Receptury kowalstwa", komenda: "mi stations open profession-smithing %gracz%", dzwiek: block.anvil.use}
+      - etykieta: "<#d8cba8>Ilu was tu jest?"
+        odpowiedz: ["Trzynastu mistrzów, trzynaście fachów. Każdy ma swój stragan na dziedzińcu. Zielarka jest najładniejsza, ale nie mów jej, że to powiedziałem."]
+
+  zielarka:
+    imie: Dobromira
+    rola: Zielarka
+    kolor: "<#d9b26a>"
+    miejsce: [24.5, 101, 24.5]
+    patrz: [25, 102, 28]
+    skorka: elf_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#3a6a2a", nogi: "LEATHER_LEGGINGS#2a4a1a", reka: FERN}
+    glos: block.azalea_leaves.break
+    czynnosc: {co-tickow: 70, dzwiek: block.azalea_leaves.hit, glosnosc: 0.5, czastka: COMPOSTER, ilosc: 6, rozrzut: [0.3, 0.2, 0.3], predkosc: 0.02}
+    zaczepki: ["Nie depcz paproci!", "Każde ziele leczy albo truje. Zależy, ile weźmiesz."]
+    rozmowa: ["Zioła z Polany to najlepsze, jakie widziałam. Ucz się je rozpoznawać — i zrywać, nie wyrywać."]
+    opcje:
+      - {etykieta: "<#d9b26a>Stół zielarski", podpowiedz: "<gray>Receptury zielarstwa", komenda: "mi stations open profession-herbalism %gracz%", dzwiek: block.azalea_leaves.place}
+
+  farmer:
+    imie: Wojciech
+    rola: Farmer
+    kolor: "<#d9b26a>"
+    miejsce: [27.5, 101, 32.5]
+    patrz: [33, 102, 31]
+    skorka: czlowiek_ninja
+    stroj: {glowa: "LEATHER_HELMET#c9a24a", tors: "LEATHER_CHESTPLATE#6a5a2a", reka: IRON_HOE}
+    glos: entity.villager.work_farmer
+    czynnosc: {co-tickow: 80, dzwiek: block.composter.fill, glosnosc: 0.5, czastka: BLOCK, blok: HAY_BLOCK, ilosc: 6, rozrzut: [0.3, 0.2, 0.3], predkosc: 0.1}
+    zaczepki: ["Kury znów rozgrzebały siano…", "Ziemia odda, jak ją dobrze potraktujesz."]
+    rozmowa: ["Bez farmera nie ma kucharza, a bez kucharza nikt nie wraca z lochu."]
+    opcje:
+      - {etykieta: "<#d9b26a>Zagroda farmera", podpowiedz: "<gray>Receptury rolnictwa", komenda: "mi stations open profession-farming %gracz%", dzwiek: entity.villager.work_farmer}
+
+  rybak:
+    imie: Florian
+    rola: Rybak
+    kolor: "<#d9b26a>"
+    miejsce: [36.5, 101, 34.5]
+    skorka: nieumarly_ninja
+    stroj: {glowa: "LEATHER_HELMET#3a5a6a", tors: "LEATHER_CHESTPLATE#2a4a5a", buty: "LEATHER_BOOTS#1a2a3a", reka: FISHING_ROD}
+    glos: entity.fishing_bobber.splash
+    czynnosc: {co-tickow: 110, dzwiek: entity.fishing_bobber.retrieve, glosnosc: 0.5, czastka: SPLASH, ilosc: 8, rozrzut: [0.3, 0.1, 0.3], predkosc: 0.1}
+    zaczepki: ["Przy molo biorą najlepiej o świcie.", "Nie ruszaj się, płoszysz ryby."]
+    rozmowa: ["Morze wokół wyspy jest pełne ryb. I nie tylko ryb."]
+    opcje:
+      - {etykieta: "<#d9b26a>Stragan rybaka", podpowiedz: "<gray>Receptury rybołówstwa", komenda: "mi stations open profession-fishing %gracz%", dzwiek: entity.fishing_bobber.splash}
+
+  lowczy:
+    imie: Jarogniew
+    rola: Łowczy
+    kolor: "<#d9b26a>"
+    miejsce: [41.5, 101, 6.5]
+    patrz: [42, 102, 5]
+    skorka: ork_ninja
+    stroj: {tors: "LEATHER_CHESTPLATE#4a3a1a", nogi: "LEATHER_LEGGINGS#3a2a1a", buty: "LEATHER_BOOTS#2a1a0a", reka: CROSSBOW}
+    glos: item.crossbow.loading_end
+    czynnosc: {co-tickow: 100, dzwiek: entity.villager.work_fletcher, glosnosc: 0.5, czastka: CRIT, ilosc: 4, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.1}
+    zaczepki: ["Ślady prowadzą na Polanę.", "Cicho. Słyszysz? Nic. Dobrze."]
+    rozmowa: ["Łowiectwo to skóry, kości, pióra. I cierpliwość, której ci brakuje."]
+    opcje:
+      - {etykieta: "<#d9b26a>Stanowisko łowczego", podpowiedz: "<gray>Receptury łowiectwa", komenda: "mi stations open profession-hunting %gracz%", dzwiek: item.crossbow.loading_end}
+
+  jubilerka:
+    imie: Bożena
+    rola: Jubilerka
+    kolor: "<#d9b26a>"
+    miejsce: [55.5, 101, 6.5]
+    patrz: [55, 102, 5]
+    skorka: elf_mag
+    stroj: {glowa: "LEATHER_HELMET#7a3a8a", tors: "LEATHER_CHESTPLATE#5a2a6a", reka: AMETHYST_SHARD}
+    glos: block.amethyst_cluster.hit
+    czynnosc: {co-tickow: 90, dzwiek: block.amethyst_block.hit, glosnosc: 0.5, czastka: WAX_OFF, ilosc: 5, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.2}
+    zaczepki: ["Ten kamień ma skazę. Widzisz? Nie widzisz.", "Pierścień z Polany? Pokaż!"]
+    rozmowa: ["Kamienie z lochów mają w sobie moc. Oprawione — oddają ją temu, kto je nosi."]
+    opcje:
+      - {etykieta: "<#d9b26a>Pracownia jubilerska", podpowiedz: "<gray>Receptury jubilerstwa", komenda: "mi stations open profession-jewelcrafting %gracz%", dzwiek: block.amethyst_cluster.place}
+
+  krawcowa:
+    imie: Agnieszka
+    rola: Krawcowa
+    kolor: "<#d9b26a>"
+    miejsce: [40.5, 102, 25.5]
+    patrz: [39, 102, 22]
+    skorka: czlowiek_mag
+    stroj: {tors: "LEATHER_CHESTPLATE#8a2a5a", nogi: "LEATHER_LEGGINGS#5a1a3a", reka: SHEARS}
+    glos: ui.loom.take_result
+    czynnosc: {co-tickow: 80, dzwiek: ui.loom.select_pattern, glosnosc: 0.5, czastka: BLOCK, blok: WHITE_WOOL, ilosc: 6, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.1}
+    zaczepki: ["Rozdarty rękaw? Przyjdź jutro.", "Skóra Zdzisława to najlepszy materiał."]
+    rozmowa: ["Krawiectwo to lekkie zbroje i torby. Ładne i wytrzymałe — jedno bez drugiego nic nie znaczy."]
+    opcje:
+      - {etykieta: "<#d9b26a>Pracownia krawiecka", podpowiedz: "<gray>Receptury krawiectwa", komenda: "mi stations open profession-tailoring %gracz%", dzwiek: ui.loom.take_result}
+
+  alchemiczka:
+    imie: Jaromira
+    rola: Alchemiczka
+    kolor: "<#d9b26a>"
+    miejsce: [28.5, 101, 27.5]
+    patrz: [29, 102, 22]
+    skorka: nieumarly_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#3a2a5a", nogi: "LEATHER_LEGGINGS#2a1a3a", reka: POTION}
+    glos: block.brewing_stand.brew
+    czynnosc: {co-tickow: 70, machniecie: false, dzwiek: block.brewing_stand.brew, glosnosc: 0.4, czastka: WITCH, ilosc: 5, rozrzut: [0.2, 0.3, 0.2], predkosc: 0.02}
+    zaczepki: ["Nie wąchaj tego. Serio.", "Mikstura leczenia — za chwilę, jeszcze bulgocze."]
+    rozmowa: ["Zioła od Dobromiry, woda z Nexusu, trochę cierpliwości. I wychodzi coś, co ratuje życie."]
+    opcje:
+      - {etykieta: "<#d9b26a>Pracownia alchemiczna", podpowiedz: "<gray>Receptury alchemii", komenda: "mi stations open profession-alchemy %gracz%", dzwiek: block.brewing_stand.brew}
+
+  zaklinacz:
+    imie: Lubomir
+    rola: Zaklinacz
+    kolor: "<#d9b26a>"
+    miejsce: [35.5, 101, 26.5]
+    patrz: [34, 103, 22]
+    skorka: elf_mag
+    stroj: {tors: "LEATHER_CHESTPLATE#2a3a7a", nogi: "LEATHER_LEGGINGS#1a2a5a", reka: ENCHANTED_BOOK}
+    glos: block.enchantment_table.use
+    czynnosc: {co-tickow: 60, machniecie: false, dzwiek: block.enchantment_table.use, glosnosc: 0.4, czastka: ENCHANT, ilosc: 12, rozrzut: [0.4, 0.4, 0.4], predkosc: 0.8}
+    zaczepki: ["Runy szepczą. Słuchasz?", "Ostrze bez zaklęcia to tylko ostrze."]
+    rozmowa: ["Zaklinanie wiąże moc z przedmiotem. Trudna sztuka — i kosztowna."]
+    opcje:
+      - {etykieta: "<#d9b26a>Stół zaklęć", podpowiedz: "<gray>Receptury zaklinania", komenda: "mi stations open profession-enchanting %gracz%", dzwiek: block.enchantment_table.use}
+
+  kucharka:
+    imie: Stanisława
+    rola: Kucharka
+    kolor: "<#d9b26a>"
+    miejsce: [52.5, 101, 32.5]
+    patrz: [51, 102, 29]
+    skorka: ork_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#e8e2cf", nogi: "LEATHER_LEGGINGS#6a4a2a", reka: COOKED_BEEF}
+    glos: entity.generic.eat
+    czynnosc: {co-tickow: 80, dzwiek: block.smoker.smoke, glosnosc: 0.5, czastka: CAMPFIRE_COSY_SMOKE, ilosc: 1, rozrzut: [0.1, 0.1, 0.1], predkosc: 0.01}
+    zaczepki: ["Głodny? Widać po oczach.", "Gulasz z Polany, kto chętny?"]
+    rozmowa: ["Na pusty brzuch nikt nie wygrał bitwy. Pokażę ci, co ugotować przed wyprawą."]
+    opcje:
+      - {etykieta: "<#d9b26a>Kuchnia", podpowiedz: "<gray>Receptury gotowania", komenda: "mi stations open profession-cooking %gracz%", dzwiek: entity.generic.eat}
+
+  budowniczy:
+    imie: Przemysław
+    rola: Budowniczy
+    kolor: "<#d9b26a>"
+    miejsce: [55.5, 101, 36.5]
+    patrz: [52, 102, 34]
+    skorka: czlowiek_wojownik
+    stroj: {glowa: GOLDEN_HELMET, tors: "LEATHER_CHESTPLATE#7a6a4a", nogi: "LEATHER_LEGGINGS#4a3a2a", reka: BRICK}
+    glos: block.stone.place
+    czynnosc: {co-tickow: 60, dzwiek: entity.villager.work_mason, glosnosc: 0.5, czastka: BLOCK, blok: STONE_BRICKS, ilosc: 6, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.1}
+    zaczepki: ["Ta Stolica? Połowę postawiłem ja.", "Krzywy mur widać z daleka."]
+    rozmowa: ["Budownictwo to cegły, kamień, zaprawa. I plan — bez planu wychodzi szopa."]
+    opcje:
+      - {etykieta: "<#d9b26a>Plac budowniczego", podpowiedz: "<gray>Receptury budownictwa", komenda: "mi stations open profession-building %gracz%", dzwiek: block.stone.place}

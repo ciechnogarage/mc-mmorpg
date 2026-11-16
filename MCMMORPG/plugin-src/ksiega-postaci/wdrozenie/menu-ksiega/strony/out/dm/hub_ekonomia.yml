@@ -20,8 +20,12 @@ items:
     lore:
       - '&7Sprzedawaj rzeczy innym graczom.'
       - '&7Sam ustalasz cenę.'
+      - ''
+      - '&7Licytacje prowadzi Bartosz na rynku.'
+      - '&eKliknij — wskażę drogę.'
     left_click_commands:
-      - '[console] ah mmoitems_example stolica %player_name%'
+      - '[console] mieszkancy prowadz licytator %player_name%'
+      - '[close]'
   sklep:
     material: nexo-mmo_icon_blank
     slots: [7, 8, 16, 17]

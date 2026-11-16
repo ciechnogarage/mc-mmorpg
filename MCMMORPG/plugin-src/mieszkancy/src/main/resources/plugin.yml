@@ -1,0 +1,12 @@
+name: Mieszkancy
+version: '${version}'
+main: pl.mcmmorpg.mieszkancy.Mieszkancy
+api-version: '1.21'
+description: Mieszkańcy Stolicy — NPC z dialogami i usługami, przechodnie, zwierzęta, napisy, towary, dźwięki i cząsteczki miasta.
+author: mcmmorpg
+commands:
+  mieszkancy:
+    description: Mieszkańcy — administracja i komendy dla menu (konsola)
+    permission: mieszkancy.admin
+permissions:
+  mieszkancy.admin: {default: op}

@@ -421,7 +421,10 @@ items:
       - '&7Łaska patrona przy Wierze %wiary_wiara%:'
       - '&f%wiary_opis_patrona%'
       - ''
-      - '&eKliknij, aby się pomodlić.'
+      - '&7Modlitwę przyjmuje Kapłanka Wiesława'
+      - '&7w świątyni Starszych.'
+      - ''
+      - '&eKliknij — wskażę drogę.'
     view_requirement:
       requirements:
         mozna:
@@ -429,8 +432,8 @@ items:
           input: '%wiary_modlitwa%'
           output: 'tak'
     left_click_commands:
-      - '[console] wiary modlitwa %player_name%'
-      - '[refresh]'
+      - '[console] mieszkancy prowadz kaplanka %player_name%'
+      - '[close]'
 
   'modlitwa_trwa':
     material: nexo-hub_wiara

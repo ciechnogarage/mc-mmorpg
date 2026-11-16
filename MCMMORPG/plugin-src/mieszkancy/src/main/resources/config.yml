@@ -1,0 +1,204 @@
+# Mieszkancy — życie Stolicy (świat stolica_odnowa). Po zmianie: /mieszkancy przeladuj (bez restartu).
+# Wszystkie encje są nieprzetrwałe: plugin stawia je, gdy chunk jest wczytany, i nic nie zapisuje do świata.
+# Współrzędne: [x, y, z] albo [x, y, z, yaw]. Teksty: MiniMessage.
+debug: false
+swiat: stolica_odnowa
+srodek: [0, 101, 0]
+# Pętle (NPC, przechodnie, efekty) liczą się tylko, gdy w tym promieniu od środka jest gracz.
+promien-aktywny: 120
+# Ścieżka względem plugins/Mieszkancy/ — 16 podpisanych skórek kreatora (rasa_klasa).
+skorki-plik: ../CharacterCreator/skins.yml
+# Villagery bez AI w tym świecie (stare NPC MythicMobs ze Stolicy v2) są usuwane przy wczytaniu chunka.
+# Spawnery stolica2_* trzeba zdjąć z MythicMobs, inaczej będą je odradzać co 60 s.
+usun-stare-villagery: true
+
+# Tabliczki ze Stolicy v2 (stary format, bez polskich znaków) — zdejmowane (setblock air), gdy ich chunk jest
+# wczytany. Plugin sprawdza, że w tym miejscu NAPRAWDĘ stoi tabliczka; inny blok zostaje nietknięty.
+usun-tabliczki:
+  - [-9, 102, -52]
+  - [9, 102, -52]
+  - [0, 102, -52]
+  - [0, 104, -38]
+  - [-3, 102, -29]
+  - [-9, 102, -31]
+  - [9, 102, -31]
+  - [3, 102, -29]
+  - [-30, 104, -34]
+  - [12, 102, 2]
+  - [-12, 102, 2]
+  - [37, 104, 20]
+  - [0, 109, 51]
+  - [28, 104, 48]
+  - [32, 104, -35]
+  - [-35, 104, 20]
+
+# Napisy (TextDisplay, zawsze przodem do gracza). zasieg = mnożnik odległości widzenia (1.0 ≈ 64 bloki).
+napisy:
+  # Świątynia — trzech Starszych
+  - {miejsce: [-8.5, 103.4, -51.5], tekst: "<#b58a4a><b>ORDHUN</b>\n<#d8cba8>Pierwszy Korzeń", skala: 0.9, zasieg: 0.35}
+  - {miejsce: [0.5, 103.4, -51.5], tekst: "<#c9c3e6><b>NYSARA</b>\n<#d8cba8>Tkaczka Losu", skala: 0.9, zasieg: 0.35}
+  - {miejsce: [9.5, 103.4, -51.5], tekst: "<#9a3b3b><b>VHARUN</b>\n<#d8cba8>Sąd Umarłych", skala: 0.9, zasieg: 0.35}
+  - {miejsce: [0.5, 107.2, -37.5], tekst: "<#f3e3b0><b>ŚWIĄTYNIA STARSZYCH</b>\n<#d8cba8>Kapłanka Wiesława przyjmie modlitwę", skala: 1.2, zasieg: 0.6}
+  # Świątynia — cokoły ras
+  - {miejsce: [-8.5, 106.2, -34.5], tekst: "<#e8d9b0><b>Ludzie</b>\n<gray>patroni rasy", skala: 0.7, zasieg: 0.3}
+  - {miejsce: [-2.5, 106.2, -32.5], tekst: "<#a8d68a><b>Elfy</b>\n<gray>patroni rasy", skala: 0.7, zasieg: 0.3}
+  - {miejsce: [3.5, 106.2, -32.5], tekst: "<#d07a4a><b>Orkowie</b>\n<gray>patroni rasy", skala: 0.7, zasieg: 0.3}
+  - {miejsce: [9.5, 106.2, -34.5], tekst: "<#9fb6c9><b>Nieumarli</b>\n<gray>patroni rasy", skala: 0.7, zasieg: 0.3}
+  # Dzielnice
+  - {miejsce: [-29.5, 105.4, -33.5], tekst: "<#e0c27a><b>DOM BOHATERÓW</b>\n<#d8cba8>postać · umiejętności", skala: 1.1, zasieg: 0.5}
+  - {miejsce: [12.5, 112.6, 0.5], tekst: "<#7d7d8c><b>Dalsze lochy</b>\n<dark_gray>pieczęć jeszcze trzyma", skala: 0.9, zasieg: 0.4}
+  - {miejsce: [-11.5, 112.6, 0.5], tekst: "<#7d7d8c><b>Trasy na wyspy</b>\n<dark_gray>przeprawa zamknięta", skala: 0.9, zasieg: 0.4}
+  - {miejsce: [0.5, 112.6, 13.5], tekst: "<#d9a8ff><b>BRAMA LOCHU</b>\n<#d8cba8>Radomir otworzy przejście", skala: 1.0, zasieg: 0.5}
+  - {miejsce: [37.5, 105.4, 20.5], tekst: "<#d9b26a><b>DZIEDZINIEC RZEMIOSŁ</b>\n<#d8cba8>13 mistrzów, 13 warsztatów", skala: 1.1, zasieg: 0.55}
+  - {miejsce: [0.5, 113.4, 50.5], tekst: "<#f3e3b0><b>STOLICA</b>\n<#d8cba8>prosto — Nexus", skala: 1.4, zasieg: 0.7}
+  - {miejsce: [28.5, 105.4, 48.5], tekst: "<#8fc7e8><b>DOM DRUŻYN</b>\n<#d8cba8>drużyny · gildie", skala: 1.0, zasieg: 0.5}
+  - {miejsce: [32.5, 105.4, -34.5], tekst: "<#a8e08a><b>MENAŻERIA</b>\n<#d8cba8>chowańce", skala: 1.0, zasieg: 0.5}
+  - {miejsce: [-34.5, 105.4, 20.5], tekst: "<#f0c060><b>RYNEK</b>\n<#d8cba8>handel · naprawa · sakwa", skala: 1.2, zasieg: 0.6}
+  - {miejsce: [13.0, 107.4, 42.5], tekst: "<#e0c27a><b>TABLICA WYPRAW</b>\n<#d8cba8>pytaj kronikarza", skala: 0.9, zasieg: 0.4}
+
+# Efekty: cząsteczka co N ticków + dźwięk co M ticków, tylko gdy gracz jest w zasięgu (bloki).
+# pora: ZAWSZE | NOC | DZIEN. Cząsteczki z danymi: DUST (kolor, rozmiar), BLOCK (blok), ITEM (przedmiot).
+efekty:
+  # Nexus: oddychająca poświata, iskry nad kryształem, niski szum.
+  - {id: nexus_rdzen, miejsce: [0.5, 103.0, 0.5], czastka: END_ROD, co-tickow: 3, ilosc: 2, rozrzut: [3.0, 1.2, 3.0], predkosc: 0.01, zasieg: 48}
+  - {id: nexus_wir, miejsce: [0.5, 102.4, 0.5], czastka: PORTAL, co-tickow: 2, ilosc: 6, rozrzut: [2.2, 0.2, 2.2], predkosc: 0.4, zasieg: 32,
+     dzwiek: block.beacon.ambient, dzwiek-co-tickow: 90, glosnosc: 0.7, ton: 0.7}
+  - {id: nexus_szczyt, miejsce: [0.5, 121.0, 0.5], czastka: GLOW, co-tickow: 6, ilosc: 3, rozrzut: [0.6, 0.6, 0.6], predkosc: 0.0, zasieg: 90}
+  - {id: brama_lochu, miejsce: [0.5, 105.0, 13.5], czastka: REVERSE_PORTAL, co-tickow: 3, ilosc: 4, rozrzut: [1.2, 1.8, 0.2], predkosc: 0.02, zasieg: 32,
+     dzwiek: block.portal.ambient, dzwiek-co-tickow: 200, glosnosc: 0.25, ton: 1.4}
+  - {id: pylon_w, miejsce: [-11.5, 107.5, 0.5], czastka: SMOKE, co-tickow: 12, ilosc: 2, rozrzut: [0.4, 0.4, 0.1], predkosc: 0.005, zasieg: 32}
+  - {id: pylon_e, miejsce: [12.5, 107.5, 0.5], czastka: SMOKE, co-tickow: 12, ilosc: 2, rozrzut: [0.4, 0.4, 0.1], predkosc: 0.005, zasieg: 32}
+  # Kuźnia rynku: żar i trzask ognia.
+  - {id: kuznia_zar, miejsce: [-42.5, 105.6, 34.5], czastka: LAVA, co-tickow: 25, ilosc: 1, rozrzut: [0.2, 0.1, 0.2], predkosc: 0.0, zasieg: 28,
+     dzwiek: block.fire.ambient, dzwiek-co-tickow: 60, glosnosc: 0.6, ton: 1.0}
+  - {id: kuznia_dym, miejsce: [-42.5, 106.4, 34.5], czastka: CAMPFIRE_COSY_SMOKE, co-tickow: 18, ilosc: 1, rozrzut: [0.1, 0.0, 0.1], predkosc: 0.01, zasieg: 48}
+  # Dziedziniec rzemiosł: piec hutniczy, wędzarnia.
+  - {id: piec_hut, miejsce: [35.5, 103.2, 12.5], czastka: FLAME, co-tickow: 14, ilosc: 2, rozrzut: [0.25, 0.1, 0.25], predkosc: 0.005, zasieg: 24,
+     dzwiek: block.blastfurnace.fire_crackle, dzwiek-co-tickow: 70, glosnosc: 0.6}
+  - {id: wedzarnia, miejsce: [51.5, 103.2, 29.5], czastka: SMOKE, co-tickow: 10, ilosc: 2, rozrzut: [0.2, 0.2, 0.2], predkosc: 0.01, zasieg: 24,
+     dzwiek: block.smoker.smoke, dzwiek-co-tickow: 90, glosnosc: 0.5}
+  # Świątynia: unoszące się runy i dzwon co 2 minuty (słychać w całym mieście).
+  - {id: swiatynia_runy, miejsce: [0.5, 103.2, -38.5], czastka: ENCHANT, co-tickow: 2, ilosc: 4, rozrzut: [6.0, 0.6, 6.0], predkosc: 0.6, zasieg: 32}
+  - {id: swiatynia_swiatlo, miejsce: [0.5, 104.0, -52.5], czastka: END_ROD, co-tickow: 10, ilosc: 1, rozrzut: [9.0, 1.0, 0.6], predkosc: 0.005, zasieg: 32,
+     dzwiek: block.amethyst_block.chime, dzwiek-co-tickow: 80, glosnosc: 0.8, ton: 0.8}
+  - {id: dzwon, miejsce: [0.5, 116.0, -49.5], dzwiek: block.bell.use, dzwiek-co-tickow: 2400, glosnosc: 2.5, ton: 0.6, zasieg: 110}
+  - {id: dzwon_echo, miejsce: [0.5, 116.0, -49.5], dzwiek: block.bell.resonate, dzwiek-co-tickow: 2400, glosnosc: 1.2, ton: 0.8, zasieg: 110}
+  # Ogród chowańców.
+  - {id: ogrod_chw, miejsce: [42.5, 103.0, -50.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 4, ilosc: 2, rozrzut: [6.0, 1.5, 6.0], predkosc: 0.0, zasieg: 28}
+  # Ogrody azalii: w dzień pyłki, nocą świetliki.
+  - {id: az1_d, miejsce: [-51.5, 102.5, 56.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 6, ilosc: 2, rozrzut: [4.0, 1.0, 4.0], predkosc: 0.0, zasieg: 28, pora: DZIEN}
+  - {id: az2_d, miejsce: [-10.5, 102.5, 54.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 6, ilosc: 2, rozrzut: [4.0, 1.0, 4.0], predkosc: 0.0, zasieg: 28, pora: DZIEN}
+  - {id: az3_d, miejsce: [48.5, 102.5, 55.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 6, ilosc: 2, rozrzut: [4.0, 1.0, 4.0], predkosc: 0.0, zasieg: 28, pora: DZIEN}
+  - {id: az4_d, miejsce: [59.5, 102.5, -14.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 6, ilosc: 2, rozrzut: [4.0, 1.0, 4.0], predkosc: 0.0, zasieg: 28, pora: DZIEN}
+  - {id: az5_d, miejsce: [-56.5, 102.5, -27.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 6, ilosc: 2, rozrzut: [4.0, 1.0, 4.0], predkosc: 0.0, zasieg: 28, pora: DZIEN}
+  - {id: az6_d, miejsce: [8.5, 102.5, -57.5], czastka: SPORE_BLOSSOM_AIR, co-tickow: 6, ilosc: 2, rozrzut: [4.0, 1.0, 4.0], predkosc: 0.0, zasieg: 28, pora: DZIEN}
+  - {id: az1_n, miejsce: [-51.5, 102.5, 56.5], czastka: FIREFLY, co-tickow: 3, ilosc: 2, rozrzut: [5.0, 1.5, 5.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: az2_n, miejsce: [-10.5, 102.5, 54.5], czastka: FIREFLY, co-tickow: 3, ilosc: 2, rozrzut: [5.0, 1.5, 5.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: az3_n, miejsce: [48.5, 102.5, 55.5], czastka: FIREFLY, co-tickow: 3, ilosc: 2, rozrzut: [5.0, 1.5, 5.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: az4_n, miejsce: [59.5, 102.5, -14.5], czastka: FIREFLY, co-tickow: 3, ilosc: 2, rozrzut: [5.0, 1.5, 5.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: az5_n, miejsce: [-56.5, 102.5, -27.5], czastka: FIREFLY, co-tickow: 3, ilosc: 2, rozrzut: [5.0, 1.5, 5.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: az6_n, miejsce: [8.5, 102.5, -57.5], czastka: FIREFLY, co-tickow: 3, ilosc: 2, rozrzut: [5.0, 1.5, 5.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: chw_n, miejsce: [42.5, 102.5, -50.5], czastka: FIREFLY, co-tickow: 3, ilosc: 3, rozrzut: [6.0, 1.5, 6.0], predkosc: 0.0, zasieg: 40, pora: NOC}
+  - {id: rynek_n, miejsce: [-25.5, 103.0, 19.5], czastka: FIREFLY, co-tickow: 5, ilosc: 1, rozrzut: [4.0, 1.5, 12.0], predkosc: 0.0, zasieg: 36, pora: NOC}
+  # Molo: mewy i fale przy przyjeździe.
+  - {id: molo, miejsce: [0.5, 101.0, 62.5], czastka: SPLASH, co-tickow: 8, ilosc: 4, rozrzut: [8.0, 0.1, 3.0], predkosc: 0.1, zasieg: 30,
+     dzwiek: ambient.underwater.exit, dzwiek-co-tickow: 160, glosnosc: 0.25, ton: 0.6}
+
+# Towary na ladach rynku (lada = płyta na y102, wierzch 103). pochylenie 90 = leży płasko.
+towary:
+  # Kupiec wyposażenia (lada z=5)
+  - {miejsce: [-28.5, 102.03, 5.5, 20], przedmiot: IRON_SWORD, skala: 0.5, pochylenie: 90}
+  - {miejsce: [-26.3, 102.03, 5.5, -35], przedmiot: BOW, skala: 0.5, pochylenie: 90}
+  - {miejsce: [-25.5, 102.22, 5.5, 15], przedmiot: LEATHER_HELMET, skala: 0.45, pochylenie: 0}
+  - {miejsce: [-27.6, 102.03, 5.5, 70], przedmiot: SHEARS, skala: 0.35, pochylenie: 90}
+  # Skup surowców (lada z=16)
+  - {miejsce: [-28.6, 102.15, 16.5, 0], przedmiot: RAW_IRON_BLOCK, skala: 0.3}
+  - {miejsce: [-27.7, 102.03, 16.4, 40], przedmiot: COAL, skala: 0.35, pochylenie: 90}
+  - {miejsce: [-26.4, 102.03, 16.6, -20], przedmiot: LEATHER, skala: 0.4, pochylenie: 90}
+  - {miejsce: [-25.5, 102.15, 16.5, 30], przedmiot: HAY_BLOCK, skala: 0.3}
+  # Licytator (lada z=27)
+  - {miejsce: [-28.5, 102.03, 27.5, 10], przedmiot: GOLD_INGOT, skala: 0.4, pochylenie: 90}
+  - {miejsce: [-27.6, 102.03, 27.4, -50], przedmiot: EMERALD, skala: 0.35, pochylenie: 90}
+  - {miejsce: [-26.4, 102.03, 27.6, 25], przedmiot: ENCHANTED_BOOK, skala: 0.4, pochylenie: 90}
+  - {miejsce: [-25.5, 102.2, 27.5, 0], przedmiot: AMETHYST_CLUSTER, skala: 0.35}
+
+# Zwierzęta: promien 0 = bez AI (stoi/siedzi/leży), > 0 = chodzi w tym promieniu od miejsca.
+# wariant kota: tabby, black, red, siamese, british_shorthair, calico, persian, ragdoll, white, jellie, all_black; „lezy” = leży.
+zwierzeta:
+  - {typ: CAT, miejsce: [42.5, 103.0, -50.5], wariant: calico, siedzi: true}
+  - {typ: CAT, miejsce: [44.5, 102.0, -48.5], wariant: lezy}
+  - {typ: WOLF, miejsce: [39.5, 102.0, -52.5], siedzi: true}
+  - {typ: RABBIT, miejsce: [45.5, 102.0, -53.5], promien: 4}
+  - {typ: CAT, miejsce: [11.5, 101.0, 40.5], wariant: black, siedzi: true}
+  - {typ: CAT, miejsce: [-24.0, 101.0, 12.5], wariant: lezy}
+  - {typ: CHICKEN, miejsce: [36.5, 101.0, 37.5], promien: 4}
+  - {typ: CHICKEN, miejsce: [38.5, 101.0, 37.0], promien: 4}
+  - {typ: CHICKEN, miejsce: [34.5, 101.0, 37.5], promien: 4}
+
+# Przechodnie: manekiny idące po trasie [x, z] (wysokość z podłoża). petla: true = w kółko, inaczej tam i z powrotem.
+przechodnie:
+  - id: obchod_nexusu
+    imie: Strażniczka Mirosława
+    skorka: czlowiek_wojownik
+    stroj: {glowa: IRON_HELMET, tors: CHAINMAIL_CHESTPLATE, reka: IRON_SPEAR}
+    petla: true
+    predkosc: 0.09
+    postoj: 50
+    trasa: [[26, 0], [22.5, 13], [13, 22.5], [0, 26], [-13, 22.5], [-22.5, 13], [-26, 0], [-22.5, -13], [-13, -22.5], [0, -26], [13, -22.5], [22.5, -13]]
+    kwestie: ["Spokojnie dziś przy Nexusie.", "Nie dotykaj pylonów, wędrowcze.", "Jak coś wyjdzie z bramy — biegnij do mnie."]
+  - id: glowna
+    imie: Posłaniec Bożydar
+    skorka: elf_ninja
+    stroj: {tors: "LEATHER_CHESTPLATE#3b5a7a", buty: LEATHER_BOOTS, reka: PAPER}
+    predkosc: 0.15
+    postoj: 30
+    trasa: [[1.5, 58], [1.5, 49], [2.5, 35], [1.5, 23]]
+    kwestie: ["Z drogi, list do kronikarza!", "Nowi przybysze na molo, trzeba ich zapisać.", "Przepraszam, śpieszę się!"]
+  - id: rynek
+    imie: Gospodyni Jadwiga
+    skorka: czlowiek_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#8a4b2a", reka: BREAD}
+    predkosc: 0.07
+    postoj: 70
+    trasa: [[-20, 18], [-26, 19.5], [-31, 20], [-34, 20]]
+    kwestie: ["Chleb znowu podrożał…", "U Zdzisława najlepsza skóra w mieście.", "Ogląda pan towar czy tylko gapi?"]
+  - id: rzemiosla
+    imie: Czeladnik Wit
+    skorka: ork_wojownik
+    stroj: {tors: "LEATHER_CHESTPLATE#5a4632", nogi: "LEATHER_LEGGINGS#3a2e22", reka: IRON_PICKAXE}
+    predkosc: 0.08
+    postoj: 60
+    trasa: [[21, 16], [27, 19], [33, 21], [37, 20]]
+    kwestie: ["Mistrz Bogdan każe nosić rudę, to noszę.", "Słyszałeś, jak dzwoni kowadło? Muzyka.", "Uważaj, ciężkie niosę!"]
+  - id: swiatynia
+    imie: Pątniczka Dobrosława
+    skorka: nieumarly_akolita
+    stroj: {tors: "LEATHER_CHESTPLATE#e8e2cf", reka: CANDLE}
+    predkosc: 0.06
+    postoj: 90
+    trasa: [[1.5, -22], [1.5, -27], [1.5, -31]]
+    kwestie: ["Nysara widzi wszystkie nici…", "Pomódl się, zanim zejdziesz do lochu.", "Cicho tu. Dobrze."]
+  - id: menazeria
+    imie: Pachołek Kuba
+    skorka: czlowiek_ninja
+    stroj: {tors: "LEATHER_CHESTPLATE#6a7a3a", reka: WHEAT}
+    predkosc: 0.1
+    postoj: 50
+    trasa: [[17, -19], [24, -23.5], [31, -28], [36, -31]]
+    kwestie: ["Lisek znowu uciekł z zagrody…", "Pani Ziemowita karmi je o świcie.", "Masz już chowańca? Ja bym chciał."]
+  - id: dom_bohaterow
+    imie: Giermek Lech
+    skorka: ork_ninja
+    stroj: {tors: "LEATHER_CHESTPLATE#7a1f1f", reka: WOODEN_SWORD}
+    predkosc: 0.1
+    postoj: 60
+    trasa: [[-19, -17], [-23, -19.5], [-27, -22]]
+    kwestie: ["Kiedyś też wybiorę ścieżkę.", "Mistrz Gniewomir mówi, że mam za słabe nogi.", "Widziałeś herby klas w środku?"]
+  - id: plac
+    imie: Rekrut Sambor
+    skorka: elf_wojownik
+    stroj: {glowa: LEATHER_HELMET, tors: "LEATHER_CHESTPLATE#4a4a4a", reka: SHIELD}
+    predkosc: 0.11
+    postoj: 70
+    trasa: [[-29, 33], [-30, 38], [-31, 43], [-31, 48]]
+    kwestie: ["Tarcze na placu już porąbane.", "Jeszcze sto cięć i odpoczynek.", "Ćwiczysz z nami?"]

@@ -252,9 +252,10 @@ def market():
     hall(-51,37,17,13,'dark_oak_planks','mud_bricks','east')
     # Three separate storefronts with awnings and counters.
     for z,wool in [(8,'red_wool'),(19,'orange_wool'),(30,'yellow_wool')]:
-        box(-27,102,z-3,-27,106,z+3,'dark_oak_fence')
+        # Floor here is mud_bricks y100: posts from y101, counter top at waist height (y101 top slab).
+        box(-27,101,z-3,-27,106,z+3,'dark_oak_fence')
         box(-31,107,z-4,-23,107,z+4,wool)
-        box(-29,102,z-3,-25,102,z-3,'spruce_slab[type=top]')
+        box(-29,101,z-3,-25,101,z-3,'spruce_slab[type=top]')
         p(-26,103,z,'lantern')
     # Forge/repair/deconstruction visual anchors.
     box(-43,102,34,-43,104,34,'deepslate_bricks')
@@ -361,9 +362,15 @@ def smaller_places():
         p(x+2,102,z+2,'lectern[facing=south,has_book=false]')
 
 
+def night_lights():
+    # Invisible light blocks (level 13) over the Nexus ring, main road and market lanes;
+    # placed only where air (the same list is applied in-game by the stolica-zycie deploy package).
+    for x,z in [(12,0),(0,12),(-12,0),(0,-12),(22,0),(19,11),(11,19),(0,22),(-11,19),(-19,11),(-22,0),(-11,-19),(0,-22),(11,-19),(19,-11),(0,30),(0,40),(0,50),(0,60),(0,70),(0,80),(-20,8),(-20,19),(-20,30),(-30,8),(-30,19),(-30,30),(-40,8),(-40,19),(-40,30),(20,0),(30,0),(40,0)]:
+        if (x,103,z) not in B: p(x,103,z,'light[level=13]')
+
 def main():
     B.clear()
-    island(); streets(); nexus(); market(); crafts(); north(); south(); smaller_places(); trees_and_gardens()
+    island(); streets(); nexus(); market(); crafts(); north(); south(); smaller_places(); trees_and_gardens(); night_lights()
     STRUCTURES.mkdir(parents=True,exist_ok=True)
     FUNCTIONS.mkdir(parents=True,exist_ok=True)
     (ROOT/'pack.mcmeta').write_text('{"pack":{"description":"Stolica Wyspy v2 — dzielnice i uslugi","min_format":[94,1],"max_format":[94,1]}}\n')
