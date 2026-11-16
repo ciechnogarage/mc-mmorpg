@@ -16,7 +16,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
  *  cel_{jest,nazwa,hp,hpmax,poziom,ranga}: ostatni cel walki (8 s); ranga = zwykly|mythic|boss (boss = mob MM z bossbarem).
  *  zdobycz_liczba, zdobycz_<n>_{tekst,rodzaj}: ostatnie 4 zdobycze (4,5 s); rodzaj = exp|profesja|przedmiot.
  *  ostrzezenie = zuzycie|pelny|brak (bron w rece >= 85% zuzycia, pelny ekwipunek). loch = tak|nie (MythicDungeons).
- *  zadanie_{jest,tytul,postep,krok,kierunek,odl}: cel zadania (MMOCore albo samouczek), krok przyciety, strzalka n..nw|tu|brak.
+ *  zadanie_{jest,tytul,postep,krok,krok_1,krok_2,kierunek,odl}: cel zadania (MMOCore albo samouczek), krok przyciety (krok) albo
+ *  zawiniety w 2 linie po max-linia znakow (krok_1, krok_2), strzalka n..nw|tu|brak liczona z pelnego tekstu kroku.
  *  obrazenia_kierunek = n..nw|brak (1,2 s). awans_{blisko,brakuje}. umiejetnosc_<n>_{stan,skrot,cd} (sloty MMOCore).
  *  okno = pelne|przygaszone (walka MMOCore, walka Chowancow albo tryb kompakt) -> przygaszenie okna postaci.
  *  pet_typ = pierwszy typ aktywnego Chowanca.
@@ -51,7 +52,9 @@ final class Placeholdery extends PlaceholderExpansion {
         case "zadanie_jest" -> z == null ? "nie" : "tak";
         case "zadanie_tytul" -> z == null ? "" : z[0];
         case "zadanie_postep" -> z == null ? "" : z[1];
-        case "zadanie_krok" -> z == null ? "" : z[2];
+        case "zadanie_krok" -> z == null ? "" : pl.nawigacja.krok(z[2]);
+        case "zadanie_krok_1" -> z == null ? "" : pl.nawigacja.linia(z[2], 1);
+        case "zadanie_krok_2" -> z == null ? "" : pl.nawigacja.linia(z[2], 2);
         case "zadanie_kierunek", "zadanie_odl" -> {
           String[] kr = z == null ? null : pl.nawigacja.kierunek(p, z[2]);
           yield kr == null ? (k.endsWith("odl") ? "" : "brak") : (k.endsWith("odl") ? kr[1] + " m" : kr[0]);

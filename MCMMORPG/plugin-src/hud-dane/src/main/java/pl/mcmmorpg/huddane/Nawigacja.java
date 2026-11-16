@@ -31,11 +31,14 @@ final class Nawigacja implements Listener {
   static final long OBRAZENIA_MS = 1200;
 
   final List<Miejsce> miejsca = new ArrayList<>();
-  final int maxKrok;
+  final int maxKrok, maxLinia, maxTytul;
   final Map<UUID, double[]> obrazenia = new ConcurrentHashMap<>(); // {x, z, czas}
 
   Nawigacja(ConfigurationSection cfg) {
     maxKrok = cfg == null ? 38 : cfg.getInt("max-krok", 38);
+    // Ramka celu w HUD-zie ma 140 GUI szerokosci (16.11, wlasciciel: "questy wychodza na pol ekranu"): krok w 2 liniach.
+    maxLinia = cfg == null ? 22 : cfg.getInt("max-linia", 22);
+    maxTytul = cfg == null ? 16 : cfg.getInt("max-tytul", 16);
     ConfigurationSection m = cfg == null ? null : cfg.getConfigurationSection("miejsca");
     if (m != null) for (String k : m.getKeys(false)) {
       ConfigurationSection s = m.getConfigurationSection(k);
@@ -43,20 +46,36 @@ final class Nawigacja implements Listener {
     }
   }
 
-  /** {tytul, postep, krok} albo null, gdy nie ma czego pokazac. */
+  /** {tytul (przyciety do max-tytul), postep, krok (pelny, bez kolorow)} albo null, gdy nie ma czego pokazac. */
   String[] zadanie(Player p) {
     if ("tak".equals(PlaceholderAPI.setPlaceholders(p, "%chowance_ma_zadanie_mmocore%")))
-      return new String[]{PlaceholderAPI.setPlaceholders(p, "%mmocore_quest%"),
-          PlaceholderAPI.setPlaceholders(p, "%mmocore_quest_progress%") + "%", przytnij(PlaceholderAPI.setPlaceholders(p, "%mmocore_quest_objective%"))};
+      return new String[]{przytnij(PlaceholderAPI.setPlaceholders(p, "%mmocore_quest%"), maxTytul),
+          PlaceholderAPI.setPlaceholders(p, "%mmocore_quest_progress%") + "%", czysty(PlaceholderAPI.setPlaceholders(p, "%mmocore_quest_objective%"))};
     if ("true".equals(PlaceholderAPI.setPlaceholders(p, "%chowance_kroki_aktywne%")))
       return new String[]{"Pierwsze kroki", PlaceholderAPI.setPlaceholders(p, "%chowance_kroki_postep%"),
-          przytnij(PlaceholderAPI.setPlaceholders(p, "%chowance_kroki_opis%"))};
+          czysty(PlaceholderAPI.setPlaceholders(p, "%chowance_kroki_opis%"))};
     return null;
   }
 
-  private String przytnij(String s) {
-    s = s == null ? "" : s.replaceAll("(?i)[&§][0-9a-fk-orx]", "").replaceAll("<[^>]+>", "");
-    return s.length() > maxKrok ? s.substring(0, maxKrok - 1).stripTrailing() + "…" : s;
+  static String czysty(String s) {
+    return s == null ? "" : s.replaceAll("(?i)[&§][0-9a-fk-orx]", "").replaceAll("<[^>]+>", "").strip();
+  }
+
+  /** Krok w jednej linii (stary placeholder zadanie_krok). */
+  String krok(String s) { return przytnij(s, maxKrok); }
+
+  static String przytnij(String s, int max) {
+    s = czysty(s);
+    return s.length() > max ? s.substring(0, max - 1).stripTrailing() + "…" : s;
+  }
+
+  /** Linia 1 albo 2 kroku zawinietego po slowach do max-linia znakow; reszta po 2. linii konczy sie "…". */
+  String linia(String s, int n) {
+    s = czysty(s);
+    if (s.length() <= maxLinia) return n == 1 ? s : "";
+    int ciecie = s.lastIndexOf(' ', maxLinia);
+    if (ciecie <= 0) ciecie = maxLinia; // jedno dlugie slowo: ciecie twarde
+    return n == 1 ? s.substring(0, ciecie).stripTrailing() : przytnij(s.substring(ciecie), maxLinia);
   }
 
   /** {kierunek, odleglosc w m} do miejsca pasujacego do kroku, albo null. */
