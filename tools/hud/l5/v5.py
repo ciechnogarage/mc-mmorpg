@@ -15,20 +15,28 @@ def strzalka(kat):
 for i, k_ in enumerate(('n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw')): save(strzalka(i*45), f'zad_{k_}')
 save(ik_(lambda d: (d.ellipse((1, 1, 7, 7), outline=c('gold2')), rect(d, (4, 4, 4, 4), 'gold2'))), 'zad_tu')
 ZAD_WSP = [SPEC, ZYJE, '- placeholder{ph=%hud_zadanie_widac%;val=tak} true hide']
+# Koncowka ramki 25 GUI (50 px) z prawego brzegu cel_b: cel_a (115) + cel_c (25) = 140 GUI.
+_cb = _I.open(TEX/'cel_b.png'); _cc = _cb.crop((_cb.width - 50, 0, _cb.width, _cb.height)).copy()
+if _cc.getpixel((0, 0))[3] == 0: _cc.putpixel((0, 0), (0, 0, 0, 1))
+_cc.save(TEX/'cel_c.png')
 zad = []
 for e in (0, 1):
+    # 16.11 (wlasciciel: "questy wychodza na pol ekranu"): ramka 230 -> 140 GUI, krok w 2 liniach po 22 znaki (HudDane
+    # zadanie_krok_1/2), linie co 9 GUI - wysokosc 30 GUI bez zmian, bo kolumna l3 pod celem zaczyna sie 32 GUI nizej.
     warstwy = [
-      ('tytul', txt('<#FFE7AE>%hud_zadanie_tytul% <#D5A96B>%hud_zadanie_postep%', 18, 5, 'right')),
-      ('krok', txt('<#FFF1CC>%hud_zadanie_krok%', 18, 17, 'right')),
-      ('ikona', tex('cel_ikona', 6, 4)),
-      ('strzalka', tex('cel_strzalka', 7, 16, warunki('- placeholder{ph=%hud_zadanie_kierunek%;val=brak} true hide'))),
-      ('tlo-b', tex('cel_b', 115, 0)),
+      # odleglosc w linii tytulu (pusta bez celu na mapie); osobna warstwa przy prawej krawedzi nachodzila na "0/4" (klon 16.11)
+      ('tytul', txt('<#FFE7AE>%hud_zadanie_tytul% <#D5A96B>%hud_zadanie_postep%  %hud_zadanie_odl%', 18, 3, 'right')),
+      ('krok-1', txt('<#FFF1CC>%hud_zadanie_krok_1%', 18, 12, 'right')),
+      ('krok-2', txt('<#FFF1CC>%hud_zadanie_krok_2%', 18, 21, 'right')),
+      ('ikona', tex('cel_ikona', 6, 2)),
+      ('strzalka', tex('cel_strzalka', 7, 12, warunki('- placeholder{ph=%hud_zadanie_kierunek%;val=brak} true hide'))),
+      ('tlo-c', tex('cel_c', 115, 0)),
       ('tlo', tex('cel_a', 0, 0)),
     ]
     zad.append(asset(f'l5-zadanie-e{e}', ZAD_WSP + [ef(e)], warstwy))
     # kierunek: osobny asset (warunki na teksturach dzialaja, odleglosc to tekst bez warunku)
-    kier = [('odl', txt('<#D5A96B>%hud_zadanie_odl%', 196, 5, 'right'))]
-    kier += [(f'k-{k_}', tex(f'zad_{k_}', 6, 15, warunki(f'- placeholder{{ph=%hud_zadanie_kierunek%;val={k_}}} true hide')))
+    kier = []
+    kier += [(f'k-{k_}', tex(f'zad_{k_}', 6, 11, warunki(f'- placeholder{{ph=%hud_zadanie_kierunek%;val={k_}}} true hide')))
              for k_ in ('n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw', 'tu')]
     zad.append(asset(f'l5-zadanie-kier-e{e}', ZAD_WSP + [ef(e), '- placeholder{ph=%hud_zadanie_kierunek%;val=brak} false hide'], kier))
 (OUT/'hud_assets/hud/cel.yml').write_text('# Cel zadania v5 (20.10): w lewej kolumnie pod efektami; tekst z HudDane (przyciety), strzalka do celu kroku.\n' + '\n'.join(zad))
@@ -83,9 +91,11 @@ for n in (1, 2, 3, 4):
 lay5 = 'l5-layout:\n  elements:\n'
 lay5 += el('obrazenia', 'l5-obrazenia', 50.0, 50.0, -15, 15)
 lay5 += el('awans', 'l5-awans', 50.0, 0.0, -14, 53)
+# Kafelki 2x2 na prawo od hotbara (16.11, wlasciciel: "co to za kafel 1 sierp na srodku ekranu"): 1 2 / 3 4, x +97..+171
+# (miesci sie przy GUI 3 na 1280 px: pol ekranu = 213), dol kafla 3/4 na wysokosci dolu hotbara.
 for n in (1, 2, 3, 4):
     for st in ('gotowa', 'odnowienie'):
-        lay5 += el(f'um{n}-{st}', f'l5-um{n}-{st}', 50.0, 0.0, -78 + (n-1)*40, 94)
+        lay5 += el(f'um{n}-{st}', f'l5-um{n}-{st}', 50.0, 0.0, 97 + ((n-1) % 2)*38, 43 if n <= 2 else 21)
 (OUT/'layouts/l5.yml').write_text('# HUD v5: kierunek obrazen, awans, umiejetnosci.\n' + lay5)
 
 # ---------------- PAS: wszystkie assety znikaja na ekranie smierci (napisy tez) ----------------

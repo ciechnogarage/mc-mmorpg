@@ -72,6 +72,15 @@ def ikona(kind):
 for k in ('serce','kropla','dusza','szal','skupienie'):
     im,d=new(11,11); recess(d,(0,0,10,10)); rect(d,(1,1,9,9),'leather1'); im.alpha_composite(ikona(k),(1,1)); save(im,f'kieszen_{k}')
 im,d=new(69,11); recess(d,(0,0,68,10)); save(im,'pasek_tlo')
+# Tarcza pancerza 14x14 na lewo od kieszeni serca (16.11, wlasciciel: pancerz "mala tarcza z liczba obok paska HP").
+im,d=new(14,14)
+# obrys ink, rant zloty, pole stalowe (jasne, zeby ksztalt czytal sie pod liczba), zwezenie od polowy do szpica
+ksz = ((0,1,12),(1,0,13),(2,0,13),(3,0,13),(4,0,13),(5,0,13),(6,0,13),(7,1,12),(8,1,12),(9,2,11),(10,3,10),(11,4,9),(12,5,8),(13,6,7))
+for y,a_,b_ in ksz: rect(d,(a_,y,b_,y),'ink')
+for y,a_,b_ in ksz[1:-1]: rect(d,(a_+1,y,b_-1,y),'gold1')
+for y,a_,b_ in ksz[2:-2]: rect(d,(a_+2,y,b_-2,y),'#7E8A99' if y < 7 else '#5E6878')
+rect(d,(3,2,10,2),'gold2'); rect(d,(2,2,2,6),'gold2')
+save(im,'zbroja_tarcza')
 def fill_tex(name,tones):
     im,d=new(67,9); hi,mid,lo=tones
     rect(d,(0,0,66,8),mid); line(d,[(0,0),(66,0)],hi); line(d,[(0,8),(66,8)],lo); save(im,name)
@@ -196,6 +205,12 @@ pas.append(asset('l1-pas', [SPEC, ZYJE], [
   ('stamina-niska', tex('stamina_niska', 0, 24, fn('stamina', 10) + warunki('- progress{l=stamina-niska;o=<;v=31%} true hide'))),
   ('stamina', tex('stamina_fill', 0, 24, fn('stamina', 10))),
   ('stamina-tlo', tex('stamina_tlo', 0, 24)),
+]))
+# Pancerz: liczba = atrybut minecraft:armor (listener armor MythicHUD; warstwa 'zbroja' daje %zbroja-value%, jak w 52eb583).
+pas.append(asset('l1-zbroja', [SPEC, ZYJE], [
+  ('zbroja-liczba', txt('<#FFF1CC>%zbroja-value%', -9, 15, 'center')),
+  ('zbroja', tex('dane', 0, 0, fn('armor', 1))),
+  ('tarcza', tex('zbroja_tarcza', -16, 11)),
 ]))
 LV = '- placeholder{ph=%mmocore_level%;'
 for nazwa, warunek, x in (('1',[LV+'v=10;o=<} true hide'],89),('2',[LV+'v=10;o=>=} true hide',LV+'v=100;o=<} true hide'],86),('3',[LV+'v=100;o=>=} true hide'],83)):
@@ -322,7 +337,7 @@ def el(name, asset_, px, py, ox, oy):
     return f"    {name}:\n      asset: {asset_}\n      align: right\n      position: {{x: {px}, y: {py}}}\n      offset: {{x: {ox}, y: {oy}}}\n"
 lay = "l1-pas-layout:\n  elements:\n"
 # Elementy layoutu: PIERWSZY rysuje sie na wierzchu, jak warstwy w assecie (zmierzone 18.10).
-for a in ('l1-poziom-1','l1-poziom-2','l1-poziom-3','l1-hp-niskie','l1-hp-tekst','l1-zasob-dusze','l1-zasob-mana','l1-zasob-szal','l1-zasob-skupienie','l1-tlen','l1-pas'):
+for a in ('l1-poziom-1','l1-poziom-2','l1-poziom-3','l1-hp-niskie','l1-hp-tekst','l1-zasob-dusze','l1-zasob-mana','l1-zasob-szal','l1-zasob-skupienie','l1-tlen','l1-zbroja','l1-pas'):
     lay += el(a.replace('l1-',''), a, 50.0, 0.0, -91, 51)
 lay += "\nl1-okno-layout:\n  elements:\n"
 for a in ('l1-pl-patron-brak','l1-pl-wiara','l1-pl-laska','l1-pl-odznaki','l1-pl-atrybuty','l1-pl-umiejetnosci','l1-okno','l1-okno-walka','l1-okno-chowance','l1-okno-kompakt'):

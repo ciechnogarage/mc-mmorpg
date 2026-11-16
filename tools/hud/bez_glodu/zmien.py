@@ -29,7 +29,8 @@ def okno(s):
         m = re.match(r'l1-okno(-przygaszone)?:', c)
         if m: cz[i] = re.sub(r"(    exp-proc:\n(?:      .*\n)+)", lambda x: x.group(1) + warstwy(bool(m.group(1))), c, count=1)
     return ''.join(cz)
-zmien(H + '/hud_assets/hud/l1-okno.yml', okno)
+# 16.11 wieczorem: pancerz wrocil do pasa jako tarcza obok HP (tools/hud/l5/build.py, l1-zbroja) - zakladki w oknie juz nie dokladamy.
+# zmien(H + '/hud_assets/hud/l1-okno.yml', okno)
 T = H + '/source-pack/assets/mythichud/textures/assets/l1/'
 for n in ('zbroja_skrzydlo.png', 'zbroja_skrzydlo_p.png'):
     shutil.copyfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tex', n), T + n); print('tekstura', T + n)
