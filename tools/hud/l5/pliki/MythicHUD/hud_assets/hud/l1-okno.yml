@@ -26,6 +26,21 @@ l1-okno:
       outlined: true
       align: right
       offset: {x: 116, y: -30}
+    zbroja-liczba:
+      text: '<#FFF1CC>%zbroja-value%'
+      font: default
+      outlined: true
+      align: center
+      offset: {x: 170, y: -22}
+    zbroja:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: armor, increment: 1, orientation: horizontal}
+    zbroja-tlo:
+      texture: {path: assets/l1/zbroja_skrzydlo.png}
+      scale: 0.5
+      offset: {x: 144, y: -18}
     rasa-czlowiek:
       texture: {path: assets/l1/rasa_czlowiek.png}
       scale: 0.5
@@ -105,6 +120,21 @@ l1-okno-przygaszone:
       outlined: true
       align: right
       offset: {x: 116, y: -30}
+    zbroja-liczba:
+      text: '<#A89A8C>%zbroja-value%'
+      font: default
+      outlined: true
+      align: center
+      offset: {x: 170, y: -22}
+    zbroja:
+      texture: {path: assets/l1/dane.png}
+      scale: 0.5
+      offset: {x: 0, y: 0}
+      function: {listener: armor, increment: 1, orientation: horizontal}
+    zbroja-tlo:
+      texture: {path: assets/l1/zbroja_skrzydlo_p.png}
+      scale: 0.5
+      offset: {x: 144, y: -18}
     alarm:
       texture: {path: assets/l1/portret_alarm.png}
       scale: 0.5

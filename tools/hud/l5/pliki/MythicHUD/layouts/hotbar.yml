@@ -1,7 +1,1 @@
-hotbar-layout:
-  elements:
-    zbroja:
-      asset: hotbar-zbroja
-      align: right
-      position: {x: 50.0, y: 0.0}
-      offset: {x: -168, y: 22}
+# Pusty od 16.11: kafel glodu usuniety (glod wylaczony), pancerz w oknie postaci (l1-okno.yml).

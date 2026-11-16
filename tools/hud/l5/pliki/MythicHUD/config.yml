@@ -9,7 +9,6 @@ layout:
   - l4-layout
   - l5-layout
   - cel-layout
-  - hotbar-layout
   - chowance-layout
 check-update: 5
 placeholder-update: 5
