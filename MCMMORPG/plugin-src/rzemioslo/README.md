@@ -87,6 +87,10 @@ Nie mierzone (brak spark/MSPT w repo). Z kodu: tykają tylko aktywne sesje zbier
 | `ZMagazyn` | dysk zielarza (F1): jeden wątek zapisu/odczytu |
 | `Komenda` | `/rzemioslo …` (perm. `rzemioslo.admin`, menu wołają z konsoli) |
 
+Zachowanie (16.11, gałąź `zielarz-naprawa`):
+- Zbiór ze sceny liczy się do zlecenia startowego zielarstwa tak jak zbiór z węzła (`Zielarz.daj` → `Zlecenia.zebrano`, id bazowe, wyborne też). Test: `MCMMORPG/profesje/zielarz/testy/zadanie-startowe.js` (bot bez OP, PPM w kępę, LPM sierpem).
+- Brak „niepewnej ręki”: jakość cięcia/wyciągania zależy tylko od ruchu gracza, nie od liczby wcześniejszych zbiorów (`s.wprawa` służy już tylko radom).
+
 ### Dane zielarza na dysku (od F1, 25.10)
 Katalog `plugins/Rzemioslo/`:
 - `zielarz/regiony/<swiat>/r.<x>.<z>.yml` — kępy postawione w świecie, region 512×512 bloków (`x = blokX >> 9`).

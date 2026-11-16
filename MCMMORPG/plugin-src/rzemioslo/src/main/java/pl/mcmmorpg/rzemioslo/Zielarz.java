@@ -930,7 +930,6 @@ final class Zielarz implements Listener {
         if (c.b("cienki") && q > 0.7) { q = 0.7; m = "Cienki pęd po zbyt łapczywym zbiorze. Mało w nim mocy."; }
         boolean chory = c.b("chory");
         if (chory) { q = 0; s.chore++; m = "Plamy na liściach. Zostawiasz go w trawie."; zielnik.odkryj(s.p, "dziurawiec_chory"); }
-        if (q >= 0.85 && !reka(s)) { q = 0.7; m = "Ręka jeszcze niepewna: cięcie poszarpane."; }
         boolean okaz = q >= 0.85 && c.b("dbl");
         if (okaz) { s.okaz = true; m = "Czyste cięcie. Podwójny kwiatostan!"; }
         s.ciecTotal += c.b("dbl") ? 2 : 1;   // podwojny kwiatostan liczy sie do chciwosci podwojnie
@@ -958,11 +957,6 @@ final class Zielarz implements Listener {
         else if (chory) uwaga(s, "chore");
         return (q >= 0.85 ? "§a" : q >= 0.5 ? "§e" : "§c") + m;
     }
-
-    /** Wprawa ("reka sie nauczyla"): szansa, ze wyborny ruch wyjdzie wyborny, rosnie z liczba zbiorow tego gatunku. */
-    private static double wprawaP(int n) { return 0.86 - 0.46 * Math.exp(-n / 5.0); }
-
-    private boolean reka(Sesja s) { return ThreadLocalRandom.current().nextDouble() < wprawaP(s.wprawa); }
 
     private void zerwijKwiatyDziurawca(Sesja s, ZRoslina.Czesc c) {
         if (c.b("bezKwiatow")) { pasek(s, "§fKwiatów już tu nie ma."); return; }
@@ -1172,8 +1166,6 @@ final class Zielarz implements Listener {
         double q = otw == 0 ? 1.0 : Math.max(0.3, 0.75 - 0.15 * (otw - 1));
         q -= 0.1 * s.zleKopanie + (s.przyWodzie ? 0.3 : 0.2) * s.naderwania;
         q = Math.max(0.15, q);
-        boolean niepewna = q >= 0.85 && !reka(s);
-        if (niepewna) q = 0.7;
         // wielki moment przed oczami: korzen wychodzi pionowo przed kamere i wisi chwile, potem do reki
         if (s.fx.jest()) {
             Location base0 = s.r.swiat(0, 0.05, 0);
@@ -1200,7 +1192,6 @@ final class Zielarz implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> dzwiek(s, Sound.ENTITY_ITEM_PICKUP, 0.7f, 1.0f), 8L);
         daj(s, "PROF_KORZEN_KOZLKA", otw == 0 ? 2 : 1, q);
         String m = otw > 0 ? "§eKorzeń wyszedł, ale korzonki zostały w ziemi (" + otw + ")."
-                : niepewna ? "§eKorzeń wyszedł cały. Ręka jeszcze niepewna: draśnięty łopatką."
                 : q >= 0.85 ? "§aKorzeń wyszedł cały, z korzonkami."
                 : "§eKorzeń wyszedł cały, ale " + (s.naderwania > 0 ? "naderwany" : "obity rozkopaną ziemią") + ".";
         pasek(s, m);
@@ -1284,12 +1275,9 @@ final class Zielarz implements Listener {
         s.zajetyDo = s.t + 3;
         dzwiek(s, Sound.BLOCK_AZALEA_LEAVES_BREAK, 0.7f, 1.3f);
         double q = jakoscLiscia(s, l);
-        boolean niepewna = q >= 0.85 && !reka(s);
-        if (niepewna) q = 0.7;
         skaza(s, daj(s, idLiscia(s), 1, q));
         boolean jakCzosnek = s.gatunek.equals("czosnek") || !s.rozpoznana;   // konwalia nierozpoznana wyglada jak czosnek
         pasek(s, (q >= 0.85 ? "§a" : "§e") + (l.b("stary") ? "Stary liść, żółknie na końcu."
-                : niepewna ? "Ręka jeszcze niepewna: liść zgnieciony przy zrywaniu."
                 : s.roztarte && s.gatunek.equals("czosnek") ? "Kępa pognieciona przy rozcieraniu: dobre, nie wyborne."
                 : l.b("kwitnie") && jakCzosnek ? "Młody liść, ale kępa już kwitnie: mniej ostry." : "Młody, jędrny liść."));
     }
@@ -1382,6 +1370,8 @@ final class Zielarz implements Listener {
         s.xp += dx;
         s.ostatniaKlasa = klasa; s.ostatniWyd = wyd; s.ostatniaNazwa = nazwa; s.ostatnieXp = dx;
         zielnik.zbior(s.p, pomylka(s) ? "czosnek" : s.gatunek, q);
+        // zadanie startowe liczy zbior ze sceny tak jak z wezlow (Zbieranie:240); wyborne = to samo ziolo
+        if (wyd > 0) plugin.zlecenia().zebrano(s.p, PROF, id, wyd);
         return wyd;
     }
 
@@ -1532,7 +1522,7 @@ final class Zielarz implements Listener {
                 p.sendMessage(sb.toString());
             }
             if (s.pokruszone > 0) p.sendMessage("§7Słabe sztuki (" + s.pokruszone + ") pokruszyły się w koszu.");
-            if (s.mokrych > 0 && zielnik.rada3(p, "mokre")) p.sendMessage("§7Mokre ziele (" + s.mokrych + "). Przesąd zielarzy mówi, że mokre pleśnieje w suszarni.");
+            if (s.mokrych > 0 && zielnik.rada3(p, "mokre")) p.sendMessage("§7Mokre ziele (" + s.mokrych + "). Zebrane mokre pleśnieje w suszarni. Zbieraj, gdy rosa obeschnie.");
             if (s.chore > 0) p.sendMessage("§7Chorych pędów (" + s.chore + ") nie bierzesz do pęczka: ścięte poszły w trawę.");
             if (odrostOpis != null) p.sendMessage("§7" + odrostOpis);
             zielnik.wypiszZaleglosci(p);

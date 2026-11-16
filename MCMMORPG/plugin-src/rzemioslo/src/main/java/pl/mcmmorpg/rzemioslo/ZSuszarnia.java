@@ -54,7 +54,7 @@ final class ZSuszarnia implements Listener {
         int ilosc, klasa;
         long start;
         int probki, slonce, deszcz;
-        int mokre;                   // sztuki zebrane mokre (deszcz/rosa) — przesad zielarzy: plesnieja
+        int mokre;                   // sztuki zebrane mokre (deszcz/rosa) — plesnieja (regula za LP, decyzja 25.10)
         java.util.UUID wlasciciel;   // null = stary wpis, zdejmie kazdy
         boolean zielarza;            // ze zbioru zielarza (ma jakosc); stare ziola z wezlow nie daja XP za suszenie
         ItemDisplay widok;
@@ -148,7 +148,7 @@ final class ZSuszarnia implements Listener {
             String uw = null;
             // plesn stopniowo: kazda mokra probka psuje ~12% peczka (wczesniej jedna kropla = 60% na caly stos)
             int plesn = (int) Math.round(k.ilosc * Math.min(0.8, 0.12 * k.deszcz));
-            // ziele zebrane mokre: wiekszosc tych sztuk plesnieje (przesad zielarzy, w grze tak dziala)
+            // ziele zebrane mokre: wiekszosc tych sztuk plesnieje (mokre ziele schnie wolno i plesnieje; regula, decyzja 25.10)
             int zMokrego = Math.min(k.ilosc - plesn, (int) Math.round(k.mokre * 0.6));
             if (plesn + zMokrego > 0) {
                 daj(p, "PROF_SPLESNIALE_ZIELE", plesn + zMokrego, 0);
