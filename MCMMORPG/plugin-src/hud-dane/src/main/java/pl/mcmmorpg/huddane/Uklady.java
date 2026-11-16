@@ -11,6 +11,7 @@ import io.lumine.mythichud.api.element.layout.HudLayout;
 import io.lumine.mythichud.api.manager.LayoutManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 /**
@@ -30,6 +31,9 @@ final class Uklady {
       Map.entry("e1c1t0", "l3-e1c1t0g"), Map.entry("e1c1t1", "l3-e1c1t1h"), Map.entry("e1c1t2", "l3-e1c1t2i"));
   /** Tyle ms po wejsciu nie ruszamy layoutow: MythicHUD w tym czasie asynchronicznie buduje je z PDC (initialize). */
   private static final long ZWLOKA_MS = 1500;
+  /** Flaga w PDC gracza: inny plugin schowal HUD (rozmowa z NPC w Mieszkancach, scena). Wtedy nie dokladamy wariantu l3
+   *  (inaczej kolumna wraca w nastepnym cyklu) i zdejmujemy go, gdyby byl. Flage stawia i zdejmuje ten, kto chowa. */
+  static final NamespacedKey SCHOWANY = new NamespacedKey("huddane", "schowany");
 
   private final Map<UUID, Long> wejscie = new ConcurrentHashMap<>();
   private final Set<String> wartosci = Set.copyOf(WARIANTY.values());
@@ -46,7 +50,8 @@ final class Uklady {
     HudHolder h = HudHolder.get(p);
     if (h == null || !h.isInitialized()) return;
     LayoutManager lm = MythicHUD.getInstance().layouts();
-    String chce = WARIANTY.get(PlaceholderAPI.setPlaceholders(p, "%hud_uklad%"));
+    String chce = p.getPersistentDataContainer().has(SCHOWANY) ? null
+        : WARIANTY.get(PlaceholderAPI.setPlaceholders(p, "%hud_uklad%"));
     for (String k : wartosci) {
       if (k.equals(chce) || h.getActiveLayout(k).isEmpty()) continue;
       HudLayout l = lm.get(k);
