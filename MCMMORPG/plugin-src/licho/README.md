@@ -33,6 +33,9 @@ czasem „wyczuwa” (15%/s). Psota liczy też boty-Zamawiaczy jako słuchaczy (
 („Złapane!”), przetrwanie = „Świt!”. Bez rekordów (`cwiczenie = true`).
 **WDROŻONE** na world1 15.11 21:25 UTC z gałęzi `licho-cwiczenie` (3a15908 + 8c2de22), jar `licho-0.1.0-202611151842.jar` (md5 b6519e55);
 cofnięcie `/opt/docker/mc/data/world1/backups/licho-20261115-212426/cofnij.sh`.
+**CHOWAJ + wybór roli WDROŻONE** na world1 16.11 19:40 UTC z gałęzi `licho-rola` (78d5f34), jar `licho-0.1.0-202611161723.jar`
+(md5 b13345fe); cofnięcie `/opt/docker/mc/data/world1/backups/licho-20261116-193936/cofnij.sh`, kopia świata
+`/opt/docker/mc/kopie/world1-20261116-1939.tar.zst`.
 Menu i kafel: `wdrozenie/menu/` (DeluxeMenus), wpinane przez `wdrozenie/latka.py`.
 
 ## Konfiguracja (`plugins/Licho/config.yml`, komentarze w pliku)
