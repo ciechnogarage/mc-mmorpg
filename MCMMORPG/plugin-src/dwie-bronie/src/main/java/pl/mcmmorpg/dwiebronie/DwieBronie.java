@@ -5,6 +5,7 @@ import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.AttackRange;
 import io.papermc.paper.datacomponent.item.Consumable;
+import io.papermc.paper.datacomponent.item.SwingAnimation;
 import io.papermc.paper.datacomponent.item.UseEffects;
 import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import io.papermc.paper.event.player.PlayerStopUsingItemEvent;
@@ -97,6 +98,7 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   private final Set<String> typyBroni = new java.util.HashSet<>();
   private NamespacedKey kluczUzbrojenia;
   private NamespacedKey kluczPremii;
+  private NamespacedKey kluczZamachu;
   private boolean mmocore;
   private MostModelEngine mostMe;   // null = brak ModelEngine (softdepend)
 
@@ -113,6 +115,7 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     getConfig().getStringList("typy-broni").forEach(t -> typyBroni.add(t.toUpperCase(java.util.Locale.ROOT)));
     kluczUzbrojenia = new NamespacedKey(this, "ppm");
     kluczPremii = new NamespacedKey(this, "premia_szybkosci");
+    kluczZamachu = new NamespacedKey(this, "zamach_prawej");
     mmocore = getServer().getPluginManager().isPluginEnabled("MMOCore");
     if (getServer().getPluginManager().isPluginEnabled("ModelEngine")) {
       try { mostMe = new MostModelEngine(); }
@@ -196,7 +199,8 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   }
 
   private ItemStack rozbrojony(ItemStack item) {
-    if (!oznaczona(item)) return null;
+    boolean odkryta = odkryj(item);
+    if (!oznaczona(item)) return odkryta ? item : null;
     item.resetData(DataComponentTypes.CONSUMABLE);
     item.resetData(DataComponentTypes.USE_EFFECTS);
     item.editPersistentDataContainer(pdc -> pdc.remove(kluczUzbrojenia));
@@ -224,9 +228,15 @@ public final class DwieBronie extends JavaPlugin implements Listener {
   private void odswiez(Player p) {
     PlayerInventory inv = p.getInventory();
     boolean dwie = dwieBronie(p), ppm = dwie && !maUmiejetnoscPpm(inv.getItemInMainHand());
+    boolean zapowiedz = dwie && zapowiedzLewej(p);
     for (int i = 0; i < 36; i++) {
+      if (zapowiedz && i == inv.getHeldItemSlot()) continue;
       ItemStack it = inv.getItem(i);
       if (rozbrojony(it) != null) inv.setItem(i, it);
+    }
+    if (zapowiedz) {
+      ItemStack prawa = inv.getItemInMainHand();
+      if (ukryj(prawa)) { inv.setItemInMainHand(prawa); dbg(p.getName() + " zapowiedz lewej: prawa bez zamachu tick=" + tick()); }
     }
     ItemStack kursor = p.getItemOnCursor();
     if (rozbrojony(kursor) != null) p.setItemOnCursor(kursor);
@@ -245,6 +255,77 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     else if ((!dwie || premia <= 0) && ma) a.removeModifier(kluczPremii);
   }
 
+  // ------------------------------------------------------------------ widok gracza: zamach lewej
+
+  // Klient przy LPM sam rusza PRAWA reka, zanim serwer zdecyduje o ciosie - gracz u siebie nigdy nie widzial ciosu lewa
+  // (16.11, nagranie klienta QA: przy ciosie LEWA prawy miecz robi pchniecie, lewy stoi; swingOffHand() nie idzie do
+  // samego gracza). Dlatego: (1) gdy nastepny LPM pojdzie lewa (seria po ciosie prawa), prawa bron dostaje zamach NONE
+  // i klient jej nie rusza; (2) przy ciosie lewa gracz dostaje pakiet zamachu lewej reki.
+  // Klient odrzuca nowy zamach, dopoki trwa pierwsza polowa poprzedniego (jego wlasny zamach prawej z LPM, tez ukryty) -
+  // dlatego NONE ma dlugosc 1 tick, a pakiet lewej idzie tick po ciosie.
+  private boolean zapowiedzLewej(Player p) {
+    Stan s = stany.get(p.getUniqueId());
+    if (s == null || s.poprzedniaLewa) return false;
+    int od = tick() - s.ostatniTick;
+    // 5 tickow: AnimacjeBroni ustawia zamach prawej po trafieniu (najpozniej awaryjnie po 4 tickach)
+    return od >= 5 && od <= getConfig().getInt("okno-serii-tickow", 40);
+  }
+
+  /** Prawa bez zamachu (NONE); poprzedni zamach w PDC. true = przedmiot zmieniony. */
+  private boolean ukryj(ItemStack item) {
+    if (item == null || item.getType().isAir()) return false;
+    SwingAnimation teraz = item.getData(DataComponentTypes.SWING_ANIMATION);
+    if (teraz != null && teraz.type() == SwingAnimation.Animation.NONE) return false;
+    String zapis = teraz == null ? "-" : teraz.type().name() + ":" + teraz.duration();
+    item.editPersistentDataContainer(pdc -> pdc.set(kluczZamachu, PersistentDataType.STRING, zapis));
+    item.setData(DataComponentTypes.SWING_ANIMATION, SwingAnimation.swingAnimation()
+        .type(SwingAnimation.Animation.NONE).duration(1).build());
+    return true;
+  }
+
+  /** Oddaje zamach zapisany przez ukryj(); gdy ktos (AnimacjeBroni) ustawil w miedzyczasie inny - zostaje jego. */
+  private boolean odkryj(ItemStack item) {
+    if (item == null || item.getType().isAir() || !item.hasItemMeta()) return false;
+    String zapis = item.getPersistentDataContainer().get(kluczZamachu, PersistentDataType.STRING);
+    if (zapis == null) return false;
+    item.editPersistentDataContainer(pdc -> pdc.remove(kluczZamachu));
+    SwingAnimation teraz = item.getData(DataComponentTypes.SWING_ANIMATION);
+    if (teraz == null || teraz.type() != SwingAnimation.Animation.NONE) return true;
+    if (zapis.equals("-")) { item.resetData(DataComponentTypes.SWING_ANIMATION); return true; }
+    String[] cz = zapis.split(":");
+    try {
+      item.setData(DataComponentTypes.SWING_ANIMATION, SwingAnimation.swingAnimation()
+          .type(SwingAnimation.Animation.valueOf(cz[0])).duration(Integer.parseInt(cz[1])).build());
+    } catch (RuntimeException ex) { item.resetData(DataComponentTypes.SWING_ANIMATION); }
+    return true;
+  }
+
+  private java.lang.reflect.Method uchwyt, wyslij;
+  private java.lang.reflect.Constructor<?> pakietZamachu;
+  private java.lang.reflect.Field polaczenie;
+  private boolean pakietNiedostepny;
+
+  /** Pakiet animacji zamachu lewej reki (akcja 3 = SWING_OFF_HAND) do samego gracza - NMS przez refleksje (Paper 1.21.11). */
+  private void zamachLewejUSiebie(Player p) {
+    if (pakietNiedostepny) return;
+    try {
+      if (uchwyt == null) {
+        uchwyt = p.getClass().getMethod("getHandle");
+        Class<?> encja = Class.forName("net.minecraft.world.entity.Entity");
+        pakietZamachu = Class.forName("net.minecraft.network.protocol.game.ClientboundAnimatePacket")
+            .getConstructor(encja, int.class);
+        Object h = uchwyt.invoke(p);
+        polaczenie = h.getClass().getField("connection");
+        wyslij = polaczenie.getType().getMethod("send", Class.forName("net.minecraft.network.protocol.Packet"));
+      }
+      Object h = uchwyt.invoke(p);
+      wyslij.invoke(polaczenie.get(h), pakietZamachu.newInstance(h, 3));
+    } catch (Throwable ex) {
+      pakietNiedostepny = true;
+      getLogger().warning("Zamach lewej u gracza niedostepny (NMS): " + ex);
+    }
+  }
+
   // ------------------------------------------------------------------ LPM: naprzemiennie
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -259,7 +340,11 @@ public final class DwieBronie extends JavaPlugin implements Listener {
         || teraz - s.ostatniTick <= getConfig().getInt("okno-serii-tickow", 40) && !s.poprzedniaLewa;
     s.ostatniTick = teraz;
     s.poprzedniaLewa = lewa;
-    if (!lewa) { dbg(p.getName() + " cios PRAWA tick=" + teraz); return; }
+    if (!lewa) {
+      dbg(p.getName() + " cios PRAWA tick=" + teraz);
+      getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) odswiez(p); }, 5L);
+      return;
+    }
     double k = wymuszona > 0 ? wymuszona : skala(p);
     // pod-hitbox ME (np. ostrze kosy) przekazuje obrazenia bazie moba - EntityDamageByEntity przychodzi na baze
     ciosyLewa.put(p.getUniqueId(), new Cios(e.getAttacked().getUniqueId(), baza(e.getAttacked()).getUniqueId(), teraz, k));
@@ -268,6 +353,9 @@ public final class DwieBronie extends JavaPlugin implements Listener {
     s.lewaTick = teraz;
     if (wymuszona <= 0) {
       p.swingOffHand();
+      getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) zamachLewejUSiebie(p); }, 1L);
+      // prawa odzyskuje zamach przed nastepnym (prawym) ciosem
+      getServer().getScheduler().runTaskLater(this, () -> { if (p.isOnline()) odswiez(p); }, 1L);
       // machniecie prawej jest wyciete, wiec AnimacjeBroni nie policzy tego lekkiego ciosu - placimy tu,
       // tick pozniej: zadyszka przy obrazeniach liczy sie ze stanu sprzed ciosu
       getServer().getScheduler().runTask(this, () -> { if (p.isOnline()) lekkiCios(p); });

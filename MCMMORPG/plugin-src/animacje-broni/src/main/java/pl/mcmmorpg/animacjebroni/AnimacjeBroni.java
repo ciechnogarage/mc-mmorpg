@@ -719,6 +719,20 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         + " aktywny=" + p.getActiveItem().getType()));
   }
 
+  /**
+   * Wlocznia na TRIDENT (np. OSZCZEP) w gardzie: puszczenie PPM po >= 10 t trzymania to w wanilii rzut trojzebem,
+   * wiec gracz wyrzucal bron z gardy (16.11, klon walka-wasd: 1/3 gard, potem pusta reka). Zwykly PPM (bez Shift)
+   * zostaje rzutem - oszczep jest do rzucania.
+   */
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  public void rzutZGardy(com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent e) {
+    if (!(e.getProjectile() instanceof org.bukkit.entity.Trident)) return;
+    String stan = e.getItemStack().getPersistentDataContainer().get(kluczStanu, PersistentDataType.STRING);
+    if (stan == null || !stan.contains(":garda:")) return;
+    e.setCancelled(true);
+    dbg("RZUT_Z_GARDY anulowany " + e.getPlayer().getName());
+  }
+
   @EventHandler(priority = EventPriority.MONITOR)
   public void puszczeniePpm(PlayerStopUsingItemEvent e) {
     Player p = e.getPlayer();
@@ -758,10 +772,25 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         return;
       }
     }
-    int naladowanie = ladunek(id, ticki);
-    if (naladowanie != ticki) {
-      Zwod z = zwody.get(id);
-      zwody.put(id, new Zwod(z.tick(), z.seria(), false));
+    // Mocny zaraz po lekkim (LPM, od razu trzymany PPM) wchodzil ~0,35 s po lekkim - dwa ciosy naraz (wlasciciel 16.11:
+    // "moge zrobic lewy i od razu prawy robie dwa ataki w jednym momencie"). Ladowanie liczy sie dopiero od chwili, gdy
+    // bron wrocila po ostatnim ciosie (ten sam prog co szturchniecie); kombo L+P zostaje, ale w rytmie broni.
+    int liczone = ticki;
+    if (!szturchniecie) {
+      int ostatni = Math.max(tickCiosu.getOrDefault(id, -100000), ostatnieMachniecie.getOrDefault(id, -100000));
+      int powrot = (int) Math.ceil(pelneNaladowanie(p) * minNaladowanieSzturchniecia);
+      liczone = Math.min(ticki, teraz - (ostatni + powrot));
+      if (liczone < progMocnego) {
+        dbg("MOCNY typ=" + NBTItem.get(item).getType() + " wariant=za_wczesnie ticki=" + ticki + " liczone=" + liczone
+            + " obrazenia=0 stamina=0");
+        return;
+      }
+    }
+    int naladowanie = ladunek(id, liczone);
+    // ladunek() rozni sie od liczonego tylko przy zwodzie - wtedy zwod zuzyty (z != null: zabezpieczenie)
+    Zwod zuzyty = naladowanie != liczone ? zwody.get(id) : null;
+    if (zuzyty != null) {
+      zwody.put(id, new Zwod(zuzyty.tick(), zuzyty.seria(), false));
     }
     // Kierunek przy puszczeniu (klawisz trzymany w trakcie ladowania), sprint z chwili wcisniecia (ladowanie go wylacza),
     // w prawdziwym locie cios z gory.
@@ -893,6 +922,10 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     tickProgramowegoZamachu.put(p.getUniqueId(), getServer().getCurrentTick());
     try { p.swingMainHand(); }
     finally { programowyZamach.remove(p.getUniqueId()); }
+    // Po mocnym bron wraca jak po lekkim: LPM tuz po mocnym nie jest pelnym ciosem (vanillowe naladowanie od zera,
+    // martwe klikniecie broni z minimum_attack_charge liczy od tego machniecia).
+    p.resetCooldown();
+    ostatnieMachniecie.put(p.getUniqueId(), getServer().getCurrentTick());
     ruchMocnego(p, wariant, szturchniecie, strona);
     smuga(p, rodzaj, szturchniecie ? (rodzaj == Rodzaj.KLUTE ? 0 : 1) : "zamach_boczny".equals(wariant)
         ? strona : rodzaj == Rodzaj.KLUTE ? 0 : 2);
@@ -1000,9 +1033,16 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     // Bez podmiany przedmiotu (zamach siedzi w komponencie broni) - kierunek widac w smudze i ruchu, obrazenia te same.
     Input wejscie = p.getCurrentInput();
     int bokKlawisza = wejscie.isLeft() == wejscie.isRight() ? 0 : wejscie.isLeft() ? -1 : 1;
-    if (smuga != null && smuga.zamach() != null && smuga.rodzaj() != Rodzaj.BRAK)
-      smuga(p, rodzajSmugi, rodzajSmugi != Rodzaj.KLUTE && bokKlawisza != 0 ? -bokKlawisza
-          : ogniwo == 2 ? -1 : ogniwo == 3 && rodzajSmugi == Rodzaj.KLUTE ? 0 : ogniwo == 3 ? 2 : 1);
+    // 16.11 (wlasciciel: "rozne zamachy dla kazdego wasd ... z w i s nie ma roznicy"): W = ciecie z gory (pchniecie
+    // z gory), S = ciecie od dolu w gore przy cofnieciu, A/D = z boku, bez klawisza = seria (prawa, lewa, z gory).
+    int przodTyl = wejscie.isForward() == wejscie.isBackward() ? 0 : wejscie.isForward() ? 1 : -1;
+    int kierunekSmugi = bokKlawisza != 0 ? -bokKlawisza : przodTyl > 0 ? 2 : przodTyl < 0 ? -2
+        : ogniwo == 2 ? -1 : ogniwo == 3 && rodzajSmugi == Rodzaj.KLUTE ? 0 : ogniwo == 3 ? 2 : 1;
+    if (smuga != null && smuga.zamach() != null && smuga.rodzaj() != Rodzaj.BRAK) {
+      smuga(p, rodzajSmugi, kierunekSmugi);
+      dbg("SMUGA typ=" + NBTItem.get(bron).getType() + " kierunek=" + kierunekSmugi + " ogniwo=" + ogniwo
+          + " w=" + wejscie.isForward() + " s=" + wejscie.isBackward() + " a=" + wejscie.isLeft() + " d=" + wejscie.isRight());
+    }
     if (smuga != null && smuga.ciezkie() != null) {
       Sound swist = smuga.drzewce() || smuga.rodzaj() == Rodzaj.KLUTE ? Sound.ITEM_TRIDENT_THROW
           : smuga.rodzaj() == Rodzaj.OBUCHOWE ? Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
@@ -1430,17 +1470,21 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     Vector przod = oko.getDirection().normalize();
     Vector bok = new Vector(-przod.getZ(), 0, przod.getX());
     boolean prosto = kierunek == 0 || rodzaj == Rodzaj.KLUTE;
+    boolean pion = Math.abs(kierunek) == 2;
     for (int faza = 0; faza < 4; faza++) {
       final int f = faza;
       getServer().getScheduler().runTaskLater(this, () -> {
         if (!p.isOnline()) return;
         for (int i = 0; i < 8; i++) {
           double t = (f * 8.0 + i) / 31.0;
+          // kierunek: 1/-1 luk z prawej/lewej, 2 z gory w dol, -2 od dolu w gore, 0 prosto; pchniecie (KLUTE) zawsze
+          // prosto, 2/-2 = pchniecie z gory/od dolu, 1/-1 = z boku
           Location punkt = prosto ? oko.clone().add(przod.clone().multiply(0.45 + t * 2.75))
-                  .add(bok.clone().multiply(kierunek * 0.55 * (1 - t))).subtract(0, 0.48, 0)
+                  .add(bok.clone().multiply(pion ? 0 : kierunek * 0.55 * (1 - t)))
+                  .add(0, -0.48 + (kierunek == 2 ? 0.5 : kierunek == -2 ? -0.35 : 0) * (1 - t), 0)
               : oko.clone().add(przod.clone().multiply(1.45 + 0.45 * Math.sin(Math.PI * t)))
-                  .add(bok.clone().multiply(kierunek == 2 ? 0 : kierunek * (1.25 - 2.5 * t)))
-                  .add(0, kierunek == 2 ? 0.8 - 1.6 * t : 0.35 - 0.9 * t, 0);
+                  .add(bok.clone().multiply(pion ? 0 : kierunek * (1.25 - 2.5 * t)))
+                  .add(0, kierunek == 2 ? 0.8 - 1.6 * t : kierunek == -2 ? -0.8 + 1.5 * t : 0.35 - 0.9 * t, 0);
           if (prosto) p.getWorld().spawnParticle(Particle.CRIT, punkt, 2, 0.015, 0.015, 0.015, 0);
           else p.getWorld().spawnParticle(Particle.DUST, punkt, 2, 0.01, 0.01, 0.01, 0,
               new Particle.DustOptions(rodzaj == Rodzaj.OBUCHOWE ? Color.fromRGB(116, 83, 52)

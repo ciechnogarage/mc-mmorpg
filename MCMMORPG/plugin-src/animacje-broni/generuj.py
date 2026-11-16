@@ -67,6 +67,18 @@ TYPY = {
     'SHIELD':          {'zamach': 'whack', 'czas': 7,  'rodzaj': 'obuchowe'},
     'GAUNTLET':        {'zamach': 'stab',  'czas': 4,  'rodzaj': 'obuchowe'},
 }
+# 16.11 garda dla kazdej broni wrecz (wlasciciel: "te bronie niby po prostu nie maja gardy? ... w skyrimie chyba maja
+# nawet sztylety ... tylko pewnie slabsze"). Lekkie: szybko w gardzie, slabo trzymaja; dwureczne: zaslona drzewcem
+# oburacz, wolniej. Bez gardy zostaja fokusy magii (rozdzka, kostur, ksiega, talizman, filakterium - Shift+PPM to ich
+# rzucanie), tarcza (wlasny blok) i bronie bez przedmiotow na serwerze (LANCE, GAUNTLET).
+G_LEKKA = {'redukcja': 0.2, 'kat': 60, 'opoznienie': 0.1, 'spowolnienie': 0.6}
+TYPY['DAGGER']['garda'] = G_LEKKA
+TYPY['SIERP']['garda'] = G_LEKKA
+TYPY['WHIP']['garda'] = {'redukcja': 0.15, 'kat': 60, 'opoznienie': 0.1, 'spowolnienie': 0.6}
+for typ, red in (('KOSA', 0.35), ('GREATSTAFF', 0.4), ('GREATHAMMER', 0.45), ('SPEAR', 0.35)):
+    TYPY[typ].update({'poza': 'crossbow', 'garda_oburacz': True,
+                      'garda': {'redukcja': red, 'kat': 60, 'opoznienie': 0.3 if typ != 'SPEAR' else 0.2,
+                                'spowolnienie': 0.35 if typ != 'SPEAR' else 0.5}})
 # Prog naladowania lekkiego ciosu (minimum_attack_charge): klik przed progiem nie wchodzi i nie jest liczony (bez smugi i
 # kosztu) - lekki cios nie jest spamem, rytm wyznacza bron (19.10 wlasciciel: "ma pasowac do broni"). Lekka bron pozwala na
 # szybkie serie, dwureczna wymaga niemal pelnego zamachu. Przy szybkosci ataku: sztylet ~0,25 s, miecz ~0,45 s, kosa ~0,85 s.

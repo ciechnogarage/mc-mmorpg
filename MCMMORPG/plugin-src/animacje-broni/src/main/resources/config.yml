@@ -134,7 +134,9 @@ typy:
     skala: s130
   SPEAR:
     rodzaj: klute
+    poza: crossbow
     waga: 1.0
+    garda: {redukcja: 0.35, kat: 60, opoznienie: 0.2, spowolnienie: 0.5}
   DAGGER:
     zamach: stab
     czas: 4
@@ -147,6 +149,7 @@ typy:
     rytm: true
     kroki: [0.18, 0.18, 0.24]
     skala: s080
+    garda: {redukcja: 0.2, kat: 60, opoznienie: 0.1, spowolnienie: 0.6}
     # plecy = cios w plecy (>strona.tyl st. od wzroku celu), ZASTEPUJE ogolny strona.mnoznik_tyl;
     # ukrycie = plecy + kucanie, gdy cel nie wie o atakujacym: mob bez celu = atakujacy; gracz: nie widzi go
     # (stozek st. od wzroku + linia wzroku) albo atakujacy niewidzialny, i brak wymiany ciosow tej pary
@@ -177,6 +180,7 @@ typy:
     kroki: [0, 0, 0]
     prog_rytmu: 0.9
     okno_rytmu: 8
+    garda: {redukcja: 0.15, kat: 60, opoznienie: 0.1, spowolnienie: 0.6}
   WAND:
     zamach: stab
     czas: 5
@@ -194,11 +198,13 @@ typy:
     reakcja: pancerz
     ladowanie: 0.85
     zasieg: 3.3
+    poza: crossbow
     poza_mocnego: trident
     waga: 1.4
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s140
+    garda: {redukcja: 0.4, kat: 60, opoznienie: 0.3, spowolnienie: 0.35}
     pancerz: {procent: 0.3}
     ciezkie: {przod: wypad, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 12, spadanie: z_powietrza, bok: zamach_boczny, brak: znad_glowy}
   TOME:
@@ -233,13 +239,14 @@ typy:
     rodzaj: obuchowe
     reakcja: pancerz
     ladowanie: 0.9
-    poza: trident
+    poza: crossbow
     poza_mocnego: trident
     waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.06, 0.06, 0.1]
     skala: s130
+    garda: {redukcja: 0.45, kat: 60, opoznienie: 0.3, spowolnienie: 0.35}
     uderzenie: {promien: 3.5, mnoznik: 1.6}
     pancerz: {procent: 0.3}
     ciezkie: {przod: znad_glowy, tyl: odepchniecie, bieg: z_rozbiegu, koszt: 12, pelne: 24, spadanie: z_powietrza, brak: znad_glowy}
@@ -255,6 +262,7 @@ typy:
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s100
+    garda: {redukcja: 0.2, kat: 60, opoznienie: 0.1, spowolnienie: 0.6}
     krwawienie: {procent: 0.25, czas: 60, stosy: 3}
     ciezkie: {bok: zamach_boczny, koszt: 12, pelne: 12, spadanie: z_powietrza, przod: wypad, tyl: odepchniecie, brak: znad_glowy}
   KOSA:
@@ -264,12 +272,14 @@ typy:
     reakcja: krwawienie
     ladowanie: 0.85
     zasieg: 3.5
+    poza: crossbow
     poza_mocnego: trident
     waga: 1.4
     ciezka: true
     rytm: true
     kroki: [0.04, 0.04, 0.1]
     skala: s140
+    garda: {redukcja: 0.35, kat: 60, opoznienie: 0.3, spowolnienie: 0.35}
     krwawienie: {procent: 0.25, czas: 60, stosy: 1}
     ciezkie: {przod: wypad, bok: zamach_boczny, koszt: 12, pelne: 24, spadanie: z_powietrza, tyl: odepchniecie, bieg: z_rozbiegu, brak: znad_glowy}
     luk_lekki: {kat: 180, mnoznik: 0.5}

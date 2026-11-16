@@ -16,8 +16,11 @@ MMOItems (Ksiega: wybrany slot 1 = prawa, off-hand = lewa) i postac spelnia wyma
 Mechanika: MMOItems liczy obrazenia tylko z glownej reki, wiec cios lewa skaluje obrazenia proporcja
 ATTACK_DAMAGE lewa/prawa (glowny cel, ten tick). PPM uzywa off-handu: lewa dostaje CONSUMABLE (klient
 uzywa off-handu, gdy glowna reka nie ma uzycia); plugin pilnuje, by bron poza off-handem go nie miala.
-Inni gracze przy ciosie lewa widza machniecie lewa (machniecie prawa wycinane); sam gracz przy LPM-lewej
-widzi prawa (animacja lokalna klienta).
+Inni gracze przy ciosie lewa widza machniecie lewa (machniecie prawa wycinane). Sam gracz (od 16.11): gdy
+nastepny LPM pojdzie lewa, bron w prawej dostaje komponent `swing_animation` NONE (stary w PDC
+`dwiebronie:zamach_prawej`, przywracany po ciosie), wiec klient nie macha prawa; tick po trafieniu lewa plugin
+wysyla graczowi `ClientboundAnimatePacket` (3 = machniecie off-hand, NMS przez refleksje). Sprawdzone klientem QA
+na zrzutach (klon walka-wasd): LPM naprzemiennie, lewa widocznie macha i zadaje obrazenia.
 
 Koszty staminy: mocny 25%, podwojny 40% maks. staminy (przy 20 staminy i regeneracji 0,2/s: ok. 4 mocne pod rzad, potem ~1 na 25 s).
 
