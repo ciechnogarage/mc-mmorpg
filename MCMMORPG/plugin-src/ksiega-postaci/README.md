@@ -56,6 +56,21 @@ podstronie używają ikon panelu Q, lecz pokazują `podstrony.wstecz-nazwa` i
 działają jak w Q. Na istniejącym serwerze dopisz sekcję `podstrony` ręcznie,
 ponieważ `saveDefaultConfig()` nie uzupełnia istniejącego pliku.
 
+Tła i menu podstron generuje `wdrozenie/menu-ksiega/strony/rysuj_strony.py`
+(uruchamiaj zwykłym `python3`, bez `-I` — Pillow jest pakietem użytkownika; obok
+`menu-ksiega` musi leżeć `mcfont`). Wynik: `strony/out/<strona>/<strona>_1..4.png`
+(ćwiartki 176×222, 3–4 jako RGBA) i `strony/out/dm/<strona>.yml`; sloty kafli w
+`out/<strona>/sloty.txt`. Podpis kafla mieści się w 32 px (`narrow_width`, bez kropek).
+
+Q → Postać ma piąty kafel **Ścieżka** (sloty 41, 42, 50, 51) w trzech stanach
+`view_requirement`/`priority`: przed 10. poziomem opis „Na 10. poziomie wybierzesz…”
+(klik nic nie robi); poziom ≥10 i punkt klasy MMOCore → klik `[player] class`
+(okno „Wybierz specjalizację”, gracz potrzebuje `mmocore.class-select`); po wyborze
+„Twoja ścieżka: <klasa>”. Test botem (droga gracza bez OP, Q → Postać → kafel):
+`wdrozenie/menu-ksiega/testy/specjalizacja-kafel.js akolita|ninja` przez
+`/opt/docker/mc/narzedzia/bot/run.sh <klon --z-kreatorem>`; na klonie najpierw
+`lp group default permission set mmocore.class-select true`.
+
 Do kompilacji potrzeba także `PlaceholderAPI-2.12.2.jar` i `nexo-1.20.jar` z
 `/opt/docker/mc/data/world1/plugins/` (zależności `compileOnly`); runtime ma
 `softdepend` i działa bez nich na materiałach zapasowych. Liczniki bez PAPI

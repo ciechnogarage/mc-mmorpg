@@ -52,3 +52,56 @@ items:
       - '&7Twórz i zarządzaj postaciami.'
     left_click_commands:
       - '[console] cc wybor %player_name% lista'
+  # Specjalizacja (kafel "Ścieżka", sloty 41,42,50,51): na 10. poziomie MMOCore daje punkt klasy
+  # (MMOCore/exp-tables/default_exp_tables.yml), /class otwiera "Wybierz specjalizację".
+  # Trzy stany wg priority: wybór dostępny / przed 10. poziomem / już wybrana (brak punktu klasy).
+  specjalizacja_wybierz:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    priority: 1
+    update: true
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&aSpecjalizacja'
+    lore:
+      - '&7Klasa: &f%mmocore_class%'
+      - '&7Punkty klasy: &f%mmocore_class_points%'
+      - ''
+      - '&eKliknij: wybierz specjalizację'
+    view_requirement:
+      requirements:
+        poziom:
+          type: '>='
+          input: '%mmocore_level%'
+          output: '10'
+        punkt:
+          type: '>='
+          input: '%mmocore_class_points%'
+          output: '1'
+    left_click_commands:
+      - '[player] class'
+  specjalizacja_zablokowana:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    priority: 2
+    update: true
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&7Specjalizacja'
+    lore:
+      - '&7Na &f10. poziomie &7wybierzesz'
+      - '&7jedną z dwóch ścieżek swojej klasy.'
+      - '&7Twój poziom: &f%mmocore_level%&7/10'
+    view_requirement:
+      requirements:
+        poziom:
+          type: '<'
+          input: '%mmocore_level%'
+          output: '10'
+  specjalizacja_wybrana:
+    material: nexo-mmo_icon_blank
+    slots: [41, 42, 50, 51]
+    priority: 3
+    update: true
+    item_flags: [HIDE_ADDITIONAL_TOOLTIP]
+    display_name: '&6Specjalizacja'
+    lore:
+      - '&7Twoja ścieżka: &f%mmocore_class%'
