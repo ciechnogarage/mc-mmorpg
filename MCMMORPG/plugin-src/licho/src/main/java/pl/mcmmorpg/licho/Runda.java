@@ -264,6 +264,7 @@ final class Runda {
     wciel(x, p, start);
     // inni i tak go nie widzą (hidePlayer); to dla niego samego: w F5 ciało sterczało ze sprzętu (24.10, klient QA)
     p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 0, false, false, false));
+    pl.bezRzeczy(p, true);   // niewidzialność nie chowa zbroi ani rzeczy w ręce
     tytul(p, gora, dol, Sound.ENTITY_VEX_AMBIENT, 1.2f);
   }
 
@@ -428,7 +429,7 @@ final class Runda {
     if (x.zaczepa != null) { cele.remove(x.zaczepa.getEntityId()); x.zaczepa.remove(); x.zaczepa = null; }
     if (x.wyglad != null) { x.wyglad.remove(); x.wyglad = null; }
     Player p = x.gracz();
-    if (p != null) { p.removePotionEffect(PotionEffectType.INVISIBILITY); for (Player o : Bukkit.getOnlinePlayers()) o.showPlayer(pl, p); }
+    if (p != null) { p.removePotionEffect(PotionEffectType.INVISIBILITY); pl.bezRzeczy(p, false); for (Player o : Bukkit.getOnlinePlayers()) o.showPlayer(pl, p); }
   }
 
   private void szept(Uczestnik x, Player p) {

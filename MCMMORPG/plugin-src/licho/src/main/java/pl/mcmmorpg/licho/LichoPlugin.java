@@ -105,6 +105,18 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
   }
 
   World swiat() { return Bukkit.getWorld(u.swiat); }
+  /** Licho nie widzi u siebie zbroi ani rzeczy w rękach (tylko pakiety, ekwipunek na serwerze bez zmian). */
+  void bezRzeczy(Player p, boolean ukryj) {
+    boolean zmiana = ukryj ? klawisze.bezRzeczy.add(p.getUniqueId()) : klawisze.bezRzeczy.remove(p.getUniqueId());
+    if (zmiana) p.updateInventory();
+  }
+
+  @EventHandler(ignoreCancelled = true)
+  public void klikEkwipunku(org.bukkit.event.inventory.InventoryClickEvent e) {
+    // Licho widzi pusty ekwipunek: klik w niewidoczną rzecz rozjechałby się z serwerem
+    if (klawisze.bezRzeczy.contains(e.getWhoClicked().getUniqueId())) e.setCancelled(true);
+  }
+
   private Uczestnik uczestnik(UUID id) { return runda == null ? null : runda.gracze.get(id); }
 
   /** Zagroda (16 chunków) jest załadowana tylko na czas rundy — pusta nie kosztuje nic. */
@@ -238,6 +250,7 @@ public final class LichoPlugin extends JavaPlugin implements Listener {
     Runda r = runda;
     if (r != null) r.odejdz(x);
     klawisze.gracze.remove(x.id);
+    if (x.gracz() != null) bezRzeczy(x.gracz(), false);
     profilNaStarcie.remove(x.id);
     ostatniTekst.remove(x.id);
     Player p = x.gracz();
