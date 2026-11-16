@@ -190,24 +190,53 @@ final class Bron implements Listener {
 
   /**
    * {@code ksiegareka <gracz> uzbroj}: koniec zestawu startowego (CoreTools, klasy-rasowe.yml). {@code mi give}
-   * kładzie przedmioty w pierwszy wolny slot, a sloty 1–4 zajmują już ikony Księgi — tarcza lądowała w slocie 5
-   * albo w plecaku, lewa ręka zostawała pusta (16.11, nowa postać na klonie). Pierwsza broń, którą wolno trzymać
-   * w lewej, idzie do pustej lewej ręki; broń dwuręczna i przedmioty nie-broń zostają, gdzie są.
+   * kładzie przedmioty w pierwszy wolny slot (u świeżej postaci także 1–4, zanim pojawią się ikony Księgi), a
+   * odświeżenie wyrzucało je potem do plecaka — lewa ręka zostawała pusta (16.11, nowa postać na klonie). Pusta
+   * prawa dostaje broń jednoręczną (albo dwuręczną), pusta lewa najpierw tarczę/broń tylko-lewą, potem drugą
+   * jednoręczną; reszta zostaje, gdzie jest.
    */
   void equipStartingLeft(Player player) {
-    canonical(player);
-    PlayerInventory inventory = player.getInventory();
-    if (!Przedmioty.empty(real(inventory, LEFT)) || twoHanded(real(inventory, RIGHT))) { refreshLater(player); return; }
+    // 5 tickow: po mi give z tego samego skryptu, zeby stan ekwipunku byl ustalony. Linia "uzbroj" w logu
+    // (co przelozono + stan rak przed) - po niej 16.11 znaleziono tarcze w slocie 1 u swiezej postaci.
+    org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+      if (!player.isOnline()) return;
+      canonical(player);
+      PlayerInventory inventory = player.getInventory();
+      StringBuilder log = new StringBuilder();
+      StringBuilder przed = new StringBuilder(" [prawa=" + Przedmioty.type(real(inventory, RIGHT)) + " lewa="
+          + Przedmioty.type(real(inventory, LEFT)) + " swiat=" + player.getWorld().getName());
+      przed.append(']');
+      if (Przedmioty.empty(real(inventory, RIGHT))) {
+        int slot = startingSlot(inventory, false);
+        if (slot >= 0) { inventory.setItem(RIGHT, inventory.getItem(slot)); inventory.setItem(slot, null); log.append(" prawa<-").append(slot); }
+      }
+      if (Przedmioty.empty(real(inventory, LEFT)) && !twoHanded(real(inventory, RIGHT))) {
+        int slot = startingSlot(inventory, true);
+        if (slot < 0) slot = startingSlot(inventory, false);
+        if (slot >= 0) { inventory.setItemInOffHand(inventory.getItem(slot)); inventory.setItem(slot, null); log.append(" lewa<-").append(slot); }
+      }
+      plugin.getLogger().info("uzbroj " + player.getName() + ":" + (log.length() == 0 ? " bez zmian" : log) + przed);
+      refreshLater(player);
+    }, 5L);
+  }
+
+  /** Slot plecaka/hotbara z bronia do zestawu: {@code leftFirst} = tylko tarcza i bron tylko-lewa; inaczej bron
+   *  jednoreczna nie-tarcza (do prawej; dwureczna tez, gdy prawa pusta - wtedy lewa zostaje pusta). */
+  private int startingSlot(PlayerInventory inventory, boolean leftFirst) {
+    boolean rightEmpty = Przedmioty.empty(real(inventory, RIGHT));
     for (int slot = 0; slot < 36; slot++) {
-      if (slot == RIGHT || slot == LEFT_IMAGE || slot == RIGHT_IMAGE || slot == RIGHT_SPARE || slot == LEFT_SPARE
-          || consumableSlot(slot)) continue;
+      // Sloty 1-4 tez: u swiezej postaci ikon Ksiegi jeszcze nie ma i mi give kladzie tarcze w 1, a bron w 2
+      // (16.11 22:12, log "uzbroj"); obrazy i ikony odpadaja na virtual().
+      if (slot == RIGHT || slot == RIGHT_SPARE || slot == LEFT_SPARE) continue;
       ItemStack item = inventory.getItem(slot);
-      if (Przedmioty.empty(item) || virtual(item) || spell(item) || !weapon(item) || twoHanded(item)) continue;
-      inventory.setItem(slot, null);
-      inventory.setItemInOffHand(item);
-      break;
+      if (Przedmioty.empty(item) || virtual(item) || spell(item) || !weapon(item)) continue;
+      boolean shieldLike = leftOnly(item) || typy("typy-zawsze-jednoreczne", DOMYSLNE_ZAWSZE_JEDNORECZNE)
+          .contains(Przedmioty.type(item));
+      if (leftFirst) { if (shieldLike) return slot; continue; }
+      if (shieldLike) continue;
+      if (rightEmpty ? rightAllowed(item) : !twoHanded(item)) return slot;
     }
-    refreshLater(player);
+    return -1;
   }
 
   private boolean consumableSlot(int slot) { return slot >= HEALTH && slot <= UTILITY; }
@@ -223,6 +252,45 @@ final class Bron implements Listener {
       case UTILITY -> true;
       default -> false;
     };
+  }
+
+  // Klawisz 3/4/5 (sloty 2-4) uzywa mikstury od razu, bron zostaje w rece (decyzja wlasciciela 16.11).
+  // To samo co PPM w MMOItems ItemUse.rightClickEffects: wymagania, cooldown, useOnPlayer, -1 sztuka, komendy.
+  // Zwraca false, gdy zwykly wybor slotu ma zostac (przedmiot wielorazowy MAX_CONSUME: MMOItems zapisalby go
+  // do slotu reki, czyli na bron; przedmiot spoza MMOItems).
+  private boolean quickUse(Player player, int slot) {
+    PlayerInventory inventory = player.getInventory();
+    ItemStack item = inventory.getItem(slot);
+    if (Przedmioty.empty(item) || isConsumableIcon(item)) {
+      plugin.message(player, "brak-mikstury");
+      return true;
+    }
+    if (virtual(item)) return false;
+    NBTItem nbt = NBTItem.get(item);
+    if (!nbt.hasType() || nbt.hasTag("MMOITEMS_UNIDENTIFIED_ITEM")
+        || nbt.getInteger(net.Indyuce.mmoitems.ItemStats.MAX_CONSUME.getNBTPath()) > 0) return false;
+    var type = net.Indyuce.mmoitems.api.Type.get(nbt);
+    var data = net.Indyuce.mmoitems.api.player.PlayerData.getOrNull(player);
+    if (type == null || data == null) return false;
+    var use = type.toUseItem(data, nbt);
+    if (!(use instanceof net.Indyuce.mmoitems.api.interaction.Consumable consumable)) return false;
+    if (!use.checkItemRequirements()) return true;
+    var cooldowns = data.getMMOPlayerData().getCooldownMap();
+    if (cooldowns.isOnCooldown(use.getMMOItem())) {
+      double left = cooldowns.getCooldown(use.getMMOItem());
+      net.Indyuce.mmoitems.api.util.message.Message.ITEM_ON_COOLDOWN.format(org.bukkit.ChatColor.RED,
+          "#left#", io.lumine.mythic.lib.MythicLib.plugin.getMMOConfig().decimal.format(left),
+          "#s#", left >= 2 ? "s" : "").send(player);
+      return true;
+    }
+    var result = consumable.useOnPlayer(org.bukkit.inventory.EquipmentSlot.HAND, false);
+    if (result == net.Indyuce.mmoitems.api.interaction.Consumable.ConsumableConsumeResult.CANCEL) return true;
+    if (result == net.Indyuce.mmoitems.api.interaction.Consumable.ConsumableConsumeResult.CONSUME)
+      item.setAmount(item.getAmount() - 1);
+    cooldowns.applyCooldown(use.getMMOItem(), nbt.getStat("ITEM_COOLDOWN"));
+    if (net.Indyuce.mmoitems.MMOItems.plugin.getLanguage().itemCommands) use.executeCommands();
+    refreshLater(player);
+    return true;
   }
 
   boolean weapon(ItemStack item) {
@@ -944,6 +1012,16 @@ final class Bron implements Listener {
     // Pasek Zaklec anuluje przewiniecie: wybrany slot ekwipunku sie nie zmienia.
     // Odswiezanie calej Ksiegi w takim przypadku wysylalo kilkanascie set_slot.
     if (event.isCancelled()) return;
+    // Cyfra 3-5 = szybkie uzycie. Kolko myszy przesuwa o 1 slot (tez 8<->0) i wybiera slot jak dawniej,
+    // zeby przewijanie przez hotbar nie wypijalo mikstur. Paper nie odroznia cyfry od kolka.
+    int from = event.getPreviousSlot(), to = event.getNewSlot();
+    int step = Math.floorMod(to - from, 9);
+    if (consumableSlot(to) && step != 1 && step != 8
+        && plugin.getConfig().getBoolean("szybkie-mikstury", true)
+        && quickUse(event.getPlayer(), to)) {
+      event.setCancelled(true);
+      return;
+    }
     canonical(event.getPlayer());
     refreshLater(event.getPlayer());
   }

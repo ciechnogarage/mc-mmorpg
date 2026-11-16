@@ -195,6 +195,8 @@ typy-dwureczne: [BOW, CROSSBOW, MUSKET, GREATBOW, GREATSWORD, GREATAXE, GREATHAM
 typy-tylko-lewa: [OFF_CATALYST]
 # tarcza: w obu rekach (Nosiciel Relikwii ma ja jako bron startowa), nigdy dwureczna mimo flagi przedmiotu
 typy-zawsze-jednoreczne: [SHIELD]
+# klawisz 3/4/5 (sloty 2-4) od razu uzywa mikstury, bron zostaje w rece; false = stary wybor slotu
+szybkie-mikstury: true
 typy-mikstur-i-uzytkowych:
   - CONSUMABLE
 staty-mikstur:
@@ -232,6 +234,7 @@ opisy-ikon:
   mikstura-many: '§7Włóż miksturę many'
   przedmiot-uzytkowy: '§7Włóż przedmiot użytkowy'
 komunikaty:
+  brak-mikstury: '&7Ten slot jest pusty — połóż tu miksturę z plecaka.'
   zly-typ: '&cTen przedmiot nie pasuje do tego slotu.'
   wymagania: '&cTa postac nie spelnia wymagan przedmiotu.'
   dwureczna: '&cBroń dwuręczna zajmuje obie ręce.'

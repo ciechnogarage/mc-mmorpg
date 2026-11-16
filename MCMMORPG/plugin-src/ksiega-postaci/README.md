@@ -119,7 +119,7 @@ Obrazy i zaślepki nie mają danych MMOItems i nigdy nie są przedmiotami wyposa
 
 Broń dwuręczna w prawej aktywnej lub zapasowej zajmuje odpowiadającą jej lewą rękę: offhand lub slot 12 musi być pusty, a obraz pokazuje „zajęta”. Próba włożenia tam przedmiotu jest odrzucana. Przy osobnej zmianie prawej na dwuręczną dotychczasowa lewa aktywna trafia do pustego zapasu L; zajęty zapas blokuje zmianę. Przy zwykłym założeniu dwuręcznej do 0 lewa broń trafia najpierw do zapasu L, potem do plecaka 14–35; przy braku miejsca operacja jest odrzucana. Zmiana prawej z dwuręcznej na jednoręczną pozostawia lewą aktywną pustą. Jeżeli zapas L był zajęty, jego przedmiot jest przenoszony do plecaka albo upuszczany pod nogi, aby zapas z dwuręczną pozostał spójny. Każda zmiana zestawu sprawdza obie pary przed zapisem.
 
-Sloty 2–4 przyjmują typy i statystyki z `typy-mikstur-i-uzytkowych` oraz `staty-mikstur` w `config.yml`. Shift-klik z plecaka umieszcza pasujący stos najpierw w pustym 2, 3 lub 4. Można też użyć zwykłego kliknięcia lub cyfry; niepasujący przedmiot jest odrzucany. Prawdziwy przedmiot po wyborze slotu działa normalnie po PPM. Po zużyciu ostatniej sztuki zaślepka wraca w następnym ticku. Przy odświeżeniu ekwipunku niepasujące rzeczy z 2–4 trafiają do plecaka 14–35 albo pod nogi; pasujące zostają. Stary prawdziwy przedmiot ze slotu 13 podlega tej samej migracji.
+Sloty 2–4 przyjmują typy i statystyki z `typy-mikstur-i-uzytkowych` oraz `staty-mikstur` w `config.yml`. Shift-klik z plecaka umieszcza pasujący stos najpierw w pustym 2, 3 lub 4. Można też użyć zwykłego kliknięcia lub cyfry; niepasujący przedmiot jest odrzucany. Klawisz cyfry 3/4/5 używa przedmiotu od razu bez zmiany slotu (sekcja „Szybkie mikstury”); wybrany kółkiem działa normalnie po PPM. Po zużyciu ostatniej sztuki zaślepka wraca w następnym ticku. Przy odświeżeniu ekwipunku niepasujące rzeczy z 2–4 trafiają do plecaka 14–35 albo pod nogi; pasujące zostają. Stary prawdziwy przedmiot ze slotu 13 podlega tej samej migracji.
 
 ## Pliki wdrożeniowe
 
@@ -156,11 +156,29 @@ Komenda konsoli (`ksiegapostaci.portal.admin`), umowa z pluginem Zaklecia bez za
 - `ksiegareka <gracz> przywroc <prawa|lewa>` — po wyborze „Pusta” broń odłożona do zapasu wraca do ręki.
 - Shift+F z zaklęciem w ręce: zaklęcia zdjęte, potem zwykła zamiana z zapasem (gdy oba zapasy puste — nic).
 - `ksiegareka <gracz> uzbroj` — koniec zestawu startowego (`tools/klasy-rasowe/generuj_klasy.py` → CoreTools
-  `klasy-rasowe.yml`): `mi give` kładzie w pierwszy wolny slot, a 1–4 zajmują ikony, więc tarcza lądowała w 5 albo
-  w plecaku. Pierwsza broń dozwolona w lewej (nie dwuręczna) idzie do pustej lewej ręki.
+  `klasy-rasowe.yml`). `mi give` kładzie w pierwszy wolny slot; u świeżej postaci ikon Księgi jeszcze nie ma, więc
+  tarcza trafiała do 1, druga broń do 2, a odświeżenie wyrzucało je do plecaka (lewa pusta). Uruchamia się 5 ticków
+  później; przegląda też sloty 1–4 (pomija obrazy i ikony). Pusta prawa dostaje broń dozwoloną w prawej, pusta lewa
+  najpierw tarczę/broń tylko-lewą (`typy-zawsze-jednoreczne`), potem drugą jednoręczną; dwuręczna i nie-broń zostają.
+  W logu linia `uzbroj <gracz>: lewa<-N [prawa=… lewa=… swiat=…]` (co przełożono i stan rąk przed).
 Sprawdzono 16.11 na klonie `pasek-eq` klientem QA (konto bez OP): LPM/PPM z buławą+tarczą, przy wybranym slocie 1,
 „Pusta”, pełny zapas i plecak, Claymore (dwuręczna), nowa postać wojownik i akolita.
 Znane: przy dwuręcznej w prawej lewe zaklęcie może zostać w offhandzie (tak jak przed zmianą) — czeka na decyzję.
+
+## Szybkie mikstury: klawisz 3/4/5 (decyzja właściciela 16.11)
+Klawisz cyfry slotu 2–4 z prawdziwym przedmiotem MMOItems używa go od razu, a wybrany slot (broń w ręce) się nie zmienia.
+Robi to samo co PPM w MMOItems 6.10.1 (`listener/ItemUse`): wymagania, cooldown (`item-cooldown`, komunikat
+„Przedmiot odnawia się jeszcze…”), `Consumable.useOnPlayer`, −1 sztuka, komendy przedmiotu.
+- Pusty slot (ikona) → komunikat `brak-mikstury` na pasku akcji, wybór slotu się nie zmienia.
+- Przedmiot wielorazowy (`max-consume`, np. RECALL_STAR) i przedmiot spoza MMOItems → zwykły wybór slotu, potem PPM
+  (MMOItems zapisałby zużycie do slotu ręki, czyli na broń).
+- Kółko myszy: Paper nie odróżnia kółka od cyfry (`PlayerItemHeldEvent`), więc krok ±1 slot traktowany jest jak kółko
+  i daje zwykły wybór. Skutek: cyfra sąsiedniego slotu (np. 3 przy wybranym slocie 1, 4 przy wybranym 2) wybiera slot zamiast pić.
+- Wyłącznik: `szybkie-mikstury: false` w `config.yml`.
+Sprawdzono 16.11 na klonie `pasek-eq` klientem QA (konto bez OP, wojownik `QA_tarcza3`): mikstury przełożone Shift+klikiem
+z plecaka do 2/3, klawisz 3 przy mieczu w ręce: HP 12,8 → 23,9, stos 3 → 2, wybrany slot 0; drugi raz w 1 s: „odnawia się
+jeszcze 9,1 s”, stos bez zmian; klawisz 4 (mana): stos 2 → 1, mana wzrosła; klawisz 5 na pustym: komunikat; kółko 0→3→0:
+nic nie wypite; RECALL_STAR w 4: zwykły wybór. Tick śr. 1,8 ms, P95 4,3 ms; 0 wyjątków, 0 WARN Księgi.
 
 ## Klawisz F (decyzja właściciela 15.11: każdy klawisz robi jedną rzecz)
 Samo F = wyłącznie tryb skilli MMOCore: Księga anuluje `PlayerSwapHandItemsEvent` i nie rusza rąk (wcześniej
