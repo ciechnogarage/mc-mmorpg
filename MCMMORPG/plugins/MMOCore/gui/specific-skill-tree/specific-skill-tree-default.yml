@@ -1,5 +1,5 @@
 # GUI display name
-name: '&7{skill-tree-name} Skill Tree.'
+name: '&7Drzewko: {skill-tree-name}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -10,25 +10,25 @@ items:
   up:
     function: up
     item: PLAYER_HEAD
-    name: "Up"
+    name: "W górę"
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTk5YWFmMjQ1NmE2MTIyZGU4ZjZiNjI2ODNmMmJjMmVlZDlhYmI4MWZkNWJlYTFiNGMyM2E1ODE1NmI2NjkifX19
     slots: [ 50 ]
   down:
     function: down
     item: PLAYER_HEAD
-    name: "Down"
+    name: "W dół"
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzkxMmQ0NWIxYzc4Y2MyMjQ1MjcyM2VlNjZiYTJkMTU3NzdjYzI4ODU2OGQ2YzFiNjJhNTQ1YjI5YzcxODcifX19
     slots: [ 49 ]
   right:
     function: right
     item: PLAYER_HEAD
-    name: "Right"
+    name: "W prawo"
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTNmYzUyMjY0ZDhhZDllNjU0ZjQxNWJlZjAxYTIzOTQ3ZWRiY2NjY2Y2NDkzNzMyODliZWE0ZDE0OTU0MWY3MCJ9fX0=
     slots: [ 51 ]
   left:
     function: left
     item: PLAYER_HEAD
-    name: "Left"
+    name: "W lewo"
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWYxMzNlOTE5MTlkYjBhY2VmZGMyNzJkNjdmZDg3YjRiZTg4ZGM0NGE5NTg5NTg4MjQ0NzRlMjFlMDZkNTNlNiJ9fX0=
     slots: [ 48 ]
 
@@ -36,15 +36,15 @@ items:
     function: reallocation
     item: CAULDRON
     slots: [ 45 ]
-    name: '&aReallocate Skill Tree Points'
+    name: '&aZresetuj punkty drzewka'
     lore:
       - ''
-      - '&7You have spent a total of &6{point-spent}&7 skill tree points.'
-      - '&7The maximum points that can be spent is: &6{max-point-spent}'
-      - '&7Right click to reallocate them.'
+      - '&7Wydano &6{point-spent}&7 punktów drzewka.'
+      - '&7Limit wydanych punktów: &6{max-point-spent}'
+      - '&7Kliknij prawym przyciskiem, aby zresetować.'
       - ''
-      - '&eCosts 1 attribute reallocation point.'
-      - '&e◆ Skill Tree Reallocation Points: &6{realloc-points}'
+      - '&eKoszt: 1 punkt przydziału drzewka.'
+      - '&e◆ Punkty przydziału drzewka: &6{realloc-points}'
 
   skill-tree-node:
 
@@ -56,8 +56,8 @@ items:
     #All the placeholders you see here can also be used in the node lore.
     #For debugging custom display you can use the {display-type} placeholder.
     lore:
-      - '&eLevel &6{current-level}&e/&6{max-level}'
-      - '&eCosts &6{point-consumed} &ept per upgrade'
+      - '&ePoziom &6{current-level}&e/&6{max-level}'
+      - '&eKoszt ulepszenia: &6{point-consumed} &epkt'
       #- '&7Current State: &6{current-state}'
       #- '&7Max Children: &6{max-children}'
       #- ''
@@ -70,16 +70,16 @@ items:
       - ''
       - '&7{node-lore}'
       - ''
-      - '&e◆ Points Spent:&6 {point-spent}&e/&6{max-point-spent}'
-      - '&e◆ Available: &6{skill-tree-points} &e(&6{global-points} &eglobal)'
+      - '&e◆ Wydane punkty: &6{point-spent}&e/&6{max-point-spent}'
+      - '&e◆ Dostępne: &6{skill-tree-points} &e+ &6{global-points} &eogólne'
     path-lore: []
 
 #This is the name that will be displayed for each status.
 status-names:
-  unlocked: 'Unlocked'
-  unlockable: 'Unlockable'
-  locked: 'Locked'
-  fully-locked: 'Fully Locked'
+  unlocked: 'Odblokowany'
+  unlockable: 'Do odblokowania'
+  locked: 'Zablokowany'
+  fully-locked: 'Całkowicie zablokowany'
 
 # This section is to change display options for nodes and paths depending on:
 # - their shape: each path has a shape given its neighboring connections (left + up, )... kind of like a vanilla redstone wire.

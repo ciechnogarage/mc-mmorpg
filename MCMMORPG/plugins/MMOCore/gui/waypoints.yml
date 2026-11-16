@@ -1,6 +1,6 @@
 # GUI display name
-name: Waypoints
-name-on-waypoint: 'Waypoint: {waypoint}'
+name: 'Punkty podróży'
+name-on-waypoint: 'Punkt podróży: {waypoint}'
 
 # Number of slots in your inventory. Must be
 # between 9 and 54 and must be a multiple of 9.
@@ -19,7 +19,7 @@ items:
 
     # Displayed when the waypoint has not been unlocked yet.
     locked:
-      name: '&c- Locked -'
+      name: '&c- Zablokowany -'
       item: GRAY_DYE
       lore: { }
 
@@ -34,7 +34,7 @@ items:
 
       lore:
         - '{lore}'
-        - '&7You do not have access to this waypoint.'
+        - '&7Nie masz dostępu do tego punktu.'
 
     current-waypoint:
       name: '&a{name}'
@@ -53,7 +53,7 @@ items:
       item: ENDER_PEARL
       lore:
         - '{lore}'
-        - '&7You are here.'
+        - '&7Jesteś tutaj.'
 
     # When you don't have enough stellium
     not-enough-stellium:
@@ -62,33 +62,33 @@ items:
 
       lore:
         - '{lore}'
-        - '&7You cannot teleport as you do not have enough Stellium.'
-        - '&7Teleporting costs &b{normal_cost}&7/&b{dynamic_cost} &7Stellium.'
+        - '&7Masz za mało stellium, by się przenieść.'
+        - '&7Koszt podróży: &b{normal_cost}&7/&b{dynamic_cost} &7stellium.'
 
     # Displayed when the waypoint is unlocked and usable
     display:
       name: '&a{name}'
       item: ENDER_EYE
-      path:
+      format_path:   # MMOCore czyta format_path.none/.splitter (WaypointViewer$WaypointItemHandler); domyslne "path:" nieczytane -> "None"
         splitter: ', '
-        none: 'None'
+        none: 'Brak'
       lore:
         - '{lore}'
-        - '&7You can teleport to this waypoint.'
-        - '&7Intermediary waypoints: {intermediary_waypoints}'
-        - '&7Click to teleport for &b{current_cost} &7Stellium.'
+        - '&7Możesz się tu przenieść.'
+        - '&7Punkty pośrednie: {intermediary_waypoints}'
+        - '&7Kliknij, by przenieść się za &b{current_cost} &7stellium.'
 
   next:
     slots: [ 26 ]
     function: next
     item: PLAYER_HEAD
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
-    name: '&aNext Page'
+    name: '&aNastępna strona'
     lore: [ ]
   previous:
     slots: [ 18 ]
     function: previous
     item: PLAYER_HEAD
     texture: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
-    name: '&aPrevious Page'
+    name: '&aPoprzednia strona'
     lore: [ ]

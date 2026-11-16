@@ -57,6 +57,12 @@ scenariusz('specjalizacja-kafel-' + TRYB, async ({ w, polacz, rcon }) => {
   if (wyb) {
     const pot = await kliknijSlot(bot, wyb.slot, { ms: 5000 }).catch(() => null);
     console.log('potwierdzenie:', tytulOkna(pot));
+    // okno potwierdzenia MMOCore (gui/class-confirm/class-confirm-default.yml) po polsku, bez angielskich resztek
+    const pTak = pot && sloty(pot).find(s => s.slot === 12), pWroc = pot && sloty(pot).find(s => s.slot === 14);
+    const pTekst = [tytulOkna(pot), pTak && czysc(pTak.nazwa), lore(pot, 12), pWroc && czysc(pWroc.nazwa)].join(' | ');
+    console.log('potwierdzenie teksty:', pTekst);
+    w.sprawdz('potwierdzenie-po-polsku', !!pot && /Potwierdź/.test(tytulOkna(pot) || '') && /Wybierz/.test(pTekst) && /Wróć/.test(pTekst)
+      && !/Confirmation|Select|Back|Class Level|Skill Points|Progression/.test(pTekst), pTekst);
     if (pot) { await bot.clickWindow(12, 0, 0); await sleep(3000); }
   }
   if (bot.currentWindow) bot.closeWindow(bot.currentWindow);

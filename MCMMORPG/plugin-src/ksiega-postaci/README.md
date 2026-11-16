@@ -70,6 +70,10 @@ Q → Postać ma piąty kafel **Ścieżka** (sloty 41, 42, 50, 51) w trzech stan
 `wdrozenie/menu-ksiega/testy/specjalizacja-kafel.js akolita|ninja` przez
 `/opt/docker/mc/narzedzia/bot/run.sh <klon --z-kreatorem>`; na klonie najpierw
 `lp group default permission set mmocore.class-select true`.
+Test sprawdza też, że okno potwierdzenia MMOCore (`MMOCore/gui/class-confirm/`) jest
+po polsku. Pozostałe okna MMOCore otwierane komendą gracza (`/class`, `/waypoints`,
+`/skilltrees <id>`) sprawdza `testy/okna-mmocore-pl.js` (na klonie dodatkowo
+`mmocore.waypoints` i `mmocore.skilltrees` dla grupy `default`).
 
 Do kompilacji potrzeba także `PlaceholderAPI-2.12.2.jar` i `nexo-1.20.jar` z
 `/opt/docker/mc/data/world1/plugins/` (zależności `compileOnly`); runtime ma
