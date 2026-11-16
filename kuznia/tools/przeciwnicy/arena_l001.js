@@ -3,6 +3,7 @@
 // (swiat 'world' plaski), paczka L1R_* + GAJ_* skills wgrana do plugins/MythicMobs.
 //   run.sh <klon> arena_l001.js walka <MOB> nieuwazny|uwazny [POWT=3]   bot BASTION poz. 2, Kamienny miecz (MMOItems)
 //   run.sh <klon> arena_l001.js pak                                     mechanika R1: pak, deptanie, dojrzewanie, Korzen
+//   run.sh <klon> arena_l001.js kolejka                                 R1 limit 12 pakow: najstarszy aktywny usycha
 //   run.sh <klon> arena_l001.js garda                                   Korowiec: cios z przodu vs z tylu (garda -80%)
 // Strata HP = scoreboard minecraft.custom:damage_taken (/10), nie bot.health (regen MMOCore). Linie POMIAR {...}.
 // Nieuwazny: stoi i bije najblizszego wroga, pakow nie rusza. Uwazny: unik na dzwiek zapowiedzi (po glosnosci/wysokosci -
@@ -183,6 +184,50 @@ scenariusz(`arena-l001-${TRYB}-${MOB}-${STYL}`, async ({ w, polacz, rcon }) => {
     await rcon(`mm mobs spawn L1R_KOTWA 1 world,${poz}`); await sleep(10800);
     const n5 = await ile(pniaczki);
     w.sprawdz('kotwa-budzi', n5 === 1, `pniaczki po 10,8 s: ${n5}`);
+  }
+
+  if (TRYB === 'kolejka') {
+    // R1 limit 12 (karta §13 w.1). Paki rozpoznawane po NUMERZE w kolejce (score l1r_pak), stawiane jednym spawnem
+    // (ten sam tick), sprawdzenia przed dojrzaniem (5 s). "Inna instancja" = ten sam swiat 400 bl. dalej (distance=..300);
+    // osobnych swiatow MythicDungeons to nie sprawdza.
+    await rcon('minecraft:scoreboard objectives add l1r_pak dummy');
+    await rcon('minecraft:execute in minecraft:overworld run minecraft:forceload add 680 280 720 320');
+    const nr = async () => +((/has (-?\d+)/.exec(await rcon('minecraft:scoreboard players get l1r.nr l1r_pak')) || [0, 0])[1]);
+    const spawn = async (n, x = S.x) => rcon(`mm mobs spawn L1R_PAK ${n} world,${x},${S.y},${S.z + 4}`);
+    const jest = async k => (await ile(`@e[tag=l1r_pq,scores={l1r_pak=${k}}]`)) === 1;
+    const aktywne = async () => ile(`@e[tag=l1r_pq,tag=!l1r_usycha]`);
+    const pniaczki = `@e[type=husk,nbt={IsBaby:1b},${BOX}]`;
+    await start(); await rcon(`minecraft:tp ${nick} ${S.x} ${S.y} ${S.z - 10}`);
+    // 1. 14 pakow naraz -> 12 aktywnych, usychaja dwa najstarsze (B+1, B+2), po 1 s znikaja z areny
+    let B = await nr(); const t0 = Date.now();
+    await spawn(14); await sleep(1500);
+    const ob = []; for (let k = B + 1; k <= B + 14; k++) ob.push(await jest(k) ? 1 : 0);
+    const a1 = await aktywne(), n1 = await ile(`@e[type=zombie,${BOX}]`), nrPo = await nr();
+    w.sprawdz('kolejka-12', a1 === 12 && n1 === 12, `aktywne ${a1}, nosniki w arenie ${n1}, numery ${B + 1}..${nrPo}`);
+    w.sprawdz('kolejka-najstarsze', ob.join('') === '00111111111111', `obecne wg numeru ${ob.join('')}`);
+    // 2. zdeptany najstarszy aktywny (B+3) -> 11; +1 -> 12 bez usychania; +1 -> usycha B+4 (najstarszy AKTYWNY)
+    await rcon(`minecraft:kill @e[tag=l1r_pq,scores={l1r_pak=${B + 3}}]`); await sleep(250);
+    await spawn(1); await sleep(400); const a2 = await aktywne(), u2 = await ile('@e[tag=l1r_usycha]');
+    await spawn(1); await sleep(1300);
+    const p4 = await jest(B + 4), p5 = await jest(B + 5), a3 = await aktywne(), t2 = r1((Date.now() - t0) / 1000);
+    w.sprawdz('kolejka-po-zdeptaniu', a2 === 12 && u2 === 0 && !p4 && p5 && a3 === 12,
+      `po zdeptaniu+1: ${a2} (usycha ${u2}), po +1: ${a3}, nr B+4 ${p4}, nr B+5 ${p5}, t=${t2} s`);
+    // 3. usychajace nie dojrzewaja: z 16 pakow (3 uschly, 1 zdeptany) wyrasta 12 Pniaczkow
+    await sleep(Math.max(0, 8800 - (Date.now() - t0)));
+    const pn = await ile(pniaczki), zostalo = await ile('@e[tag=l1r_pq]');
+    w.sprawdz('usychajace-nie-dojrzewaja', pn === 12 && zostalo === 0, `pniaczki ${pn} (oczekiwane 12), paki ${zostalo}`);
+    // 4. dwie "instancje" po 10 pakow, 400 bl. od siebie -> zadne nie usycha
+    await czysc(); await sleep(400); await czysc();
+    await spawn(10); await spawn(10, S.x + 400); await sleep(1500);
+    const a4 = await aktywne(), uA = await ile(`@e[tag=l1r_pq,${BOX}]`), uB = await ile(`@e[tag=l1r_pq,x=686,y=-62,z=286,dx=28,dy=12,dz=28]`);
+    w.sprawdz('kolejka-osobne-instancje', a4 === 20 && uA === 10 && uB === 10, `aktywne ${a4}, A ${uA}, B ${uB}`);
+    // 5. trzeci pak w B (11.) i 3 w A (13.) -> w A usycha 1, w B nic
+    await spawn(3); await spawn(1, S.x + 400); await sleep(1300);
+    const uA2 = await ile(`@e[tag=l1r_pq,tag=!l1r_usycha,${BOX}]`), uB2 = await ile(`@e[tag=l1r_pq,x=686,y=-62,z=286,dx=28,dy=12,dz=28]`);
+    w.sprawdz('kolejka-limit-osobno', uA2 === 12 && uB2 === 11, `A ${uA2} (12), B ${uB2} (11)`);
+    for (let i = 0; i < 3; i++) { await rcon('minecraft:execute in minecraft:overworld run minecraft:kill @e[type=!player,x=686,y=-62,z=286,dx=28,dy=12,dz=28]'); await sleep(200); }
+    await sleep(6000);
+    pomiar('kolejka-wpisy-scoreboard', { odpowiedz: (await rcon('minecraft:scoreboard players list')).slice(0, 400) });
   }
 
   if (TRYB === 'garda') {

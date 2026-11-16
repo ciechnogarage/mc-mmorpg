@@ -84,9 +84,40 @@ Wyniki 16.11 (seria 2, 3 walki na wroga i styl, utracone HP, gracz ~28 HP; limit
 
 Garda (`… garda`, 4 ciosy): przód 1,2 HP, tył 7,5, przód 1,2 s po zapowiedzi ciosu 6,0. Pąki (`… pak`) 8/8 PASS.
 Koszt (klon, 12 pąków + 14 Pniaczków + 2 Kotwy + Sowiedź): MSPT śr. 0,3 → 0,6 ms, szczyt 10 ms przy masowym przywołaniu.
-Nie sprawdzone: limit 12 pąków na instancję (kolejka), boss Strażnik Sadu, ataki w grupie, prawdziwy gracz (klient QA).
+Nie sprawdzone: boss Strażnik Sadu, ataki w grupie, prawdziwy gracz (klient QA).
 
 Decyzje właściciela 16.11 (po arenie): (1) pętla Pniaczek→pąk→Pniaczek ZOSTAJE (wariant A) — kara za niedeptanie;
 pętla trwa bez końca, ale się nie mnoży (1 Pniaczek → 1 pąk → 1 Pniaczek; Siewca daje 3 tylko raz), górną granicę
-encji ma dać limit 12 pąków na instancję (jeszcze niezrobiony);
+encji daje limit 12 pąków na instancję (niżej);
 (2) Sowiedź ZOSTAJE bez złagodzenia (łapa 6) — nieuważny ginie 3/3. Generator bez zmian (stan 0010a39).
+
+### Limit 12 pąków na instancję (karta §13 w.1) — 16.11, klon l001-kolejka
+Jak: każdy pąk przy `~onSpawn` (`L1R_PAK_KOLEJKA`) dostaje tag `l1r_pq` i numer z rosnącego licznika `l1r.nr`
+(scoreboard `l1r_pak`, posiadacz = UUID pąka). Gdy w promieniu 300 bl. (`distance=..300` = ten sam świat i instancja)
+jest >12 aktywnych pąków z numerem, najmniejszy numer dostaje `l1r_usycha`; `~onTimer:5` (`L1R_PAK_USYCHA`) zdejmuje
+go z kolejki, zeruje `dojrzewa` (nie da Pniaczka), szary dym 1 s, `remove`. Każde zniknięcie pąka (zdeptany, dojrzał,
+usechł) robi `scoreboard players reset <uuid>`. **Przed pierwszym użyciem na serwerze (raz):**
+`minecraft:scoreboard objectives add l1r_pak dummy` (bez tego komendy kolejki padają, pąki działają bez limitu — nie sprawdzone).
+
+Wynik `run.sh l001-kolejka arena_l001.js kolejka`: **7/7 PASS ×3 przebiegi**:
+- 14 pąków naraz → 12 aktywnych, usychają dwa najstarsze;
+- po zdeptaniu jest miejsce (nowy nie wypycha nikogo), następny wypycha najstarszego;
+- usychające nie dojrzewają (12 Pniaczków z 14 pąków);
+- dwie „instancje” 400 bl. od siebie liczą się osobno (10+10, potem A 12 / B 11);
+- scoreboard nie puchnie (po teście tylko `l1r.nr/ile/min`).
+
+Test pąków `… pak` po zmianie: 8/8 (1 z 2 przebiegów 7/8: `kotwa-budzi` 2 Pniaczki po 10,8 s — test czasowy, nie kolejka; do obserwacji).
+Koszt (`mspt`, klon bez graczy poza botem): spoczynek 0,3 ms śr.; 6 serii po 14 pąków co 0,8 s (84 spawny w 5 s, ponad każdą
+realną walkę) → 1,6 ms śr. w oknie 5 s, max tick 22 ms (max 22,8 ms był też w oknie 1 min przed testem — kosztu samego
+spawnu MM i kolejki nie rozdzieliłem).
+
+Pułapki (16.11):
+- W YAML ` #` w zwykłym skalarze zaczyna komentarz: `c="...l1r_pak #nr..."` ucięło komendę (`command error` w logu) → nazwy `l1r.nr`.
+- **Kilka pąków w jednym ticku** (14 naraz; w grze AoE zabija kilku wrogów naraz): tag dostawały wszystkie, numer jeszcze nie,
+  więc pierwszy liczył 14 i uznawał siebie za najstarszego → usychało 13. Naprawa: liczyć i wybierać tylko `scores={l1r_pak=1..}`.
+- Murek areny stoi na x≈314 — pąk przywołany w murze ginie od razu (fałszywy FAIL testu).
+- **Spam konsoli**: każda komenda MM `command{}` loguje wynik — na pąk ~4 linie (`Added … l1r.nr`, `Set … Pąk`,
+  `Reset … Pąk`, `Modified entity data` z IsBaby) + przy przepełnieniu 1 linia `Set l1r.min` na każdy aktywny pąk.
+  Gamerule `send_command_feedback false` / `log_admin_commands false` nie usunęły linii (4–5 na pąk; klon, przywrócone).
+  Funkcja datapacku wołana przez `execute as` z RCON nie zalogowała nic (wołana z MM — nie sprawdzone). Bez linii byłaby
+  własna mechanika Java. Decyzja właściciela: zostawić / datapack / Java.

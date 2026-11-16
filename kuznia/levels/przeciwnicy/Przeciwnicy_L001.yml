@@ -24,6 +24,8 @@ L1R_PAK:
   - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
   - skill{s=L1R_PAK_DOJRZEWA} @self ~onSpawn
   - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
+  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn
+  - skill{s=L1R_PAK_USYCHA} @self ~onTimer:5 ?hastag{t=l1r_usycha}
 L1R_PAK_DUZY:
   Type: ZOMBIE
   Display: '&dDuży pąk'
@@ -46,6 +48,8 @@ L1R_PAK_DUZY:
   - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
   - skill{s=L1R_PAK_DUZY_DOJRZEWA} @self ~onSpawn
   - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
+  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn
+  - skill{s=L1R_PAK_USYCHA} @self ~onTimer:5 ?hastag{t=l1r_usycha}
 L1R_PAK_SIEWCY:
   Type: ZOMBIE
   Display: '&dPąk z puchem'
@@ -67,6 +71,8 @@ L1R_PAK_SIEWCY:
   - setvariable{var=caster.dojrzewa;val=1;type=INTEGER} @self ~onSpawn
   - skill{s=L1R_PAK_SIEWCY_DOJRZEWA} @self ~onSpawn
   - skill{s=L1R_PAK_ZDEPTANY} @self ~onDeath
+  - skill{s=L1R_PAK_KOLEJKA} @self ~onSpawn
+  - skill{s=L1R_PAK_USYCHA} @self ~onTimer:5 ?hastag{t=l1r_usycha}
 # Korzen: krag 3x3 na 8 s, spowalnia i trzyma WSZYSTKO (gracze i wrogowie)
 L1R_KORZEN:
   Type: ARMOR_STAND

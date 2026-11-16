@@ -65,6 +65,8 @@ L1R_PAK:
   - setvariable{{var=caster.dojrzewa;val=1;type=INTEGER}} @self ~onSpawn
   - skill{{s=L1R_PAK_DOJRZEWA}} @self ~onSpawn
   - skill{{s=L1R_PAK_ZDEPTANY}} @self ~onDeath
+  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn
+  - skill{{s=L1R_PAK_USYCHA}} @self ~onTimer:5 ?hastag{{t=l1r_usycha}}
 L1R_PAK_DUZY:
   Type: ZOMBIE
   Display: '&dDuży pąk'
@@ -87,6 +89,8 @@ L1R_PAK_DUZY:
   - setvariable{{var=caster.dojrzewa;val=1;type=INTEGER}} @self ~onSpawn
   - skill{{s=L1R_PAK_DUZY_DOJRZEWA}} @self ~onSpawn
   - skill{{s=L1R_PAK_ZDEPTANY}} @self ~onDeath
+  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn
+  - skill{{s=L1R_PAK_USYCHA}} @self ~onTimer:5 ?hastag{{t=l1r_usycha}}
 L1R_PAK_SIEWCY:
   Type: ZOMBIE
   Display: '&dPąk z puchem'
@@ -108,6 +112,8 @@ L1R_PAK_SIEWCY:
   - setvariable{{var=caster.dojrzewa;val=1;type=INTEGER}} @self ~onSpawn
   - skill{{s=L1R_PAK_SIEWCY_DOJRZEWA}} @self ~onSpawn
   - skill{{s=L1R_PAK_ZDEPTANY}} @self ~onDeath
+  - skill{{s=L1R_PAK_KOLEJKA}} @self ~onSpawn
+  - skill{{s=L1R_PAK_USYCHA}} @self ~onTimer:5 ?hastag{{t=l1r_usycha}}
 # Korzen: krag 3x3 na 8 s, spowalnia i trzyma WSZYSTKO (gracze i wrogowie)
 L1R_KORZEN:
   Type: ARMOR_STAND
@@ -234,9 +240,39 @@ L1R_SOWIEDZ_MLODE:
 SKILLS = """# Skille przeciwnikow remake'u Lochu 001 (caster = mob, delay dozwolony)
 # ---- PAK (R1). Dojrzewanie: 4 s spokoju, 1 s pecznienia i swiecenia, skutek. Zdeptany = remove (test: czy opozniony
 #      lancuch umiera z rzucajacym - flaga caster.dojrzewa jako bezpiecznik). ----
+# ---- KOLEJKA R1 (karta §13 wiersz 1): limit 12 aktywnych pakow na instancje, 13. wypiera NAJSTARSZY AKTYWNY.
+#      Numer z jednego rosnacego licznika l1r.nr (porzadek wystarczy, swiat niepotrzebny); instancje rozdziela distance=..300
+#      w execute at <pak> (selektor z distance patrzy tylko w wymiar paka). Obiekt 'l1r_pak dummy' zaklada sie RAZ na
+#      serwer (scoreboard jest wspolny dla swiatow): minecraft:scoreboard objectives add l1r_pak dummy.
+#      Wszystkie linie w jednym ticku, wiec wspolne l1r.ile/l1r.min nie mieszaja sie miedzy instancjami.
+#      Liczone i wybierane TYLKO paki z numerem (scores=1..): przy kilku pakach z jednego ticku (klon 16.11, spawn 14 naraz)
+#      pierwszy przechodzil kolejke, gdy reszta miala juz tag, ale nie numer (score 0) -> usychalo 13 zamiast 2.
+L1R_PAK_KOLEJKA:
+  Skills:
+  - addtag{tag=l1r_pq} @self
+  - command{c="minecraft:scoreboard players add l1r.nr l1r_pak 1"} @self
+  - command{c="minecraft:scoreboard players operation <caster.uuid> l1r_pak = l1r.nr l1r_pak"} @self
+  - command{c="minecraft:execute at <caster.uuid> store result score l1r.ile l1r_pak if entity @e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300]"} @self
+  - command{c="minecraft:execute if score l1r.ile l1r_pak matches 13.. run scoreboard players set l1r.min l1r_pak 2147483647"} @self
+  - command{c="minecraft:execute if score l1r.ile l1r_pak matches 13.. at <caster.uuid> as @e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300] run scoreboard players operation l1r.min l1r_pak < @s l1r_pak"} @self
+  - command{c="minecraft:execute if score l1r.ile l1r_pak matches 13.. at <caster.uuid> as @e[tag=l1r_pq,tag=!l1r_usycha,scores={l1r_pak=1..},distance=..300] if score @s l1r_pak = l1r.min l1r_pak run tag @s add l1r_usycha"} @self
+# usychanie: wypada z kolejki od razu (bez l1r_pq), nie dojrzewa (dojrzewa=0), 1 s szarzenia, remove bez ~onDeath
+L1R_PAK_USYCHA:
+  Skills:
+  - removetag{tag=l1r_pq} @self
+  - removetag{tag=l1r_usycha} @self
+  - setvariable{var=caster.dojrzewa;val=0;type=INTEGER} @self
+  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
+  - sound{s=block.azalea_leaves.break;v=1.0;p=0.6} @self
+  - particles{p=block;m=DEAD_BUSH;a=10;hs=0.3;vs=0.2;y=0.4} @self
+  - delay 10
+  - particles{p=block;m=DEAD_BUSH;a=10;hs=0.3;vs=0.2;y=0.4} @self
+  - delay 10
+  - remove @self
 L1R_PAK_ZDEPTANY:
   Skills:
   - setvariable{var=caster.dojrzewa;val=0;type=INTEGER} @self
+  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
   - particles{p=block;m=FLOWERING_AZALEA_LEAVES;a=16;hs=0.3;vs=0.2;y=0.4} @self
   - sound{s=block.azalea_leaves.break;v=1.2;p=1.2} @self
 L1R_PAK_PECZNIEJE:
@@ -251,6 +287,7 @@ L1R_PAK_DOJRZEWA:
   - skill{s=L1R_PAK_PECZNIEJE} @self ?variableequals{var=caster.dojrzewa;value=1}
   - delay 20
   - summon{type=L1R_PNIACZEK;amount=1;noise=0} @self ?variableequals{var=caster.dojrzewa;value=1}
+  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
   - remove @self
 L1R_PAK_SIEWCY_DOJRZEWA:
   Skills:
@@ -258,6 +295,7 @@ L1R_PAK_SIEWCY_DOJRZEWA:
   - skill{s=L1R_PAK_PECZNIEJE} @self ?variableequals{var=caster.dojrzewa;value=1}
   - delay 20
   - summon{type=L1R_PNIACZEK;amount=3;noise=1} @self ?variableequals{var=caster.dojrzewa;value=1}
+  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
   - remove @self
 L1R_PAK_DUZY_DOJRZEWA:
   Skills:
@@ -265,6 +303,7 @@ L1R_PAK_DUZY_DOJRZEWA:
   - skill{s=L1R_PAK_PECZNIEJE} @self ?variableequals{var=caster.dojrzewa;value=1}
   - delay 20
   - summon{type=L1R_KORZEN;amount=1;noise=0} @self ?variableequals{var=caster.dojrzewa;value=1}
+  - command{c="minecraft:scoreboard players reset <caster.uuid> l1r_pak"} @self
   - remove @self
 L1R_KORZEN_TRZYMA:
   Skills:
