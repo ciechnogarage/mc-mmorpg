@@ -62,14 +62,23 @@ public final class PierwszeKroki implements Listener {
       if (ex != null) { c.log.warning("Pierwsze kroki: zapis profilu " + d.profil + " nieudany — nagroda kroku " + krok + " wstrzymana"); return; }
       if (nagroda) c.komendyKonsoli(c.ust.krokiNagrody.get(krok - 1), Map.of("gracz", nick));
     }));
-    String opis = c.ust.krokiOpisy.get(krok - 1);
     int dalej = Kroki.nastepny(d.pierwszeKrokiMaska);
     // Pasek akcji mieści ~60 znaków i znika po 1,5 s (HUD MMOCore) — tylko krótki opis; pełna wskazówka na czacie
     // (klient QA 03.10: długi tekst wychodził poza ekran z obu stron).
-    c.pasek(p, dalej == 0 ? "<gold>Wszystkie pierwsze kroki ukończone!" : "<green>Krok " + krok + "/4 ✔ <gray>· Dalej: <white>" + c.ust.krokiOpisy.get(dalej - 1));
+    // Po 1,5 s: akcja kroku (np. „Przywołano: …” z Przywolania) pisze swój pasek zaraz po zdarzeniu i nadpisywała
+    // „Krok N/4 ✔” (test zagroda-dymki 16.11) — bez tytułu pasek jest głównym znakiem postępu, więc idzie po niej.
+    String pasekKroku = dalej == 0 ? "<gold>Wszystkie pierwsze kroki ukończone!" : "<green>Krok " + krok + "/4 ✔ <gray>· Dalej: <white>" + c.ust.krokiOpisy.get(dalej - 1);
+    Bukkit.getScheduler().runTaskLater(c.plugin, () -> { if (p.isOnline()) c.pasek(p, pasekKroku); }, 30L);
     if (dalej > 0) c.msg(p, "<gold>[Pierwsze kroki " + Kroki.postep(d.pierwszeKrokiMaska) + "/4]</gold> <white>" + c.ust.krokiWskazowki.get(dalej - 1));
-    p.showTitle(net.kyori.adventure.title.Title.title(Chowance.mm(dalej == 0 ? "<gold>Gratulacje!" : "<green>Krok " + krok + "/4 ukończony"), Chowance.mm(dalej == 0 ? "<gray>Pierwsze kroki za tobą" : "<gray>" + opis)));
-    p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1.2f);
+    // Tytuł na środku ekranu tylko na koniec wszystkich kroków; pośrednie = pasek + dźwięk + jedna linia „jak”
+    // (zgłoszenie 16.11: „czy musi spamować na cały ekran postęp questa”). Bieżący cel pokazuje też HUD (ui_goal).
+    if (dalej == 0) {
+      p.showTitle(net.kyori.adventure.title.Title.title(Chowance.mm("<gold>Gratulacje!"), Chowance.mm("<gray>Pierwsze kroki za tobą"),
+          net.kyori.adventure.title.Title.Times.times(java.time.Duration.ofMillis(200), java.time.Duration.ofMillis(2000), java.time.Duration.ofMillis(400))));
+      p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1.2f);
+    } else {
+      p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.6f);
+    }
     if (dalej == 0) Bukkit.getScheduler().runTaskLater(c.plugin, () -> {
       if (p.isOnline()) c.msg(p, c.ust.krokiCoDalej);
     }, 60L);
