@@ -85,3 +85,7 @@ Wyniki 16.11 (seria 2, 3 walki na wroga i styl, utracone HP, gracz ~28 HP; limit
 Garda (`… garda`, 4 ciosy): przód 1,2 HP, tył 7,5, przód 1,2 s po zapowiedzi ciosu 6,0. Pąki (`… pak`) 8/8 PASS.
 Koszt (klon, 12 pąków + 14 Pniaczków + 2 Kotwy + Sowiedź): MSPT śr. 0,3 → 0,6 ms, szczyt 10 ms przy masowym przywołaniu.
 Nie sprawdzone: limit 12 pąków na instancję (kolejka), boss Strażnik Sadu, ataki w grupie, prawdziwy gracz (klient QA).
+
+Decyzje właściciela 16.11 (po arenie): (1) pętla Pniaczek→pąk→Pniaczek ZOSTAJE (wariant A) — kara za niedeptanie;
+jedynym bezpiecznikiem liczby encji ma być limit 12 pąków na instancję, dopóki go nie ma, pętla rośnie bez końca;
+(2) Sowiedź ZOSTAJE bez złagodzenia (łapa 6) — nieuważny ginie 3/3. Generator bez zmian (stan 0010a39).
