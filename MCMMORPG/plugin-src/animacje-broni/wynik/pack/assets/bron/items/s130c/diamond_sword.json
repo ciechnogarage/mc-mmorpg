@@ -73,5 +73,6 @@
     "model": "bron:item/s130/diamond_sword"
    }
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

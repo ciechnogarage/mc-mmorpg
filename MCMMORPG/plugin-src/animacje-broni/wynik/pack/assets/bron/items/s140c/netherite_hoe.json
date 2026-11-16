@@ -73,5 +73,6 @@
     "model": "bron:item/s140/netherite_hoe"
    }
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

@@ -37,5 +37,6 @@
    "type": "minecraft:model",
    "model": "bron:item/s100/netherite_sword"
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

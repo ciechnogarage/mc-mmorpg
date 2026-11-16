@@ -184,7 +184,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
   private Wytrzymalosc wytrzymalosc;
   private double progRytmu, kosztRytmu, mnoznikRytmu, lukRytmu;
   private int progMocnego, odnowienieMocnegoTicki, odnowienieSzturchniecia, zmeczenieMocnego, oknoRytmu, dlugoscRytmu;
-  private double mnoznikSzturchniecia, bazowyMnoznikMocnego;
+  private double mnoznikSzturchniecia, bazowyMnoznikMocnego, minNaladowanieSzturchniecia;
   private boolean wlasnyCios;
   private Strona strona = new Strona(false, 60, 120, 1, 1, 1, 1, 0, 0);
   private Tarcza tarcza;
@@ -242,6 +242,7 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
         && getServer().getPluginManager().isPluginEnabled("MythicMobs")
         ? new SygnalyMobow(getConfig().getDouble("sygnaly_mobow.zasieg", 5)) : null;
     mnoznikSzturchniecia = getConfig().getDouble("mocny.szturchniecie_mnoznik", 0.5);
+    minNaladowanieSzturchniecia = getConfig().getDouble("mocny.szturchniecie_min_naladowanie", 0.9);
     bazowyMnoznikMocnego = getConfig().getDouble("mocny.bazowy_mnoznik", 0.8);
     progRytmu = getConfig().getDouble("rytm.prog_rytmu", 0.9);
     oknoRytmu = getConfig().getInt("rytm.okno_rytmu", 8);
@@ -743,6 +744,20 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
       return;
     }
     boolean szturchniecie = ticki < progMocnego;
+    // Szturchniecie zaraz po lekkim (LPM, a 0,1 s pozniej stukniecie PPM) dawalo dwa ciosy w 7 tikow (16.11, klon
+    // zwod-bledy: 12.9 vs 8.6 samego LPM). Jak lekki, czeka na naladowanie ataku; mocny i tak laduje sie dluzej.
+    // Naladowanie Papera spada dopiero z pakietem machniecia, a LPM i puszczenie PPM w jednym ticku przychodza przed
+    // nim (zmierzone: 1/4 odwrotnej kolejnosci dalo oba ciosy w t=4931) - dlatego tez odstep od ostatniego ciosu.
+    if (szturchniecie) {
+      Integer cios = tickCiosu.get(id);
+      double gotowosc = Math.min(p.getAttackCooldown(),
+          cios == null ? 1 : (teraz - cios + 0.5) / pelneNaladowanie(p));
+      if (gotowosc < minNaladowanieSzturchniecia) {
+        dbg("SZTURCHNIECIE typ=" + NBTItem.get(item).getType() + " wariant=za_wczesnie naladowanie="
+            + String.format(java.util.Locale.ROOT, "%.2f", gotowosc) + " obrazenia=0");
+        return;
+      }
+    }
     int naladowanie = ladunek(id, ticki);
     if (naladowanie != ticki) {
       Zwod z = zwody.get(id);
@@ -956,6 +971,11 @@ public final class AnimacjeBroni extends JavaPlugin implements Listener {
     // anulowane machniecie nie jest ciosem (klik w pelna mape, tryb zaklec) - bez smugi i swistu
     if (e.isCancelled()) return;
     Player p = e.getPlayer();
+    // Q nad niepustym slotem otwartego okna: klient wysyla pakiet machniecia PRZED kliknieciem wyrzucenia, a serwer bral
+    // go za lekki cios w powietrze (swist, smuga, stamina; 16.11 klon zwod-bledy: menu Q 2/3, okno E 5/5, pusty slot
+    // 0/2). Z oknem otwartym przez serwer (menu, Ksiega, GUI pluginow) nie da sie bic w swiecie. Wlasny ekwipunek (E)
+    // klient otwiera bez wiedzy serwera - ten przypadek zostaje. Q bez okna przechwytuje MenuKey razem z machnieciem.
+    if (p.getOpenInventory().getType() != org.bukkit.event.inventory.InventoryType.CRAFTING) return;
     if (programowyZamach.contains(p.getUniqueId())
         || getServer().getCurrentTick() - tickProgramowegoZamachu.getOrDefault(p.getUniqueId(), -100) <= 1) return;
     ItemStack bron = p.getInventory().getItemInMainHand();

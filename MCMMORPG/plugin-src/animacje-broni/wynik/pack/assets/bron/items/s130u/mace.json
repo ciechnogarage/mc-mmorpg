@@ -45,5 +45,6 @@
     "model": "bron:item/s130/mace"
    }
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

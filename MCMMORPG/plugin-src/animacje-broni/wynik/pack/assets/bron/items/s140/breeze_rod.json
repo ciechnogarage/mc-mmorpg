@@ -37,5 +37,6 @@
    "type": "minecraft:model",
    "model": "bron:item/s140/breeze_rod"
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

@@ -37,5 +37,6 @@
    "type": "minecraft:model",
    "model": "bron:item/s100/iron_hoe"
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

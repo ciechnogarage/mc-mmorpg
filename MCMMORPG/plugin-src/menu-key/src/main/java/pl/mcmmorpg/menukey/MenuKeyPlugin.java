@@ -9,7 +9,10 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -50,6 +53,15 @@ public final class MenuKeyPlugin extends JavaPlugin {
   private String permission;
   private Set<String> blockedWorlds;
 
+  /**
+   * Kiedy (System.nanoTime) przechwycilismy Q tego gracza. Klient po wyrzuceniu przedmiotu sam macha reka
+   * (pakiet ARM_ANIMATION zaraz po DROP_ITEM), a serwer bral to machniecie za cios bronia — "po kliknieciu q robi
+   * atak" (16.11, zmierzone na klonie: LEKKI i koszt staminy po samym Q). Machniecie, ktore przychodzi do
+   * {@link #SWING_WINDOW_NANOS} po przechwyconym Q, odrzucamy razem z Q.
+   */
+  private final Map<UUID, Long> lastMenuKey = new ConcurrentHashMap<>();
+  private static final long SWING_WINDOW_NANOS = 150_000_000L;
+
   @Override
   public void onEnable() {
     saveDefaultConfig();
@@ -71,10 +83,28 @@ public final class MenuKeyPlugin extends JavaPlugin {
           return;
         }
         event.setCancelled(true);
+        lastMenuKey.put(player.getUniqueId(), System.nanoTime());
         // Jestesmy na watku sieciowym. Wszystko, co dotyka gry, musi wrocic na glowny.
         Bukkit.getScheduler().runTask(MenuKeyPlugin.this, () -> dispatch(player));
       }
     });
+
+    protocol.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL,
+        PacketType.Play.Client.ARM_ANIMATION) {
+      @Override
+      public void onPacketReceiving(PacketEvent event) {
+        Long q = lastMenuKey.remove(event.getPlayer().getUniqueId());
+        if (q != null && System.nanoTime() - q <= SWING_WINDOW_NANOS) {
+          event.setCancelled(true);
+        }
+      }
+    });
+    getServer().getPluginManager().registerEvents(new org.bukkit.event.Listener() {
+      @org.bukkit.event.EventHandler
+      public void quit(org.bukkit.event.player.PlayerQuitEvent e) {
+        lastMenuKey.remove(e.getPlayer().getUniqueId());
+      }
+    }, this);
 
     getLogger().info("Klawisz Q -> " + (asConsole ? "konsola: " : "gracz: ") + command);
   }

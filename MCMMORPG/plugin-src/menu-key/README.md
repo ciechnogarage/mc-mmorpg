@@ -14,6 +14,13 @@ Ten plugin slucha wiec samego pakietu (ProtocolLib, `BLOCK_DIG`), reaguje **wyla
 `DROP_ITEM` i `DROP_ALL_ITEMS` (kopanie blokow zostaje nietkniete), anuluje go — zeby Q nie
 robilo dwoch rzeczy naraz — i wola komende z `config.yml`.
 
+**Machniecie po Q (16.11, zgloszenie "po kliknieciu q robi atak").** Klient po wyrzuceniu
+przedmiotu sam macha reka (pakiet `ARM_ANIMATION` zaraz po `DROP_ITEM`), a AnimacjeBroni bralo
+to za lekki cios (smuga, koszt staminy, obrazenia w celu przed graczem). Plugin zapamietuje
+chwile przechwyconego Q i odrzuca JEDNO machniecie, ktore przyjdzie do 150 ms pozniej
+(`SWING_WINDOW_NANOS`). Klon zwod-bledy, klient QA: Q bez okna przed celem 0/3 ciosow, menu
+otwiera sie; LPM przed i po trafia (7,6). Wpis czyszczony przy wyjsciu gracza.
+
 To wszystko. Plugin nie rysuje zadnego menu i nie zna ani jednej jego pozycji.
 
 ## Build i wdrozenie

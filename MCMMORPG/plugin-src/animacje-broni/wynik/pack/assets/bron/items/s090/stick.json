@@ -37,5 +37,6 @@
    "type": "minecraft:model",
    "model": "bron:item/s090/stick"
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

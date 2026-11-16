@@ -73,5 +73,6 @@
     "model": "bron:item/s080/netherite_sword"
    }
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

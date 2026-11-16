@@ -37,5 +37,6 @@
    "type": "minecraft:model",
    "model": "bron:item/s100/golden_shovel"
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

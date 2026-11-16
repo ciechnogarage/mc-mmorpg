@@ -37,5 +37,6 @@
    "type": "minecraft:model",
    "model": "bron:item/s130/golden_sword"
   }
- }
+ },
+ "hand_animation_on_swap": false
 }

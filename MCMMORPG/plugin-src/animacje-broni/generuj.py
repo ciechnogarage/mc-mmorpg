@@ -115,7 +115,7 @@ for typ in ('SHIELD', 'GAUNTLET', 'WHIP'):
     TYPY[typ]['prog_rytmu'] = 0.9
     TYPY[typ]['okno_rytmu'] = 8
 
-MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20,
+MOCNY = {'prog': 6, 'szturchniecie_mnoznik': 0.5, 'szturchniecie_odnowienie': 20, 'szturchniecie_min_naladowanie': 0.9,
          'odnowienie': 20, 'zmeczenie': 60, 'bazowy_mnoznik': 1.0,
          'szerokosc_celu': 0.65, 'szerokosc_luku': 1.45,
          'krok_szturchniecia': 0.18, 'dystans_kroku': 1.5, 'krok_wypadu': 0.4, 'krok_biegu': 0.65,
@@ -504,7 +504,12 @@ def kierunki_w_pierwszej_osobie(baza):
     for sc in sorted(os.listdir(it_dir)):
         for plik in sorted(os.listdir(os.path.join(it_dir, sc))):
             pp = os.path.join(it_dir, sc, plik)
-            json.dump(owin(json.load(open(pp))), open(pp, 'w'), indent=1)
+            d = owin(json.load(open(pp)))
+            # Shift (mocny <-> garda) i sprint (szarza) podmieniaja komponenty broni w rece; bez tego klient za kazdym
+            # razem chowal i dobywal bron od nowa (16.11, "po kliknieciu shift jakby doposazal bron na nowo", seria
+            # klatek klienta QA). Koszt: przelaczenie paska na bron tez jest bez animacji dobycia.
+            d['hand_animation_on_swap'] = False
+            json.dump(d, open(pp, 'w'), indent=1)
     return n
 
 

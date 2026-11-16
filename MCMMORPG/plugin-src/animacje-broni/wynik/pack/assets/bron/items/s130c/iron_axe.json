@@ -73,5 +73,6 @@
     "model": "bron:item/s130/iron_axe"
    }
   }
- }
+ },
+ "hand_animation_on_swap": false
 }
