@@ -15,17 +15,21 @@ def strzalka(kat):
 for i, k_ in enumerate(('n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw')): save(strzalka(i*45), f'zad_{k_}')
 save(ik_(lambda d: (d.ellipse((1, 1, 7, 7), outline=c('gold2')), rect(d, (4, 4, 4, 4), 'gold2'))), 'zad_tu')
 ZAD_WSP = [SPEC, ZYJE, '- placeholder{ph=%hud_zadanie_widac%;val=tak} true hide']
-# Koncowka ramki 25 GUI (50 px) z prawego brzegu cel_b: cel_a (115) + cel_c (25) = 140 GUI.
-_cb = _I.open(TEX/'cel_b.png'); _cc = _cb.crop((_cb.width - 50, 0, _cb.width, _cb.height)).copy()
-if _cc.getpixel((0, 0))[3] == 0: _cc.putpixel((0, 0), (0, 0, 0, 1))
+# Koncowka ramki 38 GUI (76 px) jako dalszy ciag gradientu cel_a (kolor i krycie z jego prawej kolumny): widoczne tlo do ~147 GUI,
+# wygaszenie do 153. 16.11: koncowka z cel_b miala krycie 10->0 (niewidoczna), tlo konczylo sie na 115 GUI i tekst wystawal.
+_ca = _I.open(TEX/'cel_a.png').convert('RGBA'); _r, _g, _b, _a0 = _ca.getpixel((_ca.width - 1, _ca.height // 2))
+_cc = _I.new('RGBA', (76, _ca.height))
+for _x in range(76):
+  _al = round(_a0 - (_a0 - 54) * _x / 63) if _x < 64 else round(54 * (75 - _x) / 12)
+  for _y in range(_ca.height): _cc.putpixel((_x, _y), (_r, _g, _b, max(_al, 1)))
 _cc.save(TEX/'cel_c.png')
 zad = []
 for e in (0, 1):
     # 16.11 (wlasciciel: "questy wychodza na pol ekranu"): ramka 230 -> 140 GUI, krok w 2 liniach po 22 znaki (HudDane
     # zadanie_krok_1/2), linie co 9 GUI - wysokosc 30 GUI bez zmian, bo kolumna l3 pod celem zaczyna sie 32 GUI nizej.
     warstwy = [
-      # odleglosc w linii tytulu (pusta bez celu na mapie); osobna warstwa przy prawej krawedzi nachodzila na "0/4" (klon 16.11)
-      ('tytul', txt('<#FFE7AE>%hud_zadanie_tytul% <#D5A96B>%hud_zadanie_postep%  %hud_zadanie_odl%', 18, 3, 'right')),
+      # odleglosc w linii tytulu (pusta bez celu na mapie; HudDane przycina tytul, by linia miescila sie w max-px); osobna warstwa przy prawej krawedzi nachodzila na "0/4" (klon 16.11)
+      ('tytul', txt('<#FFE7AE>%hud_zadanie_tytul% <#D5A96B>%hud_zadanie_postep% %hud_zadanie_odl%', 18, 3, 'right')),
       ('krok-1', txt('<#FFF1CC>%hud_zadanie_krok_1%', 18, 12, 'right')),
       ('krok-2', txt('<#FFF1CC>%hud_zadanie_krok_2%', 18, 21, 'right')),
       ('ikona', tex('cel_ikona', 6, 2)),
