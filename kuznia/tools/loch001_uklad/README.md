@@ -52,7 +52,19 @@ Pomiar: `mspt` przez RCON co ~5 s (okno 10 s, linia 2), `spark tickmonitor --thr
 **19 odstępów >75 ms (B, C, D, A/B) według zdarzenia w tej samej sekundzie (parser logu):** GC ≥15 ms w tym ticku — 9; wejście bota — 4 (do 304 ms); masowe `kill` 25 Pniaczków naraz — 2 (82–89 ms, ok. 1,4 ms na śmierć z przywołaniem pąka); bez wyjaśnienia — 4 (96–139 ms).
 - Profil długich ticków D2 (`--only-ticks-over 60`): 84% czasu wątku serwera w JVM (safepoint, GC, wolna alokacja G1), kod lochu i pluginów ≤6%.
 - **Pniaczek nie jest potwierdzoną przyczyną**: 3 z ok. 125 śmierci z ręki bota przy odstępie >75 ms ≈ przypadek (~1,4% sekund); 30 śmierci bez gracza (`damage`) — żaden odstęp >63 ms. Ścieżki „zabił gracz” w izolacji nie mierzono.
-- Klon ≠ produkcja: klon `--cpus 2`, `-Xmx2G`, G1 domyślny (MaxGCPauseMillis 200); world1 flagi Aikara, `MaxGCPauseMillis=50`, bez limitu CPU. Wyników GC z klona nie przenosić 1:1.
+- Klon a produkcja: heap ten sam (2G/1G), różnią się flagi GC (klon domyślnie G1 `MaxGCPauseMillis` 200; world1 Aikar + `MaxGCPauseMillis=50`) i `--cpus 2`. Klon z flagami world1: `JVM_JAK_PROD=1 klon.sh start <n>`.
 - Wejście do instancji MD `loch_001` (obecna mapa world1, bot bez OP, 3×): tick 305 ms + 166 ms (zimne), potem 134 ms, 67 ms — dotyczy każdego wejścia do lochu, całego serwera.
-- Alokacja ~11 MB/s przy 2 botach (GC co ~10 s); poza lochem największe: `zaklecia` `Nosnik` (co tick `getItemMeta` 9 slotów × gracz), `huddane` `SzybkiParser` — do decyzji właściciela, nie ruszane.
+- Alokacja ~11 MB/s przy 2 botach (GC co ~10 s). Poza lochem: `zaklecia` `Nosnik` co tick woła `getItemMeta()` (kopia metadanych) dla 9 slotów + obu rąk × gracz (`Nosnik.java:88,93`, gałąź `pasek-eq-naprawa`) — poprawka `ItemStack#getPersistentDataContainer()` bez kopii, do wpięcia po tamtej sesji; `SzybkiParser` (hud-dane) to już optymalizacja MythicHUD, jego alokacji nie zmierzono.
 - Klient QA (prawdziwy klient, sam klawisz W): schody J→R (9 stopni, y 29→38) w ~11 s, 0 „moved wrongly”.
+
+## Flagi JVM i tryb jednego świata MD (klon l001-jvm, 16.11, noc)
+Ten sam scenariusz D (2 kopie × 1 bot, oba PASS 5/5 w A i B) + 3 wejścia do instancji `loch_001`; liczone bez 30 s wejść botów, po 1 przebiegu na fazę.
+| Faza | JVM | Odstępy >75 ms | >100 ms | Najdłuższy | Pauzy GC | Wejście do instancji (max ticku: 1. / 2. / 3.) |
+|---|---|---|---|---|---|---|
+| A | domyślny G1 klona | 2,0/min | 0,9/min | 155 ms | 23/min, śr. 17 ms | 197 / 100 / 63 ms |
+| B | jak world1 (Aikar + `MaxGCPauseMillis=50`) | 1,0/min | 0,4/min | 111 ms | 27/min, śr. 13 ms | 207 / 65 / 68 ms |
+| C | jak B + `OneWorldDungeons: true` | — | — | — | — | 948 / 201 / 324 ms |
+
+- Flagi world1 mniej więcej o połowę zmniejszają lagi od GC, ale ich nie usuwają; koszt wejścia do instancji od flag nie zależy.
+- `OneWorldDungeons` gorszy, a bez dopełnienia `maps/loch_001/region/r.-1.1.mca` do 4096 B (209256 B, też na world1) wejście w ogóle nie działa (`EOFException`, `Region.java:89`). Nie wdrażać.
+- PSI CPU hosta w czasie pomiaru 9–12% (inne klony) — szum; różnica A/B to 1 przebieg, nie pewnik.
