@@ -9,9 +9,9 @@ Wszystko w pikselach GUI, skalowane NEAREST x3 (= GUI 3 na 1280x720, najciasniej
 """
 import json, sys, zipfile, io
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageEnhance
+from PIL import ImageChops, Image, ImageDraw, ImageEnhance
 
-TLO = Path(sys.argv[1]); OUT = Path(sys.argv[2]); OUT.mkdir(parents=True, exist_ok=True)
+TLO = Path(sys.argv[1]); OUT = Path(sys.argv[2]); WARIANTY = sys.argv[3] if len(sys.argv) > 3 else 'ABCDE'; OUT.mkdir(parents=True, exist_ok=True)
 CLIENT = Path('/home/dev/Desktop/Przemek/MC/MCMMORPG/scratchpad/mc-client/client.jar')
 ZAK = Path('/opt/docker/mc/data/world1/plugins/Nexo/pack/assets/zaklecia/textures/item')
 MCFONT = Path('/home/dev/Desktop/Przemek/MC/tools/hud/mcfont')
@@ -200,6 +200,66 @@ def kafel(ico, stan='gotowa', klawisz=None, cd=None, frac=0.0, tryb=None):
         mikro(d, x0+1, y0+1, klawisz, fg)
     return im
 
+# ---------- medalion (warianty D/E, runda 2) ----------
+# Runda 1 (A/B/C) czytala sie jak dalsze sloty hotbara: ten sam kwadrat 20 px, ta sama rama skory, mikro-klawisz.
+# Tu: inny ksztalt (kolo albo brak ramy), klawisz pelnym fontem MC POD ikona, odnowienie jak tarcza zegara.
+def kolo(r2, cx, cy):
+    return [(x, y) for y in range(22) for x in range(22) if (x+0.5-cx)**2 + (y+0.5-cy)**2 <= r2]
+def zegar(frac, cx=11, cy=10, r=10):
+    """Maska wycinka: pozostala czesc odnowienia, od godziny 12 zgodnie z zegarem."""
+    m = Image.new('L', (22, 22), 0)
+    if frac > 0:
+        d = ImageDraw.Draw(m); d.pieslice((cx-r, cy-r, cx+r, cy+r), -90, -90 + 360*frac, fill=255)
+    return m
+def medal(ico, stan='gotowa', klawisz=None, cd=None, frac=0.0, tryb=None, rama=True):
+    """22x32: kolo r=10 (srodek 11,10) albo sama ikona (rama=False) + plakietka klawisza pod spodem."""
+    im = Image.new('RGBA', (22, 32), T); d = ImageDraw.Draw(im)
+    pier = {'gotowa': 'gold1', 'odnowienie': 'leather2', 'brak': 'blue', 'laduje': 'leather2',
+            'trwa': 'cream', 'zablokowana': 'leather1'}[stan]
+    if tryb == 'f' and stan == 'gotowa': pier = 'gold2'
+    if tryb == 'przygas': pier = 'leather1'
+    if rama:
+        if tryb == 'f':
+            for p in kolo(11.6**2, 11, 10): im.putpixel(p, rgba('gold2', 140))
+        for p in kolo(10.3**2, 11, 10): im.putpixel(p, rgba('ink'))
+        for p in kolo(9.3**2, 11, 10): im.putpixel(p, rgba(pier))
+        for p in kolo(7.6**2, 11, 10): im.putpixel(p, rgba('leather0'))
+        if stan == 'laduje':  # postep = jasny luk na pierscieniu
+            lm = zegar(frac, r=10); pm = Image.new('L', (22, 22), 0); dm = ImageDraw.Draw(pm)
+            dm.ellipse((1, 0, 21, 20), fill=255); dm.ellipse((3, 2, 19, 18), fill=0)
+            arc = Image.new('RGBA', (22, 22), rgba('cream')); arc.putalpha(ImageChops.multiply(lm, pm))
+            im.alpha_composite(arc, (0, 0))
+    if stan != 'zablokowana':
+        ic = ico.copy()
+        if stan == 'brak': ic = szary(ic, 0.8)
+        if tryb == 'przygas': ic = ImageEnhance.Brightness(ic).enhance(0.45)
+        if stan == 'odnowienie': ic = szary(ic, 0.55)
+        if not rama:  # cien pod sama ikona, zeby odciac ja od trawy
+            sh = Image.new('RGBA', (16, 16), rgba('ink', 200)); sh.putalpha(ImageChops.multiply(ic.getchannel('A'), Image.new('L', (16, 16), 200)))
+            im.alpha_composite(sh, (4, 3))
+        if rama:  # przytnij do kola
+            cm = Image.new('L', (16, 16), 0); ImageDraw.Draw(cm).ellipse((0, 0, 15, 15), fill=255)
+            ic.putalpha(ImageChops.multiply(ic.getchannel('A'), cm))
+        if stan == 'odnowienie':  # kolor wraca zegarowo: jasna czesc = juz odnowione
+            kol = ico.copy(); keep = ImageChops.invert(zegar(frac).crop((3, 2, 19, 18)))
+            if rama: keep = ImageChops.multiply(keep, cm)
+            kol.putalpha(ImageChops.multiply(kol.getchannel('A'), keep)); ic.alpha_composite(kol)
+        im.alpha_composite(ic, (3, 2))
+        if stan == 'brak':
+            n = Image.new('RGBA', (16, 16), rgba('navy1', 120)); n.putalpha(ImageChops.multiply(ic.getchannel('A'), Image.new('L', (16, 16), 120)))
+            im.alpha_composite(n, (3, 2))
+    else:
+        d.rectangle((9, 6, 12, 8), outline=c('leather2')); d.rectangle((8, 9, 13, 13), fill=c('leather2'))
+    if cd is not None and stan == 'odnowienie':
+        s = str(cd); text(im, 11 - tw(s)//2, 6, s, 'cream')
+    if klawisz:  # plakietka pod ikona, font MC 8 px - czytelny z kanapy
+        w = tw(klawisz) + 4; x0 = 11 - (w+1)//2
+        bg, fg = ('gold2', 'ink') if tryb == 'f' else ('ink', 'grey' if tryb == 'przygas' else 'gold2')
+        d.rectangle((x0, 21, x0+w, 31), fill=c(bg))
+        if tryb != 'f': d.rectangle((x0, 21, x0+w, 31), outline=c('leather1'))
+        text(im, x0+2, 22, klawisz, fg, shadow=None)
+    return im
+
 # ---------- tlo ----------
 def tlo():
     im = Image.open(TLO).convert('RGBA')
@@ -275,6 +335,16 @@ def uklad(wariant, klasa, scena, styl='wanilia'):
             wklej(gui, g, xx, y-1); xx += 20
         x = HB_X + 182 + 6; plyta(d, (x-1, y-2, x+82, y+20))
         for i, g in enumerate(f): wklej(gui, g, x+1+i*20, y-1)
+    elif wariant in ('D', 'E'):  # runda 2: medaliony (D) / same ikony (E); bez przedmiotow i pustych kafli
+        rama = wariant == 'D'; krok = 23 if rama else 21
+        lp = [medal(spell(n), klawisz=k, rama=rama, **st) for (n, k), st in zip(MAG_LP, sc['lp'])] if klasa == 'mag' else []
+        f = [medal(ikona(k, styl), klawisz=KLAW[i], rama=rama, **sc['f'][i]) for i, k in enumerate(fk)]
+        y0 = 240 - 32   # plakietki klawiszy na dole ekranu, kolo obok gornej polowy hotbara i paskow
+        x = HB_X - 8 - krok*len(lp)
+        for i, g in enumerate(lp): gui.alpha_composite(g, (x+i*krok, y0))
+        x = HB_X + 182 + 8
+        for i, g in enumerate(f): gui.alpha_composite(g, (x+i*krok, y0))
+        print(wariant, klasa, 'lewo', 8+krok*len(lp), 'prawo', 8+krok*len(f)-(krok-22), 'GUI px z 122')
     else:  # C: przyklejone do hotbara - jeden dlugi pas, bez plytek; L/P i F po bokach, przedmioty na skrajach
         lewa = it[:1] + lp
         x = HB_X - 20*len(lewa)
@@ -293,7 +363,7 @@ def ekran(gui, klasa):
 
 def main():
     wyniki = []
-    for w in 'ABC':
+    for w in WARIANTY:
         for klasa, scena in (('mag', 'walka'), ('mag', 'tryb_f'), ('woj', 'walka')):
             im = ekran(uklad(w, klasa, scena), klasa)
             nazwa = f'{w}_{klasa}_{scena}'
@@ -311,6 +381,14 @@ def main():
         ark.alpha_composite(kafel(ico, klawisz='L' if kw['stan'] in ('laduje', 'trwa') else '3', **kw), (3+i*26, 2))
     ark.resize((ark.width*6, ark.height*6), N).save(OUT/'stany_x6.png')
     (OUT/'stany.json').write_text(json.dumps([n for n, _ in st], ensure_ascii=False))
+    # Runda 2: te same stany jako medalion (D) i sama ikona (E), x6
+    for wr, rama in (('D', True), ('E', False)):
+        ark = Image.new('RGBA', (len(st)*26+4, 36), rgba('#5B7A3A'))   # tlo jak trawa - E nie ma ramy
+        for i, (_, kw) in enumerate(st):
+            if kw['stan'] == 'pusta': continue
+            ico = spell('kula_ognia') if kw['stan'] in ('laduje', 'trwa', 'brak') else vanilla('iron_axe')
+            ark.alpha_composite(medal(ico, klawisz='L' if kw['stan'] in ('laduje', 'trwa') else '3', rama=rama, **kw), (3+i*26, 2))
+        ark.resize((ark.width*6, ark.height*6), N).save(OUT/f'stany_{wr}_x6.png')
     # Kroki odnowienia 8/8..0/8 (x6)
     ko = Image.new('RGBA', (9*26+4, 26), rgba('#2E2A26'))
     for i in range(9):
