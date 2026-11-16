@@ -46,10 +46,10 @@ scenariusz('zwod', async ({ w, polacz, rcon }) => {
   }[TRYB];
   for (const [klasa, typ, id, material, pelne] of BRONIE) {
     await rcon(`mmocore admin class ${NICK} ${klasa}`);
-    await sleep(1500);   // MMOCore przypina skill do paska ~1 s po zmianie klasy; bez pauzy miecz dwureczny 2/4 przebiegow bez PPM (16.11)
+    await sleep(1500);   // zapas po zmianie klasy (tagi arch_* i pasek MMOCore przychodza 0-2 s pozniej); PPM to nie blokuje - patrz qa/sonda-klasa.js
     await rcon(`minecraft:clear ${NICK}`);
     await rcon(`mi give ${typ} ${id} ${NICK} 1`);
-    await sleep(1200);
+    await sleep(1200);   // >= 10 t: bron z `mi give` dostaje komponenty (consumable = PPM) dopiero z zegara dopasujDlonie co 10 t
     if (!w.sprawdz(`${id}-bron`, await trzymaj(material), klasa)) continue;
     if (TRYB === 'dwie') {   // druga bron do lewej reki; DwieBronie uzbraja ja przy PPM
       // kopia broni z prawej po stronie serwera: mi give + klikanie okna psulo kursor (pasek 1-4 = umiejetnosci MMOCore, 16.11 3 przebiegi FAIL)

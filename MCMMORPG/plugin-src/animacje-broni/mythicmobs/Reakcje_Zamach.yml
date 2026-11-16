@@ -1,0 +1,53 @@
+# Reakcje mobow na zamach mocnego ciosu gracza. Plik do plugins/MythicMobs/skills/.
+# Sygnal ZAMACH wysyla AnimacjeBroni na poczatku ladowania PPM (SygnalyMobow.java) mobom MM, ktore celuja w gracza
+# i stoja przed nim w promieniu sygnaly_mobow.zasieg. @trigger = gracz. Mob reaguje tylko z linia ~onSignal:ZAMACH.
+# Cooldown = sens zwodu: zwod wyciaga reakcje, prawdziwy cios trafia, zanim mob moze zareagowac znowu.
+# Linie w mobach (plugins/MythicMobs/mobs/Loch_001.yml):
+#   L001_KORZENIAK:     - skill{s=REAKCJA_GARDA} @self ~onSignal:ZAMACH
+#                       - skill{s=REAKCJA_GARDA_TRAF} @self ~onDamaged ?variableequals{var=caster.garda;value=1}
+#   L001_WILK:          - skill{s=REAKCJA_ODSKOK} @trigger ~onSignal:ZAMACH
+#   L001_STARY_KORZEN:  - skill{s=REAKCJA_KONTRA} @trigger ~onSignal:ZAMACH
+
+# Garda: Korzeniak zaslania sie kora - 1 s Odpornosci III (-60% obrazen), stoi w miejscu; trzask drewna.
+REAKCJA_GARDA:
+  Cooldown: 4
+  Skills:
+  - setvariable{var=caster.garda;value=1;type=INTEGER;duration=20} @self
+  - potion{type=RESISTANCE;duration=20;level=2;hasParticles=false} @self
+  - potion{type=SLOWNESS;duration=20;level=4;hasParticles=false} @self
+  - sound{s=block.wood.place;v=1.2;p=0.6} @PlayersInRadius{r=12}
+  - particles{p=block;m=OAK_LOG;a=25;hs=0.4;vs=0.7;s=0.05;y=1} @self
+# Cios w garde: gluchy stuk zamiast zwyklego trafienia.
+REAKCJA_GARDA_TRAF:
+  Skills:
+  - sound{s=item.shield.block;v=1;p=0.7} @PlayersInRadius{r=12}
+  - particles{p=block;m=OAK_LOG;a=15;hs=0.3;vs=0.5;s=0.1;y=1} @self
+
+# Odskok: wilk odskakuje od gracza (~2-3 bloki), mocny cios trafia w powietrze.
+REAKCJA_ODSKOK:
+  Cooldown: 4
+  Skills:
+  - disengage{v=0.9;vy=0.35}
+  - sound{s=entity.wolf.growl;v=1;p=1.4} @PlayersInRadius{r=12}
+  - particles{p=cloud;a=8;hs=0.3;vs=0.1;s=0.02} @self
+
+# Kontra: Stary Korzen widzi dlugi zamach w swoim zasiegu - zapowiedz 0,4 s (stoi, ziemia pęka), potem uderza pierwszy.
+# Gracz uniknie: szybki cios (szturchniecie), zwod i krok w bok/tyl albo wyjscie z zasiegu.
+REAKCJA_KONTRA:
+  Cooldown: 5
+  TargetConditions:
+  - distance{d=<4} true
+  Skills:
+  - potion{type=SLOWNESS;duration=8;level=5;hasParticles=false} @self
+  - sound{s=block.rooted_dirt.break;v=1.5;p=0.5} @PlayersInRadius{r=16}
+  - particles{p=block;m=ROOTED_DIRT;a=40;hs=0.8;vs=0.4;s=0.1} @self
+  - delay 8
+  - skill{s=REAKCJA_KONTRA_CIOS}
+REAKCJA_KONTRA_CIOS:
+  TargetConditions:
+  - distance{d=<3.5} true
+  Skills:
+  - damage{a=6}
+  - throw{v=7;vy=4}           # skala MM ~1/10: v=7 ~ 0,7 bl/t (zwykly cios zombie ~0,4); v=1,1 dawalo 0,11 (16.11)
+  - sound{s=entity.ravager.attack;v=1.2;p=1.1} @PlayersInRadius{r=16}
+  - particles{p=sweep_attack;a=3;hs=0.4;vs=0.3;y=1} @self
