@@ -87,5 +87,6 @@ Koszt (klon, 12 pąków + 14 Pniaczków + 2 Kotwy + Sowiedź): MSPT śr. 0,3 →
 Nie sprawdzone: limit 12 pąków na instancję (kolejka), boss Strażnik Sadu, ataki w grupie, prawdziwy gracz (klient QA).
 
 Decyzje właściciela 16.11 (po arenie): (1) pętla Pniaczek→pąk→Pniaczek ZOSTAJE (wariant A) — kara za niedeptanie;
-jedynym bezpiecznikiem liczby encji ma być limit 12 pąków na instancję, dopóki go nie ma, pętla rośnie bez końca;
+pętla trwa bez końca, ale się nie mnoży (1 Pniaczek → 1 pąk → 1 Pniaczek; Siewca daje 3 tylko raz), górną granicę
+encji ma dać limit 12 pąków na instancję (jeszcze niezrobiony);
 (2) Sowiedź ZOSTAJE bez złagodzenia (łapa 6) — nieuważny ginie 3/3. Generator bez zmian (stan 0010a39).
