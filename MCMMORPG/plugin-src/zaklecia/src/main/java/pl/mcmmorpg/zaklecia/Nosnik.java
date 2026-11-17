@@ -84,13 +84,15 @@ final class Nosnik implements Listener {
 
   private static final NamespacedKey KLON_KSIEGI = new NamespacedKey("ksiega", "klon");
 
+  // Co tick dla kazdego gracza: widok PDC ItemStacka (Paper 1.21.11) bez kopii ItemMeta. Nie hasItemMeta(): w
+  // CraftItemStack woła getItemMeta() (bajtkod 1.21.11), wiec tez kopiuje. Pomiar 17.11 klon: README "Wydajnosc".
   boolean jest(ItemStack i) {
-    return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(klucz, PersistentDataType.BYTE);
+    return i != null && !i.isEmpty() && i.getPersistentDataContainer().has(klucz, PersistentDataType.BYTE);
   }
 
   boolean pusta(ItemStack i) {
-    return i != null && i.hasItemMeta()
-        && i.getItemMeta().getPersistentDataContainer().has(kluczPustej, PersistentDataType.BYTE);
+    return i != null && !i.isEmpty()
+        && i.getPersistentDataContainer().has(kluczPustej, PersistentDataType.BYTE);
   }
 
   ItemStack zrobPusta() {

@@ -30,3 +30,11 @@ Build: `./build.sh` → `build/libs/zaklecia-*.jar`.
   (priorytety `Wybor.PRIO_LISTA`=35 < `PRIO_KOMUNIKAT`=40 < `PRIO_RUCH`=41, więc komunikaty przypisania wygrywają z listą).
   Wcześniej bossbary u góry ekranu zasłaniały kartę gracza MythicHUD. Podpowiedź klawiszy idzie na czat, dopóki gracz
   pierwszy raz czegoś nie przypisze (flaga PDC `pasek_wyboru_umie`). Sprawdzone 15.11 w kliencie QA (klon `klawisze`).
+
+## Wydajność
+- `Nosnik.jest()`/`pusta()` idą co tick dla każdego gracza (`odswiezPuste`, 36 slotów + ręce). Czytają
+  `ItemStack.getPersistentDataContainer()` (widok, Paper 1.21.11) ze strażnikiem `!isEmpty()` — **nie**
+  `getItemMeta()` ani `hasItemMeta()`: oba kopiują ItemMeta (`CraftItemStack.hasItemMeta()` woła `getItemMeta()`, bajtkod 1.21.11).
+- Pomiar 17.11 (klon `--z-kreatorem`, 1 bot-mag z zaklęciem w lewej, `spark profiler --alloc` 60 s, wątek serwera):
+  `odswiezPuste` 41,4 MB → 11,0 MB (stary kod / nowy), `jest`+`pusta` 31,5 MB → 0,5 MB. Testy `eq/lewa.js` 28/30
+  i `klawisze/konflikty.js` 25/27 identyczne przed i po (te same FAIL: T8/T9, `*-cyfry-wolne` — zastane).
