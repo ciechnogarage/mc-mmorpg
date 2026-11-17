@@ -38,3 +38,13 @@ Build: `./build.sh` → `build/libs/zaklecia-*.jar`.
 - Pomiar 17.11 (klon `--z-kreatorem`, 1 bot-mag z zaklęciem w lewej, `spark profiler --alloc` 60 s, wątek serwera):
   `odswiezPuste` 41,4 MB → 11,0 MB (stary kod / nowy), `jest`+`pusta` 31,5 MB → 0,5 MB. Testy `eq/lewa.js` 28/30
   i `klawisze/konflikty.js` 25/27 identyczne przed i po (te same FAIL: T8/T9, `*-cyfry-wolne` — zastane).
+- **Reguła dla całego pluginu: znacznik przedmiotu czytaj `!i.isEmpty() && i.getPersistentDataContainer().has/get(...)`**,
+  nigdy przez `getItemMeta()`/`hasItemMeta()` (dotyczy też `Rzucanie.trybHud`/`nosnik`, `Kostur.odswiez`, `EfektyCzasowe`).
+- `Ksiega.w()` (co tick z Nosnika, `Rzucanie.trybLpm` i placeholderów HUD) czyta typ MM wprost z PDC `mythicmobs:type`
+  (`ItemKeys.TYPE`, MM 5.11.2), **nie** `getMythicTypeFromItem`: ta w 5.11.2 robi `isMythicItem` (kopia całego NBT przez
+  `getNBTData`) i `getItemMeta()`, a typ i tak bierze z tego samego PDC (bajtkod `ItemExecutor`). Różnica: nie migruje
+  przedmiotów ze starego NBT `MYTHIC_TYPE` (sprzed PDC) — zaklęcia robi `getItemStack` MM 5.11.2, więc ich nie ma.
+- Pomiar 17.11 po obu poprawkach (ten sam klon i scenariusz; C2 = stan po pierwszej poprawce, E = obie):
+  `Ksiega.w` 37,2 MB → 0, `Rzucanie.trybyLpm` 22,0 → 1,0 MB, `Nosnik.odswiezPuste` 9,4 → 0 (poniżej próbkowania 0,5 MB);
+  cały wątek serwera 180,9 → 119,5 MB/min. Zostało ok. 2,6 MB/min: `RzutyOdrzutowe.tick` 1,6 MB (niezbadane)
+  i `getAttribute` Papera w `modDo`. Testy jak wyżej, wynik bez zmian (28/30, 25/27).

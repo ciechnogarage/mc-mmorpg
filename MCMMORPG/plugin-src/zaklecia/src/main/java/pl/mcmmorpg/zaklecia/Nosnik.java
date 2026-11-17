@@ -203,7 +203,7 @@ final class Nosnik implements Listener {
           return "§cZwolnij miejsce w ekwipunku — broń z lewej dłoni nie ma gdzie trafić.";
       } else {
         // Klon wizualny okna E (ksiega:klon) to tylko obraz broni ze slotu 1 — prawdziwa bron oddaje sama ksiega-postaci.
-        if (teraz.hasItemMeta() && teraz.getItemMeta().getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
+        if (!teraz.isEmpty() && teraz.getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
         else if (!teraz.getType().isAir() && !jest(teraz)) {
           if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
           inv.setItemInOffHand(null);

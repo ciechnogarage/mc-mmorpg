@@ -261,7 +261,7 @@ final class EfektyCzasowe implements Listener {
   }
 
   private boolean oznaczona(ItemStack i) {
-    return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(kBron, PersistentDataType.BYTE);
+    return i != null && !i.isEmpty() && i.getPersistentDataContainer().has(kBron, PersistentDataType.BYTE);
   }
 
   private void zdejmij(Player p, boolean prawa) {
@@ -283,7 +283,7 @@ final class EfektyCzasowe implements Listener {
     for (int i = 0; i < 41; i++) {
       ItemStack item = p.getInventory().getItem(i);
       if (!oznaczona(item)) continue;
-      String id = item.getItemMeta().getPersistentDataContainer().get(kZrodlo, PersistentDataType.STRING);
+      String id = item.getPersistentDataContainer().get(kZrodlo, PersistentDataType.STRING);
       Ksiega.Zaklecie z = ksiega.poId.get(id);
       p.getInventory().setItem(i, z == null ? null : nosnik.zrob(z));
     }

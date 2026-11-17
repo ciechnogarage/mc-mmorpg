@@ -58,10 +58,14 @@ final class Ksiega {
     skBrakMany = cfg.getString("skille.brak-many", "Zak_BrakMany");
   }
 
-  /** Zaklecie w tym przedmiocie albo null. */
+  /** Klucz typu przedmiotu MM 5.11.2 (ItemKeys.TYPE = new NamespacedKey(MythicBukkit, "type"), bajtkod). */
+  private static final org.bukkit.NamespacedKey MM_TYP = new org.bukkit.NamespacedKey("mythicmobs", "type");
+
+  /** Zaklecie w tym przedmiocie albo null. Wolane co tick (Nosnik, Rzucanie) — bez getMythicTypeFromItem:
+   *  w MM 5.11.2 kopiuje cale NBT (isMythicItem→getNBTData) i ItemMeta, a typ i tak czyta z PDC pod MM_TYP. */
   Zaklecie w(ItemStack item) {
-    if (item == null || item.getType().isAir()) return null;
-    String typ = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+    if (item == null || item.isEmpty()) return null;
+    String typ = item.getPersistentDataContainer().get(MM_TYP, org.bukkit.persistence.PersistentDataType.STRING);
     return typ == null ? null : poPrzedmiocie.get(typ.toUpperCase());
   }
 }
