@@ -169,9 +169,13 @@ final class Nosnik implements Listener {
   /** Ksiega postaci (okno E, stale sloty) obsluguje komende konsoli ksiegareka — wtedy zaklecie zajmuje aktywna reke. */
   private boolean ksiegaRak() { return org.bukkit.Bukkit.getPluginCommand("ksiegareka") != null; }
 
+  // Wprost przez PluginCommand.execute, nie dispatchCommand: wewnatrz innej komendy (DeluxeMenus [console]
+  // zaklecia przypisz, RCON) Paper 1.21.11 KOLEJKUJE zagniezdzona komende (Commands.executeCommandInContext,
+  // CURRENT_EXECUTION_CONTEXT) i Ksiega odkladala bron dopiero PO sprawdzeniu reki — odmowa przy pierwszym kliku.
   private void ksiegaRak(Player p, String akcja, boolean prawa) {
-    org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(),
-        "ksiegareka " + p.getName() + " " + akcja + " " + (prawa ? "prawa" : "lewa"));
+    org.bukkit.command.PluginCommand k = org.bukkit.Bukkit.getPluginCommand("ksiegareka");
+    if (k != null) k.execute(org.bukkit.Bukkit.getConsoleSender(), "ksiegareka",
+        new String[] {p.getName(), akcja, prawa ? "prawa" : "lewa"});
   }
 
   private static boolean wolne(ItemStack i) { return i == null || i.getType().isAir(); }
