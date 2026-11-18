@@ -11,8 +11,9 @@ Plugin prowadzi rzucanie zaklęć koncentracji, a MythicMobs rysuje efekty i zad
   Z ksiega-postaci (komenda `ksiegareka` istnieje) broń z ręki odkłada Księga (`ksiegareka <gracz> odloz|przywroc
   <prawa|lewa>`): prawe zaklęcie zawsze w slocie 0, lewe w offhandzie, „Pusta” oddaje broń. Bez Księgi — stary `addItem`.
   **Ponowny wybór tego samego zaklęcia na tę samą dłoń zdejmuje je** (jak „Pusta”; Księga zaklęć, Shift+Q, komenda —
-  wszystko w `Nosnik.przypisz`; właściciel 16.11: „ponowne wybranie spella nie wywala go z ręki”). Udany wybór na pasku
-  Shift+Q zamyka pasek, odmowa zostawia go otwartym. `ksiegareka` wołana przez `PluginCommand.execute`, nie
+  wszystko w `Nosnik.przypisz`; właściciel 16.11: „ponowne wybranie spella nie wywala go z ręki”). Wybór na pasku
+  Shift+Q zamyka pasek, także odmowa (18.11: otwarty pasek po odmowie łapał kółko i następne Shift+Q tylko go
+  zamykało); komunikat zawsze z priorytetem `PRIO_RUCH`. `ksiegareka` wołana przez `PluginCommand.execute`, nie
   `Bukkit.dispatchCommand`: z komendy konsoli (menu DeluxeMenus `[console]`, RCON) zagnieżdżony dispatch wykonywał się
   po sprawdzeniu ręki → 1. klik w menu = „Zwolnij miejsce…”, miecz w zapasie, ręka pusta (klon 16.11).
 - **Bramka klasy** (`Bramka.java`, decyzja właściciela 21.10): rzucać i brać zaklęcie do dłoni mogą tylko klasy MMOCore

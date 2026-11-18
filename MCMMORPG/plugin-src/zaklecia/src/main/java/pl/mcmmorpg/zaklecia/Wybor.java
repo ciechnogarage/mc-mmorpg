@@ -179,12 +179,13 @@ final class Wybor implements Listener {
     boolean sukces = !wynik.startsWith("§c");
     s.ostatnio = System.currentTimeMillis();
     // Udany wybor zamyka pasek (16.11: otwarty pasek po przypisaniu + drugie Shift+Q, ktore go zamykalo, dawaly
-    // „nie da się zdjąć” — kolko zmienialo slot, PPM rzucal zamiast zdejmowac). Odmowa zostawia pasek otwarty.
-    if (sukces) zamknij(p, p.getUniqueId()); else odswiez(p, s, PRIO_LISTA);
+    // „nie da się zdjąć” — kolko zmienialo slot, PPM rzucal zamiast zdejmowac). Odmowa tez zamyka (18.11: otwarty
+    // pasek po odmowie lapal kolko i nastepne Shift+Q tylko go zamykalo) — gracz widzi powod i otwiera od nowa.
+    zamknij(p, p.getUniqueId());
     // „§7… dłoń jest pusta.” = zdjecie (takze ponownym wyborem tego samego zaklecia w tej dloni)
     Nosnik.pasek(p, sukces && wynik.startsWith("§7") ? wynik : sukces ? "§f" + (id == null ? "Pusta" : ksiega.poId.get(id).nazwa())
         + " §7→ " + (prawa ? "prawa" : "lewa") + " dłoń" : wynik,
-        sukces ? PRIO_RUCH : PRIO_KOMUNIKAT, TIKI_KOMUNIKATU);   // po zamknieciu (zgaszenie 41) komunikat musi przejsc
+        PRIO_RUCH, TIKI_KOMUNIKATU);   // po zamknieciu (zgaszenie 41) komunikat musi przejsc
     if (sukces) {
       p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 0.7f, 1.3f);
       p.getPersistentDataContainer().set(kluczUmie(), PersistentDataType.BYTE, (byte) 1);

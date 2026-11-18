@@ -84,6 +84,15 @@ public final class KsiegaPostaci extends JavaPlugin implements Listener {
             getConfig().getString("komunikaty." + key), "&cBlad.")));
   }
 
+  /** Komunikat w trakcie wyboru zaklęcia: przez arbitra MythicLib z priorytetem 42, bo komunikat Zaklęć (Wybor,
+   *  priorytet 41) przychodzi zaraz po komendzie ksiegareka i zwykły sendActionBar przykrywał (18.11, klon). */
+  void messageOverSpells(Player player, String key) {
+    String text = org.bukkit.ChatColor.translateAlternateColorCodes('&', java.util.Objects.requireNonNullElse(
+        getConfig().getString("komunikaty." + key), "&cBlad."));
+    try { io.lumine.mythic.lib.api.player.MMOPlayerData.get(player).getActionBar().show(42, 40L, text); }
+    catch (RuntimeException e) { message(player, key); }   // dane MMO po szybkim relogu bywają niegotowe
+  }
+
   void refreshLater(Player player) {
     Bukkit.getScheduler().runTaskLater(this, () -> {
       if (!player.isOnline() || player.getWorld().getName().equals("creator_limbo")) return;

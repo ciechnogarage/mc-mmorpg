@@ -74,6 +74,9 @@ final class Bron implements Listener {
   // Broń odłożona do zapasu, bo zaklęcie zajęło rękę — wraca po wyborze „Pusta” (putAwayForSpell).
   private final NamespacedKey stashedRightKey = new NamespacedKey("ksiega", "pod_zakleciem_prawa");
   private final NamespacedKey stashedLeftKey = new NamespacedKey("ksiega", "pod_zakleciem_lewa");
+  // Zapas zajęty → broń idzie do plecaka 14–35 ze znacznikiem PDC na SAMYM przedmiocie („prawa”/„lewa”), żeby
+  // zdjęcie zaklęcia znalazło ją także po przełożeniu w plecaku (18.11: wcześniej bez flagi — ręka zostawała pusta).
+  private final NamespacedKey stashedBackpackKey = new NamespacedKey("ksiega", "pod_zakleciem_plecak");
   // Nakładki z wdrozenie/klon/generuj.py: klon widać w slocie, w dłoni nic (właściciel 03.10).
   private final Set<String> hiddenModels = new HashSet<>();
   // Gracze w trakcie wyjscia (od PlayerQuitEvent do konca ticku). Paper zrzuca przedmiot z kursora
@@ -161,7 +164,11 @@ final class Bron implements Listener {
       player.getPersistentDataContainer().set(right ? stashedRightKey : stashedLeftKey,
           PersistentDataType.BYTE, (byte) 1);
     } else if (canStore(inventory, item, 14, 35)) {
-      if (store(inventory, item, 14, 35) != null) return false;
+      clearBackpackMark(inventory, right);
+      ItemStack marked = item.clone();
+      String side = right ? "prawa" : "lewa";
+      marked.editMeta(m -> m.getPersistentDataContainer().set(stashedBackpackKey, PersistentDataType.STRING, side));
+      if (store(inventory, marked, 14, 35) != null) return false;
       inventory.setItem(hand, null);
     } else return false;
     return true;
@@ -171,21 +178,52 @@ final class Bron implements Listener {
   void restoreAfterSpell(Player player, boolean right) {
     canonical(player);
     NamespacedKey flag = right ? stashedRightKey : stashedLeftKey;
-    if (!player.getPersistentDataContainer().has(flag)) { refreshLater(player); return; }
-    player.getPersistentDataContainer().remove(flag);
     PlayerInventory inventory = player.getInventory();
     int hand = right ? RIGHT : LEFT, spare = right ? RIGHT_SPARE : LEFT_SPARE;
-    ItemStack weapon = real(inventory, spare);
+    boolean flagged = player.getPersistentDataContainer().has(flag);
+    player.getPersistentDataContainer().remove(flag);
+    int from = flagged && !Przedmioty.empty(real(inventory, spare)) ? spare : markedSlot(inventory, right);
+    if (from < 0) { refreshLater(player); return; }
+    ItemStack weapon = from == spare ? real(inventory, spare) : unmark(inventory.getItem(from));
+    if (from != spare) inventory.setItem(from, weapon);   // znacznik zdjęty zawsze, także gdy broń nie pasuje
     ItemStack current = inventory.getItem(hand);
     boolean free = Przedmioty.empty(current) || virtual(current);
     boolean fits = right
         ? rightAllowed(weapon) && (!twoHanded(weapon) || Przedmioty.empty(real(inventory, LEFT)))
         : leftAllowed(weapon) && !twoHanded(real(inventory, RIGHT));
     if (free && !Przedmioty.empty(weapon) && weapon(weapon) && fits) {
-      inventory.setItem(spare, null);
+      inventory.setItem(from, null);
       inventory.setItem(hand, weapon);
+    } else if (free && !Przedmioty.empty(weapon) && weapon(weapon)) {
+      // Nie pasuje (dwuręczna przy zajętej lewej): zostaje tam, gdzie leży, ale gracz wie dlaczego (18.11, test łuku).
+      plugin.messageOverSpells(player, right ? "dwureczna" : "dwureczna-do-prawej");
     }
     refreshLater(player);
+  }
+
+  /** Slot plecaka 14–35 z bronią odłożoną pod zaklęcie tej ręki albo -1. */
+  private int markedSlot(PlayerInventory inventory, boolean right) {
+    String side = right ? "prawa" : "lewa";
+    for (int slot = 14; slot <= 35; slot++) {
+      ItemStack item = inventory.getItem(slot);
+      if (Przedmioty.empty(item) || !item.hasItemMeta()) continue;
+      if (side.equals(item.getItemMeta().getPersistentDataContainer().get(stashedBackpackKey, PersistentDataType.STRING)))
+        return slot;
+    }
+    return -1;
+  }
+
+  private ItemStack unmark(ItemStack item) {
+    if (Przedmioty.empty(item) || !item.hasItemMeta()
+        || !item.getItemMeta().getPersistentDataContainer().has(stashedBackpackKey)) return item;
+    ItemStack clean = item.clone();
+    clean.editMeta(m -> m.getPersistentDataContainer().remove(stashedBackpackKey));
+    return clean;
+  }
+
+  private void clearBackpackMark(PlayerInventory inventory, boolean right) {
+    for (int slot = markedSlot(inventory, right); slot >= 0; slot = markedSlot(inventory, right))
+      inventory.setItem(slot, unmark(inventory.getItem(slot)));
   }
 
   /**
@@ -438,7 +476,7 @@ final class Bron implements Listener {
           : m != null && m.hasItemName() ? m.getItemName() : "zaklęcie").replaceAll("§.", "");
       ItemStack icon = Przedmioty.icon(plugin.getConfig().getString("ikony." + side, "nexo:mmo_icon_gloves"),
           (right ? "§7Prawa ręka: §f" : "§7Lewa ręka: §f") + nazwa,
-          "§8Zaklęcie w dłoni, broń w zapasie. Wybierz je jeszcze raz, żeby zdjąć.", key);
+          "§8Zaklęcie w dłoni. Wybierz je jeszcze raz, żeby zdjąć i wrócić do broni.", key);
       return right ? icon : hiddenInHand(icon);
     }
     // Nowy stos kopiuje wyłącznie komponenty wizualne, nigdy CUSTOM_DATA/NBT/PDC MMOItems.
@@ -863,6 +901,8 @@ final class Bron implements Listener {
     }
     player.getPersistentDataContainer().remove(stashedRightKey);
     player.getPersistentDataContainer().remove(stashedLeftKey);
+    clearBackpackMark(inventory, true);
+    clearBackpackMark(inventory, false);
     inventory.setItem(RIGHT, spareRight);
     inventory.setItem(LEFT, spareLeft);
     inventory.setItem(RIGHT_SPARE, activeRight);

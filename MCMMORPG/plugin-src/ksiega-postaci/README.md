@@ -156,9 +156,14 @@ Komenda konsoli (`ksiegapostaci.portal.admin`), umowa z pluginem Zaklecia bez za
 - Obraz ręki z zaklęciem (1 lewa, 13 prawa) to ikona dłoni `ikony.pusta-*` z nazwą „Prawa/Lewa ręka: <zaklęcie>”,
   nie kopia nośnika: zaklęcie nie jest przedmiotem ekwipunku i nie pokazuje się w siatce plecaka okna E (właściciel 16.11:
   „chujowo jak wpada skill do eq przecież to nonsens”; klon zaklecia-rece: ikona czaru w 13 → `mmo_icon_right_hand`).
-- Gdy zapas ręki był zajęty i broń poszła do plecaka 14–35, zdjęcie zaklęcia jej NIE oddaje (flaga tylko dla zapasu) —
-  ręka zostaje pusta, broń w plecaku (sprawdzone na klonie 16.11, nic nie ginie).
-- `ksiegareka <gracz> przywroc <prawa|lewa>` — po wyborze „Pusta” broń odłożona do zapasu wraca do ręki.
+- Gdy zapas ręki był zajęty, broń idzie do plecaka 14–35 ze znacznikiem PDC na PRZEDMIOCIE
+  (`ksiega:pod_zakleciem_plecak` = `prawa|lewa`, jeden na rękę) i wraca po zdjęciu zaklęcia także po przełożeniu
+  w plecaku; znacznik znika przy powrocie, przy Shift+F i przy następnym odłożeniu tej ręki. Wcześniej (16.11) wracała
+  tylko broń z zapasu. Klon zaklecia-rece 18.11: różdżka 14 → przełożona do 30 → wraca do 0 bez znacznika; grimuar w lewej.
+- `ksiegareka <gracz> przywroc <prawa|lewa>` — po wyborze „Pusta” broń odłożona do zapasu/plecaka wraca do ręki.
+  Gdy nie pasuje (dwuręczna przy zajętej lewej), zostaje, gdzie leży, a gracz widzi „Broń dwuręczna zajmuje obie ręce.”
+  przez arbitra MythicLib z priorytetem 42 (`messageOverSpells`) — zwykły `sendActionBar` przykrywał komunikat Zaklęć
+  (priorytet 41) i łuk znikał z ręki bez słowa (klon 18.11). W stanie kanonicznym łuk wraca normalnie przez zapas 11.
 - Shift+F z zaklęciem w ręce: zaklęcia zdjęte, potem zwykła zamiana z zapasem (gdy oba zapasy puste — nic).
 - `ksiegareka <gracz> uzbroj` — koniec zestawu startowego (`tools/klasy-rasowe/generuj_klasy.py` → CoreTools
   `klasy-rasowe.yml`). `mi give` kładzie w pierwszy wolny slot; u świeżej postaci ikon Księgi jeszcze nie ma, więc
