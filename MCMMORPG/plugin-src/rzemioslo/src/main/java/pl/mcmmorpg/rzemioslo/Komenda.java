@@ -40,6 +40,16 @@ final class Komenda implements TabExecutor {
                 if (p == null) return offline(s, a[1]);
                 plugin.zlecenia().start(p, a[2].toLowerCase());
             }
+            case "flaga" -> {              // flaga <gracz> <klucz> [wartosc...] — bez wartosci = usun; per postac (profil MMOProfiles)
+                if (a.length < 3) { pomoc(s); return true; }
+                Player p = Bukkit.getPlayerExact(a[1]);
+                if (p == null) return offline(s, a[1]);
+                String kl = a[2].toLowerCase(java.util.Locale.ROOT);
+                if (!Zlecenia.dobryKlucz(kl)) { s.sendMessage("[Rzemioslo] klucz flagi tylko a-z 0-9 _ (do 64 znakow): " + a[2]); return true; }
+                String w = a.length > 3 ? String.join(" ", Arrays.copyOfRange(a, 3, a.length)) : null;
+                plugin.zlecenia().ustawFlage(p, kl, w);
+                s.sendMessage("[Rzemioslo] flaga " + kl + " " + (w == null ? "usunieta" : "= " + w) + " (" + p.getName() + ", postac " + Zlecenia.profil(p) + ")");
+            }
             case "przeprawa" -> {          // przeprawa <gracz> <id> <komenda po sukcesie...>
                 if (a.length < 4) { pomoc(s); return true; }
                 Player p = Bukkit.getPlayerExact(a[1]);
@@ -153,12 +163,12 @@ final class Komenda implements TabExecutor {
     }
 
     private void pomoc(CommandSender s) {
-        s.sendMessage("/rzemioslo reload | info <gracz> | zlecenie oddaj <gracz> <prof> <n> | start <gracz> <prof>"
+        s.sendMessage("/rzemioslo reload | info <gracz> | zlecenie oddaj <gracz> <prof> <n> | start <gracz> <prof> | flaga <gracz> <klucz> [wartosc]"
                 + " | przeprawa <gracz> <id> <komenda...> | narzedzie <gracz> <rodzaj> <tier> | wezel <x> <y> <z> [swiat]"
                 + " | postaw <nexoId> <swiat> <x> <y> <z> | doreki <gracz> <itemId> [slot 0-8] | oboz <gracz> <id>");
     }
 
-    private static final List<String> PODKOMENDY = List.of("reload", "info", "zlecenie", "start", "przeprawa", "narzedzie", "wezel",
+    private static final List<String> PODKOMENDY = List.of("reload", "info", "zlecenie", "start", "flaga", "przeprawa", "narzedzie", "wezel",
             "postaw", "doreki", "oboz");
 
     @Override
