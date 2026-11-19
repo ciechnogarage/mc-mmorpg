@@ -182,8 +182,8 @@ final class Rzucanie implements Listener {
   boolean trybHud(Player p) {
     if (Nosnik.widz(p)) return false;
     ItemStack prawa = p.getInventory().getItemInMainHand();
-    return prawa.getType() == org.bukkit.Material.DEBUG_STICK && prawa.hasItemMeta()
-        && prawa.getItemMeta().getPersistentDataContainer().has(kNosnik);
+    return prawa.getType() == org.bukkit.Material.DEBUG_STICK
+        && prawa.getPersistentDataContainer().has(kNosnik); // co tick: widok PDC, bez kopii ItemMeta (README Wydajnosc)
   }
 
   private void trybyLpm() { for (Player p : Bukkit.getOnlinePlayers()) atrybutyLpm(p, trybLpm(p)); }
@@ -293,7 +293,7 @@ final class Rzucanie implements Listener {
   }
 
   private boolean nosnik(org.bukkit.inventory.ItemStack i) {
-    return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(kNosnik);
+    return i != null && !i.isEmpty() && i.getPersistentDataContainer().has(kNosnik);
   }
 
   @EventHandler(priority = EventPriority.LOWEST)

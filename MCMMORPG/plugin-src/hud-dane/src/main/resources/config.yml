@@ -30,13 +30,13 @@ efekty:
   resistance: odpornosc
   speed: szybkosc
   fire_resistance: ognioodpornosc
-# Cel zadania w HUD-zie: krok przycinany do max-krok znakow (zadanie_krok) albo zawijany w 2 linie po max-linia znakow
-# (zadanie_krok_1/2, ramka 140 GUI od 16.11); tytul MMOCore przycinany do max-tytul. Strzalka do miejsca, ktorego fragment
+# Cel zadania w HUD-zie: krok przycinany do max-krok znakow (zadanie_krok) albo zawijany po slowach w 2 linie (zadanie_krok_1/2);
+# tytul przycinany tak, by linia "tytul postep odleglosc" sie miescila. max-px = szerokosc linii w PIKSELACH GUI czcionki gry
+# (tabela szerokosci.txt w jarze): tekst od x 18, widoczne tlo ramki do ~147 GUI. Strzalka do miejsca, ktorego fragment
 # wystepuje w pelnym tekscie kroku.
 zadania:
   max-krok: 38
-  max-linia: 22
-  max-tytul: 16
+  max-px: 128
   miejsca:
     straznicza:
       fragment: "Strażniczk"

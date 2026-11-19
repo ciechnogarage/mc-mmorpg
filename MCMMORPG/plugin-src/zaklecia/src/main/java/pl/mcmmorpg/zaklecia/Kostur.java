@@ -46,7 +46,7 @@ final class Kostur implements Listener {
   void odswiez(Player p) {
     // stare nosniki (sprzed 13.10) bez flagi MMOITEMS_HANDWORN - podmien, zeby MMOItems nie karal "zajetymi rekami"
     ItemStack lewa = p.getInventory().getItemInOffHand();
-    if (lewa.hasItemMeta() && lewa.getItemMeta().getPersistentDataContainer().has(NOSNIK)) {
+    if (!lewa.isEmpty() && lewa.getPersistentDataContainer().has(NOSNIK)) { // widok PDC, bez kopii ItemMeta
       ItemStack nowa = Nosnik.naDloni(lewa);
       if (nowa != lewa) p.getInventory().setItemInOffHand(nowa);
     }

@@ -84,13 +84,15 @@ final class Nosnik implements Listener {
 
   private static final NamespacedKey KLON_KSIEGI = new NamespacedKey("ksiega", "klon");
 
+  // Co tick dla kazdego gracza: widok PDC ItemStacka (Paper 1.21.11) bez kopii ItemMeta. Nie hasItemMeta(): w
+  // CraftItemStack woła getItemMeta() (bajtkod 1.21.11), wiec tez kopiuje. Pomiar 17.11 klon: README "Wydajnosc".
   boolean jest(ItemStack i) {
-    return i != null && i.hasItemMeta() && i.getItemMeta().getPersistentDataContainer().has(klucz, PersistentDataType.BYTE);
+    return i != null && !i.isEmpty() && i.getPersistentDataContainer().has(klucz, PersistentDataType.BYTE);
   }
 
   boolean pusta(ItemStack i) {
-    return i != null && i.hasItemMeta()
-        && i.getItemMeta().getPersistentDataContainer().has(kluczPustej, PersistentDataType.BYTE);
+    return i != null && !i.isEmpty()
+        && i.getPersistentDataContainer().has(kluczPustej, PersistentDataType.BYTE);
   }
 
   ItemStack zrobPusta() {
@@ -167,11 +169,10 @@ final class Nosnik implements Listener {
   /** Ksiega postaci (okno E, stale sloty) obsluguje komende konsoli ksiegareka — wtedy zaklecie zajmuje aktywna reke. */
   private boolean ksiegaRak() { return org.bukkit.Bukkit.getPluginCommand("ksiegareka") != null; }
 
+  // Wprost przez PluginCommand.execute, nie dispatchCommand: wewnatrz innej komendy (DeluxeMenus [console]
+  // zaklecia przypisz, RCON) Paper 1.21.11 KOLEJKUJE zagniezdzona komende (Commands.executeCommandInContext,
+  // CURRENT_EXECUTION_CONTEXT) i Ksiega odkladala bron dopiero PO sprawdzeniu reki — odmowa przy pierwszym kliku.
   private void ksiegaRak(Player p, String akcja, boolean prawa) {
-    // Executor wprost, nie Bukkit.dispatchCommand: gdy przypisanie przychodzi z komendy konsoli (menu Ksiegi
-    // DeluxeMenus [console], RCON), zagniezdzona komenda wykonywala sie PO sprawdzeniu reki — gracz dostawal
-    // „broń z prawej dłoni nie ma gdzie trafić”, a miecz i tak szedl do zapasu, bez zaklecia w dloni
-    // (16.11, klon zaklecia-rece: menu 1. klik = nic, 2. klik = zaklecie). Pasek Shift+Q (zdarzenie gracza) dzialal.
     org.bukkit.command.PluginCommand k = org.bukkit.Bukkit.getPluginCommand("ksiegareka");
     if (k != null) k.execute(org.bukkit.Bukkit.getConsoleSender(), "ksiegareka",
         new String[] {p.getName(), akcja, prawa ? "prawa" : "lewa"});
@@ -222,7 +223,7 @@ final class Nosnik implements Listener {
           return "§cZwolnij miejsce w ekwipunku — broń z lewej dłoni nie ma gdzie trafić.";
       } else {
         // Klon wizualny okna E (ksiega:klon) to tylko obraz broni ze slotu 1 — prawdziwa bron oddaje sama ksiega-postaci.
-        if (teraz.hasItemMeta() && teraz.getItemMeta().getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
+        if (!teraz.isEmpty() && teraz.getPersistentDataContainer().has(KLON_KSIEGI)) inv.setItemInOffHand(null);
         else if (!teraz.getType().isAir() && !jest(teraz)) {
           if (!inv.addItem(teraz.clone()).isEmpty()) return "§cZwolnij miejsce w ekwipunku — lewa dłoń jest zajęta.";
           inv.setItemInOffHand(null);

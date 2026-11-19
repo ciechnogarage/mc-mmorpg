@@ -13,9 +13,11 @@ Plugin prowadzi rzucanie zaklęć koncentracji, a MythicMobs rysuje efekty i zad
   **Ponowny wybór tego samego zaklęcia na tę samą dłoń zdejmuje je** (jak „Pusta”; Księga zaklęć, Shift+Q, komenda —
   wszystko w `Nosnik.przypisz`; właściciel 16.11: „ponowne wybranie spella nie wywala go z ręki”). Wybór na pasku
   Shift+Q zamyka pasek, także odmowa (18.11: otwarty pasek po odmowie łapał kółko i następne Shift+Q tylko go
-  zamykało); komunikat zawsze z priorytetem `PRIO_RUCH`. `ksiegareka` wołana przez `PluginCommand.execute`, nie
-  `Bukkit.dispatchCommand`: z komendy konsoli (menu DeluxeMenus `[console]`, RCON) zagnieżdżony dispatch wykonywał się
-  po sprawdzeniu ręki → 1. klik w menu = „Zwolnij miejsce…”, miecz w zapasie, ręka pusta (klon 16.11).
+  zamykało); komunikat zawsze z priorytetem `PRIO_RUCH`.
+  `ksiegareka` idzie wprost przez `PluginCommand.execute`, NIE `dispatchCommand`: wewnątrz innej komendy (menu
+  DeluxeMenus `[console] zaklecia przypisz`, RCON) Paper 1.21.11 kolejkuje zagnieżdżoną komendę do końca zewnętrznej
+  (`Commands.executeCommandInContext`), więc Księga odkładała broń PO sprawdzeniu ręki — pierwszy klik w menu z bronią
+  w ręce dawał „nie ma gdzie trafić” i zabierał broń (18.11, klon: menu 0/2 → 2/2, `eq/lewa.js` 28/30 → 30/30).
 - **Bramka klasy** (`Bramka.java`, decyzja właściciela 21.10): rzucać i brać zaklęcie do dłoni mogą tylko klasy MMOCore
   z `plugins/Zaklecia/klasy.yml` → `dozwolone-klasy` (id klas, wielkość liter bez znaczenia). Plik pisze
   `tools/klasy-rasowe/generuj_klasy.py` (wszystkie klasy archetypów mag i akolita). Brak pliku lub pusta lista = bramka wyłączona.
@@ -36,3 +38,21 @@ Build: `./build.sh` → `build/libs/zaklecia-*.jar`.
   (priorytety `Wybor.PRIO_LISTA`=35 < `PRIO_KOMUNIKAT`=40 < `PRIO_RUCH`=41, więc komunikaty przypisania wygrywają z listą).
   Wcześniej bossbary u góry ekranu zasłaniały kartę gracza MythicHUD. Podpowiedź klawiszy idzie na czat, dopóki gracz
   pierwszy raz czegoś nie przypisze (flaga PDC `pasek_wyboru_umie`). Sprawdzone 15.11 w kliencie QA (klon `klawisze`).
+
+## Wydajność
+- `Nosnik.jest()`/`pusta()` idą co tick dla każdego gracza (`odswiezPuste`, 36 slotów + ręce). Czytają
+  `ItemStack.getPersistentDataContainer()` (widok, Paper 1.21.11) ze strażnikiem `!isEmpty()` — **nie**
+  `getItemMeta()` ani `hasItemMeta()`: oba kopiują ItemMeta (`CraftItemStack.hasItemMeta()` woła `getItemMeta()`, bajtkod 1.21.11).
+- Pomiar 17.11 (klon `--z-kreatorem`, 1 bot-mag z zaklęciem w lewej, `spark profiler --alloc` 60 s, wątek serwera):
+  `odswiezPuste` 41,4 MB → 11,0 MB (stary kod / nowy), `jest`+`pusta` 31,5 MB → 0,5 MB. Testy `eq/lewa.js` 28/30
+  i `klawisze/konflikty.js` 25/27 identyczne przed i po (te same FAIL: T8/T9, `*-cyfry-wolne` — zastane).
+- **Reguła dla całego pluginu: znacznik przedmiotu czytaj `!i.isEmpty() && i.getPersistentDataContainer().has/get(...)`**,
+  nigdy przez `getItemMeta()`/`hasItemMeta()` (dotyczy też `Rzucanie.trybHud`/`nosnik`, `Kostur.odswiez`, `EfektyCzasowe`).
+- `Ksiega.w()` (co tick z Nosnika, `Rzucanie.trybLpm` i placeholderów HUD) czyta typ MM wprost z PDC `mythicmobs:type`
+  (`ItemKeys.TYPE`, MM 5.11.2), **nie** `getMythicTypeFromItem`: ta w 5.11.2 robi `isMythicItem` (kopia całego NBT przez
+  `getNBTData`) i `getItemMeta()`, a typ i tak bierze z tego samego PDC (bajtkod `ItemExecutor`). Różnica: nie migruje
+  przedmiotów ze starego NBT `MYTHIC_TYPE` (sprzed PDC) — zaklęcia robi `getItemStack` MM 5.11.2, więc ich nie ma.
+- Pomiar 17.11 po obu poprawkach (ten sam klon i scenariusz; C2 = stan po pierwszej poprawce, E = obie):
+  `Ksiega.w` 37,2 MB → 0, `Rzucanie.trybyLpm` 22,0 → 1,0 MB, `Nosnik.odswiezPuste` 9,4 → 0 (poniżej próbkowania 0,5 MB);
+  cały wątek serwera 180,9 → 119,5 MB/min. Zostało ok. 2,6 MB/min: `RzutyOdrzutowe.tick` 1,6 MB (niezbadane)
+  i `getAttribute` Papera w `modDo`. Testy jak wyżej, wynik bez zmian (28/30, 25/27).
