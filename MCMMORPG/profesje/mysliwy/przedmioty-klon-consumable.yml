@@ -1,0 +1,28 @@
+# >>> MYSLIWY wycinek (tylko klon; docelowo profesje/tresc.py) — consumable.yml
+PROF_SUSZONA_DZICZYZNA:
+  base:
+    material: COOKED_MUTTON
+    name: '&aSuszona dziczyzna'
+    lore:
+    - '&7Uwędzona nad ogniskiem. Lekka, nie psuje się w drodze.'
+    - '&8Zielona Granica · tier I'
+    vanilla-eating: true
+    consume-seconds: 1.6
+    restore-food: 5.0
+    restore-saturation: 6.0
+    disable-crafting: true
+    disable-smelting: true
+PROF_SUSZONA_DZICZYZNA_WYBORNE:
+  base:
+    material: COOKED_MUTTON
+    name: '&6Suszona dziczyzna (wyborna)'
+    lore:
+    - '&7Uwędzona nad ogniskiem z czystego mięsa.'
+    - '&8Zielona Granica · tier I'
+    vanilla-eating: true
+    consume-seconds: 1.6
+    restore-food: 7.0
+    restore-saturation: 9.0
+    disable-crafting: true
+    disable-smelting: true
+# <<< MYSLIWY wycinek

@@ -1,0 +1,56 @@
+# >>> MYSLIWY wycinek (tylko klon; docelowo profesje/tresc.py) — material.yml
+PROF_DZICZYZNA:
+  base:
+    material: MUTTON
+    name: '&fDziczyzna'
+    lore:
+    - '&7Surowiec: &fMyślistwo (oprawianie)'
+    - '&7Uwędź nad ogniskiem (PPM w zapalone ognisko).'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_DZICZYZNA_WYBORNE:
+  base:
+    material: MUTTON
+    name: '&6Dziczyzna (wyborna)'
+    lore:
+    - '&7Surowiec: &fMyślistwo (oprawianie)'
+    - '&6Wyborna: &7patroszona w dobrej kolejności, czysta.'
+    - '&7Uwędź nad ogniskiem (PPM w zapalone ognisko).'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_BEAST_SCRAP_WYBORNE:
+  base:
+    model: nexo:prof_beast_scrap
+    material: LEATHER
+    name: '&6Łup z bestii (wyborny)'
+    lore:
+    - '&7Surowiec: &fMyślistwo'
+    - '&6Wyborny: &7skóra zdjęta w całości, bez rozdarć.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_RAW_FLEECE_WYBORNE:
+  base:
+    model: nexo:prof_raw_fleece
+    material: WHITE_WOOL
+    name: '&6Surowe runo (wyborne)'
+    lore:
+    - '&7Surowiec: &fMyślistwo'
+    - '&6Wyborne: &7runo zdjęte w całości, czyste.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_VENOM_SAC_WYBORNE:
+  base:
+    model: nexo:prof_venom_sac
+    material: SPIDER_EYE
+    name: '&6Woreczek jadowy (wyborny)'
+    lore:
+    - '&7Surowiec: &fMyślistwo (oprawianie)'
+    - '&6Wyborny: &7gruczoł wyjęty bez przebicia.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+# <<< MYSLIWY wycinek

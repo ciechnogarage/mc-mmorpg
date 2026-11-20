@@ -34,6 +34,8 @@ final class Przedmioty {
         Type t = Type.get(typ);
         if (t == null) return null;
         ItemStack it = MMOItems.plugin.getItem(t, id);
+        if (it == null && !plugin.dane().typy.containsKey(id) && Type.get("CONSUMABLE") != null)
+            it = MMOItems.plugin.getItem(Type.get("CONSUMABLE"), id);   // jadalne surowce profesji (np. suszona dziczyzna) bez wpisu w typy
         if (it == null) return null;
         it.setAmount(Math.max(1, ilosc));
         return it;

@@ -7,12 +7,14 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -20,41 +22,43 @@ import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-/** Mysliwstwo v2: bestia z listy 'zwierzyna' zostawia zwloki na N s; zabojca (i jego druzyna) oprawia je nozem
- *  (PPM, ten sam silnik co wezly). Zwykle zabicie nie daje XP mysliwstwa ani surowcow. */
+/** Mysliwstwo v3: bestia z listy 'zwierzyna' zostawia zwloki na N s; zabojca (i jego druzyna) oprawia je nozem
+ *  scena ciec w Mysliwy (kolejnosc zalezna od zwierzecia, spalona skora). Zwykle zabicie nie daje XP ani surowcow. */
 final class Oprawianie implements Listener {
-    private final class Zwloki implements Zbieranie.Cel {
+    /** Zwloki upolowanej bestii; postep ciec i kary trzyma Mysliwy (scena moze byc przerwana i wznowiona). */
+    final class Zwloki {
         final UUID interakcja, wyswietlacz;
         final Set<UUID> wolno;
         final Dane.Zrodlo z;
         final Location l;
+        final EntityType typ;
+        final boolean spalona;
+        final float yaw;
+        final boolean[] ciete;
+        double kS, kM, kJ;
+        final List<String> uwagi = new ArrayList<>();
+        long wygasa;
         boolean zuzyte;
 
-        Zwloki(UUID interakcja, UUID wyswietlacz, Set<UUID> wolno, Dane.Zrodlo z, Location l) {
+        Zwloki(UUID interakcja, UUID wyswietlacz, Set<UUID> wolno, Dane.Zrodlo z, Location l, EntityType typ, boolean spalona, float yaw) {
             this.interakcja = interakcja;
             this.wyswietlacz = wyswietlacz;
             this.wolno = wolno;
             this.z = z;
             this.l = l;
+            this.typ = typ;
+            this.spalona = spalona;
+            this.yaw = yaw;
+            this.ciete = new boolean[Mysliwy.plan(typ).size()];
         }
-
-        public Location miejsce() { return l.clone().add(0, 0.3, 0); }
-        public String profesja() { return "hunting"; }
-        public int tier() { return z.tier(); }
-        public String rodzaj() { return "noz"; }
-        public double czasBazowy() { return plugin.dane().czasOprawiania; }
-        public Dane.Zrodlo nagroda() { return z; }
-        public String nazwa() { return "Zwłoki: " + plugin.dane().nazwa(z.glowny()); }
-        public Block blok() { return null; }
-        public boolean aktualny() { return !zuzyte && Bukkit.getEntity(interakcja) != null; }
-        public void poSukcesie(Player p) { usun(this); }
-        public org.bukkit.Particle.DustOptions kurz() { return null; }
     }
 
     private final Rzemioslo plugin;
@@ -73,6 +77,8 @@ final class Oprawianie implements Listener {
     }
 
     private Player zabojca(MythicMobDeathEvent e) {
+        Player lowca = plugin.mysliwy().lowca(e.getEntity().getUniqueId());
+        if (lowca != null) return lowca;
         if (e.getKiller() instanceof Player p) return p;
         if (e.getEntity() instanceof org.bukkit.entity.LivingEntity le && le.getKiller() != null) return le.getKiller();
         Map.Entry<UUID, Long> c = ostatniCios.remove(e.getEntity().getUniqueId());
@@ -85,10 +91,18 @@ final class Oprawianie implements Listener {
         String mob = e.getMobType().getInternalName();
         Dane.Zrodlo z = plugin.dane().zwierzyna.get(mob);
         Player zabojca = z == null ? null : zabojca(e);
-        if (plugin.getConfig().getBoolean("debug")) plugin.getLogger().info("smierc " + mob + " zwierzyna=" + (z != null) + " zabojca=" + (zabojca == null ? "-" : zabojca.getName()));
+        if (plugin.getConfig().getBoolean("debug") || Mysliwy.pomiar) plugin.getLogger().info("smierc " + mob + " zwierzyna=" + (z != null) + " zabojca=" + (zabojca == null ? "-" : zabojca.getName()));
         ostatniCios.remove(e.getEntity().getUniqueId());
         if (z == null || zabojca == null) return;
         Location l = e.getEntity().getLocation();
+        EntityType typ = e.getEntity().getType();
+        // ogien pali skore: plonie w chwili smierci albo zginal od ognia/lawy
+        var ost = e.getEntity().getLastDamageCause();
+        var przyczyna = ost == null ? null : ost.getCause();
+        boolean spalona = e.getEntity().getFireTicks() > 0 || przyczyna == EntityDamageEvent.DamageCause.FIRE
+                || przyczyna == EntityDamageEvent.DamageCause.FIRE_TICK || przyczyna == EntityDamageEvent.DamageCause.LAVA
+                || przyczyna == EntityDamageEvent.DamageCause.HOT_FLOOR || przyczyna == EntityDamageEvent.DamageCause.CAMPFIRE;
+        float yaw = l.getYaw();
         Set<UUID> wolno = new HashSet<>();
         wolno.add(zabojca.getUniqueId());
         try {
@@ -105,13 +119,17 @@ final class Oprawianie implements Listener {
         ItemDisplay d = l.getWorld().spawn(l.clone().add(0, 0.05, 0), ItemDisplay.class, x -> {
             if (wyglad != null) x.setItemStack(wyglad);
             x.setPersistent(false);
+            x.setRotation(yaw, 0);
             x.setTransformation(new Transformation(new Vector3f(0, 0, 0), new AxisAngle4f((float) Math.toRadians(90), 1, 0, 0),
                     new Vector3f(0.9f, 0.9f, 0.9f), new AxisAngle4f()));
         });
-        Zwloki zw = new Zwloki(in.getUniqueId(), d.getUniqueId(), wolno, z, l);
+        Zwloki zw = new Zwloki(in.getUniqueId(), d.getUniqueId(), wolno, z, l, typ, spalona, yaw);
         zwloki.put(in.getUniqueId(), zw);
+        if (spalona) l.getWorld().spawnParticle(Particle.SMOKE, l.clone().add(0, 0.3, 0), 12, 0.3, 0.1, 0.3, 0.01);
         plugin.pasek(zabojca, plugin.kom("zwloki", "{s}", String.valueOf(plugin.dane().zwlokiS)));
-        Bukkit.getScheduler().runTaskLater(plugin, () -> usun(zw), plugin.dane().zwlokiS * 20L);
+        zw.wygasa = System.currentTimeMillis() + plugin.dane().zwlokiS * 1000L;
+        if (plugin.getConfig().getBoolean("debug") || Mysliwy.pomiar) plugin.getLogger().info("zwloki " + mob + " typ=" + typ + " spalona=" + spalona + " przyczyna=" + przyczyna);
+        wygasanie(zw);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -126,10 +144,31 @@ final class Oprawianie implements Listener {
             return;
         }
         if (plugin.zbieranie().wTrakcie(p)) return;
-        plugin.zbieranie().rozpocznij(p, zw);
+        plugin.mysliwy().klikZwloki(p, zw);
     }
 
-    private void usun(Zwloki zw) {
+    /** Zwloki znikaja po zwloki-s; trwajaca scena ciec przedluza je o 10 s. */
+    private void wygasanie(Zwloki zw) {
+        long za = Math.max(1, (zw.wygasa - System.currentTimeMillis()) / 50);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (zw.zuzyte) return;
+            if (plugin.mysliwy().oprawia(zw)) { zw.wygasa = System.currentTimeMillis() + 10_000; wygasanie(zw); return; }
+            if (System.currentTimeMillis() < zw.wygasa) { wygasanie(zw); return; }
+            usun(zw);
+        }, za);
+    }
+
+    Zwloki najblizsze(Location l, double r) {
+        Zwloki best = null; double bd = r * r;
+        for (Zwloki zw : zwloki.values()) {
+            if (zw.l.getWorld() != l.getWorld()) continue;
+            double d = zw.l.distanceSquared(l);
+            if (d < bd) { bd = d; best = zw; }
+        }
+        return best;
+    }
+
+    void usun(Zwloki zw) {
         if (zw.zuzyte) return;
         zw.zuzyte = true;
         zwloki.remove(zw.interakcja);
