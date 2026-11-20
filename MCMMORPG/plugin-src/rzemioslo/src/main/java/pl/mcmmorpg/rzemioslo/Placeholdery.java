@@ -13,6 +13,7 @@ import java.util.Locale;
  *  start_<prof>_{opis,postep,akcja}
  *  buff_<grupa>          aktywny buff grupy z pozostalym czasem (pusty = brak)
  *  tier_<prof>           biezacy tier (rzymska)
+ *  flaga_<klucz>         flaga postaci z `rzemioslo flaga` (pusty = brak)
  */
 final class Placeholdery extends PlaceholderExpansion {
     private final Rzemioslo plugin;
@@ -29,6 +30,7 @@ final class Placeholdery extends PlaceholderExpansion {
         if (!(off instanceof Player p) || !p.isOnline()) return "";
         String k = params.toLowerCase(Locale.ROOT);
         Dane d = plugin.dane();
+        if (k.startsWith("flaga_")) { String kl = k.substring(6); return Zlecenia.dobryKlucz(kl) ? plugin.zlecenia().flaga(p, kl) : ""; }
         if (k.startsWith("buff_")) return plugin.buffy().opis(p, k.substring(5));
         if (k.startsWith("tier_")) return d.rzymska(Profesje.tier(p, k.substring(5)));
         if (k.startsWith("zlecenie_")) {

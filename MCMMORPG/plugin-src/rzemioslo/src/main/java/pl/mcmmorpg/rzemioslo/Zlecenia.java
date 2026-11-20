@@ -196,6 +196,19 @@ final class Zlecenia {
         }
     }
 
+    // ------------------------------------------------------------------ flagi postaci
+    /** Klucz flagi: male litery, cyfry, '_' (placeholder PAPI dostaje parametry malymi literami; kropka zagniezdzalaby YAML). */
+    static boolean dobryKlucz(String k) { return k != null && k.matches("[a-z0-9_]{1,64}"); }
+
+    /** Flaga zapisana w pliku postaci (profil MMOProfiles); pusty napis = brak. */
+    String flaga(Player p, String klucz) { return dane(p).getString("flagi." + klucz, ""); }
+
+    /** wartosc null = usun flage. */
+    void ustawFlage(Player p, String klucz, String wartosc) {
+        dane(p).set("flagi." + klucz, wartosc);
+        zapisz(p);
+    }
+
     /** Wolane przy kazdym zebraniu (wezel, lowisko, zwloki). */
     void zebrano(Player p, String prof, String id, int ile) {
         Dane.Start s = plugin.dane().startowe.get(prof);
