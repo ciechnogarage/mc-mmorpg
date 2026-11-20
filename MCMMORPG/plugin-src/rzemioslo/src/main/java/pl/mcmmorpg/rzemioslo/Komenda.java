@@ -222,6 +222,41 @@ final class Komenda implements TabExecutor {
                 if (p == null) { s.sendMessage("brak gracza"); return true; }
                 plugin.zielarz().zielnik.pokaz(p);
             }
+            case "las" -> {                // las <swiat|loch_001_*> <x1> <z1> <x2> <z2> [trwale] — obszar drzew do scinki (loch/wyspa z MythicMobs)
+                if (a.length < 6) { pomoc(s); return true; }
+                if (!a[1].endsWith("*") && Bukkit.getWorld(a[1]) == null) { s.sendMessage("[Rzemioslo] brak swiata " + a[1]); return true; }
+                try {
+                    s.sendMessage("[Rzemioslo] " + plugin.drwal().las(a[1], (int) Math.floor(Double.parseDouble(a[2])), (int) Math.floor(Double.parseDouble(a[3])),
+                            (int) Math.floor(Double.parseDouble(a[4])), (int) Math.floor(Double.parseDouble(a[5])), a.length > 6 && a[6].equalsIgnoreCase("trwale")));
+                } catch (NumberFormatException e) { s.sendMessage("[Rzemioslo] zle wspolrzedne"); }
+            }
+            case "drzewo" -> {             // drzewo <dodaj|usun|sprochnialy> <swiat> <x> <y> <z> — pojedyncze drzewo do scinki (trwale, drwal.yml)
+                if (a.length < 6) { pomoc(s); return true; }
+                var w = Bukkit.getWorld(a[2]);
+                if (w == null) { s.sendMessage("[Rzemioslo] brak swiata " + a[2]); return true; }
+                try {
+                    Block b = w.getBlockAt((int) Math.floor(Double.parseDouble(a[3])), (int) Math.floor(Double.parseDouble(a[4])), (int) Math.floor(Double.parseDouble(a[5])));
+                    s.sendMessage("[Rzemioslo] " + plugin.drwal().drzewo(b, a[1].equalsIgnoreCase("usun") ? null : a[1].toLowerCase()));
+                } catch (NumberFormatException e) { s.sendMessage("[Rzemioslo] zle wspolrzedne"); }
+            }
+            case "drzewa-skan" -> {        // drzewa-skan <swiat> <x1> <z1> <x2> <z2> — test/projekt: ktore drzewa w obszarze sa scinalne
+                if (a.length < 6) { pomoc(s); return true; }
+                var w = Bukkit.getWorld(a[1]);
+                if (w == null) { s.sendMessage("[Rzemioslo] brak swiata " + a[1]); return true; }
+                try {
+                    var lista = plugin.drwal().skan(w, Integer.parseInt(a[2]), Integer.parseInt(a[3]), Integer.parseInt(a[4]), Integer.parseInt(a[5]));
+                    s.sendMessage("[Rzemioslo] drzew: " + lista.size());
+                    lista.stream().limit(40).forEach(x -> s.sendMessage("[Rzemioslo]  " + x));
+                } catch (NumberFormatException e) { s.sendMessage("[Rzemioslo] zle wspolrzedne"); }
+            }
+            case "drwal" -> {              // drwal <gracz> [stan|cel <nr>] | drwal pomiar on|off — test sceny scinki
+                if (a.length < 2) { pomoc(s); return true; }
+                if (a[1].equals("pomiar")) { Drwal.pomiar = a.length > 2 && a[2].equals("on"); s.sendMessage("[Rzemioslo] drwal pomiar=" + Drwal.pomiar); return true; }
+                Player g = Bukkit.getPlayerExact(a[1]);
+                if (g == null) return offline(s, a[1]);
+                if (a.length > 3 && a[2].equals("cel")) s.sendMessage("[Rzemioslo] " + plugin.drwal().celLezacy(g, Integer.parseInt(a[3])));
+                else s.sendMessage("[Rzemioslo] " + plugin.drwal().stan(g));
+            }
             case "wezel" -> {              // wezel <x> <y> <z> [swiat] — co to za blok (diagnostyka dla projektantow)
                 if (a.length < 4) { pomoc(s); return true; }
                 try {
@@ -250,11 +285,12 @@ final class Komenda implements TabExecutor {
     private void pomoc(CommandSender s) {
         s.sendMessage("/rzemioslo reload | info <gracz> | zlecenie oddaj <gracz> <prof> <n> | start <gracz> <prof> | flaga <gracz> <klucz> [wartosc]"
                 + " | przeprawa <gracz> <id> <komenda...> | narzedzie <gracz> <rodzaj> <tier> | wezel <x> <y> <z> [swiat]"
-                + " | postaw <nexoId> <swiat> <x> <y> <z> | doreki <gracz> <itemId> [slot 0-8] | oboz <gracz> <id>");
+                + " | postaw <nexoId> <swiat> <x> <y> <z> | doreki <gracz> <itemId> [slot 0-8] | oboz <gracz> <id>"
+                + " | las <swiat> <x1> <z1> <x2> <z2> [trwale] | drzewo <dodaj|usun> <swiat> <x> <y> <z> | drzewa-skan <swiat> <x1> <z1> <x2> <z2> | drwal <gracz> [stan|cel <nr>]");
     }
 
     private static final List<String> PODKOMENDY = List.of("reload", "info", "zlecenie", "start", "flaga", "przeprawa", "narzedzie", "wezel",
-            "postaw", "doreki", "oboz");
+            "postaw", "doreki", "oboz", "las", "drzewo", "drzewa-skan", "drwal");
 
     @Override
     public List<String> onTabComplete(CommandSender s, Command c, String l, String[] a) {

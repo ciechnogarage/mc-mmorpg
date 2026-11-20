@@ -1,0 +1,24 @@
+# >>> DRWAL wycinek (tylko klon; docelowo generuj.py)
+PROF_OAK_TIMBER_WYBORNE:
+  base:
+    model: nexo:prof_oak_timber
+    material: OAK_LOG
+    name: '&6Twarde drewno dębowe (wyborne)'
+    lore:
+    - '&7Surowiec: &fDrwalstwo i stolarstwo'
+    - '&6Wyborne: &7drzewo położone tam, gdzie miało paść, równe kłody.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_SPRUCE_RESIN_WYBORNE:
+  base:
+    model: nexo:prof_spruce_resin
+    material: SPRUCE_LOG
+    name: '&6Żywiczne drewno świerkowe (wyborne)'
+    lore:
+    - '&7Surowiec poboczny: &fDrwalstwo i stolarstwo'
+    - '&6Wyborne: &7czysta ścinka, drewno nasiąknięte żywicą.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+# <<< DRWAL wycinek

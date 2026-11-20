@@ -66,6 +66,7 @@ public final class Rzemioslo extends JavaPlugin implements Listener {
     private Zlecenia zlecenia;
     private Placeholdery papi;
     private Zielarz zielarz;
+    private Drwal drwal;
 
     @Override
     public void onEnable() {
@@ -89,6 +90,8 @@ public final class Rzemioslo extends JavaPlugin implements Listener {
         pm.registerEvents(new Stacje(this), this);
         zielarz = new Zielarz(this);
         pm.registerEvents(zielarz, this);
+        drwal = new Drwal(this);
+        pm.registerEvents(drwal, this);
         pm.registerEvents(new ZSkaza(this), this);
         pm.registerEvents(this, this);
         Komenda k = new Komenda(this);
@@ -103,6 +106,7 @@ public final class Rzemioslo extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         if (zielarz != null) zielarz.zatrzymajWszystko();
+        if (drwal != null) drwal.zatrzymajWszystko();
         if (zbieranie != null) zbieranie.zatrzymajWszystko();
         if (oprawianie != null) oprawianie.sprzatnij();
         if (buffy != null) buffy.sprzatnij();
@@ -163,6 +167,7 @@ public final class Rzemioslo extends JavaPlugin implements Listener {
     Profesje profesje() { return profesje; }
     Zbieranie zbieranie() { return zbieranie; }
     Zielarz zielarz() { return zielarz; }
+    Drwal drwal() { return drwal; }
     Buffy buffy() { return buffy; }
     Zlecenia zlecenia() { return zlecenia; }
 }

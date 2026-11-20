@@ -21,6 +21,10 @@ Jedna komenda `/rzemioslo` (`src/main/resources/plugin.yml:8-12`), uprawnienie `
 | `doreki <gracz> <ID> [slot]` | OP/test | zamienia przedmiot na pasek (domyślnie slot 5) i ustawia jako trzymany; test/boty; slot 0-8, zły slot/nie-liczba = komunikat | `Komenda.java:89-112` |
 | `oboz <gracz> <ID>` | OP/test | rozbija obozowisko pod graczem bez PPM | `Komenda.java:113-120` |
 | `postaw <nexoId> <świat> <x> <y> <z>` | OP/konsola | stawia węzeł/łowisko (blok Nexo) — API dla lochów/wysp (MythicMobs); nic nie robi, gdy już stoi; odmawia, gdy blok zajęty | `Komenda.java:121-139` |
+| `las <świat\|loch_001_*> <x1> <z1> <x2> <z2> [trwale]` | OP/konsola | obszar, w którym drzewa (pień `OAK_LOG`/`SPRUCE_LOG` z liśćmi) są ścinalne; `loch_001_*` = każda instancja MythicDungeons tej mapy; `trwale` zapisuje do `drwal.yml` | `Komenda.java` `case "las"`, `Drwal.java:256` |
+| `drzewo <dodaj\|usun\|sprochnialy> <świat> <x> <y> <z>` | OP/konsola | pojedyncze drzewo do ścinki (trwale, `drwal.yml`), `sprochnialy` = zawsze puste w środku | `Drwal.java:264` |
+| `drzewa-skan <świat> <x1> <z1> <x2> <z2>` | OP/projekt | lista ścinalnych drzew w obszarze (gatunek, pień, liście) — do sprawdzenia lasu w lochu przed rozstawieniem | `Drwal.java:279` |
+| `drwal <gracz> [cel <nr>]` / `drwal pomiar on\|off` | OP/test | stan sceny ścinki (faza, ciosy, kąt, klin, cięcia) / punkt cięcia leżącego pnia dla bota; `pomiar` = logi `[drwal] …` | `Drwal.java:1138,1148` |
 | `wezel <x> <y> <z> [świat]` | OP/konsola | diagnostyka: co to za blok, jaki węzeł i tier | `Komenda.java:140-153` |
 
 Pomoc (`Komenda.java:165-169`), `usage` (`plugin.yml:11`) i tab-complete (`Komenda.java:175-200`) obejmują wszystkie 11 podkomend; tab-complete podpowiada też graczy online, profesje, rodzaje narzędzi, obozy, światy i id węzłów, tylko dla `rzemioslo.admin`. Błędna liczba w `zlecenie oddaj`/`doreki` albo nieznany świat w `wezel` = komunikat dla nadawcy, bez wyjątku.
@@ -70,7 +74,7 @@ Klucze najwyższego poziomu na world1 (25):
 - **Komunikaty** idą na action bar z priorytetem HIGH przez MythicLib (`Rzemioslo.java:148-154`).
 
 ## Koszt dla serwera
-Nie mierzone (brak spark/MSPT w repo). Z kodu: tykają tylko aktywne sesje zbierania (1 zadanie/gracz co tick, pakiet narzędzia + `sendBlockDamage` do graczy w 32 blokach, `Zbieranie.java:195-223`) i obozy (co 2 s, pętla po graczach świata, `Buffy.java:252-270`); reszta na zdarzenia. `tierWody` przeszukuje 2197 bloków na złowioną rybę (`Lowienie.java:43-52`). Zapis zleceń (przy każdym `zebrano()` w aktywnym zleceniu startowym, przyjęciu i oddaniu, `Zlecenia.java:132,157,179,191,209,219`): na głównym wątku tylko `saveToString`, plik pisze osobny jednowątkowy executor (`Zlecenia.java:70-92`).
+Drwal: pomiar w sekcji „Drwal” niżej (20.11, klon). Nie mierzone (brak spark/MSPT w repo). Z kodu: tykają tylko aktywne sesje zbierania (1 zadanie/gracz co tick, pakiet narzędzia + `sendBlockDamage` do graczy w 32 blokach, `Zbieranie.java:195-223`) i obozy (co 2 s, pętla po graczach świata, `Buffy.java:252-270`); reszta na zdarzenia. `tierWody` przeszukuje 2197 bloków na złowioną rybę (`Lowienie.java:43-52`). Zapis zleceń (przy każdym `zebrano()` w aktywnym zleceniu startowym, przyjęciu i oddaniu, `Zlecenia.java:132,157,179,191,209,219`): na głównym wątku tylko `saveToString`, plik pisze osobny jednowątkowy executor (`Zlecenia.java:70-92`).
 
 ## Dane
 - Zlecenia: `plugins/Rzemioslo/dane/<UUID>.yml` (klucze `dzien`, `zlecenia.<prof>.{tier,wybrane,oddane}`, `start.<prof>.{stan,postep}`, `flagi.<klucz>`), per **postać**: UUID profilu MMOProfiles (`MMOPlayerData.getProfileId()`), a bez profilu UUID gracza (`Zlecenia.java:45-51`). Katalog `dane/` na world1 był pusty 2026-10-25.
@@ -132,9 +136,32 @@ postawić ponownie).
 
 Klon testowy zielarza: `MCMMORPG/profesje/zielarz/przygotuj_klon.sh <klon>`; projekt: `MCMMORPG/profesje/ZIELARZ.md`.
 
+## Drwal — ścinka w świecie (gałąź `profesje-zbierackie`, 20.11, NIEWDROŻONY)
+Klasa `Drwal.java` (opis w nagłówku klasy, linie 68-74). Gracz z siekierą w ręce (rodzaj z `profesje.woodworking.narzedzie`, `Dane.java:72`; poziom gatunku) w zasięgu 3,4 bloku od pnia drzewa w zarejestrowanym lesie (`las`/`drzewo`) ścina je w skali 1:1 (`rozpocznij`, `Drwal.java:409`):
+1. **Wrąb** — seria LPM nisko z jednej strony (6–7 ciosów w rytmie ~7 ticków) wyznacza kierunek upadku. Za mało/za dużo ciosów albo rozrzut obniża jakość (`nagroda`, `Drwal.java:998`).
+2. **Rzaz ścinający** — PPM trzymany z przeciwnej strony, nie niżej niż wrąb; pasek „trzeszczy” (postęp ~0,55–0,8). Puszczony w paśmie → drzewo pada tam, gdzie wrąb; za głęboko albo bez wrębu → „gdzie chce”, może pęknąć wzdłuż.
+3. **Upadek** — pień, gałęzie i korona jako `BlockDisplay` z interpolacją, widoczne dla wszystkich w pobliżu; prawdziwe bloki ukryte pakietem u widzów na czas sceny. Przeszkoda w łuku upadku (`przeszkoda`, `Drwal.java:776`: sąsiednie drzewo, mur) → drzewo **zawisa** (faza `WISI`); klin (LPM w pniak od strony przeciwnej do upadku, `klin`, `Drwal.java:553`) ściąga je dalej. Każdy gracz w pasie upadku dostaje obrażenia `FALLING_BLOCK`: pień ≥14 albo 75% max HP, korona ≥5 albo 30% (`przygniec`, `Drwal.java:925`) — ścinający też (uwaga `przygnieciony`).
+4. **Obróbka** — leżący pień: LPM w koronę = okrzesanie, LPM w granice kłód = cięcie na kłody (tolerancja `TRAF` 0,3 bloku; chybienie = drzazgi).
+5. **Wynik** — klasa słabe/dobre/wyborne z jakości; wyborne daje `<przedmiot>_WYBORNE`. Liczba kłód = pocięte segmenty (−1 bez okrzesania), zawieszone = połowa, pęknięte = połowa, **spróchniały dąb (12%, raz na drzewo) = 0** (decyzja 20.11: „może dać 0”). XP profesji z MMOCore × jakość × długość.
+6. **Świerk** — LPM wyżej na pniu przed ścinką = spała (nacięcie kory); po 5 min drewno smolne (+1 kłoda, +jakość).
+7. **Odrost** — per konto: ścinający widzi pniak przez `odrostSek` (dąb 600 s, świerk 720 s), inni widzą drzewo (`pokazPniak`, `odrastaj`, `Drwal.java:1073-1097`).
+
+Gatunki i przedmioty: `GATUNKI` (`Drwal.java:82-84`): dąb → `PROF_OAK_TIMBER`, świerk → `PROF_SPRUCE_RESIN`. Przedmioty `*_WYBORNE` są na razie tylko na klonie (`MCMMORPG/profesje/drwal/przedmioty-klon.yml`, dopisywane przez `przygotuj_klon.sh`); przed wdrożeniem trzeba je dodać do generatora przedmiotów (`tresc.py`/`generuj.py`) — nie zrobione.
+
+**Lochy i wyspy:** mechanizm gotowy — w lochu `las loch_001_* x1 z1 x2 z2 trwale` (instancje MythicDungeons), pojedyncze drzewo `drzewo dodaj`. Sprawdzone 20.11 parserem regionów mapy `MythicDungeons/maps/loch_001`: na mapie **nie ma stojących drzew do ścinki** (pnie świerku to palisada, dąb/brzoza leżą poziomo, pale_oak to punkt orientacyjny „Blade Drzewo”). Las w lochu trzeba posadzić przy budowie mapy — decyzja właściciela/sesji lochów. Wysp gry jeszcze nie ma.
+
+**Koszt (klon, 20.11, `MCMMORPG/profesje/drwal/testy/obciazenie.js`):** 1 bot ścina w pętli 90 s (5 drzew): MSPT 10 s avg 1,8 (max 5,6) wobec spoczynku 2,1; do 90 `block_display` naraz; obserwator ~166 pakietów/s (metadata 56/s). 4 boty naraz (19 drzew w 90 s): MSPT 10 s avg 2,5 (max 8,8) wobec 2,2; do 412 displayów naraz (~100 na drzewo); obserwator ~475 pakietów/s (metadata 211/s). Po jednym pomiarze na N, spark nie użyty. Wniosek: koszt serwera mały, główny koszt to pakiety do widzów (~100 displayów na upadające drzewo) — przy 20+ drwalach w jednym miejscu do zmierzenia ponownie. Na tik tylko aktywne sesje (1 zadanie/gracz) i interpolacja displayów po stronie klienta.
+
+**Znane ograniczenie:** na czas sceny serwer trzyma bloki drzewa, a klienci widzą powietrze (kolizja niezgodna z obrazem, ~kilka sekund).
+
+**Nie sprawdzone w źródłach** (projekt, nie fakt leśny): że drzewo pada w stronę wrębu, że rzaz idzie nad wrębem, że przecięcie zawiasy odbiera kontrolę, że spróchniały pień brzmi głucho, że spała na świerku daje drewno smolne.
+
+**Testy:** `MCMMORPG/profesje/drwal/przygotuj_klon.sh <klon>` (jar, przedmioty, las testowy na płaskim świecie klonu), potem `run.sh <klon> MCMMORPG/profesje/drwal/testy/scinka.js` — 16 przypadków bez OP (bez siekiery, za wcześnie, czysto, widz przygnieciony, spróchniały, zawis + klin, bez wrębu, ścinający w pasie, spała + żywica). Wynik 20.11: 16/16 PASS.
+
 ## Znane pułapki i decyzje
 - Profesje v2 — stan, liczby, wdrożenie 12.10 i cofnięcie: `~/.claude/skills/mc-systemy-gracza/profesje.md:8-13`.
 - Brak `set_player_inventory` w mineflayer, UI Księgi blokuje equip → `rzemioslo doreki`: `~/.claude/skills/mc-systemy-gracza/SKILL.md:36`, `historia.md:30`.
+- Drwal, test botem: `bot.lookAt(p, true)` w mineflayer 4.39 nie zmienia samego pitchu na serwerze → `lookAt(p, false)` + ~160 ms (`~/.claude/skills/mc-host-testy-wdrozenia/SKILL.md`, pułapka 13).
 - Generatory/Nexo (`model:`, STRINGBLOCK, `RZM_*` z `{base:0}`): `~/.claude/skills/mc-systemy-gracza/SKILL.md:39`.
 - Krzywa XP profesji = plik `exp-curves/profesje_v2.txt`: `~/.claude/skills/mc-mmo-pluginy/SKILL.md:22`.
 - Zasady zawodów (czynności w świecie, testy bez OP): `~/.claude/skills/mc-systemy-gracza/SKILL.md:46`.
