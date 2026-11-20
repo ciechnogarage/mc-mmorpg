@@ -11,7 +11,7 @@ Stan na 2026-11-20 (drwal 12:05, rybak po południu, myśliwy wieczorem). Gałą
 | drwal | GOTOWE na gałęzi: scinka.js 16/16, obciążenie 1/4 boty, nagranie QA | df77aa2 |
 | rybak | GOTOWE na gałęzi: lowienie.js 18/18 ×2, obciążenie 1/4 boty, klient QA (hol, kamera stoi → bez kontry); klon usunięty | 7354922 |
 | myśliwy | GOTOWE na gałęzi: lowy.js 21/21 ×3, obciążenie 1/4 boty, klient QA (trop, podchód, cios, 5 cięć, wędzenie); klon usunięty | (ten commit) |
-| górnik | nie zaczęte (węzły Nexo w `Zbieranie.java`) | — |
+| górnik | GOTOWE na gałęzi: urobek.js 31/31 ×2 (końcowy jar), obciążenie 1/4 boty (65/104 pkt/s), klient QA (opukanie, pęknięcia, zawał, przebieranie, wynik; 2 błędy znalezione i poprawione); klon usunięty | (ten commit) |
 | farmer | nie zaczęte; pory roku: zegar właściciela — źródła jeszcze nie znalazłem (nie sprawdzone) | — |
 
 ## Drwal — otwarte
@@ -68,6 +68,38 @@ Wniosek: tropy, wiatr, podchód, scena cięć, spalona skóra i wędzenie mięsa
 | zając: skóra „pończochą” od łap; pająk: worek jadowy | — | NIE sprawdzone (reguła gry) |
 | ogień niszczy skórę | — | reguła gry, bez źródła |
 
+## Górnik — co już było na world1 (sprawdzone 20.11, przed kodem)
+| Funkcja | Co już to robi na world1 | Źródło |
+|---|---|---|
+| źródło T1 (złoże) w świecie | NIC — `rzemioslo postaw` w skillach MM tylko dla ziół, grzybów, drewna (`skills/Loch_001.yml:99-102`); pakiet Iris w folderze świata `world/iris/pack/dimensions/overworld.json` bez `nexo:`; `Rzemioslo/dane` pusty | MM `skills/Loch_001.yml:99-102`, `world/iris/pack/...overworld.json`, plik SAD_ZRODLO `backups/stolica-v3-20261019/blockout-a2/npc-cytadela/generuj.py:121-138` („PLACEHOLDER”) |
+| złoża Iris `nexo:ruda_urobku(_glebinowa)` | są tylko w `plugins/Iris/packs/overworld/dimensions/overworld.json:690-730` (nie w pakiecie świata `world`); który świat z niego generuje — nie sprawdzone do końca (MV `world` generator pusty) | j.w. |
+| węzeł górniczy (blok Nexo, PPM 3 s) | Rzemiosło `Zbieranie` + config `wezly.wezel_t1_mining`, `ruda_urobku`, `ruda_urobku_glebinowa`, `kamien_kamieniolomu` (główny `PROF_ORE_CHUNK`, poboczny `PROF_ROUGH_CRYSTAL` 0,15, rzadki `PROF_RAW_GEM` 0,03) — pasek, bez sceny | `Rzemioslo/config.yml:572,1329,1343`, `Zbieranie.java:38-40` |
+| kopanie z regeneracją bloków | MMOCore custom-mining włączone (`config.yml:50-53`), ale `professions/mining.yml` bez `on-mine` (12 linii, `exp-sources: {}`) → nic nie robi | `MMOCore/config.yml:50-70`, `MMOCore/professions/mining.yml:1-12`, `docs/Plugins-wiki-local/mmocore/wiki/md/features-mining.md` |
+| narzędzie | `PROF_KILOF_1..10` (rodzaj `kilof`, `profesje.mining.narzedzie`), kowal robi kilof `smithing_t1_kilof` | `MMOItems/item/tool.yml:275`, `profession-smithing.yml:36` |
+| przetop rudy | KOWAL: `smithing_t1_sztabka` 3× `PROF_ORE_CHUNK` → `PROF_REFINED_IRON` | `MMOItems/crafting-stations/profession-smithing.yml:28-35` |
+| przedmioty | `PROF_ORE_CHUNK` „Bryła urobku”, `PROF_ROUGH_CRYSTAL`, `PROF_RAW_GEM`, `PROF_ROUGH_STONE`; brak wersji wybornych | `MMOItems/item/material.yml:525-555,2035` |
+| opukiwanie, zawał, przebieranie | nic — brak pluginu górnictwa w `plugins/` (`ls`), MythicMobs bez mechanik złóż | `ls world1/plugins` |
+Wniosek: scena (opukiwanie, praca wzdłuż warstwy, skała twarda/miękka, obryw stropu, zawał, przebieranie urobku) nie istniała → nowy kod `Gornik.java`; tier, łup i XP z istniejącego configu (`wezel_t1_mining`). Przetopu NIE robię (kowal). Przeróbka górnika = rozbijanie i przebieranie urobku (cobbing) — oddziela płonną skałę, zanim urobek trafi do kowala.
+
+## Górnik — źródła wiedzy (20.11)
+| Reguła gry | Źródło | Status |
+|---|---|---|
+| opukiwanie stropu: lita skała dźwięczy, luźna („drummy”) brzmi głucho; luźny strop zbija się drągiem (obrywka) | NIOSH „Ground Monitoring”, Bureau of Mines RI 5251, decyzja FMSHRC 86081146 | sprawdzone (wyszukiwarka) |
+| odgłos pękania/trzeszczenia skały ostrzega przed obrywem | NIOSH „Mining Topic: Ground Monitoring” | sprawdzone (wyszukiwarka) |
+| twarda żyła: klin/żelazko pod młot, nie kilof; ogień na najtwardszą | Agricola, De re metallica ks. V (tłum. Hoover), Ruhr-Uni Bochum (DBM) | sprawdzone (wyszukiwarka) |
+| ręczne rozbijanie i przebieranie urobku (cobbing) oddziela płonną skałę | Cornish Mining WHS „Dressing the Ore”, Wikipedia „Mineral processing” | sprawdzone (wyszukiwarka) |
+| dźwięk prowadzi do żyły (ruda dźwięczy inaczej) | — | NIE sprawdzone — reguła gry |
+| praca wzdłuż warstwy (żyła biegnie pasem, uskok o blok) | — | reguła gry (źródło o „following the vein” nie znalezione) |
+| przekruszona ruda = strata („miał”) | — | reguła gry |
+
+## Górnik — otwarte
+- Przedmioty `PROF_ORE_CHUNK_WYBORNE`, `PROF_KLIN_GORNICZY` tylko w `gornik/przedmioty-klon.yml` → do `tresc.py` przed wdrożeniem; klin potrzebuje receptury u kowala (nie zrobione).
+- Lochy: `gornik/sciany_lochow.py` (20.11, tylko odczyt): `loch_001` ma 1 nadającą się ścianę (37,103,11, andezyt, bez stropu → bez zawału); reszta ścian to liście/drewno/cegły → przodki trzeba dobudować przy budowie mapy (wnęka ze skały ze stropem) i wpisać `rzemioslo przodek loch_001* x y z trwale`. 5 map Iris: brak regionów w pliku. Wysp jeszcze nie ma.
+- Do decyzji właściciela: odrost wyrobiska 4 min per konto (testowe), obrażenia zawału (środek 75% HP — zabija przy niskim HP), czy ruda odsłonięta opukaniem ma być widoczna dla wszystkich ≤ 48 bl. (koszt zmierzony: mały).
+- **Drwal ma tę samą lukę co górnik przed poprawką**: `Drwal.java:204` pomija machnięcie tylko 80 ms po PPM, a klient QA przy 10 FPS macha 98 ms po PPM (górnik 20.11) → u drwala PPM może liczyć się jako cios przy niskim FPS. Nie poprawione (poza zakresem górnika), nie sprawdzone klientem na drwalu.
+- Klient QA: w prawym górnym rogu ekranu stoi zielony kwadrat z szarą kreską (nie z Rzemiosła; nie sprawdziłem, który plugin/pakiet go rysuje).
+- Kara „poza warstwą” podniesiona do 0,1/blok (max 0,3) po FAIL testu (2 bloki obok żyły dawały jeszcze „wyborny”).
+
 ## Jak wznowić
-Klon: `klon.sh lista` → `klon.sh start <profesja> --z-kreatorem` → `MCMMORPG/profesje/<profesja>/przygotuj_klon.sh` (wzór: `drwal/`). Klony usunięte 20.11 (drwal, rybak, myśliwy).
+Klon: `klon.sh lista` → `klon.sh start <profesja> --z-kreatorem` → `MCMMORPG/profesje/<profesja>/przygotuj_klon.sh` (wzór: `drwal/`). Klony usunięte 20.11 (drwal, rybak, myśliwy, górnik).
 Pułapka botów: `bot.lookAt(p, true)` nie wysyła samego pitchu → `lookAt(p, false)` + 160 ms (skill mc-host-testy-wdrozenia, pułapka 13).

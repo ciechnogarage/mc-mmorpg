@@ -289,6 +289,32 @@ final class Komenda implements TabExecutor {
                 else if (a.length > 2 && a[2].equals("wedzenie-gotowe")) s.sendMessage("[Rzemioslo] " + plugin.mysliwy().wedzenieGotowe(g));
                 else s.sendMessage("[Rzemioslo] " + plugin.mysliwy().stan(g));
             }
+            case "przodek" -> {            // przodek <swiat|loch_001_*> <x> <y> <z> [trwale] — sciana z zyla dla gornika
+                if (a.length < 5) { pomoc(s); return true; }
+                if (!a[1].endsWith("*") && Bukkit.getWorld(a[1]) == null) { s.sendMessage("[Rzemioslo] brak swiata " + a[1]); return true; }
+                try {
+                    s.sendMessage("[Rzemioslo] " + plugin.gornik().przodek(a[1], (int) Math.floor(Double.parseDouble(a[2])), (int) Math.floor(Double.parseDouble(a[3])),
+                            (int) Math.floor(Double.parseDouble(a[4])), a.length > 5 && a[5].equalsIgnoreCase("trwale")));
+                } catch (NumberFormatException e) { s.sendMessage("[Rzemioslo] zle wspolrzedne"); }
+            }
+            case "przodek-usun" -> {       // przodek-usun <swiat|wzorzec> <x> <y> <z>
+                if (a.length < 5) { pomoc(s); return true; }
+                try {
+                    s.sendMessage("[Rzemioslo] " + plugin.gornik().przodekUsun(a[1], (int) Math.floor(Double.parseDouble(a[2])), (int) Math.floor(Double.parseDouble(a[3])),
+                            (int) Math.floor(Double.parseDouble(a[4]))));
+                } catch (NumberFormatException e) { s.sendMessage("[Rzemioslo] zle wspolrzedne"); }
+            }
+            case "gornik" -> {             // gornik <gracz> [stan|odnow|nastepna <luzne> <dlugosc> <uskok 0|1|2> <zawal 0|1>] | gornik pomiar on|off — test
+                if (a.length < 2) { pomoc(s); return true; }
+                if (a[1].equals("pomiar")) { Gornik.pomiar = a.length > 2 && a[2].equals("on"); s.sendMessage("[Rzemioslo] gornik pomiar=" + Gornik.pomiar); return true; }
+                Player g = Bukkit.getPlayerExact(a[1]);
+                if (g == null) return offline(s, a[1]);
+                try {
+                    if (a.length > 4 && a[2].equals("nastepna")) s.sendMessage("[Rzemioslo] " + plugin.gornik().nastepna(g, Integer.parseInt(a[3]), Integer.parseInt(a[4]), a.length > 5 ? Integer.parseInt(a[5]) : 2, a.length > 6 ? Integer.parseInt(a[6]) : 0));
+                    else if (a.length > 2 && a[2].equals("odnow")) s.sendMessage("[Rzemioslo] " + plugin.gornik().odnow(g));
+                    else s.sendMessage("[Rzemioslo] " + plugin.gornik().stan(g));
+                } catch (NumberFormatException e) { s.sendMessage("[Rzemioslo] zle liczby"); }
+            }
             case "wezel" -> {              // wezel <x> <y> <z> [swiat] — co to za blok (diagnostyka dla projektantow)
                 if (a.length < 4) { pomoc(s); return true; }
                 try {
@@ -319,11 +345,12 @@ final class Komenda implements TabExecutor {
                 + " | przeprawa <gracz> <id> <komenda...> | narzedzie <gracz> <rodzaj> <tier> | wezel <x> <y> <z> [swiat]"
                 + " | postaw <nexoId> <swiat> <x> <y> <z> | doreki <gracz> <itemId> [slot 0-8] | oboz <gracz> <id>"
                 + " | las <swiat> <x1> <z1> <x2> <z2> [trwale] | drzewo <dodaj|usun> <swiat> <x> <y> <z> | drzewa-skan <swiat> <x1> <z1> <x2> <z2> | drwal <gracz> [stan|cel <nr>] | rybak <gracz> [wymus <gatunek> <ticki>]"
-                + " | rewir <swiat|wzorzec*> <x> <y> <z> <mob> [trwale] | rewir-usun <swiat> <x> <y> <z> | mysliwy <gracz> [stan|wiatr <st>|wedzenie-gotowe]");
+                + " | rewir <swiat|wzorzec*> <x> <y> <z> <mob> [trwale] | rewir-usun <swiat> <x> <y> <z> | mysliwy <gracz> [stan|wiatr <st>|wedzenie-gotowe]"
+                + " | przodek <swiat|wzorzec*> <x> <y> <z> [trwale] | przodek-usun <swiat> <x> <y> <z> | gornik <gracz> [stan|odnow|nastepna <luzne> <dl> <uskok> <zawal>]");
     }
 
     private static final List<String> PODKOMENDY = List.of("reload", "info", "zlecenie", "start", "flaga", "przeprawa", "narzedzie", "wezel",
-            "postaw", "doreki", "oboz", "las", "drzewo", "drzewa-skan", "drwal", "rybak", "rewir", "rewir-usun", "mysliwy");
+            "postaw", "doreki", "oboz", "las", "drzewo", "drzewa-skan", "drwal", "rybak", "rewir", "rewir-usun", "mysliwy", "przodek", "przodek-usun", "gornik");
 
     @Override
     public List<String> onTabComplete(CommandSender s, Command c, String l, String[] a) {

@@ -1,0 +1,24 @@
+# >>> GORNIK wycinek (tylko klon; docelowo profesje/tresc.py) — material.yml
+PROF_ORE_CHUNK_WYBORNE:
+  base:
+    model: nexo:prof_ore_chunk
+    material: RAW_IRON
+    name: '&6Bryła urobku (wyborna)'
+    lore:
+    - '&7Surowiec: &fGórnictwo'
+    - '&6Wyborna: &7czysto przebrana, bez płonnej skały.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_KLIN_GORNICZY:
+  base:
+    material: IRON_HOE
+    name: '&fKlin górniczy z pyrlikiem'
+    lore:
+    - '&7Narzędzie: &fGórnictwo'
+    - '&7Do twardej skały (łupek, bazalt, granit),'
+    - '&7od której kilof się odbija. Wolniejszy w miękkiej.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+# <<< GORNIK wycinek
