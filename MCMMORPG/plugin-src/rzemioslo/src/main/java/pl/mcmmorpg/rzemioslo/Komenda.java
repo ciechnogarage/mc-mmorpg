@@ -257,6 +257,14 @@ final class Komenda implements TabExecutor {
                 if (a.length > 3 && a[2].equals("cel")) s.sendMessage("[Rzemioslo] " + plugin.drwal().celLezacy(g, Integer.parseInt(a[3])));
                 else s.sendMessage("[Rzemioslo] " + plugin.drwal().stan(g));
             }
+            case "rybak" -> {              // rybak <gracz> [wymus <gatunek> <ticki>] | rybak pomiar on|off — test sceny lowienia
+                if (a.length < 2) { pomoc(s); return true; }
+                if (a[1].equals("pomiar")) { Rybak.pomiar = a.length > 2 && a[2].equals("on"); s.sendMessage("[Rzemioslo] rybak pomiar=" + Rybak.pomiar); return true; }
+                Player g = Bukkit.getPlayerExact(a[1]);
+                if (g == null) return offline(s, a[1]);
+                if (a.length > 3 && a[2].equals("wymus")) s.sendMessage("[Rzemioslo] " + plugin.rybak().wymus(g, a[3], a.length > 4 ? Integer.parseInt(a[4]) : 20));
+                else s.sendMessage("[Rzemioslo] " + plugin.rybak().stan(g));
+            }
             case "wezel" -> {              // wezel <x> <y> <z> [swiat] — co to za blok (diagnostyka dla projektantow)
                 if (a.length < 4) { pomoc(s); return true; }
                 try {
@@ -286,11 +294,11 @@ final class Komenda implements TabExecutor {
         s.sendMessage("/rzemioslo reload | info <gracz> | zlecenie oddaj <gracz> <prof> <n> | start <gracz> <prof> | flaga <gracz> <klucz> [wartosc]"
                 + " | przeprawa <gracz> <id> <komenda...> | narzedzie <gracz> <rodzaj> <tier> | wezel <x> <y> <z> [swiat]"
                 + " | postaw <nexoId> <swiat> <x> <y> <z> | doreki <gracz> <itemId> [slot 0-8] | oboz <gracz> <id>"
-                + " | las <swiat> <x1> <z1> <x2> <z2> [trwale] | drzewo <dodaj|usun> <swiat> <x> <y> <z> | drzewa-skan <swiat> <x1> <z1> <x2> <z2> | drwal <gracz> [stan|cel <nr>]");
+                + " | las <swiat> <x1> <z1> <x2> <z2> [trwale] | drzewo <dodaj|usun> <swiat> <x> <y> <z> | drzewa-skan <swiat> <x1> <z1> <x2> <z2> | drwal <gracz> [stan|cel <nr>] | rybak <gracz> [wymus <gatunek> <ticki>]");
     }
 
     private static final List<String> PODKOMENDY = List.of("reload", "info", "zlecenie", "start", "flaga", "przeprawa", "narzedzie", "wezel",
-            "postaw", "doreki", "oboz", "las", "drzewo", "drzewa-skan", "drwal");
+            "postaw", "doreki", "oboz", "las", "drzewo", "drzewa-skan", "drwal", "rybak");
 
     @Override
     public List<String> onTabComplete(CommandSender s, Command c, String l, String[] a) {

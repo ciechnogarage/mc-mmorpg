@@ -1,0 +1,24 @@
+# >>> RYBAK wycinek (tylko klon; docelowo generuj.py)
+PROF_RAW_CATCH_WYBORNE:
+  base:
+    model: nexo:prof_raw_catch
+    material: COD
+    name: '&6Świeży połów (wyborny)'
+    lore:
+    - '&7Surowiec: &fRybactwo'
+    - '&6Wyborny: &7czyste zacięcie, hol bez szarpania żyłki.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+PROF_CLAM_WYBORNE:
+  base:
+    model: nexo:prof_clam
+    material: NAUTILUS_SHELL
+    name: '&6Małż (wyborny)'
+    lore:
+    - '&7Surowiec poboczny: &fRybactwo'
+    - '&6Wyborny: &7podniesiony z dna bez zerwania.'
+    - '&8Zielona Granica · tier I'
+    disable-crafting: true
+    disable-smelting: true
+# <<< RYBAK wycinek

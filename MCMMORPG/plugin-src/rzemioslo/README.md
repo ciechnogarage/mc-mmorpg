@@ -158,10 +158,30 @@ Gatunki i przedmioty: `GATUNKI` (`Drwal.java:82-84`): dąb → `PROF_OAK_TIMBER`
 
 **Testy:** `MCMMORPG/profesje/drwal/przygotuj_klon.sh <klon>` (jar, przedmioty, las testowy na płaskim świecie klonu), potem `run.sh <klon> MCMMORPG/profesje/drwal/testy/scinka.js` — 16 przypadków bez OP (bez siekiery, za wcześnie, czysto, widz przygnieciony, spróchniały, zawis + klin, bez wrębu, ścinający w pasie, spała + żywica). Wynik 20.11: 16/16 PASS.
 
+## Rybak — scena łowienia (gałąź `profesje-zbierackie`, 20.11, NIEWDROŻONY)
+Klasa `Rybak.java` (opis w nagłówku, linie 32-37). Zarzut wędką profesji (`Lowienie.java:77`) przejmuje scena; zwykła wędka łowi po staremu, bez XP. Vanilla nigdy nie bierze (`setWaitTime(72000)`), wszystko prowadzi tik sesji (1 zadanie na łowiącego). Bez paska postępu: odległość widać po spławiku, naprężenie słychać. Q nic nie robi.
+1. **Czekanie** (`czeka`, `Rybak.java:151`): spławik siada w wodzie łowiska (tier jak dawniej, `tierWody`); drobnica skubie (fałszywe ruchy).
+2. **Branie** (`branie`, `:175`): gatunek zdradza ruch spławika, zapowiedź ≥ 1 s (`:165`). Gatunki: ryba główna tieru (wzorzec z tabeli `RYBY`, `:50-61`), dar wody (spławik powoli tonie → przedmiot poboczny łowiska, perła z małża z szansą rzadką), okaz (5%, długa zapowiedź, wyskok, ×2 łup i XP), drobnica (zacięcie = nic). Zacięcie PPM w oknie ≥ 700 ms (`OKNO_MIN`, `:41`); za wcześnie albo za późno = ryba puszcza.
+3. **Hol** (`hol`, `:272`): Shift zwija. Ryba zapowiada zryw w bok (≥ 1 s, komunikat z kierunkiem), potem rwie — kamera w przeciwną stronę = kontra. Kąt liczony względem osi holu bez bocznego odjazdu ryby (`katDoSplawika`, `:370`), więc stojąca kamera nie daje kontry (poprawka 20.11 po teście klientem QA). Żyłka trzeszczy przy dużym naprężeniu → puść Shift; długie trzeszczenie = zerwanie (0). Schowana wędka albo zwinięta żyłka w holu = ryba poszła (0).
+4. **Wynik** (`nagroda`, `:456`): jakość q = 1 − późne zacięcie − brak kontry − trzeszczenie; q ≥ 0,85 = wyborne (`<ID>_WYBORNE`, gdy brak takiego przedmiotu — zwykły z ostrzeżeniem w logu), ≥ 0,5 dobre, niżej słabe. XP = `g(tier)·(0,4+0,6q)` (okaz ×2). Wyskok ryby (`wyskok`, `:381`) = `ItemDisplay` widoczny dla wszystkich.
+
+Przedmioty `PROF_RAW_CATCH_WYBORNE`, `PROF_CLAM_WYBORNE` są tylko na klonie (`MCMMORPG/profesje/rybak/przedmioty-klon.yml`); przed wdrożeniem trzeba je dodać do `tresc.py` — nie zrobione (tak jak u drwala).
+
+**Komenda testowa:** `rzemioslo rybak <gracz>` (stan sceny: faza, okno, naprężenie, kierunek, kąt, kontra, hak), `rzemioslo rybak <gracz> wymus <ryba|okaz|dar_wody|drobnica> <ticki>` (następne branie), `rzemioslo rybak pomiar on|off` (logi `[rybak] …`) — `Komenda.java` `case "rybak"`, `Rybak.java:545,555`.
+
+**Lochy i wyspy:** łowisko w lochu = znacznik `lowisko_tN` przy wodzie instancji. Sprawdzone 20.11 parserem `MCMMORPG/profesje/rybak/woda_lochow.py` (tylko odczyt map MythicDungeons world1): `loch_001` ma 0 bloków wody, pozostałe 5 map ma pusty region (teren z generatora Iris — wody z pliku nie policzysz). Wodę trzeba zbudować przy budowie map; parser wypisze wtedy komendy znaczników. Wysp gry jeszcze nie ma.
+
+**Koszt (klon, 20.11, `MCMMORPG/profesje/rybak/testy/obciazenie.js`, 90 s, wymuszane okaz/ryba = najwięcej wyskoków):** 1 bot: MSPT 10 s avg 1,7 (max 3,7) wobec spoczynku 1,6; obserwator 58 pakietów/s; do 1 `item_display`. 4 boty: MSPT 10 s avg 2,1 (max 6,6) wobec 2,1; obserwator 129 pakietów/s (cząsteczki 32/s, velocity 16/s); do 4 `item_display`. Po jednym pomiarze na N, spark nie użyty. Wniosek: koszt mały (drwal przy 4 graczach ~475 pakietów/s).
+
+**Nie sprawdzone w źródłach** (projekt, nie fakt wędkarski): kontra kamerą w stronę przeciwną do zrywu, „trzeszczenie” żyłki jako sygnał popuszczenia, rozpoznawanie gatunku po ruchu spławika.
+
+**Testy:** `MCMMORPG/profesje/rybak/przygotuj_klon.sh <klon> [--bez-terenu]` (jar, przedmioty, stawy T1/T2 na płaskim świecie klonu), potem `run.sh <klon> MCMMORPG/profesje/rybak/testy/lowienie.js [przypadki]` — bot bez OP: vanilla, za wcześnie, drobnica, spóźnienie, czysty hol, zerwanie, bez kontry, bierny (kamera stoi), dar wody, okaz, słaba wędka, schowana wędka. Wynik 20.11: 18/18 PASS w dwóch przebiegach po poprawce kontry (wcześniej 17/17 bez przypadku „bierny”). Klient QA (20.11): hol samym Shiftem bez ruchu kamery → kontra 0/41, żyłka zerwana; pasek akcji z komunikatami holu widoczny na nagraniu.
+
 ## Znane pułapki i decyzje
 - Profesje v2 — stan, liczby, wdrożenie 12.10 i cofnięcie: `~/.claude/skills/mc-systemy-gracza/profesje.md:8-13`.
 - Brak `set_player_inventory` w mineflayer, UI Księgi blokuje equip → `rzemioslo doreki`: `~/.claude/skills/mc-systemy-gracza/SKILL.md:36`, `historia.md:30`.
 - Drwal, test botem: `bot.lookAt(p, true)` w mineflayer 4.39 nie zmienia samego pitchu na serwerze → `lookAt(p, false)` + ~160 ms (`~/.claude/skills/mc-host-testy-wdrozenia/SKILL.md`, pułapka 13).
+- Rybak (Paper 1.21.11, sprawdzone na klonie 20.11): `Sound.ENTITY_LEASH_KNOT_BREAK` nie istnieje (błąd kompilacji) → `ENTITY_ITEM_BREAK`; anulowany `PlayerFishEvent` w stanie REEL_IN zostawia hak w wodzie (na tym stoi hol); `FishHook.setWaitTime(72000)` blokuje branie vanilla; bot mineflayer nie zmienia slotu paska (`~/.claude/skills/mc-host-testy-wdrozenia/testy-narzedzia.md`).
 - Generatory/Nexo (`model:`, STRINGBLOCK, `RZM_*` z `{base:0}`): `~/.claude/skills/mc-systemy-gracza/SKILL.md:39`.
 - Krzywa XP profesji = plik `exp-curves/profesje_v2.txt`: `~/.claude/skills/mc-mmo-pluginy/SKILL.md:22`.
 - Zasady zawodów (czynności w świecie, testy bez OP): `~/.claude/skills/mc-systemy-gracza/SKILL.md:46`.

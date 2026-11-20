@@ -20,7 +20,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /** Lowienie v2: woda = lowisko T1; w promieniu R od znacznika Nexo 'lowisko_tN' — tier N. Wedka profesji
- *  tieru >= tier lowiska jest wymagana; jej tier skraca czas brania. Wedka vanilla dziala po staremu (bez surowcow i XP). */
+ *  tieru >= tier lowiska jest wymagana; zarzut wedka profesji przejmuje scena Rybak (vanilla nie bierze).
+ *  Wedka vanilla dziala po staremu (bez surowcow i XP). Galaz CAUGHT_FISH zostaje na wypadek, gdyby vanilla jednak wziela. */
 final class Lowienie implements Listener {
     private static final int R = 6;
     private final Rzemioslo plugin;
@@ -31,9 +32,9 @@ final class Lowienie implements Listener {
     @EventHandler
     public void naWyjscie(PlayerQuitEvent e) { podpowiedz.remove(e.getPlayer().getUniqueId()); }
 
-    private record Wedka(int slot, ItemStack item, Dane.Narz narz) {}
+    record Wedka(int slot, ItemStack item, Dane.Narz narz) {}
 
-    private Wedka wedka(Player p) {
+    Wedka wedka(Player p) {
         int held = p.getInventory().getHeldItemSlot();
         ItemStack it = p.getInventory().getItemInMainHand();
         Dane.Narz n = plugin.dane().narzedzia.get(Przedmioty.id(it));
@@ -73,9 +74,7 @@ final class Lowienie implements Listener {
                 e.setCancelled(true);
                 return;
             }
-            FishHook h = e.getHook();
-            double k = Math.max(0.35, 1 - 0.07 * (w.narz().tier() - 1));
-            h.setWaitTime((int) (100 * k), (int) (400 * k));
+            plugin.rybak().zarzut(p, e.getHook());   // scena rybaka (Rybak.java): branie, zaciecie, hol
             return;
         }
         if (e.getState() != PlayerFishEvent.State.CAUGHT_FISH || w == null || !(e.getCaught() instanceof Item zlowione)) return;
